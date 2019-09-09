@@ -6,7 +6,7 @@ from bark.geometry import *
 
 class BarkTest(unittest.TestCase):
   def test_bark(self):
-    pass
+    p = Point2d(0.0, 1.0)
 
 
 if __name__ == '__main__':

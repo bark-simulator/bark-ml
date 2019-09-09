@@ -1,10 +1,10 @@
-# py_test(
-#     name = "py_bark_test",
-#     srcs = ["py_bark_test.py"],
-#     data = ['//python:bark.so'],
-#     imports = ['../python/'],
-#     visibility = ["//visibility:public"],
-# )
+py_test(
+    name = "py_bark_test",
+    srcs = ["py_bark_test.py"],
+    data = ['@bark_project//python:bark.so'],
+    imports = ["../external/bark_project/python/"],
+    visibility = ["//visibility:public"]
+)
 
 cc_test(
     name = "cpp_bark_test",
@@ -17,5 +17,5 @@ cc_test(
         "@bark_project//modules/models/dynamic:dynamic",
         "@gtest//:main",
         "@boost//:geometry"
-    ],
+    ]
 )
