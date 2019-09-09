@@ -2,7 +2,7 @@ import tensorflow as tf
 tf.compat.v1.enable_v2_behavior()
 from tf_agents.drivers import dynamic_step_driver
 from tf_agents.utils import common
-from modules.runtime.ml.runners.base_runner import BaseRunner
+from src.drivers.base_runner import BaseRunner
 
 class TFARunner(BaseRunner):
   def __init__(self,
