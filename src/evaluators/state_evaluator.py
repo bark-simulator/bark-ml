@@ -14,31 +14,35 @@ class GoalReached(StateEvaluator):
     self.params = params
     self._goal_reward = \
       params["Runtime"]["RL"]["StateEvaluator"]["GoalReward",
-                                                "The reward given for goals",
-                                                0.01]
+        "The reward given for goals",
+        0.01]
     self.collision_reward = \
-        params["Runtime"]["RL"]["StateEvaluator"]["CollisionReward",
-                                                  "The (negative) reward given for collisions",
-                                                  -1.]
+      params["Runtime"]["RL"]["StateEvaluator"]["CollisionReward",
+        "The (negative) reward given for collisions",
+        -1.]
     self.max_steps = \
-        params["Runtime"]["RL"]["StateEvaluator"]["MaxSteps",
-                                                  "The maximum number of steps allowed to take" + \
-                                                  "in the environment before episode is done",
-                                                  50]
+      params["Runtime"]["RL"]["StateEvaluator"]["MaxSteps",
+        "The maximum number of steps allowed to take" + \
+        "in the environment before episode is done",
+        50]
     self._eval_agent = None
 
   def get_evaluation(self, world):
     if self._eval_agent in world.agents:
       eval_results = world.evaluate()
-      collision = eval_results["collision_agents"] or eval_results["collision_driving_corridor"]
+      collision = eval_results["collision_agents"] or \
+        eval_results["collision_driving_corridor"]
       success = eval_results["success"]
-      reward = collision * self.collision_reward + success * self._goal_reward
+      reward = collision * self.collision_reward + \
+        success * self._goal_reward
       max_steps_reached = eval_results["step_count"] > self.max_steps
       done = success or collision or max_steps_reached
       info = {"success": success,
               "collision_agents": eval_results["collision_agents"], 
-              "collision_driving_corridor": eval_results["collision_driving_corridor"],
-              "outside_map": False, "num_steps": eval_results["step_count"]}
+              "collision_driving_corridor": \
+                eval_results["collision_driving_corridor"],
+              "outside_map": False,
+              "num_steps": eval_results["step_count"]}
     else:
       collision = False
       success = False
@@ -54,10 +58,11 @@ class GoalReached(StateEvaluator):
   def reset(self, world, agents_to_evaluate):
     if len(agents_to_evaluate) != 1:
       raise ValueError("Invalid number of agents provided for GoalReached \
-                        evaluation, number= {}".format(len(agents_to_evaluate)))
+                        evaluation, number= {}" \
+                        .format(len(agents_to_evaluate)))
     self._eval_agent = agents_to_evaluate[0]
     evaluator1 = EvaluatorGoalReached(self._eval_agent)
-    evaluator2 = EvaluatorCollisionEgoAgent(self._eval_agent) # EvaluatorCollisionAgents()
+    evaluator2 = EvaluatorCollisionEgoAgent(self._eval_agent)
     evaluator3 = EvaluatorCollisionDrivingCorridor()
     evaluator4 = EvaluatorStepCount()
     world.add_evaluator("success", evaluator1)

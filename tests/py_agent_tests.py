@@ -9,7 +9,8 @@ import tensorflow as tf
 tf.compat.v1.enable_v2_behavior()
 from tf_agents.environments import tf_py_environment
 
-from modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution import UniformVehicleDistribution
+from modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution \
+  import UniformVehicleDistribution
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 

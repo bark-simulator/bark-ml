@@ -8,7 +8,8 @@ import unittest
 import tensorflow as tf
 from tf_agents.environments import tf_py_environment
 
-from modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution import UniformVehicleDistribution
+from modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution \
+  import UniformVehicleDistribution
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 
@@ -26,16 +27,23 @@ class RunnerTests(unittest.TestCase):
   @staticmethod
   def test_runner():
     params = ParameterServer(filename="data/highway_merging.json")
-    scenario_generation = UniformVehicleDistribution(num_scenarios=2, random_seed=0, params=params)
+    scenario_generation = UniformVehicleDistribution(num_scenarios=2,
+                                                     random_seed=0,
+                                                     params=params)
     state_observer = StateConcatenation(params=params)
     action_wrapper = DynamicModel(params=params)
     evaluator = GoalReached(params=params)
-    viewer = MPViewer(params=params, x_range=[-30,30], y_range=[-20,40], follow_agent_id=True) # use_world_bounds=True
-    runtimerl = RuntimeRL(action_wrapper=action_wrapper, observer=state_observer,
-                          evaluator=evaluator, step_time=0.05, viewer=viewer,
+    viewer = MPViewer(params=params,
+                      x_range=[-30,30],
+                      y_range=[-20,40],
+                      follow_agent_id=True) # use_world_bounds=True
+    runtimerl = RuntimeRL(action_wrapper=action_wrapper,
+                          observer=state_observer,
+                          evaluator=evaluator,
+                          step_time=0.05,
+                          viewer=viewer,
                           scenario_generator=scenario_generation)
     tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(runtimerl))
-    # this is a fully working sac agent (agent, replay buffer, dataset, ...)
     sac_agent = SACAgent(tfa_env)
     tfa_runner = TFARunner(tfa_env, sac_agent)
     tfa_runner.collect_initial_episodes()

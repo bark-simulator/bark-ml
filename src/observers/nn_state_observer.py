@@ -42,23 +42,23 @@ class StateConcatenation(OpenAI):
     self.params = params
     self._velocity_range = \
       self.params["Runtime"]["RL"]["StateConcatenation"]["VelocityRange",
-      "Gives boundaries for min and max velocity for normalization",
+      "Boundaries for min and max velocity for normalization",
       [0, 100]]
     self._theta_range = \
       self.params["Runtime"]["RL"]["StateConcatenation"]["ThetaRange",
-      "Gives boundaries for min and max theta for normalization",
+      "Boundaries for min and max theta for normalization",
       [0, 2*math.pi]]
     self._normalize = \
       self.params["Runtime"]["RL"]["StateConcatenation"]["Normalize",
-      "Should normalization be performed",
+      "Whether normalization should be performed",
       True]
     self._max_num_other_agents = \
       self.params["Runtime"]["RL"]["StateConcatenation"]["MaxOtherAgents",
-      "The concatenation state size is ego agent plus max num other agents",
+      "The concatenation state size is the ego agent plus max num other agents",
       4]
     self._max_distance_other_agents = \
       self.params["Runtime"]["RL"]["StateConcatenation"]["MaxOtherDistance",
-      "Agents farer than this value are not observed; if not max" + \
+      "Agents further than this distance are not observed; if not max" + \
       "other agents are seen, remaining concatenation state is set to zero",
       30]
 
