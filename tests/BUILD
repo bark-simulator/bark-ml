@@ -1,7 +1,17 @@
+
+filegroup(
+   name="bark_scenarios",
+   srcs=glob(["data/**"]),
+   visibility = ["//visibility:public"],
+)
+
+
 py_test(
     name = "py_bark_test",
     srcs = ["py_bark_test.py"],
-    data = ['@bark_project//python:bark.so'],
+    data = ["@bark_project//python:bark.so",
+            ":bark_scenarios"],
+    deps = ["@bark_project//modules/runtime:runtime"],
     imports = ["../external/bark_project/python/"],
     visibility = ["//visibility:public"]
 )
