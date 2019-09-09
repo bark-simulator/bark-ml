@@ -9,10 +9,12 @@ class RuntimeRL(Runtime):
                evaluator,
                step_time,
                viewer,
-               scenario_generator=None):
+               scenario_generator=None,
+               render=False):
     super().__init__(step_time=step_time,
                      viewer=viewer,
-                     scenario_generator=scenario_generator)
+                     scenario_generator=scenario_generator,
+                     render=render)
     self._action_wrapper = action_wrapper
     self._observer = observer
     self._evaluator = evaluator
@@ -33,6 +35,8 @@ class RuntimeRL(Runtime):
     self._world = self._action_wrapper.action_to_behavior(world=self._world,
                                                          action=action)
     self._world.step(self._step_time)
+    if self._render:
+      self.render()
     return self.get_nstate_reward_action_tuple(
       world=self._world,
       controlled_agents=self._scenario.eval_agent_ids)

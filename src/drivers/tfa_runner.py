@@ -6,13 +6,13 @@ from src.drivers.base_runner import BaseRunner
 
 class TFARunner(BaseRunner):
   def __init__(self,
-                runtime,
-                agent,
-                number_of_collections=10,
-                initial_collection_steps=10,
-                collection_steps_per_cycle=10,
-                initial_collection_driver=None,
-                collection_driver=None):
+               runtime,
+               agent,
+               number_of_collections=10,
+               initial_collection_steps=10,
+               collection_steps_per_cycle=10,
+               initial_collection_driver=None,
+               collection_driver=None):
     BaseRunner.__init__(self,
                         runtime=runtime,
                         agent=agent,
@@ -42,7 +42,7 @@ class TFARunner(BaseRunner):
   def collect_initial_episodes(self):
     self._initial_collection_driver.run()
 
-  def train(self, render=False):
+  def train(self):
     iterator = iter(self._agent._dataset)
     for i in range(0, self._number_of_collections):
       print("Collecting {}".format(str(i)))
@@ -53,8 +53,7 @@ class TFARunner(BaseRunner):
       train_loss = self._agent._agent.train(experience)
       print('train_loss = {}'.format(train_loss.loss))
 
-
-  def evaluate(self, render=False):
+  def evaluate(self):
     # for loop
     # cannot use collection driver due to the fact it would evaluate the whole dataset
     # greedy policy

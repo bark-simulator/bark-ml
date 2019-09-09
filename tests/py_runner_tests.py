@@ -42,10 +42,13 @@ class RunnerTests(unittest.TestCase):
                           evaluator=evaluator,
                           step_time=0.05,
                           viewer=viewer,
-                          scenario_generator=scenario_generation)
+                          scenario_generator=scenario_generation,
+                          render=False)
     tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(runtimerl))
     sac_agent = SACAgent(tfa_env)
-    tfa_runner = TFARunner(tfa_env, sac_agent)
+    tfa_runner = TFARunner(tfa_env,
+                           sac_agent,
+                           number_of_collections=100)
     tfa_runner.collect_initial_episodes()
     tfa_runner.train()
 
