@@ -31,7 +31,7 @@ class RunnerTests(unittest.TestCase):
     action_wrapper = DynamicModel(params=params)
     evaluator = GoalReached(params=params)
     viewer = MPViewer(params=params, x_range=[-30,30], y_range=[-20,40], follow_agent_id=True) # use_world_bounds=True
-    runtimerl = RuntimeRL(action_wrapper=action_wrapper, nn_observer=state_observer,
+    runtimerl = RuntimeRL(action_wrapper=action_wrapper, observer=state_observer,
                           evaluator=evaluator, step_time=0.05, viewer=viewer,
                           scenario_generator=scenario_generation)
     tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(runtimerl))

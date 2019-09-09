@@ -39,8 +39,11 @@ class BarkTest(unittest.TestCase):
     agent_2d_shape = CarLimousine()
     init_state = np.array([0, -11, -8, 3.14*3.0/4.0, 10/3.6])
     agent_params = param_server.addChild("agent1")
-    goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
-    goal_polygon = goal_polygon.translate(Point2d(-191.789,-50.1725))
+    goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),
+                                        Point2d(-1,1),
+                                        Point2d(1,1),
+                                        Point2d(1,-1)])
+    goal_polygon = goal_polygon.translate(Point2d(-191.789, -50.1725))
     agent = Agent(init_state,
                   behavior_model,
                   dynamic_model,
@@ -60,15 +63,14 @@ class BarkTest(unittest.TestCase):
                                               "Step-time in simulation",
                                               0.05]
     sim_real_time_factor = param_server["simulation"]["real_time_factor",
-                                                      "execution in real-time or faster",
-                                                      100]
+      "execution in real-time or faster",
+      100]
     for _ in range(0, 10):
       viewer.clear()
       world.step(sim_step_time)
       viewer.drawWorld(world)
       viewer.show(block=False)
       # time.sleep(sim_step_time/sim_real_time_factor)
-
 
 
 if __name__ == '__main__':
