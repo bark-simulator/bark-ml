@@ -1,16 +1,11 @@
 
-filegroup(
-   name="bark_scenarios",
-   srcs=glob(["data/**"]),
-   visibility = ["//visibility:public"],
-)
 
 
 py_test(
     name = "py_bark_test",
     srcs = ["py_bark_test.py"],
     data = ["@bark_project//python:bark.so",
-            ":bark_scenarios"],
+            "//data:bark_data"],
     deps = ["@bark_project//modules/runtime:runtime"],
     imports = ["../external/bark_project/python/"],
     visibility = ["//visibility:public"]
@@ -28,4 +23,70 @@ cc_test(
         "@gtest//:main",
         "@boost//:geometry"
     ]
+)
+
+py_test(
+    name = "py_runtime_wrapper_tests",
+    srcs = ["py_runtime_wrapper_tests.py"],
+    data = ["@bark_project//python:bark.so",
+            "//data:bark_data"],
+    imports = ["../external/bark_project/python/"],
+    deps = ["@bark_project//modules/runtime:runtime",
+            "@bark_project//modules/runtime/scenario/scenario_generation:scenario_generation",
+            "//src:rl_runtime",
+            "//src/agents:agents"],
+    visibility = ["//visibility:public"],
+)
+
+py_test(
+    name = "py_runtime_rl_tests",
+    srcs = ["py_runtime_rl_tests.py"],
+    data = ["@bark_project//python:bark.so",
+            "//data:bark_data"],
+    imports = ["../external/bark_project/python/"],
+    deps = ["@bark_project//modules/runtime:runtime",
+            "@bark_project//modules/runtime/scenario/scenario_generation:scenario_generation",
+            "//src:rl_runtime",
+            "//src/agents:agents"],
+    visibility = ["//visibility:public"],
+)
+
+py_test(
+    name = "py_runtime_tfa_tests",
+    srcs = ["py_runtime_tfa_tests.py"],
+    data = ["@bark_project//python:bark.so",
+            "//data:bark_data"],
+    imports = ["../external/bark_project/python/"],
+    deps = ["@bark_project//modules/runtime:runtime",
+            "@bark_project//modules/runtime/scenario/scenario_generation:scenario_generation",
+            "//src:rl_runtime",
+            "//src/agents:agents"],
+    visibility = ["//visibility:public"],
+)
+
+py_test(
+    name = "py_agent_tests",
+    srcs = ["py_agent_tests.py"],
+    data = ["@bark_project//python:bark.so",
+            "//data:bark_data"],
+    imports = ["../external/bark_project/python/"],
+    deps = ["@bark_project//modules/runtime:runtime",
+            "@bark_project//modules/runtime/scenario/scenario_generation:scenario_generation",
+            "//src:rl_runtime",
+            "//src/agents:agents"],
+    visibility = ["//visibility:public"],
+)
+
+py_test(
+    name = "py_runner_tests",
+    srcs = ["py_runner_tests.py"],
+    data = ["@bark_project//python:bark.so",
+            "//data:bark_data"],
+    imports = ["../external/bark_project/python/"],
+    deps = ["@bark_project//modules/runtime:runtime",
+            "@bark_project//modules/runtime/scenario/scenario_generation:scenario_generation",
+            "//src:rl_runtime",
+            "//src/agents:agents",
+            "//src/drivers:drivers"],
+    visibility = ["//visibility:public"],
 )

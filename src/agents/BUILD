@@ -1,0 +1,6 @@
+py_library(
+    name = "agents",
+    srcs = ["base_agent.py",
+            "sac_agent.py"],
+    visibility = ["//visibility:public"],
+)
