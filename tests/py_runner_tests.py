@@ -25,18 +25,15 @@ tf.compat.v1.enable_v2_behavior()
 class RunnerTests(unittest.TestCase):
   @staticmethod
   def test_runner():
-    params = ParameterServer(filename="tests/data/highway_merging.json")
-    scenario_generation = UniformVehicleDistribution(num_scenarios=3, random_seed=0, params=params)
+    params = ParameterServer(filename="data/highway_merging.json")
+    scenario_generation = UniformVehicleDistribution(num_scenarios=2, random_seed=0, params=params)
     state_observer = StateConcatenation(params=params)
     action_wrapper = DynamicModel(params=params)
     evaluator = GoalReached(params=params)
     viewer = MPViewer(params=params, x_range=[-30,30], y_range=[-20,40], follow_agent_id=True) # use_world_bounds=True
-
     runtimerl = RuntimeRL(action_wrapper=action_wrapper, nn_observer=state_observer,
                           evaluator=evaluator, step_time=0.05, viewer=viewer,
                           scenario_generator=scenario_generation)
-
-
     tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(runtimerl))
     # this is a fully working sac agent (agent, replay buffer, dataset, ...)
     sac_agent = SACAgent(tfa_env)

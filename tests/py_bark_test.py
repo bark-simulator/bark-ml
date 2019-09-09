@@ -26,12 +26,12 @@ from modules.runtime.commons.xodr_parser import XodrParser
 
 class BarkTest(unittest.TestCase):
   def test_bark(self):
-    param_server = ParameterServer(filename="tests/data/od8_const_vel_one_agent.json")
+    param_server = ParameterServer(filename="data/od8_const_vel_one_agent.json")
     world = World(param_server)
     behavior_model = BehaviorConstantVelocity(param_server)
     execution_model = ExecutionModelInterpolate(param_server)
     dynamic_model = SingleTrackModel()
-    xodr_parser = XodrParser("tests/data/Crossing8Course.xodr")
+    xodr_parser = XodrParser("data/Crossing8Course.xodr")
     map_interface = MapInterface()
     map_interface.set_open_drive_map(xodr_parser.map)
     map_interface.set_roadgraph(xodr_parser.roadgraph)

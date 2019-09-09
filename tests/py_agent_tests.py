@@ -24,7 +24,7 @@ from src.agents.sac_agent import SACAgent
 class AgentTests(unittest.TestCase):
   @staticmethod
   def test_agent():
-    params = ParameterServer(filename="tests/data/highway_merging.json")
+    params = ParameterServer(filename="data/highway_merging.json")
     scenario_generation = UniformVehicleDistribution(num_scenarios=3, random_seed=0, params=params)
     state_observer = StateConcatenation(params=params)
     action_wrapper = DynamicModel(params=params)
