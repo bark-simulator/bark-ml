@@ -1,7 +1,6 @@
 py_library(
-    name = "wrappers",
-    srcs = ["action_wrapper.py",
-						"tfa_wrapper.py"],
+    name = "observers",
+    srcs = ["nn_state_observer.py"],
     data = ["@bark_project//python:bark.so"],
     imports = ["../external/bark_project/python/"],
 		deps = ["@bark_project//modules/runtime:runtime"],
