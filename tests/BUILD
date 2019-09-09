@@ -1,3 +1,10 @@
+# py_test(
+#     name = "py_bark_test",
+#     srcs = ["py_bark_test.py"],
+#     data = ['//python:bark.so'],
+#     imports = ['../python/'],
+#     visibility = ["//visibility:public"],
+# )
 
 cc_test(
     name = "cpp_bark_test",

@@ -2,7 +2,7 @@ import unittest
 import pickle
 import numpy as np
 
-from bark.world.agent import *
+from bark.geometry import *
 
 class BarkTest(unittest.TestCase):
   def test_bark(self):
