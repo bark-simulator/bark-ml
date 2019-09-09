@@ -13,5 +13,6 @@ recommonmark
 sphinx_rtd_theme
 gym
 tf-agents-nightly
-tf-nightly-2.0-preview
+tf-nightly
+tfp-nightly
 panda3d

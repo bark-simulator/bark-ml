@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from modules.runtime.ml.spaces import Discrete, BoundedContinuous
+from src.commons.spaces import Discrete, BoundedContinuous
 from bark.models.behavior import BehaviorMotionPrimitives, DynamicBehaviorModel
 from bark.models.dynamic import SingleTrackModel
 from modules.runtime.commons.parameters import ParameterServer

@@ -1,5 +1,5 @@
 py_library(
-    name = "commons",
+    name = "spaces",
     srcs = ["spaces.py"],
     visibility = ["//visibility:public"],
 )
