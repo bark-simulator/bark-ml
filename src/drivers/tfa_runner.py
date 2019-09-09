@@ -28,7 +28,8 @@ class TFARunner(BaseRunner):
       self._agent._agent.collect_policy,
       observers=[self._agent._replay_buffer.add_batch],
       num_steps=self._initial_collection_steps)
-    self._initial_collection_driver.run = common.function(self._initial_collection_driver.run)
+    self._initial_collection_driver.run = common.function(
+      self._initial_collection_driver.run)
 
   def get_collection_driver(self):
     self._collection_driver = dynamic_step_driver.DynamicStepDriver(

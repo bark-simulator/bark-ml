@@ -3,26 +3,27 @@ import numpy as np
 
 class Discrete(Space):
     def __init__(self, n):
-        self.n = n
+        self._n = n
         super(Discrete, self).__init__((), np.int64)
 
     def sample(self):
-        return self.np_random.randint(self.n)
+        return self.np_random.randint(self._n)
 
     def contains(self, x):
         if isinstance(x, int):
             as_int = x
-        elif isinstance(x, (np.generic, np.ndarray)) and (x.dtype.kind in np.typecodes['AllInteger'] and x.shape == ()):
+        elif isinstance(x, (np.generic, np.ndarray)) and \
+         (x.dtype.kind in np.typecodes['AllInteger'] and x.shape == ()):
             as_int = int(x)
         else:
             return False
-        return as_int >= 0 and as_int < self.n
+        return as_int >= 0 and as_int < self._n
 
     def __repr__(self):
-        return "Discrete(%d)" % self.n
+        return "Discrete(%d)" % self._n
 
     def __eq__(self, other):
-        return isinstance(other, Discrete) and self.n == other.n
+        return isinstance(other, Discrete) and self._n == other._n
 
 
 class BoundedContinuous(Space):
