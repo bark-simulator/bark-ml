@@ -13,7 +13,7 @@ from tf_agents.replay_buffers import tf_uniform_replay_buffer
 # from tf_agents.utils import common
 from tf_agents.utils.common import Checkpointer
 
-from modules.runtime.ml.agents.base_agent import BaseAgent
+from src.agents.base_agent import BaseAgent
 
 
 class SACAgent(BaseAgent):
@@ -94,6 +94,7 @@ class SACAgent(BaseAgent):
     return tf_agent
 
   def get_replay_buffer(self):
+    # TODO(@hart): param
     replay_buffer_capacity = 256
     return tf_uniform_replay_buffer.TFUniformReplayBuffer(
       data_spec=self._agent.collect_data_spec,
@@ -110,6 +111,7 @@ class SACAgent(BaseAgent):
     return checkpointer
 
   def get_dataset(self):
+    # TODO(@hart): param
     batch_size = 256
     dataset = self._replay_buffer.as_dataset(
       num_parallel_calls=3,

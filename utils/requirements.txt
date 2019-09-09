@@ -13,6 +13,7 @@ recommonmark
 sphinx_rtd_theme
 gym
 tf-agents-nightly
-tf-nightly
-tfp-nightly
+# should be compatible
+tensorflow==2.0.0-rc0
+tensorflow-probability
 panda3d

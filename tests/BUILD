@@ -82,7 +82,8 @@ py_test(
     imports = ["../external/bark_project/python/"],
     deps = ["@bark_project//modules/runtime:runtime",
             "@bark_project//modules/runtime/scenario/scenario_generation:scenario_generation",
-            "//src:rl_runtime"],
+            "//src:rl_runtime",
+            "//src/agents:agents"],
     visibility = ["//visibility:public"],
 )
 
