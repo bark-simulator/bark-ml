@@ -38,19 +38,19 @@ class RuntimeRLTests(unittest.TestCase):
                           step_time=0.2,
                           viewer=viewer,
                           scenario_generator=scenario_generation)
-    for _ in range(0, 2): # run 5 scenarios in a row, repeating after 3
+    for _ in range(0, 5): # run 5 scenarios in a row, repeating after 2
       observed_state = runtimerl.reset()
-      for _ in range(0, 10): # run each scenario for 10 steps
+      for _ in range(0, 25): # run each scenario for 10 steps
         action = np.array([0,0]) #action_wrapper.action_space.sample()
-        print("Action: {}".format(str(action)))
-        runtimerl.render()
-        next_observed, reward, done, info = runtimerl.step(action)
+        #runtimerl.render()
+        next_observed_state, reward, done, info = runtimerl.step(action)
+        print("State: {} \n Reward: {} \n Done {}, Info: {} \n \
+            =================================================". \
+          format(next_observed_state, reward, done, info))
         if info["success"] or done:
-          print("State: {} \n Reward: {} \n Done {}, Info: {} \n \
-              =================================================". \
-            format(next_observed_state, reward, done, info))
           break
 
+  @unittest.skip("...")
   def test_motion_primitives_concat_state(self):
     params = ParameterServer(filename="data/highway_merging.json")
     scenario_generation = UniformVehicleDistribution(num_scenarios=2,
@@ -67,17 +67,17 @@ class RuntimeRLTests(unittest.TestCase):
     runtimerl = RuntimeRL(action_wrapper=action_wrapper,
                           observer=state_observer,
                           evaluator=evaluator,
-                          step_time=0.05,
+                          step_time=0.2,
                           viewer=viewer,
                           scenario_generator=scenario_generation)
 
 
-    for _ in range(0, 1): # run 5 scenarios in a row, repeating after 3
+    for _ in range(0, 2): # run 5 scenarios in a row, repeating after 3
       observed_state = runtimerl.reset()
-      for _ in range(0, 10): # run each scenario for 10 steps
+      for _ in range(0, 25): # run each scenario for 10 steps
         next_observed_state, reward, done, info = \
           runtimerl.step(action_wrapper.action_space.sample())
-        runtimerl.render()
+        #runtimerl.render()
         if info["success"] or done:
           print("State: {} \n Reward: {} \n Done {}, Info: {} \n \
               =================================================". \

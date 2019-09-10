@@ -16,7 +16,8 @@ class RuntimeRL(Runtime):
                viewer,
                scenario_generator=None,
                render=False):
-    super().__init__(step_time=step_time,
+    Runtime.__init__(self,
+                     step_time=step_time,
                      viewer=viewer,
                      scenario_generator=scenario_generator,
                      render=render)

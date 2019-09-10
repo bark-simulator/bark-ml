@@ -36,7 +36,7 @@ class RunnerTests(unittest.TestCase):
     viewer = MPViewer(params=params,
                       x_range=[-30,30],
                       y_range=[-20,40],
-                      follow_agent_id=True) # use_world_bounds=True
+                      follow_agent_id=True)
     runtimerl = RuntimeRL(action_wrapper=action_wrapper,
                           observer=state_observer,
                           evaluator=evaluator,
@@ -48,7 +48,7 @@ class RunnerTests(unittest.TestCase):
     sac_agent = SACAgent(tfa_env)
     tfa_runner = TFARunner(tfa_env,
                            sac_agent,
-                           number_of_collections=1)
+                           number_of_collections=40)
     tfa_runner.collect_initial_episodes()
     tfa_runner.train()
 
