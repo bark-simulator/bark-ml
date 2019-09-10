@@ -50,7 +50,6 @@ class GoalReached(StateEvaluator):
     return reward, done, info
       
   def reset(self, world, agents_to_evaluate):
-    print("agee", agents_to_evaluate)
     if len(agents_to_evaluate) != 1:
       raise ValueError("Invalid number of agents provided for GoalReached \
                         evaluation, number= {}" \
