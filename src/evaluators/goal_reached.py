@@ -1,27 +1,21 @@
 from bark.world.evaluation import *
 from modules.runtime.commons.parameters import ParameterServer
 
-class StateEvaluator:
-  def get_evaluation(self, world):
-    return # reward, done, info
-
-  def reset(self, world, agents_to_evaluate):
-    return # world
-
+from src.evaluators.evaluator import StateEvaluator
 
 class GoalReached(StateEvaluator):
   def __init__(self, params=ParameterServer()):
-    self.params = params
+    StateEvaluator.__init__(self, params)
     self._goal_reward = \
-      params["Runtime"]["RL"]["StateEvaluator"]["GoalReward",
+      self._params["Runtime"]["RL"]["StateEvaluator"]["GoalReward",
         "The reward given for goals",
         0.01]
     self.collision_reward = \
-      params["Runtime"]["RL"]["StateEvaluator"]["CollisionReward",
+      self._params["Runtime"]["RL"]["StateEvaluator"]["CollisionReward",
         "The (negative) reward given for collisions",
         -1.]
     self.max_steps = \
-      params["Runtime"]["RL"]["StateEvaluator"]["MaxSteps",
+      self._params["Runtime"]["RL"]["StateEvaluator"]["MaxSteps",
         "The maximum number of steps allowed to take" + \
         "in the environment before episode is done",
         50]
@@ -56,6 +50,7 @@ class GoalReached(StateEvaluator):
     return reward, done, info
       
   def reset(self, world, agents_to_evaluate):
+    print("agee", agents_to_evaluate)
     if len(agents_to_evaluate) != 1:
       raise ValueError("Invalid number of agents provided for GoalReached \
                         evaluation, number= {}" \

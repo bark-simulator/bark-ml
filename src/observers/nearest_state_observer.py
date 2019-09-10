@@ -6,8 +6,11 @@ from modules.runtime.commons.parameters import ParameterServer
 import math
 import operator
 
-class NNStateObserver:
-  def __init__(self):
+from src.observers.observer import StateObserver
+
+class NNStateObserver(StateObserver):
+  def __init__(self, params):
+    StateObserver.__init__(self, params)
     self._world_x_range = None
     self._world_y_range = None
 
@@ -25,39 +28,31 @@ class NNStateObserver:
     pass
 
 
-class OpenAI(NNStateObserver):
-  def observe(self, world, agents_to_observe):
-    if(len(agents_to_observe) != 1):
-      raise ValueError("Invalid number of evaluation agents given: {}" \
-        .format(agents_to_observe))
-
-
-class StateConcatenation(OpenAI):
+class StateConcatenation(NNStateObserver):
   def __init__(self, params=ParameterServer()):
-    # TODO(@hart): make parameterizable
+    NNStateObserver.__init__(self, params)
     self.nn_state_dimensions = [int(StateDefinition.X_POSITION),
                                 int(StateDefinition.Y_POSITION),
                                 int(StateDefinition.THETA_POSITION),
                                 int(StateDefinition.VEL_POSITION)]
-    self.params = params
     self._velocity_range = \
-      self.params["Runtime"]["RL"]["StateConcatenation"]["VelocityRange",
+      self._params["Runtime"]["RL"]["StateConcatenation"]["VelocityRange",
       "Boundaries for min and max velocity for normalization",
       [0, 100]]
     self._theta_range = \
-      self.params["Runtime"]["RL"]["StateConcatenation"]["ThetaRange",
+      self._params["Runtime"]["RL"]["StateConcatenation"]["ThetaRange",
       "Boundaries for min and max theta for normalization",
       [0, 2*math.pi]]
     self._normalize = \
-      self.params["Runtime"]["RL"]["StateConcatenation"]["Normalize",
+      self._params["Runtime"]["RL"]["StateConcatenation"]["Normalize",
       "Whether normalization should be performed",
       True]
     self._max_num_other_agents = \
-      self.params["Runtime"]["RL"]["StateConcatenation"]["MaxOtherAgents",
+      self._params["Runtime"]["RL"]["StateConcatenation"]["MaxOtherAgents",
       "The concatenation state size is the ego agent plus max num other agents",
       4]
     self._max_distance_other_agents = \
-      self.params["Runtime"]["RL"]["StateConcatenation"]["MaxOtherDistance",
+      self._params["Runtime"]["RL"]["StateConcatenation"]["MaxOtherDistance",
       "Agents further than this distance are not observed; if not max" + \
       "other agents are seen, remaining concatenation state is set to zero",
       30]

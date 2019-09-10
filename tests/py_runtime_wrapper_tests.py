@@ -12,9 +12,10 @@ from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 
 from src.rl_runtime import RuntimeRL
-from src.observers.nn_state_observer import StateConcatenation
-from src.wrappers.action_wrapper import MotionPrimitives, DynamicModel
-from src.evaluators.state_evaluator import GoalReached
+from src.observers.nearest_state_observer import StateConcatenation
+from src.wrappers.dynamic_model import DynamicModel
+from src.wrappers.motion_primitives import MotionPrimitives
+from src.evaluators.goal_reached import GoalReached
 import numpy as np
 
 

@@ -12,10 +12,10 @@ from modules.runtime.viewer.matplotlib_viewer import MPViewer
 
 
 from src.rl_runtime import RuntimeRL
-from src.observers.nn_state_observer import StateConcatenation
-from src.wrappers.action_wrapper import DynamicModel
+from src.observers.nearest_state_observer import StateConcatenation
+from src.wrappers.dynamic_model import DynamicModel
 from src.wrappers.tfa_wrapper import TFAWrapper
-from src.evaluators.state_evaluator import GoalReached
+from src.evaluators.goal_reached import GoalReached
 
 from tf_agents.environments import tf_py_environment
 from tf_agents.environments import utils

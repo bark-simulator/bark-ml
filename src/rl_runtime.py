@@ -22,24 +22,24 @@ class RuntimeRL(Runtime):
   def reset(self, scenario=None):
     super().reset(scenario=scenario)
     self._world = self._evaluator.reset(self._world,
-                                       self._scenario.eval_agent_ids)
+                                        self._scenario._eval_agent_ids)
     self._world = self._action_wrapper.reset(self._world,
-                                            self._scenario.eval_agent_ids)
+                                             self._scenario._eval_agent_ids)
     self._world = self._observer.reset(self._world,
-                                      self._scenario.eval_agent_ids)
+                                       self._scenario._eval_agent_ids)
     return self._observer.observe(
       world=self._world,
-      agents_to_observe=self._scenario.eval_agent_ids)
+      agents_to_observe=self._scenario._eval_agent_ids)
 
   def step(self, action):
     self._world = self._action_wrapper.action_to_behavior(world=self._world,
-                                                         action=action)
+                                                          action=action)
     self._world.step(self._step_time)
     if self._render:
       self.render()
     return self.get_nstate_reward_action_tuple(
       world=self._world,
-      controlled_agents=self._scenario.eval_agent_ids)
+      controlled_agents=self._scenario._eval_agent_ids)
 
   @property
   def action_space(self):

@@ -13,9 +13,10 @@ from modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution \
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from src.rl_runtime import RuntimeRL
-from src.observers.nn_state_observer import StateConcatenation
-from src.wrappers.action_wrapper import MotionPrimitives, DynamicModel
-from src.evaluators.state_evaluator import GoalReached
+from src.observers.nearest_state_observer import StateConcatenation
+from src.wrappers.dynamic_model import DynamicModel
+from src.wrappers.motion_primitives import MotionPrimitives
+from src.evaluators.goal_reached import GoalReached
 
 class RuntimeRLTests(unittest.TestCase):
   def test_dynamic_behavior_model(self):
@@ -38,16 +39,16 @@ class RuntimeRLTests(unittest.TestCase):
                           viewer=viewer,
                           scenario_generator=scenario_generation)
     for _ in range(0, 2): # run 5 scenarios in a row, repeating after 3
-      nn_state = runtimerl.reset()
+      observed_state = runtimerl.reset()
       for _ in range(0, 10): # run each scenario for 10 steps
         action = np.array([0,0]) #action_wrapper.action_space.sample()
         print("Action: {}".format(str(action)))
         runtimerl.render()
-        next_nn_state, reward, done, info = runtimerl.step(action)
+        next_observed, reward, done, info = runtimerl.step(action)
         if info["success"] or done:
           print("State: {} \n Reward: {} \n Done {}, Info: {} \n \
               =================================================". \
-            format( next_nn_state, reward, done, info))
+            format(next_observed_state, reward, done, info))
           break
 
   def test_motion_primitives_concat_state(self):
@@ -72,15 +73,15 @@ class RuntimeRLTests(unittest.TestCase):
 
 
     for _ in range(0, 1): # run 5 scenarios in a row, repeating after 3
-      nn_state = runtimerl.reset()
+      observed_state = runtimerl.reset()
       for _ in range(0, 10): # run each scenario for 10 steps
-        next_nn_state, reward, done, info = \
+        next_observed_state, reward, done, info = \
           runtimerl.step(action_wrapper.action_space.sample())
         runtimerl.render()
         if info["success"] or done:
           print("State: {} \n Reward: {} \n Done {}, Info: {} \n \
               =================================================". \
-            format( next_nn_state, reward, done, info))
+            format( next_observed_state, reward, done, info))
           break
 
 

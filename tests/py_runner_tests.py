@@ -14,10 +14,10 @@ from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 
 from src.rl_runtime import RuntimeRL
-from src.observers.nn_state_observer import StateConcatenation
-from src.wrappers.action_wrapper import DynamicModel
+from src.observers.nearest_state_observer import StateConcatenation
+from src.wrappers.dynamic_model import DynamicModel
 from src.wrappers.tfa_wrapper import TFAWrapper
-from src.evaluators.state_evaluator import GoalReached
+from src.evaluators.goal_reached import GoalReached
 from src.agents.sac_agent import SACAgent
 from src.drivers.tfa_runner import TFARunner
 
@@ -48,7 +48,7 @@ class RunnerTests(unittest.TestCase):
     sac_agent = SACAgent(tfa_env)
     tfa_runner = TFARunner(tfa_env,
                            sac_agent,
-                           number_of_collections=100)
+                           number_of_collections=1)
     tfa_runner.collect_initial_episodes()
     tfa_runner.train()
 
