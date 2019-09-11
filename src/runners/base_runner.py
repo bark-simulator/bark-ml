@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-
 class BaseRunner(ABC):
   def __init__(self,
                runtime,
@@ -29,7 +28,6 @@ class BaseRunner(ABC):
   def train(self):
     """Trains the agent for a given period
     """
-    pass
 
   @abstractmethod
   def evaluate(self):

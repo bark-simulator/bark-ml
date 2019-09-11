@@ -21,18 +21,18 @@ class SACAgent(BaseAgent):
                dataset=None,
                params=None):
     BaseAgent.__init__(self,
-                       agent=self.get_agent(environment, params),
                        params=params)
+    self._ckpt = tf.train.Checkpoint(step=tf.Variable(0, dtype=tf.int64))
+    self._agent = self.get_agent(environment, params)
     self._env = environment
     self._replay_buffer = self.get_replay_buffer()
-    self._checkpointer  =self.get_checkpointer()
+    self._checkpointer  = self.get_checkpointer()
     self._dataset = self.get_dataset()
     self._collect_policy = self.get_collect_policy()
     self._eval_policy = self.get_eval_policy()
     self._env = environment
-    self._global_step = 0 # TODO(@hart): use checkpoint
-
-    # TODO(@hart): put all hyper-parameters here
+    self._ckpt = tf.train.Checkpoint(step=tf.Variable(0, dtype=tf.int64),
+                                     agent=self._agent)
 
   def get_agent(self, env, params):
     """Returns a tensorflow SAC-Agent
@@ -54,7 +54,6 @@ class SACAgent(BaseAgent):
     reward_scale_factor = 1.0 #@param
     gamma = 0.995 #@param
     gradient_clipping = None # @param
-    self._global_step = tf.compat.v1.train.get_or_create_global_step()
     agent_name = "SAC_agent"
 
     def _normal_projection_net(action_spec, init_means_output_factor=0.1):
@@ -96,7 +95,7 @@ class SACAgent(BaseAgent):
       gamma=gamma,
       reward_scale_factor=reward_scale_factor,
       gradient_clipping=gradient_clipping,
-      train_step_counter=self._global_step,
+      train_step_counter=self._ckpt.step,
       name=agent_name)
     tf_agent.initialize()
     return tf_agent
@@ -112,7 +111,7 @@ class SACAgent(BaseAgent):
   def get_checkpointer(self, log_path="/"):
     # checkpoints
     checkpointer = Checkpointer(log_path,
-      global_step=self._global_step,
+      global_step=self._ckpt.step,
       tf_agent=self._agent,
       max_to_keep=2)
     checkpointer.initialize_or_restore()
@@ -143,3 +142,13 @@ class SACAgent(BaseAgent):
   @property
   def eval_policy(self):
     return self._eval_policy
+
+  def save(self):
+    """Saves an agent
+    """
+    pass
+
+  def load(self):
+    """Loads an agent
+    """
+    pass

@@ -24,7 +24,7 @@ class TFARunner(BaseRunner):
                evaluation_steps=5,
                initial_collection_driver=None,
                collection_driver=None,
-               summary_writer=None):
+               summary_path=None):
     BaseRunner.__init__(self,
                         runtime=runtime,
                         agent=agent,
@@ -35,9 +35,11 @@ class TFARunner(BaseRunner):
       tf_metrics.AverageReturnMetric(buffer_size=evaluation_steps),
       tf_metrics.AverageEpisodeLengthMetric(buffer_size=evaluation_steps)
     ]
+    self._summary_writer = None
+    if summary_path is not None:
+      self._summary_writer = tf.summary.create_file_writer(summary_path)
     self._evaluate_every_n_steps = evaluate_every_n_steps
     self._evaluation_steps = evaluation_steps
-    self._summary_writer = summary_writer
     self.get_initial_collection_driver()
     self.get_collection_driver()
 
@@ -62,13 +64,19 @@ class TFARunner(BaseRunner):
     self._initial_collection_driver.run()
 
   def train(self):
+    if self._summary_writer is not None:
+      with self._summary_writer.as_default():
+        self._train()
+    else:
+      self._train()
+
+  def _train(self):
     iterator = iter(self._agent._dataset)
-    # TODO(@hart): replace by tf step variable
     for i in range(0, self._number_of_collections):
-      logger.info("Iteration: {}".format(str(i)))
+      logger.info("Iteration: {}".format(str(self._agent._ckpt.step.numpy())))
       self._collection_driver.run()
       experience, _ = next(iterator)
-      train_loss = self._agent._agent.train(experience)
+      self._agent._agent.train(experience)
       if i % self._evaluate_every_n_steps == 0:
         self.evaluate()
 

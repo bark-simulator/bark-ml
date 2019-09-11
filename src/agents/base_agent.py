@@ -15,3 +15,15 @@ class BaseAgent(ABC):
     """Resets all the internal states
     """
     pass
+
+  @abstractmethod
+  def save(self):
+    """Saves an agent
+    """
+    pass
+
+  @abstractmethod
+  def load(self):
+    """Loads an agent
+    """
+    pass
