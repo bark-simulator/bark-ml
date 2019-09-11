@@ -55,6 +55,7 @@ class GoalReached(StateEvaluator):
                         evaluation, number= {}" \
                         .format(len(agents_to_evaluate)))
     self._eval_agent = agents_to_evaluate[0]
+    world.clear_evaluators()
     evaluator1 = EvaluatorGoalReached(self._eval_agent)
     evaluator2 = EvaluatorCollisionEgoAgent(self._eval_agent)
     evaluator3 = EvaluatorCollisionDrivingCorridor()

@@ -42,8 +42,8 @@ class ScenarioGenerationTests(unittest.TestCase):
     for _ in range(0, 5):
       print("Scenario {}:".format(str(env._scenario_generator._current_scenario_idx)))
       for _ in range(0, 5):
-        #for key, agent in env._world.agents.items():
-        #  print(agent.id)
+        for key, agent in env._world.agents.items():
+          print(agent.id)
         env.step()
       env.reset()
 

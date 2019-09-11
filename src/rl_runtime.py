@@ -51,7 +51,6 @@ class RuntimeRL(Runtime):
     """
     self._world = self._action_wrapper.action_to_behavior(world=self._world,
                                                           action=action)
-
     self._world.step(self._step_time)
     if self._render:
       self.render()
