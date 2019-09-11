@@ -12,7 +12,7 @@ from tf_agents.utils.common import Checkpointer
 
 from src.agents.base_agent import BaseAgent
 
-
+# TODO(@hart): create a TFABaseAgent with all checkpointing, saving, loading etc. functionality
 class SACAgent(BaseAgent):
   def __init__(self,
                environment=None,
