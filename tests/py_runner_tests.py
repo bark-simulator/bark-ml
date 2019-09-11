@@ -48,9 +48,15 @@ class RunnerTests(unittest.TestCase):
     sac_agent = SACAgent(tfa_env)
     tfa_runner = TFARunner(tfa_env,
                            sac_agent,
-                           number_of_collections=40)
+                           number_of_collections=10)
     tfa_runner.collect_initial_episodes()
+    
+    # main two functionalities
     tfa_runner.train()
+    tfa_runner.evaluate()
+
+    # TODO(@hart): make visualization possible;
+    # does not work in TF-driver because of threads
 
 if __name__ == '__main__':
     unittest.main()
