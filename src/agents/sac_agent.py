@@ -5,12 +5,9 @@ from tf_agents.networks import actor_distribution_network
 from tf_agents.networks import normal_projection_network
 from tf_agents.agents.ddpg import critic_network
 from tf_agents.policies import greedy_policy
-# from tf_agents.metrics import tf_metrics
-# from tf_agents.eval import metric_utils
 
 from tf_agents.agents.sac import sac_agent
 from tf_agents.replay_buffers import tf_uniform_replay_buffer
-# from tf_agents.utils import common
 from tf_agents.utils.common import Checkpointer
 
 from src.agents.base_agent import BaseAgent
@@ -21,9 +18,11 @@ class SACAgent(BaseAgent):
                environment=None,
                replay_buffer=None,
                checkpointer=None,
-               dataset=None):
+               dataset=None,
+               params=None):
     BaseAgent.__init__(self,
-                       agent=self.get_agent(environment))
+                       agent=self.get_agent(environment, params),
+                       params=params)
     self._env = environment
     self._replay_buffer = self.get_replay_buffer()
     self._checkpointer  =self.get_checkpointer()
@@ -31,11 +30,20 @@ class SACAgent(BaseAgent):
     self._collect_policy = self.get_collect_policy()
     self._eval_policy = self.get_eval_policy()
     self._env = environment
-    self._global_step = 0
+    self._global_step = 0 # TODO(@hart): use checkpoint
+
     # TODO(@hart): put all hyper-parameters here
 
-  def get_agent(self, env):
-    # hyper parameters
+  def get_agent(self, env, params):
+    """Returns a tensorflow SAC-Agent
+    
+    Arguments:
+        env {TFAPyEnvironment} -- Tensorflow-Agents PyEnvironment
+        params {ParameterServer} -- ParameterServer from BARK
+    
+    Returns:
+        agent -- tf-agent
+    """
     actor_fc_layer_params = (512, 512, 128) # 4 layer net right now # changes 14 from (1024, 512, 512, 256)
     critic_joint_fc_layer_params = (256, 256, 128) # 2 layer critic net
     actor_learning_rate = 2e-4  # @param
@@ -124,10 +132,6 @@ class SACAgent(BaseAgent):
 
   def get_eval_policy(self):
     return greedy_policy.GreedyPolicy(self._agent.policy)
-
-  def execute(self, state):
-    # self._agent
-    pass
 
   def reset(self):
     pass

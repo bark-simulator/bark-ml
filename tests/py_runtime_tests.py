@@ -27,6 +27,8 @@ class ScenarioGenerationTests(unittest.TestCase):
     scenario_generation = DeterministicScenarioGeneration(num_scenarios=3,
                                                           random_seed=0,
                                                           params=param_server)
+
+    param_server["Visualization"]["Agents"]["DrawRoute", "Draw Route of each agent", True]
     viewer = MPViewer(params=param_server,
                       x_range=[-50, 50],
                       y_range=[-50, 50],
@@ -38,10 +40,17 @@ class ScenarioGenerationTests(unittest.TestCase):
                   scenario_generation,
                   render=True)
 
+    # TODO(@hart): assert agent's ids
+    # TODO(@hart): make sure the reset places the agents on the same position
+    # TODO(@hart): make sure the evaluators work
+    # TODO(@hart): assert _current_scenario_idx and make sure the scenario alternation works
+    # TODO(@hart): make sure a step moves the agents as expected (kinematic state and time)
+    # TODO(@hart): visualize the lane the agent drives on (local map)
+    # TODO(@hart): make sure the routing works on the given map with the given configurations
     env.reset()
     for _ in range(0, 5):
       print("Scenario {}:".format(str(env._scenario_generator._current_scenario_idx)))
-      for _ in range(0, 5):
+      for _ in range(0, 35):
         for key, agent in env._world.agents.items():
           print(agent.id)
         env.step()

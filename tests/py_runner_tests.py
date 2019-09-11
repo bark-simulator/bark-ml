@@ -21,7 +21,7 @@ from src.wrappers.dynamic_model import DynamicModel
 from src.wrappers.tfa_wrapper import TFAWrapper
 from src.evaluators.goal_reached import GoalReached
 from src.agents.sac_agent import SACAgent
-from src.drivers.tfa_runner import TFARunner
+from src.runners.tfa_runner import TFARunner
 
 tf.compat.v1.enable_v2_behavior()
 

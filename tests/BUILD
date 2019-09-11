@@ -87,7 +87,7 @@ py_test(
             "@bark_project//modules/runtime/scenario/scenario_generation:scenario_generation",
             "//src:rl_runtime",
             "//src/agents:agents",
-            "//src/drivers:drivers"],
+            "//src/runners:runners"],
     visibility = ["//visibility:public"],
 )
 

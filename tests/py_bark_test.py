@@ -63,15 +63,14 @@ class BarkTest(unittest.TestCase):
     sim_step_time = param_server["simulation"]["step_time",
       "Step-time in simulation",
       0.05]
-    sim_real_time_factor = param_server["simulation"]["real_time_factor",
-      "execution in real-time or faster",
-      100]
+
+
+    # TODO(@hart): assert everything.. agent ids movement etc.
     for _ in range(0, 10):
       viewer.clear()
       world.step(sim_step_time)
       viewer.drawWorld(world)
       viewer.show(block=False)
-      # time.sleep(sim_step_time/sim_real_time_factor)
 
 
 if __name__ == '__main__':

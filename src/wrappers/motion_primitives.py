@@ -14,7 +14,7 @@ class MotionPrimitives(ActionWrapper):
     self.control_inputs = \
       self._params["Runtime"]["RL"]["ActionWrapper"]["MotionPrimitives",
       "Motion primitives available as discrete actions", \
-      [[0,0], [10,0],[-2,0],[-50,0]]] # (acceleration, steering angle)
+      [[4.,0.], [2.,0.],[-0.5,0.],[-1.,0.]]] # (acceleration, steering angle)
     self.behavior_model = None
 
   def reset(self, world, agents_to_act):

@@ -6,7 +6,7 @@ from tf_agents.drivers import dynamic_step_driver
 from tf_agents.metrics import tf_metrics
 from tf_agents.eval import metric_utils
 from tf_agents.utils import common
-from src.drivers.base_runner import BaseRunner
+from src.runners.base_runner import BaseRunner
 
 
 logger = logging.getLogger()
