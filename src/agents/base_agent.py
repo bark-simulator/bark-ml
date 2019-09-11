@@ -9,8 +9,12 @@ class BaseAgent(ABC):
 
   @abstractmethod
   def execute(self, state):
+    """Returns an action given a state
+    """
     pass
 
   @abstractmethod
   def reset(self):
+    """Resets all the internal states
+    """
     pass
