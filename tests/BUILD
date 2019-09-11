@@ -90,3 +90,13 @@ py_test(
             "//src/drivers:drivers"],
     visibility = ["//visibility:public"],
 )
+
+py_test(
+  name = "py_runtime_tests",
+  srcs = ["py_runtime_tests.py"],
+  data = ["@bark_project//python:bark.so",
+          "//data:bark_data"],
+  imports = ["../external/bark_project/python/"],
+  deps = ["@bark_project//modules/runtime:runtime",
+          "@bark_project//modules/runtime/scenario/scenario_generation:scenario_generation"],
+)

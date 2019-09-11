@@ -26,10 +26,11 @@ tf.compat.v1.enable_v2_behavior()
 class RunnerTests(unittest.TestCase):
   @staticmethod
   def test_runner():
-    params = ParameterServer(filename="data/highway_merging.json")
-    scenario_generation = UniformVehicleDistribution(num_scenarios=2,
-                                                     random_seed=0,
-                                                     params=params)
+    params = ParameterServer(
+      filename="data/deterministic_scenario.json")
+    scenario_generation = DeterministicScenarioGeneration(num_scenarios=3,
+                                                          random_seed=0,
+                                                          params=params)
     state_observer = StateConcatenation(params=params)
     action_wrapper = DynamicModel(params=params)
     evaluator = GoalReached(params=params)
@@ -40,7 +41,7 @@ class RunnerTests(unittest.TestCase):
     runtimerl = RuntimeRL(action_wrapper=action_wrapper,
                           observer=state_observer,
                           evaluator=evaluator,
-                          step_time=0.05,
+                          step_time=0.2,
                           viewer=viewer,
                           scenario_generator=scenario_generation,
                           render=False)
@@ -48,12 +49,12 @@ class RunnerTests(unittest.TestCase):
     sac_agent = SACAgent(tfa_env)
     tfa_runner = TFARunner(tfa_env,
                            sac_agent,
-                           number_of_collections=10)
+                           number_of_collections=1)
     tfa_runner.collect_initial_episodes()
     
     # main two functionalities
     tfa_runner.train()
-    tfa_runner.evaluate()
+    #tfa_runner.evaluate()
 
     # TODO(@hart): make visualization possible;
     # does not work in TF-driver because of threads

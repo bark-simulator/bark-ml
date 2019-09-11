@@ -22,7 +22,7 @@ class SimpleObserver(StateObserver):
     observed_worlds =  world.observe(agents_to_observe)
     # concatenated state (zero)
     concatenated_state = np.zeros(len(world.agents)*self._len_state)
-    for i, agent in enumerate(world.agents):
+    for i, (key, agent) in enumerate(world.agents.items()):
       reduced_state = self._select_state_by_index(agent.state)
       starts_id = i*self._len_state
       concatenated_state[starts_id:starts_id+self._len_state] = reduced_state
@@ -39,6 +39,7 @@ class SimpleObserver(StateObserver):
   def _len_state(self):
     return len(self._state_definition)
 
-
+  def reset(self, world, agents_to_observe):
+    return world
 
 

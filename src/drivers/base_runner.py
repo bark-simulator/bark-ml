@@ -21,20 +21,30 @@ class BaseRunner(ABC):
 
   @abstractmethod
   def collect_initial_episodes(self):
+    """Collects initial episodes without prior training
+    """
     pass
 
   @abstractmethod
-  def train(self, render=False):
+  def train(self):
+    """Trains the agent for a given period
+    """
     pass
 
   @abstractmethod
-  def evaluate(self, render=False):
+  def evaluate(self):
+    """Evaluates the agent for a given number of episodes
+    """
     pass
 
   def render(self):
+    """Renderes the current state of the enviornment
+    """
     if self._render_evaluation:
       self._runtime.render()
 
   def reset(self):
+    """Resets the runtime and the agent
+    """
     self._runtime.reset()
     self._agent.reset()

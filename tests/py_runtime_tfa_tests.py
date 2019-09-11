@@ -23,10 +23,11 @@ from tf_agents.environments import utils
 class RuntimeTFARLTests(unittest.TestCase):
   @staticmethod
   def test_motion_primitives_concat_state():
-    params = ParameterServer(filename="data/highway_merging.json")
-    scenario_generation = UniformVehicleDistribution(num_scenarios=2,
-                                                     random_seed=0,
-                                                     params=params)
+    params = ParameterServer(
+      filename="data/deterministic_scenario.json")
+    scenario_generation = DeterministicScenarioGeneration(num_scenarios=3,
+                                                          random_seed=0,
+                                                          params=params)
     state_observer = StateConcatenation(params=params)
     action_wrapper = DynamicModel(params=params)
     evaluator = GoalReached(params=params)
