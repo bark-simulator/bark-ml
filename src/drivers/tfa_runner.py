@@ -71,8 +71,8 @@ class TFARunner(BaseRunner):
       self._agent._agent.policy,
       num_episodes=self._evaluation_steps)
     metric_utils.log_metrics(self._eval_metrics)
-    print("The agent achieved on average {} reward and {} steps in " + \
-          "{} evaluation runs." \
-          .format(str(self._eval_metrics[0].result()),
-                  str(self._eval_metrics[1].result()),
+    print("The agent achieved on average {} reward and {} steps in \
+          {} evaluation runs." \
+          .format(str(self._eval_metrics[0].result().numpy()),
+                  str(self._eval_metrics[1].result().numpy()),
                   str(self._evaluation_steps)))
