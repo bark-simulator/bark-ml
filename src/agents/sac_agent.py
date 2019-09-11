@@ -26,7 +26,7 @@ class SACAgent(BaseAgent):
     self._agent = self.get_agent(environment, params)
     self._env = environment
     self._replay_buffer = self.get_replay_buffer()
-    self._checkpointer  = self.get_checkpointer()
+    self._ckpt_manager  = self.get_checkpointer()
     self._dataset = self.get_dataset()
     self._collect_policy = self.get_collect_policy()
     self._eval_policy = self.get_eval_policy()
@@ -44,6 +44,7 @@ class SACAgent(BaseAgent):
     Returns:
         agent -- tf-agent
     """
+    # TODO(@hart): put in params
     actor_fc_layer_params = (512, 512, 128) # 4 layer net right now # changes 14 from (1024, 512, 512, 256)
     critic_joint_fc_layer_params = (256, 256, 128) # 2 layer critic net
     actor_learning_rate = 2e-4  # @param
@@ -101,7 +102,7 @@ class SACAgent(BaseAgent):
     return tf_agent
 
   def get_replay_buffer(self):
-    # TODO(@hart): param
+    # TODO(@hart): put in params
     replay_buffer_capacity = 256
     return tf_uniform_replay_buffer.TFUniformReplayBuffer(
       data_spec=self._agent.collect_data_spec,
@@ -109,7 +110,7 @@ class SACAgent(BaseAgent):
       max_length=replay_buffer_capacity)
 
   def get_checkpointer(self, log_path="/"):
-    # checkpoints
+    # TODO(@hart): put in params
     checkpointer = Checkpointer(log_path,
       global_step=self._ckpt.step,
       tf_agent=self._agent,
@@ -118,7 +119,7 @@ class SACAgent(BaseAgent):
     return checkpointer
 
   def get_dataset(self):
-    # TODO(@hart): param
+    # TODO(@hart): put in params
     batch_size = 256
     dataset = self._replay_buffer.as_dataset(
       num_parallel_calls=3,
@@ -146,9 +147,19 @@ class SACAgent(BaseAgent):
   def save(self):
     """Saves an agent
     """
-    pass
+    save_path = self._ckpt_manager.save()
+    print("Saved checkpoint for step {}: {}".format(int(self._ckpt.step) + 1,
+                                                    save_path))
 
   def load(self):
     """Loads an agent
     """
-    pass
+    try:
+      self._ckpt.restore(self._ckpt_manager.latest_checkpoint)
+    except:
+      return RuntimeError("Could not load agent.")
+    if self._ckpt_manager.latest_checkpoint:
+      print("Restored agent from {}".format(
+        self._ckpt_manager.latest_checkpoint))
+    else:
+      print("Initializing agent from scratch.")
