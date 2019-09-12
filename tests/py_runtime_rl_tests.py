@@ -21,7 +21,7 @@ from src.wrappers.dynamic_model import DynamicModel
 from src.wrappers.motion_primitives import MotionPrimitives
 from src.evaluators.goal_reached import GoalReached
 
-class RuntimeRLTests(unittest.TestCase):
+class PyRuntimeRLTests(unittest.TestCase):
   def test_dynamic_behavior_model(self):
     params = ParameterServer(
       filename="data/deterministic_scenario_test.json")
@@ -50,7 +50,6 @@ class RuntimeRLTests(unittest.TestCase):
       reward = 0.
       for _ in range(0, 50): # run each scenario for 10 steps
         action = action_wrapper.action_space.sample() / 100 # to go straight
-        print("action", action)
         next_observed_state, reward, done, info = \
           runtimerl.step(action)
         # observer
@@ -94,7 +93,6 @@ class RuntimeRLTests(unittest.TestCase):
       runtimerl.reset()
       for _ in range(0, 50): # run each scenario for 10 steps
         action = action_wrapper.action_space.sample()
-        print("action", action)
         next_observed_state, reward, done, info = \
           runtimerl.step(action)
         if done:

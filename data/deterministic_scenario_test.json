@@ -290,7 +290,7 @@
           "collection_steps_per_cycle": 1,
           "evaluate_every_n_steps": 5,
           "evaluation_steps": 5,
-          "summary_path": "./"
+          "summary_path": "data/"
       },
       "DynamicModel": {
           "action_dimension": 2,

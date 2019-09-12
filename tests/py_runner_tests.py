@@ -25,7 +25,7 @@ from src.runners.tfa_runner import TFARunner
 
 tf.compat.v1.enable_v2_behavior()
 
-class RunnerTests(unittest.TestCase):
+class PyRunnerTests(unittest.TestCase):
   @staticmethod
   def test_runner():
     params = ParameterServer(
@@ -57,10 +57,9 @@ class RunnerTests(unittest.TestCase):
     
     # main two functionalities
     tfa_runner.train()
-    #tfa_runner.evaluate()
+    tfa_runner.evaluate()
 
-    # TODO(@hart): make visualization possible;
-    # does not work in TF-driver because of threads
+    # TODO(@hart): visualization
 
 if __name__ == '__main__':
     unittest.main()

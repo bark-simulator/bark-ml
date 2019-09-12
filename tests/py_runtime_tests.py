@@ -20,7 +20,7 @@ from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from modules.runtime.viewer.pygame_viewer import PygameViewer
 
 
-class RuntimeTests(unittest.TestCase):
+class PyRuntimeTests(unittest.TestCase):
   """Tests to verify the functionality of BARK
   """
   def test_runtime(self):

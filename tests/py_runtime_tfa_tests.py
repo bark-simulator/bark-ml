@@ -22,9 +22,9 @@ from src.evaluators.goal_reached import GoalReached
 from tf_agents.environments import tf_py_environment
 from tf_agents.environments import utils
 
-class RuntimeTFARLTests(unittest.TestCase):
+class PyRuntimeTFARLTests(unittest.TestCase):
   @staticmethod
-  def test_motion_primitives_concat_state():
+  def test_tfa_runtime():
     params = ParameterServer(
       filename="data/deterministic_scenario_test.json")
     scenario_generation = DeterministicScenarioGeneration(num_scenarios=3,
@@ -47,6 +47,7 @@ class RuntimeTFARLTests(unittest.TestCase):
 
     tfa_env = TFAWrapper(runtimerl)
     _ = tfa_env.reset()
+
     utils.validate_py_environment(tfa_env, episodes=5)
     _ = tf_py_environment.TFPyEnvironment(tfa_env)
 

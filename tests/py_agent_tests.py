@@ -24,9 +24,8 @@ from src.wrappers.tfa_wrapper import TFAWrapper
 from src.evaluators.goal_reached import GoalReached
 from src.agents.sac_agent import SACAgent
 
-class AgentTests(unittest.TestCase):
-  @staticmethod
-  def test_agent():
+class PyAgentTests(unittest.TestCase):
+  def test_agent(self):
     params = ParameterServer(
       filename="data/deterministic_scenario_test.json")
     scenario_generation = DeterministicScenarioGeneration(
@@ -51,9 +50,12 @@ class AgentTests(unittest.TestCase):
     tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(runtimerl))
     sac_agent = SACAgent(tfa_env,
                          params=params)
+    self.assertEqual(sac_agent._agent.name, "sac_agent")
     sac_agent.reset()
-
-    # TODO(@hart): verify summary writer, saving and loading capabilities
+    
+    # TODO(@hart): does not work because of read-only file-system
+    # sac_agent.save()
+    sac_agent.load()
 
 
 if __name__ == '__main__':
