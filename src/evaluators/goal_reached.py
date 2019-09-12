@@ -33,6 +33,8 @@ class GoalReached(StateEvaluator):
     self._evaluators["step_count"] = EvaluatorStepCount()
 
   def _evaluate(self, eval_results):
+    """Returns information about the current world state
+    """
     done = False
     success = eval_results["goal_reached"]
     collision = eval_results["ego_collision"] or \

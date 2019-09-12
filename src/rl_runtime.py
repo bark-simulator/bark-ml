@@ -2,12 +2,11 @@ import numpy as np
 from modules.runtime.runtime import Runtime
 
 class RuntimeRL(Runtime):
-  """Runtime wrapper for reinforcement learning
-     that includes additional observers and evaluators
+  """Runtime wrapper for reinforcement learning.
+     Extends the runtime with observers and evaluators.
   
   Arguments:
-      Runtime {Runtime} -- Base class that is also
-                           wrapped in CPP
+      Runtime {Runtime} -- BaseClass
   """
   def __init__(self,
                action_wrapper,
@@ -27,7 +26,7 @@ class RuntimeRL(Runtime):
     self._evaluator = evaluator
 
   def reset(self, scenario=None):
-    """Resets the runtime with and its objects
+    """Resets the runtime and its objects
     """
     super().reset(scenario=scenario)
     self._world = self._evaluator.reset(self._world,
@@ -41,7 +40,7 @@ class RuntimeRL(Runtime):
       agents_to_observe=self._scenario._eval_agent_ids)
 
   def step(self, action):
-    """Steps the world
+    """Steps the world with a specified time dt
     
     Arguments:
         action {any} -- will be passed to the ActionWrapper
@@ -60,13 +59,13 @@ class RuntimeRL(Runtime):
 
   @property
   def action_space(self):
-    """Action space for agent
+    """Action space of the agent
     """
     return self._action_wrapper.action_space
 
   @property
   def observation_space(self):
-    """Observation space for agent
+    """Observation space of the agent
     """
     return self._observer.observation_space
 
@@ -75,8 +74,8 @@ class RuntimeRL(Runtime):
        perspective
     
     Arguments:
-        world {bark.world} -- Contains all required objects for the simulation
-        controlled_agents {list} -- list of ids
+        world {bark.world} -- Contains all objects of the simulation
+        controlled_agents {list} -- list of AgentIds
     
     Returns:
         (next_state, reward, done, info) -- RL tuple

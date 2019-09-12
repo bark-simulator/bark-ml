@@ -14,13 +14,11 @@ from src.agents.base_agent import BaseAgent
 
 
 class TFAAgent(BaseAgent):
-  """TFAgent
-     This class handles checkpoints and TF specific
-     functionalities
+  """This class serves as a base class for all
+     tf-agents agents. 
   
   Arguments:
       BaseAgent {BaseAgent} -- Abstract base class
-  
   """
   def __init__(self,
                environment=None,
@@ -38,13 +36,13 @@ class TFAAgent(BaseAgent):
     pass
 
   def get_checkpointer(self, log_path="/"):
-    """Checkpointer for handling saving and loading of agents
+    """Checkpointer handling the saving and loading of agents
     
     Keyword Arguments:
         log_path {string} -- path to the checkpoints (default: {"/"})
     
     Returns:
-        Checkpointer -- tf checkpoint handler
+        Checkpointer -- tf-checkpoint handler
     """
     checkpointer = Checkpointer(log_path,
       global_step=self._ckpt.step,
@@ -54,14 +52,14 @@ class TFAAgent(BaseAgent):
     return checkpointer
 
   def save(self):
-    """Saves an agent
+    """Saves the agent
     """
-    save_path = self._ckpt_manager.save()
+    save_path = self._ckpt_manager.save(global_step=self._ckpt.step)
     print("Saved checkpoint for step {}: {}".format(int(self._ckpt.step) + 1,
                                                     save_path))
 
   def load(self):
-    """Loads an agent
+    """Loads the agent
     """
     try:
       self._ckpt.restore(self._ckpt_manager.latest_checkpoint)

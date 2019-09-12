@@ -9,6 +9,8 @@ from src.wrappers.action_wrapper import ActionWrapper
 
 
 class MotionPrimitives(ActionWrapper):
+  """ActionWrapper that uses MotionPrimitives
+  """
   def __init__(self, params=ParameterServer()):
     ActionWrapper.__init__(self, params)
     self._control_inputs = \
@@ -18,6 +20,8 @@ class MotionPrimitives(ActionWrapper):
     self._behavior_model = None
 
   def reset(self, world, agents_to_act):
+    """see base class
+    """
     super(MotionPrimitives, self).reset(world=world,
                                         agents_to_act=agents_to_act)
     self._behavior_model = BehaviorMotionPrimitives(SingleTrackModel(),
@@ -32,10 +36,14 @@ class MotionPrimitives(ActionWrapper):
     return world
 
   def action_to_behavior(self, world, action):
+    """see base class
+    """
     if self._behavior_model:
       self._behavior_model.action_to_behavior(action)
     return world
 
   @property
   def action_space(self):
-      return Discrete(len(self._control_inputs))
+    """see base class
+    """
+    return Discrete(len(self._control_inputs))

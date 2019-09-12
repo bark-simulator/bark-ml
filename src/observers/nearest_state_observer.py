@@ -52,6 +52,8 @@ class ClosestAgentsObserver(NNStateObserver):
       30]
 
   def observe(self, world, agents_to_observe):
+    """see base class
+    """
     super(ClosestAgentsObserver, self).observe(
       world=world,
       agents_to_observe=agents_to_observe)
