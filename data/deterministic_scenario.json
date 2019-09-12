@@ -291,6 +291,17 @@
           "evaluate_every_n_steps": 5,
           "evaluation_steps": 5,
           "summary_path": "./"
+      },
+      "DynamicModel": {
+          "action_dimension": 2,
+          "actions_lower_bound": [-1.0, -0.1],
+          "actions_upper_bound": [1.0, 0.1]
+      },
+      "MotionPrimitives": {
+          "motion_primitives": [[4.0, 0.0],
+                                [2.0, 0.0],
+                                [-0.5, 0.0],
+                                [-1.0, 0.0]]
       }
   } 
 }

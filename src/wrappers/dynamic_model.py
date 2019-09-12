@@ -13,9 +13,9 @@ class DynamicModel(ActionWrapper):
                dynamic_model=SingleTrackModel()):
     ActionWrapper.__init__(self, params)
     self._control_inputs = \
-      self._params["Runtime"]["RL"]["ActionWrapper"]["ActionDimension",
+      self._params["ML"]["DynamicModel"]["action_dimension",
       "Dimension of action",
-      2] # (acceleration, steering angle)
+      2]
     self._dynamic_model = dynamic_model
     self._behavior_model = DynamicBehaviorModel(dynamic_model,
                                                 self._params)
@@ -29,7 +29,7 @@ class DynamicModel(ActionWrapper):
     if ego_agent_id in world.agents:
       world.agents[ego_agent_id].behavior_model = self._behavior_model
     else:
-      raise ValueError("Id of controlled agent not in world agent map.")
+      raise ValueError("AgentID does not exist in world.")
     return world
 
   def action_to_behavior(self, world, action):
@@ -39,7 +39,11 @@ class DynamicModel(ActionWrapper):
 
   @property
   def action_space(self):
-    # TODO(@hart): get these parameters
-    return BoundedContinuous(self._control_inputs,
-                             low=[-1.0, -0.1],
-                             high=[1.0, 0.1])
+    return BoundedContinuous(
+      self._control_inputs,
+      low=self._params["ML"]["DynamicModel"]["actions_lower_bound",
+        "Lower-bound for actions.",
+        [-1.0, -0.1]],
+      high=self._params["ML"]["DynamicModel"]["actions_upper_bound",
+        "Upper-bound for actions.",
+        [1.0, 0.1]])

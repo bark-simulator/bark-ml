@@ -97,10 +97,10 @@ class RuntimeRLTests(unittest.TestCase):
         print("action", action)
         next_observed_state, reward, done, info = \
           runtimerl.step(action)
-        print("State: {} \n Reward: {} \n Done {}, Info: {} \n \
-            =================================================". \
-          format(next_observed_state, reward, done, info))
         if done:
+          print("State: {} \n Reward: {} \n Done {}, Info: {} \n \
+              =================================================". \
+            format(next_observed_state, reward, done, info))
           break
 
 

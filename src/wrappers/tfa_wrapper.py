@@ -16,21 +16,21 @@ class TFAWrapper(py_environment.PyEnvironment):
   """
 
   def __init__(self, env):
-    self.env = env
+    self._env = env
     self._action_spec = array_spec.BoundedArraySpec(
-      shape=self.env.action_space.shape,
+      shape=self._env.action_space.shape,
       dtype=np.float32,
-      minimum=self.env.action_space.low,
-      maximum=self.env.action_space.high,
+      minimum=self._env.action_space.low,
+      maximum=self._env.action_space.high,
       name='action')
     self._observation_spec = array_spec.BoundedArraySpec(
-      shape=self.env.observation_space.shape,
+      shape=self._env.observation_space.shape,
       dtype=np.float32,
-      minimum=self.env.observation_space.low,
-      maximum=self.env.observation_space.high,
+      minimum=self._env.observation_space.low,
+      maximum=self._env.observation_space.high,
       name='observation')
-    self._state = np.zeros(shape=self.env.observation_space.shape,
-        dtype=np.float32)
+    self._state = np.zeros(shape=self._env.observation_space.shape,
+      dtype=np.float32)
     self._episode_ended = False
 
   def action_spec(self):
@@ -40,17 +40,17 @@ class TFAWrapper(py_environment.PyEnvironment):
     return self._observation_spec
 
   def render(self):
-    return self.env.render()
+    return self._env.render()
 
   def _reset(self):
-    self._state = np.array(self.env.reset(), dtype=np.float32)
+    self._state = np.array(self._env.reset(), dtype=np.float32)
     self._episode_ended = False
     return ts.restart(self._state)
 
   def _step(self, action):
     if self._episode_ended:
       return self.reset()
-    state, reward, self._episode_ended, _ = self.env.step(action)
+    state, reward, self._episode_ended, _ = self._env.step(action)
     self._state = np.array(state, dtype=np.float32)
     if self._episode_ended:
       return ts.termination(self._state, reward=reward)
