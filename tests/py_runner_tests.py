@@ -52,7 +52,7 @@ class RunnerTests(unittest.TestCase):
                          params=params)
     tfa_runner = TFARunner(tfa_env,
                            sac_agent,
-                           number_of_collections=1)
+                           params=params)
     tfa_runner.collect_initial_episodes()
     
     # main two functionalities

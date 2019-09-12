@@ -18,14 +18,7 @@ class SimpleObserver(StateObserver):
                               int(StateDefinition.VEL_POSITION)]
 
   def observe(self, world, agents_to_observe):
-    """Observes the world
-    
-    Arguments:
-        world {bark.world} -- BARK world
-        agents_to_observe {list(int)} -- ids of agents to observe
-    
-    Returns:
-        np.array -- concatenated state array
+    """see base class
     """
     # observe world
     observed_worlds =  world.observe(agents_to_observe)
