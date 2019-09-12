@@ -57,7 +57,7 @@ class RuntimeRLTests(unittest.TestCase):
         print("State: {} \n Reward: {} \n Done {}, Info: {} \n \
             =================================================". \
           format(next_observed_state, reward, done, info))
-        if info["success"] or done:
+        if done:
           break
 
   def test_motion_primitives_concat_state(self):
@@ -92,7 +92,7 @@ class RuntimeRLTests(unittest.TestCase):
         print("State: {} \n Reward: {} \n Done {}, Info: {} \n \
             =================================================". \
           format(next_observed_state, reward, done, info))
-        if info["success"] or done:
+        if done:
           break
 
 

@@ -45,17 +45,16 @@ class RuntimeTests(unittest.TestCase):
     env = Runtime(0.2,
                   viewer,
                   scenario_generation,
-                  render=True)
+                  render=False)
 
     # TODO(@hart): make sure the routing works on the given map with the given configurations
     env.reset()
     agent_ids = []
     agent_states = []
+    centers_of_driving_corridor= []
     for key, agent in env._world.agents.items():
       agent_ids.append(agent.id)
       agent_states.append(agent.state)
-      print(agent.local_map.get_horizon_driving_corridor().get_lane_ids())
-      print(agent.local_map.get_driving_corridor().get_lane_ids())
         
     for i in range(0, 5):
       print("Scenario {}:".format(

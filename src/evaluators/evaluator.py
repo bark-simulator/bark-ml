@@ -9,9 +9,10 @@ class StateEvaluator(ABC):
   def __init__(self,
                params=ParameterServer()):
     self._params = params
+    self._evaluators = {}
 
   @abstractmethod
-  def get_evaluation(self, world):
+  def evaluate(self, world):
     """Returns an RL tuple
     
     Arguments:
