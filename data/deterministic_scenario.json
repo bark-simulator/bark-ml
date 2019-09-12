@@ -259,7 +259,7 @@
       "MaxHistoryLength": 50
   },
   "ML": {
-      "SACAgent": {
+      "Agent": {
           "actor_fc_layer_params": [512, 512, 128],
           "critic_joint_fc_layer_params": [256, 256, 128],
           "actor_learning_rate": 1e-4,

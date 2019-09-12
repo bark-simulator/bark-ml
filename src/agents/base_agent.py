@@ -4,11 +4,12 @@ class BaseAgent(ABC):
   """Base class for bark-ml agents
   """
   def __init__(self,
+               environment=None,
                agent=None,
                params=None):
+    self._env = environment
     self._agent = agent
     self._params = params
-
 
   @abstractmethod
   def reset(self):

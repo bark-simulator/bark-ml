@@ -13,7 +13,7 @@ from tf_agents.utils.common import Checkpointer
 from src.agents.base_agent import BaseAgent
 
 
-class TFAgent(BaseAgent):
+class TFAAgent(BaseAgent):
   """TFAgent
      This class handles checkpoints and TF specific
      functionalities
@@ -26,10 +26,13 @@ class TFAgent(BaseAgent):
                environment=None,
                params=None):
     BaseAgent.__init__(self,
+                       environment=environment,
                        params=params)
     self._ckpt = tf.train.Checkpoint(step=tf.Variable(0, dtype=tf.int64))
-    self._env = environment
-    self._ckpt_manager  = self.get_checkpointer()
+    self._agent = self.get_agent(environment, params)
+    self._ckpt = tf.train.Checkpoint(step=tf.Variable(0, dtype=tf.int64),
+                                     agent=self._agent)
+    self._ckpt_manager = self.get_checkpointer()
 
   def reset(self):
     pass
