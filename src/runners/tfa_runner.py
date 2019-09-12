@@ -14,7 +14,7 @@ from src.runners.base_runner import BaseRunner
 
 
 logger = logging.getLogger()
-# TODO(@hart): this will print all statements
+# NOTE(@hart): this will print all statements
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 class TFARunner(BaseRunner):

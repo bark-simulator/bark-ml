@@ -26,7 +26,7 @@ class RuntimeTFARLTests(unittest.TestCase):
   @staticmethod
   def test_motion_primitives_concat_state():
     params = ParameterServer(
-      filename="data/deterministic_scenario.json")
+      filename="data/deterministic_scenario_test.json")
     scenario_generation = DeterministicScenarioGeneration(num_scenarios=3,
                                                           random_seed=0,
                                                           params=params)

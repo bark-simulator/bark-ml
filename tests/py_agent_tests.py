@@ -28,7 +28,7 @@ class AgentTests(unittest.TestCase):
   @staticmethod
   def test_agent():
     params = ParameterServer(
-      filename="data/deterministic_scenario.json")
+      filename="data/deterministic_scenario_test.json")
     scenario_generation = DeterministicScenarioGeneration(
       num_scenarios=2,
       random_seed=0,
@@ -52,6 +52,8 @@ class AgentTests(unittest.TestCase):
     sac_agent = SACAgent(tfa_env,
                          params=params)
     sac_agent.reset()
+
+    # TODO(@hart): verify summary writer, saving and loading capabilities
 
 
 if __name__ == '__main__':

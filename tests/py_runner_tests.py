@@ -29,7 +29,7 @@ class RunnerTests(unittest.TestCase):
   @staticmethod
   def test_runner():
     params = ParameterServer(
-      filename="data/deterministic_scenario.json")
+      filename="data/deterministic_scenario_test.json")
     scenario_generation = DeterministicScenarioGeneration(num_scenarios=3,
                                                           random_seed=0,
                                                           params=params)

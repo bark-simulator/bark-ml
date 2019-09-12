@@ -24,7 +24,7 @@ from src.evaluators.goal_reached import GoalReached
 class RuntimeRLTests(unittest.TestCase):
   def test_dynamic_behavior_model(self):
     params = ParameterServer(
-      filename="data/deterministic_scenario.json")
+      filename="data/deterministic_scenario_test.json")
     scenario_generation = DeterministicScenarioGeneration(num_scenarios=2,
                                                           random_seed=0,
                                                           params=params)
@@ -70,7 +70,7 @@ class RuntimeRLTests(unittest.TestCase):
 
   def test_motion_primitives_concat_state(self):
     params = ParameterServer(
-      filename="data/deterministic_scenario.json")
+      filename="data/deterministic_scenario_test.json")
     scenario_generation = DeterministicScenarioGeneration(num_scenarios=3,
                                                           random_seed=0,
                                                           params=params)

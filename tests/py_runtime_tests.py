@@ -28,7 +28,7 @@ class RuntimeTests(unittest.TestCase):
        functionality is given by the current state of BARK.
     """
     param_server = ParameterServer(
-      filename="data/deterministic_scenario.json")
+      filename="data/deterministic_scenario_test.json")
     scenario_generation = DeterministicScenarioGeneration(num_scenarios=3,
                                                           random_seed=0,
                                                           params=param_server)
@@ -47,7 +47,6 @@ class RuntimeTests(unittest.TestCase):
                   scenario_generation,
                   render=False)
 
-    # TODO(@hart): make sure the routing works on the given map with the given configurations
     env.reset()
     agent_ids = []
     agent_states = []

@@ -2,6 +2,7 @@
 from gym import spaces
 import numpy as np
 from bark.models.dynamic import StateDefinition
+from src.commons.spaces import BoundedContinuous, Discrete
 from modules.runtime.commons.parameters import ParameterServer
 import math
 import operator
