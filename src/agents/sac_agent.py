@@ -13,7 +13,8 @@ from tf_agents.utils.common import Checkpointer
 from src.agents.tfa_agent import TFAAgent
 
 class SACAgent(TFAAgent):
-  """SAC Agent
+  """SAC-Agent
+     This agent is based on the tf-agents library.
   """
   def __init__(self,
                environment=None,
@@ -101,10 +102,10 @@ class SACAgent(TFAAgent):
       max_length=self._params["ML"]["Agent"]["replay_buffer_capacity"])
 
   def get_dataset(self):
-    """Dataset generated from the replay buffer
+    """Dataset generated of the replay buffer
     
     Returns:
-        dataset -- subset of experiences from the replay buffer
+        dataset -- subset of experiences
     """
     dataset = self._replay_buffer.as_dataset(
       num_parallel_calls=self._params["ML"]["Agent"]["parallel_buffer_calls"],
@@ -114,7 +115,7 @@ class SACAgent(TFAAgent):
     return dataset
 
   def get_collect_policy(self):
-    """Novel collection policy from the agent
+    """Returns the collection policy of the agent
     
     Returns:
         CollectPolicy -- Samples from the agent's distribution
@@ -122,7 +123,7 @@ class SACAgent(TFAAgent):
     return self._agent.collect_policy
 
   def get_eval_policy(self):
-    """Returns a greedy policy from the agent
+    """Returns the greedy policy of the agent
     
     Returns:
         GreedyPolicy -- Always returns best suitable action

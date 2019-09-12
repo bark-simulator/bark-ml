@@ -12,6 +12,14 @@ class StateEvaluator(ABC):
     self._evaluators = {}
 
   def evaluate(self, world):
+    """Evaluates the passed world
+    
+    Arguments:
+        world {bark.world} -- World containing all information
+    
+    Returns:
+        (reward, status, evaluation results) -- Rl-tuple
+    """
     eval_results = None
     reward = 0.
     done = False

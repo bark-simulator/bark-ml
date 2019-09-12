@@ -8,6 +8,10 @@ from modules.runtime.commons.parameters import ParameterServer
 from src.wrappers.action_wrapper import ActionWrapper
 
 class DynamicModel(ActionWrapper):
+  """This module wraps the SingleTrack model
+     and requires the steering angle and acceleration
+     as system inputs. 
+  """
   def __init__(self,
                params=ParameterServer(),
                dynamic_model=SingleTrackModel()):
@@ -21,6 +25,8 @@ class DynamicModel(ActionWrapper):
                                                 self._params)
 
   def reset(self, world, agents_to_act):
+    """see base class
+    """
     super(DynamicModel, self).reset(world=world,
                                     agents_to_act=agents_to_act)
     self._behavior_model = DynamicBehaviorModel(self._dynamic_model,
@@ -33,12 +39,16 @@ class DynamicModel(ActionWrapper):
     return world
 
   def action_to_behavior(self, world, action):
+    """see base class
+    """
     if self._behavior_model:
       self._behavior_model.set_action(action)
     return world
 
   @property
   def action_space(self):
+    """see base class
+    """
     return BoundedContinuous(
       self._control_inputs,
       low=self._params["ML"]["DynamicModel"]["actions_lower_bound",

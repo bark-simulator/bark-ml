@@ -18,6 +18,9 @@ logger = logging.getLogger()
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 class TFARunner(BaseRunner):
+  """Runner that takes the runtime and agent
+     and runs the training and evaluation as specified.
+  """
   def __init__(self,
                runtime=None,
                agent=None,
@@ -43,6 +46,8 @@ class TFARunner(BaseRunner):
     self.collect_initial_episodes()
 
   def get_initial_collection_driver(self):
+    """Sets the initial collection driver for tf-agents.
+    """
     self._initial_collection_driver = \
       dynamic_episode_driver.DynamicEpisodeDriver(
         env=self._runtime,
@@ -53,6 +58,8 @@ class TFARunner(BaseRunner):
       self._initial_collection_driver.run)
 
   def get_collection_driver(self):
+    """Sets the collection driver for tf-agents.
+    """
     self._collection_driver = dynamic_episode_driver.DynamicEpisodeDriver(
       env=self._runtime,
       policy=self._agent._agent.collect_policy,
@@ -61,9 +68,14 @@ class TFARunner(BaseRunner):
     self._collection_driver.run = common.function(self._collection_driver.run)
 
   def collect_initial_episodes(self):
+    """Function that collects the initial episodes
+    """
     self._initial_collection_driver.run()
 
   def train(self):
+    """Wrapper that sets the summary writer.
+       This enables a seamingless integration with TensorBoard.
+    """
     if self._summary_writer is not None:
       with self._summary_writer.as_default():
         self._train()
@@ -71,6 +83,8 @@ class TFARunner(BaseRunner):
       self._train()
 
   def _train(self):
+    """Trains the agent as specified in the parameter file
+    """
     iterator = iter(self._agent._dataset)
     for i in range(0, self._params["ML"]["Runner"]["number_of_collections"]):
       logger.info("Iteration: {}".format(str(self._agent._ckpt.step.numpy())))
@@ -81,6 +95,8 @@ class TFARunner(BaseRunner):
         self.evaluate()
 
   def evaluate(self):
+    """Evaluates the agent
+    """
     logger.info("Evaluating the agent's performance in {} episodes."
       .format(str(self._params["ML"]["Runner"]["evaluation_steps"])))
     metric_utils.eager_compute(
