@@ -12,7 +12,7 @@ from tf_agents.utils.common import Checkpointer
 
 from src.agents.tfa_agent import TFAAgent
 
-class Agent(TFAAgent):
+class SACAgent(TFAAgent):
   """SAC Agent
   """
   def __init__(self,

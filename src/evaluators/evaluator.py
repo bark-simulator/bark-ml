@@ -11,17 +11,14 @@ class StateEvaluator(ABC):
     self._params = params
     self._evaluators = {}
 
-  @abstractmethod
   def evaluate(self, world):
-    """Returns an RL tuple
-    
-    Arguments:
-        world {bark.world} -- World provided by bark
-    
-    Returns:
-        (rewad, done, info) -- RL-tuple
-    """
-    pass
+    eval_results = None
+    reward = 0.
+    done = False
+    if self._eval_agent in world.agents:
+      eval_results = world.evaluate()
+      reward, done, eval_results = self._evaluate(eval_results)
+    return reward, done, eval_results
 
   def reset(self, world, agents_to_evaluate):
     if len(agents_to_evaluate) != 1:

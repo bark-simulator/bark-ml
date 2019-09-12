@@ -12,7 +12,7 @@ from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 
 from src.rl_runtime import RuntimeRL
-from src.observers.nearest_state_observer import StateConcatenation
+from src.observers.nearest_state_observer import ClosestAgentsObserver
 from src.wrappers.dynamic_model import DynamicModel
 from src.wrappers.motion_primitives import MotionPrimitives
 from src.evaluators.goal_reached import GoalReached
@@ -26,7 +26,7 @@ class RuntimeRLWrapperTests(unittest.TestCase):
     scenario_generation = UniformVehicleDistribution(num_scenarios=3,
                                                      random_seed=0,
                                                      params=params)
-    state_observer = StateConcatenation(params=params)
+    state_observer = ClosestAgentsObserver(params=params)
     action_wrapper = DynamicModel(params=params)
     evaluator = GoalReached(params=params)
     viewer = MPViewer(params=params,
@@ -52,7 +52,7 @@ class RuntimeRLWrapperTests(unittest.TestCase):
     scenario_generation = UniformVehicleDistribution(num_scenarios=3,
                                                      random_seed=0,
                                                      params=params)
-    state_observer = StateConcatenation(params=params)
+    state_observer = ClosestAgentsObserver(params=params)
     action_wrapper = MotionPrimitives(params=params)
     evaluator = GoalReached(params=params)
     viewer = MPViewer(params=params,

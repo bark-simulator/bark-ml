@@ -14,51 +14,44 @@ class NNStateObserver(StateObserver):
     self._world_x_range = None
     self._world_y_range = None
 
-  def observe(self, world, agents_to_observe):
-    pass
-
   def reset(self, world, agents_to_observe):
     bb = world.bounding_box
     self._world_x_range = [bb[0].x(), bb[1].x()]
     self._world_y_range = [bb[0].y(), bb[1].y()]
     return world
 
-  @property
-  def observation_space(self):
-    pass
 
-
-class StateConcatenation(NNStateObserver):
+class ClosestAgentsObserver(NNStateObserver):
   def __init__(self, params=ParameterServer()):
     NNStateObserver.__init__(self, params)
-    self.nn_state_dimensions = [int(StateDefinition.X_POSITION),
-                                int(StateDefinition.Y_POSITION),
-                                int(StateDefinition.THETA_POSITION),
-                                int(StateDefinition.VEL_POSITION)]
+    self._state_definition = [int(StateDefinition.X_POSITION),
+                              int(StateDefinition.Y_POSITION),
+                              int(StateDefinition.THETA_POSITION),
+                              int(StateDefinition.VEL_POSITION)]
     self._velocity_range = \
-      self._params["Runtime"]["RL"]["StateConcatenation"]["VelocityRange",
+      self._params["Runtime"]["RL"]["ClosestAgentsObserver"]["VelocityRange",
       "Boundaries for min and max velocity for normalization",
       [0, 100]]
     self._theta_range = \
-      self._params["Runtime"]["RL"]["StateConcatenation"]["ThetaRange",
+      self._params["Runtime"]["RL"]["ClosestAgentsObserver"]["ThetaRange",
       "Boundaries for min and max theta for normalization",
       [0, 2*math.pi]]
     self._normalize = \
-      self._params["Runtime"]["RL"]["StateConcatenation"]["Normalize",
+      self._params["Runtime"]["RL"]["ClosestAgentsObserver"]["Normalize",
       "Whether normalization should be performed",
       True]
     self._max_num_other_agents = \
-      self._params["Runtime"]["RL"]["StateConcatenation"]["MaxOtherAgents",
+      self._params["Runtime"]["RL"]["ClosestAgentsObserver"]["MaxOtherAgents",
       "The concatenation state size is the ego agent plus max num other agents",
       4]
     self._max_distance_other_agents = \
-      self._params["Runtime"]["RL"]["StateConcatenation"]["MaxOtherDistance",
+      self._params["Runtime"]["RL"]["ClosestAgentsObserver"]["MaxOtherDistance",
       "Agents further than this distance are not observed; if not max" + \
       "other agents are seen, remaining concatenation state is set to zero",
       30]
 
   def observe(self, world, agents_to_observe):
-    super(StateConcatenation, self).observe(
+    super(ClosestAgentsObserver, self).observe(
       world=world,
       agents_to_observe=agents_to_observe)
     observed_worlds =  world.observe(agents_to_observe)
@@ -86,7 +79,7 @@ class StateConcatenation(NNStateObserver):
     concatenated_state = np.zeros(self._len_ego_state + \
       self._max_num_other_agents*self._len_relative_agent_state)
     concatenated_state[0:self._len_ego_state] = \
-      self._reduce_to_ego_nn_state(self._norm(ego_state)) 
+      self._select_state_by_index(self._norm(ego_state)) 
     
     # add max number of agents to state concatenation vector
     concat_pos = self._len_relative_agent_state
@@ -97,7 +90,7 @@ class StateConcatenation(NNStateObserver):
         nearest_distances[agent_idx][0] <= self._max_distance_other_agents**2:
         agent_id = nearest_distances[agent_idx][1]
         agent = ego_observed_world.other_agents[agent_id]
-        agent_rel_state = self._reduce_to_other_nn_state(
+        agent_rel_state = self._select_state_by_index(
           self._calculate_relative_agent_state(ego_state,
                                                self._norm(agent.state)))
         concatenated_state[concat_pos:concat_pos + \
@@ -135,12 +128,6 @@ class StateConcatenation(NNStateObserver):
                           self._velocity_range)
     return agent_state
 
-  def _reduce_to_ego_nn_state(self, agent_state):
-    return agent_state[self.nn_state_dimensions]
-
-  def _reduce_to_other_nn_state(self, agent_state):
-    return agent_state[self.nn_state_dimensions]
-
   def _norm_to_range(self, value, range):
     return (value - range[0])/(range[1]-range[0])
 
@@ -149,12 +136,8 @@ class StateConcatenation(NNStateObserver):
 
   @property
   def _len_relative_agent_state(self):
-    return len(self.nn_state_dimensions)
+    return len(self._state_definition)
 
   @property
   def _len_ego_state(self):
-    return len(self.nn_state_dimensions)
-
-
-
-
+    return len(self._state_definition)

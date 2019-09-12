@@ -15,7 +15,7 @@ from modules.runtime.scenario.scenario_generation.deterministic \
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from src.rl_runtime import RuntimeRL
-from src.observers.nearest_state_observer import StateConcatenation
+from src.observers.nearest_state_observer import ClosestAgentsObserver
 from src.observers.simple_observer import SimpleObserver
 from src.wrappers.dynamic_model import DynamicModel
 from src.wrappers.motion_primitives import MotionPrimitives

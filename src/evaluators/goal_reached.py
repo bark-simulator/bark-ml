@@ -32,22 +32,18 @@ class GoalReached(StateEvaluator):
       EvaluatorCollisionDrivingCorridor()
     self._evaluators["step_count"] = EvaluatorStepCount()
 
-  def evaluate(self, world):
-    eval_results = None
-    reward = 0.
+  def _evaluate(self, eval_results):
     done = False
-    if self._eval_agent in world.agents:
-      eval_results = world.evaluate()
-      success = eval_results["goal_reached"]
-      collision = eval_results["ego_collision"] or \
-        eval_results["collision_driving_corridor"]
-      step_count = eval_results["step_count"]
-      # determine whether the simulation should terminate
-      if success or collision or step_count > self._max_steps:
-        done = True
-      # calculate reward
-      reward = collision * self._collision_penalty + \
-        success * self._goal_reward
+    success = eval_results["goal_reached"]
+    collision = eval_results["ego_collision"] or \
+      eval_results["collision_driving_corridor"]
+    step_count = eval_results["step_count"]
+    # determine whether the simulation should terminate
+    if success or collision or step_count > self._max_steps:
+      done = True
+    # calculate reward
+    reward = collision * self._collision_penalty + \
+      success * self._goal_reward
     return reward, done, eval_results
     
 

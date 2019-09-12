@@ -46,7 +46,7 @@ class TFARunner(BaseRunner):
     self.get_collection_driver()
 
     # collect initial episodes
-    # self.collect_initial_episodes()
+    self.collect_initial_episodes()
 
   def get_initial_collection_driver(self):
     self._initial_collection_driver = dynamic_episode_driver.DynamicEpisodeDriver(
