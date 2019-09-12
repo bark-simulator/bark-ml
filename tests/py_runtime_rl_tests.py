@@ -44,21 +44,29 @@ class RuntimeRLTests(unittest.TestCase):
                           scenario_generator=scenario_generation,
                           render=True)
 
-    # TODO(@hart): make sure the DynamicModel works as expected
-    # TODO(@hart): make sure the evaluators work
-    # TODO(@hart): make sure the observes work
     for _ in range(0, 3):
       runtimerl.reset()
+      done = False
+      reward = 0.
       for _ in range(0, 50): # run each scenario for 10 steps
         action = action_wrapper.action_space.sample() / 100 # to go straight
         print("action", action)
         next_observed_state, reward, done, info = \
           runtimerl.step(action)
-        print("State: {} \n Reward: {} \n Done {}, Info: {} \n \
-            =================================================". \
-          format(next_observed_state, reward, done, info))
+        # observer
+        self.assertEqual(len(next_observed_state), 8)
+        np.testing.assert_array_equal(next_observed_state[0:4], runtimerl._world.agents[100].state[1:5])
+        np.testing.assert_array_equal(next_observed_state[4:8], runtimerl._world.agents[101].state[1:5])
         if done:
+          print("State: {} \n Reward: {} \n Done {}, Info: {} \n \
+              =================================================". \
+            format(next_observed_state, reward, done, info))
           break
+      # must assert to equal as the agent reaches the goal in the
+      # specified number of steps
+      self.assertEqual(done, True)
+      # goal must have been reached which returns a reward of 1.
+      self.assertEqual(reward, 1.)
 
   def test_motion_primitives_concat_state(self):
     params = ParameterServer(
