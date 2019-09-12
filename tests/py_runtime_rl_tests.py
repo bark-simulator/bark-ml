@@ -47,7 +47,6 @@ class RuntimeRLTests(unittest.TestCase):
     # TODO(@hart): make sure the DynamicModel works as expected
     # TODO(@hart): make sure the evaluators work
     # TODO(@hart): make sure the observes work
-
     for _ in range(0, 3):
       runtimerl.reset()
       for _ in range(0, 50): # run each scenario for 10 steps
@@ -82,8 +81,6 @@ class RuntimeRLTests(unittest.TestCase):
                           viewer=viewer,
                           scenario_generator=scenario_generation,
                           render=True)
-
-    # TODO(@hart): make sure the MotionPrimitives works as expected
 
     for _ in range(0, 3):
       runtimerl.reset()

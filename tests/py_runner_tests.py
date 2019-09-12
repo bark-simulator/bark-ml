@@ -48,7 +48,8 @@ class RunnerTests(unittest.TestCase):
                           scenario_generator=scenario_generation,
                           render=False)
     tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(runtimerl))
-    sac_agent = SACAgent(tfa_env)
+    sac_agent = SACAgent(tfa_env,
+                         params=params)
     tfa_runner = TFARunner(tfa_env,
                            sac_agent,
                            number_of_collections=1)

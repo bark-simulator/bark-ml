@@ -3,6 +3,8 @@ import logging
 import tensorflow as tf
 tf.compat.v1.enable_v2_behavior()
 from tf_agents.drivers import dynamic_step_driver
+from tf_agents.drivers import dynamic_episode_driver
+
 from tf_agents.metrics import tf_metrics
 from tf_agents.eval import metric_utils
 from tf_agents.utils import common
@@ -18,10 +20,10 @@ class TFARunner(BaseRunner):
                runtime,
                agent,
                number_of_collections=10,
-               initial_collection_steps=1,
-               collection_steps_per_cycle=1,
+               initial_collection_steps=5,
+               collection_steps_per_cycle=5,
                evaluate_every_n_steps=5,
-               evaluation_steps=5,
+               evaluation_steps=1,
                initial_collection_driver=None,
                collection_driver=None,
                summary_path=None):
@@ -43,21 +45,24 @@ class TFARunner(BaseRunner):
     self.get_initial_collection_driver()
     self.get_collection_driver()
 
+    # collect initial episodes
+    # self.collect_initial_episodes()
+
   def get_initial_collection_driver(self):
-    self._initial_collection_driver = dynamic_step_driver.DynamicStepDriver(
-      self._runtime,
-      self._agent._agent.collect_policy,
+    self._initial_collection_driver = dynamic_episode_driver.DynamicEpisodeDriver(
+      env=self._runtime,
+      policy=self._agent._agent.collect_policy,
       observers=[self._agent._replay_buffer.add_batch],
-      num_steps=self._initial_collection_steps)
+      num_episodes=self._initial_collection_steps)
     self._initial_collection_driver.run = common.function(
       self._initial_collection_driver.run)
 
   def get_collection_driver(self):
-    self._collection_driver = dynamic_step_driver.DynamicStepDriver(
-      self._runtime,
-      self._agent._agent.collect_policy,
+    self._collection_driver = dynamic_episode_driver.DynamicEpisodeDriver(
+      env=self._runtime,
+      policy=self._agent._agent.collect_policy,
       observers=[self._agent._replay_buffer.add_batch],
-      num_steps=self._collection_steps_per_cycle)
+      num_episodes=self._collection_steps_per_cycle)
     self._collection_driver.run = common.function(self._collection_driver.run)
 
   def collect_initial_episodes(self):
