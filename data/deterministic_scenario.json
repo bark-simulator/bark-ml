@@ -278,6 +278,11 @@
           "batch_size": 52,
           "buffer_num_steps": 2,
           "buffer_prefetch": 3
+      },
+      "Evaluator": {
+          "max_steps": 50,
+          "collision_penalty": -1.0,
+          "goal_reward": 1.0
       }
   } 
 }

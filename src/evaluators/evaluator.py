@@ -23,7 +23,14 @@ class StateEvaluator(ABC):
     """
     pass
 
-  @abstractmethod
   def reset(self, world, agents_to_evaluate):
-    """Returns a world with evaluators
-    """
+    if len(agents_to_evaluate) != 1:
+      raise ValueError("Invalid number of agents provided for GoalReached \
+                        evaluation, number= {}" \
+                        .format(len(agents_to_evaluate)))
+    self._eval_agent = agents_to_evaluate[0]
+    world.clear_evaluators()
+    self._add_evaluators()
+    for key, evaluator in self._evaluators.items():
+      world.add_evaluator(key, evaluator)
+    return world
