@@ -18,6 +18,8 @@ class SimpleObserver(StateObserver):
                               int(StateDefinition.VEL_POSITION)]
 
   def observe(self, world, agents_to_observe):
+    """see base class
+    """
     # observe world
     observed_worlds =  world.observe(agents_to_observe)
     # concatenated state (zero)
@@ -28,9 +30,6 @@ class SimpleObserver(StateObserver):
       concatenated_state[starts_id:starts_id+self._len_state] = reduced_state
     return concatenated_state
 
-  def _select_state_by_index(self, state):
-    return state[self._state_definition]
-
   @property
   def observation_space(self):
     return Discrete()
@@ -38,8 +37,5 @@ class SimpleObserver(StateObserver):
   @property
   def _len_state(self):
     return len(self._state_definition)
-
-  def reset(self, world, agents_to_observe):
-    return world
 
 

@@ -1,69 +1,49 @@
-from bark.world.evaluation import *
+from bark.world.evaluation import \
+  EvaluatorGoalReached, EvaluatorCollisionEgoAgent, \
+  EvaluatorCollisionDrivingCorridor, EvaluatorStepCount
 from modules.runtime.commons.parameters import ParameterServer
 
 from src.evaluators.evaluator import StateEvaluator
 
 class GoalReached(StateEvaluator):
-  def __init__(self, params=ParameterServer()):
+  def __init__(self,
+               params=ParameterServer(),
+               eval_agent=None):
     StateEvaluator.__init__(self, params)
     self._goal_reward = \
-      self._params["Runtime"]["RL"]["StateEvaluator"]["GoalReward",
-        "The reward given for goals",
-        0.01]
-    self.collision_reward = \
-      self._params["Runtime"]["RL"]["StateEvaluator"]["CollisionReward",
-        "The (negative) reward given for collisions",
-        -1.]
-    self.max_steps = \
-      self._params["Runtime"]["RL"]["StateEvaluator"]["MaxSteps",
-        "The maximum number of steps allowed to take" + \
-        "in the environment before episode is done",
+      self._params["ML"]["Evaluator"]["goal_reward",
+        "Reward for reaching the goal.",
+        1.]
+    self._collision_penalty = \
+      self._params["ML"]["Evaluator"]["collision_penalty",
+        "Reward given for a collisions.",
+        -100.]
+    self._max_steps = \
+      self._params["ML"]["Evaluator"]["max_steps",
+        "Maximum steps per episode.",
         50]
-    self._eval_agent = None
+    self._eval_agent = eval_agent
 
-  def get_evaluation(self, world):
-    if self._eval_agent in world.agents:
-      eval_results = world.evaluate()
-      collision = eval_results["collision_agents"] or \
-        eval_results["collision_driving_corridor"]
-      success = eval_results["success"]
-      reward = collision * self.collision_reward + \
-        success * self._goal_reward
-      max_steps_reached = eval_results["step_count"] > self.max_steps
-      done = success or collision or max_steps_reached
-      info = {"success": success,
-              "collision_agents": eval_results["collision_agents"], 
-              "collision_driving_corridor": \
-                eval_results["collision_driving_corridor"],
-              "outside_map": False,
-              "num_steps": eval_results["step_count"]}
-    else:
-      collision = False
-      success = False
+  def _add_evaluators(self):
+    self._evaluators["goal_reached"] = EvaluatorGoalReached(self._eval_agent)
+    self._evaluators["ego_collision"] = \
+      EvaluatorCollisionEgoAgent(self._eval_agent)
+    self._evaluators["collision_driving_corridor"] = \
+      EvaluatorCollisionDrivingCorridor()
+    self._evaluators["step_count"] = EvaluatorStepCount()
+
+  def _evaluate(self, eval_results):
+    done = False
+    success = eval_results["goal_reached"]
+    collision = eval_results["ego_collision"] or \
+      eval_results["collision_driving_corridor"]
+    step_count = eval_results["step_count"]
+    # determine whether the simulation should terminate
+    if success or collision or step_count > self._max_steps:
       done = True
-      reward = 0
-      info = {"success": success,
-              "collision_agents": False,
-              "collision_driving_corridor": False,
-              "outside_map": True,
-              "num_steps": None}
-    return reward, done, info
-      
-  def reset(self, world, agents_to_evaluate):
-    if len(agents_to_evaluate) != 1:
-      raise ValueError("Invalid number of agents provided for GoalReached \
-                        evaluation, number= {}" \
-                        .format(len(agents_to_evaluate)))
-    self._eval_agent = agents_to_evaluate[0]
-    world.clear_evaluators()
-    evaluator1 = EvaluatorGoalReached(self._eval_agent)
-    evaluator2 = EvaluatorCollisionEgoAgent(self._eval_agent)
-    evaluator3 = EvaluatorCollisionDrivingCorridor()
-    evaluator4 = EvaluatorStepCount()
-    world.add_evaluator("success", evaluator1)
-    world.add_evaluator("collision_agents", evaluator2)
-    world.add_evaluator("collision_driving_corridor", evaluator3)
-    world.add_evaluator("step_count", evaluator4)
-    return world
+    # calculate reward
+    reward = collision * self._collision_penalty + \
+      success * self._goal_reward
+    return reward, done, eval_results
     
 

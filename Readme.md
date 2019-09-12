@@ -14,6 +14,5 @@ Next, enter the created virtual environment with the command `source dev_into.sh
 ## ToDos
 
 * Experiment runner
-* Simple scenario
 * Add function and class documentation
 * Visualization capabilities

@@ -20,32 +20,64 @@ from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from modules.runtime.viewer.pygame_viewer import PygameViewer
 
 
-class ScenarioGenerationTests(unittest.TestCase):
-  def test_visualization(self):
+class RuntimeTests(unittest.TestCase):
+  """Tests to verify the functionality of BARK
+  """
+  def test_runtime(self):
+    """Asserts the runtime to make sure the basic
+       functionality is given by the current state of BARK.
+    """
     param_server = ParameterServer(
-      filename="data/deterministic_scenario.json")
+      filename="data/deterministic_scenario_test.json")
     scenario_generation = DeterministicScenarioGeneration(num_scenarios=3,
                                                           random_seed=0,
                                                           params=param_server)
+
+    param_server["Visualization"]["Agents"]["DrawRoute",
+      "Draw the local map of each agent",
+      True]
     viewer = MPViewer(params=param_server,
                       x_range=[-50, 50],
                       y_range=[-50, 50],
-                      follow_agent_id=101,
+                      follow_agent_id=100,
                       screen_dims=[500, 500],
                       use_world_bounds=False)
     env = Runtime(0.2,
                   viewer,
                   scenario_generation,
-                  render=True)
+                  render=False)
 
     env.reset()
-    for _ in range(0, 5):
-      print("Scenario {}:".format(str(env._scenario_generator._current_scenario_idx)))
-      for _ in range(0, 5):
-        for key, agent in env._world.agents.items():
-          print(agent.id)
+    agent_ids = []
+    agent_states = []
+    centers_of_driving_corridor= []
+    for key, agent in env._world.agents.items():
+      agent_ids.append(agent.id)
+      agent_states.append(agent.state)
+        
+    for i in range(0, 5):
+      print("Scenario {}:".format(
+        str(env._scenario_generator._current_scenario_idx)))
+      # assert scenario ids
+      self.assertEqual(env._scenario_generator._current_scenario_idx, (i % 3) + 1)
+      for _ in range(0, 35):
+        # assert ids
+        states_before = []
+        for i, (key, agent) in enumerate(env._world.agents.items()):
+          self.assertEqual(key, agent.id)
+          self.assertEqual(agent_ids[i], agent.id)
+          states_before.append(agent.state)
         env.step()
+        # assert state has been changed by the step() function
+        for i, (key, agent) in enumerate(env._world.agents.items()):
+          np.testing.assert_equal(np.any(np.not_equal(states_before[i],
+                                         agent.state)), True)
+      # check whether the reset works     
       env.reset()
+      for i, (key, agent) in enumerate(env._world.agents.items()):
+        self.assertEqual(key, agent.id)
+        self.assertEqual(agent_ids[i], agent.id)
+        np.testing.assert_array_equal(agent_states[i], agent.state)
 
 if __name__ == '__main__':
   unittest.main()

@@ -7,8 +7,10 @@
 import unittest
 import tensorflow as tf
 tf.compat.v1.enable_v2_behavior()
-from tf_agents.environments import tf_py_environment
 
+from tf_agents.environments import tf_py_environment
+from modules.runtime.scenario.scenario_generation.deterministic \
+  import DeterministicScenarioGeneration
 from modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution \
   import UniformVehicleDistribution
 from modules.runtime.commons.parameters import ParameterServer
@@ -16,7 +18,7 @@ from modules.runtime.viewer.matplotlib_viewer import MPViewer
 
 
 from src.rl_runtime import RuntimeRL
-from src.observers.nearest_state_observer import StateConcatenation
+from src.observers.nearest_state_observer import ClosestAgentsObserver
 from src.wrappers.dynamic_model import DynamicModel
 from src.wrappers.tfa_wrapper import TFAWrapper
 from src.evaluators.goal_reached import GoalReached
@@ -25,11 +27,13 @@ from src.agents.sac_agent import SACAgent
 class AgentTests(unittest.TestCase):
   @staticmethod
   def test_agent():
-    params = ParameterServer(filename="data/highway_merging.json")
-    scenario_generation = UniformVehicleDistribution(num_scenarios=3,
-                                                     random_seed=0,
-                                                     params=params)
-    state_observer = StateConcatenation(params=params)
+    params = ParameterServer(
+      filename="data/deterministic_scenario_test.json")
+    scenario_generation = DeterministicScenarioGeneration(
+      num_scenarios=2,
+      random_seed=0,
+      params=params)
+    state_observer = ClosestAgentsObserver(params=params)
     action_wrapper = DynamicModel(params=params)
     evaluator = GoalReached(params=params)
     viewer = MPViewer(params=params,
@@ -45,8 +49,11 @@ class AgentTests(unittest.TestCase):
                           scenario_generator=scenario_generation)
 
     tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(runtimerl))
-    sac_agent = SACAgent(tfa_env)
+    sac_agent = SACAgent(tfa_env,
+                         params=params)
     sac_agent.reset()
+
+    # TODO(@hart): verify summary writer, saving and loading capabilities
 
 
 if __name__ == '__main__':
