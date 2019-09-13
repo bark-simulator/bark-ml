@@ -57,11 +57,11 @@ class PyRunnerTests(unittest.TestCase):
                            unwrapped_runtime=runtimerl)
     tfa_runner.collect_initial_episodes()
     
-    # main two functionalities
+    # main functionalities
     tfa_runner.train()
     tfa_runner.visualize()
     tfa_runner.evaluate()
 
 
 if __name__ == '__main__':
-    unittest.main()
+  unittest.main()

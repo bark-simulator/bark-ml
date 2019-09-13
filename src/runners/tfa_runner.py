@@ -118,6 +118,8 @@ class TFARunner(BaseRunner):
               str(self._params["ML"]["Runner"]["evaluation_steps"])))
 
   def visualize(self, num_episodes=1):
+    # Ticket (https://github.com/tensorflow/agents/issues/59) recommends
+    # to do the rendering in the original environment
     if self._unwrapped_runtime is not None:
       for _ in range(0, num_episodes):
         state = self._unwrapped_runtime.reset()

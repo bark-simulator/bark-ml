@@ -52,4 +52,4 @@ class PyRuntimeTFARLTests(unittest.TestCase):
     _ = tf_py_environment.TFPyEnvironment(tfa_env)
 
 if __name__ == '__main__':
-    unittest.main()
+  unittest.main()

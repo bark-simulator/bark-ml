@@ -92,7 +92,7 @@ class PyRuntimeRLTests(unittest.TestCase):
                           step_time=0.2,
                           viewer=viewer,
                           scenario_generator=scenario_generation,
-                          render=True)
+                          render=False)
 
     for _ in range(0, 3):
       runtimerl.reset()

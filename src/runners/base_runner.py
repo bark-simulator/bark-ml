@@ -27,8 +27,9 @@ class BaseRunner(ABC):
     """
     pass
 
-  def render(self):
-    """Renderes the current state of the enviornment
+  @abstractmethod
+  def visualize(self, num_episodes):
+    """Visualizes the agent in the runtime (num_episodes)
     """
     if self._render_evaluation:
       self._runtime.render()
