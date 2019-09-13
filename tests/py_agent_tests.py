@@ -27,7 +27,7 @@ from src.agents.sac_agent import SACAgent
 class PyAgentTests(unittest.TestCase):
   def test_agent(self):
     params = ParameterServer(
-      filename="data/deterministic_scenario_test.json")
+      filename="tests/data/deterministic_scenario_test.json")
     scenario_generation = DeterministicScenarioGeneration(
       num_scenarios=2,
       random_seed=0,

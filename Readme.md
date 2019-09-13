@@ -12,6 +12,6 @@ Reinforcement learning models that are currently available in BARK-ML:
 
 * Soft-Actor-Critic (SAC)
 
-## HowTo
-In order to use BARK-Ml a virtual python environment is recommended and can be installed using the command `bash install.sh`.
+## Quick-Start
+In order to use BARK-ML a virtual python environment is recommended and can be installed using the command `bash install.sh`.
 Next, to enter the created virtual environment run the command `source dev_into.sh`. Now, bazel build commands can be executed, such as `bazel test //...`.

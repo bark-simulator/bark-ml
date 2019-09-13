@@ -29,7 +29,7 @@ class PyRunnerTests(unittest.TestCase):
   @staticmethod
   def test_runner():
     params = ParameterServer(
-      filename="data/deterministic_scenario_test.json")
+      filename="tests/data/deterministic_scenario_test.json")
     scenario_generation = DeterministicScenarioGeneration(num_scenarios=3,
                                                           random_seed=0,
                                                           params=params)
@@ -50,16 +50,18 @@ class PyRunnerTests(unittest.TestCase):
     tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(runtimerl))
     sac_agent = SACAgent(tfa_env,
                          params=params)
+    
     tfa_runner = TFARunner(tfa_env,
                            sac_agent,
-                           params=params)
+                           params=params,
+                           unwrapped_runtime=runtimerl)
     tfa_runner.collect_initial_episodes()
     
     # main two functionalities
     tfa_runner.train()
+    tfa_runner.visualize()
     tfa_runner.evaluate()
 
-    # TODO(@hart): visualization
 
 if __name__ == '__main__':
     unittest.main()

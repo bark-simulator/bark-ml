@@ -2,7 +2,7 @@
   "Scenario": {
       "Generation": {
           "DeterministicScenarioGeneration": {
-              "MapFilename": "data/city_highway_straight.xodr",
+              "MapFilename": "tests/data/city_highway_straight.xodr",
               "Agents" : [
                   {
                     "VehicleModel": {
@@ -274,7 +274,7 @@
           "debug_summaries": "True",
           "replay_buffer_capacity": 100000,
           "max_ckpts_to_keep": 3,
-          "parallel_buffer_calls": 3,
+          "parallel_buffer_calls": 1,
           "batch_size": 52,
           "buffer_num_steps": 2,
           "buffer_prefetch": 3
@@ -290,7 +290,7 @@
           "collection_steps_per_cycle": 1,
           "evaluate_every_n_steps": 5,
           "evaluation_steps": 5,
-          "summary_path": "data/"
+          "summary_path": "tests/data/"
       },
       "DynamicModel": {
           "action_dimension": 2,

@@ -26,7 +26,7 @@ class PyRuntimeTFARLTests(unittest.TestCase):
   @staticmethod
   def test_tfa_runtime():
     params = ParameterServer(
-      filename="data/deterministic_scenario_test.json")
+      filename="tests/data/deterministic_scenario_test.json")
     scenario_generation = DeterministicScenarioGeneration(num_scenarios=3,
                                                           random_seed=0,
                                                           params=params)
