@@ -35,7 +35,7 @@ class TFAAgent(BaseAgent):
   def reset(self):
     pass
 
-  def get_checkpointer(self, log_path="/"):
+  def get_checkpointer(self):
     """Checkpointer handling the saving and loading of agents
     
     Keyword Arguments:
@@ -44,7 +44,8 @@ class TFAAgent(BaseAgent):
     Returns:
         Checkpointer -- tf-checkpoint handler
     """
-    checkpointer = Checkpointer(log_path,
+    checkpointer = Checkpointer(
+      self._params["ML"]["Agent"]["checkpoint_path"],
       global_step=self._ckpt.step,
       tf_agent=self._agent,
       max_to_keep=self._params["ML"]["Agent"]["max_ckpts_to_keep"])

@@ -154,4 +154,5 @@ web/node_modules
 *.vscode*
 *dot_file*
 
-/configurations/**/
+/configurations/**/checkpoints/
+/configurations/**/summaries/

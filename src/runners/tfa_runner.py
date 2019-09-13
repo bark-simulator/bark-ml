@@ -81,6 +81,7 @@ class TFARunner(BaseRunner):
     """Wrapper that sets the summary writer.
        This enables a seamingless integration with TensorBoard.
     """
+    #self._agent._ckpt.assign_add(1)
     if self._summary_writer is not None:
       with self._summary_writer.as_default():
         self._train()
@@ -98,6 +99,7 @@ class TFARunner(BaseRunner):
       self._agent._agent.train(experience)
       if i % self._params["ML"]["Runner"]["evaluate_every_n_steps"] == 0:
         self.evaluate()
+        self._agent.save()
 
   def evaluate(self):
     """Evaluates the agent
@@ -110,6 +112,12 @@ class TFARunner(BaseRunner):
       self._agent._agent.policy,
       num_episodes=self._params["ML"]["Runner"]["evaluation_steps"])
     metric_utils.log_metrics(self._eval_metrics)
+    tf.summary.scalar("mean_reward",
+                      self._eval_metrics[0].result().numpy(),
+                      step=self._agent._ckpt.step)
+    tf.summary.scalar("mean_steps",
+                      self._eval_metrics[1].result().numpy(),
+                      step=self._agent._ckpt.step)
     logger.info(
       "The agent achieved on average {} reward and {} steps in \
       {} episodes." \

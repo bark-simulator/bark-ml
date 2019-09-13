@@ -260,8 +260,8 @@
   },
   "ML": {
       "Agent": {
-          "actor_fc_layer_params": [512, 512, 128],
-          "critic_joint_fc_layer_params": [256, 256, 128],
+          "actor_fc_layer_params": [128, 128],
+          "critic_joint_fc_layer_params": [128, 128],
           "actor_learning_rate": 1e-4,
           "critic_learning_rate": 1e-3,
           "alpha_learning_rate": 1e-4,
@@ -278,7 +278,7 @@
           "batch_size": 52,
           "buffer_num_steps": 2,
           "buffer_prefetch": 3,
-          "checkpoint_path": "configurations/01_sac_highway/checkpoints/"
+          "checkpoint_path": "/Users/hart/2019/bark-ml/configurations/01_sac_highway/checkpoints/"
       },
       "Evaluator": {
           "max_steps": 50,
@@ -286,12 +286,12 @@
           "goal_reward": 1.0
       },
       "Runner": {
-          "number_of_collections": 10,
+          "number_of_collections": 10000,
           "initial_collection_steps": 1,
           "collection_steps_per_cycle": 1,
-          "evaluate_every_n_steps": 5,
+          "evaluate_every_n_steps": 25,
           "evaluation_steps": 5,
-          "summary_path": "tests/data/"
+          "summary_path": "/Users/hart/2019/bark-ml/configurations/01_sac_highway/summaries/"
       },
       "DynamicModel": {
           "action_dimension": 2,
