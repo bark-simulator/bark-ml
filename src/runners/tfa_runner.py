@@ -1,5 +1,6 @@
 import sys
 import logging
+import time
 import tensorflow as tf
 tf.compat.v1.enable_v2_behavior()
 
@@ -10,6 +11,8 @@ from modules.runtime.commons.parameters import ParameterServer
 from tf_agents.metrics import tf_metrics
 from tf_agents.eval import metric_utils
 from tf_agents.utils import common
+from tf_agents.trajectories import time_step as ts
+
 from src.runners.base_runner import BaseRunner
 
 
@@ -24,7 +27,8 @@ class TFARunner(BaseRunner):
   def __init__(self,
                runtime=None,
                agent=None,
-               params=ParameterServer()):
+               params=ParameterServer(),
+               unwrapped_runtime=None):
     BaseRunner.__init__(self,
                         runtime=runtime,
                         agent=agent,
@@ -36,6 +40,7 @@ class TFARunner(BaseRunner):
         buffer_size=self._params["ML"]["Runner"]["evaluation_steps"])
     ]
     self._summary_writer = None
+    self._unwrapped_runtime = unwrapped_runtime
     if self._params["ML"]["Runner"]["summary_path"] is not None:
       self._summary_writer = tf.summary.create_file_writer(
         self._params["ML"]["Runner"]["summary_path"])
@@ -111,3 +116,15 @@ class TFARunner(BaseRunner):
       .format(str(self._eval_metrics[0].result().numpy()),
               str(self._eval_metrics[1].result().numpy()),
               str(self._params["ML"]["Runner"]["evaluation_steps"])))
+
+  def visualize(self, num_episodes=1):
+    if self._unwrapped_runtime is not None:
+      for _ in range(0, num_episodes):
+        state = self._unwrapped_runtime.reset()
+        is_terminal = False
+        while not is_terminal:
+          action_step = self._agent._eval_policy.action(ts.transition(state, reward=0.0, discount=1.0))
+          state, _, is_terminal, _ = self._unwrapped_runtime.step(action_step.action.numpy())
+          self._unwrapped_runtime.render()
+          # TODO(@hart): could add flag for real-time-feel visualization
+          time.sleep(0.001)

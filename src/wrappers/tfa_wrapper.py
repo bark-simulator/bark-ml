@@ -42,6 +42,9 @@ class TFAWrapper(py_environment.PyEnvironment):
   def render(self):
     """Renders the enviornment
     """
+    # TODO(@hart): will not work is threaded environment
+    # Ticket (https://github.com/tensorflow/agents/issues/59) recommends
+    # to the rendering in the original environment
     return self._env.render()
 
   def _reset(self):
