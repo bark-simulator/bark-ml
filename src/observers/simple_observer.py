@@ -20,8 +20,6 @@ class SimpleObserver(StateObserver):
   def observe(self, world, agents_to_observe):
     """see base class
     """
-    # observe world
-    observed_worlds =  world.observe(agents_to_observe)
     # concatenated state (zero)
     concatenated_state = np.zeros(len(world.agents)*self._len_state)
     for i, (key, agent) in enumerate(world.agents.items()):

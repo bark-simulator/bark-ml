@@ -153,3 +153,5 @@ web/node_modules
 
 *.vscode*
 *dot_file*
+
+/configurations/**/

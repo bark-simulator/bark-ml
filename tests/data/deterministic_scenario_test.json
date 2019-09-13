@@ -2,7 +2,7 @@
   "Scenario": {
       "Generation": {
           "DeterministicScenarioGeneration": {
-              "MapFilename": "data/city_highway_straight.xodr",
+              "MapFilename": "tests/data/city_highway_straight.xodr",
               "Agents" : [
                   {
                     "VehicleModel": {
@@ -290,7 +290,7 @@
           "collection_steps_per_cycle": 1,
           "evaluate_every_n_steps": 5,
           "evaluation_steps": 5,
-          "summary_path": "data/"
+          "summary_path": "tests/data/"
       },
       "DynamicModel": {
           "action_dimension": 2,
