@@ -51,8 +51,6 @@ class PyRunnerTests(unittest.TestCase):
     sac_agent = SACAgent(tfa_env,
                          params=params)
     
-    # TODO(@hart): in order to visualilze we also need the unwrapped environment
-    # TFPyEnvironment will create threads which in term will cause problems rendering
     tfa_runner = TFARunner(tfa_env,
                            sac_agent,
                            params=params,
@@ -60,10 +58,10 @@ class PyRunnerTests(unittest.TestCase):
     tfa_runner.collect_initial_episodes()
     
     # main two functionalities
+    tfa_runner.train()
     tfa_runner.visualize()
-    #tfa_runner.evaluate()
+    tfa_runner.evaluate()
 
-    # TODO(@hart): visualization
 
 if __name__ == '__main__':
     unittest.main()
