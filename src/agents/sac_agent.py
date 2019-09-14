@@ -30,7 +30,6 @@ class SACAgent(TFAAgent):
     self._collect_policy = self.get_collect_policy()
     self._eval_policy = self.get_eval_policy()
 
-
   def get_agent(self, env, params):
     """Returns a TensorFlow SAC-Agent
     

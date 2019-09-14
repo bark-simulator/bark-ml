@@ -288,7 +288,7 @@
       "Runner": {
           "number_of_collections": 10,
           "initial_collection_steps": 1,
-          "collection_steps_per_cycle": 1,
+          "collection_episodes_per_cycle": 1,
           "evaluate_every_n_steps": 5,
           "evaluation_steps": 5,
           "summary_path": "tests/data/"
