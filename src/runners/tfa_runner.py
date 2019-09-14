@@ -18,7 +18,7 @@ from src.runners.base_runner import BaseRunner
 
 logger = logging.getLogger()
 # NOTE(@hart): this will print all statements
-logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+# logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 class TFARunner(BaseRunner):
   """Runner that takes the runtime and agent
@@ -47,9 +47,6 @@ class TFARunner(BaseRunner):
     self.get_initial_collection_driver()
     self.get_collection_driver()
 
-    # collect initial episodes
-    self.collect_initial_episodes()
-
   def get_initial_collection_driver(self):
     """Sets the initial collection driver for tf-agents.
     """
@@ -69,7 +66,7 @@ class TFARunner(BaseRunner):
       env=self._runtime,
       policy=self._agent._agent.collect_policy,
       observers=[self._agent._replay_buffer.add_batch],
-      num_episodes=self._params["ML"]["Runner"]["collection_steps_per_cycle"])
+      num_episodes=self._params["ML"]["Runner"]["collection_episodes_per_cycle"])
     self._collection_driver.run = common.function(self._collection_driver.run)
 
   def collect_initial_episodes(self):
@@ -81,6 +78,9 @@ class TFARunner(BaseRunner):
     """Wrapper that sets the summary writer.
        This enables a seamingless integration with TensorBoard.
     """
+    # collect initial episodes
+    self.collect_initial_episodes()
+    # main training cycle
     if self._summary_writer is not None:
       with self._summary_writer.as_default():
         self._train()
@@ -92,16 +92,18 @@ class TFARunner(BaseRunner):
     """
     iterator = iter(self._agent._dataset)
     for i in range(0, self._params["ML"]["Runner"]["number_of_collections"]):
-      logger.info("Iteration: {}".format(str(self._agent._ckpt.step.numpy())))
+      global_iteration = self._agent._agent._train_step_counter.numpy()
       self._collection_driver.run()
       experience, _ = next(iterator)
       self._agent._agent.train(experience)
-      if i % self._params["ML"]["Runner"]["evaluate_every_n_steps"] == 0:
+      if global_iteration % self._params["ML"]["Runner"]["evaluate_every_n_steps"] == 0:
         self.evaluate()
+        self._agent.save()
 
   def evaluate(self):
     """Evaluates the agent
     """
+    global_iteration = self._agent._agent._train_step_counter.numpy()
     logger.info("Evaluating the agent's performance in {} episodes."
       .format(str(self._params["ML"]["Runner"]["evaluation_steps"])))
     metric_utils.eager_compute(
@@ -110,6 +112,12 @@ class TFARunner(BaseRunner):
       self._agent._agent.policy,
       num_episodes=self._params["ML"]["Runner"]["evaluation_steps"])
     metric_utils.log_metrics(self._eval_metrics)
+    tf.summary.scalar("mean_reward",
+                      self._eval_metrics[0].result().numpy(),
+                      step=global_iteration)
+    tf.summary.scalar("mean_steps",
+                      self._eval_metrics[1].result().numpy(),
+                      step=global_iteration)
     logger.info(
       "The agent achieved on average {} reward and {} steps in \
       {} episodes." \
@@ -126,6 +134,7 @@ class TFARunner(BaseRunner):
         is_terminal = False
         while not is_terminal:
           action_step = self._agent._eval_policy.action(ts.transition(state, reward=0.0, discount=1.0))
+          print(action_step)
           state, _, is_terminal, _ = self._unwrapped_runtime.step(action_step.action.numpy())
           self._unwrapped_runtime.render()
           # TODO(@hart): could add flag for real-time-feel visualization

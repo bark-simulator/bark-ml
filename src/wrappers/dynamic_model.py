@@ -53,7 +53,7 @@ class DynamicModel(ActionWrapper):
       self._control_inputs,
       low=self._params["ML"]["DynamicModel"]["actions_lower_bound",
         "Lower-bound for actions.",
-        [-1.0, -0.1]],
+        [0.5, -0.01]],
       high=self._params["ML"]["DynamicModel"]["actions_upper_bound",
         "Upper-bound for actions.",
-        [1.0, 0.1]])
+        [0.5, 0.01]])
