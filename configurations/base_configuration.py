@@ -8,7 +8,7 @@ class BaseConfiguration:
     self._params = ParameterServer(filename=config_file)
     self._scenario_generator = None
     self._observer = None
-    self._agent_model = None
+    self._behavior_model = None
     self._evaluator = None
     self._viewer = None
     self._runtime = None
@@ -16,9 +16,9 @@ class BaseConfiguration:
     self._runner = None
 
     # build configurationion
-    self._build_configurationion()
+    self._build_configuration()
 
-  def _build_configurationion(self):
+  def _build_configuration(self):
     """Specifies the configuration
     """
     pass

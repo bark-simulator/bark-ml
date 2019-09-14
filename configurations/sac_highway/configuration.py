@@ -33,7 +33,7 @@ class Configuration(BaseConfiguration):
   """
   def __init__(self):
     BaseConfiguration.__init__(self,
-                            "configurations/sac_highway/config.json")
+                               "configurations/sac_highway/config.json")
 
   def _build_configuration(self):
     """Builds a configuration using an SAC agent
@@ -43,13 +43,13 @@ class Configuration(BaseConfiguration):
                                       random_seed=0,
                                       params=self._params)
     self._observer = ClosestAgentsObserver(params=self._params)
-    self._agent_model = DynamicModel(params=self._params)
+    self._behavior_model = DynamicModel(params=self._params)
     self._evaluator = GoalReached(params=self._params)
     self._viewer = MPViewer(params=self._params,
                             x_range=[-30,30],
                             y_range=[-20,40],
                             follow_agent_id=True)
-    self._runtime = RuntimeRL(action_wrapper=self._agent_model,
+    self._runtime = RuntimeRL(action_wrapper=self._behavior_model,
                               observer=self._observer,
                               evaluator=self._evaluator,
                               step_time=0.2,
@@ -64,6 +64,7 @@ class Configuration(BaseConfiguration):
 
 def run_configuration(argv):
   configuration = Configuration()
+  
   if FLAGS.mode == 'train':
     configuration.train()
   elif FLAGS.mode == 'visualize':
