@@ -13,20 +13,9 @@ class CustomEvaluator(GoalReached):
   def __init__(self,
                params=ParameterServer(),
                eval_agent=None):
-    GoalReached.__init__(self, params)
-    self._goal_reward = \
-      self._params["ML"]["Evaluator"]["goal_reward",
-        "Reward for reaching the goal.",
-        1.]
-    self._collision_penalty = \
-      self._params["ML"]["Evaluator"]["collision_penalty",
-        "Reward given for a collisions.",
-        -100.]
-    self._max_steps = \
-      self._params["ML"]["Evaluator"]["max_steps",
-        "Maximum steps per episode.",
-        50]
-    self._eval_agent = eval_agent
+    GoalReached.__init__(self,
+                         params,
+                         eval_agent)
 
   def _add_evaluators(self):
     self._evaluators["goal_reached"] = EvaluatorGoalReached(self._eval_agent)
