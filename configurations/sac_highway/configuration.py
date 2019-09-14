@@ -36,7 +36,7 @@ class Configuration(BaseConfiguration):
                             "configurations/sac_highway/config.json")
 
   def _build_configuration(self):
-    """The components will be filled in the configurations
+    """Builds a configuration using an SAC agent
     """
     self._scenario_generator = \
       DeterministicScenarioGeneration(num_scenarios=3,

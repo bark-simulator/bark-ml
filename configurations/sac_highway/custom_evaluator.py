@@ -7,6 +7,9 @@ from bark.geometry import *
 from src.evaluators.goal_reached import GoalReached
 
 class CustomEvaluator(GoalReached):
+  """Shows the capability of custom elements inside
+     a configuration.
+  """
   def __init__(self,
                params=ParameterServer(),
                eval_agent=None):
@@ -32,6 +35,15 @@ class CustomEvaluator(GoalReached):
     self._evaluators["step_count"] = EvaluatorStepCount()
 
   def _distance_to_center_line(self, world):
+    """calculates the distance of the agent
+       to its centerline
+    
+    Arguments:
+        world {bark.world} -- bark world
+    
+    Returns:
+        float -- distance to centerline
+    """
     agent = world.agents[self._eval_agent]
     agent_state = agent.state
     centerline = agent.local_map.get_driving_corridor().center

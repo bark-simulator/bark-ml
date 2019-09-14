@@ -19,7 +19,7 @@ class BaseConfiguration:
     self._build_configurationion()
 
   def _build_configurationion(self):
-    """The components will be filled in the configurations
+    """Specifies the configuration
     """
     pass
 
