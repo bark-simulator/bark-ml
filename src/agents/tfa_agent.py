@@ -55,8 +55,8 @@ class TFAAgent(BaseAgent):
   def save(self):
     """Saves the agent
     """
-    save_path = self._ckpt_manager.save(global_step=self._ckpt.step)
-    print("Saved checkpoint for step {}: {}".format(int(self._ckpt.step) + 1,
+    save_path = self._ckpt_manager.save(global_step=self._agent._train_step_counter)
+    print("Saved checkpoint for step {}: {}".format(int(self._agent._train_step_counter.numpy()) + 1,
                                                     save_path))
 
   def load(self):
