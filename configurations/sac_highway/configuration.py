@@ -17,22 +17,25 @@ from src.wrappers.tfa_wrapper import TFAWrapper
 from src.evaluators.goal_reached import GoalReached
 from src.agents.sac_agent import SACAgent
 from src.runners.tfa_runner import TFARunner
-from configurations.base_experiment import BaseExperiment
+from configurations.base_configuration import BaseConfiguration
+
+# configuration specific evaluator
+from configurations.sac_highway.custom_evaluator import CustomEvaluator
 
 FLAGS = flags.FLAGS
 flags.DEFINE_enum('mode',
                   'visualize',
                   ['train', 'visualize', 'evaluate'],
-                  'Mode the experiment should be executed in.')
+                  'Mode the configuration should be executed in.')
 
-class Experiment(BaseExperiment):
-  """Hermetic and reproducible experiment class
+class Configuration(BaseConfiguration):
+  """Hermetic and reproducible configuration class
   """
   def __init__(self):
-    BaseExperiment.__init__(self,
-                            "configurations/01_sac_highway/config.json")
+    BaseConfiguration.__init__(self,
+                            "configurations/sac_highway/config.json")
 
-  def _build_experiment(self):
+  def _build_configuration(self):
     """The components will be filled in the configurations
     """
     self._scenario_generator = \
@@ -59,14 +62,14 @@ class Experiment(BaseExperiment):
                              params=self._params,
                              unwrapped_runtime=self._runtime)
 
-def run_experiment(argv):
-  experiment = Experiment()
+def run_configuration(argv):
+  configuration = Configuration()
   if FLAGS.mode == 'train':
-    experiment.train()
+    configuration.train()
   elif FLAGS.mode == 'visualize':
-    experiment.visualize()
+    configuration.visualize()
   elif FLAGS.mode == 'evaluate':
-    experiment.evaluate()
+    configuration.evaluate()
 
 if __name__ == '__main__':
-  app.run(run_experiment)
+  app.run(run_configuration)

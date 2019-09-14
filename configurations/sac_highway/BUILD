@@ -1,23 +1,34 @@
 
 filegroup(
-   name="experiment_data",
+   name="configuration_data",
    srcs=glob(["*.json",
               "checkpoints/**"]),
    visibility = ["//visibility:public"],
 )
 
+py_library(
+    name = "custom_evaluator",
+    srcs = ["custom_evaluator.py"],
+    data = ["@bark_project//python:bark.so"],
+    imports = ["../external/bark_project/python/"],
+    deps = ["@bark_project//modules/runtime:runtime",
+            "//src/evaluators:evaluators"],
+    visibility = ["//visibility:public"],
+)
+
 py_binary(
-  name = "experiment",
-  srcs = ["experiment.py"],
+  name = "configuration",
+  srcs = ["configuration.py"],
   data = ["@bark_project//python:bark.so",
           "//tests/data:bark_data",
-          ":experiment_data"],
+          ":configuration_data"],
   imports = ["../external/bark_project/python/"],
   deps = ["@bark_project//modules/runtime:runtime",
           "@bark_project//modules/runtime/scenario/scenario_generation:scenario_generation",
           "//src:rl_runtime",
           "//src/agents:agents",
           "//src/runners:runners",
-          "//configurations:base_experiment"],
+          "//configurations:base_configuration",
+          ":custom_evaluator"],
   visibility = ["//visibility:public"],
 )

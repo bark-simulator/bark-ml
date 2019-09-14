@@ -1,7 +1,7 @@
 from modules.runtime.commons.parameters import ParameterServer
 
-class BaseExperiment:
-  """Hermetic and reproducible experiment class
+class BaseConfiguration:
+  """Hermetic and reproducible configurationion
   """
   def __init__(self,
                config_file=None):
@@ -15,10 +15,10 @@ class BaseExperiment:
     self._agent = None
     self._runner = None
 
-    # build experiment
-    self._build_experiment()
+    # build configurationion
+    self._build_configurationion()
 
-  def _build_experiment(self):
+  def _build_configurationion(self):
     """The components will be filled in the configurations
     """
     pass
