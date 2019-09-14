@@ -18,6 +18,9 @@ Next, to enter the created virtual environment run the command `source dev_into.
 
 ## Configurations (Getting Started)
 
-Configurations are designed to be a hermetic and reproducible container which contains experiments.
+Configurations are designed to run experiments in an hermetic container.
 
-To run a configuration use the following command inside the virtual environment: `bazel run //configurations/sac_highway:configuration -- --mode=train`. There are three modes the configurations can be run with: `train`, `visualize` and `evaluate`.
+To run a configuration use the following command inside the virtual environment:
+```bazel run //configurations/sac_highway:configuration -- --mode=train```
+
+There are three modes the configurations can be run with: `train`, `visualize` and `evaluate`. Currently, you need to set the absolute path in the `config.json` for the checkpoints and summaries to work. You can visualize the training using tensoboard as follows: `tensorboard --logdir ./configurations/sac_highway/summaries/`.
