@@ -139,3 +139,10 @@ class SACAgent(TFAAgent):
   @property
   def eval_policy(self):
     return self._eval_policy
+
+  def act(self, state):
+    """ see base class
+    """
+    action_step = self.eval_policy.action(
+      ts.transition(state, reward=0.0, discount=1.0))
+    return action_step.action.numpy()

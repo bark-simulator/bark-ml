@@ -35,6 +35,9 @@ class TFAAgent(BaseAgent):
   def reset(self):
     pass
 
+  def act(self):
+    pass
+  
   def get_checkpointer(self):
     """Checkpointer handling the saving and loading of agents
     

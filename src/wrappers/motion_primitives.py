@@ -25,14 +25,14 @@ class MotionPrimitives(ActionWrapper):
     super(MotionPrimitives, self).reset(world=world,
                                         agents_to_act=agents_to_act)
     self._behavior_model = BehaviorMotionPrimitives(SingleTrackModel(),
-                                                   self._params)
+                                                    self._params)
     for control_input in self._control_inputs:
         self._behavior_model.add_motion_primitive(np.array(control_input))
     ego_agent_id = agents_to_act[0]
     if ego_agent_id in world.agents:
         world.agents[ego_agent_id].behavior_model = self._behavior_model
     else:
-        raise ValueError("Id of controlled agent not in world agent map.")
+        raise ValueError("AgentID does not exist in world.")
     return world
 
   def action_to_behavior(self, world, action):
