@@ -28,7 +28,7 @@ flags.DEFINE_enum('mode',
                   ['train', 'visualize', 'evaluate'],
                   'Mode the configuration should be executed in.')
 
-class Configuration(BaseConfiguration):
+class SACHighwayConfiguration(BaseConfiguration):
   """Hermetic and reproducible configuration class
   """
   def __init__(self):
@@ -63,7 +63,7 @@ class Configuration(BaseConfiguration):
                              unwrapped_runtime=self._runtime)
 
 def run_configuration(argv):
-  configuration = Configuration()
+  configuration = SACHighwayConfiguration()
   
   if FLAGS.mode == 'train':
     configuration.train()
