@@ -15,12 +15,12 @@ from src.observers.nearest_state_observer import ClosestAgentsObserver
 from src.wrappers.dynamic_model import DynamicModel
 from src.wrappers.tfa_wrapper import TFAWrapper
 from src.evaluators.goal_reached import GoalReached
-from src.agents.sac_agent import SACAgent
+from src.agents.td3_agent import TD3Agent
 from src.runners.tfa_runner import TFARunner
 from configurations.base_configuration import BaseConfiguration
 
 # configuration specific evaluator
-from configurations.sac_highway.custom_evaluator import CustomEvaluator
+from configurations.td3_highway.custom_evaluator import CustomEvaluator
 
 FLAGS = flags.FLAGS
 flags.DEFINE_enum('mode',
@@ -33,7 +33,7 @@ class SACHighwayConfiguration(BaseConfiguration):
   """
   def __init__(self):
     BaseConfiguration.__init__(self,
-                               "configurations/sac_highway/config.json")
+                               "configurations/td3_highway/config.json")
 
   def _build_configuration(self):
     """Builds a configuration using an SAC agent
@@ -56,7 +56,7 @@ class SACHighwayConfiguration(BaseConfiguration):
                               viewer=self._viewer,
                               scenario_generator=self._scenario_generator)
     tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(self._runtime))
-    self._agent = SACAgent(tfa_env, params=self._params)
+    self._agent = TD3Agent(tfa_env, params=self._params)
     self._runner = TFARunner(tfa_env,
                              self._agent,
                              params=self._params,

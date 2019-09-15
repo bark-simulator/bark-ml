@@ -43,9 +43,6 @@ class CustomEvaluator(GoalReached):
   def _evaluate(self, world, eval_results):
     """Returns information about the current world state
     """
-    # TODO(@hart): could communicate via the world (observer -> evaluator)
-    # however, a scenario should also define possible targets
-    # need to be able to set stuff like lane change and desired speed
     done = False
     success = eval_results["goal_reached"]
     distance = self._distance_to_center_line(world)
