@@ -14,6 +14,7 @@ class CustomObserver(SimpleObserver):
                             max_number_of_vehicles=2)
     self._perform_lane_change = False
 
+  def observe(self, world, agents_to_observe):
     concatenated_state = np.zeros(self._observation_len, dtype=np.float32)
     for i, (_, agent) in enumerate(world.agents.items()):
       normalized_state = self._normalize(agent.state)
@@ -23,7 +24,6 @@ class CustomObserver(SimpleObserver):
       if i >= self._max_number_of_vehicles:
         break
     return concatenated_state
-
 
   def reset(self, world, agents_to_observe):
     bb = world.bounding_box
