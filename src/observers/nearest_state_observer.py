@@ -9,22 +9,10 @@ import operator
 
 from src.observers.observer import StateObserver
 
-class NNStateObserver(StateObserver):
-  def __init__(self, params):
-    StateObserver.__init__(self, params)
-    self._world_x_range = None
-    self._world_y_range = None
 
-  def reset(self, world, agents_to_observe):
-    bb = world.bounding_box
-    self._world_x_range = [bb[0].x(), bb[1].x()]
-    self._world_y_range = [bb[0].y(), bb[1].y()]
-    return world
-
-
-class ClosestAgentsObserver(NNStateObserver):
+class ClosestAgentsObserver(StateObserver):
   def __init__(self, params=ParameterServer()):
-    NNStateObserver.__init__(self, params)
+    StateObserver.__init__(self, params)
     self._state_definition = [int(StateDefinition.X_POSITION),
                               int(StateDefinition.Y_POSITION),
                               int(StateDefinition.THETA_POSITION),

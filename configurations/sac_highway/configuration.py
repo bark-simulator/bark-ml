@@ -43,7 +43,7 @@ class SACHighwayConfiguration(BaseConfiguration):
       DeterministicScenarioGeneration(num_scenarios=3,
                                       random_seed=0,
                                       params=self._params)
-    self._observer = CustomObserver(params=self._params)
+    self._observer = ClosestAgentsObserver(params=self._params)
     self._behavior_model = DynamicModel(params=self._params)
     self._evaluator = CustomEvaluator(params=self._params)
     self._viewer = MPViewer(params=self._params,

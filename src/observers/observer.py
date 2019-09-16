@@ -4,6 +4,8 @@ class StateObserver(ABC):
   def __init__(self,
                params):
     self._params = params
+    self._world_x_range = None
+    self._world_y_range = None
 
   @abstractmethod
   def observe(self, world, agents_to_observe):
@@ -29,14 +31,12 @@ class StateObserver(ABC):
     """
     return state[self._state_definition]
 
-  @abstractmethod
   def reset(self, world, agents_to_observe):
-    pass # return world
+    bb = world.bounding_box
+    self._world_x_range = [bb[0].x(), bb[1].x()]
+    self._world_y_range = [bb[0].y(), bb[1].y()]
+    return world
 
   @property
   def observation_space(self):
     pass
-
-  def reset(self, world, agents_to_observe):
-    # TODO(@hart); make generic for multi agent planning
-    return world
