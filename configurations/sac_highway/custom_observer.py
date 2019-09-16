@@ -26,9 +26,9 @@ class CustomObserver(SimpleObserver):
     return concatenated_state
 
   def reset(self, world, agents_to_observe):
-    #self._params["ML"]["Maneuver"]["lane_change",
-    #  "Whether a lane change should be performed or not.",
-    #  np.random.randint(0, 2)]
-    #self._params["ML"]["Maneuver"]["lane_change"] = np.random.randint(0, 2)
-    #print(self._perform_lane_change)
+    rn = np.random.randint(0, 2)
+    self._params["ML"]["Maneuver"]["lane_change",
+      "Whether a lane change should be performed or not.",
+       rn]
+    # print(rn, self._params["ML"]["Maneuver"]["lane_change"])
     return world
