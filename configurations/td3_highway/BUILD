@@ -6,16 +6,6 @@ filegroup(
    visibility = ["//visibility:public"],
 )
 
-py_library(
-    name = "custom_evaluator",
-    srcs = ["custom_evaluator.py"],
-    data = ["@bark_project//python:bark.so"],
-    imports = ["../external/bark_project/python/"],
-    deps = ["@bark_project//modules/runtime:runtime",
-            "//src/evaluators:evaluators"],
-    visibility = ["//visibility:public"],
-)
-
 py_binary(
   name = "configuration",
   srcs = ["configuration.py"],
@@ -28,7 +18,6 @@ py_binary(
           "//src:rl_runtime",
           "//src/agents:agents",
           "//src/runners:runners",
-          "//configurations:base_configuration",
-          ":custom_evaluator"],
+          "//configurations:base_configuration"],
   visibility = ["//visibility:public"],
 )

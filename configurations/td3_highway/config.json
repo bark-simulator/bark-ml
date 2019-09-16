@@ -270,7 +270,7 @@
           "gamma": 0.99,
           "reward_scale_factor": 1.0,
           "gradient_clipping": null, 
-          "agent_name": "sac_agent",
+          "agent_name": "td3_agent",
           "debug_summaries": "True",
           "replay_buffer_capacity": 100000,
           "max_ckpts_to_keep": 3,
@@ -278,7 +278,7 @@
           "batch_size": 256,
           "buffer_num_steps": 2,
           "buffer_prefetch": 3,
-          "checkpoint_path": "/Users/hart/2019/bark-ml/configurations/td3_highway/checkpoints/"
+          "checkpoint_path": "/home/hart/Dokumente/2019/bark-ml/configurations/td3_highway/checkpoints/"
       },
       "Evaluator": {
           "max_steps": 60,
@@ -291,7 +291,7 @@
           "collection_episodes_per_cycle": 1,
           "evaluate_every_n_steps": 100,
           "evaluation_steps": 30,
-          "summary_path": "/Users/hart/2019/bark-ml/configurations/td3_highway/summaries/"
+          "summary_path": "/home/hart/Dokumente/2019/bark-ml/configurations/td3_highway/summaries/"
       },
       "DynamicModel": {
           "action_dimension": 2,

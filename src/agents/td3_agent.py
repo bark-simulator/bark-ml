@@ -114,7 +114,7 @@ class TD3Agent(TFAAgent):
     Returns:
         GreedyPolicy -- Always returns best suitable action
     """
-    return greedy_policy.GreedyPolicy(self._agent.policy)
+    return self._agent.policy
 
   def reset(self):
     pass

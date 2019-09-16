@@ -22,7 +22,10 @@ Next, to enter the created virtual environment run the command `source dev_into.
 Configurations are designed to run experiments in an hermetic container.
 
 To train a configuration use the following command inside the virtual environment:
-```bazel run //configurations/sac_highway:configuration -- --mode=train```
+
+```
+bazel run //configurations/sac_highway:configuration -- --mode=train
+```
 
 There are three modes the configurations can be run with: `train`, `visualize` and `evaluate`. You can use these flags in the above stated bazel command.
 

@@ -19,9 +19,6 @@ from src.agents.td3_agent import TD3Agent
 from src.runners.tfa_runner import TFARunner
 from configurations.base_configuration import BaseConfiguration
 
-# configuration specific evaluator
-from configurations.td3_highway.custom_evaluator import CustomEvaluator
-
 FLAGS = flags.FLAGS
 flags.DEFINE_enum('mode',
                   'visualize',
@@ -44,7 +41,7 @@ class SACHighwayConfiguration(BaseConfiguration):
                                       params=self._params)
     self._observer = ClosestAgentsObserver(params=self._params)
     self._behavior_model = DynamicModel(params=self._params)
-    self._evaluator = CustomEvaluator(params=self._params)
+    self._evaluator = GoalReached(params=self._params)
     self._viewer = MPViewer(params=self._params,
                             x_range=[-30,30],
                             y_range=[-20,40],
