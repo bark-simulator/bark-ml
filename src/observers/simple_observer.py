@@ -37,7 +37,7 @@ class SimpleObserver(StateObserver):
 
   @property
   def observation_space(self):
-    return BoundedContinuous(16,
+    return BoundedContinuous(self._observation_len,
                              low=-100000000.0,
                              high=100000000.0)
 

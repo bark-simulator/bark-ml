@@ -7,10 +7,11 @@ from src.commons.spaces import BoundedContinuous, Discrete
 
 from src.observers.simple_observer import SimpleObserver
 
-
 class CustomObserver(SimpleObserver):
   def __init__(self, params=ParameterServer()):
-    SimpleObserver.__init__(self, params)
+    SimpleObserver.__init__(self,
+                            params,
+                            max_number_of_vehicles=2)
     self._perform_lane_change = False
 
   def observe(self, world, agents_to_observe):
