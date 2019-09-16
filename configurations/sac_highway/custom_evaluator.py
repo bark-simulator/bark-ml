@@ -44,7 +44,7 @@ class CustomEvaluator(GoalReached):
     """Returns information about the current world state
     """
     # should read parameter that has been set in the observer
-    print(world.get_params()["ML"]["Maneuver"]["lane_change"])
+    # print(self._params["ML"]["Maneuver"]["lane_change"])
 
     done = False
     success = eval_results["goal_reached"]

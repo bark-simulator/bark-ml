@@ -38,4 +38,5 @@ class StateObserver(ABC):
     pass
 
   def reset(self, world, agents_to_observe):
+    # TODO(@hart); make generic for multi agent planning
     return world
