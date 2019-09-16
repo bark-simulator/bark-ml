@@ -69,6 +69,8 @@ class PyRuntimeRLTests(unittest.TestCase):
       self.assertEqual(done, True)
       # goal must have been reached which returns a reward of 1.
       self.assertEqual(reward, 1.)
+      self.assertEqual(runtimerl._world.agents[100].id, 100)
+      self.assertEqual(runtimerl._world.agents[101].id, 101)
     end_time = time.time()
     print("100 runs took {}s.".format(str(end_time-start_time)))
 
@@ -105,6 +107,7 @@ class PyRuntimeRLTests(unittest.TestCase):
               =================================================". \
             format(next_observed_state, reward, done, info))
           break
+
 
 
 if __name__ == '__main__':

@@ -18,6 +18,12 @@ class BaseAgent(ABC):
     pass
 
   @abstractmethod
+  def act(self, state):
+    """Returns an action based on a state
+    """
+    pass
+
+  @abstractmethod
   def save(self):
     """Saves an agent
     """

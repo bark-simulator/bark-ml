@@ -7,11 +7,20 @@ With recent advances, especially, in the field of reinforcement learning great l
 
 BARK-ML takes state-of-the-art machine learning methods and applies these to a deterministic simulation of autonomous agents (BARK). The current agent models are based on the tf-agents library (https://github.com/tensorflow/agents). Due to the modular design and concept of BARK-ML, we hope to support a wider range of machine learning libraries in the future.
 
-
 Reinforcement learning models that are currently available in BARK-ML:
 
 * Soft-Actor-Critic (SAC)
 
 ## Quick-Start
-In order to use BARK-ML a virtual python environment is recommended and can be installed using the command `bash install.sh`.
-Next, to enter the created virtual environment run the command `source dev_into.sh`. Now, bazel build commands can be executed, such as `bazel test //...`.
+
+To use BARK-ML a virtual python environment is recommended and can be installed using the command `bash install.sh`.
+Next, to enter the created virtual environment run the command `source dev_into.sh`. To verify the functionality of BARK-ML run the tests with the command `bazel test //...`.
+
+## Configurations (Getting Started)
+
+Configurations are designed to run experiments in an hermetic container.
+
+To run a configuration use the following command inside the virtual environment:
+```bazel run //configurations/sac_highway:configuration -- --mode=train```
+
+There are three modes the configurations can be run with: `train`, `visualize` and `evaluate`. Currently, you need to set the absolute path in the `config.json` for the checkpoints and summaries to work. You can visualize the training using tensoboard as follows: `tensorboard --logdir ./configurations/sac_highway/summaries/`.

@@ -25,7 +25,7 @@ class StateEvaluator(ABC):
     done = False
     if self._eval_agent in world.agents:
       eval_results = world.evaluate()
-      reward, done, eval_results = self._evaluate(eval_results)
+      reward, done, eval_results = self._evaluate(world, eval_results)
     return reward, done, eval_results
 
   def reset(self, world, agents_to_evaluate):

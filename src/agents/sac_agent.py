@@ -30,7 +30,6 @@ class SACAgent(TFAAgent):
     self._collect_policy = self.get_collect_policy()
     self._eval_policy = self.get_eval_policy()
 
-
   def get_agent(self, env, params):
     """Returns a TensorFlow SAC-Agent
     
@@ -83,7 +82,7 @@ class SACAgent(TFAAgent):
       td_errors_loss_fn=tf.compat.v1.losses.mean_squared_error,
       gamma=self._params["ML"]["Agent"]["gamma"],
       reward_scale_factor=self._params["ML"]["Agent"]["reward_scale_factor"],
-      gradient_clipping=self._params["ML"]["Agent"]["gradient_clipping"],
+      gradient_clipping=None,#self._params["ML"]["Agent"]["gradient_clipping"],
       train_step_counter=self._ckpt.step,
       name=self._params["ML"]["Agent"]["agent_name"],
       debug_summaries=self._params["ML"]["Agent"]["debug_summaries"])
@@ -140,3 +139,10 @@ class SACAgent(TFAAgent):
   @property
   def eval_policy(self):
     return self._eval_policy
+
+  def act(self, state):
+    """ see base class
+    """
+    action_step = self.eval_policy.action(
+      ts.transition(state, reward=0.0, discount=1.0))
+    return action_step.action.numpy()
