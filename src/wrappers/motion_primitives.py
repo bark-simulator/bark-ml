@@ -24,7 +24,7 @@ class MotionPrimitives(ActionWrapper):
     """
     super(MotionPrimitives, self).reset(world=world,
                                         agents_to_act=agents_to_act)
-    self._behavior_model = BehaviorMotionPrimitives(SingleTrackModel(),
+    self._behavior_model = BehaviorMotionPrimitives(SingleTrackModel(self._params),
                                                     self._params)
     for control_input in self._control_inputs:
         self._behavior_model.add_motion_primitive(np.array(control_input))

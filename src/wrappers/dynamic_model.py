@@ -13,15 +13,14 @@ class DynamicModel(ActionWrapper):
      as system inputs. 
   """
   def __init__(self,
-               params=ParameterServer(),
-               dynamic_model=SingleTrackModel()):
+               params=ParameterServer()):
     ActionWrapper.__init__(self, params)
     self._control_inputs = \
       self._params["ML"]["DynamicModel"]["action_dimension",
       "Dimension of action",
       2]
-    self._dynamic_model = dynamic_model
-    self._behavior_model = DynamicBehaviorModel(dynamic_model,
+    self._dynamic_model = SingleTrackModel(self._params)
+    self._behavior_model = DynamicBehaviorModel(self._dynamic_model,
                                                 self._params)
 
   def reset(self, world, agents_to_act):
