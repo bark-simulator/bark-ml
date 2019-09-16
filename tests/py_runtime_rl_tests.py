@@ -54,7 +54,7 @@ class PyRuntimeRLTests(unittest.TestCase):
         next_observed_state, reward, done, info = \
           runtimerl.step(action)
         # observer
-        self.assertEqual(len(next_observed_state), 8)
+        self.assertEqual(len(next_observed_state), 16)
         np.testing.assert_array_equal(next_observed_state[0:4],
                                       runtimerl._world.agents[100].state[1:5])
         np.testing.assert_array_equal(next_observed_state[4:8],
