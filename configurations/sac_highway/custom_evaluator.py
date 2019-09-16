@@ -36,12 +36,16 @@ class CustomEvaluator(GoalReached):
     agent = world.agents[self._eval_agent]
     agent_state = agent.state
     centerline = agent.local_map.get_driving_corridor().center
-    agent_xy = Point2d(agent.state[1], agent.state[2])
+    # TODO(@hart): HACK; to see whether a lane-change can be learned
+    agent_xy = Point2d(agent.state[1] - 4., agent.state[2])
     return distance(centerline, agent_xy)
 
   def _evaluate(self, world, eval_results):
     """Returns information about the current world state
     """
+    # TODO(@hart): could communicate via the world (observer -> evaluator)
+    # however, a scenario should also define possible targets
+    # need to be able to set stuff like lane change and desired speed
     done = False
     success = eval_results["goal_reached"]
     distance = self._distance_to_center_line(world)
@@ -52,7 +56,7 @@ class CustomEvaluator(GoalReached):
       done = True
     # calculate reward
     reward = collision * self._collision_penalty + \
-      success * self._goal_reward  - 0.1*distance
+      success * self._goal_reward - 0.1*distance
     return reward, done, eval_results
     
 
