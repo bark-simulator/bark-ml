@@ -21,6 +21,7 @@ from configurations.base_configuration import BaseConfiguration
 
 # configuration specific evaluator
 from configurations.sac_highway.custom_evaluator import CustomEvaluator
+from configurations.sac_highway.custom_observer import CustomObserver
 
 FLAGS = flags.FLAGS
 flags.DEFINE_enum('mode',
@@ -42,7 +43,7 @@ class SACHighwayConfiguration(BaseConfiguration):
       DeterministicScenarioGeneration(num_scenarios=3,
                                       random_seed=0,
                                       params=self._params)
-    self._observer = ClosestAgentsObserver(params=self._params)
+    self._observer = CustomObserver(params=self._params)
     self._behavior_model = DynamicModel(params=self._params)
     self._evaluator = CustomEvaluator(params=self._params)
     self._viewer = MPViewer(params=self._params,
