@@ -4,8 +4,8 @@ class BaseConfiguration:
   """Hermetic and reproducible configurationion
   """
   def __init__(self,
-               config_file=None):
-    self._params = ParameterServer(filename=config_file)
+               params=ParameterServer()):
+    self._params = params
     self._scenario_generator = None
     self._observer = None
     self._behavior_model = None
