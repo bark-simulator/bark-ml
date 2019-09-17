@@ -32,9 +32,11 @@ flags.DEFINE_enum('mode',
 class SACHighwayConfiguration(BaseConfiguration):
   """Hermetic and reproducible configuration class
   """
-  def __init__(self):
-    BaseConfiguration.__init__(self,
-                               "configurations/sac_highway/config.json")
+  def __init__(self,
+               params):
+    BaseConfiguration.__init__(
+      self,
+      params)
 
   def _build_configuration(self):
     """Builds a configuration using an SAC agent
@@ -64,7 +66,8 @@ class SACHighwayConfiguration(BaseConfiguration):
                              unwrapped_runtime=self._runtime)
 
 def run_configuration(argv):
-  configuration = SACHighwayConfiguration()
+  params = ParameterServer(filename="configurations/sac_highway/config.json")
+  configuration = SACHighwayConfiguration(params)
   
   if FLAGS.mode == 'train':
     configuration.train()
