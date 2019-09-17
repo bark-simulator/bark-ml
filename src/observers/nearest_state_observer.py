@@ -9,42 +9,14 @@ import operator
 
 from src.observers.observer import StateObserver
 
-class NNStateObserver(StateObserver):
-  def __init__(self, params):
-    StateObserver.__init__(self, params)
-    self._world_x_range = None
-    self._world_y_range = None
 
-  def reset(self, world, agents_to_observe):
-    bb = world.bounding_box
-    self._world_x_range = [bb[0].x(), bb[1].x()]
-    self._world_y_range = [bb[0].y(), bb[1].y()]
-    return world
-
-
-class ClosestAgentsObserver(NNStateObserver):
+class ClosestAgentsObserver(StateObserver):
   def __init__(self, params=ParameterServer()):
-    NNStateObserver.__init__(self, params)
+    StateObserver.__init__(self, params)
     self._state_definition = [int(StateDefinition.X_POSITION),
                               int(StateDefinition.Y_POSITION),
                               int(StateDefinition.THETA_POSITION),
                               int(StateDefinition.VEL_POSITION)]
-    self._velocity_range = \
-      self._params["Runtime"]["RL"]["ClosestAgentsObserver"]["VelocityRange",
-      "Boundaries for min and max velocity for normalization",
-      [0, 100]]
-    self._theta_range = \
-      self._params["Runtime"]["RL"]["ClosestAgentsObserver"]["ThetaRange",
-      "Boundaries for min and max theta for normalization",
-      [0, 2*math.pi]]
-    self._normalize = \
-      self._params["Runtime"]["RL"]["ClosestAgentsObserver"]["Normalize",
-      "Whether normalization should be performed",
-      True]
-    self._max_num_other_agents = \
-      self._params["Runtime"]["RL"]["ClosestAgentsObserver"]["MaxOtherAgents",
-      "The concatenation state size is the ego agent plus max num other agents",
-      4]
     self._max_distance_other_agents = \
       self._params["Runtime"]["RL"]["ClosestAgentsObserver"]["MaxOtherDistance",
       "Agents further than this distance are not observed; if not max" + \
@@ -60,7 +32,7 @@ class ClosestAgentsObserver(NNStateObserver):
     observed_worlds =  world.observe(agents_to_observe)
     if (len(observed_worlds) == 0):
       concatenated_state = np.zeros(self._len_ego_state + \
-        self._max_num_other_agents*self._len_relative_agent_state)
+        self._max_num_vehicles*self._len_relative_agent_state)
       return concatenated_state.fill(np.nan)
     ego_observed_world = observed_worlds[0]
     num_other_agents = len(ego_observed_world.other_agents)
@@ -80,7 +52,7 @@ class ClosestAgentsObserver(NNStateObserver):
 
     # preallocate np.array and add ego state
     concatenated_state = np.zeros(self._len_ego_state + \
-      self._max_num_other_agents*self._len_relative_agent_state)
+      self._max_num_vehicles*self._len_relative_agent_state)
     concatenated_state[0:self._len_ego_state] = \
       self._select_state_by_index(self._norm(ego_state)) 
     
@@ -88,7 +60,7 @@ class ClosestAgentsObserver(NNStateObserver):
     concat_pos = self._len_relative_agent_state
     nearest_distances = sorted(nearest_distances.items(),
                                key=operator.itemgetter(0))
-    for agent_idx in range(0, self._max_num_other_agents):
+    for agent_idx in range(0, self._max_num_vehicles):
       if agent_idx<len(nearest_distances) and \
         nearest_distances[agent_idx][0] <= self._max_distance_other_agents**2:
         agent_id = nearest_distances[agent_idx][1]
@@ -110,12 +82,12 @@ class ClosestAgentsObserver(NNStateObserver):
     # TODO(@hart): use from spaces.py
     return spaces.Box(
       low=np.zeros(self._len_ego_state + \
-        self._max_num_other_agents*self._len_relative_agent_state),
+        self._max_num_vehicles*self._len_relative_agent_state),
       high = np.ones(self._len_ego_state + \
-        self._max_num_other_agents*self._len_relative_agent_state))
+        self._max_num_vehicles*self._len_relative_agent_state))
 
   def _norm(self, agent_state):
-    if not self._normalize:
+    if not self._normalization_enabled:
         return agent_state
     agent_state[int(StateDefinition.X_POSITION)] = \
       self._norm_to_range(agent_state[int(StateDefinition.X_POSITION)],

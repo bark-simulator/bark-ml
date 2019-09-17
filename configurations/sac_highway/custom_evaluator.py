@@ -1,3 +1,4 @@
+import numpy as np
 from bark.world.evaluation import \
   EvaluatorGoalReached, EvaluatorCollisionEgoAgent, \
   EvaluatorCollisionDrivingCorridor, EvaluatorStepCount
@@ -45,7 +46,8 @@ class CustomEvaluator(GoalReached):
     """
     # should read parameter that has been set in the observer
     # print(self._params["ML"]["Maneuver"]["lane_change"])
-
+    agent_state = world.agents[self._eval_agent].state
+    agent_velocity = np.sqrt((agent_state[4] - 10.)**2)
     done = False
     success = eval_results["goal_reached"]
     distance = self._distance_to_center_line(world)
@@ -56,7 +58,7 @@ class CustomEvaluator(GoalReached):
       done = True
     # calculate reward
     reward = collision * self._collision_penalty + \
-      success * self._goal_reward - 0.1*distance
+      success * self._goal_reward - 0.1*distance - 0.1*agent_velocity
     return reward, done, eval_results
     
 

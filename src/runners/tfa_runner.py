@@ -91,7 +91,7 @@ class TFARunner(BaseRunner):
     """Trains the agent as specified in the parameter file
     """
     iterator = iter(self._agent._dataset)
-    for i in range(0, self._params["ML"]["Runner"]["number_of_collections"]):
+    for _ in range(0, self._params["ML"]["Runner"]["number_of_collections"]):
       global_iteration = self._agent._agent._train_step_counter.numpy()
       self._collection_driver.run()
       experience, _ = next(iterator)

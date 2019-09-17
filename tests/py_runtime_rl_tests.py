@@ -55,10 +55,12 @@ class PyRuntimeRLTests(unittest.TestCase):
           runtimerl.step(action)
         # observer
         self.assertEqual(len(next_observed_state), 16)
-        np.testing.assert_array_equal(next_observed_state[0:4],
-                                      runtimerl._world.agents[100].state[1:5])
-        np.testing.assert_array_equal(next_observed_state[4:8],
-                                      runtimerl._world.agents[101].state[1:5])
+        np.testing.assert_array_equal(
+          next_observed_state[0:4],
+          state_observer._normalize(runtimerl._world.agents[100].state)[1:5])
+        np.testing.assert_array_equal(
+          next_observed_state[4:8],
+          state_observer._normalize(runtimerl._world.agents[101].state)[1:5])
         if done:
           print("State: {} \n Reward: {} \n Done {}, Info: {} \n \
               =================================================". \
