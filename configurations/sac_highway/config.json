@@ -285,6 +285,12 @@
           "collision_penalty": -1.0,
           "goal_reward": 1.0
       },
+      "Observer": {
+          "velocity_range": [0, 50],
+          "theta_range": [0.0, 6.3],
+          "normalization_enabled": true,
+          "max_num_agents": 4
+      },
       "Runner": {
           "number_of_collections": 10000,
           "initial_collection_steps": 100,
