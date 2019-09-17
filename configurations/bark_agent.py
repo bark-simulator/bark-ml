@@ -5,7 +5,7 @@ from configurations.base_configuration import BaseConfiguration
 # include all configurations
 from configurations.sac_highway.configuration import SACHighwayConfiguration
 
-class BARKAgent(BehaviorModel):
+class BARKMLBehaviorModel(BehaviorModel):
   """This class makes a trained agent available as BehaviorModel
      in BARK. There will be no evaluation from the side of the 
      agent. Thus, a BARKAgent will only use the observer and agent
