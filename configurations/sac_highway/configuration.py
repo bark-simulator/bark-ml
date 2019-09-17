@@ -33,8 +33,9 @@ class SACHighwayConfiguration(BaseConfiguration):
   """Hermetic and reproducible configuration class
   """
   def __init__(self):
-    BaseConfiguration.__init__(self,
-                               "configurations/sac_highway/config.json")
+    BaseConfiguration.__init__(
+      self,
+      ParameterServer(filename="configurations/sac_highway/config.json"))
 
   def _build_configuration(self):
     """Builds a configuration using an SAC agent

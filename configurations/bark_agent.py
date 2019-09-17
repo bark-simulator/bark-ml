@@ -12,9 +12,8 @@ class BARKAgent(BehaviorModel):
      from the configuration.
   """
   def __init__(self,
-               params=ParameterServer(),
                configuration=None):
-    BehaviorModel.__init__(self, params)
+    BehaviorModel.__init__(self, configuration._params)
     self._configuration = configuration
 
   def plan(self, delta_time, world):
