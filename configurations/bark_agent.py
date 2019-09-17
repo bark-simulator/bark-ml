@@ -1,4 +1,4 @@
-from modules.models.behavior import BehaviorModel
+from bark.models.behavior import BehaviorModel
 from modules.runtime.commons.parameters import ParameterServer
 from configurations.base_configuration import BaseConfiguration
 
