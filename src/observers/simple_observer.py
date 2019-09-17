@@ -12,17 +12,14 @@ from src.observers.observer import StateObserver
 
 class SimpleObserver(StateObserver):
   def __init__(self,
-               params=ParameterServer(),
-               max_number_of_vehicles=4):
+               params=ParameterServer()):
     StateObserver.__init__(self, params)
     self._state_definition = [int(StateDefinition.X_POSITION),
                               int(StateDefinition.Y_POSITION),
                               int(StateDefinition.THETA_POSITION),
                               int(StateDefinition.VEL_POSITION)]
-    self._max_number_of_vehicles = max_number_of_vehicles
     self._observation_len = \
-      self._max_number_of_vehicles*self._len_state
-
+      self._max_num_vehicles*self._len_state
 
   def observe(self, world, agents_to_observe):
     """see base class
@@ -33,7 +30,7 @@ class SimpleObserver(StateObserver):
       reduced_state = self._select_state_by_index(normalized_state)
       starts_id = i*self._len_state
       concatenated_state[starts_id:starts_id+self._len_state] = reduced_state
-      if i >= self._max_number_of_vehicles:
+      if i >= self._max_num_vehicles:
         break
     return concatenated_state
 
@@ -54,12 +51,16 @@ class SimpleObserver(StateObserver):
     agent_state = \
       self._norm(agent_state,
                  StateDefinition.THETA_POSITION,
-                 [0., 2.*3.14])
+                 self._theta_range)
     agent_state = \
       self._norm(agent_state,
                  StateDefinition.VEL_POSITION,
-                 [0., 20.])
+                 self._velocity_range)
     return agent_state
+
+  def reset(self, world, agents_to_observe):
+    super(SimpleObserver, self).reset(world, agents_to_observe)
+    return world
 
   @property
   def observation_space(self):

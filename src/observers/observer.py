@@ -1,9 +1,26 @@
+import math
 from abc import ABC, abstractmethod
 
 class StateObserver(ABC):
   def __init__(self,
                params):
     self._params = params
+    self._velocity_range = \
+      self._params["Runtime"]["RL"]["Observer"]["velocity_range",
+      "Boundaries for min and max velocity for normalization",
+      [0, 100]]
+    self._theta_range = \
+      self._params["Runtime"]["RL"]["Observer"]["theta_range",
+      "Boundaries for min and max theta for normalization",
+      [0, 2*math.pi]]
+    self._normalization_enabled = \
+      self._params["Runtime"]["RL"]["Observer"]["normalization_enabled",
+      "Whether normalization should be performed",
+      True]
+    self._max_num_vehicles = \
+      self._params["Runtime"]["RL"]["Observer"]["max_num_agents",
+      "The concatenation state size is the ego agent plus max num other agents",
+      4]
     self._world_x_range = None
     self._world_y_range = None
 
