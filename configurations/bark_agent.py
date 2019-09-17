@@ -13,7 +13,7 @@ class BARKAgent(BehaviorModel):
   """
   def __init__(self,
                params=ParameterServer(),
-               configuration=BaseConfiguration()):
+               configuration=None):
     BehaviorModel.__init__(self, params)
     self._configuration = configuration
 
