@@ -17,7 +17,6 @@ class BARKMLBehaviorModel(BehaviorModel):
     self._configuration = configuration
 
   def plan(self, delta_time, world):
-    # TODO(@hart): per agent there should be only one eval_id!
     observed_state = self._configuration._observer.observe(
       world=world,
       agents_to_observe=self._configuration._runtime._scenario._eval_agent_ids)
