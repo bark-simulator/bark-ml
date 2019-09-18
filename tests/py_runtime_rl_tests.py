@@ -22,7 +22,7 @@ from src.wrappers.motion_primitives import MotionPrimitives
 from src.evaluators.goal_reached import GoalReached
 
 class PyRuntimeRLTests(unittest.TestCase):
-  def test_dynamic_behavior_model(self):
+  def test_runtime_rl(self):
     params = ParameterServer(
       filename="tests/data/deterministic_scenario_test.json")
     scenario_generation = DeterministicScenarioGeneration(num_scenarios=2,
@@ -54,11 +54,13 @@ class PyRuntimeRLTests(unittest.TestCase):
         next_observed_state, reward, done, info = \
           runtimerl.step(action)
         # observer
-        self.assertEqual(len(next_observed_state), 8)
-        np.testing.assert_array_equal(next_observed_state[0:4],
-                                      runtimerl._world.agents[100].state[1:5])
-        np.testing.assert_array_equal(next_observed_state[4:8],
-                                      runtimerl._world.agents[101].state[1:5])
+        self.assertEqual(len(next_observed_state), 16)
+        np.testing.assert_array_equal(
+          next_observed_state[0:4],
+          state_observer._normalize(runtimerl._world.agents[100].state)[1:5])
+        np.testing.assert_array_equal(
+          next_observed_state[4:8],
+          state_observer._normalize(runtimerl._world.agents[101].state)[1:5])
         if done:
           print("State: {} \n Reward: {} \n Done {}, Info: {} \n \
               =================================================". \

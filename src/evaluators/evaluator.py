@@ -23,6 +23,7 @@ class StateEvaluator(ABC):
     eval_results = None
     reward = 0.
     done = False
+    # TODO(@hart); make generic for multi agent planning
     if self._eval_agent in world.agents:
       eval_results = world.evaluate()
       reward, done, eval_results = self._evaluate(world, eval_results)
@@ -33,6 +34,7 @@ class StateEvaluator(ABC):
       raise ValueError("Invalid number of agents provided for GoalReached \
                         evaluation, number= {}" \
                         .format(len(agents_to_evaluate)))
+    # TODO(@hart); make generic for multi agent planning
     self._eval_agent = agents_to_evaluate[0]
     world.clear_evaluators()
     self._add_evaluators()

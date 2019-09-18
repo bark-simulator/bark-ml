@@ -10,6 +10,7 @@ BARK-ML takes state-of-the-art machine learning methods and applies these to a d
 Reinforcement learning models that are currently available in BARK-ML:
 
 * Soft-Actor-Critic (SAC)
+* Twin Delayed Deep Deterministic policy gradient (TD3)
 
 ## Quick-Start
 
@@ -20,7 +21,12 @@ Next, to enter the created virtual environment run the command `source dev_into.
 
 Configurations are designed to run experiments in an hermetic container.
 
-To run a configuration use the following command inside the virtual environment:
-```bazel run //configurations/sac_highway:configuration -- --mode=train```
+To train a configuration use the following command inside the virtual environment:
 
-There are three modes the configurations can be run with: `train`, `visualize` and `evaluate`. Currently, you need to set the absolute path in the `config.json` for the checkpoints and summaries to work. You can visualize the training using tensoboard as follows: `tensorboard --logdir ./configurations/sac_highway/summaries/`.
+```
+bazel run //configurations/sac_highway:configuration -- --mode=train
+```
+
+There are three modes the configurations can be run with: `train`, `visualize` and `evaluate`. You can use these flags in the above stated bazel command.
+
+Currently, you need to set the absolute path in the `config.json` for the checkpoints and summaries to work. You can visualize the training using tensoboard as follows: `tensorboard --logdir ./configurations/sac_highway/summaries/`.

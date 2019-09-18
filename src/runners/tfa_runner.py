@@ -91,7 +91,7 @@ class TFARunner(BaseRunner):
     """Trains the agent as specified in the parameter file
     """
     iterator = iter(self._agent._dataset)
-    for i in range(0, self._params["ML"]["Runner"]["number_of_collections"]):
+    for _ in range(0, self._params["ML"]["Runner"]["number_of_collections"]):
       global_iteration = self._agent._agent._train_step_counter.numpy()
       self._collection_driver.run()
       experience, _ = next(iterator)
@@ -135,6 +135,7 @@ class TFARunner(BaseRunner):
         while not is_terminal:
           action_step = self._agent._eval_policy.action(ts.transition(state, reward=0.0, discount=1.0))
           print(action_step)
+          # TODO(@hart); make generic for multi agent planning
           state, _, is_terminal, _ = self._unwrapped_runtime.step(action_step.action.numpy())
           self._unwrapped_runtime.render()
           # TODO(@hart): could add flag for real-time-feel visualization
