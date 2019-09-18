@@ -28,10 +28,10 @@ class BaseConfiguration:
     """
     self._runner.train()
 
-  def visualize(self):
+  def visualize(self, num_episodes=1):
     """Visualizes the agent
     """
-    self._runner.visualize()
+    self._runner.visualize(num_episodes)
 
   def evaluate(self):
     """Evaluates the agent

@@ -156,3 +156,5 @@ web/node_modules
 
 /configurations/**/checkpoints/
 /configurations/**/summaries/
+
+**.mp4

@@ -22,8 +22,7 @@ from src.runners.tfa_runner import TFARunner
 from configurations.base_configuration import BaseConfiguration
 
 # configuration specific evaluator
-from configurations.sac_highway.custom_evaluator import CustomEvaluator
-from configurations.sac_highway.custom_observer import CustomObserver
+from configurations.sac_highway_uniform.custom_evaluator import CustomEvaluator
 
 FLAGS = flags.FLAGS
 flags.DEFINE_enum('mode',
@@ -44,10 +43,10 @@ class SACHighwayConfiguration(BaseConfiguration):
     """Builds a configuration using an SAC agent
     """
     self._scenario_generator = \
-      DeterministicScenarioGeneration(num_scenarios=3,
+      UniformVehicleDistribution(num_scenarios=3,
                                       random_seed=0,
                                       params=self._params)
-    self._observer = CustomObserver(params=self._params)
+    self._observer = ClosestAgentsObserver(params=self._params)
     self._behavior_model = DynamicModel(params=self._params)
     self._evaluator = CustomEvaluator(params=self._params)
 
@@ -70,14 +69,14 @@ class SACHighwayConfiguration(BaseConfiguration):
                              unwrapped_runtime=self._runtime)
 
 def run_configuration(argv):
-  params = ParameterServer(filename="configurations/sac_highway/config.json")
+  params = ParameterServer(filename="configurations/sac_highway_uniform/config.json")
   configuration = SACHighwayConfiguration(params)
   
   if FLAGS.mode == 'train':
     configuration.train()
   elif FLAGS.mode == 'visualize':
     configuration.visualize(1)
-    configuration._viewer.export_video("/home/hart/Dokumente/2019/bark-ml/configurations/sac_highway/video/lane_merge")
+    configuration._viewer.export_video("/home/hart/Dokumente/2019/bark-ml/configurations/sac_highway_uniform/video/lane_merge")
   elif FLAGS.mode == 'evaluate':
     configuration.evaluate()
 

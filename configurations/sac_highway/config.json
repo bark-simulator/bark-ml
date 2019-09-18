@@ -11,11 +11,11 @@
                     "execution_model": "ExecutionModelInterpolate",
                     "id": 100,
                     "state": [
-                        0.0,
-                        5111.0,
-                        5106.8305,
-                        1.57,
-                        10.0
+                        [0.0, 0.0],
+                        [5111.0, 5111.0],
+                        [5106.8305, 5110.8305],
+                        [1.57, 1.57],
+                        [10.0, 15.0]
                     ],
                     "shape": {
                         "polygon_points": [
@@ -134,11 +134,11 @@
                     "execution_model": "ExecutionModelInterpolate",
                     "id": 101,
                     "state": [
-                      0.0,
-                      5114.3,
-                      5114.3,
-                      0.0,
-                      15.0
+                      [0.0, 0.0],
+                      [5114.3, 5114.3],
+                      [5114.3, 5130.3],
+                      [1.57, 1.57],
+                      [10.0, 15.0]
                     ],
                     "shape": {
                         "polygon_points": [
@@ -286,17 +286,17 @@
           "goal_reward": 1.0
       },
       "Observer": {
-          "velocity_range": [0, 50],
+          "velocity_range": [0, 30],
           "theta_range": [0.0, 6.29],
           "normalization_enabled": true,
-          "max_num_agents": 4
+          "max_num_agents": 2
       },
       "Runner": {
-          "number_of_collections": 10000,
-          "initial_collection_steps": 100,
-          "collection_episodes_per_cycle": 1,
-          "evaluate_every_n_steps": 100,
-          "evaluation_steps": 30,
+          "number_of_collections": 100000,
+          "initial_collection_steps": 1000,
+          "collection_episodes_per_cycle": 2,
+          "evaluate_every_n_steps": 1000,
+          "evaluation_steps": 25,
           "summary_path": "/home/hart/Dokumente/2019/bark-ml/configurations/sac_highway/summaries/"
       },
       "DynamicModel": {
