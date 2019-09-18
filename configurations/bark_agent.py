@@ -26,3 +26,5 @@ class BARKMLBehaviorModel(BehaviorModel):
 
   def clone(self):
     return self
+
+  # TODO(@hart): we need a reset functionailty for the observer
