@@ -43,18 +43,18 @@ class SACHighwayConfiguration(BaseConfiguration):
     """Builds a configuration using an SAC agent
     """
     self._scenario_generator = \
-      UniformVehicleDistribution(num_scenarios=3,
-                                      random_seed=0,
-                                      params=self._params)
+      UniformVehicleDistribution(num_scenarios=20,
+                                 random_seed=0,
+                                 params=self._params)
     self._observer = ClosestAgentsObserver(params=self._params)
     self._behavior_model = DynamicModel(params=self._params)
     self._evaluator = CustomEvaluator(params=self._params)
 
-    viewer = MPViewer(params=self._params,
+    self._viewer  = MPViewer(params=self._params,
                             x_range=[-30,30],
                             y_range=[-20,40],
                             follow_agent_id=True)
-    self._viewer = VideoRenderer(renderer=viewer, world_step_time=0.2)
+    #self._viewer = VideoRenderer(renderer=viewer, world_step_time=0.2)
     self._runtime = RuntimeRL(action_wrapper=self._behavior_model,
                               observer=self._observer,
                               evaluator=self._evaluator,
@@ -75,7 +75,7 @@ def run_configuration(argv):
   if FLAGS.mode == 'train':
     configuration.train()
   elif FLAGS.mode == 'visualize':
-    configuration.visualize(1)
+    configuration.visualize(10)
     configuration._viewer.export_video("/home/hart/Dokumente/2019/bark-ml/configurations/sac_highway_uniform/video/lane_merge")
   elif FLAGS.mode == 'evaluate':
     configuration.evaluate()
