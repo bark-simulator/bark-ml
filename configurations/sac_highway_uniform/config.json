@@ -1,135 +1,148 @@
 {
   "Scenario": {
       "Generation": {
-        "UniformVehicleDistribution": {
-            "MapFilename": "tests/data/city_highway_straight.xodr",
-            "EgoGoalEnd": [
-                5128,
-                5200
-            ],
-            "EgoRoute": [
-                [
-                    5116,
-                    5072
-                ],
-                [
-                    5116,
-                    5074
-                ]
-            ],
-            "OthersSource": [
-                [
-                    5000.626,
-                    5006.8305
-                ]
-            ],
-            "OthersSink": [
-                [
-                    5111.626,
-                    5193.1725
-                ]
-            ],
-            "VehicleDistanceRange": [
-                2,
-                20
-            ],
-            "VehicleVelocityRange": [
-                2,
-                15
-            ],
-            "VehicleModel": {
-                "behavior_model": "BehaviorIDMClassic",
-                "dynamic_model": "SingleTrackModel",
-                "execution_model": "ExecutionModelInterpolate",
-                "id": 0,
-                "state": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "shape": {
-                    "polygon_points": [
-                        [
-                            3.8499999046325684,
-                            0.0
-                        ],
-                        [
-                            3.7720000743865967,
-                            -0.4950000047683716
-                        ],
-                        [
-                            3.4260001182556152,
-                            -0.8870000243186951
-                        ],
-                        [
-                            2.9140000343322754,
-                            -0.9559999704360962
-                        ],
-                        [
-                            1.4570000171661377,
-                            -0.9559999704360962
-                        ],
-                        [
-                            0.0,
-                            -0.9559999704360962
-                        ],
-                        [
-                            -0.5120000243186951,
-                            -0.8859999775886536
-                        ],
-                        [
-                            -1.0199999809265137,
-                            -0.5889999866485596
-                        ],
-                        [
-                            -1.11899995803833,
-                            0.0
-                        ],
-                        [
-                            -1.0199999809265137,
-                            0.5889999866485596
-                        ],
-                        [
-                            -0.5120000243186951,
-                            0.8859999775886536
-                        ],
-                        [
-                            0.0,
-                            0.9559999704360962
-                        ],
-                        [
-                            1.4570000171661377,
-                            0.9559999704360962
-                        ],
-                        [
-                            2.9140000343322754,
-                            0.9559999704360962
-                        ],
-                        [
-                            3.4260001182556152,
-                            0.8870000243186951
-                        ],
-                        [
-                            3.7720000743865967,
-                            0.4950000047683716
-                        ],
-                        [
-                            3.8499999046325684,
-                            0.0
-                        ]
-                    ],
-                    "center_pose": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ]
-                },
-                "followed_trajectory": [],
-                "planned_trajectory": []
-            }
-        }
+          "UniformVehicleDistribution": {
+              "MapFilename": "tests/data/city_highway_straight.xodr",
+              "EgoGoalStart": [
+                  5111.626,
+                  5006.8305
+              ],
+              "EgoGoalEnd": [
+                  5111.626,
+                  5193.1725
+              ],
+              "EgoGoalStateLimits": [
+                  0.5,
+                  0,
+                  0
+              ],
+              "EgoRoute": [
+                  [
+                      5116,
+                      5072
+                  ],
+                  [
+                      5116,
+                      5074
+                  ]
+              ],
+              "OthersSource": [
+                  [
+                      5111.626,
+                      5006.8305
+                  ]
+              ],
+              "OthersSink": [
+                  [
+                      5111.626,
+                      5193.1725
+                  ]
+              ],
+              "VehicleDistanceRange": [
+                  10,
+                  20
+              ],
+              "OtherVehicleVelocityRange": [
+                  2,
+                  8
+              ],
+              "EgoVehicleVelocityRange": [
+                  10,
+                  12
+              ],
+              "VehicleModel": {
+                  "behavior_model": "BehaviorIDMClassic",
+                  "dynamic_model": "SingleTrackModel",
+                  "execution_model": "ExecutionModelInterpolate",
+                  "id": 0,
+                  "state": [
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0,
+                      0.0
+                  ],
+                  "shape": {
+                      "polygon_points": [
+                          [
+                              3.8499999046325684,
+                              0.0
+                          ],
+                          [
+                              3.7720000743865967,
+                              -0.4950000047683716
+                          ],
+                          [
+                              3.4260001182556152,
+                              -0.8870000243186951
+                          ],
+                          [
+                              2.9140000343322754,
+                              -0.9559999704360962
+                          ],
+                          [
+                              1.4570000171661377,
+                              -0.9559999704360962
+                          ],
+                          [
+                              0.0,
+                              -0.9559999704360962
+                          ],
+                          [
+                              -0.5120000243186951,
+                              -0.8859999775886536
+                          ],
+                          [
+                              -1.0199999809265137,
+                              -0.5889999866485596
+                          ],
+                          [
+                              -1.11899995803833,
+                              0.0
+                          ],
+                          [
+                              -1.0199999809265137,
+                              0.5889999866485596
+                          ],
+                          [
+                              -0.5120000243186951,
+                              0.8859999775886536
+                          ],
+                          [
+                              0.0,
+                              0.9559999704360962
+                          ],
+                          [
+                              1.4570000171661377,
+                              0.9559999704360962
+                          ],
+                          [
+                              2.9140000343322754,
+                              0.9559999704360962
+                          ],
+                          [
+                              3.4260001182556152,
+                              0.8870000243186951
+                          ],
+                          [
+                              3.7720000743865967,
+                              0.4950000047683716
+                          ],
+                          [
+                              3.8499999046325684,
+                              0.0
+                          ]
+                      ],
+                      "center_pose": [
+                          0.0,
+                          0.0,
+                          0.0
+                      ]
+                  },
+                  "followed_trajectory": [],
+                  "planned_trajectory": []
+              }
+          }
       }
   },
   "agent": {
@@ -137,8 +150,8 @@
   },
   "ML": {
       "Agent": {
-          "actor_fc_layer_params": [256, 256],
-          "critic_joint_fc_layer_params": [256, 256],
+          "actor_fc_layer_params": [256, 256, 128],
+          "critic_joint_fc_layer_params": [256, 256, 128],
           "actor_learning_rate": 3e-4,
           "critic_learning_rate": 3e-4,
           "alpha_learning_rate": 3e-4,
@@ -160,7 +173,7 @@
       "Evaluator": {
           "max_steps": 60,
           "collision_penalty": -1.0,
-          "goal_reward": 1.0
+          "goal_reward": 100.0
       },
       "Observer": {
           "velocity_range": [0, 30],
@@ -170,16 +183,16 @@
       },
       "Runner": {
           "number_of_collections": 100000,
-          "initial_collection_steps": 1000,
-          "collection_episodes_per_cycle": 2,
+          "initial_collection_steps": 100,
+          "collection_episodes_per_cycle": 1,
           "evaluate_every_n_steps": 1000,
           "evaluation_steps": 25,
           "summary_path": "/home/hart/Dokumente/2019/bark-ml/configurations/sac_highway_uniform/summaries/"
       },
       "DynamicModel": {
           "action_dimension": 2,
-          "actions_lower_bound": [-1.0, -0.1],
-          "actions_upper_bound": [1.0, 0.1]
+          "actions_lower_bound": [-4.0, -0.2],
+          "actions_upper_bound": [4.0, 0.2]
       },
       "MotionPrimitives": {
           "motion_primitives": [[4.0, 0.0],
