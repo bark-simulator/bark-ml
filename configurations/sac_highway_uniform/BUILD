@@ -16,8 +16,8 @@ py_library(
     visibility = ["//visibility:public"],
 )
 
-py_binary(
-  name = "configuration",
+py_library(
+  name = "configuration_lib",
   srcs = ["configuration.py"],
   data = ["@bark_project//python:bark.so",
           "//tests/data:bark_data",
@@ -32,4 +32,15 @@ py_binary(
           ":custom_evaluator",
           "@bark_project//modules/runtime/viewer:video_renderer"],
   visibility = ["//visibility:public"],
+)
+
+py_binary(
+  name = "configuration",
+  srcs = ["configuration.py"],
+  data = ["@bark_project//python:bark.so",
+          "//tests/data:bark_data",
+          ":configuration_data"],
+  imports = ["../external/bark_project/python/"],
+  visibility = ["//visibility:public"],
+  deps = [":configuration_lib"]
 )

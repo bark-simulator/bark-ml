@@ -2,6 +2,7 @@
 from gym import spaces
 import numpy as np
 from bark.models.dynamic import StateDefinition
+from bark.world import World, ObservedWorld
 from src.commons.spaces import BoundedContinuous, Discrete
 from modules.runtime.commons.parameters import ParameterServer
 import math
@@ -26,10 +27,9 @@ class ClosestAgentsObserver(StateObserver):
   def observe(self, world, agents_to_observe):
     """see base class
     """
-    super(ClosestAgentsObserver, self).observe(
-      world=world,
-      agents_to_observe=agents_to_observe)
-    observed_worlds =  world.observe(agents_to_observe)
+    observed_worlds = [world]
+    if not isinstance(world, ObservedWorld):
+      observed_worlds =  world.observe(agents_to_observe)
     if (len(observed_worlds) == 0):
       concatenated_state = np.zeros(self._len_ego_state + \
         self._max_num_vehicles*self._len_relative_agent_state)
