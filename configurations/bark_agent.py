@@ -29,7 +29,6 @@ class BARKMLBehaviorModel(DynamicBehaviorModel):
       world=world,
       agents_to_observe=self._agents_to_observe)
     action = self._configuration._agent.act(observed_state)
-    print("action", action)
     super().set_action(action)
     
     # convert

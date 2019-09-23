@@ -55,10 +55,12 @@ class PyBarkAgentTests(unittest.TestCase):
     scenario, idx = scenario_generator.get_next_scenario()
     world = scenario.get_world_state()
 
-    # this crashes.. do not know why
     dynamic_model = world.agents[scenario._eval_agent_ids[0]].dynamic_model
     bark_agent = BARKMLBehaviorModel(configuration, dynamic_model, scenario._eval_agent_ids)
     world.agents[scenario._eval_agent_ids[0]].behavior_model = bark_agent
+
+    world.step(0.2)
+    world.step(0.2)
     world.step(0.2)
 
 if __name__ == '__main__':
