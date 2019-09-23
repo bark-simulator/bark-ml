@@ -9,6 +9,7 @@ from tf_agents.policies import greedy_policy
 from tf_agents.agents.sac import sac_agent
 from tf_agents.replay_buffers import tf_uniform_replay_buffer
 from tf_agents.utils.common import Checkpointer
+from tf_agents.trajectories import time_step as ts
 
 from src.agents.tfa_agent import TFAAgent
 

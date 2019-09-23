@@ -21,8 +21,8 @@ class StateObserver(ABC):
       self._params["Runtime"]["ML"]["Observer"]["max_num_agents",
       "The concatenation state size is the ego agent plus max num other agents",
       4]
-    self._world_x_range = None
-    self._world_y_range = None
+    self._world_x_range = [-10000, 10000]
+    self._world_y_range = [-10000, 10000]
 
   @abstractmethod
   def observe(self, world, agents_to_observe):
