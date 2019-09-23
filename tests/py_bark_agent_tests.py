@@ -55,13 +55,18 @@ class PyBarkAgentTests(unittest.TestCase):
     scenario, idx = scenario_generator.get_next_scenario()
     world = scenario.get_world_state()
 
+    # bark agent
     dynamic_model = world.agents[scenario._eval_agent_ids[0]].dynamic_model
     bark_agent = BARKMLBehaviorModel(configuration, dynamic_model, scenario._eval_agent_ids)
     world.agents[scenario._eval_agent_ids[0]].behavior_model = bark_agent
 
-    world.step(0.2)
-    world.step(0.2)
-    world.step(0.2)
+
+    for _ in range(0, 10):
+      configuration._viewer.drawWorld(world)
+      world.step(0.2)
+      print(world.agents[scenario._eval_agent_ids[0]].state)
+    
+
 
 if __name__ == '__main__':
   unittest.main()
