@@ -13,7 +13,7 @@ class GoalReached(StateEvaluator):
     self._goal_reward = \
       self._params["ML"]["Evaluator"]["goal_reward",
         "Reward for reaching the goal.",
-        1.]
+        100.]
     self._collision_penalty = \
       self._params["ML"]["Evaluator"]["collision_penalty",
         "Reward given for a collisions.",
