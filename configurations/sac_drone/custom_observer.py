@@ -20,26 +20,25 @@ class CustomObserver(SimpleObserver):
 
     
   def observe(self, world, agents_to_observe):
-    # TODO(@hart): modify for conditional input
     return super(CustomObserver, self).observe(world, agents_to_observe)
 
   # TODO(@hart): HACK
   def _normalize(self, agent_state):
     agent_state = \
       self._norm(agent_state,
-                 6,
+                 6,  # x
                  self._world_x_range)
     agent_state = \
       self._norm(agent_state,
-                 9,
+                 9,  # y
                  self._world_y_range)
     agent_state = \
       self._norm(agent_state,
-                 3,
+                 3,  # theta
                  self._theta_range)
     agent_state = \
       self._norm(agent_state,
-                 4,
+                 4,  # v
                  self._velocity_range)
     return agent_state
 
