@@ -110,7 +110,7 @@
       "Evaluator": {
           "max_steps": 40,
           "collision_penalty": -1.0,
-          "goal_reward": 1.0
+          "goal_reward": 100.0
       },
       "Observer": {
           "velocity_range": [0, 10],
