@@ -49,7 +49,7 @@ class PyBarkAgentTests(unittest.TestCase):
 
   def test_bark_agent_in_world(self):
     params = ParameterServer(
-    filename="configurations/sac_highway_uniform/config.json")
+      filename="configurations/sac_highway_uniform/config.json")
     configuration = SACHighwayConfiguration(params)
     scenario_generator = configuration._scenario_generator
     scenario, idx = scenario_generator.get_next_scenario()

@@ -22,6 +22,7 @@ from src.wrappers.motion_primitives import MotionPrimitives
 from src.evaluators.goal_reached import GoalReached
 
 class PyRuntimeRLTests(unittest.TestCase):
+  @unittest.skip("...")
   def test_runtime_rl(self):
     params = ParameterServer(
       filename="tests/data/deterministic_scenario_test.json")
@@ -76,6 +77,7 @@ class PyRuntimeRLTests(unittest.TestCase):
     end_time = time.time()
     print("100 runs took {}s.".format(str(end_time-start_time)))
 
+  @unittest.skip("...")
   def test_motion_primitives_concat_state(self):
     params = ParameterServer(
       filename="tests/data/deterministic_scenario_test.json")
@@ -111,6 +113,40 @@ class PyRuntimeRLTests(unittest.TestCase):
           break
 
 
+  def test_triple_int(self):
+    params = ParameterServer(
+      filename="tests/data/deterministic_scenario_drone_test.json")
+    scenario_generation = DeterministicScenarioGeneration(num_scenarios=3,
+                                                          random_seed=0,
+                                                          params=params)
+    state_observer = SimpleObserver(params=params)
+    action_wrapper = DynamicModel(model_name="TripleIntegratorModel",
+                                  params=params)
+    evaluator = GoalReached(params=params)
+    viewer = MPViewer(params=params,
+                      x_range=[-30,30],
+                      y_range=[-40,40],
+                      use_world_bounds=True)
+
+    runtimerl = RuntimeRL(action_wrapper=action_wrapper,
+                          observer=state_observer,
+                          evaluator=evaluator,
+                          step_time=0.2,
+                          viewer=viewer,
+                          scenario_generator=scenario_generation,
+                          render=False)
+
+    for _ in range(0, 1):
+      runtimerl.reset()
+      for _ in range(0, 10): # run each scenario for 10 steps
+        action = action_wrapper.action_space.sample()
+        next_observed_state, reward, done, info = \
+          runtimerl.step(action)
+        if done:
+          print("State: {} \n Reward: {} \n Done {}, Info: {} \n \
+              =================================================". \
+            format(next_observed_state, reward, done, info))
+          break
 
 if __name__ == '__main__':
   unittest.main()
