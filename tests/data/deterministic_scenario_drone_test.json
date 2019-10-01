@@ -10,11 +10,10 @@
                     "dynamic_model": "SingleTrackModel",
                     "execution_model": "ExecutionModelInterpolate",
                     "id": 100,
-                    "state": [ 0.0,
-                               0.0, 1.0, 0.0,
-                               0.0, 1.0, 0.0,
-                               0.0, 1.0, 0.0
-                    ],
+                    "state": [ 0.0, 0.0,  0.0,  0.0,  0.0,  0.0,
+                        0.0, 1.0, 0.0,
+                        0.0, 1.0, 0.0,
+                        0.0, 1.0, 0.0],
                     "shape": {
                         "polygon_points": [
                             [
@@ -310,6 +309,6 @@
       }
   },
   "DynamicModel": {
-    "state_dimension": 10
+    "state_dimension": 15
   }
 }
