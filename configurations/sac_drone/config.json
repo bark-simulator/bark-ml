@@ -12,8 +12,8 @@
                     "id": 100,
                     "state": [ 0.0, 0.0,  0.0,  0.0,  0.0,  0.0,
                                0.0, 1.0, 0.0,
-                               0.0, 1.0, 0.0,
-                               0.0, 1.0, 0.0
+                               0.0, 0.0, 0.0,
+                               0.0, 0.0, 0.0
                     ],
                     "shape": {
                         "polygon_points": [
@@ -68,8 +68,8 @@
                           ]
                       ],
                       "center_pose": [
-                          5112.626,
-                          5200.8305,
+                          20.626,
+                          20.8305,
                           0.0
                       ]
                     },
@@ -120,10 +120,10 @@
       },
       "Runner": {
           "number_of_collections": 100000,
-          "initial_collection_steps": 1000,
+          "initial_collection_steps": 250,
           "collection_episodes_per_cycle": 2,
-          "evaluate_every_n_steps": 1000,
-          "evaluation_steps": 25,
+          "evaluate_every_n_steps": 250,
+          "evaluation_steps": 20,
           "summary_path": "/home/hart/Dokumente/2019/bark-ml/configurations/sac_drone/summaries/"
       },
       "DynamicModel": {
