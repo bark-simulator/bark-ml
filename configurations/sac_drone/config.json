@@ -105,18 +105,18 @@
           "batch_size": 256,
           "buffer_num_steps": 2,
           "buffer_prefetch": 3,
-          "checkpoint_path": "/home/hart/Dokumente/2019/bark-ml/configurations/sac_drone/checkpoints/"
+          "checkpoint_path": "/Users/hart/2019/bark-ml/configurations/sac_drone/checkpoints/"
       },
       "Evaluator": {
-          "max_steps": 60,
+          "max_steps": 40,
           "collision_penalty": -1.0,
           "goal_reward": 1.0
       },
       "Observer": {
-          "velocity_range": [0, 30],
+          "velocity_range": [0, 10],
           "theta_range": [0.0, 6.29],
           "normalization_enabled": true,
-          "max_num_agents": 2
+          "max_num_agents": 1
       },
       "Runner": {
           "number_of_collections": 100000,
@@ -124,12 +124,12 @@
           "collection_episodes_per_cycle": 2,
           "evaluate_every_n_steps": 250,
           "evaluation_steps": 20,
-          "summary_path": "/home/hart/Dokumente/2019/bark-ml/configurations/sac_drone/summaries/"
+          "summary_path": "/Users/hart/2019/bark-ml/configurations/sac_drone/summaries/"
       },
       "DynamicModel": {
           "action_dimension": 3,
-          "actions_lower_bound": [-1.0, -0.1, -0.1],
-          "actions_upper_bound": [1.0, 0.1, 0.1]
+          "actions_lower_bound": [-2.0, -2.0, -2.0],
+          "actions_upper_bound": [2.0, 2.0, 2.0]
       },
       "MotionPrimitives": {
           "motion_primitives": [[4.0, 0.0],

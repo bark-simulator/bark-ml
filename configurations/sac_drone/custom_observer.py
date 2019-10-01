@@ -35,7 +35,7 @@ class CustomObserver(SimpleObserver):
     agent_state = \
       self._norm(agent_state,
                  3,  # theta
-                 self._theta_range)
+                 [-np.pi, np.pi])
     agent_state = \
       self._norm(agent_state,
                  4,  # v
