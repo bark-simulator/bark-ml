@@ -11,6 +11,7 @@ class CustomEvaluator(GoalReached):
   """Shows the capability of custom elements inside
      a configuration.
   """
+  
   def __init__(self,
                params=ParameterServer(),
                eval_agent=None):
