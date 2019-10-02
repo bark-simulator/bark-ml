@@ -61,4 +61,3 @@ class CustomEvaluator(GoalReached):
       success * self._goal_reward - 0.1*distance - 0.1*agent_velocity
     return reward, done, eval_results
     
-

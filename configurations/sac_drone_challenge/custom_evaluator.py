@@ -17,7 +17,7 @@ class CustomEvaluator(GoalReached):
     GoalReached.__init__(self,
                          params,
                          eval_agent)
-    self._next_goal_definition = None
+    self._next_goal_definition = -1
 
   def _add_evaluators(self):
     self._evaluators["goal_reached"] = EvaluatorGoalReached(self._eval_agent)
@@ -47,7 +47,7 @@ class CustomEvaluator(GoalReached):
 
     next_goal = world.agents[self._eval_agent].goal_definition. \
       GetNextGoal(world.agents[self._eval_agent])
-    if self._next_goal_definition is None:
+    if self._next_goal_definition is -1:
       self._next_goal_definition = next_goal
 
     # intermediate goals
@@ -66,4 +66,7 @@ class CustomEvaluator(GoalReached):
       success * self._goal_reward - 0.01*distance
     return reward, done, eval_results
     
-
+  def reset(self, world, agents_to_evaluate):
+    super().reset(world, agents_to_evaluate)
+    self._next_goal_definition = -1
+    
