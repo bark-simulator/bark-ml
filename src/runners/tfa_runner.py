@@ -137,7 +137,8 @@ class TFARunner(BaseRunner):
           action_step = self._agent._eval_policy.action(ts.transition(state, reward=0.0, discount=1.0))
           print(action_step)
           # TODO(@hart); make generic for multi agent planning
-          state, _, is_terminal, _ = self._unwrapped_runtime.step(action_step.action.numpy())
+          state, reward, is_terminal, _ = self._unwrapped_runtime.step(action_step.action.numpy())
+          print(reward)
           self._unwrapped_runtime.render()
           # TODO(@hart): could add flag for real-time-feel visualization
           time.sleep(0.001)

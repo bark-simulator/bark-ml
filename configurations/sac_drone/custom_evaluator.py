@@ -30,7 +30,8 @@ class CustomEvaluator(GoalReached):
     # should read parameter that has been set in the observer
     # print(self._params["ML"]["Maneuver"]["lane_change"])
     agent_state = world.agents[self._eval_agent].state
-    agent_velocity = np.sqrt((agent_state[4] - 10.)**2)
+    distance = np.sqrt((21. - agent_state[1])**2 + \
+                       (21. - agent_state[2])**2)
     done = False
     success = eval_results["goal_reached"]
     collision = eval_results["ego_collision"]
@@ -38,9 +39,10 @@ class CustomEvaluator(GoalReached):
     # determine whether the simulation should terminate
     if success or collision or step_count > self._max_steps:
       done = True
+    # print("Distance: {}m".format(str(distance)))
     # calculate reward
     reward = collision * self._collision_penalty + \
-      success * self._goal_reward
+      success * self._goal_reward - 0.1*distance
     return reward, done, eval_results
     
 

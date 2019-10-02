@@ -53,8 +53,8 @@ class SACHighwayConfiguration(BaseConfiguration):
     self._evaluator = CustomEvaluator(params=self._params)
 
     viewer = MPViewer(params=self._params,
-                      x_range=[-30,30],
-                      y_range=[-20,40],
+                      x_range=[-40,40],
+                      y_range=[-40,40],
                       follow_agent_id=True)
     self._viewer = viewer
     # self._viewer = VideoRenderer(renderer=viewer, world_step_time=0.2)
@@ -78,8 +78,8 @@ def run_configuration(argv):
   if FLAGS.mode == 'train':
     configuration.train()
   elif FLAGS.mode == 'visualize':
-    configuration.visualize(5)
-    # configuration._viewer.export_video("/home/hart/Dokumente/2019/bark-ml/configurations/sac_drone/video/lane_merge")
+    configuration.visualize(1)
+    # configuration._viewer.export_video("/home/hart/Dokumente/2019/bark-ml/configurations/sac_drone/video/drone_rl")
   elif FLAGS.mode == 'evaluate':
     configuration.evaluate()
 

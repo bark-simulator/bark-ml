@@ -48,4 +48,5 @@ class GoalReached(StateEvaluator):
       success * self._goal_reward
     return reward, done, eval_results
     
-
+  def reset(self, world, agents_to_evaluate):
+    return super(GoalReached, self).reset(world, agents_to_evaluate)
