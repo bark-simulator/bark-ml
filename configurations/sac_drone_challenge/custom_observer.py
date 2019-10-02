@@ -18,7 +18,7 @@ class CustomObserver(SimpleObserver):
                               3,  # theta
                               4]  # v
 
-    
+  # TODO(@hart): implement relative observer
   def observe(self, world, agents_to_observe):
     return super(CustomObserver, self).observe(world, agents_to_observe)
 

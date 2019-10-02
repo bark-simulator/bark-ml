@@ -18,6 +18,7 @@ class CustomEvaluator(GoalReached):
                          params,
                          eval_agent)
     self._next_goal_definition = -1
+    self._last_distance = None
 
   def _add_evaluators(self):
     self._evaluators["goal_reached"] = EvaluatorGoalReached(self._eval_agent)
@@ -62,8 +63,13 @@ class CustomEvaluator(GoalReached):
     distance = self._distance_to_next_goal(world)
     # print("Distance: {}m".format(str(distance)))
 
+    if self._last_distance is None:
+      self._last_distance  = distance
+    else:
+      reward += 0.1*(self._last_distance - distance)
+
     reward += collision * self._collision_penalty + \
-      success * self._goal_reward - 0.01*distance
+      success * self._goal_reward
     return reward, done, eval_results
     
   def reset(self, world, agents_to_evaluate):

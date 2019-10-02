@@ -130,6 +130,7 @@ class TFARunner(BaseRunner):
     # to do the rendering in the original environment
     if self._unwrapped_runtime is not None:
       for _ in range(0, num_episodes):
+        print("====================================================")
         state = self._unwrapped_runtime.reset()
         is_terminal = False
         while not is_terminal:
