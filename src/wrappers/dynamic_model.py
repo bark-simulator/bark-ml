@@ -31,7 +31,6 @@ class DynamicModel(ActionWrapper):
                                     agents_to_act=agents_to_act)
     self._behavior_model = DynamicBehaviorModel(self._dynamic_model,
                                                 self._params)
-    # TODO(@hart); make generic for multi agent planning
     ego_agent_id = agents_to_act[0]
     if ego_agent_id in world.agents:
       world.agents[ego_agent_id].behavior_model = self._behavior_model

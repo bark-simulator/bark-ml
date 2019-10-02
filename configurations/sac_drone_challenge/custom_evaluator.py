@@ -67,6 +67,7 @@ class CustomEvaluator(GoalReached):
     return reward, done, eval_results
     
   def reset(self, world, agents_to_evaluate):
-    super().reset(world, agents_to_evaluate)
+    world = super(CustomEvaluator, self).reset(world, agents_to_evaluate)
     self._next_goal_definition = -1
+    return world
     
