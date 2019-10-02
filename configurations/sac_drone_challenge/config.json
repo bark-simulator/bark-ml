@@ -1,7 +1,7 @@
 {
   "Scenario": {
       "Generation": {
-          "DeterministicScenarioGeneration": {
+          "DeterministicDroneChallengeGeneration": {
               "MapFilename": "tests/data/city_highway_straight.xodr",
               "Agents" : [
                   {
@@ -10,33 +10,26 @@
                     "dynamic_model": "SingleTrackModel",
                     "execution_model": "ExecutionModelInterpolate",
                     "id": 100,
-                    "state": [ 0.0, 0.0,  0.0,  0.0,  0.0,  0.0,
-                               0.0, 1.0, 0.0,
-                               0.0, 0.0, 0.0,
-                               0.0, 0.0, 0.0
+                    "state": [ [0, 0],
+                               [0, 0],
+                               [0, 0], 
+                               [0, 0],
+                               [0, 0],
+                               [0, 0],
+                               [0, 10],
+                               [1, 2],
+                               [0, 0],
+                               [0, 10],
+                               [1, 2],
+                               [0, 0],
+                               [0, 0],
+                               [0, 0],
+                               [0, 0]
                     ],
                     "shape": {
                         "polygon_points": [
-                            [
-                                0.0,
-                                0.0
-                            ],
-                            [
-                                2.0,
-                                0.0
-                            ],
-                            [
-                                2.0,
-                                2.0
-                            ],
-                            [
-                                0.0,
-                                2.0
-                            ],
-                            [
-                                0.0,
-                                0.0
-                            ]
+                            [0.3,0.1],
+                            [0.3,-0.1],[0.1,-0.3],[-0.1,-0.3],[-0.3,-0.1],[-0.3,0.1],[-0.1,0.3],[0.1,0.3],[0.3,0.1]
                         ],
                         "center_pose": [
                             0.0,
@@ -105,7 +98,7 @@
           "batch_size": 256,
           "buffer_num_steps": 2,
           "buffer_prefetch": 3,
-          "checkpoint_path": "/home/hart/Dokumente/2019/bark-ml/configurations/sac_drone/checkpoints/"
+          "checkpoint_path": "/home/hart/Dokumente/2019/bark-ml/configurations/sac_drone_challenge/checkpoints/"
       },
       "Evaluator": {
           "max_steps": 40,
@@ -124,7 +117,7 @@
           "collection_episodes_per_cycle": 2,
           "evaluate_every_n_steps": 250,
           "evaluation_steps": 20,
-          "summary_path": "/home/hart/Dokumente/2019/bark-ml/configurations/sac_drone/summaries/"
+          "summary_path": "/home/hart/Dokumente/2019/bark-ml/configurations/sac_drone_challenge/summaries/"
       },
       "DynamicModel": {
           "action_dimension": 3,
