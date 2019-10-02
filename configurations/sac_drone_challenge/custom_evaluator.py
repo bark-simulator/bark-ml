@@ -17,7 +17,7 @@ class CustomEvaluator(GoalReached):
     GoalReached.__init__(self,
                          params,
                          eval_agent)
-
+    self._next_goal_definition = None
   def _add_evaluators(self):
     self._evaluators["goal_reached"] = EvaluatorGoalReached(self._eval_agent)
     self._evaluators["ego_collision"] = \
@@ -36,12 +36,24 @@ class CustomEvaluator(GoalReached):
     success = eval_results["goal_reached"]
     collision = eval_results["ego_collision"]
     step_count = eval_results["step_count"]
+
+    next_goal = world.agents[self._eval_agent].goal_definition. \
+      GetNextGoal(world.agents[self._eval_agent])
+    if self._next_goal_definition is None:
+      self._next_goal_definition = next_goal
+
+    # intermediate goals
+    reward = 0.
+    if self._next_goal_definition is not next_goal:
+      reward += 10.
+      self._next_goal_definition = next_goal
+    
     # determine whether the simulation should terminate
     if success or collision or step_count > self._max_steps:
       done = True
     # print("Distance: {}m".format(str(distance)))
-    # calculate reward
-    reward = collision * self._collision_penalty + \
+
+    reward += collision * self._collision_penalty + \
       success * self._goal_reward - 0.1*distance
     return reward, done, eval_results
     

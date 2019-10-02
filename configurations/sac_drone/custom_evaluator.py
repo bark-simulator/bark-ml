@@ -30,8 +30,8 @@ class CustomEvaluator(GoalReached):
     # should read parameter that has been set in the observer
     # print(self._params["ML"]["Maneuver"]["lane_change"])
     agent_state = world.agents[self._eval_agent].state
-    distance = np.sqrt((21. - agent_state[3])**2 + \
-                       (21. - agent_state[6])**2)
+    distance = np.sqrt((21. - agent_state[1])**2 + \
+                       (21. - agent_state[2])**2)
     done = False
     success = eval_results["goal_reached"]
     collision = eval_results["ego_collision"]
