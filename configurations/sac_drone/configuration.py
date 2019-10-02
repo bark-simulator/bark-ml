@@ -78,8 +78,8 @@ def run_configuration(argv):
   if FLAGS.mode == 'train':
     configuration.train()
   elif FLAGS.mode == 'visualize':
-    configuration.visualize(5)
-    # configuration._viewer.export_video("/home/hart/Dokumente/2019/bark-ml/configurations/sac_drone/video/lane_merge")
+    configuration.visualize(1)
+    # configuration._viewer.export_video("/home/hart/Dokumente/2019/bark-ml/configurations/sac_drone/video/drone_rl")
   elif FLAGS.mode == 'evaluate':
     configuration.evaluate()
 
