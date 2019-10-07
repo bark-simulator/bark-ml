@@ -22,7 +22,7 @@ from src.wrappers.dynamic_model import DynamicModel
 from src.wrappers.tfa_wrapper import TFAWrapper
 from src.evaluators.goal_reached import GoalReached
 from src.agents.ppo_agent import PPOAgent
-from src.runners.tfa_runner import TFARunner
+from src.runners.ppo_runner import PPORunner
 from configurations.base_configuration import BaseConfiguration
 
 # configuration specific evaluator
@@ -75,7 +75,7 @@ class PPODroneChallenge(BaseConfiguration):
       parallel_py_environment.ParallelPyEnvironment(
         [lambda: TFAWrapper(self._runtime)] * self._params["ML"]["Agent"]["num_parallel_environments"]))
     self._agent = PPOAgent(tfa_env, params=self._params)
-    self._runner = TFARunner(tfa_env,
+    self._runner = PPORunner(tfa_env,
                              self._agent,
                              params=self._params,
                              unwrapped_runtime=self._runtime)
