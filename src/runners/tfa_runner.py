@@ -35,9 +35,9 @@ class TFARunner(BaseRunner):
                         params=params)
     self._eval_metrics = [
       tf_metrics.AverageReturnMetric(
-        buffer_size=self._params["ML"]["Runner"]["evaluation_steps"]),
+        buffer_size=self._params["ML"]["Agent"]["num_parallel_environments"]),
       tf_metrics.AverageEpisodeLengthMetric(
-        buffer_size=self._params["ML"]["Runner"]["evaluation_steps"])
+        buffer_size=self._params["ML"]["Agent"]["num_parallel_environments"])
     ]
     self._summary_writer = None
     self._unwrapped_runtime = unwrapped_runtime
@@ -100,7 +100,7 @@ class TFARunner(BaseRunner):
       self._agent._agent.train(experience=trajectories)
       self._agent._replay_buffer.clear()
       if global_iteration % self._params["ML"]["Runner"]["evaluate_every_n_steps"] == 0:
-        self.evaluate()
+        # self.evaluate()
         self._agent.save()
 
   def evaluate(self):

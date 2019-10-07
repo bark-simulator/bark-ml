@@ -90,19 +90,19 @@
           "actor_fc_layer_params": [256, 256],
           "critic_fc_layer_params": [256, 256],
           "learning_rate": 1e-4,
-          "num_epochs": 25,
+          "num_epochs": 30,
           "agent_name": "ppo_agent",
           "debug_summaries": false,
-          "replay_buffer_capacity": 100000,
+          "replay_buffer_capacity": 10000,
           "max_ckpts_to_keep": 3,
-          "batch_size": 56,
+          "num_parallel_environments": 30,
           "parallel_buffer_calls": 1,
           "buffer_num_steps": 1,
           "buffer_prefetch": 1,
           "checkpoint_path": "/home/hart/Dokumente/2019/bark-ml/configurations/ppo_drone_challenge/checkpoints/"
       },
       "Evaluator": {
-          "max_steps": 50,
+          "max_steps": 100,
           "collision_penalty": -1.0,
           "goal_reward": 100.0
       },

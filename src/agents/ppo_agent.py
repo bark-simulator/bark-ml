@@ -26,7 +26,7 @@ class PPOAgent(TFAAgent):
                       environment=environment,
                       params=params)
     self._replay_buffer = self.get_replay_buffer()
-    self._dataset = self.get_dataset()
+    # self._dataset = self.get_dataset()
     self._collect_policy = self.get_collect_policy()
     self._eval_policy = self.get_eval_policy()
 
@@ -77,21 +77,21 @@ class PPOAgent(TFAAgent):
     """
     return tf_uniform_replay_buffer.TFUniformReplayBuffer(
       data_spec=self._agent.collect_data_spec,
-      batch_size=self._env.batch_size,
+      batch_size=self._params["ML"]["Agent"]["num_parallel_environments"],
       max_length=self._params["ML"]["Agent"]["replay_buffer_capacity"])
 
-  def get_dataset(self):
-    """Dataset generated of the replay buffer
+  # def get_dataset(self):
+  #   """Dataset generated of the replay buffer
     
-    Returns:
-        dataset -- subset of experiences
-    """
-    dataset = self._replay_buffer.as_dataset(
-      num_parallel_calls=self._params["ML"]["Agent"]["parallel_buffer_calls"],
-      sample_batch_size=self._params["ML"]["Agent"]["batch_size"],
-      num_steps=self._params["ML"]["Agent"]["buffer_num_steps"]) \
-        .prefetch(self._params["ML"]["Agent"]["buffer_prefetch"])
-    return dataset
+  #   Returns:
+  #       dataset -- subset of experiences
+  #   """
+  #   dataset = self._replay_buffer.as_dataset(
+  #     num_parallel_calls=self._params["ML"]["Agent"]["parallel_buffer_calls"],
+  #     sample_batch_size=self._params["ML"]["Agent"]["batch_size"],
+  #     num_steps=self._params["ML"]["Agent"]["buffer_num_steps"]) \
+  #       .prefetch(self._params["ML"]["Agent"]["buffer_prefetch"])
+  #   return dataset
 
   def get_collect_policy(self):
     """Returns the collection policy of the agent

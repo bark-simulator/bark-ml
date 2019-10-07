@@ -3,6 +3,7 @@ from absl import app
 from absl import flags
 import tensorflow as tf
 from tf_agents.environments import tf_py_environment
+from tf_agents.environments import parallel_py_environment
 
 from modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution \
   import UniformVehicleDistribution
@@ -69,7 +70,10 @@ class PPODroneChallenge(BaseConfiguration):
                               step_time=0.2,
                               viewer=self._viewer,
                               scenario_generator=self._scenario_generator)
-    tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(self._runtime))
+    # tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(self._runtime))
+    tfa_env = tf_py_environment.TFPyEnvironment(
+      parallel_py_environment.ParallelPyEnvironment(
+        [lambda: TFAWrapper(self._runtime)] * self._params["ML"]["Agent"]["num_parallel_environments"]))
     self._agent = PPOAgent(tfa_env, params=self._params)
     self._runner = TFARunner(tfa_env,
                              self._agent,
@@ -81,12 +85,13 @@ def run_configuration(argv):
   configuration = PPODroneChallenge(params)
   
   if FLAGS.mode == 'train':
-    logger.setLevel("ERROR")
+    # logger.setLevel("ERROR")
     configuration.train()
   elif FLAGS.mode == 'visualize':
+    params["ML"]["Agent"]["num_parallel_environments"] = 1
     logger.setLevel("INFO")
     configuration.visualize(5)
-    # configuration._viewer.export_video("/home/hart/Dokumente/2019/bark-ml/configurations/ppo_drone_challenge/video/lane_merge")
+    # configuration._viewer.export_video("/home/hart/Dokumente/2019/bark-ml/configurations/ppo_drone_challenge/video/race_drone")
   elif FLAGS.mode == 'evaluate':
     configuration.evaluate()
 
