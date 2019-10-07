@@ -21,10 +21,27 @@ class CustomObserver(SimpleObserver):
                               13] 
     self._observation_len = \
       self._max_num_vehicles*self._len_state
-      
+
+  def _norm_value(self, value, range):
+    value = (value - range[0])/(range[1]-range[0])
+    return value
+
   # TODO(@hart): implement relative observer
   def observe(self, world, agents_to_observe):
-    return super(CustomObserver, self).observe(world, agents_to_observe)
+    agent = world.agents[agents_to_observe[0]]
+    next_goal = agent.goal_definition. \
+      GetNextGoal(agent)
+    agent_state = agent.state    
+    center_pt = next_goal.goal_shape.center
+    dx = center_pt[0] - agent_state[6]
+    dy = center_pt[1] - agent_state[9]
+    dz = center_pt[2] - agent_state[12]
+    concatenated_state = super(CustomObserver, self).observe(world, agents_to_observe)
+    # OVERWRITE X, Y, Z
+    concatenated_state[0] = self._norm_value(dx, [-90., 90.])
+    concatenated_state[2] = self._norm_value(dy, [-90., 90.])
+    concatenated_state[4] = self._norm_value(dz, [-90., 90.])
+    return concatenated_state
 
   # TODO(@hart): HACK
   def _normalize(self, agent_state):

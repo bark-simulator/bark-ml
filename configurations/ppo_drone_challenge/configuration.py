@@ -13,6 +13,7 @@ from modules.runtime.scenario.scenario_generation.deterministic_drone_challenge 
   import DeterministicDroneChallengeGeneration
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
+# from modules.runtime.viewer.pygame_viewer import PygameViewer
 from modules.runtime.viewer.video_renderer import VideoRenderer
 
 
