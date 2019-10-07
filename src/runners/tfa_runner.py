@@ -90,12 +90,15 @@ class TFARunner(BaseRunner):
   def _train(self):
     """Trains the agent as specified in the parameter file
     """
-    iterator = iter(self._agent._dataset)
+    # iterator = iter(self._agent._dataset)
     for _ in range(0, self._params["ML"]["Runner"]["number_of_collections"]):
       global_iteration = self._agent._agent._train_step_counter.numpy()
       self._collection_driver.run()
-      experience, _ = next(iterator)
-      self._agent._agent.train(experience)
+      # experience, _ = next(iterator)
+      # self._agent._agent.train(experience)
+      trajectories = self._agent._replay_buffer.gather_all()
+      self._agent._agent.train(experience=trajectories)
+      self._agent._replay_buffer.clear()
       if global_iteration % self._params["ML"]["Runner"]["evaluate_every_n_steps"] == 0:
         self.evaluate()
         self._agent.save()

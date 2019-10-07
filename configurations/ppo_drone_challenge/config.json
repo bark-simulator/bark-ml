@@ -89,7 +89,8 @@
       "Agent": {
           "actor_fc_layer_params": [256, 256],
           "critic_fc_layer_params": [256, 256],
-          "actor_learning_rate": 1e-4,
+          "learning_rate": 1e-4,
+          "num_epochs": 25,
           "agent_name": "ppo_agent",
           "debug_summaries": false,
           "replay_buffer_capacity": 100000,

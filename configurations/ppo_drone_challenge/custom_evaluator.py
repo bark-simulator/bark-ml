@@ -35,7 +35,7 @@ class CustomEvaluator(GoalReached):
       agent = world.agents[self._eval_agent]
       agent_state = agent.state
       goal_poly = self._next_goal_definition.goal_shape
-      agent_pt = Point2d(agent_state[1], agent_state[2])
+      agent_pt = Point2d(agent_state[6], agent_state[9])
       return distance(goal_poly, agent_pt)
 
   def _evaluate(self, world, eval_results):

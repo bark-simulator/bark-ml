@@ -13,7 +13,7 @@ from tf_agents.trajectories import time_step as ts
 from src.agents.tfa_agent import TFAAgent
 
 class PPOAgent(TFAAgent):
-  """SAC-Agent
+  """PPO-Agent
      This agent is based on the tf-agents library.
   """
   def __init__(self,
@@ -31,7 +31,7 @@ class PPOAgent(TFAAgent):
     self._eval_policy = self.get_eval_policy()
 
   def get_agent(self, env, params):
-    """Returns a TensorFlow SAC-Agent
+    """Returns a TensorFlow PPO-Agent
     
     Arguments:
         env {TFAPyEnvironment} -- Tensorflow-Agents PyEnvironment

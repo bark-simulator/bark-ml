@@ -36,7 +36,7 @@ flags.DEFINE_enum('mode',
                   ['train', 'visualize', 'evaluate'],
                   'Mode the configuration should be executed in.')
 
-class SACDroneChallenge(BaseConfiguration):
+class PPODroneChallenge(BaseConfiguration):
   """Hermetic and reproducible configuration class
   """
   def __init__(self,
@@ -78,7 +78,7 @@ class SACDroneChallenge(BaseConfiguration):
 
 def run_configuration(argv):
   params = ParameterServer(filename="configurations/ppo_drone_challenge/config.json")
-  configuration = SACDroneChallenge(params)
+  configuration = PPODroneChallenge(params)
   
   if FLAGS.mode == 'train':
     logger.setLevel("ERROR")
