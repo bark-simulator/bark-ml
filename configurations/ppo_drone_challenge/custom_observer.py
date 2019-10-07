@@ -18,7 +18,8 @@ class CustomObserver(SimpleObserver):
                               9,  # y
                               10,
                               12,  # z
-                              13] 
+                              13,
+                              5] 
     self._observation_len = \
       self._max_num_vehicles*self._len_state
 
@@ -35,12 +36,13 @@ class CustomObserver(SimpleObserver):
     center_pt = next_goal.goal_shape.center
     dx = center_pt[0] - agent_state[6]
     dy = center_pt[1] - agent_state[9]
-    dz = center_pt[2] - agent_state[12]
+    # dz = center_pt[2] - agent_state[12]
     concatenated_state = super(CustomObserver, self).observe(world, agents_to_observe)
     # OVERWRITE X, Y, Z
     concatenated_state[0] = self._norm_value(dx, [-90., 90.])
     concatenated_state[2] = self._norm_value(dy, [-90., 90.])
-    concatenated_state[4] = self._norm_value(dz, [-90., 90.])
+    concatenated_state[4] = .5
+    concatenated_state[5] = self._norm_value(center_pt[2], [-2*3.14, 2*3.14])
     return concatenated_state
 
   # TODO(@hart): HACK
