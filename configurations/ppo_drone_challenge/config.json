@@ -88,26 +88,17 @@
   "ML": {
       "Agent": {
           "actor_fc_layer_params": [256, 256],
-          "critic_joint_fc_layer_params": [256, 256],
-          "actor_lstm_size": [40],
-          "critic_lstm_size": [40],
-          "actor_learning_rate": 3e-4,
-          "critic_learning_rate": 3e-4,
-          "alpha_learning_rate": 3e-4,
-          "target_update_tau": 0.005,
-          "target_update_period": 1,
-          "gamma": 0.99,
-          "reward_scale_factor": 1.0,
-          "gradient_clipping": null, 
-          "agent_name": "sac_agent",
+          "critic_fc_layer_params": [256, 256],
+          "actor_learning_rate": 1e-4,
+          "agent_name": "ppo_agent",
           "debug_summaries": false,
           "replay_buffer_capacity": 100000,
           "max_ckpts_to_keep": 3,
-          "parallel_buffer_calls": 3,
-          "batch_size": 256,
-          "buffer_num_steps": 2,
-          "buffer_prefetch": 3,
-          "checkpoint_path": "/home/hart/Dokumente/2019/bark-ml/configurations/sac_drone_challenge/checkpoints/"
+          "batch_size": 56,
+          "parallel_buffer_calls": 1,
+          "buffer_num_steps": 1,
+          "buffer_prefetch": 1,
+          "checkpoint_path": "/home/hart/Dokumente/2019/bark-ml/configurations/ppo_drone_challenge/checkpoints/"
       },
       "Evaluator": {
           "max_steps": 50,
@@ -126,7 +117,7 @@
           "collection_episodes_per_cycle": 2,
           "evaluate_every_n_steps": 250,
           "evaluation_steps": 20,
-          "summary_path": "/home/hart/Dokumente/2019/bark-ml/configurations/sac_drone_challenge/summaries/"
+          "summary_path": "/home/hart/Dokumente/2019/bark-ml/configurations/ppo_drone_challenge/summaries/"
       },
       "DynamicModel": {
           "action_dimension": 3,

@@ -16,6 +16,7 @@ class SimpleObserver(StateObserver):
     StateObserver.__init__(self, params)
     self._state_definition = [int(StateDefinition.X_POSITION),
                               int(StateDefinition.Y_POSITION),
+                              int(StateDefinition.Z_POSITION),
                               int(StateDefinition.THETA_POSITION),
                               int(StateDefinition.VEL_POSITION)]
     self._observation_len = \

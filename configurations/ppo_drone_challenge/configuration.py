@@ -20,13 +20,13 @@ from src.observers.nearest_state_observer import ClosestAgentsObserver
 from src.wrappers.dynamic_model import DynamicModel
 from src.wrappers.tfa_wrapper import TFAWrapper
 from src.evaluators.goal_reached import GoalReached
-from src.agents.sac_agent import SACAgent
+from src.agents.ppo_agent import PPOAgent
 from src.runners.tfa_runner import TFARunner
 from configurations.base_configuration import BaseConfiguration
 
 # configuration specific evaluator
-from configurations.sac_drone_challenge.custom_evaluator import CustomEvaluator
-from configurations.sac_drone_challenge.custom_observer import CustomObserver
+from configurations.ppo_drone_challenge.custom_evaluator import CustomEvaluator
+from configurations.ppo_drone_challenge.custom_observer import CustomObserver
 coloredlogs.install()
 logger = logging.getLogger()
 
@@ -46,7 +46,7 @@ class SACDroneChallenge(BaseConfiguration):
       params)
 
   def _build_configuration(self):
-    """Builds a configuration using an SAC agent
+    """Builds a configuration using an PPO agent
     """
     self._scenario_generator = \
       DeterministicDroneChallengeGeneration(num_scenarios=3,
@@ -70,14 +70,14 @@ class SACDroneChallenge(BaseConfiguration):
                               viewer=self._viewer,
                               scenario_generator=self._scenario_generator)
     tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(self._runtime))
-    self._agent = SACAgent(tfa_env, params=self._params)
+    self._agent = PPOAgent(tfa_env, params=self._params)
     self._runner = TFARunner(tfa_env,
                              self._agent,
                              params=self._params,
                              unwrapped_runtime=self._runtime)
 
 def run_configuration(argv):
-  params = ParameterServer(filename="configurations/sac_drone_challenge/config.json")
+  params = ParameterServer(filename="configurations/ppo_drone_challenge/config.json")
   configuration = SACDroneChallenge(params)
   
   if FLAGS.mode == 'train':
@@ -86,7 +86,7 @@ def run_configuration(argv):
   elif FLAGS.mode == 'visualize':
     logger.setLevel("INFO")
     configuration.visualize(5)
-    # configuration._viewer.export_video("/home/hart/Dokumente/2019/bark-ml/configurations/sac_drone_challenge/video/lane_merge")
+    # configuration._viewer.export_video("/home/hart/Dokumente/2019/bark-ml/configurations/ppo_drone_challenge/video/lane_merge")
   elif FLAGS.mode == 'evaluate':
     configuration.evaluate()
 
