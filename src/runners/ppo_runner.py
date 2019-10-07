@@ -84,10 +84,10 @@ class PPORunner(TFARunner):
         state = self._unwrapped_runtime.reset()
         is_terminal = False
         while not is_terminal:
-          print(state)
+          # print(state)
           action_step = self._agent._eval_policy.action(ts.transition(state, reward=0.0, discount=1.0))
-          print(action_step)
+          # print(action_step)
           # TODO(@hart); make generic for multi agent planning
           state, reward, is_terminal, _ = self._unwrapped_runtime.step(action_step.action.numpy())
-          print(reward)
+          # print(reward)
           self._unwrapped_runtime.render()

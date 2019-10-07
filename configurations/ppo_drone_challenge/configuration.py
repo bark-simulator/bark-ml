@@ -13,7 +13,7 @@ from modules.runtime.scenario.scenario_generation.deterministic_drone_challenge 
   import DeterministicDroneChallengeGeneration
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
-# from modules.runtime.viewer.pygame_viewer import PygameViewer
+from modules.runtime.viewer.pygame_viewer import PygameViewer
 from modules.runtime.viewer.video_renderer import VideoRenderer
 
 
@@ -63,6 +63,10 @@ class PPODroneChallenge(BaseConfiguration):
                       x_range=[-20, 20],
                       y_range=[-20, 20],
                       follow_agent_id=True)
+    # viewer = PygameViewer(params=self._params,
+    #                   x_range=[-20, 20],
+    #                   y_range=[-20, 20],
+    #                   follow_agent_id=True)
     self._viewer = viewer
     # self._viewer = VideoRenderer(renderer=viewer, world_step_time=0.2)
     self._runtime = RuntimeRL(action_wrapper=self._behavior_model,
