@@ -122,8 +122,8 @@
       },
       "DynamicModel": {
           "action_dimension": 3,
-          "actions_lower_bound": [-1.0, -1.0, -1.0],
-          "actions_upper_bound": [1.0, 1.0, 1.0]
+          "actions_lower_bound": [-1.0, -1.0, -0.00001],
+          "actions_upper_bound": [1.0, 1.0, 0.00001]
       },
       "MotionPrimitives": {
           "motion_primitives": [[4.0, 0.0],
