@@ -97,7 +97,7 @@
                     "goal": {
                       "polygon_points": [
                           [
-                              0.0,
+                              -4.0,
                               0.0
                           ],
                           [
@@ -109,11 +109,11 @@
                               4.0
                           ],
                           [
-                              0.0,
+                              -4.0,
                               4.0
                           ],
                           [
-                              0.0,
+                              -4.0,
                               0.0
                           ]
                       ],
@@ -137,6 +137,129 @@
                       [0.0, 0.0],
                       [5114.3, 5114.3],
                       [5114.3, 5130.3],
+                      [1.57, 1.57],
+                      [10.0, 15.0]
+                    ],
+                    "shape": {
+                        "polygon_points": [
+                            [
+                                3.8499999046325684,
+                                0.0
+                            ],
+                            [
+                                3.7720000743865967,
+                                -0.4950000047683716
+                            ],
+                            [
+                                3.4260001182556152,
+                                -0.8870000243186951
+                            ],
+                            [
+                                2.9140000343322754,
+                                -0.9559999704360962
+                            ],
+                            [
+                                1.4570000171661377,
+                                -0.9559999704360962
+                            ],
+                            [
+                                0.0,
+                                -0.9559999704360962
+                            ],
+                            [
+                                -0.5120000243186951,
+                                -0.8859999775886536
+                            ],
+                            [
+                                -1.0199999809265137,
+                                -0.5889999866485596
+                            ],
+                            [
+                                -1.11899995803833,
+                                0.0
+                            ],
+                            [
+                                -1.0199999809265137,
+                                0.5889999866485596
+                            ],
+                            [
+                                -0.5120000243186951,
+                                0.8859999775886536
+                            ],
+                            [
+                                0.0,
+                                0.9559999704360962
+                            ],
+                            [
+                                1.4570000171661377,
+                                0.9559999704360962
+                            ],
+                            [
+                                2.9140000343322754,
+                                0.9559999704360962
+                            ],
+                            [
+                                3.4260001182556152,
+                                0.8870000243186951
+                            ],
+                            [
+                                3.7720000743865967,
+                                0.4950000047683716
+                            ],
+                            [
+                                3.8499999046325684,
+                                0.0
+                            ]
+                        ],
+                        "center_pose": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    },
+                    "goal": {
+                      "polygon_points": [
+                            [
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                4.0,
+                                0.0
+                            ],
+                            [
+                                4.0,
+                                4.0
+                            ],
+                            [
+                                0.0,
+                                4.0
+                            ],
+                            [
+                                0.0,
+                                0.0
+                            ]
+                      ],
+                      "center_pose": [
+                          5118.3,
+                          5506.8305,
+                          0.0
+                      ]
+                    },
+                    "followed_trajectory": [],
+                    "planned_trajectory": []
+                    }
+                  },
+                  {
+                    "VehicleModel": {
+                    "behavior_model": "BehaviorConstantVelocity",
+                    "dynamic_model": "SingleTrackModel",
+                    "execution_model": "ExecutionModelInterpolate",
+                    "id": 102,
+                    "state": [
+                      [0.0, 0.0],
+                      [5114.3, 5114.3],
+                      [5124.3, 5140.3],
                       [1.57, 1.57],
                       [10.0, 15.0]
                     ],
@@ -278,26 +401,27 @@
           "batch_size": 256,
           "buffer_num_steps": 2,
           "buffer_prefetch": 3,
-          "checkpoint_path": "/home/tang/catkin_ws/bark-ml/configurations/sac_highway/checkpoints/"
+          "checkpoint_path": "/home/tang/bark-ml/configurations/sac_highway/checkpoints/"
       },
       "Evaluator": {
           "max_steps": 60,
           "collision_penalty": -1.0,
-          "goal_reward": 1.0
+          "goal_reward": 10.0
+
       },
       "Observer": {
           "velocity_range": [0, 30],
           "theta_range": [0.0, 6.29],
           "normalization_enabled": true,
-          "max_num_agents": 2
+          "max_num_agents": 3
       },
       "Runner": {
           "number_of_collections": 100000,
-          "initial_collection_steps": 1000,
+          "initial_collection_steps": 100,
           "collection_episodes_per_cycle": 2,
-          "evaluate_every_n_steps": 1000,
+          "evaluate_every_n_steps": 100,
           "evaluation_steps": 25,
-          "summary_path": "/home/tang/catkin_ws/bark-ml/configurations/sac_highway/summaries/"
+          "summary_path": "/home/tang/bark-ml/configurations/sac_highway/summaries/"
       },
       "DynamicModel": {
           "action_dimension": 2,

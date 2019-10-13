@@ -24,15 +24,18 @@ class SimpleObserver(StateObserver):
   def observe(self, world, agents_to_observe):
     """see base class
     """
+
     concatenated_state = np.zeros(self._observation_len, dtype=np.float32)
     for i, (_, agent) in enumerate(world.agents.items()):
       normalized_state = self._normalize(agent.state)
       reduced_state = self._select_state_by_index(normalized_state)
       starts_id = i*self._len_state
       concatenated_state[starts_id:starts_id+self._len_state] = reduced_state
+      
       if i >= self._max_num_vehicles:
         break
     return concatenated_state
+  
 
   def _norm(self, agent_state, position, range):
     agent_state[int(position)] = \

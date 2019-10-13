@@ -7,6 +7,7 @@ from bark.geometry import *
 
 from src.evaluators.goal_reached import GoalReached
 
+
 class CustomEvaluator(GoalReached):
   """Shows the capability of custom elements inside
      a configuration.
@@ -23,6 +24,7 @@ class CustomEvaluator(GoalReached):
     self._evaluators["goal_reached"] = EvaluatorGoalReached(self._eval_agent)
     self._evaluators["ego_collision"] = \
       EvaluatorCollisionEgoAgent(self._eval_agent)
+    self._evaluators["Corridor"] = EvaluatorCollisionDrivingCorridor()
     self._evaluators["step_count"] = EvaluatorStepCount()
 
   def _distance_to_center_line(self, world):
@@ -38,8 +40,15 @@ class CustomEvaluator(GoalReached):
     agent = world.agents[self._eval_agent]
     agent_state = agent.state
     centerline = agent.local_map.get_driving_corridor().center
+    lane_change = \
+    self._params["ML"]["Maneuver"]["lane_change"]
     # TODO(@hart): HACK; to see whether a lane-change can be learned
-    agent_xy = Point2d(agent.state[1] - 4., agent.state[2])
+    # if lane_change = 1, do the lane-change, otherwise stay in the original lane
+    if lane_change == 1:
+      agent_xy = Point2d(agent.state[1]-4., agent.state[2])
+    else:
+      agent_xy = Point2d(agent.state[1], agent.state[2])
+
     return distance(centerline, agent_xy)
 
   def _evaluate(self, world, eval_results):
@@ -59,7 +68,7 @@ class CustomEvaluator(GoalReached):
       done = True
     # calculate reward
     reward = collision * self._collision_penalty + \
-      success * self._goal_reward - 0.1*distance - 0.1*agent_velocity
+      success * self._goal_reward - 0.1*distance #- 0.1*agent_velocity
     return reward, done, eval_results
     
 
