@@ -12,7 +12,6 @@ class CustomEvaluator(GoalReached):
   """Shows the capability of custom elements inside
      a configuration.
   """
-  
   def __init__(self,
                params=ParameterServer(),
                eval_agent=None):
@@ -24,7 +23,7 @@ class CustomEvaluator(GoalReached):
     self._evaluators["goal_reached"] = EvaluatorGoalReached(self._eval_agent)
     self._evaluators["ego_collision"] = \
       EvaluatorCollisionEgoAgent(self._eval_agent)
-    self._evaluators["Corridor"] = EvaluatorCollisionDrivingCorridor()
+    self._evaluators["corridor"] = EvaluatorCollisionDrivingCorridor()
     self._evaluators["step_count"] = EvaluatorStepCount()
 
   def _distance_to_center_line(self, world):
@@ -40,24 +39,20 @@ class CustomEvaluator(GoalReached):
     agent = world.agents[self._eval_agent]
     agent_state = agent.state
     centerline = agent.local_map.get_driving_corridor().center
+
     lane_change = \
     self._params["ML"]["Maneuver"]["lane_change"]
-    # TODO(@hart): HACK; to see whether a lane-change can be learned
-    # if lane_change = 1, do the lane-change, otherwise stay in the original lane
     if lane_change == 1:
-      agent_xy = Point2d(agent.state[1]-4., agent.state[2])
+      agent_xy = Point2d(agent.state[1] - 4., agent.state[2])
     else:
       agent_xy = Point2d(agent.state[1], agent.state[2])
-
     return distance(centerline, agent_xy)
 
   def _evaluate(self, world, eval_results):
     """Returns information about the current world state
     """
-    # should read parameter that has been set in the observer
-    # print(self._params["ML"]["Maneuver"]["lane_change"])
     agent_state = world.agents[self._eval_agent].state
-    agent_velocity = np.sqrt((agent_state[4] - 10.)**2)
+    # agent_velocity = np.sqrt((agent_state[4] - 10.)**2)
     done = False
     success = eval_results["goal_reached"]
     distance = self._distance_to_center_line(world)
