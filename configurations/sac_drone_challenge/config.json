@@ -97,7 +97,7 @@
           "target_update_tau": 0.005,
           "target_update_period": 1,
           "gamma": 0.99,
-          "reward_scale_factor": 30.0,
+          "reward_scale_factor": 3.0,
           "gradient_clipping": null, 
           "agent_name": "sac_agent",
           "debug_summaries": false,
@@ -107,7 +107,8 @@
           "batch_size": 256,
           "buffer_num_steps": 2,
           "buffer_prefetch": 3,
-          "checkpoint_path": "/home/hart/Dokumente/2019/bark-ml/configurations/sac_drone_challenge/checkpoints/"
+          "checkpoint_path": "/home/hart/Dokumente/2019/bark-ml/configurations/sac_drone_challenge/checkpoints/",
+          "num_parallel_environments": 30
       },
       "Evaluator": {
           "max_steps": 50,
