@@ -1,4 +1,6 @@
 import numpy as np
+import logging
+
 from bark.world.evaluation import \
   EvaluatorGoalReached, EvaluatorCollisionEgoAgent, \
   EvaluatorCollisionDrivingCorridor, EvaluatorStepCount
@@ -6,6 +8,7 @@ from modules.runtime.commons.parameters import ParameterServer
 from bark.geometry import *
 
 from src.evaluators.goal_reached import GoalReached
+logger = logging.getLogger()
 
 class CustomEvaluator(GoalReached):
   """Shows the capability of custom elements inside
@@ -18,6 +21,8 @@ class CustomEvaluator(GoalReached):
                          params,
                          eval_agent)
     self._next_goal_definition = -1
+    self._last_distance = None
+    self._goal_number = 0
 
   def _add_evaluators(self):
     self._evaluators["goal_reached"] = EvaluatorGoalReached(self._eval_agent)
@@ -53,21 +58,26 @@ class CustomEvaluator(GoalReached):
     # intermediate goals
     reward = 0.
     if self._next_goal_definition is not next_goal:
-      reward += 10.
+      logger.info("Intermediate goal reached.")
+      # reward += 1.0
+      self._goal_number += 1
       self._next_goal_definition = next_goal
     
     # determine whether the simulation should terminate
     if success or collision or step_count > self._max_steps:
       done = True
     distance = self._distance_to_next_goal(world)
-    # print("Distance: {}m".format(str(distance)))
+    
 
-    reward += collision * self._collision_penalty + \
-      success * self._goal_reward - 0.01*distance
+    reward = 0.001*(10.0*self._goal_number - distance)
+    logger.info("Distance: {}m and reward: {}".format(str(distance), str(reward)))
+    # reward += collision * self._collision_penalty + \
+    #   success * self._goal_reward
     return reward, done, eval_results
     
   def reset(self, world, agents_to_evaluate):
     world = super(CustomEvaluator, self).reset(world, agents_to_evaluate)
     self._next_goal_definition = -1
+    self._goal_number = 0
     return world
     

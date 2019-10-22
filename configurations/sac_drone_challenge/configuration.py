@@ -1,3 +1,4 @@
+import coloredlogs, logging
 from absl import app
 from absl import flags
 import tensorflow as tf
@@ -20,12 +21,14 @@ from src.wrappers.dynamic_model import DynamicModel
 from src.wrappers.tfa_wrapper import TFAWrapper
 from src.evaluators.goal_reached import GoalReached
 from src.agents.sac_agent import SACAgent
-from src.runners.tfa_runner import TFARunner
+from src.runners.sac_runner import SACRunner
 from configurations.base_configuration import BaseConfiguration
 
 # configuration specific evaluator
 from configurations.sac_drone_challenge.custom_evaluator import CustomEvaluator
 from configurations.sac_drone_challenge.custom_observer import CustomObserver
+coloredlogs.install()
+logger = logging.getLogger()
 
 FLAGS = flags.FLAGS
 flags.DEFINE_enum('mode',
@@ -55,8 +58,8 @@ class SACDroneChallenge(BaseConfiguration):
     self._evaluator = CustomEvaluator(params=self._params)
 
     viewer = MPViewer(params=self._params,
-                      x_range=[-40, 40],
-                      y_range=[-40, 40],
+                      x_range=[-20, 20],
+                      y_range=[-20, 20],
                       follow_agent_id=True)
     self._viewer = viewer
     # self._viewer = VideoRenderer(renderer=viewer, world_step_time=0.2)
@@ -68,7 +71,7 @@ class SACDroneChallenge(BaseConfiguration):
                               scenario_generator=self._scenario_generator)
     tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(self._runtime))
     self._agent = SACAgent(tfa_env, params=self._params)
-    self._runner = TFARunner(tfa_env,
+    self._runner = SACRunner(tfa_env,
                              self._agent,
                              params=self._params,
                              unwrapped_runtime=self._runtime)
@@ -78,8 +81,10 @@ def run_configuration(argv):
   configuration = SACDroneChallenge(params)
   
   if FLAGS.mode == 'train':
+    logger.setLevel("ERROR")
     configuration.train()
   elif FLAGS.mode == 'visualize':
+    logger.setLevel("INFO")
     configuration.visualize(5)
     # configuration._viewer.export_video("/home/hart/Dokumente/2019/bark-ml/configurations/sac_drone_challenge/video/lane_merge")
   elif FLAGS.mode == 'evaluate':

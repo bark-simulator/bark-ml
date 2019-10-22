@@ -89,6 +89,8 @@
       "Agent": {
           "actor_fc_layer_params": [256, 256],
           "critic_joint_fc_layer_params": [256, 256],
+          "actor_lstm_size": [40],
+          "critic_lstm_size": [40],
           "actor_learning_rate": 3e-4,
           "critic_learning_rate": 3e-4,
           "alpha_learning_rate": 3e-4,
@@ -98,7 +100,7 @@
           "reward_scale_factor": 1.0,
           "gradient_clipping": null, 
           "agent_name": "sac_agent",
-          "debug_summaries": "True",
+          "debug_summaries": false,
           "replay_buffer_capacity": 100000,
           "max_ckpts_to_keep": 3,
           "parallel_buffer_calls": 3,
@@ -108,18 +110,18 @@
           "checkpoint_path": "/home/hart/Dokumente/2019/bark-ml/configurations/sac_drone_challenge/checkpoints/"
       },
       "Evaluator": {
-          "max_steps": 40,
+          "max_steps": 50,
           "collision_penalty": -1.0,
           "goal_reward": 100.0
       },
       "Observer": {
-          "velocity_range": [0, 10],
+          "velocity_range": [-10.0, 10.0],
           "theta_range": [0.0, 6.29],
           "normalization_enabled": true,
           "max_num_agents": 1
       },
       "Runner": {
-          "number_of_collections": 100000,
+          "number_of_collections": 550000,
           "initial_collection_steps": 250,
           "collection_episodes_per_cycle": 2,
           "evaluate_every_n_steps": 250,
@@ -128,8 +130,8 @@
       },
       "DynamicModel": {
           "action_dimension": 3,
-          "actions_lower_bound": [-2.0, -2.0, -2.0],
-          "actions_upper_bound": [2.0, 2.0, 2.0]
+          "actions_lower_bound": [-1.0, -1.0, -1.0],
+          "actions_upper_bound": [1.0, 1.0, 1.0]
       },
       "MotionPrimitives": {
           "motion_primitives": [[4.0, 0.0],
