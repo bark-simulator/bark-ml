@@ -3,6 +3,7 @@ from absl import app
 from absl import flags
 import tensorflow as tf
 from tf_agents.environments import tf_py_environment
+from tf_agents.environments import parallel_py_environment
 
 from modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution \
   import UniformVehicleDistribution
@@ -69,7 +70,10 @@ class SACDroneChallenge(BaseConfiguration):
                               step_time=0.2,
                               viewer=self._viewer,
                               scenario_generator=self._scenario_generator)
-    tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(self._runtime))
+    # tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(self._runtime))
+    tfa_env = tf_py_environment.TFPyEnvironment(
+      parallel_py_environment.ParallelPyEnvironment(
+        [lambda: TFAWrapper(self._runtime)] * self._params["ML"]["Agent"]["num_parallel_environments"]))
     self._agent = SACAgent(tfa_env, params=self._params)
     self._runner = SACRunner(tfa_env,
                              self._agent,
