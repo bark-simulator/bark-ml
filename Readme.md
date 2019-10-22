@@ -10,7 +10,9 @@ BARK-ML takes state-of-the-art machine learning methods and applies these to a d
 Reinforcement learning models that are currently available in BARK-ML:
 
 * Soft-Actor-Critic (SAC)
+* Proximal Policy Optimization (PPO)
 * Twin Delayed Deep Deterministic policy gradient (TD3)
+
 
 ## Quick-Start
 
