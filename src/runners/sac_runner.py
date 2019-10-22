@@ -2,6 +2,7 @@ import sys
 import logging
 import time
 import tensorflow as tf
+import numpy as np
 tf.compat.v1.enable_v2_behavior()
 
 from tf_agents.drivers import dynamic_step_driver
