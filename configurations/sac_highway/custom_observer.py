@@ -11,8 +11,8 @@ class CustomObserver(SimpleObserver):
   def __init__(self, params=ParameterServer()):
     SimpleObserver.__init__(self,
                             params)
-    self._perform_lane_change = False
 
+    
   def observe(self, world, agents_to_observe):
     # TODO(@hart): modify for conditional input
     return super(CustomObserver, self).observe(world, agents_to_observe)

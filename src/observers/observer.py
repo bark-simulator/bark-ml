@@ -6,19 +6,19 @@ class StateObserver(ABC):
                params):
     self._params = params
     self._velocity_range = \
-      self._params["Runtime"]["ML"]["Observer"]["velocity_range",
+      self._params["ML"]["Observer"]["velocity_range",
       "Boundaries for min and max velocity for normalization",
       [0, 100]]
     self._theta_range = \
-      self._params["Runtime"]["ML"]["Observer"]["theta_range",
+      self._params["ML"]["Observer"]["theta_range",
       "Boundaries for min and max theta for normalization",
       [0, 2*math.pi]]
     self._normalization_enabled = \
-      self._params["Runtime"]["ML"]["Observer"]["normalization_enabled",
+      self._params["ML"]["Observer"]["normalization_enabled",
       "Whether normalization should be performed",
       True]
     self._max_num_vehicles = \
-      self._params["Runtime"]["ML"]["Observer"]["max_num_agents",
+      self._params["ML"]["Observer"]["max_num_agents",
       "The concatenation state size is the ego agent plus max num other agents",
       1]
     self._world_x_range = [-10000, 10000]
