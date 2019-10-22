@@ -29,7 +29,6 @@ class SimpleObserver(StateObserver):
       normalized_state = self._normalize(agent.state)
       reduced_state = self._select_state_by_index(normalized_state)
       starts_id = i*self._len_state
-      print(i, self._observation_len, starts_id, starts_id+self._len_state, reduced_state)
       concatenated_state[starts_id:starts_id+self._len_state] = reduced_state
       print(concatenated_state)
       if i >= self._max_num_vehicles:
