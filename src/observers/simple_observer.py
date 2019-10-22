@@ -30,7 +30,6 @@ class SimpleObserver(StateObserver):
       reduced_state = self._select_state_by_index(normalized_state)
       starts_id = i*self._len_state
       concatenated_state[starts_id:starts_id+self._len_state] = reduced_state
-      print(concatenated_state)
       if i >= self._max_num_vehicles:
         break
     return concatenated_state
