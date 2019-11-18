@@ -42,7 +42,8 @@ class DynamicModel(ActionWrapper):
     """see base class
     """
     if self._behavior_model:
-      self._behavior_model.set_action(action)
+      # set_last_action
+      self._behavior_model.set_last_action(action)
     return world
 
   @property

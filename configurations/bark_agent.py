@@ -29,17 +29,15 @@ class BARKMLBehaviorModel(DynamicBehaviorModel):
       world=world,
       agents_to_observe=self._agents_to_observe)
     action = self._configuration._agent.act(observed_state)
-    # TODO(@hart): debug
-    # super().set_action(np.array([[0., 0.]]))
-    super().set_action(action)
-    
-    # convert
+
+    # need to pass the action
+    super(BARKMLBehaviorModel, self).set_last_action(np.array([1., 2.]))
+
     observed_world = world
     if not isinstance(observed_world, ObservedWorld):
       observed_world = world.observe(self._agents_to_observe)[0]
-    
-    # call cpp stuff
-    return super().plan(delta_time, observed_world)
+
+    return super(BARKMLBehaviorModel, self).plan(delta_time, observed_world)
 
   def clone(self):
-    return BARKMLBehaviorModel(self._configuration, self._dynamic_model, self._agents_to_observe)
+    return self

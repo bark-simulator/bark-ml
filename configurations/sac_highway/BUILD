@@ -28,7 +28,7 @@ py_library(
 
 py_library(
   name = "configuration_lib",
-  srcs = ["configuration.py"],
+  srcs = ["configuration_lib.py"],
   data = ["@bark_project//python:bark.so",
           "//tests/data:bark_data",
           ":configuration_data"],
