@@ -42,8 +42,6 @@ class PPORunner(TFARunner):
     for _ in range(0, self._params["ML"]["Runner"]["number_of_collections"]):
       global_iteration = self._agent._agent._train_step_counter.numpy()
       self._collection_driver.run()
-      # experience, _ = next(iterator)
-      # self._agent._agent.train(experience)
       trajectories = self._agent._replay_buffer.gather_all()
       self._agent._agent.train(experience=trajectories)
       self._agent._replay_buffer.clear()
@@ -61,7 +59,7 @@ class PPORunner(TFARunner):
       self._eval_metrics,
       self._runtime,
       self._agent._agent.policy,
-      num_episodes=self._params["ML"]["Runner"]["evaluation_steps"])
+      num_episodes=30*self._params["ML"]["Runner"]["evaluation_steps"])
     metric_utils.log_metrics(self._eval_metrics)
     tf.summary.scalar("mean_reward",
                       self._eval_metrics[0].result().numpy(),
@@ -89,5 +87,6 @@ class PPORunner(TFARunner):
           # print(action_step)
           # TODO(@hart); make generic for multi agent planning
           state, reward, is_terminal, _ = self._unwrapped_runtime.step(action_step.action.numpy())
+          print("reward: ", reward, "is_terminal", is_terminal)
           # print(reward)
           self._unwrapped_runtime.render()

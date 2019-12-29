@@ -9,3 +9,15 @@ py_library(
             "//src/observers:observers"],
     visibility = ["//visibility:public"],
 )
+
+py_library(
+    name = "test_env",
+    srcs = ["test_env.py"],
+    data = ["@bark_project//python:bark.so"],
+    imports = ["../external/bark_project/python/"],
+    deps = ["@bark_project//modules/runtime:runtime",
+            "//src/wrappers:wrappers",
+            "//src/evaluators:evaluators",
+            "//src/observers:observers"],
+    visibility = ["//visibility:public"],
+)
