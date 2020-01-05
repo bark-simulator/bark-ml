@@ -43,7 +43,7 @@ class PPOTestEnv(BaseConfiguration):
     #                           step_time=0.2,
     #                           viewer=self._viewer,
     #                           scenario_generator=self._scenario_generator)
-    self._runtime = TestEnvironment(1)
+    self._runtime = TestEnvironment(4)
 
     # tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(self._runtime))
     tfa_env = tf_py_environment.TFPyEnvironment(

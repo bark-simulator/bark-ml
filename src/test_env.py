@@ -13,12 +13,16 @@ from gym import spaces
 
 class TestEnvironment:
   def __init__(self,
-               num_agents=1):
+               num_agents=1,
+               episode_len=20,
+               dt=0.1):
     self._num_agents = num_agents
     self._states = tf.TensorArray(size=21,
                                   dtype=tf.float32,
                                   clear_after_read=False)
     self._i = 0
+    self._dt = dt
+    self._episode_len = episode_len
 
   def init_states(self, num_agents=1):
     intitial_states = np.random.uniform(size=(num_agents, 4),
@@ -30,7 +34,7 @@ class TestEnvironment:
   def move_agents(self, a, dt=0.1):
     state = self._states.read(self._i)
     next_state = self._states.read(self._i + 1)
-    a = tf.reshape(a, (1, 2))
+    a = tf.reshape(a, [-1, 2])
     # tf.print(tf.shape(state), tf.shape(a), tf.shape(dt))
     for i in range(0, state.shape[0]):
       next_state = tf.tensor_scatter_nd_update(
@@ -46,15 +50,16 @@ class TestEnvironment:
     self._states.write(self._i + 1, next_state)
 
   def get_observation(self):
-    return self._states.read(self._i)
+    return tf.reshape(self._states.read(self._i), [-1])
 
   def get_reward(self, a=None):
     # to test if it works
     d = tf.reduce_sum((self._states.read(self._i)[:, 0] - 0.)**2)
-    dtheta = tf.reduce_sum(((self._states.read(self._i)[:, 2] - self._states.read(self._i-1)[:, 2])/0.1)**2)
+    dtheta = tf.reduce_sum(
+      ((self._states.read(self._i)[:, 2] - self._states.read(self._i-1)[:, 2])/self._dt)**2)
     v = tf.reduce_sum((self._states.read(self._i)[:, 3] - 10.)**2)
-    # TODO(@hart): also include actions in reward
-    # tf.print(d, dtheta, v)
+    # TODO(@hart): include actions in reward
+    # TODO(@hart): include cols in reward
     if a is not None:
       pass
     return -0.01*d - 0.1*dtheta - 0.1*v
@@ -64,32 +69,35 @@ class TestEnvironment:
     self._i = 0
     return self.get_observation()
 
-  def step(self, a, dt=0.1):
-    self.move_agents(a, dt)
+  def step(self, a):
+    self.move_agents(a, self._dt)
     self._i += 1
     done = False
-    if self._i == 20:
+    if self._i == self._episode_len:
       done = True
     return self.get_observation(), self.get_reward(), done, None
 
   def render(self):
     states = self._states.stack()
-    if self._i == 20:
+    if self._i == self._episode_len:
       plt.plot(states[:, :, 0], states[:, :, 1])
+      plt.axis("equal")
       plt.show()
 
   @property
   def action_space(self):
     """Action space of the agent
     """
+    low_actions = [[-0.15, -2.0] for _ in range(self._num_agents)]
+    high_actions = [[0.15, 2.0] for _ in range(self._num_agents)]
     return spaces.Box(
-      low=-1.*np.ones(self._num_agents * 2),
-      high=np.ones(self._num_agents * 2))
+      low=np.array(low_actions),
+      high=np.array(high_actions))
 
   @property
   def observation_space(self):
     """Observation space of the agent
     """
     return spaces.Box(
-      low=np.zeros(self._num_agents * 4),
-      high=np.ones(self._num_agents * 4))
+      low=-100.*np.ones(self._num_agents * 4),
+      high=100.*np.ones(self._num_agents * 4))

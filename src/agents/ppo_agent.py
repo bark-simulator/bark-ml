@@ -60,6 +60,8 @@ class PPOAgent(TFAAgent):
       env.action_spec(),
       actor_net=actor_net,
       value_net=value_net,
+      normalize_observations=self._params["ML"]["Agent"]["normalize_observations"],
+      normalize_rewards=self._params["ML"]["Agent"]["normalize_rewards"],
       optimizer=tf.compat.v1.train.AdamOptimizer(
           learning_rate=self._params["ML"]["Agent"]["learning_rate"]),
       train_step_counter=self._ckpt.step,
@@ -79,19 +81,6 @@ class PPOAgent(TFAAgent):
       data_spec=self._agent.collect_data_spec,
       batch_size=self._params["ML"]["Agent"]["num_parallel_environments"],
       max_length=self._params["ML"]["Agent"]["replay_buffer_capacity"])
-
-  # def get_dataset(self):
-  #   """Dataset generated of the replay buffer
-    
-  #   Returns:
-  #       dataset -- subset of experiences
-  #   """
-  #   dataset = self._replay_buffer.as_dataset(
-  #     num_parallel_calls=self._params["ML"]["Agent"]["parallel_buffer_calls"],
-  #     sample_batch_size=self._params["ML"]["Agent"]["batch_size"],
-  #     num_steps=self._params["ML"]["Agent"]["buffer_num_steps"]) \
-  #       .prefetch(self._params["ML"]["Agent"]["buffer_prefetch"])
-  #   return dataset
 
   def get_collect_policy(self):
     """Returns the collection policy of the agent

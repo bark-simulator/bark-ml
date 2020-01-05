@@ -93,6 +93,8 @@
           "num_epochs": 30,
           "agent_name": "ppo_agent",
           "debug_summaries": false,
+          "normalize_observations": true,
+          "normalize_rewards": false,
           "replay_buffer_capacity": 10000,
           "max_ckpts_to_keep": 3,
           "num_parallel_environments": 1,
@@ -108,11 +110,6 @@
           "evaluate_every_n_steps": 250,
           "evaluation_steps": 20,
           "summary_path": "/Users/hart/2020/bark-ml/configurations/ppo_test_env/summaries/"
-      },
-      "DynamicModel": {
-          "action_dimension": 1,
-          "actions_lower_bound": [-2.0],
-          "actions_upper_bound": [2.0]
       }
   },
   "DynamicModel": {
