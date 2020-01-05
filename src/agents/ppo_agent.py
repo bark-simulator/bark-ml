@@ -2,7 +2,9 @@ import tensorflow as tf
 
 # tfa
 from tf_agents.networks import actor_distribution_network
+from tf_agents.networks import actor_distribution_rnn_network
 from tf_agents.networks import value_network
+from tf_agents.networks import value_rnn_network
 from tf_agents.policies import greedy_policy
 
 from tf_agents.agents.ppo import ppo_agent
@@ -11,6 +13,7 @@ from tf_agents.utils.common import Checkpointer
 from tf_agents.trajectories import time_step as ts
 
 from src.agents.tfa_agent import TFAAgent
+
 
 class PPOAgent(TFAAgent):
   """PPO-Agent
@@ -21,7 +24,9 @@ class PPOAgent(TFAAgent):
                replay_buffer=None,
                checkpointer=None,
                dataset=None,
-               params=None):
+               params=None,
+               use_rnns=False):
+    self._use_rnns = use_rnns
     TFAAgent.__init__(self,
                       environment=environment,
                       params=params)
@@ -40,20 +45,29 @@ class PPOAgent(TFAAgent):
     Returns:
         agent -- tf-agent
     """
-
-    # actor network
-    actor_net = actor_distribution_network.ActorDistributionNetwork(
+    if self._use_rnns:
+      actor_net = actor_distribution_rnn_network.ActorDistributionRnnNetwork(
+          env.observation_spec(),
+          env.action_spec(),
+          input_fc_layer_params=tuple(
+            self._params["ML"]["Agent"]["actor_fc_layer_params"]),
+          output_fc_layer_params=None)
+      value_net = value_rnn_network.ValueRnnNetwork(
+          env.observation_spec(),
+          input_fc_layer_params=tuple(
+            self._params["ML"]["Agent"]["critic_fc_layer_params"]),
+          output_fc_layer_params=None)
+    else:
+      actor_net = actor_distribution_network.ActorDistributionNetwork(
+          env.observation_spec(),
+          env.action_spec(),
+          fc_layer_params=tuple(
+            self._params["ML"]["Agent"]["actor_fc_layer_params"]))
+      value_net = value_network.ValueNetwork(
         env.observation_spec(),
-        env.action_spec(),
         fc_layer_params=tuple(
-          self._params["ML"]["Agent"]["actor_fc_layer_params"]))
+          self._params["ML"]["Agent"]["critic_fc_layer_params"]))
 
-    # critic network
-    value_net = value_network.ValueNetwork(
-      env.observation_spec(),
-      fc_layer_params=tuple(
-        self._params["ML"]["Agent"]["critic_fc_layer_params"]))
-    
     # agent
     tf_agent = ppo_agent.PPOAgent(
       env.time_step_spec(),

@@ -98,6 +98,9 @@ class TestEnvironment:
   def observation_space(self):
     """Observation space of the agent
     """
+    obs = [[20., 80., 3.14, 20.] for _ in range(self._num_agents)]
+    obs = np.array(obs, dtype=np.float32)
+    obs = np.reshape(obs, (-1))
     return spaces.Box(
-      low=-100.*np.ones(self._num_agents * 4),
-      high=100.*np.ones(self._num_agents * 4))
+      low=-obs,
+      high=obs)
