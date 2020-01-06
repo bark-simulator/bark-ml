@@ -41,7 +41,7 @@ class CustomEvaluator(GoalReached):
     agent_xy = Point2d(agent.state[1] + 4., agent.state[2])
     return distance(centerline, agent_xy)
 
-  def _evaluate(self, world, eval_results):
+  def _evaluate(self, world, eval_results, action):
     """Returns information about the current world state
     """
     # should read parameter that has been set in the observer

@@ -27,7 +27,7 @@ class CustomEvaluator(GoalReached):
 
   def distance_to_goal(self, world):
     d = 0.
-    for _, agent in world.agents.items():
+    for i, agent in world.agents.items():
       shape = agent.shape
       state = agent.state
       pose = np.zeros(3)
@@ -37,7 +37,20 @@ class CustomEvaluator(GoalReached):
       transformed_polygon = shape.transform(pose)
       goal_poly = agent.goal_definition.GetCurrentGoal(agent).xy_limits
       d += distance(transformed_polygon, goal_poly)
+    d /= i
     return d
+
+  def calculate_reward(self, world, eval_results, action):
+    success = eval_results["goal_reached"]
+    collision = eval_results["collision"]
+    distance_to_goals = self.distance_to_goal(world)
+    actions = np.reshape(action, (-1, 2))
+    accs = actions[:, 0]
+    delta = actions[:, 1]
+    inpt_reward = np.sum(delta**2 + 0.1*accs**2)
+    reward = collision * self._collision_penalty + \
+      success * self._goal_reward - 0.1*distance_to_goals - inpt_reward
+    return reward
 
   def _evaluate(self, world, eval_results, action):
     """Returns information about the current world state
@@ -46,16 +59,9 @@ class CustomEvaluator(GoalReached):
     success = eval_results["goal_reached"]
     collision = eval_results["collision"]
     step_count = eval_results["step_count"]
-    # TODO(@hart): distance to goal
 
-    # calculate reward
-    reward = collision * self._collision_penalty + \
-      success * self._goal_reward
-    
-    # determine if terminal
+    reward = self.calculate_reward(world, eval_results, action)    
     if success or collision or step_count > self._max_steps:
       done = True
-    
-    print("Distance to goal: ", self.distance_to_goal(world))
     return reward, done, eval_results
     
