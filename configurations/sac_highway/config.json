@@ -1,5 +1,9 @@
 {
   "Scenario": {
+      "ColorMap": {
+        "100": [1.0, 0.0, 0.0],
+        "101": [0.0, 1.0, 0.0]
+      },
       "Generation": {
           "DeterministicScenarioGeneration": {
               "MapFilename": "tests/data/city_highway_straight.xodr",
