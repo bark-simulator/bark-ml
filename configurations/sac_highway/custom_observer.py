@@ -12,16 +12,10 @@ class CustomObserver(SimpleObserver):
     SimpleObserver.__init__(self,
                             params)
 
-    
   def observe(self, world, agents_to_observe):
-    # TODO(@hart): modify for conditional input
+    # TODO(@hart): e.g. include distance to goal
     return super(CustomObserver, self).observe(world, agents_to_observe)
 
   def reset(self, world, agents_to_observe):
     world = super(CustomObserver, self).reset(world, agents_to_observe)
-    #rn = np.random.randint(0, 2)
-    #self._params["ML"]["Maneuver"]["lane_change",
-    #  "Whether a lane change should be performed or not.",
-    #   rn]
-    # print(rn, self._params["ML"]["Maneuver"]["lane_change"])
     return world

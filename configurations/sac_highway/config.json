@@ -121,7 +121,8 @@
                           5113.626,
                           5100.8305,
                           0.0
-                      ]
+                      ],
+                      "num_reached": 2
                     },
                     "followed_trajectory": [],
                     "planned_trajectory": []
@@ -244,7 +245,8 @@
                           5109.626,
                           5100.8305,
                           0.0
-                      ]
+                      ],
+                      "num_reached": 2
                     },
                     "followed_trajectory": [],
                     "planned_trajectory": []
