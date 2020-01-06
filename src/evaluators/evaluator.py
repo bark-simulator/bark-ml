@@ -11,7 +11,7 @@ class StateEvaluator(ABC):
     self._params = params
     self._evaluators = {}
 
-  def evaluate(self, world):
+  def evaluate(self, world, action):
     """Evaluates the passed world
     
     Arguments:
@@ -26,7 +26,7 @@ class StateEvaluator(ABC):
     # TODO(@hart); make generic for multi agent planning
     if self._eval_agent in world.agents:
       eval_results = world.evaluate()
-      reward, done, eval_results = self._evaluate(world, eval_results)
+      reward, done, eval_results = self._evaluate(world, eval_results, action)
     return reward, done, eval_results
 
   def reset(self, world, agents_to_evaluate):
