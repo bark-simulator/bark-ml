@@ -15,20 +15,48 @@ class TestEnvironment:
   def __init__(self,
                num_agents=1,
                episode_len=20,
-               dt=0.1):
+               dt=0.1,
+               min_start_d=1.5,
+               col_d=1.):
     self._num_agents = num_agents
-    self._states = tf.TensorArray(size=21,
+    self._states = tf.TensorArray(size=episode_len+1,
                                   dtype=tf.float32,
                                   clear_after_read=False)
     self._i = 0
     self._dt = dt
     self._episode_len = episode_len
+    self._done = False
+    self._min_start_d = min_start_d
+    self._col_d = col_d
 
+  def get_state(self, low, high):
+    return np.random.uniform(size=(4), low=low, high=high)
+  
+  def distance(self, state, states):
+    dx = state[0] - states[:, 0]
+    dy = state[1] - states[:, 1]
+    return tf.math.sqrt(dx**2 + dy**2)
+  
+  def state_colliding(self, state, states, col_dist=1., min_cols=0):
+    d = self.distance(state, states)
+    result = tf.math.count_nonzero(tf.math.less_equal(d, col_dist))
+    if result > min_cols:
+      return True
+    return False
+  
   def init_states(self, num_agents=1):
-    intitial_states = np.random.uniform(size=(num_agents, 4),
-                                        low=[-4., 0., 1.45, 9.],
-                                        high=[4., 10., 1.55, 11])
-    initial_state = tf.convert_to_tensor(intitial_states, dtype=tf.float32)
+    low = [-4., 0., 1.45, 10.]
+    high = [4., 2., 1.55, 10.]
+    states = np.array([self.get_state(low, high)])
+    agent_count = 0
+    while agent_count < self._num_agents - 1:
+      proposed_state = self.get_state(low, high)
+      is_colliding = self.state_colliding(
+        proposed_state, states, self._min_start_d)
+      if is_colliding == False:
+        states = np.vstack((states, proposed_state))
+        agent_count += 1
+    initial_state = tf.convert_to_tensor(states, dtype=tf.float32)
     self._states.write(0, initial_state)
 
   def move_agents(self, a, dt=0.1):
@@ -52,19 +80,37 @@ class TestEnvironment:
   def get_observation(self):
     return tf.reshape(self._states.read(self._i), [-1])
 
-  def get_reward(self, a=None):
+  def get_info(self, a=None):
     # to test if it works
-    d = tf.reduce_sum((self._states.read(self._i)[:, 0] - 0.)**2)
-    dtheta = tf.reduce_sum(
-      ((self._states.read(self._i)[:, 2] - self._states.read(self._i-1)[:, 2])/self._dt)**2)
-    v = tf.reduce_sum((self._states.read(self._i)[:, 3] - 10.)**2)
-    # TODO(@hart): include actions in reward
+    states = self._states.read(self._i)
+    collision_count = 0
+    reward = 0.
+    norm = 0.
+    reward += tf.reduce_sum((states[:, 0] - 0.)**2)
+    norm += 1.
+    reward += 0.1*tf.reduce_sum((states[:, 3] - 10.)**2)
+    norm += 0.1
+
     # TODO(@hart): include cols in reward
+    for state in states:
+      if self.state_colliding(state, states, col_dist=1., min_cols=1):
+        reward += 1000
+        collision_count += 1
+
     if a is not None:
-      pass
-    return -0.01*d - 0.1*dtheta - 0.1*v
+      reward += 0.1*tf.reduce_sum(a[:, 0]**2)
+      norm += 0.1
+  
+    collision = False
+    if collision_count > 0:
+      collision = True
+  
+    return -reward/norm, collision
 
   def reset(self):
+    self._states = tf.TensorArray(size=self._episode_len+1,
+                                  dtype=tf.float32,
+                                  clear_after_read=False)
     self.init_states(self._num_agents)
     self._i = 0
     return self.get_observation()
@@ -72,15 +118,18 @@ class TestEnvironment:
   def step(self, a):
     self.move_agents(a, self._dt)
     self._i += 1
-    done = False
+    self._done = False
     if self._i == self._episode_len:
-      done = True
-    return self.get_observation(), self.get_reward(), done, None
+      self._done = True
+    reward, collision = self.get_info()
+    if collision:
+      self._done = True
+    return self.get_observation(), reward, self._done, None
 
   def render(self):
     states = self._states.stack()
-    if self._i == self._episode_len:
-      plt.plot(states[:, :, 0], states[:, :, 1])
+    if self._i == self._episode_len or self._done:
+      plt.plot(states[:self._i, :, 0], states[:self._i, :, 1])
       plt.axis("equal")
       plt.show()
 

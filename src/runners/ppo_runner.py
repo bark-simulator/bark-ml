@@ -6,6 +6,7 @@ tf.compat.v1.enable_v2_behavior()
 
 from tf_agents.drivers import dynamic_step_driver
 from tf_agents.drivers import dynamic_episode_driver
+from tf_agents.policies import actor_policy
 from modules.runtime.commons.parameters import ParameterServer
 
 from tf_agents.metrics import tf_metrics
@@ -81,8 +82,15 @@ class PPORunner(TFARunner):
       for _ in range(0, num_episodes):
         state = self._unwrapped_runtime.reset()
         is_terminal = False
+        # time_step_spec = ts.time_step_spec(self._runtime.observation_spec)
+        # initial_state = actor_policy.ActorPolicy(
+        #   time_step_spec,
+        #   self._runtime.action_spec,
+        #   self._agent._agent._actor_net).get_initial_state(1)
+
         while not is_terminal:
-          action_step = self._agent._eval_policy.action(ts.transition(state, reward=0.0, discount=1.0))
+          time_step = ts.transition(state, reward=0.0, discount=1.0)
+          action_step = self._agent._eval_policy.action(time_step)
           print("state: ", state, "action: ", action_step.action.numpy())
           # TODO(@hart); make generic for multi agent planning
           state, reward, is_terminal, _ = self._unwrapped_runtime.step(action_step.action.numpy())

@@ -51,12 +51,14 @@ class PPOAgent(TFAAgent):
           env.action_spec(),
           input_fc_layer_params=tuple(
             self._params["ML"]["Agent"]["actor_fc_layer_params"]),
-          output_fc_layer_params=None)
+          output_fc_layer_params=None,
+          lstm_size=(40,))
       value_net = value_rnn_network.ValueRnnNetwork(
           env.observation_spec(),
           input_fc_layer_params=tuple(
             self._params["ML"]["Agent"]["critic_fc_layer_params"]),
-          output_fc_layer_params=None)
+          output_fc_layer_params=None,
+          lstm_size=(16,))
     else:
       actor_net = actor_distribution_network.ActorDistributionNetwork(
           env.observation_spec(),
