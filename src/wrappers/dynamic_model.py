@@ -19,7 +19,7 @@ class DynamicModel(ActionWrapper):
     self._control_inputs = \
       self._params["ML"]["DynamicModel"]["action_dimension",
       "Dimension of action",
-      3]
+      2]
     self._dynamic_model = eval("{}(self._params)".format(model_name))
     self._behavior_models = []
     self._controlled_agents = []
@@ -43,8 +43,9 @@ class DynamicModel(ActionWrapper):
   def action_to_behavior(self, world, action):
     """see base class
     """
-    for i, _ in enumerate(self._controlled_agents):
-      self._behavior_models[i].set_last_action(action)
+    actions = np.reshape(action, (-1, 2))
+    for i, a in enumerate(actions):
+      self._behavior_models[i].set_last_action(a)
     return world
 
   @property
