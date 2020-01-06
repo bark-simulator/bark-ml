@@ -30,10 +30,10 @@ class StateEvaluator(ABC):
     return reward, done, eval_results
 
   def reset(self, world, agents_to_evaluate):
-    if len(agents_to_evaluate) != 1:
-      raise ValueError("Invalid number of agents provided for GoalReached \
-                        evaluation, number= {}" \
-                        .format(len(agents_to_evaluate)))
+    # if len(agents_to_evaluate) != 1:
+    #   raise ValueError("Invalid number of agents provided for GoalReached \
+    #                     evaluation, number= {}" \
+    #                     .format(len(agents_to_evaluate)))
     # TODO(@hart); make generic for multi agent planning
     self._eval_agent = agents_to_evaluate[0]
     world.clear_evaluators()

@@ -39,7 +39,7 @@ class SACHighwayConfiguration(BaseConfiguration):
     """Builds a configuration using an SAC agent
     """
     self._scenario_generator = \
-      DeterministicScenarioGeneration(num_scenarios=3,
+      DeterministicScenarioGeneration(num_scenarios=12,
                                       random_seed=0,
                                       params=self._params)
     self._observer = CustomObserver(params=self._params)
@@ -47,9 +47,9 @@ class SACHighwayConfiguration(BaseConfiguration):
     self._evaluator = CustomEvaluator(params=self._params)
 
     viewer = MPViewer(params=self._params,
-                            x_range=[-30,30],
-                            y_range=[-20,40],
-                            follow_agent_id=True)
+                      use_world_bounds=True,
+                      follow_agent_id=False)
+                      
     self._viewer = viewer
     # self._viewer = VideoRenderer(renderer=viewer, world_step_time=0.2)
     self._runtime = RuntimeRL(action_wrapper=self._behavior_model,

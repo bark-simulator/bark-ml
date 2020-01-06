@@ -251,7 +251,7 @@
                     }
                   }
               ],
-              "EgoAgentId": 100
+              "controlled_ids": [100, 101]
           }
       }
   },
