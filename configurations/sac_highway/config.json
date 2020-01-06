@@ -111,11 +111,11 @@
                           ],
                           [
                               2.0,
-                              200.0
+                              300.0
                           ],
                           [
                               0.0,
-                              200.0
+                              300.0
                           ],
                           [
                               0.0,
@@ -124,10 +124,10 @@
                       ],
                       "center_pose": [
                           5113.626,
-                          5100.8305,
+                          5050.8305,
                           0.0
                       ],
-                      "num_reached": 2
+                      "num_reached": 5
                     },
                     "followed_trajectory": [],
                     "planned_trajectory": []
@@ -236,11 +236,11 @@
                           ],
                           [
                               2.0,
-                              200.0
+                              300.0
                           ],
                           [
                               0.0,
-                              200.0
+                              300.0
                           ],
                           [
                               0.0,
@@ -249,10 +249,10 @@
                       ],
                       "center_pose": [
                           5109.626,
-                          5100.8305,
+                          5050.8305,
                           0.0
                       ],
-                      "num_reached": 2
+                      "num_reached": 5
                     },
                     "followed_trajectory": [],
                     "planned_trajectory": []
