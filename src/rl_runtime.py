@@ -48,6 +48,7 @@ class RuntimeRL(Runtime):
     Returns:
         (next_state, reward, done, info) -- RL tuple
     """
+    # TODO(@hart): could be multiple actions
     self._world = self._action_wrapper.action_to_behavior(world=self._world,
                                                           action=action)
     self._world.step(self._step_time)
