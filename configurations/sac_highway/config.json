@@ -17,6 +17,7 @@
                         [1.57, 1.57],
                         [10.0, 15.0]
                     ],
+                    "color": "red",
                     "shape": {
                         "polygon_points": [
                             [
@@ -134,6 +135,7 @@
                     "dynamic_model": "SingleTrackModel",
                     "execution_model": "ExecutionModelInterpolate",
                     "id": 101,
+                    "color": "blue",
                     "state": [
                       [0.0, 0.0],
                       [5114.3, 5114.3],
@@ -262,8 +264,8 @@
   },
   "ML": {
       "Agent": {
-        "actor_fc_layer_params": [256, 256],
-        "critic_joint_fc_layer_params": [256, 256],
+        "actor_fc_layer_params": [512, 256, 256],
+        "critic_joint_fc_layer_params": [512, 256, 256],
         "actor_learning_rate": 3e-4,
         "critic_learning_rate": 3e-4,
         "alpha_learning_rate": 3e-4,
@@ -278,6 +280,7 @@
         "max_ckpts_to_keep": 3,
         "parallel_buffer_calls": 3,
         "batch_size": 512,
+        "num_parallel_environments": 30,
         "buffer_num_steps": 2,
         "buffer_prefetch": 3,
         "checkpoint_path": "/Users/hart/2020/bark-ml/configurations/sac_highway/checkpoints/"

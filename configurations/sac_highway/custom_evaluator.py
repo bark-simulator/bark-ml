@@ -47,7 +47,7 @@ class CustomEvaluator(GoalReached):
     actions = np.reshape(action, (-1, 2))
     accs = actions[:, 0]
     delta = actions[:, 1]
-    inpt_reward = np.sum(delta**2 + 0.1*accs**2)
+    inpt_reward = np.sum(10.*delta**2 + 0.1*accs**2)
     reward = collision * self._collision_penalty + \
       success * self._goal_reward - 0.1*distance_to_goals - inpt_reward
     return reward
