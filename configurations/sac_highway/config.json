@@ -272,7 +272,7 @@
         "target_update_tau": 0.05,
         "target_update_period": 3,
         "gamma": 0.99,
-        "reward_scale_factor": 1.0,
+        "reward_scale_factor": 5.0,
         "gradient_clipping": null, 
         "agent_name": "sac_agent",
         "debug_summaries": "True",

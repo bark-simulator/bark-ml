@@ -56,10 +56,10 @@ class SACHighwayConfiguration(BaseConfiguration):
                               step_time=0.2,
                               viewer=self._viewer,
                               scenario_generator=self._scenario_generator)
-    # tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(self._runtime))
-    tfa_env = tf_py_environment.TFPyEnvironment(
-      parallel_py_environment.ParallelPyEnvironment(
-        [lambda: TFAWrapper(self._runtime)] * self._params["ML"]["Agent"]["num_parallel_environments"]))
+    tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(self._runtime))
+    # tfa_env = tf_py_environment.TFPyEnvironment(
+    #   parallel_py_environment.ParallelPyEnvironment(
+    #     [lambda: TFAWrapper(self._runtime)] * self._params["ML"]["Agent"]["num_parallel_environments"]))
     self._agent = SACAgent(tfa_env, params=self._params)
     self._runner = SACRunner(tfa_env,
                              self._agent,
