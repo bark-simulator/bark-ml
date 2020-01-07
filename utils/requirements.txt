@@ -5,8 +5,9 @@ scipy
 pygame
 tqdm
 gym
-tf-agents-nightly
-tfp-nightly
+tf-agents
+tensorflow-probability
 tensorflow
 panda3d
-gast
+gast==0.2.2
+cloudpickle==1.1.1
