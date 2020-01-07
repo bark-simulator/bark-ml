@@ -35,7 +35,9 @@ class CustomEvaluator(GoalReached):
       pose[1] = state[int(StateDefinition.Y_POSITION)]
       pose[2] = state[int(StateDefinition.THETA_POSITION)]
       transformed_polygon = shape.transform(pose)
-      goal_poly = agent.goal_definition.GetCurrentGoal(agent).xy_limits
+      # TODO(@hart): scenario generation should support sequential goal
+      # goal_poly = agent.goal_definition.GetCurrentGoal(agent).xy_limits
+      goal_poly = agent.goal_definition.goal_shape
       d += distance(transformed_polygon, goal_poly)
     d /= i
     return d
