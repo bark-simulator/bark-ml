@@ -57,8 +57,7 @@ class CustomEvaluator(GoalReached):
     inpt_reward = np.sum((1/0.15*delta)**2 + (accs)**2)
     reward = collision * self._collision_penalty + \
       success * self._goal_reward - 0.1*distance_to_goals - inpt_reward + \
-      (drivable_area - 1.) * self._collision_penalty
-    print(drivable_area)
+      drivable_area * self._collision_penalty
     return reward
 
   def _evaluate(self, world, eval_results, action):
