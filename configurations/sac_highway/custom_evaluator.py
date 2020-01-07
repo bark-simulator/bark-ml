@@ -1,9 +1,10 @@
 import numpy as np
 from bark.world.evaluation import \
-  EvaluatorGoalReached, EvaluatorCollisionEgoAgent, \
+  EvaluatorGoalReached, EvaluatorCollisionAgents, \
   EvaluatorCollisionDrivingCorridor, EvaluatorStepCount
 from modules.runtime.commons.parameters import ParameterServer
 from bark.geometry import *
+from bark.models.dynamic import StateDefinition
 
 from src.evaluators.goal_reached import GoalReached
 
@@ -19,45 +20,50 @@ class CustomEvaluator(GoalReached):
                          eval_agent)
 
   def _add_evaluators(self):
-    self._evaluators["goal_reached"] = EvaluatorGoalReached(self._eval_agent)
-    self._evaluators["ego_collision"] = \
-      EvaluatorCollisionEgoAgent(self._eval_agent)
+    self._evaluators["goal_reached"] = EvaluatorGoalReached()
+    self._evaluators["collision"] = \
+      EvaluatorCollisionAgents()
     self._evaluators["step_count"] = EvaluatorStepCount()
 
-  def _distance_to_center_line(self, world):
-    """calculates the distance of the agent
-       to its centerline
-    
-    Arguments:
-        world {bark.world} -- bark world
-    
-    Returns:
-        float -- distance to centerline
-    """
-    agent = world.agents[self._eval_agent]
-    agent_state = agent.state
-    centerline = agent.local_map.get_driving_corridor().center
-    # TODO(@hart): HACK; to see whether a lane-change can be learned
-    agent_xy = Point2d(agent.state[1] - 4., agent.state[2])
-    return distance(centerline, agent_xy)
+  def distance_to_goal(self, world):
+    d = 0.
+    for i, agent in world.agents.items():
+      shape = agent.shape
+      state = agent.state
+      pose = np.zeros(3)
+      pose[0] = state[int(StateDefinition.X_POSITION)]
+      pose[1] = state[int(StateDefinition.Y_POSITION)]
+      pose[2] = state[int(StateDefinition.THETA_POSITION)]
+      transformed_polygon = shape.transform(pose)
+      # TODO(@hart): scenario generation should support sequential goal
+      goal_poly = agent.goal_definition.goal_shape
+      # goal_poly = agent.goal_definition.goal_shape
+      d += distance(transformed_polygon, goal_poly)
+    d /= i
+    return d
 
-  def _evaluate(self, world, eval_results):
+  def calculate_reward(self, world, eval_results, action):
+    success = eval_results["goal_reached"]
+    collision = eval_results["collision"]
+    distance_to_goals = self.distance_to_goal(world)
+    actions = np.reshape(action, (-1, 2))
+    accs = actions[:, 0]
+    delta = actions[:, 1]
+    inpt_reward = np.sum(10.*delta**2 + accs**2)
+    reward = collision * self._collision_penalty + \
+      success * self._goal_reward - 0.1*distance_to_goals - inpt_reward
+    return reward
+
+  def _evaluate(self, world, eval_results, action):
     """Returns information about the current world state
     """
-    # should read parameter that has been set in the observer
-    # print(self._params["ML"]["Maneuver"]["lane_change"])
-    agent_state = world.agents[self._eval_agent].state
-    agent_velocity = np.sqrt((agent_state[4] - 10.)**2)
     done = False
     success = eval_results["goal_reached"]
-    distance = self._distance_to_center_line(world)
-    collision = eval_results["ego_collision"]
+    collision = eval_results["collision"]
     step_count = eval_results["step_count"]
-    # determine whether the simulation should terminate
+
+    reward = self.calculate_reward(world, eval_results, action)    
     if success or collision or step_count > self._max_steps:
       done = True
-    # calculate reward
-    reward = collision * self._collision_penalty + \
-      success * self._goal_reward - 0.1*distance - 0.1*agent_velocity
     return reward, done, eval_results
     

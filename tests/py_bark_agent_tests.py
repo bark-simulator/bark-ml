@@ -67,7 +67,7 @@ class PyBarkAgentTests(unittest.TestCase):
       world.step(0.2)
       print(world.agents[scenario._eval_agent_ids[0]].state)
 
-
+  @unittest.skip("...")
   def test_bark_agent_in_runtime(self):
     # check whether the bark agent really does work
     params = ParameterServer(

@@ -1,5 +1,9 @@
 {
   "Scenario": {
+      "ColorMap": {
+        "100": [1.0, 0.0, 0.0],
+        "101": [0.0, 1.0, 0.0]
+      },
       "Generation": {
           "DeterministicScenarioGeneration": {
               "MapFilename": "tests/data/city_highway_straight.xodr",
@@ -17,6 +21,7 @@
                         [1.57, 1.57],
                         [10.0, 15.0]
                     ],
+                    "color": "red",
                     "shape": {
                         "polygon_points": [
                             [
@@ -101,16 +106,16 @@
                               0.0
                           ],
                           [
-                              4.0,
+                              1.0,
                               0.0
                           ],
                           [
-                              4.0,
-                              4.0
+                              1.0,
+                              300.0
                           ],
                           [
                               0.0,
-                              4.0
+                              300.0
                           ],
                           [
                               0.0,
@@ -118,10 +123,11 @@
                           ]
                       ],
                       "center_pose": [
-                          5112.626,
-                          5200.8305,
+                          5114.1,
+                          5050.8305,
                           0.0
-                      ]
+                      ],
+                      "num_reached": 5
                     },
                     "followed_trajectory": [],
                     "planned_trajectory": []
@@ -133,6 +139,7 @@
                     "dynamic_model": "SingleTrackModel",
                     "execution_model": "ExecutionModelInterpolate",
                     "id": 101,
+                    "color": "blue",
                     "state": [
                       [0.0, 0.0],
                       [5114.3, 5114.3],
@@ -219,96 +226,92 @@
                     },
                     "goal": {
                       "polygon_points": [
-                            [
-                                0.0,
-                                0.0
-                            ],
-                            [
-                                4.0,
-                                0.0
-                            ],
-                            [
-                                4.0,
-                                4.0
-                            ],
-                            [
-                                0.0,
-                                4.0
-                            ],
-                            [
-                                0.0,
-                                0.0
-                            ]
+                          [
+                              0.0,
+                              0.0
+                          ],
+                          [
+                              1.0,
+                              0.0
+                          ],
+                          [
+                              1.0,
+                              300.0
+                          ],
+                          [
+                              0.0,
+                              300.0
+                          ],
+                          [
+                              0.0,
+                              0.0
+                          ]
                       ],
                       "center_pose": [
-                          5118.3,
-                          5506.8305,
+                          5110.1,
+                          5050.8305,
                           0.0
-                      ]
+                      ],
+                      "num_reached": 5
                     },
                     "followed_trajectory": [],
                     "planned_trajectory": []
                     }
                   }
               ],
-              "EgoAgentId": 100
+              "controlled_ids": [100, 101]
           }
       }
   },
   "agent": {
-      "MaxHistoryLength": 50
+    "MaxHistoryLength": 50
   },
   "ML": {
       "Agent": {
-          "actor_fc_layer_params": [256, 256],
-          "critic_joint_fc_layer_params": [256, 256],
-          "actor_learning_rate": 3e-4,
-          "critic_learning_rate": 3e-4,
-          "alpha_learning_rate": 3e-4,
-          "target_update_tau": 0.005,
-          "target_update_period": 1,
-          "gamma": 0.99,
-          "reward_scale_factor": 1.0,
-          "gradient_clipping": null, 
-          "agent_name": "sac_agent",
-          "debug_summaries": "True",
-          "replay_buffer_capacity": 100000,
-          "max_ckpts_to_keep": 3,
-          "parallel_buffer_calls": 3,
-          "batch_size": 256,
-          "buffer_num_steps": 2,
-          "buffer_prefetch": 3,
-          "checkpoint_path": "/home/hart/Dokumente/2019/bark-ml/configurations/sac_highway/checkpoints/"
+        "actor_fc_layer_params": [512, 256, 256],
+        "critic_joint_fc_layer_params": [512, 256, 256],
+        "actor_learning_rate": 3e-4,
+        "critic_learning_rate": 3e-4,
+        "alpha_learning_rate": 3e-4,
+        "target_update_tau": 0.05,
+        "target_update_period": 3,
+        "gamma": 0.99,
+        "reward_scale_factor": 5.0,
+        "gradient_clipping": null, 
+        "agent_name": "sac_agent",
+        "debug_summaries": "True",
+        "replay_buffer_capacity": 100000,
+        "max_ckpts_to_keep": 3,
+        "parallel_buffer_calls": 3,
+        "batch_size": 512,
+        "num_parallel_environments": 30,
+        "buffer_num_steps": 2,
+        "buffer_prefetch": 3,
+        "checkpoint_path": "/home/hart/Dokumente/2020/bark-ml/configurations/sac_highway/checkpoints/"
       },
       "Evaluator": {
-          "max_steps": 60,
-          "collision_penalty": -1.0,
-          "goal_reward": 1.0
+        "max_steps": 60,
+        "collision_penalty": -100.0,
+        "goal_reward": 100.0
       },
       "Observer": {
-          "velocity_range": [0, 30],
-          "theta_range": [0.0, 6.29],
-          "normalization_enabled": true,
-          "max_num_agents": 2
+        "velocity_range": [0, 30],
+        "theta_range": [-3.14, 3.14],
+        "normalization_enabled": true,
+        "max_num_agents": 2
       },
       "Runner": {
-          "number_of_collections": 100000,
-          "initial_collection_steps": 1000,
-          "collection_episodes_per_cycle": 2,
-          "evaluate_every_n_steps": 1000,
-          "evaluation_steps": 25,
-          "summary_path": "/home/hart/Dokumente/2019/bark-ml/configurations/sac_highway/summaries/"
+        "number_of_collections": 100000,
+        "initial_collection_steps": 250,
+        "collection_episodes_per_cycle": 1,
+        "evaluate_every_n_steps": 500,
+        "evaluation_steps": 25,
+        "summary_path": "/home/hart/Dokumente/2020/bark-ml/configurations/sac_highway/summaries/"
       },
       "DynamicModel": {
-          "action_dimension": 2,
-          "actions_lower_bound": [-1.0, -0.1],
-          "actions_upper_bound": [1.0, 0.1]
-      },
-      "MotionPrimitives": {
-          "motion_primitives": [[4.0, 0.0],
-                                [2.0, 0.0],
-                                [-0.5, 0.0],
-                                [-1.0, 0.0]]
+        "action_dimension": 4,
+        "actions_lower_bound": [-1.0, -0.1, -1.0, -0.1],
+        "actions_upper_bound": [1.0, 0.1, 1.0, 0.1]
       }
   } 
 }

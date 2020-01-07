@@ -48,8 +48,6 @@ class PyRuntimeTFARLTests(unittest.TestCase):
     tfa_env = TFAWrapper(runtimerl)
     _ = tfa_env.reset()
 
-    utils.validate_py_environment(tfa_env, episodes=5)
-    _ = tf_py_environment.TFPyEnvironment(tfa_env)
 
 if __name__ == '__main__':
   unittest.main()

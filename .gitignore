@@ -155,6 +155,8 @@ web/node_modules
 *dot_file*
 
 /configurations/**/checkpoints/
+/configurations/**/checkpoints_old/
 /configurations/**/summaries/
+/configurations/**/summaries_old/
 
 **.mp4

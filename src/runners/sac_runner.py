@@ -16,7 +16,6 @@ from tf_agents.trajectories import time_step as ts
 
 from src.runners.tfa_runner import TFARunner
 
-
 logger = logging.getLogger()
 # NOTE(@hart): this will print all statements
 # logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -103,17 +102,18 @@ class SACRunner(TFARunner):
   def visualize(self, num_episodes=1):
     # Ticket (https://github.com/tensorflow/agents/issues/59) recommends
     # to do the rendering in the original environment
-    if self._unwrapped_runtime is not None:
-      for _ in range(0, num_episodes):
-        state = self._unwrapped_runtime.reset()
-        is_terminal = False
-        while not is_terminal:
-          print(state)
-          action_step = self._agent._eval_policy.action(
-            ts.transition(state, reward=0.0, discount=1.0))
-          print(action_step)
-          # TODO(@hart); make generic for multi agent planning
-          state, reward, is_terminal, _ = self._unwrapped_runtime.step(
-            action_step.action.numpy())
-          print(reward)
-          self._unwrapped_runtime.render()
+    for _ in range(0, num_episodes):
+      state = self._unwrapped_runtime.reset()
+      is_terminal = False
+      while not is_terminal:
+        action_step = self._agent._eval_policy.action(
+          ts.transition(state, reward=0.0, discount=1.0))
+        # TODO(@hart); make generic for multi agent planning
+        state, reward, is_terminal, _ = self._unwrapped_runtime.step(
+          action_step.action.numpy())
+        logger.info("Action: {},  Reward: {} and is_terminal {}.".format(
+          str(action_step.action.numpy()),
+          str(reward),
+          str(is_terminal)
+        ))
+        self._unwrapped_runtime.render()
