@@ -7,7 +7,7 @@ tqdm
 gym
 tf-agents
 tensorflow-probability
-tensorflow
+tensorflow=2.0.0
 panda3d
 gast==0.2.2
 cloudpickle==1.1.1
