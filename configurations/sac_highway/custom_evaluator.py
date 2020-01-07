@@ -1,7 +1,7 @@
 import numpy as np
 from bark.world.evaluation import \
   EvaluatorGoalReached, EvaluatorCollisionAgents, \
-  EvaluatorCollisionDrivingCorridor, EvaluatorStepCount
+  EvaluatorCollisionDrivingCorridor, EvaluatorStepCount, EvaluatorDrivableArea
 from modules.runtime.commons.parameters import ParameterServer
 from bark.geometry import *
 from bark.models.dynamic import StateDefinition
@@ -21,6 +21,7 @@ class CustomEvaluator(GoalReached):
 
   def _add_evaluators(self):
     self._evaluators["goal_reached"] = EvaluatorGoalReached()
+    self._evaluators["drivable_area"] = EvaluatorDrivableArea()
     self._evaluators["collision"] = \
       EvaluatorCollisionAgents()
     self._evaluators["step_count"] = EvaluatorStepCount()
@@ -60,10 +61,11 @@ class CustomEvaluator(GoalReached):
     done = False
     success = eval_results["goal_reached"]
     collision = eval_results["collision"]
+    drivable_area = eval_results["drivable_area"]
     step_count = eval_results["step_count"]
 
     reward = self.calculate_reward(world, eval_results, action)    
-    if success or collision or step_count > self._max_steps:
+    if success or collision or step_count > self._max_steps or drivable_area:
       done = True
     return reward, done, eval_results
     

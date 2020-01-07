@@ -7,7 +7,7 @@
                   {
                     "VehicleModel": {
                     "behavior_model": "BehaviorConstantVelocity",
-                    "dynamic_model": "SingleTrackModel",
+                    "dynamic_model": "TripleIntegratorModel",
                     "execution_model": "ExecutionModelInterpolate",
                     "id": 100,
                     "state": [ [0, 0],

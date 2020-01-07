@@ -1,4 +1,4 @@
-import coloredlogs, logging
+import logging
 from absl import app
 from absl import flags
 import tensorflow as tf
@@ -29,7 +29,6 @@ from configurations.base_configuration import BaseConfiguration
 # configuration specific evaluator
 from configurations.ppo_drone_challenge.custom_evaluator import CustomEvaluator
 from configurations.ppo_drone_challenge.custom_observer import CustomObserver
-coloredlogs.install()
 logger = logging.getLogger()
 
 FLAGS = flags.FLAGS
