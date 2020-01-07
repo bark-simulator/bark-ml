@@ -29,17 +29,9 @@ class CustomEvaluator(GoalReached):
   def distance_to_goal(self, world):
     d = 0.
     for i, agent in world.agents.items():
-      shape = agent.shape
       state = agent.state
-      pose = np.zeros(3)
-      pose[0] = state[int(StateDefinition.X_POSITION)]
-      pose[1] = state[int(StateDefinition.Y_POSITION)]
-      pose[2] = state[int(StateDefinition.THETA_POSITION)]
-      transformed_polygon = shape.transform(pose)
-      # TODO(@hart): scenario generation should support sequential goal
       goal_poly = agent.goal_definition.goal_shape
-      # goal_poly = agent.goal_definition.goal_shape
-      d += distance(transformed_polygon, goal_poly)
+      d += distance(goal_poly, Point2d(state[1], state[2]))
     d /= i
     return d
 
@@ -56,8 +48,9 @@ class CustomEvaluator(GoalReached):
     # TODO(@hart): use parameter server
     inpt_reward = np.sum((1/0.15*delta)**2 + (accs)**2)
     reward = collision * self._collision_penalty + \
-      success * self._goal_reward - 0.1*distance_to_goals - inpt_reward + \
-      drivable_area * self._collision_penalty
+      success * self._goal_reward - inpt_reward + \
+      drivable_area * self._collision_penalty - \
+      0.1*distance_to_goals 
     return reward
 
   def _evaluate(self, world, eval_results, action):
