@@ -25,6 +25,10 @@ class RuntimeRL(Runtime):
     self._observer = observer
     self._evaluator = evaluator
 
+    # make viewers available
+    self._observer.set_viewer(viewer)
+    self._evaluator.set_viewer(viewer)
+
   def reset(self, scenario=None):
     """Resets the runtime and its objects
     """

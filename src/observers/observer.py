@@ -23,6 +23,7 @@ class StateObserver(ABC):
       1]
     self._world_x_range = [-10000, 10000]
     self._world_y_range = [-10000, 10000]
+    self._viewer = None
 
   @abstractmethod
   def observe(self, world, agents_to_observe):
@@ -57,3 +58,6 @@ class StateObserver(ABC):
   @property
   def observation_space(self):
     pass
+
+  def set_viewer(self, viewer):
+    self._viewer = viewer

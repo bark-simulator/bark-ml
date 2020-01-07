@@ -10,6 +10,7 @@ class StateEvaluator(ABC):
                params=ParameterServer()):
     self._params = params
     self._evaluators = {}
+    self._viewer = None
 
   def evaluate(self, world, action):
     """Evaluates the passed world
@@ -41,3 +42,6 @@ class StateEvaluator(ABC):
     for key, evaluator in self._evaluators.items():
       world.add_evaluator(key, evaluator)
     return world
+
+  def set_viewer(self, viewer):
+    self._viewer = viewer
