@@ -41,7 +41,7 @@ class PyRuntimeTests(unittest.TestCase):
     env = Runtime(0.2,
                   viewer,
                   scenario_generation,
-                  render=False)
+                  render=True)
 
     env.reset()
     agent_ids = []
@@ -63,6 +63,8 @@ class PyRuntimeTests(unittest.TestCase):
           self.assertEqual(key, agent.id)
           self.assertEqual(agent_ids[i], agent.id)
           states_before.append(agent.state)
+          # TODO(@hart): why does this not work
+          print(key, agent.goal_definition.goal_shape)
         env.step()
         # assert state has been changed by the step() function
         for i, (key, agent) in enumerate(env._world.agents.items()):
