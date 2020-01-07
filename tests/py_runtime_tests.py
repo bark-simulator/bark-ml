@@ -37,11 +37,7 @@ class PyRuntimeTests(unittest.TestCase):
       "Draw the local map of each agent",
       True]
     viewer = MPViewer(params=param_server,
-                      x_range=[-50, 50],
-                      y_range=[-50, 50],
-                      follow_agent_id=100,
-                      screen_dims=[500, 500],
-                      use_world_bounds=False)
+                      use_world_bounds=True)
     env = Runtime(0.2,
                   viewer,
                   scenario_generation,
@@ -72,6 +68,7 @@ class PyRuntimeTests(unittest.TestCase):
         for i, (key, agent) in enumerate(env._world.agents.items()):
           np.testing.assert_equal(np.any(np.not_equal(states_before[i],
                                          agent.state)), True)
+
       # check whether the reset works     
       env.reset()
       for i, (key, agent) in enumerate(env._world.agents.items()):

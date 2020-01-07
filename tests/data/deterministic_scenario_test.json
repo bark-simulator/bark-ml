@@ -1,5 +1,9 @@
 {
   "Scenario": {
+    "ColorMap": {
+        "100": [1.0, 0.0, 0.0],
+        "101": [0.0, 1.0, 0.0]
+      },
       "Generation": {
           "DeterministicScenarioGeneration": {
               "MapFilename": "tests/data/city_highway_straight.xodr",
@@ -12,7 +16,7 @@
                     "id": 100,
                     "state": [
                         0.0,
-                        5111.0,
+                        5114.0,
                         5106.8305,
                         1.57,
                         10.0
@@ -118,7 +122,7 @@
                           ]
                       ],
                       "center_pose": [
-                          5108.626,
+                          5112.826,
                           5200.8305,
                           0.0
                       ]
@@ -135,10 +139,10 @@
                     "id": 101,
                     "state": [
                       0.0,
-                      5114.3,
+                      5112.3,
                       5114.3,
                       0.0,
-                      15.0
+                      10.0
                     ],
                     "shape": {
                         "polygon_points": [
@@ -241,8 +245,8 @@
                             ]
                       ],
                       "center_pose": [
-                          5114.3,
-                          5506.8305,
+                          5108.3,
+                          5206.8305,
                           0.0
                       ]
                     },
@@ -251,7 +255,7 @@
                     }
                   }
               ],
-              "EgoAgentId": 100
+              "controlled_ids": [100, 101]
           }
       }
   },
@@ -294,15 +298,9 @@
           "summary_path": "tests/data/"
       },
       "DynamicModel": {
-          "action_dimension": 2,
-          "actions_lower_bound": [-1.0, -0.1],
-          "actions_upper_bound": [1.0, 0.1]
-      },
-      "MotionPrimitives": {
-          "motion_primitives": [[4.0, 0.0],
-                                [2.0, 0.0],
-                                [-0.5, 0.0],
-                                [-1.0, 0.0]]
+          "action_dimension": 4,
+          "actions_lower_bound": [-1.0, -0.1, -1.0, -0.1],
+          "actions_upper_bound": [1.0, 0.1, 1.0, 0.1]
       }
   } 
 }

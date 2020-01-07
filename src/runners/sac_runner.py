@@ -111,5 +111,9 @@ class SACRunner(TFARunner):
         # TODO(@hart); make generic for multi agent planning
         state, reward, is_terminal, _ = self._unwrapped_runtime.step(
           action_step.action.numpy())
-        logger.info(f"Action: {action_step.action.numpy()},  Reward: {reward} and is_terminal {is_terminal}.")
+        logger.info("Action: {},  Reward: {} and is_terminal {}.".format(
+          str(action_step.action.numpy()),
+          str(reward),
+          str(is_terminal)
+        ))
         self._unwrapped_runtime.render()

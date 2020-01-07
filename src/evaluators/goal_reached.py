@@ -25,9 +25,9 @@ class GoalReached(StateEvaluator):
     self._eval_agent = eval_agent
 
   def _add_evaluators(self):
-    self._evaluators["goal_reached"] = EvaluatorGoalReached(self._eval_agent)
+    self._evaluators["goal_reached"] = EvaluatorGoalReached()
     self._evaluators["collision"] = \
-      EvaluatorCollisionAgents(self._eval_agent)
+      EvaluatorCollisionAgents()
     self._evaluators["step_count"] = EvaluatorStepCount()
 
   def _evaluate(self, world, eval_results, action):
@@ -35,8 +35,7 @@ class GoalReached(StateEvaluator):
     """
     done = False
     success = eval_results["goal_reached"]
-    collision = eval_results["collision"] or \
-      eval_results["collision_driving_corridor"]
+    collision = eval_results["collision"]
     step_count = eval_results["step_count"]
     # determine whether the simulation should terminate
     if success or collision or step_count > self._max_steps:
