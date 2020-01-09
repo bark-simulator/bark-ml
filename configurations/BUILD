@@ -16,8 +16,3 @@ py_library(
     deps = ["@bark_project//modules/runtime:runtime"],
     visibility = ["//visibility:public"],
 )
-
-sh_binary(
-    name = "deploy",
-    srcs = ["deploy.sh"]
-)
