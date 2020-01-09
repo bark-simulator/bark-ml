@@ -160,3 +160,4 @@ web/node_modules
 /configurations/**/summaries_old/
 
 **.mp4
+*.img
