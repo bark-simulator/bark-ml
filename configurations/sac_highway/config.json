@@ -287,7 +287,7 @@
         "num_parallel_environments": 30,
         "buffer_num_steps": 2,
         "buffer_prefetch": 3,
-        "checkpoint_path": "/Users/hart/2020/bark-ml/configurations/sac_highway/checkpoints/"
+        "checkpoint_path": "configurations/sac_highway/checkpoints/"
       },
       "Evaluator": {
         "max_steps": 60,
@@ -302,11 +302,11 @@
       },
       "Runner": {
         "number_of_collections": 100000,
-        "initial_collection_steps": 250,
+        "initial_collection_steps": 10,
         "collection_episodes_per_cycle": 1,
-        "evaluate_every_n_steps": 500,
-        "evaluation_steps": 25,
-        "summary_path": "/Users/hart/2020/bark-ml/configurations/sac_highway/summaries/"
+        "evaluate_every_n_steps": 20,
+        "evaluation_steps": 5,
+        "summary_path": "configurations/sac_highway/summaries/"
       },
       "DynamicModel": {
         "action_dimension": 2,
@@ -316,7 +316,7 @@
       }
   },
   "World": {
-      "recalculate_driving_corridor": false,
-      "update_horizon_corridor": false
+    "recalculate_driving_corridor": false,
+    "update_horizon_corridor": false
   }
 }

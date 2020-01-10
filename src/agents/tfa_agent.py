@@ -48,7 +48,7 @@ class TFAAgent(BaseAgent):
         Checkpointer -- tf-checkpoint handler
     """
     checkpointer = Checkpointer(
-      self._params["ML"]["Agent"]["checkpoint_path"],
+      self._params["BaseDir"] + "/" + self._params["ML"]["Agent"]["checkpoint_path"],
       global_step=self._ckpt.step,
       tf_agent=self._agent,
       max_to_keep=self._params["ML"]["Agent"]["max_ckpts_to_keep"])
