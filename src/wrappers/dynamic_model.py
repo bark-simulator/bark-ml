@@ -1,6 +1,6 @@
 
 import numpy as np
-
+import itertools
 from src.commons.spaces import Discrete, BoundedContinuous
 from bark.models.behavior import DynamicBehaviorModel
 from bark.models.dynamic import SingleTrackModel, TripleIntegratorModel
@@ -43,7 +43,7 @@ class DynamicModel(ActionWrapper):
   def action_to_behavior(self, world, action):
     """see base class
     """
-    actions = np.reshape(action, (-1, 2))
+    actions = np.reshape(action, (-1, self._control_inputs))
     for i, a in enumerate(actions):
       self._behavior_models[i].set_last_action(a)
     return world
@@ -52,11 +52,16 @@ class DynamicModel(ActionWrapper):
   def action_space(self):
     """see base class
     """
-    return BoundedContinuous(
-      self._control_inputs,
-      low=self._params["ML"]["DynamicModel"]["actions_lower_bound",
+    action_num = self._params["ML"]["DynamicModel"]["action_num",
         "Lower-bound for actions.",
-        [0.5, -0.01]],
-      high=self._params["ML"]["DynamicModel"]["actions_upper_bound",
+        1]
+    lower_bounds = [self._params["ML"]["DynamicModel"]["actions_lower_bound",
+        "Lower-bound for actions.",
+        [0.5, -0.01]] for _ in range(action_num)]
+    upper_bounds = [self._params["ML"]["DynamicModel"]["actions_upper_bound",
         "Upper-bound for actions.",
-        [0.5, 0.01]])
+        [0.5, 0.01]] for _ in range(action_num)]
+    return BoundedContinuous(
+      self._control_inputs*action_num,
+      low=list(itertools.chain(*lower_bounds)),
+      high=list(itertools.chain(*lower_bounds)))
