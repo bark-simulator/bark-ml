@@ -302,10 +302,10 @@
       },
       "Runner": {
         "number_of_collections": 100000,
-        "initial_collection_steps": 10,
+        "initial_collection_steps": 100,
         "collection_episodes_per_cycle": 1,
-        "evaluate_every_n_steps": 20,
-        "evaluation_steps": 5,
+        "evaluate_every_n_steps": 500,
+        "evaluation_steps": 25,
         "summary_path": "configurations/sac_highway/summaries/"
       },
       "DynamicModel": {
