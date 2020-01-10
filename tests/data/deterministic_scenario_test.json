@@ -298,9 +298,10 @@
           "summary_path": "tests/data/"
       },
       "DynamicModel": {
-          "action_dimension": 4,
-          "actions_lower_bound": [-1.0, -0.1, -1.0, -0.1],
-          "actions_upper_bound": [1.0, 0.1, 1.0, 0.1]
+          "action_dimension": 2,
+          "action_num": 2,
+          "actions_lower_bound": [-1.0, -0.1],
+          "actions_upper_bound": [1.0, 0.1]
       }
   } 
 }

@@ -3,7 +3,7 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-
+import os
 import unittest
 import tensorflow as tf
 from tf_agents.environments import tf_py_environment
@@ -30,6 +30,8 @@ class PyRunnerTests(unittest.TestCase):
   def test_runner():
     params = ParameterServer(
       filename="tests/data/deterministic_scenario_test.json")
+    base_dir = os.path.dirname(os.path.dirname(__file__))
+    params["BaseDir"] = base_dir
     scenario_generation = DeterministicScenarioGeneration(num_scenarios=3,
                                                           random_seed=0,
                                                           params=params)

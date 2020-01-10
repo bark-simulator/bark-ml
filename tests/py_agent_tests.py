@@ -3,7 +3,7 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-
+import os
 import unittest
 import tensorflow as tf
 tf.compat.v1.enable_v2_behavior()
@@ -28,6 +28,8 @@ class PyAgentTests(unittest.TestCase):
   def test_agent(self):
     params = ParameterServer(
       filename="tests/data/deterministic_scenario_test.json")
+    base_dir = os.path.dirname(os.path.dirname(__file__))
+    params["BaseDir"] = base_dir
     scenario_generation = DeterministicScenarioGeneration(
       num_scenarios=2,
       random_seed=0,
