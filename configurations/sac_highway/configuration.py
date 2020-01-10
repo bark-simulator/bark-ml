@@ -1,3 +1,6 @@
+import matplotlib as mpl
+mpl.use('Agg')
+
 from absl import app
 from absl import flags
 import tensorflow as tf
@@ -28,12 +31,12 @@ from configurations.sac_highway.configuration_lib import SACHighwayConfiguration
 
 FLAGS = flags.FLAGS
 flags.DEFINE_enum('mode',
-                  'visualize',
+                  'train',
                   ['train', 'visualize', 'evaluate'],
                   'Mode the configuration should be executed in.')
 
 def run_configuration(argv):
-  params = ParameterServer(filename="configurations/sac_highway/config.json")
+  params = ParameterServer(filename="/mnt/glusterdata/home/hart/experiment_1/configuration.runfiles/bark_ml/configurations/sac_highway/config.json")
   configuration = SACHighwayConfiguration(params)
   
   if FLAGS.mode == 'train':
