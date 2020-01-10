@@ -313,5 +313,9 @@
         "actions_lower_bound": [-1.0, -0.1, -1.0, -0.1],
         "actions_upper_bound": [1.0, 0.1, 1.0, 0.1]
       }
-  } 
+  },
+  "World": {
+      "recalculate_driving_corridor": false,
+      "update_horizon_corridor": false
+  }
 }
