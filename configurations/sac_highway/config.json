@@ -6,7 +6,7 @@
       },
       "Generation": {
           "DeterministicScenarioGeneration": {
-              "MapFilename": "/mnt/glusterdata/home/hart/experiment_1/configuration.runfiles/bark_ml/tests/data/city_highway_straight.xodr",
+              "MapFilename": "tests/data/city_highway_straight.xodr",
               "Agents" : [
                   {
                     "VehicleModel": {
@@ -287,7 +287,7 @@
         "num_parallel_environments": 30,
         "buffer_num_steps": 2,
         "buffer_prefetch": 3,
-        "checkpoint_path": "/mnt/glusterdata/home/hart/experiment_1/configuration.runfiles/bark_ml/configurations/sac_highway/checkpoints/"
+        "checkpoint_path": "/Users/hart/2020/bark-ml/configurations/sac_highway/checkpoints/"
       },
       "Evaluator": {
         "max_steps": 60,
@@ -306,7 +306,7 @@
         "collection_episodes_per_cycle": 1,
         "evaluate_every_n_steps": 500,
         "evaluation_steps": 25,
-        "summary_path": "/mnt/glusterdata/home/hart/experiment_1/configuration.runfiles/bark_ml/configurations/sac_highway/summaries/"
+        "summary_path": "/Users/hart/2020/bark-ml/configurations/sac_highway/summaries/"
       },
       "DynamicModel": {
         "action_dimension": 2,

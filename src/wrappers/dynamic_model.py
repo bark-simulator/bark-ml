@@ -57,11 +57,11 @@ class DynamicModel(ActionWrapper):
         1]
     lower_bounds = [self._params["ML"]["DynamicModel"]["actions_lower_bound",
         "Lower-bound for actions.",
-        [0.5, -0.01]] for _ in range(action_num)]
+        [-0.5, -0.01]] for _ in range(action_num)]
     upper_bounds = [self._params["ML"]["DynamicModel"]["actions_upper_bound",
         "Upper-bound for actions.",
         [0.5, 0.01]] for _ in range(action_num)]
     return BoundedContinuous(
       self._control_inputs*action_num,
       low=list(itertools.chain(*lower_bounds)),
-      high=list(itertools.chain(*lower_bounds)))
+      high=list(itertools.chain(*upper_bounds)))
