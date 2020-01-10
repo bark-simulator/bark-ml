@@ -43,7 +43,7 @@ class DynamicModel(ActionWrapper):
   def action_to_behavior(self, world, action):
     """see base class
     """
-    actions = np.reshape(action, (-1, 2))
+    actions = np.reshape(action, (-1, self._control_inputs))
     for i, a in enumerate(actions):
       self._behavior_models[i].set_last_action(a)
     return world
