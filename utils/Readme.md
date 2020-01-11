@@ -14,3 +14,7 @@
 ## Cluster
 Mount drive:
 `sudo mount -t glusterfs -o acl fortiss-8gpu:/data /mnt/glusterdata`
+
+also ssh key:
+ssh-keygen -t rsa
+ssh-copy-id -i ~/.ssh/id_<user>_cluster <user>@8gpu

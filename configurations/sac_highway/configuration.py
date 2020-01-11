@@ -1,6 +1,7 @@
-# import matplotlib as mpl
-# mpl.use('Agg')
 import os
+import matplotlib
+matplotlib.use('Agg')
+
 from absl import app
 from absl import flags
 import tensorflow as tf
