@@ -41,6 +41,8 @@ flags.DEFINE_string('base_dir',
                     os.path.dirname(
                       os.path.dirname(os.path.dirname(__file__))),
                     'Base directory of bark-ml.')
+
+
 def run_configuration(argv):
   params = ParameterServer(filename=FLAGS.base_dir + "/configurations/sac_highway/config.json")
   scenario_generation = params["Scenario"]["Generation"]["DeterministicScenarioGeneration"]
