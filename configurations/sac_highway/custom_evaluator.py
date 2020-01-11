@@ -46,7 +46,7 @@ class CustomEvaluator(GoalReached):
     delta = actions[:, 1]
 
     # TODO(@hart): use parameter server
-    inpt_reward = 4.*np.sum((1/0.15*delta)**2 + (accs)**2)
+    inpt_reward = np.sum((1/0.15*delta)**2 + (accs)**2)
     reward = collision * self._collision_penalty + \
       success * self._goal_reward - inpt_reward - \
       0.1*distance_to_goals + drivable_area * self._collision_penalty
