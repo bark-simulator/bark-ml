@@ -1,6 +1,8 @@
 import os
-import matplotlib
-matplotlib.use('Agg')
+import matplotlib as mpl
+if os.environ.get('DISPLAY') == ':0':
+  print('No display found. Using non-interactive Agg backend')
+  mpl.use('Agg')
 
 from absl import app
 from absl import flags
