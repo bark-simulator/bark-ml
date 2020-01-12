@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --qos normal
-#SBATCH -c 4
+#SBATCH -c 1
 ##SBATCH --gres=gpu:1
 #SBATCH --mem=10GB
 
