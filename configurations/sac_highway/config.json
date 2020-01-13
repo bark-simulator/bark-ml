@@ -268,11 +268,11 @@
   },
   "ML": {
       "Agent": {
-        "actor_fc_layer_params": [512, 256, 256],
-        "critic_joint_fc_layer_params": [512, 256, 256],
-        "actor_learning_rate": 3e-4,
-        "critic_learning_rate": 3e-4,
-        "alpha_learning_rate": 3e-4,
+        "actor_fc_layer_params": [256, 256, 128],
+        "critic_joint_fc_layer_params": [256, 256, 128],
+        "actor_learning_rate": 1e-4,
+        "critic_learning_rate": 1e-4,
+        "alpha_learning_rate": 1e-4,
         "target_update_tau": 0.05,
         "target_update_period": 1,
         "gamma": 0.995,
