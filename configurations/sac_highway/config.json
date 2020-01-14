@@ -277,7 +277,7 @@
         "target_update_period": 1,
         "gamma": 0.995,
         "reward_scale_factor": 1.0,
-        "gradient_clipping": null, 
+        "gradient_clipping": 10.0, 
         "agent_name": "sac_agent",
         "debug_summaries": "True",
         "replay_buffer_capacity": 100000,

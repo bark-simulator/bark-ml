@@ -58,7 +58,7 @@ class CustomEvaluator(GoalReached):
     reward = collision * self._collision_penalty + \
       success * self._goal_reward - inpt_reward - \
       0.1*distance_to_goals + drivable_area * self._collision_penalty - \
-      self.deviation_velocity(world)
+      0.1*self.deviation_velocity(world)**2
     return reward
 
   def _evaluate(self, world, eval_results, action):
