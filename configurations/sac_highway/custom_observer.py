@@ -10,7 +10,8 @@ from src.observers.simple_observer import SimpleObserver
 class CustomObserver(SimpleObserver):
   def __init__(self, params=ParameterServer()):
     SimpleObserver.__init__(self,
-                            params)
+                            normalize_observations=True,
+                            params=params)
 
   def observe(self, world, agents_to_observe):
     # TODO(@hart): e.g. include distance to goal

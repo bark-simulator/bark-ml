@@ -1,3 +1,9 @@
+import os
+import matplotlib as mpl
+if os.environ.get('DISPLAY') == ':0':
+  print('No display found. Using non-interactive Agg backend')
+  mpl.use('Agg')
+
 from absl import app
 from absl import flags
 import tensorflow as tf
@@ -25,10 +31,16 @@ from configurations.base_configuration import BaseConfiguration
 from configurations.sac_highway_uniform.custom_evaluator import CustomEvaluator
 
 FLAGS = flags.FLAGS
+FLAGS = flags.FLAGS
 flags.DEFINE_enum('mode',
-                  'visualize',
+                  'train',
                   ['train', 'visualize', 'evaluate'],
                   'Mode the configuration should be executed in.')
+flags.DEFINE_string('base_dir',
+                    os.path.dirname(
+                      os.path.dirname(os.path.dirname(__file__))),
+                    'Base directory of bark-ml.')
+
 
 class SACHighwayConfiguration(BaseConfiguration):
   """Hermetic and reproducible configuration class
@@ -69,7 +81,11 @@ class SACHighwayConfiguration(BaseConfiguration):
                              unwrapped_runtime=self._runtime)
 
 def run_configuration(argv):
-  params = ParameterServer(filename="configurations/sac_highway_uniform/config.json")
+  params = ParameterServer(filename=FLAGS.base_dir + "/configurations/sac_highway_uniform/config.json")
+  scenario_generation = params["Scenario"]["Generation"]["UniformVehicleDistribution"]
+  map_filename = scenario_generation["MapFilename"]
+  scenario_generation["MapFilename"] = FLAGS.base_dir + "/" + map_filename
+  params["BaseDir"] = FLAGS.base_dir
   configuration = SACHighwayConfiguration(params)
   
   if FLAGS.mode == 'train':
