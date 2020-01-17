@@ -12,6 +12,7 @@ from src.observers.observer import StateObserver
 
 class SimpleObserver(StateObserver):
   def __init__(self,
+               normalize_observations=True,
                params=ParameterServer()):
     StateObserver.__init__(self, params)
     self._state_definition = [int(StateDefinition.X_POSITION),
@@ -20,16 +21,23 @@ class SimpleObserver(StateObserver):
                               int(StateDefinition.VEL_POSITION)]
     self._observation_len = \
       self._max_num_vehicles*self._len_state
+    self._normalize_observations = normalize_observations
 
   def observe(self, world, agents_to_observe):
     """see base class
     """
     concatenated_state = np.zeros(self._observation_len, dtype=np.float32)
     for i, (_, agent) in enumerate(world.agents.items()):
-      normalized_state = self._normalize(agent.state)
-      reduced_state = self._select_state_by_index(normalized_state)
+      state = agent.state
+      if self._normalize_observations:
+        state = self._normalize(state)
+      reduced_state = self._select_state_by_index(state)
+      # use x,y,vx,vy
+      new_state = np.copy(reduced_state)
+      new_state[2] = reduced_state[3]*np.cos(reduced_state[2])
+      new_state[3] = reduced_state[3]*np.sin(reduced_state[2])
       starts_id = i*self._len_state
-      concatenated_state[starts_id:starts_id+self._len_state] = reduced_state
+      concatenated_state[starts_id:starts_id+self._len_state] = new_state
       if i >= self._max_num_vehicles:
         break
     return concatenated_state

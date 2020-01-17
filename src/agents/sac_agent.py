@@ -83,7 +83,7 @@ class SACAgent(TFAAgent):
       td_errors_loss_fn=tf.compat.v1.losses.mean_squared_error,
       gamma=self._params["ML"]["Agent"]["gamma"],
       reward_scale_factor=self._params["ML"]["Agent"]["reward_scale_factor"],
-      gradient_clipping=None,#self._params["ML"]["Agent"]["gradient_clipping"],
+      gradient_clipping=self._params["ML"]["Agent"]["gradient_clipping"],
       train_step_counter=self._ckpt.step,
       name=self._params["ML"]["Agent"]["agent_name"],
       debug_summaries=self._params["ML"]["Agent"]["debug_summaries"])

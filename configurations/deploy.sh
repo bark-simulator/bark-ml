@@ -7,5 +7,5 @@ echo "Uploading.."
 rsync bazel-bin/configurations/$1/ 8gpu:/mnt/glusterdata/home/$2/$3 -a --copy-links -v -z -P
 rsync ./configurations/run.sh 8gpu:/mnt/glusterdata/home/$2/$3/run.sh -a --copy-links -v -z -P
 
-ssh 8gpu && cd $3 && sbatch run.sh
-echo "Training started!"
+# ssh 8gpu && cd $3 && sbatch run.sh
+# echo "Training started!"

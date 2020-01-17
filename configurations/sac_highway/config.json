@@ -19,7 +19,7 @@
                         [5111.0, 5111.0],
                         [5106.8305, 5110.8305],
                         [1.57, 1.57],
-                        [10.0, 15.0]
+                        [9.0, 11.0]
                     ],
                     "color": "red",
                     "shape": {
@@ -145,7 +145,7 @@
                       [5114.3, 5114.3],
                       [5114.3, 5130.3],
                       [1.57, 1.57],
-                      [10.0, 15.0]
+                      [9.0, 11.0]
                     ],
                     "shape": {
                         "polygon_points": [
@@ -268,22 +268,22 @@
   },
   "ML": {
       "Agent": {
-        "actor_fc_layer_params": [512, 256, 256],
-        "critic_joint_fc_layer_params": [512, 256, 256],
-        "actor_learning_rate": 3e-4,
-        "critic_learning_rate": 3e-4,
-        "alpha_learning_rate": 3e-4,
+        "actor_fc_layer_params": [256, 256, 128],
+        "critic_joint_fc_layer_params": [256, 256, 128],
+        "actor_learning_rate": 1e-4,
+        "critic_learning_rate": 1e-4,
+        "alpha_learning_rate": 1e-4,
         "target_update_tau": 0.05,
-        "target_update_period": 3,
+        "target_update_period": 1,
         "gamma": 0.995,
-        "reward_scale_factor": 3.0,
-        "gradient_clipping": null, 
+        "reward_scale_factor": 1.0,
+        "gradient_clipping": 10.0, 
         "agent_name": "sac_agent",
         "debug_summaries": "True",
         "replay_buffer_capacity": 100000,
         "max_ckpts_to_keep": 3,
         "parallel_buffer_calls": 3,
-        "batch_size": 512,
+        "batch_size": 256,
         "num_parallel_environments": 30,
         "buffer_num_steps": 2,
         "buffer_prefetch": 3,
@@ -291,8 +291,8 @@
       },
       "Evaluator": {
         "max_steps": 60,
-        "collision_penalty": -100.0,
-        "goal_reward": 100.0
+        "collision_penalty": -10.0,
+        "goal_reward": 10.0
       },
       "Observer": {
         "velocity_range": [0, 30],
@@ -301,10 +301,10 @@
         "max_num_agents": 2
       },
       "Runner": {
-        "number_of_collections": 250000,
-        "initial_collection_steps": 1000,
+        "number_of_collections": 5000000,
+        "initial_collection_steps": 100,
         "collection_episodes_per_cycle": 1,
-        "evaluate_every_n_steps": 500,
+        "evaluate_every_n_steps": 2500,
         "evaluation_steps": 25,
         "summary_path": "configurations/sac_highway/summaries/"
       },
