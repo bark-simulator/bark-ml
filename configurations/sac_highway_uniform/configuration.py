@@ -31,7 +31,6 @@ from configurations.base_configuration import BaseConfiguration
 from configurations.sac_highway_uniform.custom_evaluator import CustomEvaluator
 
 FLAGS = flags.FLAGS
-FLAGS = flags.FLAGS
 flags.DEFINE_enum('mode',
                   'train',
                   ['train', 'visualize', 'evaluate'],
@@ -63,9 +62,10 @@ class SACHighwayConfiguration(BaseConfiguration):
     self._evaluator = CustomEvaluator(params=self._params)
 
     self._viewer  = MPViewer(params=self._params,
-                            x_range=[-20,20],
-                            y_range=[-20,20],
-                            follow_agent_id=True)
+                             use_world_bounds=True)
+                            # x_range=[-20,20],
+                            # y_range=[-20,20],
+                            # follow_agent_id=True)
     #self._viewer = VideoRenderer(renderer=viewer, world_step_time=0.2)
     self._runtime = RuntimeRL(action_wrapper=self._behavior_model,
                               observer=self._observer,
@@ -73,6 +73,7 @@ class SACHighwayConfiguration(BaseConfiguration):
                               step_time=0.2,
                               viewer=self._viewer,
                               scenario_generator=self._scenario_generator)
+
     tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(self._runtime))
     self._agent = SACAgent(tfa_env, params=self._params)
     self._runner = SACRunner(tfa_env,
