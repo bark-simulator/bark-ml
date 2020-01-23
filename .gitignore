@@ -151,7 +151,6 @@ web/node_modules
 .DS_Store
 .gitkeep
 
-*.vscode*
 *dot_file*
 
 /configurations/**/checkpoints/
@@ -161,3 +160,5 @@ web/node_modules
 
 **.mp4
 *.img
+.vscode/.vs_code_bazel_build/vs_code_aspect.bzl
+.vscode/.vs_code_bazel_build/BUILD
