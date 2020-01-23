@@ -46,7 +46,7 @@ tensorflow-estimator==2.1.0
 tensorflow-probability==0.8.0
 termcolor==1.1.0
 tf-agents-nightly
-tf-estimator-nightly
+tf-estimator-nightly==1.14.0.dev2019030115
 tfp-nightly
 tqdm==4.41.1
 urllib3==1.25.7
