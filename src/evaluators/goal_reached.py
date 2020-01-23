@@ -1,6 +1,6 @@
 from bark.world.evaluation import \
   EvaluatorGoalReached, EvaluatorCollisionAgents, \
-  EvaluatorCollisionDrivingCorridor, EvaluatorStepCount
+  EvaluatorStepCount
 from modules.runtime.commons.parameters import ParameterServer
 
 from src.evaluators.evaluator import StateEvaluator

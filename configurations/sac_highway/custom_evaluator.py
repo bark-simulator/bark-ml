@@ -1,7 +1,7 @@
 import numpy as np
 from bark.world.evaluation import \
   EvaluatorGoalReached, EvaluatorCollisionAgents, \
-  EvaluatorCollisionDrivingCorridor, EvaluatorStepCount, EvaluatorDrivableArea
+  EvaluatorStepCount, EvaluatorDrivableArea
 from modules.runtime.commons.parameters import ParameterServer
 from bark.geometry import *
 from bark.models.dynamic import StateDefinition

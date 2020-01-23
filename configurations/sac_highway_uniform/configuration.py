@@ -93,7 +93,7 @@ def run_configuration(argv):
     configuration.train()
   elif FLAGS.mode == 'visualize':
     configuration.visualize(10)
-    configuration._viewer.export_video("/home/hart/Dokumente/2019/bark-ml/configurations/sac_highway_uniform/video/lane_merge")
+    # configuration._viewer.export_video("/home/hart/Dokumente/2019/bark-ml/configurations/sac_highway_uniform/video/lane_merge")
   elif FLAGS.mode == 'evaluate':
     configuration.evaluate()
 
