@@ -1,7 +1,7 @@
 import numpy as np
 from bark.world.evaluation import \
   EvaluatorGoalReached, EvaluatorCollisionEgoAgent, \
-  EvaluatorCollisionDrivingCorridor, EvaluatorStepCount, EvaluatorDrivableArea
+  EvaluatorStepCount, EvaluatorDrivableArea
 from modules.runtime.commons.parameters import ParameterServer
 from bark.geometry import *
 
@@ -37,10 +37,10 @@ class CustomEvaluator(GoalReached):
     """
     agent = world.agents[self._eval_agent]
     agent_state = agent.state
-    centerline = agent.local_map.get_driving_corridor().center
+    # centerline = agent.local_map.get_driving_corridor().center
     # TODO(@hart): HACK; to see whether a lane-change can be learned
-    agent_xy = Point2d(agent.state[1] + 4., agent.state[2])
-    return distance(centerline, agent_xy)
+    #agent_xy = Point2d(agent.state[1] + 4., agent.state[2])
+    return 0 # distance(centerline, agent_xy)
 
   def _evaluate(self, world, eval_results, action):
     """Returns information about the current world state
