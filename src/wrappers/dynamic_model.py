@@ -45,7 +45,7 @@ class DynamicModel(ActionWrapper):
     """
     actions = np.reshape(action, (-1, self._control_inputs))
     for i, a in enumerate(actions):
-      self._behavior_models[i].set_last_action(a)
+      self._behavior_models[i].SetLastAction(a)
     return world
 
   @property

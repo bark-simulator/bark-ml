@@ -37,10 +37,10 @@ class StateEvaluator(ABC):
     #                     .format(len(agents_to_evaluate)))
     # TODO(@hart); make generic for multi agent planning
     self._eval_agent = agents_to_evaluate[0]
-    world.clear_evaluators()
+    world.ClearEvaluators()
     self._add_evaluators()
     for key, evaluator in self._evaluators.items():
-      world.add_evaluator(key, evaluator)
+      world.AddEvaluator(key, evaluator)
     return world
 
   def set_viewer(self, viewer):

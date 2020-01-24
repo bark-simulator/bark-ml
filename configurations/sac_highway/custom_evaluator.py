@@ -31,7 +31,7 @@ class CustomEvaluator(GoalReached):
     for i, agent in world.agents.items():
       state = agent.state
       goal_poly = agent.goal_definition.goal_shape
-      d += distance(goal_poly, Point2d(state[1], state[2]))
+      d += Distance(goal_poly, Point2d(state[1], state[2]))
     d /= i
     return d
 
