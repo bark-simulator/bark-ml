@@ -26,7 +26,7 @@ class StateEvaluator(ABC):
     done = False
     # TODO(@hart); make generic for multi agent planning
     if self._eval_agent in world.agents:
-      eval_results = world.evaluate()
+      eval_results = world.Evaluate()
       reward, done, eval_results = self._evaluate(world, eval_results, action)
     return reward, done, eval_results
 

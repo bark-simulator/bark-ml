@@ -29,7 +29,7 @@ class ClosestAgentsObserver(StateObserver):
     """
     observed_worlds = [world]
     if not isinstance(world, ObservedWorld):
-      observed_worlds =  world.observe(agents_to_observe)
+      observed_worlds =  world.Observe(agents_to_observe)
     if (len(observed_worlds) == 0):
       concatenated_state = np.zeros(self._len_ego_state + \
         self._max_num_vehicles*self._len_relative_agent_state)
