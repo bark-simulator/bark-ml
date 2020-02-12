@@ -310,7 +310,7 @@
       },
       "DynamicModel": {
         "action_dimension": 2,
-        "action_num": 2,
+        "action_num": 1,
         "actions_lower_bound": [-1.0, -0.15],
         "actions_upper_bound": [1.0, 0.15]
       }
