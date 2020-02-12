@@ -30,7 +30,6 @@ from configurations.sac_highway.configuration_lib import SACHighwayConfiguration
 from configurations.bark_agent import BARKMLBehaviorModel
 
 class PyBarkAgentTests(unittest.TestCase):
-  @unittest.skip("...")
   def test_bark_agent(self):
     params = ParameterServer(
       filename="configurations/sac_highway/config.json")
@@ -39,16 +38,25 @@ class PyBarkAgentTests(unittest.TestCase):
     scenario, idx = scenario_generator.get_next_scenario()
     world = scenario.get_world_state()
     dynamic_model = SingleTrackModel(params)
-    bark_agent = BARKMLBehaviorModel(configuration, dynamic_model, scenario._eval_agent_ids)
-    bark_agent.plan(0.2, world)
-    bark_agent.plan(0.2, world)
-    bark_agent.plan(0.2, world)
-    new_agent = bark_agent.clone()
-    new_agent.plan(0.2, world)
-    new_agent.plan(0.2, world)
-    new_agent.plan(0.2, world)
+    bark_agent = BARKMLBehaviorModel(
+      configuration, dynamic_model, scenario._eval_agent_ids)
 
-  @unittest.skip("...")
+    # test whether an action can be set
+    bark_agent.SetLastAction(np.array([1., 1.]))
+    np.testing.assert_array_equal(
+      bark_agent.GetLastAction(),
+      np.array([1., 1.]))
+    bark_agent.SetLastAction(np.array([2., 1.]))
+
+    # check whether cloning works
+    new_agent = bark_agent.Clone()
+    np.testing.assert_array_equal(
+      new_agent.GetLastAction(),
+      np.array([2., 1.]))
+
+    # test plan step
+    bark_agent.Plan(0.2, world)
+  
   def test_bark_agent_in_world(self):
     params = ParameterServer(
       filename="configurations/sac_highway/config.json")
@@ -59,15 +67,16 @@ class PyBarkAgentTests(unittest.TestCase):
 
     # bark agent
     dynamic_model = world.agents[scenario._eval_agent_ids[0]].dynamic_model
-    bark_agent = BARKMLBehaviorModel(configuration, dynamic_model, scenario._eval_agent_ids)
-    bark_agent.set_last_action(np.array([0., 0.]))
-    world.agents[scenario._eval_agent_ids[0]].behavior_model = bark_agent
+    bark_agent = BARKMLBehaviorModel(
+      configuration, dynamic_model, scenario._eval_agent_ids)
+    bark_agent.Plan(0.2, world)
+    
+    world.agents[100].behavior_model = bark_agent
     for _ in range(0, 10):
       configuration._viewer.drawWorld(world)
-      world.step(0.2)
-      print(world.agents[scenario._eval_agent_ids[0]].state)
+      world.Step(0.2)
+      # print(world.agents[scenario._eval_agent_ids[0]].state)
 
-  @unittest.skip("...")
   def test_bark_agent_in_runtime(self):
     # check whether the bark agent really does work
     params = ParameterServer(
@@ -89,8 +98,7 @@ class PyBarkAgentTests(unittest.TestCase):
     env.reset()
     dynamic_model = env._world.agents[env._scenario._eval_agent_ids[0]].dynamic_model
     bark_agent = BARKMLBehaviorModel(configuration, dynamic_model, env._scenario._eval_agent_ids)
-    bark_agent.set_last_action(np.array([1., 0.]))
-    env._world.get_agent(env._scenario._eval_agent_ids[0]).behavior_model = bark_agent
+    env._world.agents[env._scenario._eval_agent_ids[0]].behavior_model = bark_agent
 
     for _ in range(0, 35):
       env.step()

@@ -2,11 +2,11 @@
 from gym import spaces
 import numpy as np
 from bark.models.dynamic import StateDefinition
+from bark.world import ObservedWorld
 from modules.runtime.commons.parameters import ParameterServer
 import math
 import operator
 from src.commons.spaces import BoundedContinuous, Discrete
-
 from src.observers.observer import StateObserver
 
 
@@ -26,6 +26,8 @@ class SimpleObserver(StateObserver):
   def observe(self, world, agents_to_observe):
     """see base class
     """
+    if not isinstance(world, ObservedWorld):
+      world =  world.Observe(agents_to_observe)[0]
     concatenated_state = np.zeros(self._observation_len, dtype=np.float32)
     for i, (_, agent) in enumerate(world.agents.items()):
       state = agent.state
