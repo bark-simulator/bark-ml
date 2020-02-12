@@ -30,7 +30,6 @@ from configurations.sac_highway.configuration_lib import SACHighwayConfiguration
 from configurations.bark_agent import BARKMLBehaviorModel
 
 class PyBarkAgentTests(unittest.TestCase):
-  @unittest.skip("...")
   def test_bark_agent(self):
     params = ParameterServer(
       filename="configurations/sac_highway/config.json")
@@ -58,7 +57,6 @@ class PyBarkAgentTests(unittest.TestCase):
     # test plan step
     bark_agent.Plan(0.2, world)
   
-  @unittest.skip("...")
   def test_bark_agent_in_world(self):
     params = ParameterServer(
       filename="configurations/sac_highway/config.json")
