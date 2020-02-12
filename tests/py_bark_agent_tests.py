@@ -39,7 +39,7 @@ class PyBarkAgentTests(unittest.TestCase):
     world = scenario.get_world_state()
     dynamic_model = SingleTrackModel(params)
     bark_agent = BARKMLBehaviorModel(
-      configuration, dynamic_model, scenario._eval_agent_ids)
+      configuration)
 
     # test whether an action can be set
     bark_agent.SetLastAction(np.array([1., 1.]))
@@ -55,7 +55,8 @@ class PyBarkAgentTests(unittest.TestCase):
       np.array([2., 1.]))
 
     # test plan step
-    bark_agent.Plan(0.2, world)
+    observed_world = world.Observe(0)[0]
+    bark_agent.Plan(0.2, observed_world)
   
   def test_bark_agent_in_world(self):
     params = ParameterServer(
@@ -68,8 +69,7 @@ class PyBarkAgentTests(unittest.TestCase):
     # bark agent
     dynamic_model = world.agents[scenario._eval_agent_ids[0]].dynamic_model
     bark_agent = BARKMLBehaviorModel(
-      configuration, dynamic_model, scenario._eval_agent_ids)
-    bark_agent.Plan(0.2, world)
+      configuration)
     
     world.agents[100].behavior_model = bark_agent
     for _ in range(0, 10):
@@ -97,10 +97,10 @@ class PyBarkAgentTests(unittest.TestCase):
 
     env.reset()
     dynamic_model = env._world.agents[env._scenario._eval_agent_ids[0]].dynamic_model
-    bark_agent = BARKMLBehaviorModel(configuration, dynamic_model, env._scenario._eval_agent_ids)
+    bark_agent = BARKMLBehaviorModel(configuration)
     env._world.agents[env._scenario._eval_agent_ids[0]].behavior_model = bark_agent
 
-    for _ in range(0, 35):
+    for _ in range(0, 10):
       env.step()
 
 
