@@ -55,7 +55,7 @@ class PyBarkAgentTests(unittest.TestCase):
       np.array([2., 1.]))
 
     # test plan step
-    observed_world = world.Observe(0)[0]
+    observed_world = world.Observe([0])[0]
     bark_agent.Plan(0.2, observed_world)
   
   def test_bark_agent_in_world(self):
