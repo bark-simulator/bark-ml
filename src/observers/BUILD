@@ -9,3 +9,15 @@ py_library(
             "//src/commons:spaces"],
     visibility = ["//visibility:public"],
 )
+
+cc_library(
+    name = "nearest_observer",
+    hdrs = [
+        "nearest_observer.hpp",
+    ],
+    deps = [
+      "@bark_project//modules/commons/params:params",
+      "@bark_project//modules/world:world",
+    ],
+    visibility = ["//visibility:public"],
+)

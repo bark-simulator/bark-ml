@@ -77,3 +77,16 @@ py_test(
   deps = ["@bark_project//modules/runtime:runtime",
           "@bark_project//modules/runtime/scenario/scenario_generation:scenario_generation"],
 )
+
+cc_test(
+  name = "observer_tests",
+  srcs = [
+    "observer_tests.cc",
+  ],
+  copts = ["-Iexternal/gtest/include"],
+  deps = [
+    "//src/observers:nearest_observer",
+    "@bark_project//modules/commons/params:params",
+    "@gtest//:main",
+  ]
+)
