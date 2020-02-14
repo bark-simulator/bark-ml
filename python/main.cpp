@@ -32,6 +32,7 @@ PYBIND11_MODULE(bark_ml, m) {
       .def(py::init<ParamsPtr>())
       .def("observe", &NearestObserver::Observe);
       .def("reset", &NearestObserver::Reset);
+      .def_property("observation_space", &NearestObserver::ObservationSpace);
   }
 
   void python_evaluators(py::module m) {

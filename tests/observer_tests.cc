@@ -45,10 +45,11 @@ TEST(observes, nearest_observer) {
   float ego_velocity = 15.0, rel_distance = 7.0,
     velocity_difference = 0.0;
   auto observed_world = make_test_observed_world(
-    0, rel_distance, ego_velocity, velocity_difference, goal_definition_ptr);
+    1, rel_distance, ego_velocity, velocity_difference, goal_definition_ptr);
 
-  WorldPtr world = make_test_world(1, rel_distance, ego_velocity,
-                                   velocity_difference, goal_definition_ptr);
+  WorldPtr world = make_test_world(
+    1, rel_distance, ego_velocity, velocity_difference, goal_definition_ptr);
+  
   ObservedWorldPtr obs_world_ptr =
     std::make_shared<ObservedWorld>(observed_world);
 

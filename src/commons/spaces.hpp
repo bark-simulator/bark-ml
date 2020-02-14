@@ -8,6 +8,7 @@
 #define SRC_COMMONS_SPACES_HPP_
 
 #include <memory>
+#include <tuple>
 #include <vector>
 #include <Eigen/Dense>
 
@@ -15,17 +16,17 @@
 namespace spaces {
 
 template<typename T>
-using Matrix_t = Eigen::Matrix_t<T, Eigen::Dynamic, Eigen::Dynamic>;
+using Matrix_t = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
 
 template<typename T>
 struct Box {
   Box(const Matrix_t<T>& low,
       const Matrix_t<T>& high,
-      const Matrix_t<T>& shape) :
+      const std::vector<int>& shape) :
     low_(low), high_(high), shape_(shape) {}
   const Matrix_t<T> low_;
   const Matrix_t<T> high_;
-  const Matrix_t<T> shape_;
+  const std::vector<int> shape_;
 };
 
 }  // namespace spaces

@@ -16,7 +16,8 @@ cc_library(
     "nearest_observer.hpp",
   ],
   deps = [
-    "@bark_project//modules/world:include"
+    "@bark_project//modules/world:include",
+    "//src/commons:spaces"
   ],
   visibility = ["//visibility:public"],
 )
