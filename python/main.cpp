@@ -14,6 +14,7 @@
 #include "boost/variant.hpp"
 
 #include "src/observers/nearest_observer.hpp"
+#include "src/commons/spaces.hpp"
 
 PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
 
@@ -22,6 +23,8 @@ namespace py = pybind11;
 PYBIND11_MODULE(bark_ml, m) {
   m.doc() = "Wrapper for bark-ml.";
   using observers::NearestObserver;
+  using spaces::Box;
+  using spaces::Matrix_t;
 
   void python_observers(py::module m) {
     py::class_<NearestObserver,
@@ -35,9 +38,17 @@ PYBIND11_MODULE(bark_ml, m) {
     // py::class_<World, std::shared_ptr<World>>(m, "NearestObserver")
     //   .def(py::init<ParamsPtr>());
   }
-
+  void python_spaces(py::module m) {
+    py::class_<Box<float>, std::shared_ptr<Box<float>>>(m, "Box")
+      .def(py::init<Matrix_t<float>, Matrix_t<float>, Matrix_t<float>>())
+      .def_property("low", &Box::low)
+      .def_property("high", &Box::high)
+      .def_property("shape", &Box::shape);
+  }
   python_observers(
     m.def_submodule("observers", "c++ observers"));
   python_evaluators(
-    m.def_submodule("evaluators", "c++ observers"));
+    m.def_submodule("evaluators", "c++ evaluators"));
+  python_spaces(
+    m.def_submodule("spaces", "c++ spaces"));
 }
