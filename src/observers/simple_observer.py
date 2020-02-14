@@ -68,9 +68,8 @@ class SimpleObserver(StateObserver):
                  self._velocity_range)
     return agent_state
 
-  def reset(self, world, agents_to_observe):
-    super(SimpleObserver, self).reset(world, agents_to_observe)
-    return world
+  def reset(self, observed_world):
+    return observed_world
 
   @property
   def observation_space(self):

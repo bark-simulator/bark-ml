@@ -56,13 +56,13 @@ class RuntimeRL(Runtime):
     self._world = self._action_wrapper.action_to_behavior(world=self._world,
                                                           action=action)
     self._world.Step(self._step_time)
-    if self._render:
-      self.render()
-  
-    return self.snapshot(
+    snapshot =  self.snapshot(
       world=self._world,
       controlled_agents=self._scenario._eval_agent_ids,
       action=action)
+    if self._render:
+      self.render()
+    return snapshot
 
   @property
   def action_space(self):
@@ -87,9 +87,10 @@ class RuntimeRL(Runtime):
     Returns:
         (next_state, reward, done, info) -- RL tuple
     """
+    # TODO(@hart): could be multiple
+    observed_world = self._world.Observe(controlled_agents)[0]
     next_state = self._observer.observe(
-      world=self._world,
-      agents_to_observe=controlled_agents)
+      world=observed_world)
     reward, done, info = self._evaluator.evaluate(world=world, action=action)
     return next_state, reward, done, info
 
