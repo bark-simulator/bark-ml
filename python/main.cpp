@@ -13,16 +13,22 @@
 #include "pybind11/eigen.h"
 #include "boost/variant.hpp"
 
+#include "src/observers/nearest_observer.hpp"
+
 PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
 
 namespace py = pybind11;
 
 PYBIND11_MODULE(bark_ml, m) {
   m.doc() = "Wrapper for bark-ml.";
+  using observers::NearestObserver;
 
   void python_observers(py::module m) {
-    // py::class_<World, std::shared_ptr<World>>(m, "NearestObserver")
-    //   .def(py::init<ParamsPtr>());
+    py::class_<NearestObserver,
+               std::shared_ptr<NearestObserver>>(m, "NearestObserver")
+      .def(py::init<ParamsPtr>())
+      .def("observe", &NearestObserver::Observe);
+      .def("reset", &NearestObserver::Reset);
   }
 
   void python_evaluators(py::module m) {

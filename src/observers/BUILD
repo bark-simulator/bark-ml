@@ -11,13 +11,12 @@ py_library(
 )
 
 cc_library(
-    name = "nearest_observer",
-    hdrs = [
-        "nearest_observer.hpp",
-    ],
-    deps = [
-      "@bark_project//modules/commons/params:params",
-      "@bark_project//modules/world:world",
-    ],
-    visibility = ["//visibility:public"],
+  name = "nearest_observer",
+  hdrs = [
+    "nearest_observer.hpp",
+  ],
+  deps = [
+    "@bark_project//modules/world:include"
+  ],
+  visibility = ["//visibility:public"],
 )

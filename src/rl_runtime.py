@@ -39,8 +39,11 @@ class RuntimeRL(Runtime):
                                         self._scenario._eval_agent_ids)
     self._world = self._action_wrapper.reset(self._world,
                                              self._scenario._eval_agent_ids)
+    # TODO(@hart): could be multiple
+    observed_world = self._world.Observe(
+      self._scenario._eval_agent_ids)[0]
     return self._observer.observe(
-      world=self._world,
+      world=observed_world,
       agents_to_observe=self._scenario._eval_agent_ids)
 
   def step(self, action):
@@ -56,6 +59,7 @@ class RuntimeRL(Runtime):
     self._world = self._action_wrapper.action_to_behavior(world=self._world,
                                                           action=action)
     self._world.Step(self._step_time)
+
     snapshot =  self.snapshot(
       world=self._world,
       controlled_agents=self._scenario._eval_agent_ids,
@@ -91,7 +95,9 @@ class RuntimeRL(Runtime):
     observed_world = self._world.Observe(controlled_agents)[0]
     next_state = self._observer.observe(
       world=observed_world)
-    reward, done, info = self._evaluator.evaluate(world=world, action=action)
+    reward, done, info = self._evaluator.evaluate(
+      world=observed_world,
+      action=action)
     return next_state, reward, done, info
 
 

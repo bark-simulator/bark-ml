@@ -30,7 +30,7 @@ class GoalReached(StateEvaluator):
       EvaluatorCollisionAgents()
     self._evaluators["step_count"] = EvaluatorStepCount()
 
-  def _evaluate(self, world, eval_results, action):
+  def _evaluate(self, observed_world, eval_results, action):
     """Returns information about the current world state
     """
     done = False

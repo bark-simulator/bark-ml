@@ -27,18 +27,14 @@ class ClosestAgentsObserver(StateObserver):
   def observe(self, observed_world):
     """see base class
     """
-    if (len(observed_worlds) == 0):
-      concatenated_state = np.zeros(self._len_ego_state + \
-        self._max_num_vehicles*self._len_relative_agent_state)
-      return concatenated_state.fill(np.nan)
-    ego_observed_world = observed_worlds[0]
+    ego_observed_world = observed_world
     num_other_agents = len(ego_observed_world.other_agents)
     ego_state = ego_observed_world.ego_agent.state
 
     # calculate nearest agent distances
     nearest_distances = {}
     for agent_id, agent in ego_observed_world.other_agents.items():
-      if agent_id == agents_to_observe[0]:
+      if agent_id == observed_world.ego_agent.id:
         continue
       dx = ego_state[int(StateDefinition.X_POSITION)] - \
         agent.state[int(StateDefinition.X_POSITION)]
