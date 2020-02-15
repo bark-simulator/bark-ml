@@ -15,6 +15,7 @@
 #include "modules/commons/params/params.hpp"
 #include "modules/world/world.hpp"
 #include "modules/world/observed_world.hpp"
+#include "modules/world/goal_definition/goal_definition_state_limits_frenet.hpp"
 #include "modules/models/dynamic/dynamic_model.hpp"
 #include "src/commons/spaces.hpp"
 #include "src/commons/commons.hpp"
@@ -27,6 +28,7 @@ using commons::Norm;
 using spaces::Matrix_t;
 using modules::world::AgentMap;
 using modules::world::WorldPtr;
+using modules::world::goal_definition::GoalDefinitionStateLimitsFrenet;
 using modules::world::ObservedWorldPtr;
 using modules::geometry::Point2d;
 using modules::geometry::Line;
@@ -72,11 +74,12 @@ class NearestObserver {
   }
 
   ObservedState Observe(const ObservedWorldPtr& world) const {
+    // TODO(@hart): lon relative to ego
     int row_idx = 0;
     ObservedState state(1, observation_len_);
     state.setZero();
     // TODO(@hart): this should later be removed
-    // world->UpdateAgentRTree();
+    world->UpdateAgentRTree();
 
     // 1. ego lane corr
     std::shared_ptr<const Agent> ego_agent = world->GetEgoAgent();
@@ -85,14 +88,18 @@ class NearestObserver {
     const auto& road_corridor = ego_agent->GetRoadCorridor();
     BARK_EXPECT_TRUE(road_corridor != nullptr);
 
-    // TODO(@hart): should be goal frenet type
-    // HACK(@all): for now fake
-    // WE ALWAYS TAKE THE SAME REF FRAME
-    // const auto& ego_lane_corridor =
-    //   road_corridor->GetCurrentLaneCorridor(ego_pos);
-    // BARK_EXPECT_TRUE(ego_lane_corridor != nullptr);
+    const auto& ego_goal =
+      std::dynamic_pointer_cast<GoalDefinitionStateLimitsFrenet>(
+        ego_agent->GetGoalDefinition());
+    const auto& ego_goal_center_line = ego_goal->GetCenterLine();
+
+    // check in which lane corridor the goal is
     const auto& lane_corridors = road_corridor->GetUniqueLaneCorridors();
-    const auto& ego_lane_corridor = lane_corridors[0];
+    auto ego_lane_corridor = lane_corridors[0];
+    for (auto& lane_corr : lane_corridors) {
+      if (Collide(lane_corr->GetMergedPolygon(), ego_goal_center_line))
+        ego_lane_corridor = lane_corr;
+    }
 
     // 2. find near agents (n)
     AgentMap nearest_agents = world->GetNearestAgents(
@@ -115,9 +122,6 @@ class NearestObserver {
         row_idx++;
       }
     }
-
-    // TODO(@hart): norm
-    // TODO(@hart): lon relative to ego
     return state;
   }
 

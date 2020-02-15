@@ -26,28 +26,21 @@ class CustomEvaluator(GoalReached):
       EvaluatorCollisionAgents()
     self._evaluators["step_count"] = EvaluatorStepCount()
 
-  def distance_to_goal(self, observed_world):
-    d = 0.
-    for _, agent in observed_world.agents.items():
-      state = agent.state
-      goal_poly = agent.goal_definition.goal_shape
-      d += Distance(goal_poly, Point2d(state[1], state[2]))
-    return d
-
-  def deviation_velocity(self, observed_world):
-    desired_v = 10.
-    delta_v = 0.
-    for _, agent in observed_world.agents.items():
-      vel = agent.state[int(StateDefinition.VEL_POSITION)]
-      delta_v += (desired_v-vel)**2
-    return delta_v
+  # def deviation_velocity(self, observed_world):
+  #   desired_v = 10.
+  #   delta_v = 0.
+  #   for _, agent in observed_world.agents.items():
+  #     vel = agent.state[int(StateDefinition.VEL_POSITION)]
+  #     delta_v += (desired_v-vel)**2
+  #   return delta_v
   
-  def calculate_reward(self, observed_world, eval_results, action):
+  def calculate_reward(self, observed_world, eval_results, action, observed_state):  # NOLINT
     success = eval_results["goal_reached"]
     collision = eval_results["collision"]
     drivable_area = eval_results["drivable_area"]
 
-    distance_to_goals = self.distance_to_goal(observed_world)
+    # distance_to_goals = self.distance_to_goal(observed_world)
+    lateral_offset = observed_state[0, 1]**2
     actions = np.reshape(action, (-1, 2))
     accs = actions[:, 0]
     delta = actions[:, 1]
@@ -55,11 +48,12 @@ class CustomEvaluator(GoalReached):
     # TODO(@hart): use parameter server
     inpt_reward = np.sum((1/0.15*delta)**2 + (accs)**2)
     reward = collision * self._collision_penalty + \
-      success * self._goal_reward - 0.001*inpt_reward - \
-      0.1*distance_to_goals + drivable_area * self._collision_penalty
+      success * self._goal_reward + \
+      drivable_area * self._collision_penalty - \
+      0.01*lateral_offset - 0.01*inpt_reward
     return reward
 
-  def _evaluate(self, world, eval_results, action):
+  def _evaluate(self, world, eval_results, action, observed_state):
     """Returns information about the current world state
     """
     done = False
@@ -69,8 +63,9 @@ class CustomEvaluator(GoalReached):
     step_count = eval_results["step_count"]
 
     # if this is a FrenetCorr we will use this for the observer and evaluator
-    print(success, collision, drivable_area, step_count)
-    reward = self.calculate_reward(world, eval_results, action)    
+    # print(success, collision, drivable_area, step_count)
+
+    reward = self.calculate_reward(world, eval_results, action, observed_state)    
     if success or collision or step_count > self._max_steps or drivable_area:
       done = True
     return reward, done, eval_results

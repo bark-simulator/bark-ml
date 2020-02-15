@@ -87,10 +87,12 @@ class RuntimeRL(Runtime):
     """
     # TODO(@hart): could be multiple
     observed_world = self._world.Observe(controlled_agents)[0]
+    self._viewer.drawRoadCorridor(observed_world.ego_agent.road_corridor)
     next_state = self._observer.observe(observed_world)
     reward, done, info = self._evaluator.evaluate(
       world=world,
-      action=action)
+      action=action,
+      observed_state=next_state)
     return next_state, reward, done, info
 
 

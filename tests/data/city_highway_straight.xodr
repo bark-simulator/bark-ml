@@ -23,7 +23,7 @@
                 <center>
                     <lane id="0" type="driving" level= "0">
                         <link>
-                        <roadMark sOffset="0.0000000000000000e+00" type="broken" weight="standard" color="standard" width="1.4999999999999999e-01" laneChange="none" height="1.9999999552965164e-02">
+                        <roadMark sOffset="0.0000000000000000e+00" type="solid" weight="standard" color="standard" width="1.4999999999999999e-01" laneChange="none" height="1.9999999552965164e-02">
                         </roadMark>
                         </link>
                     </lane>
