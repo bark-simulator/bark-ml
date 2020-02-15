@@ -38,8 +38,7 @@ class RuntimeRL(Runtime):
     # TODO(@hart): could be multiple
     observed_world = self._world.Observe(
       self._scenario._eval_agent_ids)[0]
-    return self._observer.observe(
-      world=observed_world)
+    return self._observer.observe(observed_world)
 
   def step(self, action):
     """Steps the world with a specified time dt
@@ -88,8 +87,7 @@ class RuntimeRL(Runtime):
     """
     # TODO(@hart): could be multiple
     observed_world = self._world.Observe(controlled_agents)[0]
-    next_state = self._observer.observe(
-      world=observed_world)
+    next_state = self._observer.observe(observed_world)
     reward, done, info = self._evaluator.evaluate(
       world=world,
       action=action)

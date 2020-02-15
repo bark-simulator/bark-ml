@@ -25,7 +25,7 @@ from configurations.base_configuration import BaseConfiguration
 # configuration specific evaluator
 from configurations.sac_highway.custom_evaluator import CustomEvaluator
 from configurations.sac_highway.custom_observer import CustomObserver
-
+from bark_ml.observers import NearestObserver
 
 class SACHighwayConfiguration(BaseConfiguration):
   """Hermetic and reproducible configuration class
@@ -43,7 +43,8 @@ class SACHighwayConfiguration(BaseConfiguration):
       DeterministicScenarioGeneration(num_scenarios=12,
                                       random_seed=0,
                                       params=self._params)
-    self._observer = CustomObserver(params=self._params)
+    # self._observer = CustomObserver(params=self._params)
+    self._observer = NearestObserver(self._params)
     self._behavior_model = DynamicModel(params=self._params)
     self._evaluator = CustomEvaluator(params=self._params)
     viewer = MPViewer(params=self._params,

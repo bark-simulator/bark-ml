@@ -92,6 +92,8 @@ class NearestObserver {
       }
     }
 
+    // TODO(@hart): norm
+    // TODO(@hart): lon relative to ego
     return state;
   }
 
