@@ -63,25 +63,32 @@ class NearestObserver {
     ObservedState state(1, observation_len_);
     state.setZero();
     // TODO(@hart): this should later be removed
-    world->UpdateAgentRTree();
+    // world->UpdateAgentRTree();
 
-    // 1. build ego agent frenet system
+    // 1. ego lane corr
     std::shared_ptr<const Agent> ego_agent = world->GetEgoAgent();
+    BARK_EXPECT_TRUE(ego_agent != nullptr);
     const Point2d ego_pos = ego_agent->GetCurrentPosition();
+    const auto& road_corridor = ego_agent->GetRoadCorridor();
+    BARK_EXPECT_TRUE(road_corridor != nullptr);
+
+    // TODO(@hart): should be goal lane corridor
     const auto& ego_lane_corridor =
-      ego_agent->GetRoadCorridor()->GetCurrentLaneCorridor(ego_pos);
+      road_corridor->GetCurrentLaneCorridor(ego_pos);
+    BARK_EXPECT_TRUE(ego_lane_corridor != nullptr);
 
     // 2. find near agents (n)
-    AgentMap nearest_agents = world->GetNearestAgents(ego_pos, 5);
+    AgentMap nearest_agents = world->GetNearestAgents(
+      ego_pos, nearest_agent_num_);
 
-    // ego agent state
+    // transform ego agent state
     ObservedState obs_ego_agent_state =
       TransformState(ego_agent->GetCurrentState(),
                      ego_lane_corridor->GetCenterLine());
     state.block(0, row_idx*state_size_, 1, state_size_) = obs_ego_agent_state;
     row_idx++;
 
-    // other states
+    // transform other states
     for (const auto& agent : nearest_agents) {
       if (agent.second->GetAgentId() != ego_agent->GetAgentId()) {
         ObservedState other_agent_state =

@@ -56,9 +56,8 @@ class CustomEvaluator(GoalReached):
     # TODO(@hart): use parameter server
     inpt_reward = np.sum((1/0.15*delta)**2 + (accs)**2)
     reward = collision * self._collision_penalty + \
-      success * self._goal_reward - inpt_reward - \
-      0.1*distance_to_goals + drivable_area * self._collision_penalty - \
-      0.1*self.deviation_velocity(world)**2
+      success * self._goal_reward - 0.001*inpt_reward - \
+      0.1*distance_to_goals + drivable_area * self._collision_penalty
     return reward
 
   def _evaluate(self, world, eval_results, action):
