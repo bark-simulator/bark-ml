@@ -5,8 +5,7 @@ py_library(
             "observer.py"],
     data = ["@bark_project//python:bark.so"],
     imports = ["../external/bark_project/python/"],
-    deps = ["@bark_project//modules/runtime:runtime",
-            "//src/commons:spaces"],
+    deps = ["@bark_project//modules/runtime:runtime"],
     visibility = ["//visibility:public"],
 )
 

@@ -25,10 +25,6 @@ class RuntimeRL(Runtime):
     self._observer = observer
     self._evaluator = evaluator
 
-    # make viewers available
-    self._observer.set_viewer(viewer)
-    self._evaluator.set_viewer(viewer)
-
   def reset(self, scenario=None):
     """Resets the runtime and its objects
     """
@@ -43,8 +39,7 @@ class RuntimeRL(Runtime):
     observed_world = self._world.Observe(
       self._scenario._eval_agent_ids)[0]
     return self._observer.observe(
-      world=observed_world,
-      agents_to_observe=self._scenario._eval_agent_ids)
+      world=observed_world)
 
   def step(self, action):
     """Steps the world with a specified time dt
@@ -96,7 +91,7 @@ class RuntimeRL(Runtime):
     next_state = self._observer.observe(
       world=observed_world)
     reward, done, info = self._evaluator.evaluate(
-      world=observed_world,
+      world=world,
       action=action)
     return next_state, reward, done, info
 

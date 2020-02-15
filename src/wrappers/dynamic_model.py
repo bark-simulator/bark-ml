@@ -1,11 +1,11 @@
 
 import numpy as np
 import itertools
-from src.commons.spaces import Discrete, BoundedContinuous
 from bark.models.behavior import DynamicBehaviorModel
 from bark.models.dynamic import SingleTrackModel, TripleIntegratorModel
 from modules.runtime.commons.parameters import ParameterServer
 from src.wrappers.action_wrapper import ActionWrapper
+from src.commons.py_spaces import BoundedContinuous
 
 class DynamicModel(ActionWrapper):
   """This module wraps the SingleTrack model
@@ -61,6 +61,10 @@ class DynamicModel(ActionWrapper):
     upper_bounds = [self._params["ML"]["DynamicModel"]["actions_upper_bound",
         "Upper-bound for actions.",
         [0.5, 0.01]] for _ in range(action_num)]
+    # return Box(
+    #   np.reshape(np.array(list(itertools.chain(*lower_bounds))), (1, -1)),
+    #   np.reshape(np.array(list(itertools.chain(*upper_bounds))), (1, -1)),
+    #   [self._control_inputs*action_num])
     return BoundedContinuous(
       self._control_inputs*action_num,
       low=list(itertools.chain(*lower_bounds)),

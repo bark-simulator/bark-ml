@@ -1,10 +1,9 @@
 import numpy as np
-from bark.models.dynamic import StateDefinition
-from modules.runtime.commons.parameters import ParameterServer
 import math
 import operator
-from src.commons.spaces import BoundedContinuous, Discrete
 
+from bark.models.dynamic import StateDefinition
+from modules.runtime.commons.parameters import ParameterServer
 from src.observers.simple_observer import SimpleObserver
 
 class CustomObserver(SimpleObserver):
@@ -13,9 +12,9 @@ class CustomObserver(SimpleObserver):
                             normalize_observations=True,
                             params=params)
 
-  def observe(self, world, agents_to_observe):
+  def observe(self, world):
     # TODO(@hart): e.g. include distance to goal
-    return super(CustomObserver, self).observe(world, agents_to_observe)
+    return super(CustomObserver, self).observe(world)
 
   def reset(self, world, agents_to_observe):
     world = super(CustomObserver, self).reset(world, agents_to_observe)

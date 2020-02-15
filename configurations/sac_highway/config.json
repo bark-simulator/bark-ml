@@ -259,7 +259,7 @@
                     }
                   }
               ],
-              "controlled_ids": [100, 101]
+              "controlled_ids": [100]
           }
       }
   },

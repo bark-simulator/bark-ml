@@ -30,6 +30,7 @@ py_library(
   name = "configuration_lib",
   srcs = ["configuration_lib.py"],
   data = ["@bark_project//python:bark.so",
+          "//python:bark_ml.so",
           "//tests/data:bark_data",
           ":configuration_data"],
   imports = ["../external/bark_project/python/"],

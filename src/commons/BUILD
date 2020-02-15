@@ -8,3 +8,9 @@ cc_library(
   ],
   visibility = ["//visibility:public"],
 )
+
+py_library(
+    name = "py_spaces",
+    srcs = ["py_spaces.py"],
+    visibility = ["//visibility:public"],
+)

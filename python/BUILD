@@ -5,6 +5,7 @@ cc_binary(
   srcs = glob(["*.cpp", "*.hpp"]),
   deps = [
     "//src/observers:nearest_observer",
+    "//src/commons:spaces",
     # external
     "@python_linux//:python-lib",
     "@pybind11//:pybind11",

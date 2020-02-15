@@ -59,7 +59,6 @@ class NearestObserver {
   }
 
   ObservedState Observe(const ObservedWorldPtr& world) const {
-    // TODO(@hart): return observed space
     int row_idx = 0;
     ObservedState state(1, observation_len_);
     state.setZero();
@@ -93,7 +92,6 @@ class NearestObserver {
       }
     }
 
-    // 4. concat final state
     return state;
   }
 
