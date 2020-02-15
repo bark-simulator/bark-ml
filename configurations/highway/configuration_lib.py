@@ -8,6 +8,9 @@ from modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution \
   import UniformVehicleDistribution
 from modules.runtime.scenario.scenario_generation.deterministic \
   import DeterministicScenarioGeneration
+from modules.runtime.scenario.scenario_generation.configurable_scenario_generation import \
+  ConfigurableScenarioGeneration
+
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from modules.runtime.viewer.video_renderer import VideoRenderer
@@ -26,6 +29,7 @@ from configurations.base_configuration import BaseConfiguration
 from configurations.highway.custom_evaluator import CustomEvaluator
 from bark_ml.observers import NearestObserver
 
+
 class HighwayConfiguration(BaseConfiguration):
   """Hermetic and reproducible configuration class
   """
@@ -39,16 +43,13 @@ class HighwayConfiguration(BaseConfiguration):
     """Builds a configuration using an SAC agent
     """
     self._scenario_generator = \
-      DeterministicScenarioGeneration(num_scenarios=12,
-                                      random_seed=0,
+      ConfigurableScenarioGeneration(num_scenarios=3,
                                       params=self._params)
     self._observer = NearestObserver(self._params)
     self._behavior_model = DynamicModel(params=self._params)
     self._evaluator = CustomEvaluator(params=self._params)
     viewer = MPViewer(params=self._params,
-                      x_range=[-30, 30],
-                      y_range=[-30, 30],
-                      follow_agent_id=100)
+                      use_world_bounds=True)
     self._viewer = viewer
     self._runtime = RuntimeRL(action_wrapper=self._behavior_model,
                               observer=self._observer,
@@ -57,9 +58,6 @@ class HighwayConfiguration(BaseConfiguration):
                               viewer=self._viewer,
                               scenario_generator=self._scenario_generator)
     tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(self._runtime))
-    # tfa_env = tf_py_environment.TFPyEnvironment(
-    #   parallel_py_environment.ParallelPyEnvironment(
-    #     [lambda: TFAWrapper(self._runtime)] * self._params["ML"]["Agent"]["num_parallel_environments"]))
     self._agent = SACAgent(tfa_env, params=self._params)
     self._runner = SACRunner(tfa_env,
                              self._agent,
