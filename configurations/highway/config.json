@@ -13,7 +13,7 @@
             0.2,
             0.2
         ],
-        "DrawRoute": false,
+        "DrawRoute": true,
         "AlphaVehicle": 0.8,
         "Color": {
             "Other": [
