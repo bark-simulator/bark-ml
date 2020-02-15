@@ -17,11 +17,13 @@
 #include "modules/world/observed_world.hpp"
 #include "modules/models/dynamic/dynamic_model.hpp"
 #include "src/commons/spaces.hpp"
+#include "src/commons/commons.hpp"
 
 namespace observers {
 using modules::commons::ParamsPtr;
 using modules::world::Agent;
 using spaces::Box;
+using commons::Norm;
 using spaces::Matrix_t;
 using modules::world::AgentMap;
 using modules::world::WorldPtr;
@@ -33,14 +35,23 @@ using ObservedState = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>;
 using modules::commons::transformation::FrenetPosition;
 using State = Eigen::Matrix<float, Eigen::Dynamic, 1>;
 
+
 class NearestObserver {
  public:
   explicit NearestObserver(const ParamsPtr& params) :
     params_(params),
     state_size_(4) {
       nearest_agent_num_ =
-        params_->GetInt("ML::Observer::n_nearest_agents",
-                        "Nearest agents number", 4);
+        params_->GetInt(
+          "ML::Observer::n_nearest_agents", "Nearest agents number", 4);
+      min_lon_ = params_->GetReal("ML::Observer::min_lon", "", 0.);
+      max_lon_ = params_->GetReal("ML::Observer::max_lon", "", 500.);
+      min_lat_ = params_->GetReal("ML::Observer::min_lat", "", -10.);
+      max_lat_ = params_->GetReal("ML::Observer::max_lat", "", 10.);
+      min_theta_ = params_->GetReal("ML::Observer::min_theta", "", -3.14);
+      max_theta_ = params_->GetReal("ML::Observer::max_theta", "", 3.14);
+      min_vel_ = params_->GetReal("ML::Observer::min_vel", "", 0.0);
+      max_vel_ = params_->GetReal("ML::Observer::max_vel", "", 25.0);
       observation_len_ = nearest_agent_num_ * state_size_;
   }
 
@@ -51,10 +62,12 @@ class NearestObserver {
       state(StateDefinition::Y_POSITION));
     FrenetPosition frenet_pos(pose, center_line);
     ObservedState ret_state(1, state_size_);
-    ret_state << frenet_pos.lon,
-                 frenet_pos.lat,
-                 state(StateDefinition::THETA_POSITION),
-                 state(StateDefinition::VEL_POSITION);
+    ret_state <<
+      Norm<float>(frenet_pos.lon, min_lon_, max_lon_),
+      Norm<float>(frenet_pos.lat, min_lat_, max_lat_),
+      Norm<float>(
+        state(StateDefinition::THETA_POSITION), min_theta_, max_theta_),
+      Norm<float>(state(StateDefinition::VEL_POSITION), min_vel_, max_vel_);
     return ret_state;
   }
 
@@ -72,10 +85,14 @@ class NearestObserver {
     const auto& road_corridor = ego_agent->GetRoadCorridor();
     BARK_EXPECT_TRUE(road_corridor != nullptr);
 
-    // TODO(@hart): should be goal lane corridor
-    const auto& ego_lane_corridor =
-      road_corridor->GetCurrentLaneCorridor(ego_pos);
-    BARK_EXPECT_TRUE(ego_lane_corridor != nullptr);
+    // TODO(@hart): should be goal frenet type
+    // HACK(@all): for now fake
+    // WE ALWAYS TAKE THE SAME REF FRAME
+    // const auto& ego_lane_corridor =
+    //   road_corridor->GetCurrentLaneCorridor(ego_pos);
+    // BARK_EXPECT_TRUE(ego_lane_corridor != nullptr);
+    const auto& lane_corridors = road_corridor->GetUniqueLaneCorridors();
+    const auto& ego_lane_corridor = lane_corridors[0];
 
     // 2. find near agents (n)
     AgentMap nearest_agents = world->GetNearestAgents(
@@ -123,6 +140,8 @@ class NearestObserver {
   const int state_size_;
   int nearest_agent_num_;
   int observation_len_;
+  float min_lon_, max_lon_, min_lat_, max_lat_,
+        min_theta_, max_theta_, min_vel_, max_vel_;
 };
 
 }  // namespace observers

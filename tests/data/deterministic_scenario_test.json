@@ -282,7 +282,7 @@
           "batch_size": 52,
           "buffer_num_steps": 2,
           "buffer_prefetch": 3,
-          "checkpoint_path": "configurations/01_sac_highway/checkpoints/"
+          "checkpoint_path": "configurations/01_highway/checkpoints/"
       },
       "Evaluator": {
           "max_steps": 50,

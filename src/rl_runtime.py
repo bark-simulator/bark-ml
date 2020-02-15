@@ -89,7 +89,7 @@ class RuntimeRL(Runtime):
     observed_world = self._world.Observe(controlled_agents)[0]
     next_state = self._observer.observe(observed_world)
     reward, done, info = self._evaluator.evaluate(
-      world=world,
+      observed_world=world,
       action=action)
     return next_state, reward, done, info
 

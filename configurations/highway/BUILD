@@ -17,16 +17,6 @@ py_library(
 )
 
 py_library(
-    name = "custom_observer",
-    srcs = ["custom_observer.py"],
-    data = ["@bark_project//python:bark.so"],
-    imports = ["../external/bark_project/python/"],
-    deps = ["@bark_project//modules/runtime:runtime",
-            "//src/observers:observers"],
-    visibility = ["//visibility:public"],
-)
-
-py_library(
   name = "configuration_lib",
   srcs = ["configuration_lib.py"],
   data = ["@bark_project//python:bark.so",
@@ -41,7 +31,6 @@ py_library(
           "//src/runners:runners",
           "//configurations:base_configuration",
           ":custom_evaluator",
-          ":custom_observer",
           "@bark_project//modules/runtime/viewer:video_renderer"],
   visibility = ["//visibility:public"],
 )

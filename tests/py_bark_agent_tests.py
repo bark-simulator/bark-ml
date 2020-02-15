@@ -26,14 +26,14 @@ from src.wrappers.tfa_wrapper import TFAWrapper
 from src.evaluators.goal_reached import GoalReached
 from src.agents.sac_agent import SACAgent
 
-from configurations.sac_highway.configuration_lib import SACHighwayConfiguration
+from configurations.highway.configuration_lib import HighwayConfiguration
 from configurations.bark_agent import BARKMLBehaviorModel
 
 class PyBarkAgentTests(unittest.TestCase):
   def test_bark_agent(self):
     params = ParameterServer(
-      filename="configurations/sac_highway/config.json")
-    configuration = SACHighwayConfiguration(params)
+      filename="configurations/highway/config.json")
+    configuration = HighwayConfiguration(params)
     scenario_generator = configuration._scenario_generator
     scenario, idx = scenario_generator.get_next_scenario()
     world = scenario.get_world_state()
@@ -60,8 +60,8 @@ class PyBarkAgentTests(unittest.TestCase):
   
   def test_bark_agent_in_world(self):
     params = ParameterServer(
-      filename="configurations/sac_highway/config.json")
-    configuration = SACHighwayConfiguration(params)
+      filename="configurations/highway/config.json")
+    configuration = HighwayConfiguration(params)
     scenario_generator = configuration._scenario_generator
     scenario, idx = scenario_generator.get_next_scenario()
     world = scenario.get_world_state()
@@ -80,8 +80,8 @@ class PyBarkAgentTests(unittest.TestCase):
   def test_bark_agent_in_runtime(self):
     # check whether the bark agent really does work
     params = ParameterServer(
-      filename="configurations/sac_highway/config.json")
-    configuration = SACHighwayConfiguration(params)
+      filename="configurations/highway/config.json")
+    configuration = HighwayConfiguration(params)
     scenario_generator = configuration._scenario_generator
     
     viewer = MPViewer(params=params,

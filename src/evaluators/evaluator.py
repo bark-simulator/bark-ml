@@ -12,22 +12,16 @@ class StateEvaluator(ABC):
     self._evaluators = {}
     self._viewer = None
 
-  def evaluate(self, world, action):
-    """Evaluates the passed world
-    
-    Arguments:
-        world {bark.world} -- World containing all information
-    
-    Returns:
-        (reward, status, evaluation results) -- Rl-tuple
+  def evaluate(self, observed_world, action):
+    """Evaluates the observed world
     """
     eval_results = None
     reward = 0.
     done = False
     # TODO(@hart); make generic for multi agent planning
-    if self._eval_agent in world.agents:
-      eval_results = world.Evaluate()
-      reward, done, eval_results = self._evaluate(world, eval_results, action)
+    if self._eval_agent in observed_world.agents:
+      eval_results = observed_world.Evaluate()
+      reward, done, eval_results = self._evaluate(observed_world, eval_results, action)
     return reward, done, eval_results
 
   def reset(self, world, agents_to_evaluate):

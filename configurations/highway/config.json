@@ -287,7 +287,7 @@
         "num_parallel_environments": 30,
         "buffer_num_steps": 2,
         "buffer_prefetch": 3,
-        "checkpoint_path": "configurations/sac_highway/checkpoints/"
+        "checkpoint_path": "configurations/highway/checkpoints/"
       },
       "Evaluator": {
         "max_steps": 60,
@@ -306,7 +306,7 @@
         "collection_episodes_per_cycle": 1,
         "evaluate_every_n_steps": 2500,
         "evaluation_steps": 25,
-        "summary_path": "configurations/sac_highway/summaries/"
+        "summary_path": "configurations/highway/summaries/"
       },
       "DynamicModel": {
         "action_dimension": 2,

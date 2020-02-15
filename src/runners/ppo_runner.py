@@ -47,7 +47,7 @@ class PPORunner(TFARunner):
       self._agent._agent.train(experience=trajectories)
       self._agent._replay_buffer.clear()
       if global_iteration % self._params["ML"]["Runner"]["evaluate_every_n_steps"] == 0:
-        # self.evaluate()
+        self.evaluate()
         self._agent.save()
 
   def evaluate(self):
@@ -74,25 +74,3 @@ class PPORunner(TFARunner):
       .format(str(self._eval_metrics[0].result().numpy()),
               str(self._eval_metrics[1].result().numpy()),
               str(self._params["ML"]["Runner"]["evaluation_steps"])))
-  
-  def visualize(self, num_episodes=1):
-    # Ticket (https://github.com/tensorflow/agents/issues/59) recommends
-    # to do the rendering in the original environment
-    if self._unwrapped_runtime is not None:
-      for _ in range(0, num_episodes):
-        state = self._unwrapped_runtime.reset()
-        is_terminal = False
-        # time_step_spec = ts.time_step_spec(self._runtime.observation_spec)
-        # initial_state = actor_policy.ActorPolicy(
-        #   time_step_spec,
-        #   self._runtime.action_spec,
-        #   self._agent._agent._actor_net).get_initial_state(1)
-
-        while not is_terminal:
-          time_step = ts.transition(state, reward=0.0, discount=1.0)
-          action_step = self._agent._eval_policy.action(time_step)
-          print("state: ", state, "action: ", action_step.action.numpy())
-          # TODO(@hart); make generic for multi agent planning
-          state, reward, is_terminal, _ = self._unwrapped_runtime.step(action_step.action.numpy())
-          print("reward: ", reward, "is_terminal", is_terminal)
-          self._unwrapped_runtime.render()

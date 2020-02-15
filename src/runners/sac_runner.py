@@ -98,23 +98,3 @@ class SACRunner(TFARunner):
       if global_iteration % self._params["ML"]["Runner"]["evaluate_every_n_steps"] == 0:
         self.evaluate()
         self._agent.save()
-
-  def visualize(self, num_episodes=1):
-    # Ticket (https://github.com/tensorflow/agents/issues/59) recommends
-    # to do the rendering in the original environment
-    for _ in range(0, num_episodes):
-      state = self._unwrapped_runtime.reset()
-      is_terminal = False
-      while not is_terminal:
-        action_step = self._agent._eval_policy.action(
-          ts.transition(state, reward=0.0, discount=1.0))
-        # TODO(@hart); make generic for multi agent planning
-        state, reward, is_terminal, _ = self._unwrapped_runtime.step(
-          action_step.action.numpy())
-        logger.info("State: {}, Action: {},  Reward: {} and is_terminal {}.".format(
-          str(state),
-          str(action_step.action.numpy()),
-          str(reward),
-          str(is_terminal)
-        ))
-        self._unwrapped_runtime.render()
