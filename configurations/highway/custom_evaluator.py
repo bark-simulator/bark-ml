@@ -59,7 +59,7 @@ class CustomEvaluator(GoalReached):
       0.1*distance_to_goals + drivable_area * self._collision_penalty
     return reward
 
-  def _evaluate(self, observed_world, eval_results, action):
+  def _evaluate(self, world, eval_results, action):
     """Returns information about the current world state
     """
     done = False
@@ -68,7 +68,9 @@ class CustomEvaluator(GoalReached):
     drivable_area = eval_results["drivable_area"]
     step_count = eval_results["step_count"]
 
-    reward = self.calculate_reward(observed_world, eval_results, action)    
+    # if this is a FrenetCorr we will use this for the observer and evaluator
+    print(success, collision, drivable_area, step_count)
+    reward = self.calculate_reward(world, eval_results, action)    
     if success or collision or step_count > self._max_steps or drivable_area:
       done = True
     return reward, done, eval_results

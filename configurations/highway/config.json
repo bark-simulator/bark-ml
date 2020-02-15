@@ -1,26 +1,6 @@
 {
   "Visualization": {
-    "Map": {
-        "XodrLanes": {
-            "Boundaries": {
-                "Color": [
-                    0.7,
-                    0.7,
-                    0.7
-                ],
-                "Alpha": 1.0
-            }
-        },
-        "Plane": {
-            "Color": [
-                1,
-                1,
-                1,
-                1
-            ],
-            "Alpha": 1.0
-        }
-    },
+
     "Agents": {
         "DrawEvalGoals": true,
         "EvalGoalColor": [
