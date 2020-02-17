@@ -46,8 +46,8 @@ class NearestObserver {
       nearest_agent_num_ =
         params_->GetInt(
           "ML::Observer::n_nearest_agents", "Nearest agents number", 4);
-      min_lon_ = params_->GetReal("ML::Observer::min_lon", "", 0.);
-      max_lon_ = params_->GetReal("ML::Observer::max_lon", "", 500.);
+      min_lon_ = params_->GetReal("ML::Observer::min_lon", "", -200.);
+      max_lon_ = params_->GetReal("ML::Observer::max_lon", "", 200.);
       min_lat_ = params_->GetReal("ML::Observer::min_lat", "", -10.);
       max_lat_ = params_->GetReal("ML::Observer::max_lat", "", 10.);
       min_theta_ = params_->GetReal("ML::Observer::min_theta", "", -3.14);
@@ -58,14 +58,16 @@ class NearestObserver {
   }
 
   ObservedState TransformState(
-    const State& state, const Line& center_line) const {
+    const State& state,
+    const Line& center_line,
+    const float ref_lon = 0.0) const {
     Point2d pose(
       state(StateDefinition::X_POSITION),
       state(StateDefinition::Y_POSITION));
     FrenetPosition frenet_pos(pose, center_line);
     ObservedState ret_state(1, state_size_);
     ret_state <<
-      Norm<float>(frenet_pos.lon, min_lon_, max_lon_),
+      Norm<float>(frenet_pos.lon - ref_lon, min_lon_, max_lon_),
       Norm<float>(frenet_pos.lat, min_lat_, max_lat_),
       Norm<float>(
         state(StateDefinition::THETA_POSITION), min_theta_, max_theta_),
@@ -74,7 +76,6 @@ class NearestObserver {
   }
 
   ObservedState Observe(const ObservedWorldPtr& world) const {
-    // TODO(@hart): lon relative to ego
     int row_idx = 0;
     ObservedState state(1, observation_len_);
     state.setZero();
@@ -117,11 +118,14 @@ class NearestObserver {
       if (agent.second->GetAgentId() != ego_agent->GetAgentId()) {
         ObservedState other_agent_state =
           TransformState(agent.second->GetCurrentState(),
-                         ego_lane_corridor->GetCenterLine());
+                         ego_lane_corridor->GetCenterLine(),
+                         obs_ego_agent_state(0, 0));
         state.block(0, row_idx*state_size_, 1, state_size_) = other_agent_state;
         row_idx++;
       }
     }
+    // set ego lon to 0. (0.5 is the middle of -100, 100)
+    state(0, 0) = .5;
     return state;
   }
 

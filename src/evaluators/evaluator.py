@@ -32,7 +32,7 @@ class StateEvaluator(ABC):
     # TODO(@hart); make generic for multi agent planning
     self._eval_agent = agents_to_evaluate[0]
     world.ClearEvaluators()
-    self._add_evaluators()
+    self._add_evaluators(agents_to_evaluate)
     for key, evaluator in self._evaluators.items():
       world.AddEvaluator(key, evaluator)
     return world

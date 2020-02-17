@@ -1,7 +1,7 @@
 import numpy as np
 from bark.world.evaluation import \
   EvaluatorGoalReached, EvaluatorCollisionAgents, \
-  EvaluatorStepCount, EvaluatorDrivableArea
+  EvaluatorStepCount, EvaluatorDrivableArea, EvaluatorCollisionEgoAgent
 from modules.runtime.commons.parameters import ParameterServer
 from bark.geometry import *
 from bark.models.dynamic import StateDefinition
@@ -19,11 +19,13 @@ class CustomEvaluator(GoalReached):
                          params,
                          eval_agent)
 
-  def _add_evaluators(self):
+  def _add_evaluators(self, agents_to_evaluate):
     self._evaluators["goal_reached"] = EvaluatorGoalReached()
-    self._evaluators["drivable_area"] = EvaluatorDrivableArea()
+    self._evaluators["drivable_area"] = EvaluatorDrivableArea(
+      agents_to_evaluate[0])
     self._evaluators["collision"] = \
-      EvaluatorCollisionAgents()
+      EvaluatorCollisionEgoAgent(
+        agents_to_evaluate[0])
     self._evaluators["step_count"] = EvaluatorStepCount()
 
   # def deviation_velocity(self, observed_world):
@@ -44,7 +46,7 @@ class CustomEvaluator(GoalReached):
     actions = np.reshape(action, (-1, 2))
     accs = actions[:, 0]
     delta = actions[:, 1]
-    print("lateral off:", lateral_offset)
+    # print("lateral off:", lateral_offset)
     # TODO(@hart): use parameter server
     inpt_reward = np.sum((4/0.15*delta)**2 + (accs)**2)
     reward = collision * self._collision_penalty + \

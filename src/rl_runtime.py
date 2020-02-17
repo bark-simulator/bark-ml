@@ -58,6 +58,7 @@ class RuntimeRL(Runtime):
       world=self._world,
       controlled_agents=self._scenario._eval_agent_ids,
       action=action)
+
     if self._render:
       self.render()
     return snapshot
@@ -87,7 +88,6 @@ class RuntimeRL(Runtime):
     """
     # TODO(@hart): could be multiple
     observed_world = self._world.Observe(controlled_agents)[0]
-    self._viewer.drawRoadCorridor(observed_world.ego_agent.road_corridor)
     next_state = self._observer.observe(observed_world)
     reward, done, info = self._evaluator.evaluate(
       world=world,

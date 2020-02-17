@@ -263,6 +263,6 @@
       }
   },
   "World": {
-    "remove_agents_out_of_map" : false
+    "remove_agents_out_of_map" : true
   }
 }
