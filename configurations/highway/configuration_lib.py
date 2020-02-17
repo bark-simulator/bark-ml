@@ -42,8 +42,9 @@ class HighwayConfiguration(BaseConfiguration):
   def _build_configuration(self):
     """Builds a configuration using an SAC agent
     """
+    # TODO(@hart): increase scenario number
     self._scenario_generator = \
-      ConfigurableScenarioGeneration(num_scenarios=3,
+      ConfigurableScenarioGeneration(num_scenarios=100,
                                      params=self._params)
     self._observer = NearestObserver(self._params)
     self._behavior_model = DynamicModel(params=self._params)

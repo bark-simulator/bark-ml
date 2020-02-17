@@ -31,6 +31,12 @@
 },
 "Scenario": {
     "Generation": {
+        "GeneratorName": "ConfigurableScenarioGeneration",
+        "GeneratorSeed": 1000,
+        "SetName": "no_variation",
+        "SetDescription": "Ego vehicle is the only vehicle on the right lane. Must merge to left lane where it is crowded with IDM vehicles",
+        "NumScenarios": 100,
+        "NumSets": 1,
         "ConfigurableScenarioGeneration": {
             "MapFilename": "tests/data/city_highway_straight.xodr",
             "RandomSeed": 1000,
@@ -54,10 +60,10 @@
                         ],
                         "VehicleDistanceRange": [
                             10,
-                            20
+                            30
                         ],
                         "OtherVehicleVelocityRange": [
-                            20,
+                            10,
                             30
                         ],
                         "SRange": [
@@ -71,8 +77,8 @@
                         "ModelParams": {
                             "BehaviorIDMClassic": {
                                 "MaxVelocity": 30.0,
-                                "MinimumSpacing": 5.0,
-                                "DesiredTimeHeadway": 1.5,
+                                "MinimumSpacing": 2.0,
+                                "DesiredTimeHeadway": 3.0,
                                 "MaxAcceleration": 1.7000000476837158,
                                 "AccelerationLowerBound": -15.0,
                                 "AccelerationUpperBound": 8.0,
@@ -96,20 +102,20 @@
                         "GoalTypeControlled": "EndOfLane",
                         "GoalTypeOthers": "EndOfLane",
                         "MaxLateralDist": [
-                            0.05,
-                            0.05
+                            0.2,
+                            0.2
                         ],
                         "LongitudinalRange": [
-                            0.8,
-                            1
+                            0.5,
+                            0.8
                         ],
                         "MaxOrientationDifference": [
-                            0.8,
-                            1
+                            0.08,
+                            0.08
                         ],
                         "VelocityRange": [
-                            0.8,
-                            1
+                            20,
+                            30
                         ]
                     },
                     "ConfigControlledAgents": {
@@ -138,11 +144,11 @@
                         ],
                         "VehicleDistanceRange": [
                             10,
-                            20
+                            30
                         ],
                         "OtherVehicleVelocityRange": [
                             10,
-                            20
+                            30
                         ],
                         "SRange": [
                             0.2,
@@ -155,7 +161,7 @@
                         "ModelParams": {
                             "BehaviorIDMClassic": {
                                 "MaxVelocity": 30.0,
-                                "MinimumSpacing": 5.0,
+                                "MinimumSpacing": 2.0,
                                 "DesiredTimeHeadway": 1.5,
                                 "MaxAcceleration": 1.7000000476837158,
                                 "AccelerationLowerBound": -15.0,
@@ -177,7 +183,7 @@
                     },
                     "ConfigGoalDefinitions": {
                         "type": "FixedGoalTypes",
-                        "GoalTypeControlled": "EndOfLane",
+                        "GoalTypeControlled": "LaneChangeLeft",
                         "GoalTypeOthers": "EndOfLane",
                         "MaxLateralDist": [
                             0.05,
@@ -212,7 +218,7 @@
             }
         }
     }
-  },
+},
   "ML": {
       "Agent": {
         "actor_fc_layer_params": [256, 256, 128],
