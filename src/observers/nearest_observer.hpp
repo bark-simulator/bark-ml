@@ -82,19 +82,16 @@ class NearestObserver {
     // TODO(@hart): this should later be removed
     world->UpdateAgentRTree();
 
-    // 1. ego lane corr
+    // check in which lane corridor the goal is
     std::shared_ptr<const Agent> ego_agent = world->GetEgoAgent();
     BARK_EXPECT_TRUE(ego_agent != nullptr);
     const Point2d ego_pos = ego_agent->GetCurrentPosition();
     const auto& road_corridor = ego_agent->GetRoadCorridor();
     BARK_EXPECT_TRUE(road_corridor != nullptr);
-
     const auto& ego_goal =
       std::dynamic_pointer_cast<GoalDefinitionStateLimitsFrenet>(
         ego_agent->GetGoalDefinition());
     const auto& ego_goal_center_line = ego_goal->GetCenterLine();
-
-    // check in which lane corridor the goal is
     const auto& lane_corridors = road_corridor->GetUniqueLaneCorridors();
     auto ego_lane_corridor = lane_corridors[0];
     for (auto& lane_corr : lane_corridors) {
@@ -113,7 +110,7 @@ class NearestObserver {
     state.block(0, row_idx*state_size_, 1, state_size_) = obs_ego_agent_state;
     row_idx++;
 
-    // transform other states
+    // transform other states (lon. relative to ego agent's lon.)
     for (const auto& agent : nearest_agents) {
       if (agent.second->GetAgentId() != ego_agent->GetAgentId()) {
         ObservedState other_agent_state =
