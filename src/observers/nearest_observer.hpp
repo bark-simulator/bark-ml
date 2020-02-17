@@ -124,8 +124,7 @@ class NearestObserver {
         row_idx++;
       }
     }
-    // set ego lon to 0. (0.5 is the middle of -100, 100)
-    state(0, 0) = .5;
+    state(0, 0) = Norm<float>(0., min_lon_, max_lon_);
     return state;
   }
 
