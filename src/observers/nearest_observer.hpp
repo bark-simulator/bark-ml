@@ -121,7 +121,7 @@ class NearestObserver {
         row_idx++;
       }
     }
-    state(0, 0) = Norm<float>(0., min_lon_, max_lon_);
+    // state(0, 0) = Norm<float>(0., min_lon_, max_lon_);
     return state;
   }
 
