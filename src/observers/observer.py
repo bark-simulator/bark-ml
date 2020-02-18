@@ -23,14 +23,13 @@ class StateObserver(ABC):
       1]
     self._world_x_range = [-10000, 10000]
     self._world_y_range = [-10000, 10000]
-    self._viewer = None
 
   @abstractmethod
-  def observe(self, world, agents_to_observe):
+  def observe(self, observed_world):
     """Observes the world
     
     Arguments:
-        world {bark.world} -- BARK world
+        world {bark.ObservedWorld} -- observed BARK world
         agents_to_observe {list(int)} -- ids of agents to observe
     
     Returns:
@@ -49,7 +48,7 @@ class StateObserver(ABC):
     """
     return state[self._state_definition]
 
-  def reset(self, world, agents_to_observe):
+  def reset(self, world, controlled_agent_ids):
     bb = world.bounding_box
     self._world_x_range = [bb[0].x(), bb[1].x()]
     self._world_y_range = [bb[0].y(), bb[1].y()]
@@ -58,6 +57,3 @@ class StateObserver(ABC):
   @property
   def observation_space(self):
     pass
-
-  def set_viewer(self, viewer):
-    self._viewer = viewer

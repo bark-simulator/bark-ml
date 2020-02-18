@@ -24,13 +24,13 @@ class GoalReached(StateEvaluator):
         50]
     self._eval_agent = eval_agent
 
-  def _add_evaluators(self):
+  def _add_evaluators(self, agents_to_evaluate):
     self._evaluators["goal_reached"] = EvaluatorGoalReached()
     self._evaluators["collision"] = \
       EvaluatorCollisionAgents()
     self._evaluators["step_count"] = EvaluatorStepCount()
 
-  def _evaluate(self, world, eval_results, action):
+  def _evaluate(self, world, eval_results, action, observed_state):
     """Returns information about the current world state
     """
     done = False

@@ -3,7 +3,6 @@
 import numpy as np
 from abc import ABC, abstractmethod
 
-from src.commons.spaces import Discrete, BoundedContinuous
 from bark.models.behavior import BehaviorMotionPrimitives, \
   DynamicBehaviorModel
 from bark.models.dynamic import SingleTrackModel

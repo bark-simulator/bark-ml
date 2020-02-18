@@ -1,11 +1,11 @@
 
 import numpy as np
 import itertools
-from src.commons.spaces import Discrete, BoundedContinuous
 from bark.models.behavior import DynamicBehaviorModel
 from bark.models.dynamic import SingleTrackModel, TripleIntegratorModel
 from modules.runtime.commons.parameters import ParameterServer
 from src.wrappers.action_wrapper import ActionWrapper
+from src.commons.py_spaces import BoundedContinuous
 
 class DynamicModel(ActionWrapper):
   """This module wraps the SingleTrack model

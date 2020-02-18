@@ -1,0 +1,277 @@
+{
+  "Visualization": {
+
+    "Agents": {
+        "DrawEvalGoals": true,
+        "EvalGoalColor": [
+            0.0,
+            0.0,
+            0.2
+        ],
+        "ColorRoute": [
+            0.2,
+            0.2,
+            0.2
+        ],
+        "DrawRoute": true,
+        "AlphaVehicle": 0.8,
+        "Color": {
+            "Other": [
+                0.7,
+                0.7,
+                0.7
+            ],
+            "Controlled": [
+                0.9,
+                0,
+                0
+            ]
+        }
+    }
+},
+"Scenario": {
+    "Generation": {
+        "GeneratorName": "ConfigurableScenarioGeneration",
+        "GeneratorSeed": 1000,
+        "SetName": "no_variation",
+        "SetDescription": "Ego vehicle is the only vehicle on the right lane. Must merge to left lane where it is crowded with IDM vehicles",
+        "NumScenarios": 100,
+        "NumSets": 1,
+        "ConfigurableScenarioGeneration": {
+            "MapFilename": "tests/data/city_highway_straight.xodr",
+            "RandomSeed": 1000,
+            "SinksSources": [
+                {
+                    "SourceSink": [
+                        [
+                            5111.626,
+                            5006.8305
+                        ],
+                        [
+                            5110.789,
+                            5193.1725
+                        ]
+                    ],
+                    "Description": "left_lane",
+                    "ConfigAgentStatesGeometries": {
+                        "type": "UniformVehicleDistribution",
+                        "LanePositions": [
+                            0
+                        ],
+                        "VehicleDistanceRange": [
+                            10,
+                            30
+                        ],
+                        "OtherVehicleVelocityRange": [
+                            10,
+                            30
+                        ],
+                        "SRange": [
+                            0.1,
+                            0.9
+                        ]
+                    },
+                    "ConfigBehaviorModels": {
+                        "type": "FixedBehaviorType",
+                        "ModelType": "BehaviorIDMClassic",
+                        "ModelParams": {
+                            "BehaviorIDMClassic": {
+                                "MaxVelocity": 30.0,
+                                "MinimumSpacing": 2.0,
+                                "DesiredTimeHeadway": 3.0,
+                                "MaxAcceleration": 1.7000000476837158,
+                                "AccelerationLowerBound": -15.0,
+                                "AccelerationUpperBound": 8.0,
+                                "DesiredVelocity": 15.0,
+                                "ComfortableBrakingAcceleration": 1.6699999570846558,
+                                "MinVelocity": 0.0,
+                                "Exponent": 4
+                            }
+                        }
+                    },
+                    "ConfigExecutionModels": {
+                        "type": "FixedExecutionType",
+                        "ModelType": "ExecutionModelInterpolate"
+                    },
+                    "ConfigDynamicModels": {
+                        "type": "FixedDynamicType",
+                        "ModelType": "SingleTrackModel"
+                    },
+                    "ConfigGoalDefinitions": {
+                        "type": "FixedGoalTypes",
+                        "GoalTypeControlled": "EndOfLane",
+                        "GoalTypeOthers": "EndOfLane",
+                        "MaxLateralDist": [
+                            0.2,
+                            0.2
+                        ],
+                        "LongitudinalRange": [
+                            0.5,
+                            0.8
+                        ],
+                        "MaxOrientationDifference": [
+                            0.08,
+                            0.08
+                        ],
+                        "VelocityRange": [
+                            20,
+                            30
+                        ]
+                    },
+                    "ConfigControlledAgents": {
+                        "type": "NoneControlled"
+                    },
+                    "AgentParams": {
+                        "MaxHistoryLength": 50
+                    }
+                },
+                {
+                    "SourceSink": [
+                        [
+                            5111.626,
+                            5006.8305
+                        ],
+                        [
+                            5110.789,
+                            5193.1725
+                        ]
+                    ],
+                    "Description": "right_lane",
+                    "ConfigAgentStatesGeometries": {
+                        "type": "UniformVehicleDistribution",
+                        "LanePositions": [
+                            1
+                        ],
+                        "VehicleDistanceRange": [
+                            10,
+                            30
+                        ],
+                        "OtherVehicleVelocityRange": [
+                            10,
+                            30
+                        ],
+                        "SRange": [
+                            0.2,
+                            0.5
+                        ]
+                    },
+                    "ConfigBehaviorModels": {
+                        "type": "FixedBehaviorType",
+                        "ModelType": "BehaviorIDMClassic",
+                        "ModelParams": {
+                            "BehaviorIDMClassic": {
+                                "MaxVelocity": 30.0,
+                                "MinimumSpacing": 2.0,
+                                "DesiredTimeHeadway": 1.5,
+                                "MaxAcceleration": 1.7000000476837158,
+                                "AccelerationLowerBound": -15.0,
+                                "AccelerationUpperBound": 8.0,
+                                "DesiredVelocity": 15.0,
+                                "ComfortableBrakingAcceleration": 1.6699999570846558,
+                                "MinVelocity": 0.0,
+                                "Exponent": 4
+                            }
+                        }
+                    },
+                    "ConfigExecutionModels": {
+                        "type": "FixedExecutionType",
+                        "ModelType": "ExecutionModelInterpolate"
+                    },
+                    "ConfigDynamicModels": {
+                        "type": "FixedDynamicType",
+                        "ModelType": "SingleTrackModel"
+                    },
+                    "ConfigGoalDefinitions": {
+                        "type": "FixedGoalTypes",
+                        "GoalTypeControlled": "LaneChangeLeft",
+                        "GoalTypeOthers": "EndOfLane",
+                        "MaxLateralDist": [
+                            0.05,
+                            0.05
+                        ],
+                        "LongitudinalRange": [
+                            0.8,
+                            1
+                        ],
+                        "MaxOrientationDifference": [
+                            0.8,
+                            1
+                        ],
+                        "VelocityRange": [
+                            0.8,
+                            1
+                        ]
+                    },
+                    "ConfigControlledAgents": {
+                        "type": "RandomSingleAgent"
+                    },
+                    "AgentParams": {
+                        "MaxHistoryLength": 50
+                    }
+                }
+            ],
+            "ConflictResolution": {
+                "left_lane/right_lane": [
+                    0.2,
+                    0.8
+                ]
+            }
+        }
+    }
+},
+  "ML": {
+      "Agent": {
+        "actor_fc_layer_params": [256, 256, 128],
+        "critic_joint_fc_layer_params": [256, 256, 128],
+        "actor_learning_rate": 3e-4,
+        "critic_learning_rate": 3e-4,
+        "alpha_learning_rate": 3e-4,
+        "target_update_tau": 0.05,
+        "target_update_period": 1,
+        "gamma": 0.995,
+        "reward_scale_factor": 1.0,
+        "gradient_clipping": 10.0, 
+        "agent_name": "sac_agent",
+        "debug_summaries": "True",
+        "replay_buffer_capacity": 100000,
+        "max_ckpts_to_keep": 3,
+        "parallel_buffer_calls": 3,
+        "batch_size": 256,
+        "num_parallel_environments": 30,
+        "buffer_num_steps": 2,
+        "buffer_prefetch": 3,
+        "checkpoint_path": "configurations/highway/checkpoints/"
+      },
+      "Evaluator": {
+        "max_steps": 60,
+        "collision_penalty": -10.0,
+        "goal_reward": 10.0
+      },
+      "Observer": {
+        "velocity_range": [0, 30],
+        "theta_range": [-3.14, 3.14],
+        "normalization_enabled": true,
+        "max_num_agents": 2,
+        "n_nearest_agents": 5,
+        "max_vel": 30.0,
+        "max_lon": 500.0
+      },
+      "Runner": {
+        "number_of_collections": 5000000,
+        "initial_collection_steps": 100,
+        "collection_episodes_per_cycle": 1,
+        "evaluate_every_n_steps": 2500,
+        "evaluation_steps": 25,
+        "summary_path": "configurations/highway/summaries/"
+      },
+      "DynamicModel": {
+        "action_dimension": 2,
+        "action_num": 1,
+        "actions_lower_bound": [-1.0, -0.15],
+        "actions_upper_bound": [1.0, 0.15]
+      }
+  },
+  "World": {
+    "remove_agents_out_of_map" : true
+  }
+}

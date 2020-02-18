@@ -12,14 +12,8 @@ class StateEvaluator(ABC):
     self._evaluators = {}
     self._viewer = None
 
-  def evaluate(self, world, action):
-    """Evaluates the passed world
-    
-    Arguments:
-        world {bark.world} -- World containing all information
-    
-    Returns:
-        (reward, status, evaluation results) -- Rl-tuple
+  def evaluate(self, world, action, observed_state):
+    """Evaluates the observed world
     """
     eval_results = None
     reward = 0.
@@ -27,7 +21,7 @@ class StateEvaluator(ABC):
     # TODO(@hart); make generic for multi agent planning
     if self._eval_agent in world.agents:
       eval_results = world.Evaluate()
-      reward, done, eval_results = self._evaluate(world, eval_results, action)
+      reward, done, eval_results = self._evaluate(world, eval_results, action, observed_state)
     return reward, done, eval_results
 
   def reset(self, world, agents_to_evaluate):
@@ -38,7 +32,7 @@ class StateEvaluator(ABC):
     # TODO(@hart); make generic for multi agent planning
     self._eval_agent = agents_to_evaluate[0]
     world.ClearEvaluators()
-    self._add_evaluators()
+    self._add_evaluators(agents_to_evaluate)
     for key, evaluator in self._evaluators.items():
       world.AddEvaluator(key, evaluator)
     return world

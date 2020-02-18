@@ -4,7 +4,7 @@ py_library(
     data = ["@bark_project//python:bark.so"],
     imports = ["../external/bark_project/python/"],
     deps = ["@bark_project//modules/runtime:runtime",
-            "//configurations/sac_highway:configuration"],
+            "//configurations/highway:configuration"],
     visibility = ["//visibility:public"],
 )
 

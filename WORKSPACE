@@ -1,7 +1,7 @@
 workspace(name = "bark_ml")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
-load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository", "new_git_repository")
 
 
 load("//utils:dependencies.bzl", "load_bark")
@@ -116,3 +116,10 @@ cc_library(
     """
 )
 
+new_git_repository(
+    name = "com_github_interaction-dataset_interaction-dataset",
+    build_file = "@bark_project//tools/interaction-dataset:interaction-dataset.BUILD",
+    commit = "8e53eecfa9cdcb2203517af2f8ed154ad40c2956",
+    remote = "https://github.com/interaction-dataset/interaction-dataset.git",
+    shallow_since = "1568028656 +0200",
+)

@@ -3,12 +3,12 @@ py_test(
     srcs = ["py_bark_agent_tests.py"],
     data = ["@bark_project//python:bark.so",
             "//tests/data:bark_data",
-            "//configurations/sac_highway:configuration_data"],
+            "//configurations/highway:configuration_data"],
     imports = ["../external/bark_project/python/"],
     deps = ["@bark_project//modules/runtime:runtime",
             "@bark_project//modules/runtime/scenario/scenario_generation:scenario_generation",
             "//src:rl_runtime",
-            "//configurations/sac_highway:configuration_lib",
+            "//configurations/highway:configuration_lib",
             "//configurations:bark_agent",
             "//src/agents:agents"],
     visibility = ["//visibility:public"],
@@ -76,4 +76,17 @@ py_test(
   imports = ["../external/bark_project/python/"],
   deps = ["@bark_project//modules/runtime:runtime",
           "@bark_project//modules/runtime/scenario/scenario_generation:scenario_generation"],
+)
+
+cc_binary(
+  name = "observer_tests",
+  srcs = [
+    "observer_tests.cc",
+  ],
+  copts = ["-Iexternal/gtest/include"],
+  deps = [
+    "//src/observers:nearest_observer",
+    "@bark_project//modules/world/tests:make_test_world",
+    "@gtest//:main",
+  ]
 )

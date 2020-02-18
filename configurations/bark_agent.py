@@ -6,7 +6,7 @@ from configurations.base_configuration import BaseConfiguration
 from bark.world import World, ObservedWorld
 
 # include all configurations
-from configurations.sac_highway.configuration import SACHighwayConfiguration
+from configurations.highway.configuration import HighwayConfiguration
 
 class BARKMLBehaviorModel(BehaviorModel):
   """This class makes a trained agent available as BehaviorModel
@@ -20,13 +20,12 @@ class BARKMLBehaviorModel(BehaviorModel):
       self._configuration._behavior_model._dynamic_model,
       configuration._params)
 
-  def Plan(self, delta_time, world):
+  def Plan(self, delta_time, observed_world):
     observed_state = self._configuration._observer.observe(
-      world=world,
-      agents_to_observe=world.ego_agent.id)
+      observed_world)
     action = self._configuration._agent.act(observed_state)
     self._dynamic_behavior_model.SetLastAction(action)
-    trajectory = self._dynamic_behavior_model.Plan(delta_time, world)
+    trajectory = self._dynamic_behavior_model.Plan(delta_time, observed_world)
     super(BARKMLBehaviorModel, self).SetLastTrajectory(trajectory)
     return trajectory
 
