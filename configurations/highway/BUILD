@@ -10,7 +10,8 @@ py_library(
     name = "custom_evaluator",
     srcs = ["custom_evaluator.py"],
     data = ["@bark_project//python:bark.so"],
-    imports = ["../external/bark_project/python/"],
+    imports = ["../../python/",
+               "../external/bark_project/python/"],
     deps = ["@bark_project//modules/runtime:runtime",
             "//src/evaluators:evaluators"],
     visibility = ["//visibility:public"],
@@ -23,7 +24,7 @@ py_library(
           "//python:bark_ml.so",
           "//tests/data:bark_data",
           ":configuration_data"],
-  imports = ["../python/",
+  imports = ["../../python/",
              "../external/bark_project/python/"],
   deps = ["@bark_project//modules/runtime:runtime",
           "@bark_project//modules/runtime/scenario/scenario_generation:scenario_generation",
@@ -42,7 +43,8 @@ py_binary(
   data = ["@bark_project//python:bark.so",
           "//tests/data:bark_data",
           ":configuration_data"],
-  imports = ["../external/bark_project/python/"],
+  imports = ["../../python/",
+             "../external/bark_project/python/"],
   visibility = ["//visibility:public"],
   deps = [":configuration_lib"]
 )

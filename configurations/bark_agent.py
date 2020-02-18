@@ -22,8 +22,7 @@ class BARKMLBehaviorModel(BehaviorModel):
 
   def Plan(self, delta_time, observed_world):
     observed_state = self._configuration._observer.observe(
-      world=observed_world,
-      agents_to_observe=observed_world.ego_agent.id)
+      observed_world)
     action = self._configuration._agent.act(observed_state)
     self._dynamic_behavior_model.SetLastAction(action)
     trajectory = self._dynamic_behavior_model.Plan(delta_time, observed_world)
