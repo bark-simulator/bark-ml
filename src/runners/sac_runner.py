@@ -71,8 +71,8 @@ class SACRunner(TFARunner):
             action_step.action.numpy())
           rewards.append(reward)
           steps.append(1)
-    mean_reward = np.sum(np.array(rewards))/len(rewards)
-    mean_steps = np.sum(np.array(steps))/len(steps)
+    mean_reward = np.sum(np.array(rewards))/self._params["ML"]["Runner"]["evaluation_steps"]
+    mean_steps = np.sum(np.array(steps))/self._params["ML"]["Runner"]["evaluation_steps"]
     tf.summary.scalar("mean_reward",
                       mean_reward,
                       step=global_iteration)
