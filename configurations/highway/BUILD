@@ -23,7 +23,7 @@ py_library(
           "//python:bark_ml.so",
           "//tests/data:bark_data",
           ":configuration_data"],
-  imports = ["../python",
+  imports = ["../python/",
              "../external/bark_project/python/"],
   deps = ["@bark_project//modules/runtime:runtime",
           "@bark_project//modules/runtime/scenario/scenario_generation:scenario_generation",
