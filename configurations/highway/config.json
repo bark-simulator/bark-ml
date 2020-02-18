@@ -102,19 +102,19 @@
                         "GoalTypeControlled": "EndOfLane",
                         "GoalTypeOthers": "EndOfLane",
                         "MaxLateralDist": [
-                            0.2,
-                            0.2
+                            0.4,
+                            0.4
                         ],
                         "LongitudinalRange": [
-                            0.5,
-                            0.8
+                            0.25,
+                            1.0
                         ],
                         "MaxOrientationDifference": [
                             0.08,
                             0.08
                         ],
                         "VelocityRange": [
-                            20,
+                            10,
                             30
                         ]
                     },
@@ -190,7 +190,7 @@
                             0.05
                         ],
                         "LongitudinalRange": [
-                            0.8,
+                            0.5,
                             1
                         ],
                         "MaxOrientationDifference": [
@@ -198,7 +198,7 @@
                             1
                         ],
                         "VelocityRange": [
-                            0.8,
+                            0.5,
                             1
                         ]
                     },
