@@ -76,8 +76,8 @@ class PPOAgent(TFAAgent):
       env.action_spec(),
       actor_net=actor_net,
       value_net=value_net,
-      normalize_observations=self._params["ML"]["Agent"]["normalize_observations"],
-      normalize_rewards=self._params["ML"]["Agent"]["normalize_rewards"],
+      normalize_observations=self._params["ML"]["Agent"]["normalize_observation", "", True],
+      normalize_rewards=self._params["ML"]["Agent"]["normalize_reward", "", True],
       optimizer=tf.compat.v1.train.AdamOptimizer(
           learning_rate=self._params["ML"]["Agent"]["learning_rate"]),
       train_step_counter=self._ckpt.step,
@@ -112,7 +112,7 @@ class PPOAgent(TFAAgent):
     Returns:
         GreedyPolicy -- Always returns best suitable action
     """
-    return greedy_policy.GreedyPolicy(self._agent.policy)
+    return self._agent.policy
 
   def reset(self):
     pass
