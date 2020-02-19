@@ -95,8 +95,9 @@ class NearestObserver {
     const auto& lane_corridors = road_corridor->GetUniqueLaneCorridors();
     auto ego_lane_corridor = lane_corridors[0];
     for (auto& lane_corr : lane_corridors) {
-      if (Collide(lane_corr->GetMergedPolygon(), ego_goal_center_line))
+      if (Collide(lane_corr->GetMergedPolygon(), ego_goal_center_line)) {
         ego_lane_corridor = lane_corr;
+      }
     }
 
     // 2. find near agents (n)
