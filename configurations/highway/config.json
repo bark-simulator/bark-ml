@@ -220,7 +220,7 @@
     }
 },
   "ML": {
-      "PPOAgent": {
+      "Agent": {
         "actor_fc_layer_params": [512, 512, 256],
         "critic_fc_layer_params": [512, 512, 256],
         "learning_rate": 1e-3,
@@ -235,10 +235,10 @@
         "buffer_prefetch": 1,
         "normalize_reward": false,
         "normalize_observation": false,
-        "batch_size": 512,
+        "batch_size": 256,
         "checkpoint_path": "configurations/highway/checkpoints/"
       },
-      "Agent": {
+      "SACAgent": {
         "actor_fc_layer_params": [512, 256, 256],
         "critic_joint_fc_layer_params": [512, 256, 256],
         "actor_learning_rate": 3e-4,
@@ -273,7 +273,7 @@
         "n_nearest_agents": 5,
         "max_vel": 30.0,
         "max_lon": 500.0,
-        "max_dist": 25.0
+        "max_dist": 100.0
       },
       "Runner": {
         "number_of_collections": 5000000,
