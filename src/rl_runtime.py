@@ -52,8 +52,8 @@ class RuntimeRL(Runtime):
     # TODO(@hart): could be multiple actions
     self._world = self._action_wrapper.action_to_behavior(world=self._world,
                                                           action=action)
+    
     self._world.Step(self._step_time)
-
     snapshot =  self.snapshot(
       world=self._world,
       controlled_agents=self._scenario._eval_agent_ids,

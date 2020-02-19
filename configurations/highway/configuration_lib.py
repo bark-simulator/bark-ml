@@ -14,6 +14,7 @@ from modules.runtime.scenario.scenario_generation.configurable_scenario_generati
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from modules.runtime.viewer.video_renderer import VideoRenderer
+from modules.runtime.viewer.pygame_viewer import PygameViewer
 
 
 from src.rl_runtime import RuntimeRL
@@ -57,7 +58,7 @@ class HighwayConfiguration(BaseConfiguration):
     viewer = MPViewer(params=self._params,
                       use_world_bounds=True)
                       # follow_agent_id=True)
-                      
+
     self._viewer = viewer
     self._runtime = RuntimeRL(action_wrapper=self._behavior_model,
                               observer=self._observer,
