@@ -220,7 +220,7 @@
     }
 },
   "ML": {
-      "Agent": {
+      "PPOAgent": {
         "actor_fc_layer_params": [512, 512, 256],
         "critic_fc_layer_params": [512, 512, 256],
         "learning_rate": 1e-3,
@@ -238,6 +238,28 @@
         "batch_size": 512,
         "checkpoint_path": "configurations/highway/checkpoints/"
       },
+      "Agent": {
+        "actor_fc_layer_params": [512, 256, 256],
+        "critic_joint_fc_layer_params": [512, 256, 256],
+        "actor_learning_rate": 3e-4,
+        "critic_learning_rate": 3e-4,
+        "alpha_learning_rate": 3e-4,
+        "target_update_tau": 0.05,
+        "target_update_period": 3,
+        "gamma": 0.995,
+        "reward_scale_factor": 3.0,
+        "gradient_clipping": null, 
+        "agent_name": "sac_agent",
+        "debug_summaries": "True",
+        "replay_buffer_capacity": 100000,
+        "max_ckpts_to_keep": 3,
+        "parallel_buffer_calls": 3,
+        "batch_size": 512,
+        "num_parallel_environments": 30,
+        "buffer_num_steps": 2,
+        "buffer_prefetch": 3,
+        "checkpoint_path": "configurations/highway/checkpoints/"
+      },
       "Evaluator": {
         "max_steps": 60,
         "collision_penalty": -1.0,
@@ -251,7 +273,7 @@
         "n_nearest_agents": 5,
         "max_vel": 30.0,
         "max_lon": 500.0,
-        "max_dist": 5.0
+        "max_dist": 25.0
       },
       "Runner": {
         "number_of_collections": 5000000,
