@@ -221,8 +221,8 @@
 },
   "ML": {
       "Agent": {
-        "actor_fc_layer_params": [256, 256],
-        "critic_fc_layer_params": [256, 256],
+        "actor_fc_layer_params": [256, 256, 128],
+        "critic_fc_layer_params": [256, 256, 128],
         "learning_rate": 1e-3,
         "num_epochs": 30,
         "agent_name": "ppo_agent",
@@ -233,7 +233,8 @@
         "parallel_buffer_calls": 1,
         "buffer_num_steps": 1,
         "buffer_prefetch": 1,
-        "normalize_reward": true, 
+        "normalize_reward": true,
+        "normalize_observation": true,
         "batch_size": 256,
         "checkpoint_path": "configurations/highway/checkpoints/"
       },
