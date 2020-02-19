@@ -221,8 +221,8 @@
 },
   "ML": {
       "Agent": {
-        "actor_fc_layer_params": [256, 256, 128],
-        "critic_fc_layer_params": [256, 256, 128],
+        "actor_fc_layer_params": [512, 512, 256],
+        "critic_fc_layer_params": [512, 512, 256],
         "learning_rate": 1e-3,
         "num_epochs": 30,
         "agent_name": "ppo_agent",
@@ -233,9 +233,9 @@
         "parallel_buffer_calls": 1,
         "buffer_num_steps": 1,
         "buffer_prefetch": 1,
-        "normalize_reward": true,
-        "normalize_observation": true,
-        "batch_size": 256,
+        "normalize_reward": false,
+        "normalize_observation": false,
+        "batch_size": 512,
         "checkpoint_path": "configurations/highway/checkpoints/"
       },
       "Evaluator": {
@@ -250,7 +250,8 @@
         "max_num_agents": 2,
         "n_nearest_agents": 5,
         "max_vel": 30.0,
-        "max_lon": 500.0
+        "max_lon": 500.0,
+        "max_dist": 5.0
       },
       "Runner": {
         "number_of_collections": 5000000,
