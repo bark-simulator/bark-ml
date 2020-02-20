@@ -233,8 +233,7 @@
         "parallel_buffer_calls": 1,
         "buffer_num_steps": 1,
         "buffer_prefetch": 1,
-        "normalize_reward": false,
-        "normalize_observation": false,
+        "normalize_reward": true,
         "batch_size": 256,
         "checkpoint_path": "configurations/highway/checkpoints/"
       },

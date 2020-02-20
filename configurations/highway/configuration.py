@@ -28,10 +28,14 @@ flags.DEFINE_string('base_dir',
 
 
 def run_configuration(argv):
-  params = ParameterServer(filename=FLAGS.base_dir + "/configurations/highway/config.json")
-  scenario_generation = params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]
-  # params = ParameterServer(filename=FLAGS.base_dir + "/configurations/highway/config_easy.json")
-  # scenario_generation = params["Scenario"]["Generation"]["DeterministicScenarioGeneration"]
+  # New Configuration
+  # params = ParameterServer(filename=FLAGS.base_dir + "/configurations/highway/config.json")
+  # scenario_generation = params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]
+  
+  # Deterministic Generation
+  params = ParameterServer(filename=FLAGS.base_dir + "/configurations/highway/config_easy.json")
+  scenario_generation = params["Scenario"]["Generation"]["DeterministicScenarioGeneration"]
+
   map_filename = scenario_generation["MapFilename"]
   scenario_generation["MapFilename"] = FLAGS.base_dir + "/" + map_filename
   params["BaseDir"] = FLAGS.base_dir
