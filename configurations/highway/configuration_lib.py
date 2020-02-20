@@ -46,14 +46,14 @@ class HighwayConfiguration(BaseConfiguration):
     """Builds a configuration using an SAC agent
     """
     # TODO(@hart): increase scenario number
-    # self._scenario_generator = \
-    #   ConfigurableScenarioGeneration(num_scenarios=100,
-    #                                  params=self._params)
+    self._scenario_generator = \
+      ConfigurableScenarioGeneration(num_scenarios=100,
+                                     params=self._params)
 
     # USE THIS FOR DETERMINISTIC SCENARIO GEN.
-    self._scenario_generator = \
-      DeterministicScenarioGeneration(num_scenarios=100,
-                                      params=self._params)
+    # self._scenario_generator = \
+    #   DeterministicScenarioGeneration(num_scenarios=100,
+    #                                   params=self._params)
   
     # self._observer = NearestObserver(self._params)
     self._observer = ClosestAgentsObserver(self._params)
