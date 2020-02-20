@@ -29,11 +29,21 @@ class CustomEvaluator(GoalReached):
         agents_to_evaluate[0])
     self._evaluators["step_count"] = EvaluatorStepCount()
 
-  def deviation_velocity(self, observed_world):
-    desired_v = 10.
+  def distance_to_goal(self, world):
+    d = 0.
+    for idx in [self._eval_agent]:
+      agent = world.agents[idx]
+      state = agent.state
+      # TODO(@hart): fix.. offset 0.75 so we drive to the middle of the polygon
+      center_line = agent.road_corridor.lane_corridors[0].center_line
+      d += Distance(center_line, Point2d(state[1], state[2]))
+    return d
+
+  def deviation_velocity(self, world):
+    desired_v = 15.
     delta_v = 0.
-    for _, agent in observed_world.agents.items():
-      vel = agent.state[int(StateDefinition.VEL_POSITION)]
+    for idx in [self._eval_agent]:
+      vel = world.agents[idx].state[int(StateDefinition.VEL_POSITION)]
       delta_v += (desired_v-vel)**2
     return delta_v
   
@@ -42,13 +52,14 @@ class CustomEvaluator(GoalReached):
     collision = eval_results["collision"]
     drivable_area = eval_results["drivable_area"]
 
-    ego_agent = observed_world.agents[self._eval_agent]
-    goal_def = ego_agent.goal_definition
-    goal_center_line = goal_def.center_line
-    ego_agent_state = ego_agent.state
-    lateral_offset = Distance(goal_center_line,
-                              Point2d(ego_agent_state[1], ego_agent_state[2]))
+    # ego_agent = observed_world.agents[self._eval_agent]
+    # goal_def = ego_agent.goal_definition
+    # goal_center_line = goal_def.center_line
+    # ego_agent_state = ego_agent.state
+    # lateral_offset = Distance(goal_center_line,
+    #                           Point2d(ego_agent_state[1], ego_agent_state[2]))
 
+    distance_to_goals = self.distance_to_goal(observed_world)
     actions = np.reshape(action, (-1, 2))
     accs = actions[:, 0]
     delta = actions[:, 1]
@@ -58,7 +69,7 @@ class CustomEvaluator(GoalReached):
     reward = collision * self._collision_penalty + \
       success * self._goal_reward + \
       drivable_area * self._collision_penalty - \
-      0.01*lateral_offset - 0.01*inpt_reward
+      0.001*distance_to_goals**2 - 0.01*inpt_reward
     
     return reward
 

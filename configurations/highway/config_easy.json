@@ -668,7 +668,7 @@
         "number_of_collections": 550000,
         "initial_collection_steps": 25,
         "collection_episodes_per_cycle": 2,
-        "evaluate_every_n_steps": 25,
+        "evaluate_every_n_steps": 2500,
         "evaluation_steps": 25,
         "summary_path": "configurations/highway/summaries/"
     },
@@ -686,8 +686,8 @@
     "DynamicModel": {
       "action_dimension": 2,
       "action_num": 1,
-      "actions_lower_bound": [-5.0, -0.15],
-      "actions_upper_bound": [1.5, 0.15]
+      "actions_lower_bound": [-1.0, -0.15],
+      "actions_upper_bound": [1.0, 0.15]
     }
   },
   "World": {
