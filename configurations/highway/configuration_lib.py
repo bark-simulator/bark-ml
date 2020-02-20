@@ -54,10 +54,9 @@ class HighwayConfiguration(BaseConfiguration):
     # self._scenario_generator = \
     #   DeterministicScenarioGeneration(num_scenarios=100,
     #                                   params=self._params)
-  
     # self._observer = NearestObserver(self._params)
     self._observer = ClosestAgentsObserver(self._params)
-    
+
     self._behavior_model = DynamicModel(params=self._params)
     self._evaluator = CustomEvaluator(params=self._params)
     viewer = MPViewer(params=self._params,
