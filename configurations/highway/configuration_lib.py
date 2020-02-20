@@ -71,8 +71,10 @@ class HighwayConfiguration(BaseConfiguration):
                               viewer=self._viewer,
                               scenario_generator=self._scenario_generator)
     tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(self._runtime))
+    eval_tf_env = tf_py_environment.TFPyEnvironment(TFAWrapper(self._runtime))
     self._agent = PPOAgent(tfa_env, params=self._params)
     self._runner = PPORunner(tfa_env,
+                             eval_tf_env,
                              self._agent,
                              params=self._params,
                              unwrapped_runtime=self._runtime)
