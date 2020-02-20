@@ -660,15 +660,14 @@
         "parallel_buffer_calls": 1,
         "buffer_num_steps": 1,
         "buffer_prefetch": 1,
-        "normalize_reward": true, 
         "batch_size": 256,
         "checkpoint_path": "configurations/highway/checkpoints/"
     },
     "Runner": {
         "number_of_collections": 550000,
         "initial_collection_steps": 25,
-        "collection_episodes_per_cycle": 2,
-        "evaluate_every_n_steps": 2500,
+        "collection_episodes_per_cycle": 1,
+        "evaluate_every_n_steps": 50,
         "evaluation_steps": 25,
         "summary_path": "configurations/highway/summaries/"
     },

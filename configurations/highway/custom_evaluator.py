@@ -69,7 +69,7 @@ class CustomEvaluator(GoalReached):
     reward = collision * self._collision_penalty + \
       success * self._goal_reward + \
       drivable_area * self._collision_penalty - \
-      0.001*distance_to_goals**2 - 0.01*inpt_reward
+      0.001*distance_to_goals**2
     
     return reward
 

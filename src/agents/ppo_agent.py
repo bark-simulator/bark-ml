@@ -62,14 +62,14 @@ class PPOAgent(TFAAgent):
       env.action_spec(),
       actor_net=actor_net,
       value_net=value_net,
-      normalize_observations=self._params["ML"]["Agent"]["normalize_observations"],
-      normalize_rewards=self._params["ML"]["Agent"]["normalize_rewards"],
+      normalize_observations=self._params["ML"]["Agent"]["normalize_observations", "", False],
+      normalize_rewards=self._params["ML"]["Agent"]["normalize_reward", "", False],
       optimizer=tf.compat.v1.train.AdamOptimizer(
-          learning_rate=self._params["ML"]["Agent"]["learning_rate"]),
+          learning_rate=self._params["ML"]["Agent"]["learning_rate", "", 1e-3]),
       train_step_counter=self._ckpt.step,
-      num_epochs=self._params["ML"]["Agent"]["num_epochs"],
-      name=self._params["ML"]["Agent"]["agent_name"],
-      debug_summaries=self._params["ML"]["Agent"]["debug_summaries"])
+      num_epochs=self._params["ML"]["Agent"]["num_epochs", "", 1],
+      name=self._params["ML"]["Agent"]["agent_name", "", "ppo_agent"],
+      debug_summaries=self._params["ML"]["Agent"]["debug_summaries", "", False])
     tf_agent.initialize()
     return tf_agent
 
