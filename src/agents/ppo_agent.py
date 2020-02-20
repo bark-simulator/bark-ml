@@ -45,30 +45,16 @@ class PPOAgent(TFAAgent):
     Returns:
         agent -- tf-agent
     """
-    if self._use_rnns:
-      actor_net = actor_distribution_rnn_network.ActorDistributionRnnNetwork(
-          env.observation_spec(),
-          env.action_spec(),
-          input_fc_layer_params=tuple(
-            self._params["ML"]["Agent"]["actor_fc_layer_params"]),
-          output_fc_layer_params=None,
-          lstm_size=(40,))
-      value_net = value_rnn_network.ValueRnnNetwork(
-          env.observation_spec(),
-          input_fc_layer_params=tuple(
-            self._params["ML"]["Agent"]["critic_fc_layer_params"]),
-          output_fc_layer_params=None,
-          lstm_size=(16,))
-    else:
-      actor_net = actor_distribution_network.ActorDistributionNetwork(
-          env.observation_spec(),
-          env.action_spec(),
-          fc_layer_params=tuple(
-            self._params["ML"]["Agent"]["actor_fc_layer_params"]))
-      value_net = value_network.ValueNetwork(
+
+    actor_net = actor_distribution_network.ActorDistributionNetwork(
         env.observation_spec(),
+        env.action_spec(),
         fc_layer_params=tuple(
-          self._params["ML"]["Agent"]["critic_fc_layer_params"]))
+          self._params["ML"]["Agent"]["actor_fc_layer_params"]))
+    value_net = value_network.ValueNetwork(
+      env.observation_spec(),
+      fc_layer_params=tuple(
+        self._params["ML"]["Agent"]["critic_fc_layer_params"]))
 
     # agent
     tf_agent = ppo_agent.PPOAgent(
@@ -76,8 +62,8 @@ class PPOAgent(TFAAgent):
       env.action_spec(),
       actor_net=actor_net,
       value_net=value_net,
-      normalize_observations=self._params["ML"]["Agent"]["normalize_observation", "", True],
-      normalize_rewards=self._params["ML"]["Agent"]["normalize_reward", "", True],
+      normalize_observations=self._params["ML"]["Agent"]["normalize_observations"],
+      normalize_rewards=self._params["ML"]["Agent"]["normalize_rewards"],
       optimizer=tf.compat.v1.train.AdamOptimizer(
           learning_rate=self._params["ML"]["Agent"]["learning_rate"]),
       train_step_counter=self._ckpt.step,

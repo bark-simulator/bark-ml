@@ -46,19 +46,23 @@ class HighwayConfiguration(BaseConfiguration):
     """Builds a configuration using an SAC agent
     """
     # TODO(@hart): increase scenario number
-    self._scenario_generator = \
-      ConfigurableScenarioGeneration(num_scenarios=100,
-                                     params=self._params)
     # self._scenario_generator = \
-    #   DeterministicScenarioGeneration(num_scenarios=100,
-    #                                   params=self._params)
-    self._observer = NearestObserver(self._params)
+    #   ConfigurableScenarioGeneration(num_scenarios=100,
+    #                                  params=self._params)
+
+    # USE THIS FOR DETERMINISTIC SCENARIO GEN.
+    self._scenario_generator = \
+      DeterministicScenarioGeneration(num_scenarios=100,
+                                      params=self._params)
+  
+    # self._observer = NearestObserver(self._params)
+    self._observer = ClosestAgentsObserver(self._params)
+    
     self._behavior_model = DynamicModel(params=self._params)
     self._evaluator = CustomEvaluator(params=self._params)
     viewer = MPViewer(params=self._params,
                       use_world_bounds=True)
                       # follow_agent_id=True)
-
     self._viewer = viewer
     self._runtime = RuntimeRL(action_wrapper=self._behavior_model,
                               observer=self._observer,
@@ -67,8 +71,15 @@ class HighwayConfiguration(BaseConfiguration):
                               viewer=self._viewer,
                               scenario_generator=self._scenario_generator)
     tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(self._runtime))
+    eval_tf_env = tf_py_environment.TFPyEnvironment(TFAWrapper(self._runtime))
     self._agent = PPOAgent(tfa_env, params=self._params)
     self._runner = PPORunner(tfa_env,
+                             eval_tf_env,
                              self._agent,
                              params=self._params,
                              unwrapped_runtime=self._runtime)
+    # self._agent = SACAgent(tfa_env, params=self._params)
+    # self._runner = SACRunner(tfa_env,
+    #                          self._agent,
+    #                          params=self._params,
+    #                          unwrapped_runtime=self._runtime)
