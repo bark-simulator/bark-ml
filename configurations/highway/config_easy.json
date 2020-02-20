@@ -660,7 +660,9 @@
         "parallel_buffer_calls": 1,
         "buffer_num_steps": 1,
         "buffer_prefetch": 1,
-        "batch_size": 256,
+				"batch_size": 256,
+				"normalize_observations": true,
+				"normalize_reward": true,
         "checkpoint_path": "configurations/highway/checkpoints/"
     },
     "Runner": {
