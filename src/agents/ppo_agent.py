@@ -50,11 +50,11 @@ class PPOAgent(TFAAgent):
         env.observation_spec(),
         env.action_spec(),
         fc_layer_params=tuple(
-          self._params["ML"]["Agent"]["actor_fc_layer_params"]))
+          self._params["ML"]["Agent"]["actor_fc_layer_params", "", [512, 256, 256]]))
     value_net = value_network.ValueNetwork(
       env.observation_spec(),
       fc_layer_params=tuple(
-        self._params["ML"]["Agent"]["critic_fc_layer_params"]))
+        self._params["ML"]["Agent"]["critic_fc_layer_params", "", [512, 256, 256]]))
 
     # agent
     tf_agent = ppo_agent.PPOAgent(
@@ -81,8 +81,8 @@ class PPOAgent(TFAAgent):
     """
     return tf_uniform_replay_buffer.TFUniformReplayBuffer(
       data_spec=self._agent.collect_data_spec,
-      batch_size=self._params["ML"]["Agent"]["num_parallel_environments"],
-      max_length=self._params["ML"]["Agent"]["replay_buffer_capacity"])
+      batch_size=self._params["ML"]["Agent"]["num_parallel_environments", "", 1],
+      max_length=self._params["ML"]["Agent"]["replay_buffer_capacity", "", 1000])
 
   def get_collect_policy(self):
     """Returns the collection policy of the agent

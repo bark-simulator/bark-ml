@@ -46,7 +46,7 @@ class PPODroneChallenge(BaseConfiguration):
     # tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(self._runtime))
     tfa_env = tf_py_environment.TFPyEnvironment(
       parallel_py_environment.ParallelPyEnvironment(
-        [lambda: TFAWrapper(self._runtime)] * self._params["ML"]["Agent"]["num_parallel_environments"]))
+        [lambda: TFAWrapper(self._runtime)] * self._params["ML"]["Agent"]["num_parallel_environments", "", 0]))
     self._agent = PPOAgent(tfa_env, params=self._params)
     self._runner = PPORunner(tfa_env,
                              self._agent,
