@@ -221,7 +221,7 @@
 },
 
     "ML": {
-        "Agent": {
+        "PPOAgent": {
           "actor_fc_layer_params": [512, 256, 256],
           "critic_fc_layer_params": [512, 256, 256],
           "learning_rate": 3e-4,
@@ -239,7 +239,7 @@
           "normalize_rewards": false,
           "checkpoint_path": "configurations/highway/checkpoints/"
         },
-        "SACAgent": {
+        "Agent": {
           "actor_fc_layer_params": [512, 256, 256],
           "critic_joint_fc_layer_params": [512, 256, 256],
           "actor_learning_rate": 3e-4,

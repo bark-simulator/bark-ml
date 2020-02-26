@@ -50,9 +50,13 @@ class RuntimeRL(Runtime):
         (next_state, reward, done, info) -- RL tuple
     """
     # TODO(@hart): could be multiple actions
+    # observed_world = self._world.Observe(self._scenario._eval_agent_ids[0])[0]
+    # next_observed_world = observed_world.Predict(0.2, action)
+
     self._world = self._action_wrapper.action_to_behavior(world=self._world,
                                                           action=action)
     
+
     self._world.Step(self._step_time)
     snapshot =  self.snapshot(
       world=self._world,
