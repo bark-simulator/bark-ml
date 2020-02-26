@@ -20,7 +20,7 @@ class StateObserver(ABC):
     self._max_num_vehicles = \
       self._params["ML"]["Observer"]["max_num_agents",
       "The concatenation state size is the ego agent plus max num other agents",
-      1]
+      2]
     self._world_x_range = [-10000, 10000]
     self._world_y_range = [-10000, 10000]
 
