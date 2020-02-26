@@ -32,14 +32,14 @@
   "Scenario": {
     "Generation": {
         "GeneratorName": "ConfigurableScenarioGeneration",
-        "GeneratorSeed": 1000,
+        "GeneratorSeed": 2000,
         "SetName": "no_variation",
         "SetDescription": "Ego vehicle is the only vehicle on the right lane. Must merge to left lane where it is crowded with IDM vehicles",
         "NumScenarios": 100,
         "NumSets": 1,
         "ConfigurableScenarioGeneration": {
             "MapFilename": "tests/data/city_highway_straight.xodr",
-            "RandomSeed": 1000,
+            "RandomSeed": 2000,
             "SinksSources": [
                 {
                     "SourceSink": [
@@ -162,7 +162,7 @@
                             "BehaviorIDMClassic": {
                                 "MaxVelocity": 30.0,
                                 "MinimumSpacing": 2.0,
-                                "DesiredTimeHeadway": 1.5,
+                                "DesiredTimeHeadway": 3.0,
                                 "MaxAcceleration": 1.7000000476837158,
                                 "AccelerationLowerBound": -15.0,
                                 "AccelerationUpperBound": 8.0,
