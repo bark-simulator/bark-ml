@@ -50,4 +50,5 @@ class BARKMLBehaviorModel(BehaviorModel):
     sdict['_dynamic_behavior_model'] = DynamicBehaviorModel(
       sdict['_configuration']._behavior_model._dynamic_model,
       sdict['_configuration']._params)
+    BehaviorModel.__init__(self, sdict['_configuration']._params)
     self.__dict__.update(sdict)
