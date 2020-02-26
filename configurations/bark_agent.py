@@ -31,3 +31,23 @@ class BARKMLBehaviorModel(BehaviorModel):
 
   def Clone(self):
     return self
+
+  def __getstate__(self):
+    del self.__dict__['_configuration']
+    del self.__dict__['_dynamic_behavior_model']
+    odict = self.__dict__.copy()
+    return odict
+  
+  def __setstate__(self, sdict):
+    # HACK
+    base_dir = "/home/hart/Dokumente/2020/bark-ml"
+    params = ParameterServer(filename=base_dir + "/configurations/highway/config.json")
+    scenario_generation = params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]
+    map_filename = scenario_generation["MapFilename"]
+    scenario_generation["MapFilename"] = base_dir + "/" + map_filename
+    params["BaseDir"] = base_dir
+    sdict['_configuration'] = HighwayConfiguration(params)
+    sdict['_dynamic_behavior_model'] = DynamicBehaviorModel(
+      sdict['_configuration']._behavior_model._dynamic_model,
+      sdict['_configuration']._params)
+    self.__dict__.update(sdict)
