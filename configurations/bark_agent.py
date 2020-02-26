@@ -33,8 +33,14 @@ class BARKMLBehaviorModel(BehaviorModel):
     return self
 
   def __getstate__(self):
-    del self.__dict__['_configuration']
-    del self.__dict__['_dynamic_behavior_model']
+    try:
+      del self.__dict__['_configuration']
+    except:
+      pass
+    try:
+      del self.__dict__['_dynamic_behavior_model']
+    except:
+      pass
     odict = self.__dict__.copy()
     return odict
   
