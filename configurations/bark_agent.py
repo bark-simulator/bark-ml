@@ -21,6 +21,7 @@ class BARKMLBehaviorModel(BehaviorModel):
       configuration._params)
 
   def Plan(self, delta_time, observed_world):
+    self._configuration._observer.reset(observed_world, [0])
     observed_state = self._configuration._observer.observe(
       observed_world)
     action = self._configuration._agent.act(observed_state)
