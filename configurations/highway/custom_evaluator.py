@@ -56,7 +56,6 @@ class CustomEvaluator(GoalReached):
     collision = eval_results["collision"]
     drivable_area = eval_results["drivable_area"]
     step_count = eval_results["step_count"]
-    print(eval_results)
     reward = self.calculate_reward(observed_world, eval_results, action, observed_state)    
     if success or collision or step_count > self._max_steps or drivable_area:
       done = True
