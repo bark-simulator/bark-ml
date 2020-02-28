@@ -47,15 +47,15 @@ class RuntimeRL(Runtime):
         (next_state, reward, done, info) -- RL tuple
     """
     # TODO(@hart): could be multiple actions
-    # observed_world = self._world.Observe([self._scenario._eval_agent_ids[0]])[0]
     # next_observed_world = observed_world.PredictWithOthersIDM(0.2, action)
+    # print(observed_world.Evaluate())
     self._world = self._action_wrapper.action_to_behavior(world=self._world,
                                                           action=action)
     
     self._world.Step(self._step_time)
+    observed_world = self._world.Observe([self._scenario._eval_agent_ids[0]])[0]
     snapshot =  self.snapshot(
-      world=self._world,
-      controlled_agents=self._scenario._eval_agent_ids,
+      observed_world=observed_world,
       action=action)
 
     if self._render:
@@ -74,7 +74,7 @@ class RuntimeRL(Runtime):
     """
     return self._observer.observation_space
 
-  def snapshot(self, world, controlled_agents, action):
+  def snapshot(self, observed_world, action):
     """Evaluates and observes the world from the controlled-agents's
        perspective
     
@@ -86,8 +86,6 @@ class RuntimeRL(Runtime):
         (next_state, reward, done, info) -- RL tuple
     """
     # TODO(@hart): could be multiple
-    observed_world = self._world.Observe(controlled_agents)[0]
-
     next_state = self._observer.observe(observed_world)
     reward, done, info = self._evaluator.evaluate(
       observed_world=observed_world,
