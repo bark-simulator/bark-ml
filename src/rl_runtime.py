@@ -29,13 +29,10 @@ class RuntimeRL(Runtime):
     """Resets the runtime and its objects
     """
     super().reset(scenario=scenario)
-    self._world = self._observer.reset(self._world,
-                                       self._scenario._eval_agent_ids)
-    self._world = self._evaluator.reset(self._world,
-                                        self._scenario._eval_agent_ids)
+    self._world = self._observer.reset(self._world)
+    self._world = self._evaluator.reset(self._world)
     self._world = self._action_wrapper.reset(self._world,
                                              self._scenario._eval_agent_ids)
-    # TODO(@hart): could be multiple
     observed_world = self._world.Observe(
       self._scenario._eval_agent_ids)[0]
     return self._observer.observe(observed_world)
@@ -50,13 +47,11 @@ class RuntimeRL(Runtime):
         (next_state, reward, done, info) -- RL tuple
     """
     # TODO(@hart): could be multiple actions
-    # observed_world = self._world.Observe(self._scenario._eval_agent_ids[0])[0]
-    # next_observed_world = observed_world.Predict(0.2, action)
-
+    # observed_world = self._world.Observe([self._scenario._eval_agent_ids[0]])[0]
+    # next_observed_world = observed_world.PredictWithOthersIDM(0.2, action)
     self._world = self._action_wrapper.action_to_behavior(world=self._world,
                                                           action=action)
     
-
     self._world.Step(self._step_time)
     snapshot =  self.snapshot(
       world=self._world,
@@ -92,9 +87,10 @@ class RuntimeRL(Runtime):
     """
     # TODO(@hart): could be multiple
     observed_world = self._world.Observe(controlled_agents)[0]
+
     next_state = self._observer.observe(observed_world)
     reward, done, info = self._evaluator.evaluate(
-      world=world,
+      observed_world=observed_world,
       action=action,
       observed_state=next_state)
     return next_state, reward, done, info
