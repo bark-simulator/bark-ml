@@ -240,8 +240,8 @@
           "checkpoint_path": "configurations/highway/checkpoints/"
         },
         "Agent": {
-          "actor_fc_layer_params": [512, 256, 256],
-          "critic_joint_fc_layer_params": [512, 256, 256],
+          "actor_fc_layer_params": [512, 512, 256],
+          "critic_joint_fc_layer_params": [512, 512, 256],
           "actor_learning_rate": 3e-4,
           "critic_learning_rate": 3e-4,
           "alpha_learning_rate": 3e-4,
