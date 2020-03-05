@@ -13,6 +13,6 @@ def load_bark():
   _maybe(
     git_repository,
     name = "bark_project",
-    commit="410daaf12fcff6b73d4490b677a8c3d0d51be07f",
+    commit="fa188ffda31abf945bf80312ebbd9d1fdd87f87b",
     remote = "https://github.com/bark-simulator/bark",
   )
