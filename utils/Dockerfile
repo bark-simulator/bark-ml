@@ -1,4 +1,5 @@
 FROM openjdk:8
+FROM python:3.7
 
 ENV PATH /opt/conda/bin:$PATH
 ENV DISPLAY :0
