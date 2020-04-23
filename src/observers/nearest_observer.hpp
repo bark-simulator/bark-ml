@@ -10,6 +10,8 @@
 #include <memory>
 #include <vector>
 #include <tuple>
+#include <map>
+#include <functional>
 #include <Eigen/Dense>
 
 #include "modules/commons/params/params.hpp"
@@ -27,11 +29,13 @@ using spaces::Box;
 using commons::Norm;
 using spaces::Matrix_t;
 using modules::world::AgentMap;
+using modules::world::AgentPtr;
 using modules::world::WorldPtr;
 using modules::world::goal_definition::GoalDefinitionStateLimitsFrenet;
 using modules::world::ObservedWorldPtr;
 using modules::geometry::Point2d;
 using modules::geometry::Line;
+using modules::geometry::Distance;
 using modules::models::dynamic::StateDefinition;
 using ObservedState = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>;
 using modules::commons::transformation::FrenetPosition;
@@ -54,6 +58,7 @@ class NearestObserver {
       max_theta_ = params_->GetReal("ML::Observer::max_theta", "", 3.14);
       min_vel_ = params_->GetReal("ML::Observer::min_vel", "", 0.0);
       max_vel_ = params_->GetReal("ML::Observer::max_vel", "", 25.0);
+      max_dist_ = params_->GetReal("ML::Observer::max_dist", "", 75.0);
       observation_len_ = nearest_agent_num_ * state_size_;
   }
 
@@ -95,13 +100,23 @@ class NearestObserver {
     const auto& lane_corridors = road_corridor->GetUniqueLaneCorridors();
     auto ego_lane_corridor = lane_corridors[0];
     for (auto& lane_corr : lane_corridors) {
-      if (Collide(lane_corr->GetMergedPolygon(), ego_goal_center_line))
+      if (Collide(lane_corr->GetMergedPolygon(), ego_goal_center_line)) {
         ego_lane_corridor = lane_corr;
+      }
     }
 
-    // 2. find near agents (n)
+    // find near agents (n)
     AgentMap nearest_agents = world->GetNearestAgents(
       ego_pos, nearest_agent_num_);
+
+    // sort agents by distance and remove far away ones
+    std::map<float, AgentPtr, std::greater<float>> distance_agent_map;
+    for (const auto& agent : nearest_agents) {
+      const auto& agent_state = agent.second->GetCurrentPosition();
+      float distance = Distance(ego_pos, agent_state);
+      if (distance < max_dist_)
+        distance_agent_map[distance] = agent.second;
+    }
 
     // transform ego agent state
     ObservedState obs_ego_agent_state =
@@ -111,7 +126,7 @@ class NearestObserver {
     row_idx++;
 
     // transform other states (lon. relative to ego agent's lon.)
-    for (const auto& agent : nearest_agents) {
+    for (const auto& agent : distance_agent_map) {
       if (agent.second->GetAgentId() != ego_agent->GetAgentId()) {
         ObservedState other_agent_state =
           TransformState(agent.second->GetCurrentState(),
@@ -145,7 +160,8 @@ class NearestObserver {
   int nearest_agent_num_;
   int observation_len_;
   float min_lon_, max_lon_, min_lat_, max_lat_,
-        min_theta_, max_theta_, min_vel_, max_vel_;
+        min_theta_, max_theta_, min_vel_, max_vel_,
+        max_dist_;
 };
 
 }  // namespace observers

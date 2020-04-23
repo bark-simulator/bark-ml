@@ -45,30 +45,16 @@ class PPOAgent(TFAAgent):
     Returns:
         agent -- tf-agent
     """
-    if self._use_rnns:
-      actor_net = actor_distribution_rnn_network.ActorDistributionRnnNetwork(
-          env.observation_spec(),
-          env.action_spec(),
-          input_fc_layer_params=tuple(
-            self._params["ML"]["Agent"]["actor_fc_layer_params"]),
-          output_fc_layer_params=None,
-          lstm_size=(40,))
-      value_net = value_rnn_network.ValueRnnNetwork(
-          env.observation_spec(),
-          input_fc_layer_params=tuple(
-            self._params["ML"]["Agent"]["critic_fc_layer_params"]),
-          output_fc_layer_params=None,
-          lstm_size=(16,))
-    else:
-      actor_net = actor_distribution_network.ActorDistributionNetwork(
-          env.observation_spec(),
-          env.action_spec(),
-          fc_layer_params=tuple(
-            self._params["ML"]["Agent"]["actor_fc_layer_params"]))
-      value_net = value_network.ValueNetwork(
+
+    actor_net = actor_distribution_network.ActorDistributionNetwork(
         env.observation_spec(),
+        env.action_spec(),
         fc_layer_params=tuple(
-          self._params["ML"]["Agent"]["critic_fc_layer_params"]))
+          self._params["ML"]["Agent"]["actor_fc_layer_params", "", [512, 256, 256]]))
+    value_net = value_network.ValueNetwork(
+      env.observation_spec(),
+      fc_layer_params=tuple(
+        self._params["ML"]["Agent"]["critic_fc_layer_params", "", [512, 256, 256]]))
 
     # agent
     tf_agent = ppo_agent.PPOAgent(
@@ -76,14 +62,14 @@ class PPOAgent(TFAAgent):
       env.action_spec(),
       actor_net=actor_net,
       value_net=value_net,
-      normalize_observations=self._params["ML"]["Agent"]["normalize_observations"],
-      normalize_rewards=self._params["ML"]["Agent"]["normalize_rewards"],
+      normalize_observations=self._params["ML"]["Agent"]["normalize_observations", "", False],
+      normalize_rewards=self._params["ML"]["Agent"]["normalize_rewards", "", False],
       optimizer=tf.compat.v1.train.AdamOptimizer(
-          learning_rate=self._params["ML"]["Agent"]["learning_rate"]),
+          learning_rate=self._params["ML"]["Agent"]["learning_rate", "", 3e-4]),
       train_step_counter=self._ckpt.step,
-      num_epochs=self._params["ML"]["Agent"]["num_epochs"],
-      name=self._params["ML"]["Agent"]["agent_name"],
-      debug_summaries=self._params["ML"]["Agent"]["debug_summaries"])
+      num_epochs=self._params["ML"]["Agent"]["num_epochs", "", 30],
+      name=self._params["ML"]["Agent"]["agent_name", "", "ppo_agent"],
+      debug_summaries=self._params["ML"]["Agent"]["debug_summaries", "", False])
     tf_agent.initialize()
     return tf_agent
 
@@ -95,8 +81,8 @@ class PPOAgent(TFAAgent):
     """
     return tf_uniform_replay_buffer.TFUniformReplayBuffer(
       data_spec=self._agent.collect_data_spec,
-      batch_size=self._params["ML"]["Agent"]["num_parallel_environments"],
-      max_length=self._params["ML"]["Agent"]["replay_buffer_capacity"])
+      batch_size=self._params["ML"]["Agent"]["num_parallel_environments", "", 1],
+      max_length=self._params["ML"]["Agent"]["replay_buffer_capacity", "", 1000])
 
   def get_collect_policy(self):
     """Returns the collection policy of the agent
@@ -112,7 +98,7 @@ class PPOAgent(TFAAgent):
     Returns:
         GreedyPolicy -- Always returns best suitable action
     """
-    return greedy_policy.GreedyPolicy(self._agent.policy)
+    return self._agent.policy
 
   def reset(self):
     pass

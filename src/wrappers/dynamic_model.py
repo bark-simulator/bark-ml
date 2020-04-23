@@ -1,11 +1,11 @@
 
 import numpy as np
 import itertools
+from src.commons.py_spaces import Discrete, BoundedContinuous
 from bark.models.behavior import DynamicBehaviorModel
 from bark.models.dynamic import SingleTrackModel, TripleIntegratorModel
 from modules.runtime.commons.parameters import ParameterServer
 from src.wrappers.action_wrapper import ActionWrapper
-from src.commons.py_spaces import BoundedContinuous
 
 class DynamicModel(ActionWrapper):
   """This module wraps the SingleTrack model
@@ -35,6 +35,8 @@ class DynamicModel(ActionWrapper):
       self._behavior_models.append(DynamicBehaviorModel(self._dynamic_model,
                                                         self._params))
       if agent_id in world.agents:
+        actions = np.zeros(shape=(self._control_inputs), dtype=np.float32)
+        self._behavior_models[-1].SetLastAction(actions)
         world.agents[agent_id].behavior_model = self._behavior_models[-1]
       else:
         raise ValueError("AgentID does not exist in world.")

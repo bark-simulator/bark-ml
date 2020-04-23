@@ -20,7 +20,7 @@ class StateObserver(ABC):
     self._max_num_vehicles = \
       self._params["ML"]["Observer"]["max_num_agents",
       "The concatenation state size is the ego agent plus max num other agents",
-      1]
+      2]
     self._world_x_range = [-10000, 10000]
     self._world_y_range = [-10000, 10000]
 
@@ -48,7 +48,7 @@ class StateObserver(ABC):
     """
     return state[self._state_definition]
 
-  def reset(self, world, controlled_agent_ids):
+  def reset(self, world):
     bb = world.bounding_box
     self._world_x_range = [bb[0].x(), bb[1].x()]
     self._world_y_range = [bb[0].y(), bb[1].y()]
