@@ -7,14 +7,12 @@ jobs:
 
     runs-on: ubuntu-latest
     container:
-      image: docker://barksim/bark:latest
+      image: docker://barksim/bark-ml:latest
     steps:
       - uses: actions/checkout@v1
       - name: Setting up virtual environment
         run: virtualenv -p python3 ./python/venv  --system-site-packages
       - name: Entering the virtual python environment..
         run: . ./python/venv/bin/activate
-      - name: Installing python dependencies..
-        run: pip3 install -r utils/requirements.txt -q
       - name: Runing bazel tests..
         run: bazel test //...
