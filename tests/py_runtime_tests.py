@@ -6,6 +6,8 @@
 
 import unittest
 import os
+import matplotlib
+matplotlib.use('PS')
 import time
 import numpy as np
 from modules.runtime.scenario.scenario_generation.deterministic \
@@ -18,6 +20,7 @@ from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.runtime import Runtime
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from modules.runtime.viewer.pygame_viewer import PygameViewer
+
 
 
 class PyRuntimeTests(unittest.TestCase):

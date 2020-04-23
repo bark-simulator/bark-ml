@@ -5,6 +5,9 @@
 
 
 import unittest
+import os
+import matplotlib
+matplotlib.use('PS')
 from modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution \
   import UniformVehicleDistribution
 from modules.runtime.scenario.scenario_generation.deterministic \

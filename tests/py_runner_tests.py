@@ -4,6 +4,8 @@
 # https://opensource.org/licenses/MIT
 
 import os
+import matplotlib
+matplotlib.use('PS')
 import unittest
 import tensorflow as tf
 from tf_agents.environments import tf_py_environment
