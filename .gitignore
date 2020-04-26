@@ -162,3 +162,6 @@ web/node_modules
 *.img
 .vscode/.vs_code_bazel_build/vs_code_aspect.bzl
 .vscode/.vs_code_bazel_build/BUILD
+tests/data/database_maps_DR_DEU_Merging_MT_shifted.xodr
+*.png
+*.p

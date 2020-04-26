@@ -33,29 +33,29 @@ class BARKMLBehaviorModel(BehaviorModel):
   def Clone(self):
     return self
 
-  # def __getstate__(self):
-  #   try:
-  #     del self.__dict__['_configuration']
-  #   except:
-  #     pass
-  #   try:
-  #     del self.__dict__['_dynamic_behavior_model']
-  #   except:
-  #     pass
-  #   odict = self.__dict__.copy()
-  #   return odict
+  def __getstate__(self):
+    try:
+      del self.__dict__['_configuration']
+    except:
+      pass
+    try:
+      del self.__dict__['_dynamic_behavior_model']
+    except:
+      pass
+    odict = self.__dict__.copy()
+    return odict
   
-  # def __setstate__(self, sdict):
-  #   # HACK
-  #   base_dir = "/home/hart/Dokumente/2020/bark-ml"
-  #   params = ParameterServer(filename=base_dir + "/configurations/highway/config.json")
-  #   scenario_generation = params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]
-  #   map_filename = scenario_generation["MapFilename"]
-  #   scenario_generation["MapFilename"] = base_dir + "/" + map_filename
-  #   params["BaseDir"] = base_dir
-  #   sdict['_configuration'] = HighwayConfiguration(params)
-  #   sdict['_dynamic_behavior_model'] = DynamicBehaviorModel(
-  #     sdict['_configuration']._behavior_model._dynamic_model,
-  #     sdict['_configuration']._params)
-  #   BehaviorModel.__init__(self, sdict['_configuration']._params)
-  #   self.__dict__.update(sdict)
+  def __setstate__(self, sdict):
+    # HACK
+    base_dir = "/home/hart/Dokumente/2020/bark-ml"
+    params = ParameterServer(filename=base_dir + "/configurations/highway/config.json")
+    scenario_generation = params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]
+    map_filename = scenario_generation["MapFilename"]
+    scenario_generation["MapFilename"] = base_dir + "/" + map_filename
+    params["BaseDir"] = base_dir
+    sdict['_configuration'] = HighwayConfiguration(params)
+    sdict['_dynamic_behavior_model'] = DynamicBehaviorModel(
+      sdict['_configuration']._behavior_model._dynamic_model,
+      sdict['_configuration']._params)
+    BehaviorModel.__init__(self, sdict['_configuration']._params)
+    self.__dict__.update(sdict)

@@ -1,6 +1,9 @@
 from absl import app
 from absl import flags
 import tensorflow as tf
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
+
 from tf_agents.environments import tf_py_environment
 from tf_agents.environments import parallel_py_environment
 
@@ -59,9 +62,22 @@ class HighwayConfiguration(BaseConfiguration):
 
     self._behavior_model = DynamicModel(params=self._params)
     self._evaluator = CustomEvaluator(params=self._params)
-    viewer = MPViewer(params=self._params,
-                      use_world_bounds=True)
-                      # follow_agent_id=True)
+    sim_step_time = 0.2
+    real_time_factor = 5
+
+    resolution = (1920, 1080 )
+    dpi = 300
+    fig_env = plt.figure(figsize=(resolution[0] / dpi, resolution[1] / dpi), dpi=dpi)
+    gs = gridspec.GridSpec(1, 1, left=0.0, right=1, bottom=0, top=0.9)
+    axis = plt.subplot(gs[0])
+    viewer = MPViewer(
+                  params=self._params,
+                  y_length = 80,
+                  enforce_y_length=True,
+                  enforce_x_length=False,
+                  follow_agent_id=True,
+                  axis=axis)
+    # self._viewer = VideoRenderer(renderer=viewer, world_step_time=0.2)
     self._viewer = viewer
     self._runtime = RuntimeRL(action_wrapper=self._behavior_model,
                               observer=self._observer,

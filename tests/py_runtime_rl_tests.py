@@ -7,6 +7,8 @@
 import unittest
 import numpy as np
 import os
+import matplotlib
+matplotlib.use('PS')
 import time
 from modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution \
   import UniformVehicleDistribution

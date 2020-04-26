@@ -7,7 +7,7 @@ jobs:
 
     runs-on: ubuntu-latest
     container:
-      image: docker://barksim/bark:latest
+      image: docker://barksim/bark-ml:latest
     steps:
       - uses: actions/checkout@v1
       - name: Setting up virtual environment
