@@ -13,9 +13,6 @@ from modules.runtime.scenario.scenario_generation.deterministic \
   import DeterministicScenarioGeneration
 from src.wrappers.dynamic_model import DynamicModel
 from src.evaluators.goal_reached import GoalReached
-from src.wrappers.tfa_wrapper import TFAWrapper
-from src.agents.sac_agent import SACAgent
-from src.runners.sac_runner import SACRunner
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from src.rl_runtime import RuntimeRL
 
@@ -42,9 +39,11 @@ class PyGraphObserverTests(unittest.TestCase):
                           scenario_generator=scenario_generation)
 
       scenario = scenario_generation.create_single_scenario()
-      state = runtime.reset(scenario)
+      observed_world = runtime.reset(scenario)
 
-      print(state)
+      agents_dict = observed_world.agents
+
+      print(observed_world.ego_position)
 
 
 if __name__ == '__main__':

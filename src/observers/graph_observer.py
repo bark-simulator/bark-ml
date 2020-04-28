@@ -28,7 +28,7 @@ class GraphObserver(StateObserver):
     """see base class
     """
     # build graph here
-    graph = [1, 2, 3, 4]
+    graph = world
 
     return graph
 
