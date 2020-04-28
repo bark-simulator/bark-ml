@@ -90,5 +90,6 @@
     "dense": "cpp",
     "__functional_03": "cpp",
     "*.ipp": "cpp"
-  }
+  },
+  "python.pythonPath": "~/working_bark/python/venv/bin/"
 }
