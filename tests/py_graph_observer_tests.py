@@ -47,11 +47,6 @@ class PyGraphObserverTests(unittest.TestCase):
       for (id, features) in graph['nodes'].items():
         print(str(id) + ': ' + str(features))
 
-      print(world.ego_agent)            # works
-      print(world.ego_position)         # does not work
-      print(world.lane_corridor)        # does not work
-      print(world.getAgentInFront())    # does not work
-
 
 if __name__ == '__main__':
   unittest.main()
