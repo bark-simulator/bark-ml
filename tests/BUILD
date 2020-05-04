@@ -1,4 +1,22 @@
 py_test(
+    name = "py_graph_observer_tests",
+    srcs = ["py_graph_observer_tests.py"],
+    data = ["@bark_project//python:bark.so",
+            "//tests/data:bark_data",
+            "//configurations/highway:configuration_data"],
+    imports = ["../external/bark_project/python/"],
+    deps = ["@bark_project//modules/runtime:runtime",
+            "@bark_project//modules/runtime/scenario/scenario_generation:scenario_generation",
+            "//src/observers:observers",
+            "//src/wrappers:wrappers",
+            "//src/evaluators:evaluators",
+            "//src/agents:agents",
+            "//src/runners:runners",
+            "//src:rl_runtime"],
+    visibility = ["//visibility:public"],
+)
+
+py_test(
     name = "py_bark_agent_tests",
     srcs = ["py_bark_agent_tests.py"],
     data = ["@bark_project//python:bark.so",
@@ -13,7 +31,6 @@ py_test(
             "//src/agents:agents"],
     visibility = ["//visibility:public"],
 )
-
 
 py_test(
     name = "py_runtime_rl_tests",

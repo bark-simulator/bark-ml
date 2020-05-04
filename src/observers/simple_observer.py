@@ -40,7 +40,7 @@ class SimpleObserver(StateObserver):
       concatenated_state[starts_id:starts_id+self._len_state] = new_state
       if i >= self._max_num_vehicles:
         break
-    return concatenated_state
+    return concatenated_state # build graph here
 
   def _norm(self, agent_state, position, range):
     agent_state[int(position)] = \
