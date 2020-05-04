@@ -3,7 +3,7 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-import os
+import os, time
 import unittest
 from tf_agents.environments import tf_py_environment
 
@@ -19,7 +19,8 @@ from src.rl_runtime import RuntimeRL
 class PyGraphObserverTests(unittest.TestCase):
 
     def test_observer(self):
-      params = ParameterServer(filename="tests/data/deterministic_scenario_test.json")
+      #params = ParameterServer(filename="tests/data/deterministic_scenario_test.json")
+      params = ParameterServer(filename="tests/data/graph_scenario_test.json")
       base_dir = os.path.dirname(os.path.dirname(__file__))
       params["BaseDir"] = base_dir
       
@@ -39,12 +40,14 @@ class PyGraphObserverTests(unittest.TestCase):
                           scenario_generator=scenario_generation)
 
       scenario = scenario_generation.create_single_scenario()
-      observed_world = runtime.reset(scenario)
+      graph = runtime.reset(scenario)
 
-      agents_dict = observed_world.agents
-
-      print(observed_world.ego_position)
-
+      # Visualize Movement of vehicles
+      for i in range(20):
+        #observed_world = runtime.step([-0.8,0.0,0.0,0.0]) # for 2 ego vehicles
+        graph = runtime.step([0.0,0.0]) # [acc, steer] with -1<acc<1 and -0.1<steer<0.1
+        runtime.render()
+        #time.sleep(0.01)
 
 if __name__ == '__main__':
   unittest.main()

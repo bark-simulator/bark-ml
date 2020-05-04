@@ -27,8 +27,36 @@ class GraphObserver(StateObserver):
   def observe(self, world):
     """see base class
     """
-    # build graph here
-    graph = world
+    # Get info from ego vehicle
+    ego = world.ego_agent # seems not to work for two controlled/ego vehicles properly
+    state = ego.state #equal to world.ego_state
+    if self._normalize_observations:
+      state = self._normalize(state)
+    id_ = ego.id
+    goal = ego.goal_definition
+    road_corridor = world.road_corridor
+    lane_corridor = world.lane_corridor
+    other_agents = world.other_agents
+    #print(road_corridor)
+    #print(lane_corridor)
+    #print(other_agents)
+    #print(help(corridor))
+    # Get middle point of goal Polygon as reference point(assumption: rectangular)
+    goal_center = goal.goal_shape.ToArray()[1:].mean(axis=0)
+    at_goal = goal.AtGoal(ego) # Seems not to work as intuitivly expected, always false -> unsure about correct usage
+    print('{:2.2f}s: Ego: id {}, goal {}'.format(world.time, id_, goal_center))
+    
+    # Check data of other agents
+    for agent_id in other_agents:
+      agent = other_agents[agent_id]
+      state = agent.state
+      assert(agent_id is agent.id)
+      if self._normalize_observations:
+        state = self._normalize(state)
+        #print("Normed state: ", state)
+    
+    ## build graph here
+    graph = ego.state
 
     return graph
 
