@@ -9,6 +9,27 @@ from bark.world import ObservedWorld
 from modules.runtime.commons.parameters import ParameterServer
 from src.observers.observer import StateObserver
 
+class Graph(object):
+  """
+  Abstraction of the observed world in a graph representation.
+  This class could integrate networkx to build the graph, or only use some features
+  to visualize it.
+  """
+
+  def __init__(self):
+    self.nodes = {}
+    self.edges = [] # list of two-element tuples
+
+  def add_node(self, id, features):
+    # assert id is str
+    # assert features is list
+
+    self.nodes[id] = features
+
+  def add_edge(self, source: str, target: str):
+    self.edges.append((source, target))
+
+#####
 
 class GraphObserver(StateObserver):
   def __init__(self,
@@ -27,32 +48,41 @@ class GraphObserver(StateObserver):
   def observe(self, world):
     """see base class
     """
-    graph = {
-      'nodes': {},
-      'edges': []
-    }
-
+    graph = Graph()
     ego_agent = world.ego_agent
 
-    for (_, agent) in world.agents.items():
-      state = self._normalize(agent.state) if self._normalize_observations else agent.state
-      graph['nodes'][agent.id] = self._create_node(agent)
+    for (_, agent) in world.agents.items():      
+      features = self._extract_features(agent)
+      # normalize the features here?
+      graph.add_node(id=str(agent.id), features=features)
 
-    return graph, world
+      for nearby_agent in world.GetNearestAgents(world.ego_position, 3):
+        graph.add_edge(source=agent.id, target=nearby_agent.id)
 
-  def _create_node(self, agent):
-    return {
-      'x_pos': agent.state[int(StateDefinition.X_POSITION)],
-      'y_pos': agent.state[int(StateDefinition.Y_POSITION)],
-      'theta_pos': agent.state[int(StateDefinition.THETA_POSITION)],
-      'vel_pos': agent.state[int(StateDefinition.VEL_POSITION)]
-    }
+    return graph
 
-  def _create_edge(self, agent1, agent2):
-    return {
-      'node1': agent1.id,
-      'node2': agent2.id
-    }
+  def _extract_features(self, agent):
+    state = agent.state
+    if self._normalize_observations: 
+      self._normalize(agent.state)
+
+    goal_center = agent.goal_definition.goal_shape.center[0:2]
+    agent_position = (
+      agent.state[int(StateDefinition.X_POSITION)], 
+      agent.state[int(StateDefinition.Y_POSITION)]
+    )
+
+    distance_to_goal = np.linalg.norm(agent_position - goal_center)
+
+    # TODO: add more features here
+
+    return [
+      state[int(StateDefinition.X_POSITION)],
+      state[int(StateDefinition.Y_POSITION)],
+      state[int(StateDefinition.THETA_POSITION)],
+      state[int(StateDefinition.VEL_POSITION)],    
+      distance_to_goal,
+    ]
 
   def _norm(self, agent_state, position, range):
     agent_state[int(position)] = \

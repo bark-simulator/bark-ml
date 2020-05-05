@@ -5,7 +5,7 @@
 
 import os
 import unittest
-from tf_agents.environments import tf_py_environment
+#from tf_agents.environments import tf_py_environment
 
 from src.observers.graph_observer import GraphObserver
 from modules.runtime.commons.parameters import ParameterServer
@@ -39,13 +39,24 @@ class PyGraphObserverTests(unittest.TestCase):
                           scenario_generator=scenario_generation)
 
       scenario = scenario_generation.create_single_scenario()
-      graph, world = runtime.reset(scenario)
+      graph = runtime.reset(scenario)
 
-      # perform tests with observed_world here
+      # perform tests with graph here
 
       print('---------- Nodes ----------')
-      for (id, features) in graph['nodes'].items():
+      for (id, features) in graph.nodes.items():
         print(str(id) + ': ' + str(features))
+
+      print('---------- Edges ----------')
+      for (source, target) in graph.edges:
+        print(source + ' -> ' + target)
+
+      # Visualize Movement of vehicles
+      # for i in range(20):
+      #   #observed_world = runtime.step([-0.8,0.0,0.0,0.0]) # for 2 ego vehicles
+      #   graph = runtime.step([0.0,0.0]) # [acc, steer] with -1<acc<1 and -0.1<steer<0.1
+      #   runtime.render()
+      #   time.sleep(0.1)
 
 
 if __name__ == '__main__':
