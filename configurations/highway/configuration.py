@@ -45,7 +45,7 @@ def run_configuration(argv):
     configuration.train()
   elif FLAGS.mode == 'visualize':
     configuration.visualize(5)
-    configuration._viewer.export_video("/home/hart/Dokumente/2020/bark-ml/configurations/highway/video/lane_merge")
+    configuration._viewer.export_video(filename=FLAGS.base_dir + "/configurations/highway/video/lane_merge")
   elif FLAGS.mode == 'evaluate':
     configuration.evaluate()
 

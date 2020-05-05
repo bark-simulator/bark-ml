@@ -41,8 +41,9 @@ class TFARunner(BaseRunner):
     ]
     self._summary_writer = None
     self._unwrapped_runtime = unwrapped_runtime
-    self.get_initial_collection_driver()
-    self.get_collection_driver()
+    # self.get_initial_collection_driver()
+    # self.get_collection_driver()
+    self.setup_writer()
 
   def setup_writer(self):
     if self._params["ML"]["Runner"]["summary_path"] is not None:
