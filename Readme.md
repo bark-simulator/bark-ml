@@ -27,7 +27,7 @@ Configurations are designed to run experiments in an hermetic container.
 To train a configuration use the following command inside the virtual environment:
 
 ```
-bazel run //configurations/highway:configuration -- --base_dir=/tmp/ --mode=train
+bazel run //configurations/highway:configuration -- --base_dir=<path-to-local-bark-ml-repo> --mode=train
 ```
 
 There are three modes the configurations can be run with: `train`, `visualize` and `evaluate`. You can use these flags in the above stated bazel command.
