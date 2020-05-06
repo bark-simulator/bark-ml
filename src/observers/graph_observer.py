@@ -31,7 +31,6 @@ class Graph(object):
 
   def add_node(self, id: str, attributes: Dict[str, float]):
     self._graph.add_node(id, **attributes)
-    print('add')
 
   def add_edge(self, source: str, target: str, attributes: Dict[str, float]=None):
     assert None not in [source, target], "Specifying a source and target node id is mandatory."

@@ -55,13 +55,11 @@ class PyGraphObserverTests(unittest.TestCase):
       for item in actions.items():
         print(item)
 
-      return
-
       # Visualize Movement of vehicles
       data_collector = list()
       steer_bias = -0.1
       acc_bias = -0.8
-      for i in range(10):
+      for i in range(100):
         #observed_world = runtime.step([-0.8,0.0,0.0,0.0]) # for 2 ego vehicles
         # Generate random steer and acc commands
         if i % 400 == 0:
@@ -80,10 +78,9 @@ class PyGraphObserverTests(unittest.TestCase):
         datum["graph_labels"] = returns[0][1]
         data_collector.append(datum)
         runtime.render()
-        #time.sleep(0.01)
+        time.sleep(0.01)
       # Save data after run
       with open('/home/silvan/working_bark/tests/data/data_collection_agents7.pickle', 'wb') as handle:
         pickle.dump(data_collector, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
 if __name__ == '__main__':
   unittest.main()
