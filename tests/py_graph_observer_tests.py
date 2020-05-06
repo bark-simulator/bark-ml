@@ -41,13 +41,27 @@ class PyGraphObserverTests(unittest.TestCase):
                           scenario_generator=scenario_generation)
 
       scenario = scenario_generation.create_single_scenario()
-      graph = runtime.reset(scenario)
+      graph, actions = runtime.reset(scenario)
+
+      print('\n ------------ Nodes ------------')
+      for node in graph.nx_graph.nodes.data():
+        print(node)
+
+      print('\n ------------ Edges ------------')
+      for node in graph.nx_graph.edges.data():
+        print(node)
+
+      print('\n ----------- Actions -----------')
+      for item in actions.items():
+        print(item)
+
+      return
 
       # Visualize Movement of vehicles
       data_collector = list()
       steer_bias = -0.1
       acc_bias = -0.8
-      for i in range(800):
+      for i in range(10):
         #observed_world = runtime.step([-0.8,0.0,0.0,0.0]) # for 2 ego vehicles
         # Generate random steer and acc commands
         if i % 400 == 0:

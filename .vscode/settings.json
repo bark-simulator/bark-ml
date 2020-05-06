@@ -91,5 +91,5 @@
     "__functional_03": "cpp",
     "*.ipp": "cpp"
   },
-  "python.pythonPath": "~/working_bark/python/venv/bin/"
+  "python.pythonPath": "/Users/marco.oliva/.pyenv/versions/3.7-dev/bin/python"
 }

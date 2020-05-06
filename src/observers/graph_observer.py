@@ -3,6 +3,8 @@ from gym import spaces
 import numpy as np
 import math
 import operator
+import networkx as nx
+from typing import Dict
 
 from bark.models.dynamic import StateDefinition
 from bark.world import ObservedWorld
@@ -12,77 +14,118 @@ from src.observers.observer import StateObserver
 class Graph(object):
   """
   Abstraction of the observed world in a graph representation.
-  This class could integrate networkx to build the graph, or only use some features
-  to visualize it.
+  This class could integrate networkx to build the graph, 
+  or only use some features to visualize it.
   """
 
-  def __init__(self):
-    self.nodes = {}
-    self.edges = [] # list of two-element tuples
+  def __init__(self, ego_agent_id: str):
+    self._graph = nx.Graph(ego_agent_id=ego_agent_id)
 
-  def add_node(self, id, features):
-    # assert id is str
-    # assert features is list
+  @property
+  def nx_graph(self):
+    return self._graph
 
-    self.nodes[id] = features
+  @property
+  def data(self):
+    return nx.node_link_data(self._graph) 
 
-  def add_edge(self, source: str, target: str):
-    self.edges.append((source, target))
+  def add_node(self, id: str, attributes: Dict[str, float]):
+    self._graph.add_node(id, **attributes)
+    print('add')
+
+  def add_edge(self, source: str, target: str, attributes: Dict[str, float]=None):
+    assert None not in [source, target], "Specifying a source and target node id is mandatory."
+    assert source != target, "Source node id is equal to target node id, which is not allowed."
+    self._graph.add_edge(source, target, **attributes)
 
 #####
 
 class GraphObserver(StateObserver):
+  
   def __init__(self,
                normalize_observations=True,
+               use_edge_attributes=True,
                params=ParameterServer()):
     StateObserver.__init__(self, params)
 
-    self._state_definition = [int(StateDefinition.X_POSITION),
-                              int(StateDefinition.Y_POSITION),
-                              int(StateDefinition.THETA_POSITION),
-                              int(StateDefinition.VEL_POSITION)]
-    self._observation_len = \
-      self._max_num_vehicles*self._len_state
+    self._observation_len = 1 # i.e. one graph
     self._normalize_observations = normalize_observations
+    self._use_edge_attributes = use_edge_attributes
 
   def observe(self, world):
     """see base class
     """
-    graph = Graph()
     ego_agent = world.ego_agent
-
+    graph = Graph(ego_agent_id=ego_agent.id)
+    actions = {} # generated for now (steering, acceleration)
+    
     for (_, agent) in world.agents.items():      
+      # create node
       features = self._extract_features(agent)
-      # normalize the features here?
-      graph.add_node(id=str(agent.id), features=features)
+      graph.add_node(id=str(agent.id), attributes=features)
 
-      for nearby_agent in world.GetNearestAgents(world.ego_position, 3):
-        graph.add_edge(source=agent.id, target=nearby_agent.id)
+      # generate actions
+      actions[agent.id] = self._generate_actions(features)
+      
+      # create edges to all other agents
+      other_agents = list(filter(lambda a: a.id != agent.id, world.agents.values()))
 
-    return graph
+      for other_agent in other_agents:
+        edge_attributes = None
+        
+        if self._use_edge_attributes: 
+          edge_attributes = self._extract_edge_attributes(agent, other_agent)
+        
+        graph.add_edge(source=str(agent.id), 
+                      target=str(other_agent.id), 
+                      attributes=edge_attributes)
 
-  def _extract_features(self, agent):
+    return graph, actions
+
+  def _extract_edge_attributes(self, agent1, agent2) -> Dict[str, float]:
+    x_key = int(StateDefinition.X_POSITION)
+    y_key = int(StateDefinition.Y_POSITION)
+    vel_key = int(StateDefinition.VEL_POSITION)
+
+    attributes = {}
+    attributes['dx'] = agent1.state[x_key] - agent2.state[x_key]
+    attributes['dy'] = agent1.state[y_key] - agent2.state[y_key]
+    attributes['dvel'] = agent1.state[vel_key] - agent2.state[vel_key]
+    # maybe include difference in steering angle
+
+    return attributes
+
+  def _extract_features(self, agent) -> Dict[str, float]:
+    """Returns dict containing all features of the agent"""
+    agent_features = {}
+    
+    # Get basic information
     state = agent.state
-    if self._normalize_observations: 
-      self._normalize(agent.state)
+    agent_features["x"] = state[int(StateDefinition.X_POSITION)] # maybe not needed
+    agent_features["y"] = state[int(StateDefinition.Y_POSITION)] # maybe not needed
+    agent_features["theta"] = state[int(StateDefinition.THETA_POSITION)]
+    agent_features["vel"] = state[int(StateDefinition.VEL_POSITION)]
 
+    # Get information related to goal
     goal_center = agent.goal_definition.goal_shape.center[0:2]
-    agent_position = (
-      agent.state[int(StateDefinition.X_POSITION)], 
-      agent.state[int(StateDefinition.Y_POSITION)]
-    )
+    goal_dx = goal_center[0] - agent_features["x"] # Distance to goal in x coord
+    goal_dy = goal_center[1] - agent_features["y"] # Distance to goal in y coord
+    goal_theta = np.arctan2(goal_dy, goal_dx) # Theta for straight line to goal
+    goal_d = np.sqrt(goal_dx**2 + goal_dy**2) # Distance to goal
+    agent_features["goal_d"] = goal_d
+    agent_features["goal_theta"] = goal_theta
+    
+    return agent_features
 
-    distance_to_goal = np.linalg.norm(agent_position - goal_center)
-
-    # TODO: add more features here
-
-    return [
-      state[int(StateDefinition.X_POSITION)],
-      state[int(StateDefinition.Y_POSITION)],
-      state[int(StateDefinition.THETA_POSITION)],
-      state[int(StateDefinition.VEL_POSITION)],    
-      distance_to_goal,
-    ]
+  def _generate_actions(self, features: Dict[str, float]) -> Dict[str, float]:
+    labels = dict()
+    steering = features["goal_theta"] - features["theta"]
+    labels["steering"] = steering
+    
+    dt = 2 # parameter: time constant in s for planning horizon
+    acc = 2. * (features["goal_d"] - features["vel"] * dt) / (dt**2)
+    labels["acceleration"] = acc
+    return labels
 
   def _norm(self, agent_state, position, range):
     agent_state[int(position)] = \
@@ -119,6 +162,4 @@ class GraphObserver(StateObserver):
 
   @property
   def _len_state(self):
-    return len(self._state_definition)
-
-
+    return 1
