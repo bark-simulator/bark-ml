@@ -3,9 +3,10 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-import os
+import os, time, json, pickle
+import numpy as np
 import unittest
-#from tf_agents.environments import tf_py_environment
+from tf_agents.environments import tf_py_environment
 
 from src.observers.graph_observer import GraphObserver
 from modules.runtime.commons.parameters import ParameterServer
@@ -19,7 +20,8 @@ from src.rl_runtime import RuntimeRL
 class PyGraphObserverTests(unittest.TestCase):
 
     def test_observer(self):
-      params = ParameterServer(filename="tests/data/deterministic_scenario_test.json")
+      #params = ParameterServer(filename="tests/data/deterministic_scenario_test.json")
+      params = ParameterServer(filename="tests/data/graph_scenario_test.json")
       base_dir = os.path.dirname(os.path.dirname(__file__))
       params["BaseDir"] = base_dir
       
@@ -34,30 +36,40 @@ class PyGraphObserverTests(unittest.TestCase):
       runtime = RuntimeRL(action_wrapper=behavior_model,
                           observer=observer,
                           evaluator=evaluator,
-                          step_time=0.2,
+                          step_time=0.1,
                           viewer=viewer,
                           scenario_generator=scenario_generation)
 
       scenario = scenario_generation.create_single_scenario()
       graph = runtime.reset(scenario)
 
-      # perform tests with graph here
-
-      print('---------- Nodes ----------')
-      for (id, features) in graph.nodes.items():
-        print(str(id) + ': ' + str(features))
-
-      print('---------- Edges ----------')
-      for (source, target) in graph.edges:
-        print(source + ' -> ' + target)
-
       # Visualize Movement of vehicles
-      # for i in range(20):
-      #   #observed_world = runtime.step([-0.8,0.0,0.0,0.0]) # for 2 ego vehicles
-      #   graph = runtime.step([0.0,0.0]) # [acc, steer] with -1<acc<1 and -0.1<steer<0.1
-      #   runtime.render()
-      #   time.sleep(0.1)
-
+      data_collector = list()
+      steer_bias = -0.1
+      acc_bias = -0.8
+      for i in range(800):
+        #observed_world = runtime.step([-0.8,0.0,0.0,0.0]) # for 2 ego vehicles
+        # Generate random steer and acc commands
+        if i % 400 == 0:
+          steer_bias -= 0.1
+          acc_bias += 0
+        elif i% 200 == 0:
+          steer_bias += 0.1
+          acc_bias += 0
+        steer = np.random.random()*0.2 + steer_bias
+        acc = np.random.random()*2.0 + acc_bias
+        # Run step
+        returns = runtime.step([acc, steer]) # [acc, steer] with -1<acc<1 and -0.1<steer<0.1
+        # Save datum in da
+        datum = dict()
+        datum["graph_data"] = returns[0][0]
+        datum["graph_labels"] = returns[0][1]
+        data_collector.append(datum)
+        runtime.render()
+        #time.sleep(0.01)
+      # Save data after run
+      with open('/home/silvan/working_bark/tests/data/data_collection_agents7.pickle', 'wb') as handle:
+        pickle.dump(data_collector, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 if __name__ == '__main__':
   unittest.main()
