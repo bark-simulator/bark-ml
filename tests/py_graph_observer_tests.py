@@ -3,7 +3,8 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-import os, time
+import os, time, json, pickle
+import numpy as np
 import unittest
 from tf_agents.environments import tf_py_environment
 
@@ -35,7 +36,7 @@ class PyGraphObserverTests(unittest.TestCase):
       runtime = RuntimeRL(action_wrapper=behavior_model,
                           observer=observer,
                           evaluator=evaluator,
-                          step_time=0.2,
+                          step_time=0.1,
                           viewer=viewer,
                           scenario_generator=scenario_generation)
 
@@ -43,11 +44,32 @@ class PyGraphObserverTests(unittest.TestCase):
       graph = runtime.reset(scenario)
 
       # Visualize Movement of vehicles
-      for i in range(20):
+      data_collector = list()
+      steer_bias = -0.1
+      acc_bias = -0.8
+      for i in range(800):
         #observed_world = runtime.step([-0.8,0.0,0.0,0.0]) # for 2 ego vehicles
-        graph = runtime.step([0.0,0.0]) # [acc, steer] with -1<acc<1 and -0.1<steer<0.1
+        # Generate random steer and acc commands
+        if i % 400 == 0:
+          steer_bias -= 0.1
+          acc_bias += 0
+        elif i% 200 == 0:
+          steer_bias += 0.1
+          acc_bias += 0
+        steer = np.random.random()*0.2 + steer_bias
+        acc = np.random.random()*2.0 + acc_bias
+        # Run step
+        returns = runtime.step([acc, steer]) # [acc, steer] with -1<acc<1 and -0.1<steer<0.1
+        # Save datum in da
+        datum = dict()
+        datum["graph_data"] = returns[0][0]
+        datum["graph_labels"] = returns[0][1]
+        data_collector.append(datum)
         runtime.render()
         #time.sleep(0.01)
+      # Save data after run
+      with open('/home/silvan/working_bark/tests/data/data_collection_agents7.pickle', 'wb') as handle:
+        pickle.dump(data_collector, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 if __name__ == '__main__':
   unittest.main()
