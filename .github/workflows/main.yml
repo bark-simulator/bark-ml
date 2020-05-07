@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Install python3 dependency
-        run: apt-get install --reinstall python3-dev
+        run: apt-get install --reinstall python3.7-dev
       - name: Setting up virtual environment
         run: virtualenv -p python3 ./python/venv  --system-site-packages
       - name: Entering the virtual python environment..
