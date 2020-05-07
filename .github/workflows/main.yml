@@ -11,11 +11,11 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Install locate
-        run: sudo apt-get install locate
+        run: apt-get install locate
       - name: Locate python.h
         run: locate Python.h
       - name: Install python3 dependencies
-        run: sudo apt-get install python3-dev
+        run: apt-get install python3-dev
       - name: Setting up virtual environment
         run: virtualenv -p python3 ./python/venv  --system-site-packages
       - name: Entering the virtual python environment..
