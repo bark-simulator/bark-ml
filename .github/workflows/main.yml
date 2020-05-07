@@ -10,9 +10,17 @@ jobs:
       image: docker://barksim/bark-ml:latest
     steps:
       - uses: actions/checkout@v1
+      - name: Install python3 dependency
+        run: |
+              apt-get install --reinstall python3.7
+              apt-get install --reinstall python3.7-dev
+              apt-get install --reinstall python3.7-tk
+              pip3 install virtualenv==16.7.8
       - name: Setting up virtual environment
         run: virtualenv -p python3 ./python/venv  --system-site-packages
       - name: Entering the virtual python environment..
         run: . ./python/venv/bin/activate
+      - name: Installing requirements
+        run: pip3.7 install --no-cache-dir --upgrade --trusted-host pypi.org -r utils/requirements.txt
       - name: Runing bazel tests..
         run: bazel test //...
