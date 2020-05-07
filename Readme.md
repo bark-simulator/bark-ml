@@ -2,7 +2,7 @@
 
 <img src="docs/source/bark_ml_logo.png" width="65%" align="center" />
 
-![CI Build](https://github.com/bark-simulator/bark-ml/workflows/CI/badge.svg)
+![CI Build](https://github.com/GAIL-4-BARK/bark-ml/workflows/CI/badge.svg)
 
 Machine learning plays a vital role in decision making for autonomous agents. It enables learning based on experiences, a life-long improvement of the agents' behavior and much more.
 With recent advances, especially, in the field of reinforcement learning great leaps in behavior generation of autonomous systems have been achieved.
