@@ -13,7 +13,6 @@ Reinforcement learning models that are currently available in BARK-ML:
 
 * Soft-Actor-Critic (SAC)
 * Proximal Policy Optimization (PPO)
-* Twin Delayed Deep Deterministic policy gradient (TD3)
 
 
 ## Quick-Start
@@ -28,7 +27,7 @@ Configurations are designed to run experiments in an hermetic container.
 To train a configuration use the following command inside the virtual environment:
 
 ```
-bazel run //configurations/highway:configuration -- --mode=train
+bazel run //configurations/highway:configuration -- --base_dir=/tmp/ --mode=train
 ```
 
 There are three modes the configurations can be run with: `train`, `visualize` and `evaluate`. You can use these flags in the above stated bazel command.

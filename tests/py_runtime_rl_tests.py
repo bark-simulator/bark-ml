@@ -8,7 +8,7 @@ import unittest
 import numpy as np
 import os
 import matplotlib
-matplotlib.use('PS')
+#matplotlib.use('PS')
 import time
 from modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution \
   import UniformVehicleDistribution
@@ -24,7 +24,7 @@ from src.wrappers.motion_primitives import MotionPrimitives
 from src.evaluators.goal_reached import GoalReached
 
 class PyRuntimeRLTests(unittest.TestCase):
-  @unittest.skip("...")
+  @unittest.skip
   def test_runtime_rl(self):
     params = ParameterServer(
       filename="tests/data/deterministic_scenario_test.json")
@@ -79,7 +79,6 @@ class PyRuntimeRLTests(unittest.TestCase):
     end_time = time.time()
     print("100 runs took {}s.".format(str(end_time-start_time)))
 
-  @unittest.skip("...")
   def test_motion_primitives_concat_state(self):
     params = ParameterServer(
       filename="tests/data/deterministic_scenario_test.json")
@@ -102,12 +101,15 @@ class PyRuntimeRLTests(unittest.TestCase):
                           scenario_generator=scenario_generation,
                           render=False)
 
+    params.save(filename="./default_params_runtime_rl_motion_primitives.json")
+
     for _ in range(0, 3):
       runtimerl.reset()
-      for _ in range(0, 50): # run each scenario for 10 steps
+      for _ in range(0, 100): # run each scenario for 10 steps
         action = action_wrapper.action_space.sample()
         next_observed_state, reward, done, info = \
           runtimerl.step(action)
+        runtimerl.render()
         if done:
           print("State: {} \n Reward: {} \n Done {}, Info: {} \n \
               =================================================". \

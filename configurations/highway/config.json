@@ -24,7 +24,7 @@
                     ],
                     "Description": "left_lane",
                     "ConfigAgentStatesGeometries": {
-                        "type": "UniformVehicleDistribution",
+                        "Type": "UniformVehicleDistribution",
                         "LanePositions": [
                             0
                         ],
@@ -42,7 +42,7 @@
                         ]
                     },
                     "ConfigBehaviorModels": {
-                        "type": "FixedBehaviorType",
+                        "Type": "FixedBehaviorType",
                         "ModelType": "BehaviorIDMClassic",
                         "ModelParams": {
                             "BehaviorIDMClassic": {
@@ -60,15 +60,15 @@
                         }
                     },
                     "ConfigExecutionModels": {
-                        "type": "FixedExecutionType",
+                        "Type": "FixedExecutionType",
                         "ModelType": "ExecutionModelInterpolate"
                     },
                     "ConfigDynamicModels": {
-                        "type": "FixedDynamicType",
+                        "Type": "FixedDynamicType",
                         "ModelType": "SingleTrackModel"
                     },
                     "ConfigGoalDefinitions": {
-                        "type": "FixedGoalTypes",
+                        "Type": "FixedGoalTypes",
                         "GoalTypeControlled": "EndOfLane",
                         "GoalTypeOthers": "EndOfLane",
                         "MaxLateralDist": [
@@ -89,7 +89,7 @@
                         ]
                     },
                     "ConfigControlledAgents": {
-                        "type": "NoneControlled"
+                        "Type": "NoneControlled"
                     },
                     "AgentParams": {
                         "MaxHistoryLength": 50
@@ -108,7 +108,7 @@
                     ],
                     "Description": "right_lane",
                     "ConfigAgentStatesGeometries": {
-                        "type": "UniformVehicleDistribution",
+                        "Type": "UniformVehicleDistribution",
                         "LanePositions": [
                             1
                         ],
@@ -126,7 +126,7 @@
                         ]
                     },
                     "ConfigBehaviorModels": {
-                        "type": "FixedBehaviorType",
+                        "Type": "FixedBehaviorType",
                         "ModelType": "BehaviorIDMClassic",
                         "ModelParams": {
                             "BehaviorIDMClassic": {
@@ -144,15 +144,15 @@
                         }
                     },
                     "ConfigExecutionModels": {
-                        "type": "FixedExecutionType",
+                        "Type": "FixedExecutionType",
                         "ModelType": "ExecutionModelInterpolate"
                     },
                     "ConfigDynamicModels": {
-                        "type": "FixedDynamicType",
+                        "Type": "FixedDynamicType",
                         "ModelType": "SingleTrackModel"
                     },
                     "ConfigGoalDefinitions": {
-                        "type": "FixedGoalTypes",
+                        "Type": "FixedGoalTypes",
                         "GoalTypeControlled": "LaneChangeLeft",
                         "GoalTypeOthers": "EndOfLane",
                         "MaxLateralDist": [
@@ -173,7 +173,7 @@
                         ]
                     },
                     "ConfigControlledAgents": {
-                        "type": "RandomSingleAgent"
+                        "Type": "RandomSingleAgent"
                     },
                     "AgentParams": {
                         "MaxHistoryLength": 50

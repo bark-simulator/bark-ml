@@ -29,7 +29,8 @@ class RuntimeRL(Runtime):
     """Resets the runtime and its objects
     """
     super().reset(scenario=scenario)
-    self._world = self._observer.reset(self._world)
+    self._world = self._observer.reset(self._world,
+                                             self._scenario._eval_agent_ids)
     self._world = self._evaluator.reset(self._world)
     self._world = self._action_wrapper.reset(self._world,
                                              self._scenario._eval_agent_ids)
