@@ -42,6 +42,7 @@ def run_configuration(argv):
   configuration = HighwayConfiguration(params)
   
   if FLAGS.mode == 'train':
+    configuration._runner.setup_writer()
     configuration.train()
   elif FLAGS.mode == 'visualize':
     configuration.visualize(5)
