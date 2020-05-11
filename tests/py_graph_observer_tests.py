@@ -20,7 +20,6 @@ from src.rl_runtime import RuntimeRL
 class PyGraphObserverTests(unittest.TestCase):
 
     def test_observer(self):
-      #params = ParameterServer(filename="tests/data/deterministic_scenario_test.json")
       params = ParameterServer(filename="tests/data/graph_scenario_test.json")
       base_dir = os.path.dirname(os.path.dirname(__file__))
       params["BaseDir"] = base_dir
@@ -43,6 +42,8 @@ class PyGraphObserverTests(unittest.TestCase):
       scenario = scenario_generation.create_single_scenario()
       graph, actions = runtime.reset(scenario)
 
+      return
+
       print('\n ------------ Nodes ------------')
       for node in graph.nx_graph.nodes.data():
         print(node)
@@ -55,32 +56,55 @@ class PyGraphObserverTests(unittest.TestCase):
       for item in actions.items():
         print(item)
 
-      # Visualize Movement of vehicles
+      # comment out this return statement to generate a dataset
+      return
+
+      # The following code generates a dataset by running
+      # the scenario for the specified number of steps. 
+      # 
+      # The resulting dataset consists of a graph and correspondig
+      # actions [acceleration, steering] for each timestep.
+      # 
+      # If a 'dump_path' is specified, the dataset will be saved at
+      # this location as a .pickle file.
+      
+      dump_path = None
+      steps = 1000
+
       data_collector = list()
       steer_bias = -0.1
       acc_bias = -0.8
-      for i in range(100):
-        #observed_world = runtime.step([-0.8,0.0,0.0,0.0]) # for 2 ego vehicles
+
+      for i in range(steps):
         # Generate random steer and acc commands
         if i % 400 == 0:
           steer_bias -= 0.1
           acc_bias += 0
-        elif i% 200 == 0:
+        elif i % 200 == 0:
           steer_bias += 0.1
           acc_bias += 0
-        steer = np.random.random()*0.2 + steer_bias
-        acc = np.random.random()*2.0 + acc_bias
+
+        steer = np.random.random() * 0.2 + steer_bias
+        acc = np.random.random() * 2.0 + acc_bias
+        
         # Run step
-        returns = runtime.step([acc, steer]) # [acc, steer] with -1<acc<1 and -0.1<steer<0.1
+        # [acc, steer] with -1<acc<1 and -0.1<steer<0.1
+        (graph, actions), _, _, _ = runtime.step([acc, steer]) 
+
         # Save datum in da
         datum = dict()
-        datum["graph_data"] = returns[0][0]
-        datum["graph_labels"] = returns[0][1]
+        datum["graph_data"] = graph.data
+        datum["graph_labels"] = actions
         data_collector.append(datum)
-        runtime.render()
-        time.sleep(0.01)
-      # Save data after run
-      with open('/home/silvan/working_bark/tests/data/data_collection_agents7.pickle', 'wb') as handle:
-        pickle.dump(data_collector, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        
+        # runtime.render()
+        
+      # Save data
+      if dump_path is not None:
+        path = dump_path + '/gen_dataset_' + str(int(time.time())) + '.pickle'
+        with open(path, 'wb') as handle:
+          pickle.dump(data_collector, handle, protocol=pickle.HIGHEST_PROTOCOL)
+          print('---> Dumped dataset to: ' + path)
+        
 if __name__ == '__main__':
   unittest.main()

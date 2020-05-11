@@ -1,4 +1,4 @@
-
+import os, time, json, pickle
 from gym import spaces
 import numpy as np
 import math
@@ -8,14 +8,13 @@ from typing import Dict
 
 from bark.models.dynamic import StateDefinition
 from bark.world import ObservedWorld
+from bark.geometry import Distance
 from modules.runtime.commons.parameters import ParameterServer
 from src.observers.observer import StateObserver
 
 class Graph(object):
   """
-  Abstraction of the observed world in a graph representation.
-  This class could integrate networkx to build the graph, 
-  or only use some features to visualize it.
+  An abstraction of the observed world in a graph representation.
   """
 
   def __init__(self, ego_agent_id: str):
@@ -23,21 +22,45 @@ class Graph(object):
 
   @property
   def nx_graph(self):
+    """
+    The underlying `nx.Graph` object.
+    """
     return self._graph
 
   @property
   def data(self):
+    """
+    A dictionary representation of the graph.
+    """
     return nx.node_link_data(self._graph) 
 
   def add_node(self, id: str, attributes: Dict[str, float]):
+    """
+    Adds a node with the specified identifier and attributes
+    to the graph.
+    If a node with this id already exists, it will replaced.
+    """
     self._graph.add_node(id, **attributes)
 
   def add_edge(self, source: str, target: str, attributes: Dict[str, float]=None):
-    assert None not in [source, target], "Specifying a source and target node id is mandatory."
-    assert source != target, "Source node id is equal to target node id, which is not allowed."
+    """ 
+    Adds an undirected edge between the specified source 
+    and target nodes with the given attributes.
+    If an edge between these two nodes already exists, 
+    it will replaced.
+    
+    :param source:str: identifier of the source node.
+    :param target:str: identifier of the target node.
+  
+    :param attributes:Dict[str, float]: A dictionary\
+      of attributes with string keys and float values.
+    """
+    assert None not in [source, target], \
+      "Specifying a source and target node id is mandatory."
+    assert source != target, \
+      "Source node id is equal to target node id, which is not allowed."
     self._graph.add_edge(source, target, **attributes)
 
-#####
 
 class GraphObserver(StateObserver):
   
@@ -76,12 +99,16 @@ class GraphObserver(StateObserver):
           edge_attributes = self._extract_edge_attributes(agent, other_agent)
         
         graph.add_edge(source=str(agent.id), 
-                      target=str(other_agent.id), 
-                      attributes=edge_attributes)
+                       target=str(other_agent.id), 
+                       attributes=edge_attributes)
 
     return graph, actions
 
   def _extract_edge_attributes(self, agent1, agent2) -> Dict[str, float]:
+    """
+    Returns a dict containing attributes for an edge 
+    between two agents.
+    """
     x_key = int(StateDefinition.X_POSITION)
     y_key = int(StateDefinition.Y_POSITION)
     vel_key = int(StateDefinition.VEL_POSITION)
