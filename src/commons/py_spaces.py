@@ -9,6 +9,14 @@ class Discrete(Space):
     def sample(self):
         return self.np_random.randint(self._n)
 
+    @property
+    def low(self):
+        return 0 
+
+    @property
+    def high(self):
+        return self._n - 1
+
     def contains(self, x):
         if isinstance(x, int):
             as_int = x
