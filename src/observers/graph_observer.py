@@ -8,7 +8,7 @@ from typing import Dict
 
 from bark.models.dynamic import StateDefinition
 from bark.world import ObservedWorld
-from bark.geometry import Distance
+from bark.geometry import Distance, Point2d
 from modules.runtime.commons.parameters import ParameterServer
 from src.observers.observer import StateObserver
 
@@ -34,23 +34,22 @@ class Graph(object):
     """
     return nx.node_link_data(self._graph) 
 
-  def add_node(self, id: str, attributes: Dict[str, float]):
+  def add_node(self, id: int, attributes: Dict[str, float]):
     """
     Adds a node with the specified identifier and attributes
     to the graph.
-    If a node with this id already exists, it will replaced.
     """
     self._graph.add_node(id, **attributes)
 
-  def add_edge(self, source: str, target: str, attributes: Dict[str, float]=None):
+  def add_edge(self, source: int, target: int, attributes: Dict[str, float]=None):
     """ 
     Adds an undirected edge between the specified source 
     and target nodes with the given attributes.
     If an edge between these two nodes already exists, 
     it will replaced.
     
-    :param source:str: identifier of the source node.
-    :param target:str: identifier of the target node.
+    :param source:int: identifier of the source node.
+    :param target:int: identifier of the target node.
   
     :param attributes:Dict[str, float]: A dictionary\
       of attributes with string keys and float values.
@@ -59,7 +58,7 @@ class Graph(object):
       "Specifying a source and target node id is mandatory."
     assert source != target, \
       "Source node id is equal to target node id, which is not allowed."
-    self._graph.add_edge(source, target, **attributes)
+    self._graph.add_edge(source, target)
 
 
 class GraphObserver(StateObserver):
@@ -74,14 +73,24 @@ class GraphObserver(StateObserver):
     self._normalize_observations = normalize_observations
     self._use_edge_attributes = use_edge_attributes
 
+     # the radius an agent can 'see' in meters
+    self._visible_distance = 30
+
   def observe(self, world):
     """see base class
     """
     ego_agent = world.ego_agent
     graph = Graph(ego_agent_id=ego_agent.id)
     actions = {} # generated for now (steering, acceleration)
+
+    # make ego_agent the first element, sort others by id
+    agents = list(world.agents.values())
+    agents.remove(ego_agent)
+    agents.sort(key=lambda agent: agent.id)
+    agents.insert(0, ego_agent)
     
-    for (_, agent) in world.agents.items():      
+    # add other nodes
+    for agent in agents:
       # create node
       features = self._extract_features(agent)
       graph.add_node(id=str(agent.id), attributes=features)
@@ -90,36 +99,36 @@ class GraphObserver(StateObserver):
       actions[agent.id] = self._generate_actions(features)
       
       # create edges to all other agents
-      other_agents = list(filter(lambda a: a.id != agent.id, world.agents.values()))
+      other_agents = self._nearby_agents(agent, agents, self._visible_distance)
 
       for other_agent in other_agents:
-        edge_attributes = None
-        
-        if self._use_edge_attributes: 
-          edge_attributes = self._extract_edge_attributes(agent, other_agent)
-        
-        graph.add_edge(source=str(agent.id), 
-                       target=str(other_agent.id), 
-                       attributes=edge_attributes)
+        graph.add_edge(source=agent.id, target=other_agent.id)
 
     return graph, actions
 
-  def _extract_edge_attributes(self, agent1, agent2) -> Dict[str, float]:
+  def _nearby_agents(self, center_agent, agents, radius: float):
     """
-    Returns a dict containing attributes for an edge 
-    between two agents.
+    Returns all agents within the specified radius of the
+    ego_position.
     """
-    x_key = int(StateDefinition.X_POSITION)
-    y_key = int(StateDefinition.Y_POSITION)
-    vel_key = int(StateDefinition.VEL_POSITION)
+    center_agent_pos = self._position(center_agent)
+    other_agents = list(filter(lambda a: a.id != center_agent.id, agents))
+    nearby_agents = []
 
-    attributes = {}
-    attributes['dx'] = agent1.state[x_key] - agent2.state[x_key]
-    attributes['dy'] = agent1.state[y_key] - agent2.state[y_key]
-    attributes['dvel'] = agent1.state[vel_key] - agent2.state[vel_key]
-    # maybe include difference in steering angle
+    for agent in other_agents:
+      agent_pos = self._position(agent)
+      distance = Distance(center_agent_pos, agent_pos)
 
-    return attributes
+      if distance <= radius:
+        nearby_agents.append(agent)
+    
+    return nearby_agents
+
+  def _position(self, agent) -> Point2d:
+    return Point2d(
+      agent.state[int(StateDefinition.X_POSITION)],
+      agent.state[int(StateDefinition.Y_POSITION)]
+    )
 
   def _extract_features(self, agent) -> Dict[str, float]:
     """Returns dict containing all features of the agent"""

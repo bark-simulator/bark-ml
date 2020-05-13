@@ -68,7 +68,7 @@ class PyGraphObserverTests(unittest.TestCase):
       # If a 'dump_path' is specified, the dataset will be saved at
       # this location as a .pickle file.
       
-      dump_path = None
+      dump_path = os.getcwd()
       steps = 1000
 
       data_collector = list()
