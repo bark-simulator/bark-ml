@@ -42,7 +42,7 @@ class PyGraphObserverTests(unittest.TestCase):
       scenario = scenario_generation.create_single_scenario()
       graph, actions = runtime.reset(scenario)
 
-      return
+      #return
 
       print('\n ------------ Nodes ------------')
       for node in graph.nx_graph.nodes.data():

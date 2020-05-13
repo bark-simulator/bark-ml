@@ -74,7 +74,7 @@ class GraphObserver(StateObserver):
     self._use_edge_attributes = use_edge_attributes
 
      # the radius an agent can 'see' in meters
-    self._visible_distance = 30
+    self._visible_distance = 50
 
   def observe(self, world):
     """see base class
@@ -84,6 +84,7 @@ class GraphObserver(StateObserver):
     actions = {} # generated for now (steering, acceleration)
 
     # make ego_agent the first element, sort others by id
+    # there should be a more elegant way to do this
     agents = list(world.agents.values())
     agents.remove(ego_agent)
     agents.sort(key=lambda agent: agent.id)
@@ -93,15 +94,15 @@ class GraphObserver(StateObserver):
     for agent in agents:
       # create node
       features = self._extract_features(agent)
-      graph.add_node(id=str(agent.id), attributes=features)
+      graph.add_node(id=agent.id, attributes=features)
 
       # generate actions
       actions[agent.id] = self._generate_actions(features)
       
       # create edges to all other agents
-      other_agents = self._nearby_agents(agent, agents, self._visible_distance)
+      nearby_agents = self._nearby_agents(agent, agents, self._visible_distance)
 
-      for other_agent in other_agents:
+      for other_agent in nearby_agents:
         graph.add_edge(source=agent.id, target=other_agent.id)
 
     return graph, actions
