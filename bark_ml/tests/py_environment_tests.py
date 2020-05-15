@@ -17,7 +17,7 @@ from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 
 
 class PyEnvironmentTests(unittest.TestCase):
-  def test_runtime_rl(self):
+  def test_env_cont_rl(self):
     params = ParameterServer()
     bp = ContinuousHighwayBlueprint(params)
     env = SingleAgentRuntime(blueprint=bp, render=True)
@@ -25,13 +25,13 @@ class PyEnvironmentTests(unittest.TestCase):
     for _ in range(0, 20):
       print(env.step(np.array([1., 0.1])))
 
-  def test_runtime_rl(self):
+  def test_env_discrete_rl(self):
     params = ParameterServer()
     bp = DiscreteHighwayBlueprint(params)
     env = SingleAgentRuntime(blueprint=bp, render=True)
     env.reset()
     for _ in range(0, 20):
-      print(env.step(1))
+      print(env.step(0))
 
 if __name__ == '__main__':
   unittest.main()
