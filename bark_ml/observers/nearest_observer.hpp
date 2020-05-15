@@ -5,8 +5,8 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef SRC_OBSERVERS_NEAREST_OBSERVER_HPP_
-#define SRC_OBSERVERS_NEAREST_OBSERVER_HPP_
+#ifndef BARK_ML_OBSERVERS_NEAREST_OBSERVER_HPP_
+#define BARK_ML_OBSERVERS_NEAREST_OBSERVER_HPP_
 
 #include <memory>
 #include <vector>
@@ -38,7 +38,7 @@ using modules::geometry::Point2d;
 using modules::geometry::Line;
 using modules::geometry::Distance;
 using modules::models::dynamic::StateDefinition;
-using ObservedState = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>;
+using ObservedState = Eigen::Matrix<float, 1, Eigen::Dynamic>;
 using modules::commons::transformation::FrenetPosition;
 using State = Eigen::Matrix<float, Eigen::Dynamic, 1>;
 
@@ -46,38 +46,27 @@ using State = Eigen::Matrix<float, Eigen::Dynamic, 1>;
 class NearestObserver {
  public:
   explicit NearestObserver(const ParamsPtr& params) :
-    params_(params),
-    state_size_(4) {
+    params_(params) {
       nearest_agent_num_ =
         params_->GetInt(
           "ML::Observer::n_nearest_agents", "Nearest agents number", 4);
-      min_lon_ = params_->GetReal("ML::Observer::min_lon", "", -200.);
-      max_lon_ = params_->GetReal("ML::Observer::max_lon", "", 200.);
-      min_lat_ = params_->GetReal("ML::Observer::min_lat", "", -10.);
-      max_lat_ = params_->GetReal("ML::Observer::max_lat", "", 10.);
       min_theta_ = params_->GetReal("ML::Observer::min_theta", "", -3.14);
       max_theta_ = params_->GetReal("ML::Observer::max_theta", "", 3.14);
       min_vel_ = params_->GetReal("ML::Observer::min_vel", "", 0.0);
       max_vel_ = params_->GetReal("ML::Observer::max_vel", "", 25.0);
       max_dist_ = params_->GetReal("ML::Observer::max_dist", "", 75.0);
+      state_size_ = params_->GetInt("ML::Observer::state_size", "", 4);
       observation_len_ = nearest_agent_num_ * state_size_;
   }
 
-  ObservedState TransformState(
+  ObservedState FilterState(
     const State& state,
-    const Line& center_line,
-    const float ref_lon = 0.0) const {
-    Point2d pose(
-      state(StateDefinition::X_POSITION),
-      state(StateDefinition::Y_POSITION));
-    FrenetPosition frenet_pos(pose, center_line);
+    const Line& center_line) const {
     ObservedState ret_state(1, state_size_);
-    ret_state <<
-      Norm<float>(frenet_pos.lon - ref_lon, min_lon_, max_lon_),
-      Norm<float>(frenet_pos.lat, min_lat_, max_lat_),
-      Norm<float>(
-        state(StateDefinition::THETA_POSITION), min_theta_, max_theta_),
-      Norm<float>(state(StateDefinition::VEL_POSITION), min_vel_, max_vel_);
+    ret_state << state(StateDefinition::X_POSITION),
+                 state(StateDefinition::Y_POSITION),
+                 state(StateDefinition::THETA_POSITION),
+                 state(StateDefinition::VEL_POSITION);
     return ret_state;
   }
 
@@ -85,8 +74,6 @@ class NearestObserver {
     int row_idx = 0;
     ObservedState state(1, observation_len_);
     state.setZero();
-    // TODO(@hart): this should later be removed
-    world->UpdateAgentRTree();
 
     // check in which lane corridor the goal is
     std::shared_ptr<const Agent> ego_agent = world->GetEgoAgent();
@@ -121,7 +108,7 @@ class NearestObserver {
 
     // transform ego agent state
     ObservedState obs_ego_agent_state =
-      TransformState(ego_agent->GetCurrentState(),
+      FilterState(ego_agent->GetCurrentState(),
                      ego_lane_corridor->GetCenterLine());
     state.block(0, row_idx*state_size_, 1, state_size_) = obs_ego_agent_state;
     row_idx++;
@@ -130,14 +117,12 @@ class NearestObserver {
     for (const auto& agent : distance_agent_map) {
       if (agent.second->GetAgentId() != ego_agent->GetAgentId()) {
         ObservedState other_agent_state =
-          TransformState(agent.second->GetCurrentState(),
-                         ego_lane_corridor->GetCenterLine(),
-                         obs_ego_agent_state(0, 0));
+          FilterState(agent.second->GetCurrentState(),
+                         ego_lane_corridor->GetCenterLine());
         state.block(0, row_idx*state_size_, 1, state_size_) = other_agent_state;
         row_idx++;
       }
     }
-    // state(0, 0) = Norm<float>(0., min_lon_, max_lon_);
     return state;
   }
 
@@ -157,9 +142,7 @@ class NearestObserver {
 
  private:
   ParamsPtr params_;
-  const int state_size_;
-  int nearest_agent_num_;
-  int observation_len_;
+  int state_size_, nearest_agent_num_, observation_len_;
   float min_lon_, max_lon_, min_lat_, max_lat_,
         min_theta_, max_theta_, min_vel_, max_vel_,
         max_dist_;
@@ -167,4 +150,4 @@ class NearestObserver {
 
 }  // namespace observers
 
-#endif  // SRC_OBSERVERS_NEAREST_OBSERVER_HPP_
+#endif  // BARK_ML_OBSERVERS_NEAREST_OBSERVER_HPP_

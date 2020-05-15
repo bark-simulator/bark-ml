@@ -1,7 +1,7 @@
 package(default_visibility = ["//visibility:public"])
 
 cc_binary(
-  name = "bark_ml.so",
+  name = "bark_ml_cpp.so",
   srcs = glob(["*.cpp", "*.hpp"]),
   deps = [
     "//bark_ml/observers:nearest_observer",

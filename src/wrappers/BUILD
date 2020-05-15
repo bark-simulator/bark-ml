@@ -5,7 +5,7 @@
 #             "dynamic_model.py",
 #             "motion_primitives.py"],
 #     data = ["@bark_project//python:bark.so",
-#             "//python:bark_ml.so",
+#             "//python:bark_ml_cpp.so",
 #             "//src/commons:py_spaces"],
 #     imports = ["../external/bark_project/python/",
 #                "../../python/"],
