@@ -22,8 +22,8 @@ class DiscreteMLBehavior(BehaviorMPMacroActions):
       params)
     self._params = params
     self._dynamic_model = dynamic_model
-  
-  def Reset(self):
+
+    # add motion primitives
     motion_primitives = []
     motion_primitives.append(
       PrimitiveConstAccStayLane(self._params, self._dynamic_model, 0, 0.1))
@@ -32,7 +32,10 @@ class DiscreteMLBehavior(BehaviorMPMacroActions):
     motion_primitives.append(
       PrimitiveConstAccChangeToRight(self._params, self._dynamic_model, 0.1))
     for mp in motion_primitives:
-      self.AddMotionPrimitive(mp)
+      super().AddMotionPrimitive(mp)
+
+  def Reset(self):
+    pass
 
   @property
   def action_space(self):

@@ -17,6 +17,7 @@ from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 
 
 class PyEnvironmentTests(unittest.TestCase):
+  @unittest.skip("..")
   def test_env_cont_rl(self):
     params = ParameterServer()
     bp = ContinuousHighwayBlueprint(params)
