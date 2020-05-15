@@ -6,28 +6,27 @@
 
 import numpy as np
 
-from bark_project.behavior import BehaviorModel, BehaviorMotionPrimtives
-from bark_ml.behaviors.ml_behavior import MLBehavior
+from bark.models.behavior import BehaviorModel, BehaviorMPMacroActions
+from bark.models.dynamic import SingleTrackModel
 from bark_ml.commons.py_spaces import Discrete
 
 
-class DiscreteMLBehavior(MLBehavior):
+class DiscreteMLBehavior(BehaviorMPMacroActions):
   def __init__(self,
+               dynamic_model=None,
                params=None):
-    super().__init__(params)
-    self._behavior = BehaviorMotionPrimtives(self._params)
+    BehaviorMPMacroActions.__init__(
+      self,
+      dynamic_model,
+      params)
+    self._params = params
   
-  def ActionToBehavior(self, action):
-    self._behavior.ActionToBehavior(action)
-
-  def Plan(self, observed_world, dt):
-    return self._behavior.Plan(observed_world, dt)
-
   def Reset(self):
-    control_inputs = params["DiscreteMLBehavior"]["MotionPrimitives",
+    control_inputs =self._params["DiscreteMLBehavior"]["MotionPrimitives",
       "Motion primitives available as discrete actions", \
       [[4.,0.], [2.,0.],[-0.5,0.],[-1.,0.]]]
-    self._behavior.AddMotionPrimitive(np.array(control_input))
+    for control_input in control_inputs:
+      self.AddMotionPrimitive(np.array(control_input))
 
   @property
   def action_space(self):

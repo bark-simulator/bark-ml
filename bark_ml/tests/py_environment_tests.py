@@ -12,7 +12,7 @@ import matplotlib
 import time
 
 from modules.runtime.commons.parameters import ParameterServer
-from bark_ml.environments.blueprints import ContinuousHighwayBlueprint
+from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, DiscreteHighwayBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 
 
@@ -23,7 +23,15 @@ class PyEnvironmentTests(unittest.TestCase):
     env = SingleAgentRuntime(blueprint=bp, render=True)
     env.reset()
     for _ in range(0, 20):
-      print(env.step(np.array([1., 0.])))
+      print(env.step(np.array([1., 0.1])))
+
+  def test_runtime_rl(self):
+    params = ParameterServer()
+    bp = DiscreteHighwayBlueprint(params)
+    env = SingleAgentRuntime(blueprint=bp, render=True)
+    env.reset()
+    for _ in range(0, 20):
+      print(env.step([1]))
 
 if __name__ == '__main__':
   unittest.main()
