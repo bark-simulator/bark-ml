@@ -23,7 +23,8 @@ class PyEnvironmentTests(unittest.TestCase):
     env = SingleAgentRuntime(blueprint=bp, render=True)
     env.reset()
     for _ in range(0, 20):
-      print(env.step(np.array([1., 0.1])))
+      observed_next_state, reward, done, info = env.step(np.array([1., 0.1]))
+      print(f"Reward: {reward}, Done: {done}")
 
   def test_env_discrete_rl(self):
     params = ParameterServer()
@@ -31,7 +32,8 @@ class PyEnvironmentTests(unittest.TestCase):
     env = SingleAgentRuntime(blueprint=bp, render=True)
     env.reset()
     for _ in range(0, 20):
-      print(env.step(0))
+      observed_next_state, reward, done, info = env.step(0)
+      print(f"Reward: {reward}, Done: {done}")
 
 if __name__ == '__main__':
   unittest.main()

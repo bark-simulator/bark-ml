@@ -23,6 +23,9 @@ class ContinuousMLBehavior(BehaviorDynamicModel):
       "Upper-bound for actions.",
       [0.5, 0.01]]
 
+  def Reset(self):
+    pass
+
   def Clone(self):
     return self
 
