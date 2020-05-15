@@ -45,15 +45,15 @@ class PyGraphObserverTests(unittest.TestCase):
       # return
 
       print('\n ------------ Globals ------------')
-      for (key, value) in graph.attributes.items():
+      for (key, value) in graph.graph.items():
         print(key + ': ' + str(value))
 
       print('\n ------------ Nodes ------------')
-      for node in graph.nx_graph.nodes.data():
+      for node in graph.nodes.data():
         print(node)
 
       print('\n ------------ Edges ------------')
-      for node in graph.nx_graph.edges.data():
+      for node in graph.edges.data():
         print(node)
 
       print('\n ----------- Actions -----------')

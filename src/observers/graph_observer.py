@@ -12,65 +12,6 @@ from bark.geometry import Distance, Point2d
 from modules.runtime.commons.parameters import ParameterServer
 from src.observers.observer import StateObserver
 
-class ObservationGraph(object):
-  """
-  An abstraction of the observed world in a graph representation.
-  """
-
-  def __init__(self, ego_agent_id: str):
-    self._graph = nx.Graph(ego_agent_id=ego_agent_id)
-
-  @property
-  def nx_graph(self):
-    """
-    The underlying `nx.Graph` object.
-    """
-    return self._graph
-
-  @property
-  def attributes(self):
-    """
-    Global attributes of the graph.
-    """
-    return self._graph.graph
-
-  @property
-  def data(self):
-    """
-    A dictionary representation of the graph.
-    """
-    return nx.node_link_data(self._graph)
-
-  def add_global(self, key: str, value):
-      self._graph.graph[key] = value
-
-  def add_node(self, id: int, attributes: Dict[str, float]):
-    """
-    Adds a node with the specified identifier and attributes
-    to the graph.
-    """
-    self._graph.add_node(id, **attributes)
-
-  def add_edge(self, source: int, target: int, attributes: Dict[str, float]=None):
-    """ 
-    Adds an undirected edge between the specified source 
-    and target nodes with the given attributes.
-    If an edge between these two nodes already exists, 
-    it will replaced.
-    
-    :param source:int: identifier of the source node.
-    :param target:int: identifier of the target node.
-  
-    :param attributes:Dict[str, float]: A dictionary\
-      of attributes with string keys and float values.
-    """
-    assert None not in [source, target], \
-      "Specifying a source and target node id is mandatory."
-    assert source != target, \
-      "Source node id is equal to target node id, which is not allowed."
-    self._graph.add_edge(source, target)
-
-
 class GraphObserver(StateObserver):
   
   def __init__(self,
@@ -89,8 +30,8 @@ class GraphObserver(StateObserver):
   def observe(self, world):
     """see base class"""
     ego_agent = world.ego_agent
-    graph = ObservationGraph(ego_agent_id=ego_agent.id)
-    graph.add_global("normalization_ref", self.normalization_data)
+    graph = nx.Graph(ego_agent_id=ego_agent.id,
+                     normalization_ref=self.normalization_data)
 
     actions = {} # generated for now (steering, acceleration)
 
@@ -105,7 +46,7 @@ class GraphObserver(StateObserver):
     for agent in agents:
       # create node
       features = self._extract_features(agent)
-      graph.add_node(id=agent.id, attributes=features)
+      graph.add_node(agent.id, **features)
 
       # generate actions
       actions[agent.id] = self._generate_actions(features)
@@ -114,7 +55,7 @@ class GraphObserver(StateObserver):
       nearby_agents = self._nearby_agents(agent, agents, self._visible_distance)
 
       for other_agent in nearby_agents:
-        graph.add_edge(source=agent.id, target=other_agent.id)
+        graph.add_edge(agent.id, other_agent.id)
 
     return graph, actions
 
