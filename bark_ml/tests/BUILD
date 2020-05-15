@@ -10,15 +10,45 @@ py_test(
     visibility = ["//visibility:public"],
 )
 
-cc_binary(
-  name = "observer_tests",
-  srcs = [
-    "observer_tests.cc",
-  ],
-  copts = ["-Iexternal/gtest/include"],
-  deps = [
-    "//bark_ml/observers:nearest_observer",
-    "@bark_project//modules/world/tests:make_test_world",
-    "@gtest//:main",
-  ]
+py_test(
+    name = "py_behavior_tests",
+    srcs = ["py_behavior_tests.py"],
+    data = ["@bark_project//python:bark.so"],
+    imports = ["../external/bark_project/python/"],
+    deps = ["@bark_project//modules/runtime:runtime",
+            "@bark_project//modules/runtime/scenario/scenario_generation:scenario_generation",
+            "//bark_ml/environments:single_agent_runtime",
+            "//bark_ml/behaviors:behaviors",
+            "//bark_ml/commons:py_spaces"],
+    visibility = ["//visibility:public"],
+)
+
+py_test(
+    name = "py_observer_tests",
+    srcs = ["py_observer_tests.py"],
+    data = ["@bark_project//python:bark.so",
+            "//python:bark_ml.so"],
+    imports = ["../external/bark_project/python/",
+               "../python/"],
+    deps = ["@bark_project//modules/runtime:runtime",
+            "@bark_project//modules/runtime/scenario/scenario_generation:scenario_generation",
+            "//bark_ml/environments:single_agent_runtime",
+            "//bark_ml/behaviors:behaviors",
+            "//bark_ml/commons:py_spaces"],
+    visibility = ["//visibility:public"],
+)
+
+py_test(
+    name = "py_evaluator_tests",
+    srcs = ["py_evaluator_tests.py"],
+    data = ["@bark_project//python:bark.so",
+            "//python:bark_ml.so"],
+    imports = ["../external/bark_project/python/",
+               "../python/"],
+    deps = ["@bark_project//modules/runtime:runtime",
+            "@bark_project//modules/runtime/scenario/scenario_generation:scenario_generation",
+            "//bark_ml/environments:single_agent_runtime",
+            "//bark_ml/behaviors:behaviors",
+            "//bark_ml/commons:py_spaces"],
+    visibility = ["//visibility:public"],
 )
