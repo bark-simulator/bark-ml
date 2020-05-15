@@ -1,5 +1,9 @@
-from abc import ABC, abstractmethod
+# Copyright (c) 2019 Patrick Hart, Julian Bernhard, Klemens Esterle, Tobias Kessler
+#
+# This software is released under the MIT License.
+# https://opensource.org/licenses/MIT
 
+from abc import ABC, abstractmethod
 from modules.runtime.commons.parameters import ParameterServer
 
 class StateEvaluator(ABC):

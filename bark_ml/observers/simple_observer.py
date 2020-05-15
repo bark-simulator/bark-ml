@@ -1,3 +1,7 @@
+# Copyright (c) 2019 Patrick Hart, Julian Bernhard, Klemens Esterle, Tobias Kessler
+#
+# This software is released under the MIT License.
+# https://opensource.org/licenses/MIT
 
 from gym import spaces
 import numpy as np
@@ -8,7 +12,6 @@ from bark.models.dynamic import StateDefinition
 from bark.world import ObservedWorld
 from modules.runtime.commons.parameters import ParameterServer
 from src.observers.observer import StateObserver
-
 
 class SimpleObserver(StateObserver):
   def __init__(self,
