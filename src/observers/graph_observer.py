@@ -12,7 +12,7 @@ from bark.geometry import Distance, Point2d
 from modules.runtime.commons.parameters import ParameterServer
 from src.observers.observer import StateObserver
 
-class Graph(object):
+class ObservationGraph(object):
   """
   An abstraction of the observed world in a graph representation.
   """
@@ -28,11 +28,21 @@ class Graph(object):
     return self._graph
 
   @property
+  def attributes(self):
+    """
+    Global attributes of the graph.
+    """
+    return self._graph.graph
+
+  @property
   def data(self):
     """
     A dictionary representation of the graph.
     """
-    return nx.node_link_data(self._graph) 
+    return nx.node_link_data(self._graph)
+
+  def add_global(self, key: str, value):
+      self._graph.graph[key] = value
 
   def add_node(self, id: int, attributes: Dict[str, float]):
     """
@@ -77,10 +87,11 @@ class GraphObserver(StateObserver):
     self._visible_distance = 50
 
   def observe(self, world):
-    """see base class
-    """
+    """see base class"""
     ego_agent = world.ego_agent
-    graph = Graph(ego_agent_id=ego_agent.id)
+    graph = ObservationGraph(ego_agent_id=ego_agent.id)
+    graph.add_global("normalization_ref", self.normalization_data)
+
     actions = {} # generated for now (steering, acceleration)
 
     # make ego_agent the first element, sort others by id
@@ -90,7 +101,7 @@ class GraphObserver(StateObserver):
     agents.sort(key=lambda agent: agent.id)
     agents.insert(0, ego_agent)
     
-    # add other nodes
+    # add nodes
     for agent in agents:
       # create node
       features = self._extract_features(agent)
@@ -109,11 +120,11 @@ class GraphObserver(StateObserver):
 
   def _nearby_agents(self, center_agent, agents, radius: float):
     """
-    Returns all agents within the specified radius of the
-    ego_position.
+    Returns all elements from 'agents' within the specified 
+    radius of the 'center_agent's position.
     """
     center_agent_pos = self._position(center_agent)
-    other_agents = list(filter(lambda a: a.id != center_agent.id, agents))
+    other_agents = filter(lambda a: a.id != center_agent.id, agents)
     nearby_agents = []
 
     for agent in other_agents:
@@ -125,70 +136,83 @@ class GraphObserver(StateObserver):
     
     return nearby_agents
 
-  def _position(self, agent) -> Point2d:
-    return Point2d(
-      agent.state[int(StateDefinition.X_POSITION)],
-      agent.state[int(StateDefinition.Y_POSITION)]
-    )
-
   def _extract_features(self, agent) -> Dict[str, float]:
     """Returns dict containing all features of the agent"""
-    agent_features = {}
+    res = {}
     
-    # Get basic information
+    # get basic information
     state = agent.state
-    agent_features["x"] = state[int(StateDefinition.X_POSITION)] # maybe not needed
-    agent_features["y"] = state[int(StateDefinition.Y_POSITION)] # maybe not needed
-    agent_features["theta"] = state[int(StateDefinition.THETA_POSITION)]
-    agent_features["vel"] = state[int(StateDefinition.VEL_POSITION)]
+    res["x"] = state[int(StateDefinition.X_POSITION)] # maybe not needed
+    res["y"] = state[int(StateDefinition.Y_POSITION)] # maybe not needed
+    res["theta"] = state[int(StateDefinition.THETA_POSITION)]
+    res["vel"] = state[int(StateDefinition.VEL_POSITION)]
 
-    # Get information related to goal
+    # get information related to goal
     goal_center = agent.goal_definition.goal_shape.center[0:2]
-    goal_dx = goal_center[0] - agent_features["x"] # Distance to goal in x coord
-    goal_dy = goal_center[1] - agent_features["y"] # Distance to goal in y coord
-    goal_theta = np.arctan2(goal_dy, goal_dx) # Theta for straight line to goal
-    goal_d = np.sqrt(goal_dx**2 + goal_dy**2) # Distance to goal
-    agent_features["goal_d"] = goal_d
-    agent_features["goal_theta"] = goal_theta
+    goal_dx = goal_center[0] - res["x"] # distance to goal in x coord
+    goal_dy = goal_center[1] - res["y"] # distance to goal in y coord
+    goal_theta = np.arctan2(goal_dy, goal_dx) # theta for straight line to goal
+    goal_d = np.sqrt(goal_dx**2 + goal_dy**2) # distance to goal
+    res["goal_d"] = goal_d
+    res["goal_theta"] = goal_theta
+
+    if self._normalization_enabled:
+      n = self.normalization_data
+
+      for k in ["x", "y", "theta", "vel"]:
+        res[k] = self._normalize_value(res[k], n[k])
+      
+      res["goal_d"] = self._normalize_value(res["goal_d"], n["distance"])
+      res["goal_theta"] = self._normalize_value(res["goal_theta"], n["theta"])
     
-    return agent_features
+    return res
 
   def _generate_actions(self, features: Dict[str, float]) -> Dict[str, float]:
     labels = dict()
     steering = features["goal_theta"] - features["theta"]
     labels["steering"] = steering
     
-    dt = 2 # parameter: time constant in s for planning horizon
+    dt = 2 # time constant in s for planning horizon
     acc = 2. * (features["goal_d"] - features["vel"] * dt) / (dt**2)
     labels["acceleration"] = acc
     return labels
 
-  def _norm(self, agent_state, position, range):
-    agent_state[int(position)] = \
-      (agent_state[int(position)] - range[0])/(range[1]-range[0])
-    return agent_state
-
-  def _normalize(self, agent_state):
-    agent_state = \
-      self._norm(agent_state,
-                 StateDefinition.X_POSITION,
-                 self._world_x_range)
-    agent_state = \
-      self._norm(agent_state,
-                 StateDefinition.Y_POSITION,
-                 self._world_y_range)
-    agent_state = \
-      self._norm(agent_state,
-                 StateDefinition.THETA_POSITION,
-                 self._theta_range)
-    agent_state = \
-      self._norm(agent_state,
-                 StateDefinition.VEL_POSITION,
-                 self._velocity_range)
-    return agent_state
+  def _normalize_value(self, value, range):
+    return (value - range[0]) / (range[1] - range[0])
 
   def reset(self, world):
     return world
+
+  def _position(self, agent) -> Point2d:
+    return Point2d(
+      agent.state[int(StateDefinition.X_POSITION)],
+      agent.state[int(StateDefinition.Y_POSITION)]
+    )
+
+  @property
+  def normalization_data(self) -> Dict[str, list]:
+    """
+    The reference ranges of how certain attributes are normalized.
+    Use this info to scale normalized values back to real values.
+    
+    E.g. the value for key 'x' returns the possible range of 
+    the x-element of positions. A normalized value of 1.0 
+    corresponds to the maximum of this range (and vice versa).
+
+    Note: This dictionary does not include a range for each
+    possible attribute, but rather for each _kind_ of attribute,
+    like distances, velocities, angles, etc.
+    E.g. all distances (between agents, between objects, etc.)
+    are scaled relative to the 'distance' range. 
+    """
+    d = {}
+    d['x'] = self._world_x_range
+    d['y'] = self._world_y_range
+    d['theta'] = self._theta_range
+    d['vel'] = self._velocity_range
+    d['distance'] = [0, \
+      np.linalg.norm([self._world_x_range[1], self._world_y_range[1]])]
+    return d
 
   @property
   def observation_space(self):
