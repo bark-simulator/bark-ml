@@ -31,7 +31,7 @@ class PyEnvironmentTests(unittest.TestCase):
     env = SingleAgentRuntime(blueprint=bp, render=True)
     env.reset()
     for _ in range(0, 20):
-      print(env.step([1]))
+      print(env.step(1))
 
 if __name__ == '__main__':
   unittest.main()

@@ -6,7 +6,8 @@
 
 import numpy as np
 
-from bark.models.behavior import BehaviorModel, BehaviorMPMacroActions
+from bark.models.behavior import BehaviorModel, BehaviorMPMacroActions, \
+  PrimitiveConstAccStayLane, PrimitiveConstAccChangeToLeft, PrimitiveConstAccChangeToRight
 from bark.models.dynamic import SingleTrackModel
 from bark_ml.commons.py_spaces import Discrete
 
@@ -20,13 +21,18 @@ class DiscreteMLBehavior(BehaviorMPMacroActions):
       dynamic_model,
       params)
     self._params = params
+    self._dynamic_model = dynamic_model
   
   def Reset(self):
-    control_inputs =self._params["DiscreteMLBehavior"]["MotionPrimitives",
-      "Motion primitives available as discrete actions", \
-      [[4.,0.], [2.,0.],[-0.5,0.],[-1.,0.]]]
-    for control_input in control_inputs:
-      self.AddMotionPrimitive(np.array(control_input))
+    motion_primitives = []
+    motion_primitives.append(
+      PrimitiveConstAccStayLane(self._params, self._dynamic_model, 0, 0.1))
+    motion_primitives.append(
+      PrimitiveConstAccChangeToLeft(self._params, self._dynamic_model, 0.1))
+    motion_primitives.append(
+      PrimitiveConstAccChangeToRight(self._params, self._dynamic_model, 0.1))
+    for mp in motion_primitives:
+      self.AddMotionPrimitive(mp)
 
   @property
   def action_space(self):
