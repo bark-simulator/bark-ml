@@ -119,7 +119,7 @@ class GraphObserver(StateObserver):
     return labels
 
   def _normalize_value(self, value, range):
-    return (value - range[0]) / (range[1] - range[0])
+    return 2 * (value - range[0]) / (range[1] - range[0]) - 1
 
   def reset(self, world):
     return world
