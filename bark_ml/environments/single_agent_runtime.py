@@ -25,20 +25,20 @@ class SingleAgentRuntime(Runtime):
     # TODO(@hart): CreateFromBlueprint(..)
     # TODO(@hart): put in self, so other params overwrite blueprint if given
     if blueprint is not None:
-      scenario_generator = blueprint._scenario_generation
-      viewer = blueprint._viewer
-      ml_behavior = blueprint._ml_behavior
-      step_time = blueprint._dt
-      evaluator = blueprint._evaluator
-      observer = blueprint._observer
+      self._scenario_generator = blueprint._scenario_generation
+      self._viewer = blueprint._viewer
+      self._ml_behavior = blueprint._ml_behavior
+      self._step_time = blueprint._dt
+      self._evaluator = blueprint._evaluator
+      self._observer = blueprint._observer
     Runtime.__init__(self,
-                     step_time=step_time,
-                     viewer=viewer,
-                     scenario_generator=scenario_generator,
+                     step_time=step_time or self._step_time,
+                     viewer=viewer or self._viewer,
+                     scenario_generator=scenario_generator or self._scenario_generator,
                      render=render)
-    self._ml_behavior = ml_behavior
-    self._observer = observer
-    self._evaluator = evaluator
+    self._ml_behavior = ml_behavior or self._ml_behavior
+    self._observer = observer or self._observer
+    self._evaluator = evaluator or self._evaluator
 
   def reset(self, scenario=None):
     """Resets the runtime and its objects

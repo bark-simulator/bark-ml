@@ -8,7 +8,7 @@ import unittest
 import numpy as np
 import os
 import matplotlib
-matplotlib.use('PS')
+# matplotlib.use('PS')
 import time
 
 from modules.runtime.commons.parameters import ParameterServer
@@ -20,10 +20,10 @@ class PyEnvironmentTests(unittest.TestCase):
   def test_runtime_rl(self):
     params = ParameterServer()
     bp = ContinuousHighwayBlueprint(params)
-    env = SingleAgentRuntime(blueprint=bp)
+    env = SingleAgentRuntime(blueprint=bp, render=True)
     env.reset()
     for _ in range(0, 20):
-      print(env.step(np.array([0., 0.])))
+      print(env.step(np.array([1., 1.])))
 
 if __name__ == '__main__':
   unittest.main()
