@@ -1,6 +1,6 @@
 # BARK-ML
 
-<img src="docs/source/bark_ml_logo.png" width="65%" align="center" />
+<img src="utils/bark_ml_logo.png" width="65%" align="center" />
 
 ![CI Build](https://github.com/bark-simulator/bark-ml/workflows/CI/badge.svg)
 

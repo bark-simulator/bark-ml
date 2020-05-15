@@ -9,7 +9,7 @@ from bark.world.evaluation import \
   EvaluatorStepCount
 from modules.runtime.commons.parameters import ParameterServer
 
-from src.evaluators.evaluator import StateEvaluator
+from bark_ml.evaluators.evaluator import StateEvaluator
 
 
 class GoalReached(StateEvaluator):

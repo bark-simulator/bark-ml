@@ -6,7 +6,7 @@
 
 
 class Blueprint:
-  def __init__(self
+  def __init__(self,
                scenario_generation=None,
                viewer=None,
                dt=None,
@@ -18,5 +18,4 @@ class Blueprint:
     self._dt = dt
     self._evaluator = evaluator
     self._observer = observer
-    # either discrete or continuous for now
     self._ml_behavior = ml_behavior

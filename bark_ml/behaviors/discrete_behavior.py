@@ -7,13 +7,13 @@
 import numpy as np
 
 from bark_project.behavior import BehaviorModel, BehaviorMotionPrimtives
-from bark_ml.behaviors import MLBehavior
+from bark_ml.behaviors.ml_behavior import MLBehavior
 from bark_ml.commons.py_spaces import Discrete
 
 
 class DiscreteMLBehavior(MLBehavior):
   def __init__(self,
-               params=None)
+               params=None):
     super().__init__(self, params)
     self._behavior = BehaviorMotionPrimtives(self._params)
 

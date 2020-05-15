@@ -8,6 +8,7 @@
 import math
 from abc import ABC, abstractmethod
 
+
 class StateObserver(ABC):
   def __init__(self,
                params):

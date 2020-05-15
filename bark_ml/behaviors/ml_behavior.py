@@ -4,13 +4,13 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-from bark_project.behavior import BehaviorModel
+from bark.models.behavior import BehaviorModel
 
 
 class MLBehavior(BehaviorModel):
   def __init__(self,
                params=None,
-               behavior=None)
+               behavior=None):
     self._params = None
     self._behavior = None
 

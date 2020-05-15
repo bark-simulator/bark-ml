@@ -13,7 +13,7 @@ from modules.runtime.commons.parameters import ParameterServer
 import math
 import operator
 
-from src.observers.observer import StateObserver
+from bark_ml.observers.observer import StateObserver
 
 
 class NearestAgentsObserver(StateObserver):

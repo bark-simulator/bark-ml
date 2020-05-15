@@ -9,15 +9,15 @@ from bark_project.modules.runtime.viewer.matplotlib_viewer import MPViewer
 from bark_project.modules.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
 
-from bark_ml.environments.blueprint import Blueprint
+from bark_ml.environments.blueprints.blueprint import Blueprint
 from bark_ml.evaluators.goal_reached import GoalReached
-from bark_ml.observers.nearest_state_observer import GoalReached
+from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.behaviors.cont_behavior import ContinuousMLBehavior
 
 
-class ContinuousHighwayBlueprint:
+class ContinuousHighwayBlueprint(Blueprint):
   def __init__(self,
-               params=None
+               params=None,
                number_of_senarios=25,
                random_seed=0):
     right_lane = LaneCorridorConfig(params=params,

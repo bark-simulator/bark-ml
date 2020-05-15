@@ -5,7 +5,8 @@ py_test(
     imports = ["../external/bark_project/python/"],
     deps = ["@bark_project//modules/runtime:runtime",
             "@bark_project//modules/runtime/scenario/scenario_generation:scenario_generation",
-            "//bark_ml/environments:single_agent_runtime"],
+            "//bark_ml/environments:single_agent_runtime",
+            "//bark_ml/commons:py_spaces"],
     visibility = ["//visibility:public"],
 )
 

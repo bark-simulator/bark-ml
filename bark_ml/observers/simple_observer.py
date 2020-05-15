@@ -12,7 +12,8 @@ import operator
 from bark.models.dynamic import StateDefinition
 from bark.world import ObservedWorld
 from modules.runtime.commons.parameters import ParameterServer
-from src.observers.observer import StateObserver
+from bark_ml.observers.observer import StateObserver
+
 
 class SimpleObserver(StateObserver):
   def __init__(self,

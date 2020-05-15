@@ -12,15 +12,14 @@ matplotlib.use('PS')
 import time
 
 from modules.runtime.commons.parameters import ParameterServer
-from bark_ml.environments.blueprints import ContinuousHighwayBlueprint
-from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 
 
-class PyEnvironmentTests(unittest.TestCase):
+class PyBehaviorTests(unittest.TestCase):
+  @unittest.skip
   def test_runtime_rl(self):
-    params = ParameterServer()
-    bp = ContinuousHighwayBlueprint(params)
-    env = SingleAgentRuntime(blueprint=bp)
+    params = ParameterServer(
+      filename="tests/data/deterministic_scenario_test.json")
+    pass
 
 if __name__ == '__main__':
   unittest.main()

@@ -6,14 +6,14 @@
 
 import numpy as np
 
-from bark_project.behavior import BehaviorModel, BehaviorDynamicModel
+from bark.models.behavior import BehaviorModel, BehaviorDynamicModel
 from bark_ml.commons.py_spaces import BoundedContinuous
-from bark_ml.behaviors import MLBehavior
+from bark_ml.behaviors.ml_behavior import MLBehavior
 
 
 class ContinuousMLBehavior(MLBehavior):
   def __init__(self,
-               params=None)
+               params=None):
     super().__init__(self, params)
     self._behavior = BehaviorDynamicModel(self._params)
     self._lower_bounds = self._params["ContinuousMLBehavior"][
