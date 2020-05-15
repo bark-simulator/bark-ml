@@ -1,5 +1,5 @@
 py_library(
-    name = "agents",
+    name = "behaviors",
     srcs = glob(["*.py"]),
     data = ["@bark_project//python:bark.so"],
     imports = ["../external/bark_project/python/"],

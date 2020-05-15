@@ -1,4 +1,5 @@
-# Copyright (c) 2019 Patrick Hart, Julian Bernhard, Klemens Esterle, Tobias Kessler
+# Copyright (c) 2019 Patrick Hart, Julian Bernhard,
+# Klemens Esterle, Tobias Kessler
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
@@ -15,7 +16,7 @@ import operator
 from src.observers.observer import StateObserver
 
 
-class ClosestAgentsObserver(StateObserver):
+class NearestAgentsObserver(StateObserver):
   def __init__(self, params=ParameterServer()):
     StateObserver.__init__(self, params)
     self._state_definition = [int(StateDefinition.X_POSITION),
@@ -23,12 +24,12 @@ class ClosestAgentsObserver(StateObserver):
                               int(StateDefinition.THETA_POSITION),
                               int(StateDefinition.VEL_POSITION)]
     self._max_distance_other_agents = \
-      self._params["Runtime"]["RL"]["ClosestAgentsObserver"]["MaxOtherDistance",
+      self._params["NearestAgentsObserver"]["MaxOtherDistance",
       "Agents further than this distance are not observed; if not max" + \
       "other agents are seen, remaining concatenation state is set to zero",
       30]
 
-  def observe(self, observed_world):
+  def Observe(self, observed_world):
     """see base class
     """
     ego_observed_world = observed_world

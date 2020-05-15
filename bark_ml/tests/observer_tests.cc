@@ -1,30 +1,34 @@
-// Copyright (c) 2019 fortiss GmbH, Patrick Hart, Julian Bernhard, Klemens Esterle, Tobias Kessler
+// Copyright (c) 2019 Patrick Hart, Julian Bernhard,
+// Klemens Esterle, Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
 #include "gtest/gtest.h"
+#include <memory>
+
 #include "modules/commons/params/params.hpp"
 #include "modules/geometry/geometry.hpp"
 #include "modules/commons/params/default_params.hpp"
-#include "src/observers/nearest_observer.hpp"
 #include "modules/world/tests/make_test_world.hpp"
+#include "bark_ml/observers/nearest_observer.hpp"
 
 TEST(observes, nearest_observer) {
-  // ugly imports
-  using namespace modules::models::dynamic;
-  using namespace modules::models::execution;
-  using namespace modules::commons;
-  using namespace modules::models::behavior;
-  using namespace modules::models::dynamic;
-  using namespace modules::world;
-  using namespace modules::geometry;
-  using namespace modules::world::tests;
-
-  // observer
   using observers::NearestObserver;
   using observers::ObservedState;
+  using modules::geometry::Polygon;
+  using modules::geometry::Point2d;
+  using modules::geometry::Pose;
+  using modules::world::World;
+  using modules::world::WorldPtr;
+  using modules::world::ObservedWorld;
+  using modules::world::ObservedWorldPtr;
+  using modules::world::tests::make_test_observed_world;
+  using modules::world::tests::make_test_world;
+  using modules::world::goal_definition::GoalDefinitionPolygon;
+  using modules::commons::DefaultParams;
+  using modules::commons::ParamsPtr;
 
   // Create world
   Polygon polygon(
@@ -49,7 +53,7 @@ TEST(observes, nearest_observer) {
 
   WorldPtr world = make_test_world(
     1, rel_distance, ego_velocity, velocity_difference, goal_definition_ptr);
-  
+
   ObservedWorldPtr obs_world_ptr =
     std::make_shared<ObservedWorld>(observed_world);
 

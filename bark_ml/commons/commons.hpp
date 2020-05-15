@@ -1,4 +1,5 @@
-// Copyright (c) 2019 fortiss GmbH, Patrick Hart, Julian Bernhard, Klemens Esterle, Tobias Kessler
+// Copyright (c) 2019 Patrick Hart, Julian Bernhard,
+// Klemens Esterle, Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.

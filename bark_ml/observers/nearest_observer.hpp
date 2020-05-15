@@ -1,4 +1,5 @@
-// Copyright (c) 2019 fortiss GmbH, Patrick Hart, Julian Bernhard, Klemens Esterle, Tobias Kessler
+// Copyright (c) Patrick Hart, Julian Bernhard,
+// Klemens Esterle, Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
@@ -19,8 +20,8 @@
 #include "modules/world/observed_world.hpp"
 #include "modules/world/goal_definition/goal_definition_state_limits_frenet.hpp"
 #include "modules/models/dynamic/dynamic_model.hpp"
-#include "src/commons/spaces.hpp"
-#include "src/commons/commons.hpp"
+#include "bark_ml/commons/spaces.hpp"
+#include "bark_ml/commons/commons.hpp"
 
 namespace observers {
 using modules::commons::ParamsPtr;

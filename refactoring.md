@@ -17,9 +17,9 @@ RuntimeRL(behavior_ml= BehaviorMacroActions(),)
 # Internal Interfaces
 
 
-## 1 BarkMLAgent and Runtime Definition
+## 1 BarkMLBehavior and Runtime Definition
 
-BarkMLAgent(BehaviorModel):
+BarkMLBehavior(BehaviorModel):
 
     def __init__(action_definition, )
 
@@ -71,7 +71,7 @@ gym_env = blueprints.filter("gym",)
 BarkMlRun
     self.sucessful_scenario_ids =[]
     self.sceanrio_param_file_trained
-BarkMLSACAgent(BARKMLAgent):
+BarkMLSACAgent(BARKMLBehavior):
 
     def __init__():
 

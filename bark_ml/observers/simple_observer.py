@@ -1,4 +1,5 @@
-# Copyright (c) 2019 Patrick Hart, Julian Bernhard, Klemens Esterle, Tobias Kessler
+# Copyright (c) 2019 Patrick Hart, Julian Bernhard,
+# Klemens Esterle, Tobias Kessler
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
@@ -26,7 +27,7 @@ class SimpleObserver(StateObserver):
       self._max_num_vehicles*self._len_state
     self._normalize_observations = normalize_observations
 
-  def observe(self, world):
+  def Observe(self, world):
     """see base class
     """
     concatenated_state = np.zeros(self._observation_len, dtype=np.float32)
@@ -69,7 +70,7 @@ class SimpleObserver(StateObserver):
                  self._velocity_range)
     return agent_state
 
-  def reset(self, world, controlled_agent_ids):
+  def Reset(self, world, controlled_agent_ids):
     return world
 
   @property

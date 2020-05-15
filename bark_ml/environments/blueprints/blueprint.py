@@ -1,4 +1,22 @@
-# Copyright (c) 2019 Patrick Hart, Julian Bernhard, Klemens Esterle, Tobias Kessler
+# Copyright (c) 2019 Patrick Hart, Julian Bernhard,
+# Klemens Esterle, Tobias Kessler
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
+
+
+class Blueprint:
+  def __init__(self
+               scenario_generation=None,
+               viewer=None,
+               dt=None,
+               observer=None,
+               evaluator=None,
+               ml_behavior=None):
+    self._scenario_generation = scenario_generation
+    self._viewer = viewer
+    self._dt = dt
+    self._evaluator = evaluator
+    self._observer = observer
+    # either discrete or continuous for now
+    self._ml_behavior = ml_behavior

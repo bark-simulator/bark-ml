@@ -1,5 +1,12 @@
+# Copyright (c) 2019 Patrick Hart, Julian Bernhard, 
+# Klemens Esterle, Tobias Kessler
+#
+# This software is released under the MIT License.
+# https://opensource.org/licenses/MIT
+
 from gym import Space
 import numpy as np
+
 
 class Discrete(Space):
     def __init__(self, n):

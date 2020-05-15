@@ -1,5 +1,6 @@
 
-# Copyright (c) 2019 Patrick Hart, Julian Bernhard, Klemens Esterle, Tobias Kessler
+# Copyright (c) 2019 Patrick Hart, Julian Bernhard,
+# Klemens Esterle, Tobias Kessler
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
@@ -31,7 +32,7 @@ class StateObserver(ABC):
     self._world_y_range = [-10000, 10000]
 
   @abstractmethod
-  def observe(self, observed_world):
+  def Observe(self, observed_world):
     """Observes the world
     
     Arguments:
@@ -54,7 +55,7 @@ class StateObserver(ABC):
     """
     return state[self._state_definition]
 
-  def reset(self, world):
+  def Reset(self, world):
     bb = world.bounding_box
     self._world_x_range = [bb[0].x(), bb[1].x()]
     self._world_y_range = [bb[0].y(), bb[1].y()]
