@@ -7,6 +7,7 @@ import os, time, json, pickle
 import numpy as np
 import unittest
 from tf_agents.environments import tf_py_environment
+import networkx as nx
 
 from src.observers.graph_observer import GraphObserver
 from modules.runtime.commons.parameters import ParameterServer
@@ -61,7 +62,7 @@ class PyGraphObserverTests(unittest.TestCase):
         print(item)
 
       # comment out this return statement to generate a dataset
-      return
+      #return
 
       # The following code generates a dataset by running
       # the scenario for the specified number of steps. 
@@ -97,7 +98,7 @@ class PyGraphObserverTests(unittest.TestCase):
 
         # Save datum in da
         datum = dict()
-        datum["graph_data"] = graph.data
+        datum["graph_data"] = nx.node_link_data(graph)
         datum["graph_labels"] = actions
         data_collector.append(datum)
         
