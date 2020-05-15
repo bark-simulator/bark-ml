@@ -11,8 +11,8 @@ class MLBehavior(BehaviorModel):
   def __init__(self,
                params=None,
                behavior=None):
-    self._params = None
-    self._behavior = None
+    self._params = params
+    self._behavior = behavior
 
   def Plan(self, observed_world, dt):
     return self._behavior.Plan(observed_world, dt)

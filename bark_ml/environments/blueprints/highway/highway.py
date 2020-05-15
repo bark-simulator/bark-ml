@@ -39,9 +39,11 @@ class ContinuousHighwayBlueprint(Blueprint):
     evaluator = GoalReached(params)
     observer = NearestAgentsObserver(params)
     ml_behavior = ContinuousMLBehavior(params)
+
     super().__init__(
-      scenario_generation,
-      viewer,
-      dt,
-      evaluator,
-      ml_behavior)
+      scenario_generation=scenario_generation,
+      viewer=viewer,
+      dt=dt,
+      evaluator=evaluator,
+      observer=observer,
+      ml_behavior=ml_behavior)

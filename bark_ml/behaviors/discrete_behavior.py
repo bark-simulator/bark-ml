@@ -14,9 +14,9 @@ from bark_ml.commons.py_spaces import Discrete
 class DiscreteMLBehavior(MLBehavior):
   def __init__(self,
                params=None):
-    super().__init__(self, params)
+    super().__init__(params)
     self._behavior = BehaviorMotionPrimtives(self._params)
-
+  
   def ActionToBehavior(self, action):
     self._behavior.ActionToBehavior(action)
 

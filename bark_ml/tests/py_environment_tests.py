@@ -21,6 +21,9 @@ class PyEnvironmentTests(unittest.TestCase):
     params = ParameterServer()
     bp = ContinuousHighwayBlueprint(params)
     env = SingleAgentRuntime(blueprint=bp)
+    env.reset()
+    for _ in range(0, 20):
+      print(env.step(np.array([0., 0.])))
 
 if __name__ == '__main__':
   unittest.main()

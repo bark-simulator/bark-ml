@@ -18,21 +18,21 @@ class StateEvaluator(ABC):
     self._evaluators = {}
     self._viewer = None
 
-  def evaluate(self, observed_world, action, observed_state):
+  def Evaluate(self, observed_world, action):
     """Evaluates the observed world
     """
     eval_results, reward, done = None, 0., False
     eval_results = observed_world.Evaluate()
     reward, done, eval_results = self._evaluate(
-      observed_world, eval_results, action, observed_state)
+      observed_world, eval_results, action)
     return reward, done, eval_results
 
-  def reset(self, world):
+  def Reset(self, world):
     world.ClearEvaluators()
     self._add_evaluators()
     for key, evaluator in self._evaluators.items():
       world.AddEvaluator(key, evaluator)
     return world
 
-  def set_viewer(self, viewer):
+  def SetViewer(self, viewer):
     self._viewer = viewer

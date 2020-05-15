@@ -10,8 +10,8 @@ class Blueprint:
                scenario_generation=None,
                viewer=None,
                dt=None,
-               observer=None,
                evaluator=None,
+               observer=None,
                ml_behavior=None):
     self._scenario_generation = scenario_generation
     self._viewer = viewer

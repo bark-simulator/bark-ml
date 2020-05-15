@@ -6,6 +6,9 @@
 
 import numpy as np
 from modules.runtime.runtime import Runtime
+from bark_ml.behaviors.cont_behavior import ContinuousMLBehavior
+from modules.runtime.commons.parameters import ParameterServer
+from bark.models.behavior import BehaviorModel, BehaviorDynamicModel
 
 
 class SingleAgentRuntime(Runtime):
@@ -20,6 +23,7 @@ class SingleAgentRuntime(Runtime):
                render=False):
     
     # TODO(@hart): CreateFromBlueprint(..)
+    # TODO(@hart): put in self, so other params overwrite blueprint if given
     if blueprint is not None:
       scenario_generator = blueprint._scenario_generation
       viewer = blueprint._viewer
@@ -27,7 +31,6 @@ class SingleAgentRuntime(Runtime):
       step_time = blueprint._dt
       evaluator = blueprint._evaluator
       observer = blueprint._observer
-    
     Runtime.__init__(self,
                      step_time=step_time,
                      viewer=viewer,
@@ -44,27 +47,26 @@ class SingleAgentRuntime(Runtime):
     assert len(self._scenario._eval_agent_ids) == 1, \
       "This runtime only supports an single agent!"
     eval_id = self._scenario._eval_agent_ids[0]
-    self._world = self._observer.Reset(self._world,
-                                       self._scenario._eval_agent_ids)
+    self._world = self._observer.Reset(self._world)
     self._world = self._evaluator.Reset(self._world)
-    self._world.agents[eval_id] = self._ml_behavior.Reset()
+    self._world.agents[eval_id].behavior_model = self._ml_behavior
     
     # observe
     observed_world = self._world.Observe([eval_id])[0]
-    return self._observer.observe(observed_world)
+    return self._observer.Observe(observed_world)
 
   def step(self, action):
     # set actions
     eval_id = self._scenario._eval_agent_ids[0]
-    self._world.agents[eval_id].ActionToBehavior(action)
+    self._world.agents[eval_id].behavior_model.ActionToBehavior(action)
 
     # step and observe
     self._world.Step(self._step_time)
     observed_world = self._world.Observe([eval_id])[0]
 
     # observe and evaluate
-    observed_next_state = self._observer.observe(observed_world)
-    reward, done, info = self._evaluator.evaluate(
+    observed_next_state = self._observer.Observe(observed_world)
+    reward, done, info = self._evaluator.Evaluate(
       observed_world=observed_world,
       action=action)
   
