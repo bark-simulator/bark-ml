@@ -21,19 +21,23 @@ class PyEnvironmentTests(unittest.TestCase):
     params = ParameterServer()
     bp = ContinuousHighwayBlueprint(params)
     env = SingleAgentRuntime(blueprint=bp, render=True)
-    env.reset()
-    for _ in range(0, 20):
-      observed_next_state, reward, done, info = env.step(np.array([1., 0.1]))
-      print(f"Reward: {reward}, Done: {done}")
+    for _ in range(0, 2):
+      env.reset()
+      for _ in range(0, 10):
+        action = np.random.uniform(low=-0.1, high=0.1, size=(2, ))
+        observed_next_state, reward, done, info = env.step(action)
+        print(f"Reward: {reward}, Done: {done}")
 
   def test_env_discrete_rl(self):
     params = ParameterServer()
     bp = DiscreteHighwayBlueprint(params)
     env = SingleAgentRuntime(blueprint=bp, render=True)
-    env.reset()
-    for _ in range(0, 20):
-      observed_next_state, reward, done, info = env.step(1)
-      print(f"Reward: {reward}, Done: {done}")
+    for _ in range(0, 2):
+      env.reset()
+      for _ in range(0, 10):
+        action = np.random.randint(low=0, high=3)
+        observed_next_state, reward, done, info = env.step(action)
+        print(f"Reward: {reward}, Done: {done}")
 
 if __name__ == '__main__':
   unittest.main()

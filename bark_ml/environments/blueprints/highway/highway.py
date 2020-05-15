@@ -20,9 +20,13 @@ from bark_ml.behaviors.discrete_behavior import DiscreteMLBehavior
 class HighwayBlueprint(Blueprint):
   def __init__(self,
                params=None,
-               number_of_senarios=25,
+               number_of_senarios=250,
                random_seed=0,
                ml_behavior=None):
+    left_lane = LaneCorridorConfig(params=params,
+                                   road_ids=[16],
+                                   lane_corridor_id=0,
+                                   controlled_ids=None)
     right_lane = LaneCorridorConfig(params=params,
                                     road_ids=[16],
                                     lane_corridor_id=1,
@@ -33,7 +37,7 @@ class HighwayBlueprint(Blueprint):
         map_file_name="bark_ml/environments/blueprints/highway/city_highway_straight.xodr",  # NOLINT
         random_seed=random_seed,
         params=params,
-        lane_corridor_configs=[right_lane])
+        lane_corridor_configs=[left_lane, right_lane])
     viewer = MPViewer(params=params,
                       x_range=[-35, 35],
                       y_range=[-35, 35],
