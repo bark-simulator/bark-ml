@@ -7,17 +7,17 @@ import matplotlib.gridspec as gridspec
 from tf_agents.environments import tf_py_environment
 from tf_agents.environments import parallel_py_environment
 
-from modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution \
+from bark_project.modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution \
   import UniformVehicleDistribution
-from modules.runtime.scenario.scenario_generation.deterministic \
+from bark_project.modules.runtime.scenario.scenario_generation.deterministic \
   import DeterministicScenarioGeneration
-from modules.runtime.scenario.scenario_generation.configurable_scenario_generation import \
+from bark_project.modules.runtime.scenario.scenario_generation.configurable_scenario_generation import \
   ConfigurableScenarioGeneration
 
-from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.viewer.matplotlib_viewer import MPViewer
-from modules.runtime.viewer.video_renderer import VideoRenderer
-from modules.runtime.viewer.pygame_viewer import PygameViewer
+from bark_project.modules.runtime.commons.parameters import ParameterServer
+from bark_project.modules.runtime.viewer.matplotlib_viewer import MPViewer
+from bark_project.modules.runtime.viewer.video_renderer import VideoRenderer
+from bark_project.modules.runtime.viewer.pygame_viewer import PygameViewer
 
 
 from src.rl_runtime import RuntimeRL
@@ -33,7 +33,7 @@ from configurations.base_configuration import BaseConfiguration
 
 # configuration specific evaluator
 from configurations.highway.custom_evaluator import CustomEvaluator
-# from bark_ml.observers import NearestObserver
+# from bark_ml.modules.observers import NearestObserver
 
 
 class HighwayConfiguration(BaseConfiguration):

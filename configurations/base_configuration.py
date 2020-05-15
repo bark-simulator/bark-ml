@@ -1,4 +1,4 @@
-from modules.runtime.commons.parameters import ParameterServer
+from bark_project.modules.runtime.commons.parameters import ParameterServer
 
 class BaseConfiguration:
   """Hermetic and reproducible configurationion

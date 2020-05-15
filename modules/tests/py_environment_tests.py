@@ -11,9 +11,9 @@ import matplotlib
 # matplotlib.use('PS')
 import time
 
-from modules.runtime.commons.parameters import ParameterServer
-from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, DiscreteHighwayBlueprint
-from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
+from bark_project.modules.runtime.commons.parameters import ParameterServer
+from bark_ml.modules.environments.blueprints import ContinuousHighwayBlueprint, DiscreteHighwayBlueprint
+from bark_ml.modules.environments.single_agent_runtime import SingleAgentRuntime
 
 
 class PyEnvironmentTests(unittest.TestCase):

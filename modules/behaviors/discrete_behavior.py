@@ -9,7 +9,7 @@ import numpy as np
 from bark.models.behavior import BehaviorModel, BehaviorMPMacroActions, \
   PrimitiveConstAccStayLane, PrimitiveConstAccChangeToLeft, PrimitiveConstAccChangeToRight
 from bark.models.dynamic import SingleTrackModel
-from bark_ml.commons.py_spaces import Discrete
+from bark_ml.modules.commons.py_spaces import Discrete
 
 
 class DiscreteMLBehavior(BehaviorMPMacroActions):

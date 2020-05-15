@@ -9,7 +9,7 @@ from absl import flags
 import tensorflow as tf
 from tf_agents.environments import tf_py_environment
 
-from modules.runtime.commons.parameters import ParameterServer
+from bark_project.modules.runtime.commons.parameters import ParameterServer
 from configurations.base_configuration import BaseConfiguration
 
 # configuration specific evaluator

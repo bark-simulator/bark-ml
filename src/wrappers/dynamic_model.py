@@ -4,7 +4,7 @@ import itertools
 from src.commons.py_spaces import Discrete, BoundedContinuous
 from bark.models.behavior import DynamicBehaviorModel
 from bark.models.dynamic import SingleTrackModel, TripleIntegratorModel
-from modules.runtime.commons.parameters import ParameterServer
+from bark_project.modules.runtime.commons.parameters import ParameterServer
 from src.wrappers.action_wrapper import ActionWrapper
 
 class DynamicModel(ActionWrapper):

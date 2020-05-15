@@ -7,7 +7,7 @@ tf.compat.v1.enable_v2_behavior()
 from tf_agents.drivers import dynamic_step_driver
 from tf_agents.drivers import dynamic_episode_driver
 from tf_agents.policies import actor_policy
-from modules.runtime.commons.parameters import ParameterServer
+from bark_project.modules.runtime.commons.parameters import ParameterServer
 
 from tf_agents.metrics import tf_metrics
 from tf_agents.eval import metric_utils

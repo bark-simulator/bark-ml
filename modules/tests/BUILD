@@ -5,8 +5,8 @@ py_test(
     imports = ["../external/bark_project/python/"],
     deps = ["@bark_project//modules/runtime:runtime",
             "@bark_project//modules/runtime/scenario/scenario_generation:scenario_generation",
-            "//bark_ml/environments:single_agent_runtime",
-            "//bark_ml/commons:py_spaces"],
+            "//modules/environments:single_agent_runtime",
+            "//modules/commons:py_spaces"],
     visibility = ["//visibility:public"],
 )
 
@@ -17,9 +17,9 @@ py_test(
     imports = ["../external/bark_project/python/"],
     deps = ["@bark_project//modules/runtime:runtime",
             "@bark_project//modules/runtime/scenario/scenario_generation:scenario_generation",
-            "//bark_ml/environments:single_agent_runtime",
-            "//bark_ml/behaviors:behaviors",
-            "//bark_ml/commons:py_spaces"],
+            "//modules/environments:single_agent_runtime",
+            "//modules/behaviors:behaviors",
+            "//modules/commons:py_spaces"],
     visibility = ["//visibility:public"],
 )
 
@@ -32,9 +32,9 @@ py_test(
                "../../python/"],
     deps = ["@bark_project//modules/runtime:runtime",
             "@bark_project//modules/runtime/scenario/scenario_generation:scenario_generation",
-            "//bark_ml/environments:single_agent_runtime",
-            "//bark_ml/behaviors:behaviors",
-            "//bark_ml/commons:py_spaces"],
+            "//modules/environments:single_agent_runtime",
+            "//modules/behaviors:behaviors",
+            "//modules/commons:py_spaces"],
     visibility = ["//visibility:public"],
 )
 
@@ -47,8 +47,8 @@ py_test(
                "../python/"],
     deps = ["@bark_project//modules/runtime:runtime",
             "@bark_project//modules/runtime/scenario/scenario_generation:scenario_generation",
-            "//bark_ml/environments:single_agent_runtime",
-            "//bark_ml/behaviors:behaviors",
-            "//bark_ml/commons:py_spaces"],
+            "//modules/environments:single_agent_runtime",
+            "//modules/behaviors:behaviors",
+            "//modules/commons:py_spaces"],
     visibility = ["//visibility:public"],
 )

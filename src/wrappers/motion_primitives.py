@@ -5,7 +5,7 @@ from src.commons.py_spaces import Discrete, BoundedContinuous
 from bark.models.behavior import BehaviorMotionPrimitives, BehaviorMPMacroActions, \
                               BehaviorMacroActionsFromParamServer
 from bark.models.dynamic import SingleTrackModel
-from modules.runtime.commons.parameters import ParameterServer
+from bark_project.modules.runtime.commons.parameters import ParameterServer
 from src.wrappers.action_wrapper import ActionWrapper
 
 

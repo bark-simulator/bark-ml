@@ -10,11 +10,11 @@ from bark_project.modules.runtime.scenario.scenario_generation.config_with_ease 
   LaneCorridorConfig, ConfigWithEase
 from bark.models.dynamic import SingleTrackModel
 
-from bark_ml.environments.blueprints.blueprint import Blueprint
-from bark_ml.evaluators.goal_reached import GoalReached
-from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
-from bark_ml.behaviors.cont_behavior import ContinuousMLBehavior
-from bark_ml.behaviors.discrete_behavior import DiscreteMLBehavior
+from bark_ml.modules.environments.blueprints.blueprint import Blueprint
+from bark_ml.modules.evaluators.goal_reached import GoalReached
+from bark_ml.modules.observers.nearest_state_observer import NearestAgentsObserver
+from bark_ml.modules.behaviors.cont_behavior import ContinuousMLBehavior
+from bark_ml.modules.behaviors.discrete_behavior import DiscreteMLBehavior
 
 
 class HighwayBlueprint(Blueprint):
@@ -34,7 +34,7 @@ class HighwayBlueprint(Blueprint):
     scenario_generation = \
       ConfigWithEase(
         num_scenarios=number_of_senarios,
-        map_file_name="bark_ml/environments/blueprints/highway/city_highway_straight.xodr",  # NOLINT
+        map_file_name="modules/environments/blueprints/highway/city_highway_straight.xodr",  # NOLINT
         random_seed=random_seed,
         params=params,
         lane_corridor_configs=[left_lane, right_lane])

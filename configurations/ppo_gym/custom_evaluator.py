@@ -4,7 +4,7 @@ import logging
 from bark.world.evaluation import \
   EvaluatorGoalReached, EvaluatorCollisionEgoAgent, \
   EvaluatorCollisionDrivingCorridor, EvaluatorStepCount
-from modules.runtime.commons.parameters import ParameterServer
+from bark_project.modules.runtime.commons.parameters import ParameterServer
 from bark.geometry import *
 
 from src.evaluators.goal_reached import GoalReached

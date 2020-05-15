@@ -6,9 +6,9 @@ py_library(
     data = glob(["blueprints/*/*.xodr",
                   "blueprints/*/*.json"]),
     imports = ["../external/bark_project/python/"],
-    deps = ["//bark_ml/observers:observers",
-            "//bark_ml/evaluators:evaluators",
-            "//bark_ml/behaviors:behaviors"],
+    deps = ["//modules/observers:observers",
+            "//modules/evaluators:evaluators",
+            "//modules/behaviors:behaviors"],
     visibility = ["//visibility:public"],
 )
 
@@ -17,6 +17,6 @@ py_library(
     srcs = ["single_agent_runtime.py"],
     imports = ["../external/bark_project/python/"],
     data = ["@bark_project//python:bark.so"],
-    deps = ["//bark_ml/environments:blueprints"],
+    deps = ["//modules/environments:blueprints"],
     visibility = ["//visibility:public"],
 )

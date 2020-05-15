@@ -1,7 +1,7 @@
 import numpy as np
 from bark.models.behavior import BehaviorModel, DynamicBehaviorModel
 from bark.models.dynamic import SingleTrackModel
-from modules.runtime.commons.parameters import ParameterServer
+from bark_project.modules.runtime.commons.parameters import ParameterServer
 from configurations.base_configuration import BaseConfiguration
 from bark.world import World, ObservedWorld
 

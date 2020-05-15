@@ -10,12 +10,12 @@ import os
 import matplotlib
 import time
 
-from bark_ml.behaviors.cont_behavior import ContinuousMLBehavior
-from bark_ml.behaviors.discrete_behavior import DiscreteMLBehavior
-from modules.runtime.commons.parameters import ParameterServer
-from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, DiscreteHighwayBlueprint
-from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-from bark_ml.evaluators.goal_reached import GoalReached
+from bark_ml.modules.behaviors.cont_behavior import ContinuousMLBehavior
+from bark_ml.modules.behaviors.discrete_behavior import DiscreteMLBehavior
+from bark_project.modules.runtime.commons.parameters import ParameterServer
+from bark_ml.modules.environments.blueprints import ContinuousHighwayBlueprint, DiscreteHighwayBlueprint
+from bark_ml.modules.environments.single_agent_runtime import SingleAgentRuntime
+from bark_ml.modules.evaluators.goal_reached import GoalReached
 
 
 class PyEvaluatorTests(unittest.TestCase):

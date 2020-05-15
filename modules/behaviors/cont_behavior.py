@@ -7,7 +7,7 @@
 import numpy as np
 
 from bark.models.behavior import BehaviorModel, BehaviorDynamicModel
-from bark_ml.commons.py_spaces import BoundedContinuous
+from bark_ml.modules.commons.py_spaces import BoundedContinuous
 
 
 class ContinuousMLBehavior(BehaviorDynamicModel):

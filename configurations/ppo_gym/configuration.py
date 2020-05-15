@@ -6,7 +6,7 @@ import gym
 
 from tf_agents.environments import tf_py_environment
 from tf_agents.environments import parallel_py_environment
-from modules.runtime.commons.parameters import ParameterServer
+from bark_project.modules.runtime.commons.parameters import ParameterServer
 
 
 from src.wrappers.tfa_wrapper import TFAWrapper
