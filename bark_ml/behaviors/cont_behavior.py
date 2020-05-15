@@ -11,11 +11,11 @@ from bark_ml.commons.py_spaces import BoundedContinuous
 from bark_ml.behaviors.ml_behavior import MLBehavior
 
 
-class ContinuousMLBehavior(BehaviorModel):
+class ContinuousMLBehavior(BehaviorDynamicModel):
   def __init__(self,
                params=None):
-    BehaviorModel.__init__(self, params)
-    self._behavior = BehaviorDynamicModel(params)
+    BehaviorDynamicModel.__init__(self, params)
+    # self._behavior = BehaviorDynamicModel(params)
     self._lower_bounds = params["ContinuousMLBehavior"][
       "actions_lower_bound",
       "Lower-bound for actions.",
@@ -24,12 +24,6 @@ class ContinuousMLBehavior(BehaviorModel):
       "actions_upper_bound",
       "Upper-bound for actions.",
       [0.5, 0.01]]
-    
-  def ActionToBehavior(self, action):
-    self._behavior.ActionToBehavior(action)
-
-  def Plan(self, observed_world, dt):
-    return self._behavior.Plan(observed_world, dt)
 
   def Clone(self):
     return self

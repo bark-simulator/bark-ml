@@ -22,8 +22,6 @@ class SingleAgentRuntime(Runtime):
                scenario_generator=None,
                render=False):
     
-    # TODO(@hart): CreateFromBlueprint(..)
-    # TODO(@hart): put in self, so other params overwrite blueprint if given
     if blueprint is not None:
       self._scenario_generator = blueprint._scenario_generation
       self._viewer = blueprint._viewer
