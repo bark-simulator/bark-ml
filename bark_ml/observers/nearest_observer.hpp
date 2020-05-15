@@ -59,9 +59,8 @@ class NearestObserver {
       observation_len_ = nearest_agent_num_ * state_size_;
   }
 
-  ObservedState FilterState(
-    const State& state,
-    const Line& center_line) const {
+  // TODO(@hart): add NormState fct. or integrate in this fct.
+  ObservedState FilterState(const State& state) const {
     ObservedState ret_state(1, state_size_);
     ret_state << state(StateDefinition::X_POSITION),
                  state(StateDefinition::Y_POSITION),
@@ -70,55 +69,36 @@ class NearestObserver {
     return ret_state;
   }
 
-  ObservedState Observe(const ObservedWorldPtr& world) const {
+  ObservedState Observe(const ObservedWorldPtr& observed_world) const {
     int row_idx = 0;
     ObservedState state(1, observation_len_);
     state.setZero();
 
-    // check in which lane corridor the goal is
-    std::shared_ptr<const Agent> ego_agent = world->GetEgoAgent();
-    BARK_EXPECT_TRUE(ego_agent != nullptr);
-    const Point2d ego_pos = ego_agent->GetCurrentPosition();
-    const auto& road_corridor = ego_agent->GetRoadCorridor();
-    BARK_EXPECT_TRUE(road_corridor != nullptr);
-    const auto& ego_goal =
-      std::dynamic_pointer_cast<GoalDefinitionStateLimitsFrenet>(
-        ego_agent->GetGoalDefinition());
-    const auto& ego_goal_center_line = ego_goal->GetCenterLine();
-    const auto& lane_corridors = road_corridor->GetUniqueLaneCorridors();
-    auto ego_lane_corridor = lane_corridors[0];
-    for (auto& lane_corr : lane_corridors) {
-      if (Collide(lane_corr->GetMergedPolygon(), ego_goal_center_line)) {
-        ego_lane_corridor = lane_corr;
-      }
-    }
-
     // find near agents (n)
-    AgentMap nearest_agents = world->GetNearestAgents(
-      ego_pos, nearest_agent_num_);
+    AgentMap nearest_agents = observed_world->GetNearestAgents(
+      observed_world->CurrentEgoPosition(), nearest_agent_num_);
 
-    // sort agents by distance and remove far away ones
+    // sort agents by distance and distance < max_dist_
     std::map<float, AgentPtr, std::greater<float>> distance_agent_map;
     for (const auto& agent : nearest_agents) {
       const auto& agent_state = agent.second->GetCurrentPosition();
-      float distance = Distance(ego_pos, agent_state);
+      float distance = Distance(
+        observed_world->CurrentEgoPosition(), agent_state);
       if (distance < max_dist_)
         distance_agent_map[distance] = agent.second;
     }
 
-    // transform ego agent state
+    // add ego agent state
     ObservedState obs_ego_agent_state =
-      FilterState(ego_agent->GetCurrentState(),
-                     ego_lane_corridor->GetCenterLine());
+      FilterState(observed_world->CurrentEgoState());
     state.block(0, row_idx*state_size_, 1, state_size_) = obs_ego_agent_state;
     row_idx++;
 
-    // transform other states (lon. relative to ego agent's lon.)
+    // add other states
     for (const auto& agent : distance_agent_map) {
-      if (agent.second->GetAgentId() != ego_agent->GetAgentId()) {
+      if (agent.second->GetAgentId() != observed_world->GetEgoAgentId()) {
         ObservedState other_agent_state =
-          FilterState(agent.second->GetCurrentState(),
-                         ego_lane_corridor->GetCenterLine());
+          FilterState(agent.second->GetCurrentState());
         state.block(0, row_idx*state_size_, 1, state_size_) = other_agent_state;
         row_idx++;
       }
