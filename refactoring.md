@@ -17,7 +17,7 @@ RuntimeRL(behavior_ml= BehaviorMacroActions(),)
 # Internal Interfaces
 
 
-## 1 BarkMLBehavior and Runtime Definition
+## 1 BarkMLBehavior and Runtime Definition (DONE)
 
 BarkMLBehavior(BehaviorModel):
 
@@ -42,7 +42,7 @@ Constructors
 
 
 
-## 2 Setup some blueprints
+## 2 Setup some blueprints (DONE)
 
 dir_gym_blueprints:
     blue_print_gym.py =
@@ -64,10 +64,10 @@ bark_sac = blue
 gym_env = blueprints.filter("gym",)
 
 ## 3 Check other libraries apart from tf agents
+-> baselines, tf-agents
 
 
 ## 4 BarkML runner generate statistics and reusable models
-
 BarkMlRun
     self.sucessful_scenario_ids =[]
     self.sceanrio_param_file_trained

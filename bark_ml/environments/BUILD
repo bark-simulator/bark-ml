@@ -8,7 +8,8 @@ py_library(
     imports = ["../external/bark_project/python/"],
     deps = ["//bark_ml/observers:observers",
             "//bark_ml/evaluators:evaluators",
-            "//bark_ml/behaviors:behaviors"],
+            "//bark_ml/behaviors:behaviors",
+            "@bark_project//modules/runtime/scenario/scenario_generation:scenario_generation"],
     visibility = ["//visibility:public"],
 )
 
@@ -17,7 +18,8 @@ py_library(
     srcs = ["single_agent_runtime.py"],
     imports = ["../external/bark_project/python/"],
     data = ["@bark_project//python:bark.so"],
-    deps = ["//bark_ml/environments:blueprints"],
+    deps = ["//bark_ml/environments:blueprints",
+            "@bark_project//modules/runtime:runtime"],
     visibility = ["//visibility:public"],
 )
 
