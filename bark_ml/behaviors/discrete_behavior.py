@@ -23,6 +23,7 @@ class DiscreteMLBehavior(BehaviorMPMacroActions):
     self._params = params
     self._dynamic_model = dynamic_model
 
+    # TODO(@hart): make generic and configurable
     # add motion primitives
     motion_primitives = []
     motion_primitives.append(
