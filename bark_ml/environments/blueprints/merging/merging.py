@@ -9,6 +9,8 @@ from bark_project.modules.runtime.viewer.matplotlib_viewer import MPViewer
 from bark_project.modules.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
 from bark.models.dynamic import SingleTrackModel
+from bark.world.opendrive import XodrDrivingDirection
+from bark.world.goal_definition import GoalDefinitionPolygon
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
 from bark_ml.evaluators.goal_reached import GoalReached
@@ -16,6 +18,17 @@ from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.behaviors.cont_behavior import ContinuousMLBehavior
 from bark_ml.behaviors.discrete_behavior import DiscreteMLBehavior
 
+class MergingLaneCorridorConfig(LaneCorridorConfig):
+  def __init__(self,
+               params=None,
+               **kwargs):
+    super(MergingLaneCorridorConfig, self).__init__(params, **kwargs)
+  
+  def goal(self, world):
+    road_corr = world.map.GetRoadCorridor(
+      self._road_ids, XodrDrivingDirection.forward)
+    lane_corr = self._road_corridor.lane_corridors[0]
+    return GoalDefinitionPolygon(lane_corr.polygon)
 
 class MergingBlueprint(Blueprint):
   def __init__(self,
@@ -23,16 +36,18 @@ class MergingBlueprint(Blueprint):
                number_of_senarios=250,
                random_seed=0,
                ml_behavior=None):
-    left_lane = LaneCorridorConfig(params=params,
-                                   road_ids=[0, 1],
-                                   lane_corridor_id=0,
-                                   controlled_ids=None)
-    right_lane = LaneCorridorConfig(params=params,
-                                    road_ids=[0, 1],
-                                    lane_corridor_id=1,
-                                    s_min=0.,
-                                    s_max=20.,
-                                    controlled_ids=True)
+    left_lane = MergingLaneCorridorConfig(
+      params=params,
+      road_ids=[0, 1],
+      lane_corridor_id=0,
+      controlled_ids=None)
+    right_lane = MergingLaneCorridorConfig(
+      params=params,
+      road_ids=[0, 1],
+      lane_corridor_id=1,
+      s_min=0.,
+      s_max=20.,
+      controlled_ids=True)
     scenario_generation = \
       ConfigWithEase(
         num_scenarios=number_of_senarios,
