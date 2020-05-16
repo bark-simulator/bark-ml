@@ -5,7 +5,7 @@
 # https://opensource.org/licenses/MIT
 
 from bark.world.evaluation import \
-  EvaluatorGoalReached, EvaluatorCollisionAgents, \
+  EvaluatorGoalReached, EvaluatorCollisionEgoAgent, \
   EvaluatorStepCount, EvaluatorDrivableArea
 from bark_project.modules.runtime.commons.parameters import ParameterServer
 
@@ -33,7 +33,7 @@ class GoalReached(StateEvaluator):
 
   def _add_evaluators(self):
     self._evaluators["goal_reached"] = EvaluatorGoalReached()
-    self._evaluators["collision"] = EvaluatorCollisionAgents()
+    self._evaluators["collision"] = EvaluatorCollisionEgoAgent()
     self._evaluators["step_count"] = EvaluatorStepCount()
     self._evaluators["drivable_area"] = EvaluatorDrivableArea()
 
