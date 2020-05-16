@@ -6,7 +6,7 @@
 
 from bark.world.evaluation import \
   EvaluatorGoalReached, EvaluatorCollisionAgents, \
-  EvaluatorStepCount
+  EvaluatorStepCount, EvaluatorDrivableArea
 from bark_project.modules.runtime.commons.parameters import ParameterServer
 
 from bark_ml.evaluators.evaluator import StateEvaluator
@@ -35,13 +35,14 @@ class GoalReached(StateEvaluator):
     self._evaluators["goal_reached"] = EvaluatorGoalReached()
     self._evaluators["collision"] = EvaluatorCollisionAgents()
     self._evaluators["step_count"] = EvaluatorStepCount()
+    self._evaluators["drivable_area"] = EvaluatorDrivableArea()
 
   def _evaluate(self, observed_world, eval_results, action):
     """Returns information about the current world state
     """
     done = False
     success = eval_results["goal_reached"]
-    collision = eval_results["collision"]
+    collision = eval_results["collision"] or eval_results["drivable_area"]
     step_count = eval_results["step_count"]
     # determine whether the simulation should terminate
     if success or collision or step_count > self._max_steps:

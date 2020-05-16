@@ -3,6 +3,7 @@
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
+
 import gym
 from gym.envs.registration import register
 
