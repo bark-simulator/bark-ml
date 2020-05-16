@@ -47,17 +47,28 @@ class PyEnvironmentTests(unittest.TestCase):
         observed_next_state, reward, done, info = env.step(action)
         # print(f"Reward: {reward}, Done: {done}")
 
-  def test_gym(self):
+  def test_gym_wrapping(self):
     # highway-v0: continuous
     # highway-v1: discrete
+    # merging-v0: continuous
+    # merging-v1: discrete
     # are registered here: import bark_ml.environments.gym
-    env = gym.make("highway-v0")
-    env.reset()
-    for _ in range(0, 10):
-      action = np.random.uniform(low=-0.1, high=0.1, size=(2, ))
-      observed_next_state, reward, done, info = env.step(action)
-      print(f"Observed state: {observed_next_state}, Reward: {reward}, Done: {done}")
 
+    cont_envs = [gym.make("highway-v0"), gym.make("merging-v0")]
+    for env in cont_envs:
+      env.reset()
+      for _ in range(0, 10):
+        action = np.random.uniform(low=-0.1, high=0.1, size=(2, ))
+        observed_next_state, reward, done, info = env.step(action)
+        print(f"Observed state: {observed_next_state}, Reward: {reward}, Done: {done}")
+
+    cont_envs = [gym.make("highway-v1"), gym.make("merging-v1")]
+    for env in cont_envs:
+      env.reset()
+      for _ in range(0, 10):
+        action = np.random.randint(low=0, high=3)
+        observed_next_state, reward, done, info = env.step(action)
+        print(f"Observed state: {observed_next_state}, Reward: {reward}, Done: {done}")
 
 if __name__ == '__main__':
   unittest.main()
