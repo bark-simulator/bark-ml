@@ -1,8 +1,0 @@
-model_checkpoint_path: "ckpt-33030"
-all_model_checkpoint_paths: "ckpt-31530"
-all_model_checkpoint_paths: "ckpt-32280"
-all_model_checkpoint_paths: "ckpt-33030"
-all_model_checkpoint_timestamps: 1577617335.535798
-all_model_checkpoint_timestamps: 1577617443.864096
-all_model_checkpoint_timestamps: 1577617558.783274
-last_preserved_timestamp: 1577564444.584335
