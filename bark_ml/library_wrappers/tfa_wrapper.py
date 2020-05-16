@@ -8,6 +8,7 @@ from tf_agents.trajectories import time_step as ts
 
 tf.compat.v1.enable_v2_behavior()
 
+
 class TFAWrapper(py_environment.PyEnvironment):
   """Wrapper for TensorFlow Agents (https://github.com/tensorflow/agents)
 
@@ -17,7 +18,6 @@ class TFAWrapper(py_environment.PyEnvironment):
 
   def __init__(self, env):
     self._env = env
-    print(self._env.action_space.low,self._env.action_space.high, self._env.action_space.shape)
     self._action_spec = array_spec.BoundedArraySpec(
       shape=self._env.action_space.shape,
       dtype=np.float32,

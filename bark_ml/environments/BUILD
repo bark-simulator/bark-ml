@@ -20,3 +20,13 @@ py_library(
     deps = ["//bark_ml/environments:blueprints"],
     visibility = ["//visibility:public"],
 )
+
+py_library(
+    name = "gym",
+    srcs = ["gym.py"],
+    imports = ["../external/bark_project/python/"],
+    data = ["@bark_project//python:bark.so"],
+    deps = ["//bark_ml/environments:blueprints",
+            "//bark_ml/environments:single_agent_runtime"],
+    visibility = ["//visibility:public"],
+)

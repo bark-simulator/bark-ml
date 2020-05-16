@@ -7,6 +7,7 @@
 import unittest
 import numpy as np
 import os
+import gym
 import matplotlib
 # matplotlib.use('PS')
 import time
@@ -15,7 +16,7 @@ from bark_project.modules.runtime.commons.parameters import ParameterServer
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
   DiscreteHighwayBlueprint, ContinuousMergingBlueprint, DiscreteMergingBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-
+import bark_ml.environments.gym
 
 class PyEnvironmentTests(unittest.TestCase):
   def test_envs_cont_rl(self):
@@ -45,6 +46,17 @@ class PyEnvironmentTests(unittest.TestCase):
         action = np.random.randint(low=0, high=3)
         observed_next_state, reward, done, info = env.step(action)
         # print(f"Reward: {reward}, Done: {done}")
+
+  def test_gym(self):
+    # highway-v0: continuous
+    # highway-v1: discrete
+    # are registered here: import bark_ml.environments.gym
+    env = gym.make("highway-v0")
+    env.reset()
+    for _ in range(0, 10):
+      action = np.random.uniform(low=-0.1, high=0.1, size=(2, ))
+      observed_next_state, reward, done, info = env.step(action)
+      print(f"Observed state: {observed_next_state}, Reward: {reward}, Done: {done}")
 
 
 if __name__ == '__main__':
