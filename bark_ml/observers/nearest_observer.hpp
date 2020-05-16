@@ -106,8 +106,7 @@ class NearestObserver {
     return state;
   }
 
-  WorldPtr Reset(const WorldPtr& world,
-    const std::vector<int>& agent_ids) {
+  WorldPtr Reset(const WorldPtr& world) {
     return world;
   }
 

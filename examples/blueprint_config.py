@@ -8,23 +8,25 @@ import numpy as np
 
 # BARK imports
 from bark_project.modules.runtime.commons.parameters import ParameterServer
-from bark_project.modules.runtime.viewer.matplotlib_viewer import MPViewer
-from bark_project.modules.runtime.scenario.scenario_generation.config_with_ease import \
-  LaneCorridorConfig, ConfigWithEase
 
 # BARK-ML imports
-from bark_ml.evaluators.goal_reached import GoalReached
-from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
-from bark_ml.behaviors.cont_behavior import ContinuousMLBehavior
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-
+from bark_ml_library.observers import NearestObserver
+from bark_ml.environments.blueprints import ContinuousHighwayBlueprint
 
 # create scenario
 params = ParameterServer()
 bp = ContinuousHighwayBlueprint(params,
                                 number_of_senarios=10,
                                 random_seed=0)
-env = SingleAgentRuntime(blueprint=bp, render=False)
+
+# arguments that are additionally set in the runtime
+# overwrite the ones of the blueprint
+# e.g. we can change observer to the cpp observer
+observer = NearestObserver(params)
+env = SingleAgentRuntime(blueprint=bp,
+                         observer=observer,
+                         render=True)
 
 # gym interface
 env.reset()
