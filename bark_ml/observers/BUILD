@@ -16,8 +16,8 @@ cc_library(
   ],
   deps = [
     "@bark_project//modules/world:include",
-    "//modules/commons:spaces",
-    "//modules/commons:commons"
+    "//bark_ml/commons:spaces",
+    "//bark_ml/commons:commons"
   ],
   visibility = ["//visibility:public"],
 )

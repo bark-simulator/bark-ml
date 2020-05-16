@@ -10,8 +10,8 @@ import os
 import matplotlib
 import time
 
-from bark_ml.modules.behaviors.cont_behavior import ContinuousMLBehavior
-from bark_ml.modules.behaviors.discrete_behavior import DiscreteMLBehavior
+from bark_ml.behaviors.cont_behavior import ContinuousMLBehavior
+from bark_ml.behaviors.discrete_behavior import DiscreteMLBehavior
 from bark_project.modules.runtime.commons.parameters import ParameterServer
 from bark.models.dynamic import SingleTrackModel
 from bark.world import World, MakeTestWorldHighway

@@ -7,8 +7,8 @@ from gym.envs.registration import register
 
 from bark_project.modules.runtime.commons.parameters import ParameterServer
 
-from bark_ml.modules.environments.blueprints.highway.highway import ContinuousHighwayBlueprint
-from bark_ml.modules.environments.single_agent_runtime import SingleAgentRuntime
+from bark_ml.environments.blueprints.highway.highway import ContinuousHighwayBlueprint
+from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 
 
 register(

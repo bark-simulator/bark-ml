@@ -123,9 +123,7 @@ class NearestObserver {
  private:
   ParamsPtr params_;
   int state_size_, nearest_agent_num_, observation_len_;
-  float min_lon_, max_lon_, min_lat_, max_lat_,
-        min_theta_, max_theta_, min_vel_, max_vel_,
-        max_dist_;
+  float min_theta_, max_theta_, min_vel_, max_vel_, max_dist_;
 };
 
 }  // namespace observers

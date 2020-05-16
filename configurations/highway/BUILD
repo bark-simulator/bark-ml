@@ -21,7 +21,7 @@
 #   name = "configuration_lib",
 #   srcs = ["configuration_lib.py"],
 #   data = ["@bark_project//python:bark.so",
-#           "//python:bark_ml_cpp.so",
+#           "//python:bark_ml.so",
 #           "//tests/data:bark_data",
 #           ":configuration_data"],
 #   imports = ["../../python/",

@@ -33,7 +33,7 @@ from configurations.base_configuration import BaseConfiguration
 
 # configuration specific evaluator
 from configurations.highway.custom_evaluator import CustomEvaluator
-# from bark_ml.modules.observers import NearestObserver
+# from bark_ml.observers import NearestObserver
 
 
 class HighwayConfiguration(BaseConfiguration):

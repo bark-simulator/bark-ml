@@ -6,7 +6,7 @@
 
 import numpy as np
 from bark_project.modules.runtime.runtime import Runtime
-from bark_ml.modules.behaviors.cont_behavior import ContinuousMLBehavior
+from bark_ml.behaviors.cont_behavior import ContinuousMLBehavior
 from bark_project.modules.runtime.commons.parameters import ParameterServer
 from bark.models.behavior import BehaviorModel, BehaviorDynamicModel
 

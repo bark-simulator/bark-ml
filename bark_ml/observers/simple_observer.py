@@ -12,7 +12,7 @@ import operator
 from bark.models.dynamic import StateDefinition
 from bark.world import ObservedWorld
 from bark_project.modules.runtime.commons.parameters import ParameterServer
-from bark_ml.modules.observers.observer import StateObserver
+from bark_ml.observers.observer import StateObserver
 
 
 class SimpleObserver(StateObserver):
