@@ -33,6 +33,7 @@ class BehaviorTFAAgent:
                                      agent=self._agent)
     self._ckpt_manager = self.GetCheckpointer()
     self._logger = logging.getLogger()
+    self._training = False
 
   def Reset(self):
     pass

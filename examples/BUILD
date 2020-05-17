@@ -37,8 +37,8 @@ py_test(
 )
 
 py_test(
-  name = "tfa_sac",
-  srcs = ["tfa_sac.py"],
+  name = "tfa",
+  srcs = ["tfa.py"],
   data = ["@bark_project//python:bark.so",
           "//python:bark_ml_library.so"],
   imports = ['../python/'],

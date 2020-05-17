@@ -118,7 +118,8 @@ class BehaviorSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
     return action_step.action.numpy()
 
   def Plan(self, observed_world, dt):
-    observed_state = self._environment._observer.Observe(observed_world)
-    action = self.Act(observed_state)
-    super().ActionToBehavior(action)
+    if self._training == True:
+      observed_state = self._environment._observer.Observe(observed_world)
+      action = self.Act(observed_state)
+      super().ActionToBehavior(action)
     return super().Plan(observed_world, dt)

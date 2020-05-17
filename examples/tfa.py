@@ -17,7 +17,7 @@ from bark_ml.library_wrappers.lib_tf_agents.runners.sac_runner import SACRunner
 from bark_ml.library_wrappers.lib_tf_agents.agents.ppo_agent import BehaviorPPOAgent
 from bark_ml.library_wrappers.lib_tf_agents.runners.ppo_runner import PPORunner
 
-params = ParameterServer(filename="/Users/hart/2020/bark-ml/examples/sac_params.json")
+params = ParameterServer(filename="/Users/hart/2020/bark-ml/examples/ml_params.json")
 # params = ParameterServer()
 
 bp = ContinuousHighwayBlueprint(params,
@@ -37,4 +37,4 @@ runner = PPORunner(params=params,
 
 # runner.Train()
 runner.Visualize()
-params.save("/Users/hart/2020/bark-ml/examples/sac_params.json")
+params.save("/Users/hart/2020/bark-ml/examples/ml_params.json")

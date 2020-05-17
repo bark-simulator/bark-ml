@@ -72,6 +72,8 @@ class TFARunner:
 
   def Train(self):
     self.CollectInitialEpisodes()
+    # enable training
+    self._agent._training = True
     if self._summary_writer is not None:
       with self._summary_writer.as_default():
         self._train()
