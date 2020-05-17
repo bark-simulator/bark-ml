@@ -674,21 +674,21 @@
         "summary_path": "configurations/highway/summaries/"
     },
     "Evaluator": {
-      "max_steps": 60,
-      "collision_penalty": -1.0,
-      "goal_reward": 1.0
+      "MaxSteps": 60,
+      "CollisionPenalty": -1.0,
+      "GoalReward": 1.0
     },
     "Observer": {
-      "velocity_range": [0, 30],
-      "theta_range": [-3.14, 3.14],
-      "normalization_enabled": true,
-      "max_num_agents": 2
+      "VelocityRange": [0, 30],
+      "ThetaRange": [-3.14, 3.14],
+      "NormalizationEnabled": true,
+      "MaxNumAgents": 2
     },
     "DynamicModel": {
       "action_dimension": 2,
       "action_num": 1,
-      "actions_lower_bound": [-1.0, -0.15],
-      "actions_upper_bound": [1.0, 0.15]
+      "ActionsLowerBound": [-1.0, -0.15],
+      "ActionsUpperBound": [1.0, 0.15]
     }
   },
   "World": {

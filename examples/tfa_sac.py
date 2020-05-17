@@ -34,4 +34,4 @@ runner = SACRunner(params=params,
 
 # runner.Train()
 # runner.Visualize()
-# TODO(@hart): dump (formatted) parameters
+params.save("/Users/hart/2020/bark-ml/examples/sac_params.json")

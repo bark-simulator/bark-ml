@@ -111,8 +111,8 @@
       },
       "DynamicModel": {
           "action_dimension": 1,
-          "actions_lower_bound": [-2.0],
-          "actions_upper_bound": [2.0]
+          "ActionsLowerBound": [-2.0],
+          "ActionsUpperBound": [2.0]
       }
   },
   "DynamicModel": {

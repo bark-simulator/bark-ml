@@ -17,16 +17,16 @@ class GoalReached(StateEvaluator):
                params=ParameterServer(),
                eval_agent=None):
     StateEvaluator.__init__(self, params)
-    self._goal_reward = \
-      self._params["ML"]["Evaluator"]["goal_reward",
+    self._GoalReward = \
+      self._params["ML"]["GoalReachedEvaluator"]["GoalReward",
         "Reward for reaching the goal.",
         100.]
-    self._collision_penalty = \
-      self._params["ML"]["Evaluator"]["collision_penalty",
+    self._CollisionPenalty = \
+      self._params["ML"]["GoalReachedEvaluator"]["CollisionPenalty",
         "Reward given for a collisions.",
         -100.]
-    self._max_steps = \
-      self._params["ML"]["Evaluator"]["max_steps",
+    self._MaxSteps = \
+      self._params["ML"]["GoalReachedEvaluator"]["MaxSteps",
         "Maximum steps per episode.",
         50]
     self._eval_agent = eval_agent
@@ -46,11 +46,11 @@ class GoalReached(StateEvaluator):
     drivable_area = eval_results["drivable_area"]
     step_count = eval_results["step_count"]
     # determine whether the simulation should terminate
-    if success or collision or drivable_area or step_count > self._max_steps:
+    if success or collision or drivable_area or step_count > self._MaxSteps:
       done = True
     # calculate reward
-    reward = collision * self._collision_penalty + \
-      success * self._goal_reward
+    reward = collision * self._CollisionPenalty + \
+      success * self._GoalReward
     return reward, done, eval_results
     
   def Reset(self, world):

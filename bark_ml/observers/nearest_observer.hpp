@@ -49,13 +49,13 @@ class NearestObserver {
     params_(params) {
       nearest_agent_num_ =
         params_->GetInt(
-          "ML::Observer::n_nearest_agents", "Nearest agents number", 4);
-      min_theta_ = params_->GetReal("ML::Observer::min_theta", "", -3.14);
-      max_theta_ = params_->GetReal("ML::Observer::max_theta", "", 3.14);
-      min_vel_ = params_->GetReal("ML::Observer::min_vel", "", 0.0);
-      max_vel_ = params_->GetReal("ML::Observer::max_vel", "", 25.0);
-      max_dist_ = params_->GetReal("ML::Observer::max_dist", "", 75.0);
-      state_size_ = params_->GetInt("ML::Observer::state_size", "", 4);
+          "ML::NearestObserver::n_nearest_agents", "Nearest agents number", 4);
+      min_theta_ = params_->GetReal("ML::NearestObserver::min_theta", "", -3.14);
+      max_theta_ = params_->GetReal("ML::NearestObserver::max_theta", "", 3.14);
+      min_vel_ = params_->GetReal("ML::NearestObserver::min_vel", "", 0.0);
+      max_vel_ = params_->GetReal("ML::NearestObserver::max_vel", "", 25.0);
+      max_dist_ = params_->GetReal("ML::NearestObserver::max_dist", "", 75.0);
+      state_size_ = params_->GetInt("ML::NearestObserver::state_size", "", 4);
       observation_len_ = nearest_agent_num_ * state_size_;
   }
 

@@ -27,12 +27,12 @@ class PPORunner(TFARunner):
                        params=params)
 
   def _train(self):
-    for i in range(0, self._params["PPORunner"]["NumberOfCollections", "", 20]):
+    for i in range(0, self._params["ML"]["PPORunner"]["NumberOfCollections", "", 20]):
       global_iteration = self._agent._agent._train_step_counter.numpy()
       self._collection_driver.run()
       trajectories = self._agent._replay_buffer.gather_all()
       self._agent._agent.train(experience=trajectories)
       self._agent._replay_buffer.clear()
-      if i % self._params["PPORunner"]["EvaluateEveryNSteps", "", 20] == 0:
+      if i % self._params["ML"]["PPORunner"]["EvaluateEveryNSteps", "", 20] == 0:
         self.Evaluate()
         self._agent.Save()

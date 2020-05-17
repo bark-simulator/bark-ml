@@ -24,7 +24,7 @@ class NearestAgentsObserver(StateObserver):
                               int(StateDefinition.THETA_POSITION),
                               int(StateDefinition.VEL_POSITION)]
     self._max_distance_other_agents = \
-      self._params["NearestAgentsObserver"]["MaxOtherDistance",
+      self._params["ML"]["NearestAgentsObserver"]["MaxOtherDistance",
       "Agents further than this distance are not observed; if not max" + \
       "other agents are seen, remaining concatenation state is set to zero",
       30]
@@ -85,7 +85,7 @@ class NearestAgentsObserver(StateObserver):
         self._max_num_vehicles*self._len_relative_agent_state))
 
   def _norm(self, agent_state):
-    if not self._normalization_enabled:
+    if not self._NormalizationEnabled:
         return agent_state
     agent_state[int(StateDefinition.X_POSITION)] = \
       self._norm_to_range(agent_state[int(StateDefinition.X_POSITION)],
@@ -95,10 +95,10 @@ class NearestAgentsObserver(StateObserver):
                           self._world_y_range)
     agent_state[int(StateDefinition.THETA_POSITION)] = \
       self._norm_to_range(agent_state[int(StateDefinition.THETA_POSITION)],
-                          self._theta_range)
+                          self._ThetaRange)
     agent_state[int(StateDefinition.VEL_POSITION)] = \
       self._norm_to_range(agent_state[int(StateDefinition.VEL_POSITION)],
-                          self._velocity_range)
+                          self._VelocityRange)
     return agent_state
 
   def _norm_to_range(self, value, range):

@@ -42,10 +42,10 @@ class BehaviorTFAAgent:
 
   def GetCheckpointer(self):
     checkpointer = Checkpointer(
-        self._params["BehaviorTFAAgents"]["CheckpointPath", "", ""],
+        self._params["ML"]["BehaviorTFAAgents"]["CheckpointPath", "", ""],
       global_step=self._ckpt.step,
       tf_agent=self._agent,
-      max_to_keep=self._params["BehaviorTFAAgents"]["NumCheckpointsToKeep", "", 3])
+      max_to_keep=self._params["ML"]["BehaviorTFAAgents"]["NumCheckpointsToKeep", "", 3])
     checkpointer.initialize_or_restore()
     return checkpointer
 

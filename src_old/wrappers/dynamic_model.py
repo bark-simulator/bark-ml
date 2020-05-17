@@ -57,10 +57,10 @@ class DynamicModel(ActionWrapper):
     action_num = self._params["ML"]["DynamicModel"]["action_num",
         "Lower-bound for actions.",
         1]
-    lower_bounds = [self._params["ML"]["DynamicModel"]["actions_lower_bound",
+    lower_bounds = [self._params["ML"]["DynamicModel"]["ActionsLowerBound",
         "Lower-bound for actions.",
         [-0.5, -0.01]] for _ in range(action_num)]
-    upper_bounds = [self._params["ML"]["DynamicModel"]["actions_upper_bound",
+    upper_bounds = [self._params["ML"]["DynamicModel"]["ActionsUpperBound",
         "Upper-bound for actions.",
         [0.5, 0.01]] for _ in range(action_num)]
     return BoundedContinuous(

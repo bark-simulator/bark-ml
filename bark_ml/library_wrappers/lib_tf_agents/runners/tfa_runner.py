@@ -28,9 +28,9 @@ class TFARunner:
     self._params = params
     self._eval_metrics = [
       tf_metrics.AverageReturnMetric(
-        buffer_size=self._params["TFARunner"]["EvaluationSteps", "", 25]),
+        buffer_size=self._params["ML"]["TFARunner"]["EvaluationSteps", "", 25]),
       tf_metrics.AverageEpisodeLengthMetric(
-        buffer_size=self._params["TFARunner"]["EvaluationSteps", "", 25])
+        buffer_size=self._params["ML"]["TFARunner"]["EvaluationSteps", "", 25])
     ]
     self._agent = agent
     self._summary_writer = None
@@ -43,10 +43,10 @@ class TFARunner:
     self._logger = logging.getLogger()
 
   def SetupSummaryWriter(self):
-    if self._params["TFARunner"]["SummaryPath"] is not None:
+    if self._params["ML"]["TFARunner"]["SummaryPath"] is not None:
       try:
         self._summary_writer = tf.summary.create_file_writer(
-          self._params["BaseDir"] + "/" + self._params["TFARunner"]["SummaryPath"])
+          self._params["ML"]["BaseDir"] + "/" + self._params["ML"]["TFARunner"]["SummaryPath"])
       except:
         pass
     self.get_initial_collection_driver()
@@ -58,14 +58,14 @@ class TFARunner:
         env=self._wrapped_env,
         policy=self._agent._agent.collect_policy,
         observers=[self._agent._replay_buffer.add_batch],
-        num_episodes=self._params["TFARunner"]["InitialCollectionEpisodes", "", 1])
+        num_episodes=self._params["ML"]["TFARunner"]["InitialCollectionEpisodes", "", 1])
 
   def GetCollectionDriver(self):
     self._collection_driver = dynamic_episode_driver.DynamicEpisodeDriver(
       env=self._wrapped_env,
       policy=self._agent._agent.collect_policy,
       observers=[self._agent._replay_buffer.add_batch],
-      num_episodes=self._params["TFARunner"]["CollectionEpisodesPerStep", "", 1])
+      num_episodes=self._params["ML"]["TFARunner"]["CollectionEpisodesPerStep", "", 1])
 
   def CollectInitialEpisodes(self):
     self._initial_collection_driver.run()
@@ -86,12 +86,12 @@ class TFARunner:
   def Evaluate(self):
     global_iteration = self._agent._agent._train_step_counter.numpy()
     self._logger.info("Evaluating the agent's performance in {} episodes."
-      .format(str(self._params["TFARunner"]["EvaluationSteps", "", 20])))
+      .format(str(self._params["ML"]["TFARunner"]["EvaluationSteps", "", 20])))
     metric_utils.eager_compute(
       self._eval_metrics,
       self._wrapped_env,
       self._agent._agent.policy,
-      num_episodes=self._params["TFARunner"]["EvaluationSteps", "", 20])
+      num_episodes=self._params["ML"]["TFARunner"]["EvaluationSteps", "", 20])
     metric_utils.log_metrics(self._eval_metrics)
     tf.summary.scalar("mean_reward",
                       self._eval_metrics[0].result().numpy(),
@@ -104,7 +104,7 @@ class TFARunner:
       {} episodes." \
       .format(str(self._eval_metrics[0].result().numpy()),
               str(self._eval_metrics[1].result().numpy()),
-              str(self._params["TFARunner"]["EvaluationSteps", "", 20])))
+              str(self._params["ML"]["TFARunner"]["EvaluationSteps", "", 20])))
 
   def Visualize(self, num_episodes=1):
     for _ in range(0, num_episodes):

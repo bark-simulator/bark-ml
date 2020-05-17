@@ -64,15 +64,15 @@ class CustomEvaluator(GoalReached):
       self._next_goal_definition = next_goal
     
     # determine whether the simulation should terminate
-    if success or collision or step_count > self._max_steps:
+    if success or collision or step_count > self._MaxSteps:
       done = True
     distance = self._distance_to_next_goal(world)
     
     if distance is None:
       distance = 10.
     reward = 0.001*(10.0*self._goal_number - distance)
-    reward += collision * self._collision_penalty + \
-      success * self._goal_reward
+    reward += collision * self._CollisionPenalty + \
+      success * self._GoalReward
     logger.info("Distance: {}m and reward: {}".format(str(distance), str(reward)))    
     return reward, done, eval_results
     

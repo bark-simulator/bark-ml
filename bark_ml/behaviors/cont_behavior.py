@@ -14,12 +14,12 @@ class BehaviorContinuousML(BehaviorDynamicModel):
   def __init__(self,
                params=None):
     BehaviorDynamicModel.__init__(self, params)
-    self._lower_bounds = params["BehaviorContinuousML"][
-      "actions_lower_bound",
+    self._lower_bounds = params["ML"]["BehaviorContinuousML"][
+      "ActionsLowerBound",
       "Lower-bound for actions.",
       [-0.5, -0.01]]
-    self._upper_bounds = params["BehaviorContinuousML"][
-      "actions_upper_bound",
+    self._upper_bounds = params["ML"]["BehaviorContinuousML"][
+      "ActionsUpperBound",
       "Upper-bound for actions.",
       [0.5, 0.01]]
 
