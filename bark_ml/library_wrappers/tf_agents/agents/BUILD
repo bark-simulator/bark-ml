@@ -5,6 +5,7 @@ py_library(
             "tfa_agent.py"],
     data = ["@bark_project//python:bark.so"],
     imports = ["../external/bark_project/python/"],
-    deps = ["//bark_ml/library_wrappers/tf_agents:tfa_wrapper"],
+    deps = ["//bark_ml/library_wrappers/tf_agents:tfa_wrapper",
+            "//bark_ml/commons:py_spaces"],
     visibility = ["//visibility:public"],
 )

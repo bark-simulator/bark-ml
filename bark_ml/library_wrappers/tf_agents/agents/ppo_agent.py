@@ -16,6 +16,7 @@ from tf_agents.utils.common import Checkpointer
 from tf_agents.trajectories import time_step as ts
 
 from bark_ml.library_wrappers.tf_agents.agents.tfa_agent import TFAAgent
+from bark_ml.commons.py_spaces import BoundedContinuous
 
 
 class PPOAgent(TFAAgent, BehaviorDynamicModel):
@@ -94,3 +95,7 @@ class PPOAgent(TFAAgent, BehaviorDynamicModel):
     action = self.Act(observed_state)
     super().ActionToBehavior(action)
     return super().Plan(observed_world, dt)
+
+  @property
+  def action_space(self):
+    return BoundedContinuous(2)
