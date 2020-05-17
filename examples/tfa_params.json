@@ -5,17 +5,17 @@
     "ML": {
         "BehaviorContinuousML": {
             "ActionsLowerBound": [
-                -0.5,
-                -0.01
+                -5.0,
+                -0.2
             ],
             "ActionsUpperBound": [
-                0.5,
-                0.01
+                4.0,
+                0.2
             ]
         },
         "GoalReachedEvaluator": {
-            "GoalReward": 100.0,
-            "CollisionPenalty": -100.0,
+            "GoalReward": 1.0,
+            "CollisionPenalty": -1.0,
             "MaxSteps": 50
         },
         "StateObserver": {
@@ -31,44 +31,7 @@
             "MaxNumAgents": 2
         },
         "NearestAgentsObserver": {
-            "MaxOtherDistance": 30
-        },
-        "BehaviorSACAgent": {
-            "ActorFcLayerParams": [
-                512,
-                256,
-                256
-            ],
-            "CriticJointFcLayerParams": [
-                512,
-                256,
-                256
-            ],
-            "ActorLearningRate": 0.0003,
-            "CriticLearningRate": 0.0003,
-            "AlphaLearningRate": 0.0003,
-            "TargetUpdateTau": 0.05,
-            "TargetUpdatePeriod": 3,
-            "Gamma": 0.995,
-            "RewardScaleFactor": 1.0,
-            "GradientClipping": 0,
-            "AgentName": "sac_agent",
-            "DebugSummaries": false,
-            "ReplayBufferCapacity": 10000,
-            "ParallelBufferCalls": 1,
-            "BatchSize": 512,
-            "BufferNumSteps": 1,
-            "BufferPrefetch": 3
-        },
-        "BehaviorTFAAgents": {
-            "CheckpointPath": "/Users/hart/2020/bark-ml/examples/train/",
-            "NumCheckpointsToKeep": 3
-        },
-        "TFARunner": {
-            "EvaluationSteps": 25,
-            "InitialCollectionEpisodes": 1,
-            "CollectionEpisodesPerStep": 1,
-            "SummaryPath": "/Users/hart/2020/bark-ml/examples/train/"
+            "MaxOtherDistance": 100
         },
         "BehaviorPPOAgent": {
             "ActorFcLayerParams": [
@@ -90,8 +53,17 @@
             "NumParallelEnvironments": 1,
             "ReplayBufferCapacity": 1000
         },
+        "BehaviorTFAAgents": {
+            "CheckpointPath": "",
+            "NumCheckpointsToKeep": 3
+        },
+        "TFARunner": {
+            "EvaluationSteps": 25,
+            "InitialCollectionEpisodes": 1,
+            "CollectionEpisodesPerStep": 1
+        },
         "PPORunner": {
-            "NumberOfCollections": 2000,
+            "NumberOfCollections": 20,
             "EvaluateEveryNSteps": 20
         }
     },

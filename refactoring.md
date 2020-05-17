@@ -84,4 +84,8 @@ BarkMLBehaviorSACAgent(BARKMLBehavior):
 
 
 
-# Timeplan / Tasks
+# ToDos:
+- scenarios closer to reality
+- get sac running
+- improve observer and evaluator
+- train and see performance

@@ -17,11 +17,11 @@ class BehaviorContinuousML(BehaviorDynamicModel):
     self._lower_bounds = params["ML"]["BehaviorContinuousML"][
       "ActionsLowerBound",
       "Lower-bound for actions.",
-      [-0.5, -0.2]]
+      [-5.0, -0.2]]
     self._upper_bounds = params["ML"]["BehaviorContinuousML"][
       "ActionsUpperBound",
       "Upper-bound for actions.",
-      [0.5, 0.2]]
+      [4.0, 0.2]]
 
   @property
   def action_space(self):
