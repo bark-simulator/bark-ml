@@ -16,33 +16,26 @@ from tf_agents.trajectories import time_step as ts
 from src.runners.base_runner import BaseRunner
 
 
-logger = logging.getLogger()
-# NOTE(@hart): this will print all statements
-# logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-
-class TFARunner(BaseRunner):
-  """Runner that takes the runtime and agent
-     and runs the training and evaluation as specified.
-  """
+class TFARunner:
   def __init__(self,
                runtime=None,
                agent=None,
-               params=ParameterServer(),
-               unwrapped_runtime=None):
-    BaseRunner.__init__(self,
-                        runtime=runtime,
-                        agent=agent,
-                        params=params)
+               params=None):
     self._eval_metrics = [
       tf_metrics.AverageReturnMetric(
         buffer_size=self._params["ML"]["Runner"]["evaluation_steps"]),
       tf_metrics.AverageEpisodeLengthMetric(
         buffer_size=self._params["ML"]["Runner"]["evaluation_steps"])
     ]
+    self._agent = agent
     self._summary_writer = None
+    self._params = params or ParameterServer()
     self._unwrapped_runtime = unwrapped_runtime
     self.get_initial_collection_driver()
     self.get_collection_driver()
+    self._logger = logging.getLogger()
+    # TODO(@hart): eval. runtime
+    # TODO(@hart): wrapped env.
 
   def setup_writer(self):
     if self._params["ML"]["Runner"]["summary_path"] is not None:
@@ -54,40 +47,26 @@ class TFARunner(BaseRunner):
     self.get_initial_collection_driver()
     self.get_collection_driver()
 
-  def get_initial_collection_driver(self):
-    """Sets the initial collection driver for tf-agents.
-    """
+  def GetInitialCollectionDriver(self):
     self._initial_collection_driver = \
       dynamic_episode_driver.DynamicEpisodeDriver(
         env=self._runtime,
         policy=self._agent._agent.collect_policy,
         observers=[self._agent._replay_buffer.add_batch],
         num_episodes=self._params["ML"]["Runner"]["initial_collection_steps"])
-    # self._initial_collection_driver.run = common.function(
-    #   self._initial_collection_driver.run)
 
-  def get_collection_driver(self):
-    """Sets the collection driver for tf-agents.
-    """
+  def GetCollectionDriver(self):
     self._collection_driver = dynamic_episode_driver.DynamicEpisodeDriver(
       env=self._runtime,
       policy=self._agent._agent.collect_policy,
       observers=[self._agent._replay_buffer.add_batch],
       num_episodes=self._params["ML"]["Runner"]["collection_episodes_per_cycle"])
-    # self._collection_driver.run = common.function(self._collection_driver.run)
 
-  def collect_initial_episodes(self):
-    """Function that collects the initial episodes
-    """
+  def CollectInitialEpisodes(self):
     self._initial_collection_driver.run()
 
-  def train(self):
-    """Wrapper that sets the summary writer.
-       This enables a seamingless integration with TensorBoard.
-    """
-    # collect initial episodes
+  def Train(self):
     self.collect_initial_episodes()
-    # main training cycle
     if self._summary_writer is not None:
       with self._summary_writer.as_default():
         self._train()
@@ -95,13 +74,11 @@ class TFARunner(BaseRunner):
       self._train()
 
   def _train(self):
-    """Trains the agent as specified in the parameter file
+    """Agent specific
     """
     pass
 
-  def evaluate(self):
-    """Evaluates the agent
-    """
+  def Evaluate(self):
     global_iteration = self._agent._agent._train_step_counter.numpy()
     logger.info("Evaluating the agent's performance in {} episodes."
       .format(str(self._params["ML"]["Runner"]["evaluation_steps"])))
@@ -124,8 +101,7 @@ class TFARunner(BaseRunner):
               str(self._eval_metrics[1].result().numpy()),
               str(self._params["ML"]["Runner"]["evaluation_steps"])))
 
-  def visualize(self, num_episodes=1):
-    # Ticket (https://github.com/tensorflow/agents/issues/59) recommends
+  def Visualize(self, num_episodes=1):
     # to do the rendering in the original environment
     if self._unwrapped_runtime is not None:
       for _ in range(0, num_episodes):

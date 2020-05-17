@@ -46,3 +46,15 @@ py_test(
             "//bark_ml/commons:py_spaces"],
     visibility = ["//visibility:public"],
 )
+
+py_test(
+    name = "py_library_tfa_tests",
+    srcs = ["py_library_tfa_tests.py"],
+    data = ["@bark_project//python:bark.so"],
+    imports = ["../external/bark_project/python/"],
+    deps = ["//bark_ml/environments:single_agent_runtime",
+            "//bark_ml/environments:gym",
+            "//bark_ml/library_wrappers/tf_agents/agents:agents",
+            "//bark_ml/commons:py_spaces"],
+    visibility = ["//visibility:public"],
+)

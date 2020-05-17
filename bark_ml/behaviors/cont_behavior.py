@@ -31,7 +31,7 @@ class ContinuousMLBehavior(BehaviorDynamicModel):
 
   @property
   def action_space(self):
-    return BoundedContinuous(
-      self._control_inputs*action_num,
-      low=np.array(self._lower_bounds, dtype=np.float32),
-      high=np.array(self._upper_bounds, dtype=np.float32))
+    return BoundedContinuous(2)
+      # 2, # acceleration and steering-rate
+      # low=np.array(self._lower_bounds, dtype=np.float32),
+      # high=np.array(self._upper_bounds, dtype=np.float32))

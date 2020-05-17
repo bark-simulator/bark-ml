@@ -78,7 +78,7 @@ class SingleAgentRuntime(Runtime):
   def action_space(self):
     """Action space of the agent
     """
-    return self._behavior_ml.action_space
+    return self._ml_behavior.action_space
 
   @property
   def observation_space(self):

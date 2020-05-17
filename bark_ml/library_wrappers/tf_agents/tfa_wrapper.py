@@ -15,7 +15,6 @@ class TFAWrapper(py_environment.PyEnvironment):
   Arguments:
     py_environment -- Base class for environment from tf_agents
   """
-
   def __init__(self, env):
     self._env = env
     self._action_spec = array_spec.BoundedArraySpec(
@@ -43,8 +42,6 @@ class TFAWrapper(py_environment.PyEnvironment):
   def render(self):
     """Renders the enviornment
     """
-    # Ticket (https://github.com/tensorflow/agents/issues/59) recommends
-    # to do the rendering in the original environment
     return self._env.render()
 
   def _reset(self):

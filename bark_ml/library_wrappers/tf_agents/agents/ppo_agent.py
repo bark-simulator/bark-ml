@@ -1,5 +1,8 @@
 import tensorflow as tf
 
+# BARK imports
+from bark.models.behavior import BehaviorModel, BehaviorDynamicModel
+
 # tfa
 from tf_agents.networks import actor_distribution_network
 from tf_agents.networks import actor_distribution_rnn_network
@@ -12,40 +15,22 @@ from tf_agents.replay_buffers import tf_uniform_replay_buffer
 from tf_agents.utils.common import Checkpointer
 from tf_agents.trajectories import time_step as ts
 
-from src.agents.tfa_agent import TFAAgent
+from bark_ml.library_wrappers.tf_agents.agents.tfa_agent import TFAAgent
 
 
-class PPOAgent(TFAAgent):
-  """PPO-Agent
-     This agent is based on the tf-agents library.
-  """
+class PPOAgent(TFAAgent, BehaviorDynamicModel):
   def __init__(self,
                environment=None,
-               replay_buffer=None,
-               checkpointer=None,
-               dataset=None,
-               params=None,
-               use_rnns=False):
-    self._use_rnns = use_rnns
+               params=None):
     TFAAgent.__init__(self,
                       environment=environment,
                       params=params)
-    self._replay_buffer = self.get_replay_buffer()
-    # self._dataset = self.get_dataset()
-    self._collect_policy = self.get_collect_policy()
-    self._eval_policy = self.get_eval_policy()
+    BehaviorDynamicModel.__init__(self, params)
+    self._replay_buffer = self.GetReplayBuffer()
+    self._collect_policy = self.GetCollectionPolicy()
+    self._eval_policy = self.GetEvalPolicy()
 
-  def get_agent(self, env, params):
-    """Returns a TensorFlow PPO-Agent
-    
-    Arguments:
-        env {TFAPyEnvironment} -- Tensorflow-Agents PyEnvironment
-        params {ParameterServer} -- ParameterServer from BARK
-    
-    Returns:
-        agent -- tf-agent
-    """
-
+  def GetAgent(self, env, params):
     actor_net = actor_distribution_network.ActorDistributionNetwork(
         env.observation_spec(),
         env.action_spec(),
@@ -73,34 +58,22 @@ class PPOAgent(TFAAgent):
     tf_agent.initialize()
     return tf_agent
 
-  def get_replay_buffer(self):
-    """Replay buffer
-    
-    Returns:
-        ReplayBuffer -- tf-agents replay buffer
-    """
+  def GetReplayBuffer(self):
     return tf_uniform_replay_buffer.TFUniformReplayBuffer(
       data_spec=self._agent.collect_data_spec,
       batch_size=self._params["ML"]["Agent"]["num_parallel_environments", "", 1],
       max_length=self._params["ML"]["Agent"]["replay_buffer_capacity", "", 1000])
 
-  def get_collect_policy(self):
-    """Returns the collection policy of the agent
-    
-    Returns:
-        CollectPolicy -- Samples from the agent's distribution
-    """
+  def GetCollectionPolicy(self):
     return self._agent.collect_policy
 
-  def get_eval_policy(self):
-    """Returns the greedy policy of the agent
-    
-    Returns:
-        GreedyPolicy -- Always returns best suitable action
-    """
+  def GetEvalPolicy(self):
     return self._agent.policy
 
-  def reset(self):
+  def Reset(self):
+    pass
+
+  def Clone(self):
     pass
 
   @property
@@ -111,9 +84,13 @@ class PPOAgent(TFAAgent):
   def eval_policy(self):
     return self._eval_policy
 
-  def act(self, state):
-    """ see base class
-    """
+  def Act(self, state):
     action_step = self.eval_policy.action(
       ts.transition(state, reward=0.0, discount=1.0))
     return action_step.action.numpy()
+
+  def Plan(self, observed_world, dt):
+    observed_state = self._environment._observer.Observe(observed_world)
+    action = self.Act(observed_state)
+    super().ActionToBehavior(action)
+    return super().Plan(observed_world, dt)

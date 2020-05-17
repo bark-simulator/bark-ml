@@ -1,5 +1,8 @@
 import tensorflow as tf
 
+# BARK imports
+from bark.models.behavior import BehaviorModel, BehaviorDynamicModel
+
 # tfa
 from tf_agents.networks import actor_distribution_network
 from tf_agents.networks import normal_projection_network
@@ -11,36 +14,25 @@ from tf_agents.replay_buffers import tf_uniform_replay_buffer
 from tf_agents.utils.common import Checkpointer
 from tf_agents.trajectories import time_step as ts
 
-from src.agents.tfa_agent import TFAAgent
+from bark_ml.library_wrappers.tf_agents.agents.tfa_agent import TFAAgent
 
-class SACAgent(TFAAgent):
+class SACAgent(TFAAgent, BehaviorDynamicModel):
   """SAC-Agent
      This agent is based on the tf-agents library.
   """
   def __init__(self,
                environment=None,
-               replay_buffer=None,
-               checkpointer=None,
-               dataset=None,
                params=None):
     TFAAgent.__init__(self,
                       environment=environment,
                       params=params)
-    self._replay_buffer = self.get_replay_buffer()
-    self._dataset = self.get_dataset()
-    self._collect_policy = self.get_collect_policy()
-    self._eval_policy = self.get_eval_policy()
+    BehaviorDynamicModel.__init__(self, params)
+    self._replay_buffer = self.GetReplayBuffer()
+    self._dataset = self.GetDataset()
+    self._collect_policy = self.GetCollectionPolicy()
+    self._eval_policy = self.GetEvalPolicy()
 
-  def get_agent(self, env, params):
-    """Returns a TensorFlow SAC-Agent
-    
-    Arguments:
-        env {TFAPyEnvironment} -- Tensorflow-Agents PyEnvironment
-        params {ParameterServer} -- ParameterServer from BARK
-    
-    Returns:
-        agent -- tf-agent
-    """
+  def GetAgent(self, env, params):
     def _normal_projection_net(action_spec, init_means_output_factor=0.1):
       return normal_projection_network.NormalProjectionNetwork(
         action_spec,
@@ -85,28 +77,18 @@ class SACAgent(TFAAgent):
       reward_scale_factor=self._params["ML"]["Agent"]["reward_scale_factor", "", 1.],
       gradient_clipping=self._params["ML"]["Agent"]["gradient_clipping"],
       train_step_counter=self._ckpt.step,
-      name=self._params["ML"]["Agent"]["agent_name"],
+      name=self._params["ML"]["Agent"]["agent_name", "", "sac_agent"],
       debug_summaries=self._params["ML"]["Agent"]["debug_summaries", "", False])
     tf_agent.initialize()
     return tf_agent
 
-  def get_replay_buffer(self):
-    """Replay buffer
-    
-    Returns:
-        ReplayBuffer -- tf-agents replay buffer
-    """
+  def GetReplayBuffer(self):
     return tf_uniform_replay_buffer.TFUniformReplayBuffer(
       data_spec=self._agent.collect_data_spec,
-      batch_size=self._env.batch_size,
+      batch_size=self._wrapped_env.batch_size,
       max_length=self._params["ML"]["Agent"]["replay_buffer_capacity", "", 10000])
 
-  def get_dataset(self):
-    """Dataset generated of the replay buffer
-    
-    Returns:
-        dataset -- subset of experiences
-    """
+  def GetDataset(self):
     dataset = self._replay_buffer.as_dataset(
       num_parallel_calls=self._params["ML"]["Agent"]["parallel_buffer_calls", "", 1],
       sample_batch_size=self._params["ML"]["Agent"]["batch_size", "", 256],
@@ -114,23 +96,13 @@ class SACAgent(TFAAgent):
         .prefetch(self._params["ML"]["Agent"]["buffer_prefetch", "", 2])
     return dataset
 
-  def get_collect_policy(self):
-    """Returns the collection policy of the agent
-    
-    Returns:
-        CollectPolicy -- Samples from the agent's distribution
-    """
+  def GetCollectionPolicy(self):
     return self._agent.collect_policy
 
-  def get_eval_policy(self):
-    """Returns the greedy policy of the agent
-    
-    Returns:
-        GreedyPolicy -- Always returns best suitable action
-    """
+  def GetEvalPolicy(self):
     return greedy_policy.GreedyPolicy(self._agent.policy)
 
-  def reset(self):
+  def Reset(self):
     pass
 
   @property
@@ -141,9 +113,13 @@ class SACAgent(TFAAgent):
   def eval_policy(self):
     return self._eval_policy
 
-  def act(self, state):
-    """ see base class
-    """
+  def Act(self, state):
     action_step = self.eval_policy.action(
       ts.transition(state, reward=0.0, discount=1.0))
     return action_step.action.numpy()
+
+  def Plan(self, observed_world, dt):
+    observed_state = self._environment._observer.Observe(observed_world)
+    action = self.Act(observed_state)
+    super().ActionToBehavior(action)
+    return super().Plan(observed_world, dt)
