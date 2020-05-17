@@ -18,7 +18,7 @@ from bark_ml.library_wrappers.tf_agents.tfa_wrapper import TFAWrapper
 
 
 # TODO(@hart): pass individual observer?
-class TFAAgent:
+class BehaviorTFAAgent:
   def __init__(self,
                environment=None,
                params=None):
@@ -40,11 +40,10 @@ class TFAAgent:
 
   def GetCheckpointer(self):
     checkpointer = Checkpointer(
-      self._params["BaseDir", "Base directory", "."] + "/" + \
-        self._params["ML"]["Agent"]["checkpoint_path", "", ""],
+        self._params["BehaviorTFAAgents"]["CheckpointPath", "", ""],
       global_step=self._ckpt.step,
       tf_agent=self._agent,
-      max_to_keep=self._params["ML"]["Agent"]["max_ckpts_to_keep", "", 3])
+      max_to_keep=self._params["BehaviorTFAAgents"]["NumCheckpointsToKeep", "", 3])
     checkpointer.initialize_or_restore()
     return checkpointer
 

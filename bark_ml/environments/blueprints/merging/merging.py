@@ -15,8 +15,8 @@ from bark.world.goal_definition import GoalDefinitionPolygon
 from bark_ml.environments.blueprints.blueprint import Blueprint
 from bark_ml.evaluators.goal_reached import GoalReached
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
-from bark_ml.behaviors.cont_behavior import ContinuousMLBehavior
-from bark_ml.behaviors.discrete_behavior import DiscreteMLBehavior
+from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
+from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteML
 
 class MergingLaneCorridorConfig(LaneCorridorConfig):
   def __init__(self,
@@ -78,7 +78,7 @@ class ContinuousMergingBlueprint(MergingBlueprint):
                params=None,
                number_of_senarios=25,
                random_seed=0):
-    ml_behavior = ContinuousMLBehavior(params)
+    ml_behavior = BehaviorContinuousML(params)
     MergingBlueprint.__init__(self,
                               params=params,
                               number_of_senarios=number_of_senarios,
@@ -92,7 +92,7 @@ class DiscreteMergingBlueprint(MergingBlueprint):
                number_of_senarios=25,
                random_seed=0):
     dynamic_model = SingleTrackModel(params)
-    ml_behavior = DiscreteMLBehavior(dynamic_model, params)
+    ml_behavior = BehaviorDiscreteML(dynamic_model, params)
     MergingBlueprint.__init__(self,
                               params=params,
                               number_of_senarios=number_of_senarios,

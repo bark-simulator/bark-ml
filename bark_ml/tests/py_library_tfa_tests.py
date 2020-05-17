@@ -19,8 +19,8 @@ from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
   DiscreteHighwayBlueprint, ContinuousMergingBlueprint, DiscreteMergingBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 import bark_ml.environments.gym
-from bark_ml.library_wrappers.tf_agents.agents.ppo_agent import PPOAgent
-from bark_ml.library_wrappers.tf_agents.agents.sac_agent import SACAgent
+from bark_ml.library_wrappers.tf_agents.agents.ppo_agent import BehaviorPPOAgent
+from bark_ml.library_wrappers.tf_agents.agents.sac_agent import BehaviorSACAgent
 from bark_ml.library_wrappers.tf_agents.runners.ppo_runner import PPORunner
 from bark_ml.library_wrappers.tf_agents.runners.sac_runner import SACRunner
 
@@ -31,9 +31,9 @@ class PyLibraryWrappersTFAgentTests(unittest.TestCase):
     params = ParameterServer()
     env = gym.make("highway-v0")
     env.reset()
-    agent = PPOAgent(environment=env,
+    agent = BehaviorPPOAgent(environment=env,
                      params=params)
-    agent = SACAgent(environment=env,
+    agent = BehaviorSACAgent(environment=env,
                      params=params)
 
   # assign as behavior model (to check if trained agent can be used)
@@ -47,15 +47,15 @@ class PyLibraryWrappersTFAgentTests(unittest.TestCase):
                              render=True)
     ml_behaviors = []
     ml_behaviors.append(
-      PPOAgent(environment=env,
+      BehaviorPPOAgent(environment=env,
                params=params))
     ml_behaviors.append(
-      SACAgent(environment=env,
+      BehaviorSACAgent(environment=env,
                params=params))
     
     for ml_behavior in ml_behaviors:
-      #! HACK
-      env._ml_behavior = ml_behavior
+      # set agent
+      env.ml_behavior = ml_behavior
       env.reset()
       done = False
       while done is False:
@@ -71,14 +71,16 @@ class PyLibraryWrappersTFAgentTests(unittest.TestCase):
                                     random_seed=0)
     env = SingleAgentRuntime(blueprint=bp,
                              render=False)
-    agent = PPOAgent(environment=env,
+    agent = BehaviorPPOAgent(environment=env,
                      params=params)
-    #! HACK
-    env._ml_behavior = agent
+    
+    # set agent
+    env.ml_behavior = agent
     runner = PPORunner(params=params,
                        environment=env,
                        agent=agent)
-    runner.Train()
+    # runner.Train()
+    runner.Visualize()
 
 
 if __name__ == '__main__':

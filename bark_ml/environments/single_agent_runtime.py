@@ -6,7 +6,7 @@
 
 import numpy as np
 from bark_project.modules.runtime.runtime import Runtime
-from bark_ml.behaviors.cont_behavior import ContinuousMLBehavior
+from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_project.modules.runtime.commons.parameters import ParameterServer
 from bark.models.behavior import BehaviorModel, BehaviorDynamicModel
 
@@ -85,3 +85,10 @@ class SingleAgentRuntime(Runtime):
     """
     return self._observer.observation_space
 
+  @property
+  def ml_behavior(self):
+    return self._ml_behavior
+
+  @ml_behavior.setter
+  def ml_behavior(self, ml_behavior):
+    self._ml_behavior = ml_behavior

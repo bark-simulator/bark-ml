@@ -12,7 +12,7 @@ from bark.models.dynamic import SingleTrackModel
 from bark_ml.commons.py_spaces import Discrete
 
 
-class DiscreteMLBehavior(BehaviorMPMacroActions):
+class BehaviorDiscreteML(BehaviorMPMacroActions):
   def __init__(self,
                dynamic_model=None,
                params=None):

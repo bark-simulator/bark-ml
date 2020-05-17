@@ -191,7 +191,7 @@
 },
 
     "ML": {
-        "PPOAgent": {
+        "BehaviorPPOAgent": {
           "actor_fc_layer_params": [512, 256, 256],
           "critic_fc_layer_params": [512, 256, 256],
           "learning_rate": 3e-4,

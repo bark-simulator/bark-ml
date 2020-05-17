@@ -11,21 +11,21 @@ from tf_agents.replay_buffers import tf_uniform_replay_buffer
 from tf_agents.utils.common import Checkpointer
 from tf_agents.trajectories import time_step as ts
 
-from bark_ml.library_wrappers.tf_agents.agents.tfa_agent import TFAAgent
-from bark_ml.behaviors.cont_behavior import ContinuousMLBehavior
+from bark_ml.library_wrappers.tf_agents.agents.tfa_agent import BehaviorTFAAgent
+from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 
 
-class SACAgent(TFAAgent, ContinuousMLBehavior):
+class BehaviorSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
   """SAC-Agent
      This agent is based on the tf-agents library.
   """
   def __init__(self,
                environment=None,
                params=None):
-    TFAAgent.__init__(self,
+    BehaviorTFAAgent.__init__(self,
                       environment=environment,
                       params=params)
-    ContinuousMLBehavior.__init__(self, params)
+    BehaviorContinuousML.__init__(self, params)
     self._replay_buffer = self.GetReplayBuffer()
     self._dataset = self.GetDataset()
     self._collect_policy = self.GetCollectionPolicy()
@@ -46,7 +46,7 @@ class SACAgent(TFAAgent, ContinuousMLBehavior):
         env.observation_spec(),
         env.action_spec(),
         fc_layer_params=tuple(
-          self._params["ML"]["Agent"]["actor_fc_layer_params", "", [512, 256, 256]]),
+          self._params["BehaviorSACAgent"]["actor_fc_layer_params", "", [512, 256, 256]]),
         continuous_projection_net=_normal_projection_net)
 
     # critic network
@@ -55,7 +55,7 @@ class SACAgent(TFAAgent, ContinuousMLBehavior):
       observation_fc_layer_params=None,
       action_fc_layer_params=None,
       joint_fc_layer_params=tuple(
-        self._params["ML"]["Agent"]["critic_joint_fc_layer_params", "", [512, 256, 256]]))
+        self._params["BehaviorSACAgent"]["critic_joint_fc_layer_params", "", [512, 256, 256]]))
     
     # agent
     tf_agent = sac_agent.SacAgent(
@@ -64,20 +64,20 @@ class SACAgent(TFAAgent, ContinuousMLBehavior):
       actor_network=actor_net,
       critic_network=critic_net,
       actor_optimizer=tf.compat.v1.train.AdamOptimizer(
-          learning_rate=self._params["ML"]["Agent"]["actor_learning_rate", "", 3e-4]),
+          learning_rate=self._params["BehaviorSACAgent"]["actor_learning_rate", "", 3e-4]),
       critic_optimizer=tf.compat.v1.train.AdamOptimizer(
-          learning_rate=self._params["ML"]["Agent"]["critic_learning_rate", "", 3e-4]),
+          learning_rate=self._params["BehaviorSACAgent"]["critic_learning_rate", "", 3e-4]),
       alpha_optimizer=tf.compat.v1.train.AdamOptimizer(
-          learning_rate=self._params["ML"]["Agent"]["alpha_learning_rate", "", 3e-4]),
-      target_update_tau=self._params["ML"]["Agent"]["target_update_tau", "", 0.005],
-      target_update_period=self._params["ML"]["Agent"]["target_update_period", "", 3],
+          learning_rate=self._params["BehaviorSACAgent"]["alpha_learning_rate", "", 3e-4]),
+      target_update_tau=self._params["BehaviorSACAgent"]["target_update_tau", "", 0.005],
+      target_update_period=self._params["BehaviorSACAgent"]["target_update_period", "", 3],
       td_errors_loss_fn=tf.compat.v1.losses.mean_squared_error,
-      gamma=self._params["ML"]["Agent"]["gamma", "", 0.995],
-      reward_scale_factor=self._params["ML"]["Agent"]["reward_scale_factor", "", 1.],
-      gradient_clipping=self._params["ML"]["Agent"]["gradient_clipping"],
+      gamma=self._params["BehaviorSACAgent"]["gamma", "", 0.995],
+      reward_scale_factor=self._params["BehaviorSACAgent"]["reward_scale_factor", "", 1.],
+      gradient_clipping=self._params["BehaviorSACAgent"]["gradient_clipping"],
       train_step_counter=self._ckpt.step,
-      name=self._params["ML"]["Agent"]["agent_name", "", "sac_agent"],
-      debug_summaries=self._params["ML"]["Agent"]["debug_summaries", "", False])
+      name=self._params["BehaviorSACAgent"]["agent_name", "", "sac_agent"],
+      debug_summaries=self._params["BehaviorSACAgent"]["debug_summaries", "", False])
     tf_agent.initialize()
     return tf_agent
 
@@ -85,14 +85,14 @@ class SACAgent(TFAAgent, ContinuousMLBehavior):
     return tf_uniform_replay_buffer.TFUniformReplayBuffer(
       data_spec=self._agent.collect_data_spec,
       batch_size=self._wrapped_env.batch_size,
-      max_length=self._params["ML"]["Agent"]["replay_buffer_capacity", "", 10000])
+      max_length=self._params["BehaviorSACAgent"]["replay_buffer_capacity", "", 10000])
 
   def GetDataset(self):
     dataset = self._replay_buffer.as_dataset(
-      num_parallel_calls=self._params["ML"]["Agent"]["parallel_buffer_calls", "", 1],
-      sample_batch_size=self._params["ML"]["Agent"]["batch_size", "", 256],
-      num_steps=self._params["ML"]["Agent"]["buffer_num_steps", "", 1]) \
-        .prefetch(self._params["ML"]["Agent"]["buffer_prefetch", "", 2])
+      num_parallel_calls=self._params["BehaviorSACAgent"]["parallel_buffer_calls", "", 1],
+      sample_batch_size=self._params["BehaviorSACAgent"]["batch_size", "", 256],
+      num_steps=self._params["BehaviorSACAgent"]["buffer_num_steps", "", 1]) \
+        .prefetch(self._params["BehaviorSACAgent"]["buffer_prefetch", "", 2])
     return dataset
 
   def GetCollectionPolicy(self):

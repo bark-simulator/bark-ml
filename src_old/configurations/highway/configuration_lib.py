@@ -25,8 +25,8 @@ from src.observers.nearest_state_observer import ClosestAgentsObserver
 from src.wrappers.dynamic_model import DynamicModel
 from src.wrappers.tfa_wrapper import TFAWrapper
 from src.evaluators.goal_reached import GoalReached
-from src.agents.sac_agent import SACAgent
-from src.agents.ppo_agent import PPOAgent
+from src.agents.sac_agent import BehaviorSACAgent
+from src.agents.ppo_agent import BehaviorPPOAgent
 from src.runners.sac_runner import SACRunner
 from src.runners.ppo_runner import PPORunner
 from configurations.base_configuration import BaseConfiguration
@@ -87,13 +87,13 @@ class HighwayConfiguration(BaseConfiguration):
                               scenario_generator=self._scenario_generator)
     tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(self._runtime))
     eval_tf_env = tf_py_environment.TFPyEnvironment(TFAWrapper(self._runtime))
-    # self._agent = PPOAgent(tfa_env, params=self._params)
+    # self._agent = BehaviorPPOAgent(tfa_env, params=self._params)
     # self._runner = PPORunner(tfa_env,
     #                          eval_tf_env,
     #                          self._agent,
     #                          params=self._params,
     #                          unwrapped_runtime=self._runtime)
-    self._agent = SACAgent(tfa_env, params=self._params)
+    self._agent = BehaviorSACAgent(tfa_env, params=self._params)
     self._runner = SACRunner(tfa_env,
                              self._agent,
                              params=self._params,

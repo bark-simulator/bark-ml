@@ -13,8 +13,8 @@ from bark.models.dynamic import SingleTrackModel
 from bark_ml.environments.blueprints.blueprint import Blueprint
 from bark_ml.evaluators.goal_reached import GoalReached
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
-from bark_ml.behaviors.cont_behavior import ContinuousMLBehavior
-from bark_ml.behaviors.discrete_behavior import DiscreteMLBehavior
+from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
+from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteML
 
 
 class HighwayBlueprint(Blueprint):
@@ -61,7 +61,7 @@ class ContinuousHighwayBlueprint(HighwayBlueprint):
                params=None,
                number_of_senarios=25,
                random_seed=0):
-    ml_behavior = ContinuousMLBehavior(params)
+    ml_behavior = BehaviorContinuousML(params)
     HighwayBlueprint.__init__(self,
                               params=params,
                               number_of_senarios=number_of_senarios,
@@ -75,7 +75,7 @@ class DiscreteHighwayBlueprint(HighwayBlueprint):
                number_of_senarios=25,
                random_seed=0):
     dynamic_model = SingleTrackModel(params)
-    ml_behavior = DiscreteMLBehavior(dynamic_model, params)
+    ml_behavior = BehaviorDiscreteML(dynamic_model, params)
     HighwayBlueprint.__init__(self,
                               params=params,
                               number_of_senarios=number_of_senarios,

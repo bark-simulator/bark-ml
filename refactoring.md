@@ -64,14 +64,15 @@ bark_sac = blue
 gym_env = blueprints.filter("gym",)
 
 ## 3 Check other libraries apart from tf agents
--> baselines, tf-agents
+-> baselines, tf-agents, diadem
 
 
 ## 4 BarkML runner generate statistics and reusable models
+--> integrated tf_agents runner
 BarkMlRun
     self.sucessful_scenario_ids =[]
     self.sceanrio_param_file_trained
-BarkMLSACAgent(BARKMLBehavior):
+BarkMLBehaviorSACAgent(BARKMLBehavior):
 
     def __init__():
 

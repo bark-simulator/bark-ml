@@ -10,7 +10,7 @@ from bark_project.modules.runtime.commons.parameters import ParameterServer
 
 
 from src.wrappers.tfa_wrapper import TFAWrapper
-from src.agents.ppo_agent import PPOAgent
+from src.agents.ppo_agent import BehaviorPPOAgent
 from src.runners.ppo_runner import PPORunner
 from configurations.base_configuration import BaseConfiguration
 
@@ -47,7 +47,7 @@ class PPODroneChallenge(BaseConfiguration):
     tfa_env = tf_py_environment.TFPyEnvironment(
       parallel_py_environment.ParallelPyEnvironment(
         [lambda: TFAWrapper(self._runtime)] * self._params["ML"]["Agent"]["num_parallel_environments", "", 0]))
-    self._agent = PPOAgent(tfa_env, params=self._params)
+    self._agent = BehaviorPPOAgent(tfa_env, params=self._params)
     self._runner = PPORunner(tfa_env,
                              self._agent,
                              params=self._params,

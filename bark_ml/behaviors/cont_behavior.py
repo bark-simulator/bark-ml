@@ -10,15 +10,15 @@ from bark.models.behavior import BehaviorModel, BehaviorDynamicModel
 from bark_ml.commons.py_spaces import BoundedContinuous
 
 
-class ContinuousMLBehavior(BehaviorDynamicModel):
+class BehaviorContinuousML(BehaviorDynamicModel):
   def __init__(self,
                params=None):
     BehaviorDynamicModel.__init__(self, params)
-    self._lower_bounds = params["ContinuousMLBehavior"][
+    self._lower_bounds = params["BehaviorContinuousML"][
       "actions_lower_bound",
       "Lower-bound for actions.",
       [-0.5, -0.01]]
-    self._upper_bounds = params["ContinuousMLBehavior"][
+    self._upper_bounds = params["BehaviorContinuousML"][
       "actions_upper_bound",
       "Upper-bound for actions.",
       [0.5, 0.01]]
