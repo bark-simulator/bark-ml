@@ -15,7 +15,7 @@ from tf_agents.replay_buffers import tf_uniform_replay_buffer
 from tf_agents.utils.common import Checkpointer
 from tf_agents.trajectories import time_step as ts
 
-from bark_ml.library_wrappers.tf_agents.agents.tfa_agent import BehaviorTFAAgent
+from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAAgent
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.commons.py_spaces import BoundedContinuous
 
@@ -37,11 +37,11 @@ class BehaviorPPOAgent(BehaviorTFAAgent, BehaviorContinuousML):
         env.observation_spec(),
         env.action_spec(),
         fc_layer_params=tuple(
-          self._params["BehaviorPPOAgent"]["actor_fc_layer_params", "", [512, 256, 256]]))
+          self._params["BehaviorPPOAgent"]["ActorFcLayerParams", "", [512, 256, 256]]))
     value_net = value_network.ValueNetwork(
       env.observation_spec(),
       fc_layer_params=tuple(
-        self._params["BehaviorPPOAgent"]["critic_fc_layer_params", "", [512, 256, 256]]))
+        self._params["BehaviorPPOAgent"]["CriticFcLayerParams", "", [512, 256, 256]]))
 
     # agent
     tf_agent = ppo_agent.PPOAgent(
@@ -49,22 +49,22 @@ class BehaviorPPOAgent(BehaviorTFAAgent, BehaviorContinuousML):
       env.action_spec(),
       actor_net=actor_net,
       value_net=value_net,
-      normalize_observations=self._params["BehaviorPPOAgent"]["normalize_observations", "", False],
-      normalize_rewards=self._params["BehaviorPPOAgent"]["normalize_rewards", "", False],
+      normalize_observations=self._params["BehaviorPPOAgent"]["NormalizeObservations", "", False],
+      normalize_rewards=self._params["BehaviorPPOAgent"]["NormalizeRewards", "", False],
       optimizer=tf.compat.v1.train.AdamOptimizer(
-          learning_rate=self._params["BehaviorPPOAgent"]["learning_rate", "", 3e-4]),
+          learning_rate=self._params["BehaviorPPOAgent"]["LearningRate", "", 3e-4]),
       train_step_counter=self._ckpt.step,
-      num_epochs=self._params["BehaviorPPOAgent"]["num_epochs", "", 30],
-      name=self._params["BehaviorPPOAgent"]["agent_name", "", "ppo_agent"],
-      debug_summaries=self._params["BehaviorPPOAgent"]["debug_summaries", "", False])
+      num_epochs=self._params["BehaviorPPOAgent"]["NumEpochs", "", 30],
+      name=self._params["BehaviorPPOAgent"]["AgentName", "", "ppo_agent"],
+      debug_summaries=self._params["BehaviorPPOAgent"]["DebugSummaries", "", False])
     tf_agent.initialize()
     return tf_agent
 
   def GetReplayBuffer(self):
     return tf_uniform_replay_buffer.TFUniformReplayBuffer(
       data_spec=self._agent.collect_data_spec,
-      batch_size=self._params["BehaviorPPOAgent"]["num_parallel_environments", "", 1],
-      max_length=self._params["BehaviorPPOAgent"]["replay_buffer_capacity", "", 1000])
+      batch_size=self._params["BehaviorPPOAgent"]["NumParallelEnvironments", "", 1],
+      max_length=self._params["BehaviorPPOAgent"]["ReplayBufferCapacity", "", 1000])
 
   def GetCollectionPolicy(self):
     return self._agent.collect_policy

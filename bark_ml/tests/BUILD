@@ -54,8 +54,8 @@ py_test(
     imports = ["../external/bark_project/python/"],
     deps = ["//bark_ml/environments:single_agent_runtime",
             "//bark_ml/environments:gym",
-            "//bark_ml/library_wrappers/tf_agents/agents:agents",
-            "//bark_ml/library_wrappers/tf_agents/runners:runners",
+            "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
+            "//bark_ml/library_wrappers/lib_tf_agents/runners:runners",
             "//bark_ml/commons:py_spaces"],
     visibility = ["//visibility:public"],
 )

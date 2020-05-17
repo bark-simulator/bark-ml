@@ -17,7 +17,7 @@ from tf_agents.utils import common
 from tf_agents.trajectories import time_step as ts
 
 # BARK-ML imports
-from bark_ml.library_wrappers.tf_agents.runners.tfa_runner import TFARunner
+from bark_ml.library_wrappers.lib_tf_agents.runners.tfa_runner import TFARunner
 
 
 class SACRunner(TFARunner):
@@ -25,18 +25,18 @@ class SACRunner(TFARunner):
                environment=None,
                agent=None,
                params=None):
-    TFARunner.__init__(sef,
+    TFARunner.__init__(self,
                        environment=environment,
                        agent=agent,
                        params=params)
 
   def _train(self):
     iterator = iter(self._agent._dataset)
-    for _ in range(0, self._params["ML"]["Runner"]["number_of_collections", "", 20]):
+    for _ in range(0, self._params["SACRunner"]["NumberOfCollections", "", 20]):
       global_iteration = self._agent._agent._train_step_counter.numpy()
       self._collection_driver.run()
       experience, _ = next(iterator)
       self._agent._agent.train(experience)
-      if global_iteration % self._params["ML"]["Runner"]["evaluate_every_n_steps", "", 20] == 0:
+      if global_iteration % self._params["SACRunner"]["EvaluateEveryNSteps", "", 20] == 0:
         self.Evaluate()
         self._agent.Save()

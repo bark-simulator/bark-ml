@@ -1,4 +1,5 @@
 import tensorflow as tf
+import logging
 
 # BARK imports
 from bark.models.behavior import BehaviorModel
@@ -14,7 +15,7 @@ from tf_agents.replay_buffers import tf_uniform_replay_buffer
 from tf_agents.utils.common import Checkpointer
 
 # BARK-ML imports
-from bark_ml.library_wrappers.tf_agents.tfa_wrapper import TFAWrapper
+from bark_ml.library_wrappers.lib_tf_agents.tfa_wrapper import TFAWrapper
 
 
 # TODO(@hart): pass individual observer?
@@ -31,6 +32,7 @@ class BehaviorTFAAgent:
     self._ckpt = tf.train.Checkpoint(step=tf.Variable(0, dtype=tf.int64),
                                      agent=self._agent)
     self._ckpt_manager = self.GetCheckpointer()
+    self._logger = logging.getLogger()
 
   def Reset(self):
     pass
@@ -50,7 +52,7 @@ class BehaviorTFAAgent:
   def Save(self):
     save_path = self._ckpt_manager.save(
       global_step=self._agent._train_step_counter)
-    print("Saved checkpoint for step {}.".format(
+    self._logger.info("Saved checkpoint for step {}.".format(
       int(self._agent._train_step_counter.numpy())))
 
   def Load(self):
@@ -59,7 +61,7 @@ class BehaviorTFAAgent:
     except:
       return RuntimeError("Could not load agent.")
     if self._ckpt_manager.latest_checkpoint:
-      print("Restored agent from {}".format(
+      self._logger.info("Restored agent from {}".format(
         self._ckpt_manager.latest_checkpoint))
     else:
-      print("Initializing agent from scratch.")
+      self._logger.info("Initializing agent from scratch.")
