@@ -61,10 +61,6 @@
             "EvaluationSteps": 25,
             "InitialCollectionEpisodes": 1,
             "CollectionEpisodesPerStep": 1
-        },
-        "PPORunner": {
-            "NumberOfCollections": 20,
-            "EvaluateEveryNSteps": 20
         }
     },
     "BehaviorIDMClassic": {

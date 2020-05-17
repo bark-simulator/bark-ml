@@ -86,6 +86,7 @@ class TFARunner:
     pass
 
   def Evaluate(self):
+    self._agent._training = False
     global_iteration = self._agent._agent._train_step_counter.numpy()
     self._logger.info("Evaluating the agent's performance in {} episodes."
       .format(str(self._params["ML"]["TFARunner"]["EvaluationSteps", "", 20])))
@@ -107,6 +108,8 @@ class TFARunner:
       .format(str(self._eval_metrics[0].result().numpy()),
               str(self._eval_metrics[1].result().numpy()),
               str(self._params["ML"]["TFARunner"]["EvaluationSteps", "", 20])))
+    self._agent._training = True
+
 
   def Visualize(self, num_episodes=1):
     for _ in range(0, num_episodes):
