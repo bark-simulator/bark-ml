@@ -23,15 +23,9 @@ class ContinuousMLBehavior(BehaviorDynamicModel):
       "Upper-bound for actions.",
       [0.5, 0.01]]
 
-  def Reset(self):
-    pass
-
-  def Clone(self):
-    return self
-
   @property
   def action_space(self):
-    return BoundedContinuous(2)
-      # 2, # acceleration and steering-rate
-      # low=np.array(self._lower_bounds, dtype=np.float32),
-      # high=np.array(self._upper_bounds, dtype=np.float32))
+    return BoundedContinuous(
+      2,  # acceleration and steering-rate
+      low=np.array(self._lower_bounds, dtype=np.float32),
+      high=np.array(self._upper_bounds, dtype=np.float32))

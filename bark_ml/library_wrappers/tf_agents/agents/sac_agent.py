@@ -1,8 +1,5 @@
 import tensorflow as tf
 
-# BARK imports
-from bark.models.behavior import BehaviorModel, BehaviorDynamicModel
-
 # tfa
 from tf_agents.networks import actor_distribution_network
 from tf_agents.networks import normal_projection_network
@@ -15,10 +12,10 @@ from tf_agents.utils.common import Checkpointer
 from tf_agents.trajectories import time_step as ts
 
 from bark_ml.library_wrappers.tf_agents.agents.tfa_agent import TFAAgent
-from bark_ml.commons.py_spaces import BoundedContinuous
+from bark_ml.behaviors.cont_behavior import ContinuousMLBehavior
 
 
-class SACAgent(TFAAgent, BehaviorDynamicModel):
+class SACAgent(TFAAgent, ContinuousMLBehavior):
   """SAC-Agent
      This agent is based on the tf-agents library.
   """
@@ -28,7 +25,7 @@ class SACAgent(TFAAgent, BehaviorDynamicModel):
     TFAAgent.__init__(self,
                       environment=environment,
                       params=params)
-    BehaviorDynamicModel.__init__(self, params)
+    ContinuousMLBehavior.__init__(self, params)
     self._replay_buffer = self.GetReplayBuffer()
     self._dataset = self.GetDataset()
     self._collect_policy = self.GetCollectionPolicy()
@@ -125,7 +122,3 @@ class SACAgent(TFAAgent, BehaviorDynamicModel):
     action = self.Act(observed_state)
     super().ActionToBehavior(action)
     return super().Plan(observed_world, dt)
-
-  @property
-  def action_space(self):
-    return BoundedContinuous(2)

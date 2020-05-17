@@ -27,7 +27,6 @@ from bark_ml.library_wrappers.tf_agents.runners.sac_runner import SACRunner
 
 class PyLibraryWrappersTFAgentTests(unittest.TestCase):
   # make sure the agent works
-  @unittest.skip("for now skipping")
   def test_agent_wrapping(self):
     params = ParameterServer()
     env = gym.make("highway-v0")
@@ -38,7 +37,6 @@ class PyLibraryWrappersTFAgentTests(unittest.TestCase):
                      params=params)
 
   # assign as behavior model (to check if trained agent can be used)
-  @unittest.skip("for now skipping")
   def test_behavior_wrapping(self):
     # create scenario
     params = ParameterServer()

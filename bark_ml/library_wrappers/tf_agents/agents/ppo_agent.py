@@ -16,17 +16,18 @@ from tf_agents.utils.common import Checkpointer
 from tf_agents.trajectories import time_step as ts
 
 from bark_ml.library_wrappers.tf_agents.agents.tfa_agent import TFAAgent
+from bark_ml.behaviors.cont_behavior import ContinuousMLBehavior
 from bark_ml.commons.py_spaces import BoundedContinuous
 
 
-class PPOAgent(TFAAgent, BehaviorDynamicModel):
+class PPOAgent(TFAAgent, ContinuousMLBehavior):
   def __init__(self,
                environment=None,
                params=None):
     TFAAgent.__init__(self,
                       environment=environment,
                       params=params)
-    BehaviorDynamicModel.__init__(self, params)
+    ContinuousMLBehavior.__init__(self, params)
     self._replay_buffer = self.GetReplayBuffer()
     self._collect_policy = self.GetCollectionPolicy()
     self._eval_policy = self.GetEvalPolicy()

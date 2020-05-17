@@ -47,8 +47,8 @@ class BoundedContinuous(Space):
                 low=None,
                 high=None):
     self._n = n
-    self._low = low or -10000.0
-    self._high = high or 100000.0
+    self._low = low
+    self._high = high
     Space.__init__(self, shape=(n,))
 
   def sample(self):

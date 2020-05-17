@@ -35,9 +35,6 @@ class DiscreteMLBehavior(BehaviorMPMacroActions):
     for mp in motion_primitives:
       super().AddMotionPrimitive(mp)
 
-  def Reset(self):
-    pass
-
   @property
   def action_space(self):
     return Discrete(self._behavior.GetNumMotionPrimitives(None))
