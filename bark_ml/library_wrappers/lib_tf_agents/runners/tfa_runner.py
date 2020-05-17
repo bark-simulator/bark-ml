@@ -46,7 +46,7 @@ class TFARunner:
     if self._params["ML"]["TFARunner"]["SummaryPath"] is not None:
       try:
         self._summary_writer = tf.summary.create_file_writer(
-          self._params["ML"]["BaseDir"] + "/" + self._params["ML"]["TFARunner"]["SummaryPath"])
+          self._params["ML"]["TFARunner"]["SummaryPath"])
       except:
         pass
     self.get_initial_collection_driver()

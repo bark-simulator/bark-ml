@@ -61,13 +61,38 @@
             "BufferPrefetch": 3
         },
         "BehaviorTFAAgents": {
-            "CheckpointPath": "",
+            "CheckpointPath": "/Users/hart/2020/bark-ml/examples/train/",
             "NumCheckpointsToKeep": 3
         },
         "TFARunner": {
             "EvaluationSteps": 25,
             "InitialCollectionEpisodes": 1,
-            "CollectionEpisodesPerStep": 1
+            "CollectionEpisodesPerStep": 1,
+            "SummaryPath": "/Users/hart/2020/bark-ml/examples/train/"
+        },
+        "BehaviorPPOAgent": {
+            "ActorFcLayerParams": [
+                512,
+                256,
+                256
+            ],
+            "CriticFcLayerParams": [
+                512,
+                256,
+                256
+            ],
+            "NormalizeObservations": false,
+            "NormalizeRewards": false,
+            "LearningRate": 0.0003,
+            "NumEpochs": 30,
+            "AgentName": "ppo_agent",
+            "DebugSummaries": false,
+            "NumParallelEnvironments": 1,
+            "ReplayBufferCapacity": 1000
+        },
+        "PPORunner": {
+            "NumberOfCollections": 2000,
+            "EvaluateEveryNSteps": 20
         }
     },
     "BehaviorIDMClassic": {

@@ -12,7 +12,6 @@ from tf_agents.policies import greedy_policy
 
 from tf_agents.agents.ppo import ppo_agent
 from tf_agents.replay_buffers import tf_uniform_replay_buffer
-from tf_agents.utils.common import Checkpointer
 from tf_agents.trajectories import time_step as ts
 
 from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAAgent
