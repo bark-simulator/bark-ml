@@ -69,12 +69,12 @@ class BehaviorSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
           learning_rate=self._params["ML"]["BehaviorSACAgent"]["CriticLearningRate", "", 3e-4]),
       alpha_optimizer=tf.compat.v1.train.AdamOptimizer(
           learning_rate=self._params["ML"]["BehaviorSACAgent"]["AlphaLearningRate", "", 3e-4]),
-      target_update_tau=self._params["ML"]["BehaviorSACAgent"]["TargetUpdateTau", "", 0.005],
+      target_update_tau=self._params["ML"]["BehaviorSACAgent"]["TargetUpdateTau", "", 0.05],
       target_update_period=self._params["ML"]["BehaviorSACAgent"]["TargetUpdatePeriod", "", 3],
       td_errors_loss_fn=tf.compat.v1.losses.mean_squared_error,
       gamma=self._params["ML"]["BehaviorSACAgent"]["Gamma", "", 0.995],
       reward_scale_factor=self._params["ML"]["BehaviorSACAgent"]["RewardScaleFactor", "", 1.],
-      gradient_clipping=self._params["ML"]["BehaviorSACAgent"]["GradientClipping"],
+      gradient_clipping=self._params["ML"]["BehaviorSACAgent"]["GradientClipping", "", 0],
       train_step_counter=self._ckpt.step,
       name=self._params["ML"]["BehaviorSACAgent"]["AgentName", "", "sac_agent"],
       debug_summaries=self._params["ML"]["BehaviorSACAgent"]["DebugSummaries", "", False])
@@ -90,7 +90,7 @@ class BehaviorSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
   def GetDataset(self):
     dataset = self._replay_buffer.as_dataset(
       num_parallel_calls=self._params["ML"]["BehaviorSACAgent"]["ParallelBufferCalls", "", 1],
-      sample_batch_size=self._params["ML"]["BehaviorSACAgent"]["BatchSize", "", 256],
+      sample_batch_size=self._params["ML"]["BehaviorSACAgent"]["BatchSize", "", 512],
       num_steps=self._params["ML"]["BehaviorSACAgent"]["BufferNumSteps", "", 1]) \
         .prefetch(self._params["ML"]["BehaviorSACAgent"]["BufferPrefetch", "", 3])
     return dataset

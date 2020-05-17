@@ -64,7 +64,7 @@ bark_sac = blue
 gym_env = blueprints.filter("gym",)
 
 ## 3 Check other libraries apart from tf agents
--> baselines, tf-agents, diadem
+-> baselines, tf-agents (DONE), diadem
 
 
 ## 4 BarkML runner generate statistics and reusable models

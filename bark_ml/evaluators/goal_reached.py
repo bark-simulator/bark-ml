@@ -20,11 +20,11 @@ class GoalReached(StateEvaluator):
     self._GoalReward = \
       self._params["ML"]["GoalReachedEvaluator"]["GoalReward",
         "Reward for reaching the goal.",
-        100.]
+        1.]
     self._CollisionPenalty = \
       self._params["ML"]["GoalReachedEvaluator"]["CollisionPenalty",
         "Reward given for a collisions.",
-        -100.]
+        -1.]
     self._MaxSteps = \
       self._params["ML"]["GoalReachedEvaluator"]["MaxSteps",
         "Maximum steps per episode.",

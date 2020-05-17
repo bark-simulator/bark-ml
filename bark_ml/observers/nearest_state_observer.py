@@ -27,7 +27,7 @@ class NearestAgentsObserver(StateObserver):
       self._params["ML"]["NearestAgentsObserver"]["MaxOtherDistance",
       "Agents further than this distance are not observed; if not max" + \
       "other agents are seen, remaining concatenation state is set to zero",
-      30]
+      100]
 
   def Observe(self, observed_world):
     """see base class
