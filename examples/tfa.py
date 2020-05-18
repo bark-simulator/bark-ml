@@ -31,23 +31,23 @@ env = SingleAgentRuntime(blueprint=bp,
                          render=False)
 
 # ppo
-ppo_agent = BehaviorPPOAgent(environment=env,
-                             params=params)
-env.ml_behavior = ppo_agent
-runner = PPORunner(params=params,
-                   environment=env,
-                   agent=ppo_agent)
+# ppo_agent = BehaviorPPOAgent(environment=env,
+#                              params=params)
+# env.ml_behavior = ppo_agent
+# runner = PPORunner(params=params,
+#                    environment=env,
+#                    agent=ppo_agent)
 
 # env = gym.make("Pendulum-v0")
 # sac
-# sac_agent = BehaviorSACAgent(environment=env,
-#                              params=params)
-# env.ml_behavior = sac_agent
-# runner = SACRunner(params=params,
-#                    environment=env,
-#                    agent=sac_agent)
+sac_agent = BehaviorSACAgent(environment=env,
+                             params=params)
+env.ml_behavior = sac_agent
+runner = SACRunner(params=params,
+                   environment=env,
+                   agent=sac_agent)
 
 
-# runner.Train()
+runner.Train()
 runner.Visualize(5)
 # params.save("/Users/hart/2020/bark-ml/examples/tfa_params.json")

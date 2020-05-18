@@ -65,7 +65,6 @@ gym_env = blueprints.filter("gym",)
 
 
 ## 4 BarkML runner generate statistics and reusable models
-
 --> integrated tf_agents runner
 BarkMlRun
     self.sucessful_scenario_ids =[]
@@ -87,8 +86,7 @@ BarkMLBehaviorSACAgent(BARKMLBehavior):
 - set training flag in eval to false (DONE)
 - improve observer (DONE)
 - improve evaluator (DONE)
-
-- get sac running (IN PROGRESS)
-- fix cont. integration (IN PROGRESS)
+- fix cont. integration (DONE)
+- get sac running (DONE)
 - train and validate performance
 - fix motion primitive behavior model

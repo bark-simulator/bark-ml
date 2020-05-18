@@ -23,8 +23,8 @@ class BehaviorSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
                environment=None,
                params=None):
     BehaviorTFAAgent.__init__(self,
-                      environment=environment,
-                      params=params)
+                              environment=environment,
+                              params=params)
     BehaviorContinuousML.__init__(self, params)
     self._replay_buffer = self.GetReplayBuffer()
     self._dataset = self.GetDataset()
@@ -74,10 +74,10 @@ class BehaviorSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
       td_errors_loss_fn=tf.compat.v1.losses.mean_squared_error,
       gamma=self._params["ML"]["BehaviorSACAgent"]["Gamma", "", 0.995],
       reward_scale_factor=self._params["ML"]["BehaviorSACAgent"]["RewardScaleFactor", "", 1.],
-      gradient_clipping=self._params["ML"]["BehaviorSACAgent"]["GradientClipping", "", 0],
       train_step_counter=self._ckpt.step,
       name=self._params["ML"]["BehaviorSACAgent"]["AgentName", "", "sac_agent"],
       debug_summaries=self._params["ML"]["BehaviorSACAgent"]["DebugSummaries", "", False])
+    
     tf_agent.initialize()
     return tf_agent
 
@@ -91,8 +91,8 @@ class BehaviorSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
     dataset = self._replay_buffer.as_dataset(
       num_parallel_calls=self._params["ML"]["BehaviorSACAgent"]["ParallelBufferCalls", "", 1],
       sample_batch_size=self._params["ML"]["BehaviorSACAgent"]["BatchSize", "", 512],
-      num_steps=self._params["ML"]["BehaviorSACAgent"]["BufferNumSteps", "", 1]) \
-        .prefetch(self._params["ML"]["BehaviorSACAgent"]["BufferPrefetch", "", 2])
+      num_steps=self._params["ML"]["BehaviorSACAgent"]["BufferNumSteps", "", 2]) \
+        .prefetch(self._params["ML"]["BehaviorSACAgent"]["BufferPrefetch", "", 3])
     return dataset
 
   def GetCollectionPolicy(self):
