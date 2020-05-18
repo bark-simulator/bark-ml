@@ -9,6 +9,8 @@ from bark_project.modules.runtime.viewer.matplotlib_viewer import MPViewer
 from bark_project.modules.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
 from bark.models.dynamic import SingleTrackModel
+from bark.world.opendrive import XodrDrivingDirection
+from bark.world.goal_definition import GoalDefinitionStateLimitsFrenet
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
 from bark_ml.evaluators.goal_reached import GoalReached
@@ -17,20 +19,42 @@ from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteML
 
 
+class HighwayLaneCorridorConfig(LaneCorridorConfig):
+  def __init__(self,
+               params=None,
+               **kwargs):
+    super(HighwayLaneCorridorConfig, self).__init__(params, **kwargs)
+  
+  def goal(self, world):
+    road_corr = world.map.GetRoadCorridor(
+      self._road_ids, XodrDrivingDirection.forward)
+    lane_corr = self._road_corridor.lane_corridors[0]
+    return GoalDefinitionStateLimitsFrenet(lane_corr.center_line,
+                                           (0.4, 0.4),
+                                           (0.1, 0.1),
+                                           (25., 35.))
+
+
 class HighwayBlueprint(Blueprint):
   def __init__(self,
                params=None,
                number_of_senarios=250,
                random_seed=0,
                ml_behavior=None):
-    left_lane = LaneCorridorConfig(params=params,
-                                   road_ids=[16],
-                                   lane_corridor_id=0,
-                                   controlled_ids=None)
-    right_lane = LaneCorridorConfig(params=params,
-                                    road_ids=[16],
-                                    lane_corridor_id=1,
-                                    controlled_ids=True)
+
+    params["BehaviorIDMClassic"]["DesiredVelocity"] = 30.
+    left_lane = HighwayLaneCorridorConfig(params=params,
+                                          road_ids=[16],
+                                          lane_corridor_id=0,
+                                          min_vel=25.0,
+                                          max_vel=30.0,
+                                          controlled_ids=None)
+    right_lane = HighwayLaneCorridorConfig(params=params,
+                                           road_ids=[16],
+                                           lane_corridor_id=1,
+                                           min_vel=25.0,
+                                           max_vel=30.0,
+                                           controlled_ids=True)
     scenario_generation = \
       ConfigWithEase(
         num_scenarios=number_of_senarios,
