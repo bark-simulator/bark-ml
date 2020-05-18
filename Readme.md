@@ -33,7 +33,7 @@ Available environments:
 
 ## TF-Agents
 
-TF-Agents example: `bazel run //examples:tfa`:
+The TF-Agents example can be run using: `bazel run //examples:tfa`.
 
 ## License
 
