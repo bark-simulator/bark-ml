@@ -33,25 +33,32 @@
         "NearestAgentsObserver": {
             "MaxOtherDistance": 100
         },
-        "BehaviorPPOAgent": {
+        "BehaviorSACAgent": {
             "ActorFcLayerParams": [
                 512,
                 256,
                 256
             ],
-            "CriticFcLayerParams": [
+            "CriticJointFcLayerParams": [
                 512,
                 256,
                 256
             ],
-            "NormalizeObservations": false,
-            "NormalizeRewards": false,
-            "LearningRate": 0.0003,
-            "NumEpochs": 30,
-            "AgentName": "ppo_agent",
+            "ActorLearningRate": 0.0003,
+            "CriticLearningRate": 0.0003,
+            "AlphaLearningRate": 0.0003,
+            "TargetUpdateTau": 0.05,
+            "TargetUpdatePeriod": 3,
+            "Gamma": 0.995,
+            "RewardScaleFactor": 1.0,
+            "GradientClipping": 0,
+            "AgentName": "sac_agent",
             "DebugSummaries": false,
-            "NumParallelEnvironments": 1,
-            "ReplayBufferCapacity": 1000
+            "ReplayBufferCapacity": 10000,
+            "ParallelBufferCalls": 1,
+            "BatchSize": 512,
+            "BufferNumSteps": 1,
+            "BufferPrefetch": 3
         },
         "BehaviorTFAAgents": {
             "CheckpointPath": "",

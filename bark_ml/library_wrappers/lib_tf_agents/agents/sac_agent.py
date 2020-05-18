@@ -92,7 +92,7 @@ class BehaviorSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
       num_parallel_calls=self._params["ML"]["BehaviorSACAgent"]["ParallelBufferCalls", "", 1],
       sample_batch_size=self._params["ML"]["BehaviorSACAgent"]["BatchSize", "", 512],
       num_steps=self._params["ML"]["BehaviorSACAgent"]["BufferNumSteps", "", 1]) \
-        .prefetch(self._params["ML"]["BehaviorSACAgent"]["BufferPrefetch", "", 3])
+        .prefetch(self._params["ML"]["BehaviorSACAgent"]["BufferPrefetch", "", 2])
     return dataset
 
   def GetCollectionPolicy(self):

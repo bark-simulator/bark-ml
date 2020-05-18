@@ -89,4 +89,4 @@ BarkMLBehaviorSACAgent(BARKMLBehavior):
 - get sac running
 - improve observer and evaluator
 - train and see performance
-- set training flag in eval to false
+- set training flag in eval to false (DONE)

@@ -72,8 +72,6 @@ class TFARunner:
 
   def Train(self):
     self.CollectInitialEpisodes()
-    # enable training
-    self._agent._training = True
     if self._summary_writer is not None:
       with self._summary_writer.as_default():
         self._train()
@@ -108,10 +106,10 @@ class TFARunner:
       .format(str(self._eval_metrics[0].result().numpy()),
               str(self._eval_metrics[1].result().numpy()),
               str(self._params["ML"]["TFARunner"]["EvaluationSteps", "", 20])))
-    self._agent._training = True
 
 
   def Visualize(self, num_episodes=1):
+    self._agent._training = False
     for _ in range(0, num_episodes):
       state = self._environment.reset()
       is_terminal = False

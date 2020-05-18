@@ -33,6 +33,7 @@ class SACRunner(TFARunner):
   def _train(self):
     iterator = iter(self._agent._dataset)
     for _ in range(0, self._params["ML"]["SACRunner"]["NumberOfCollections", "", 10000]):
+      self._agent._training = True
       global_iteration = self._agent._agent._train_step_counter.numpy()
       self._collection_driver.run()
       experience, _ = next(iterator)
