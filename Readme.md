@@ -15,11 +15,11 @@ BARK-ML supported machine learning libraries:
 * [TF-Agents](https://github.com/tensorflow/agents)
 * [Baselines](https://github.com/openai/baselines) (Planned)
 
-## The environments
+## Gym Environments
 
-First, install the virtual python enviornment (`bash install.sh`) and enter it (`source dev_into.sh`).
+Bef, install the virtual python enviornment (`bash install.sh`) and enter it (`source dev_into.sh`).
 
-Continuous environments: `bazel run //examples:continuous_env`:
+Continuous environments example: `bazel run //examples:continuous_env`
 <p align="center">
 <img src="docs/images/bark-ml.gif" alt="BARK-ML Highway" />
 </p>
