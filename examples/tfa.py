@@ -12,10 +12,8 @@ from bark_project.modules.runtime.commons.parameters import ParameterServer
 # BARK-ML imports
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-from bark_ml.library_wrappers.lib_tf_agents.agents.sac_agent import BehaviorSACAgent
-from bark_ml.library_wrappers.lib_tf_agents.runners.sac_runner import SACRunner
-from bark_ml.library_wrappers.lib_tf_agents.agents.ppo_agent import BehaviorPPOAgent
-from bark_ml.library_wrappers.lib_tf_agents.runners.ppo_runner import PPORunner
+from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, BehaviorPPOAgent
+from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner
 
 # params = ParameterServer(filename="/Users/hart/2020/bark-ml/examples/tfa_params.json")
 params = ParameterServer()
@@ -46,6 +44,8 @@ runner = PPORunner(params=params,
 #                    environment=env,
 #                    agent=sac_agent)
 
-runner.Train()
+# print(env.reset())
+# print(env.step())
+# runner.Train()
 runner.Visualize(5)
 # params.save("/Users/hart/2020/bark-ml/examples/tfa_params.json")

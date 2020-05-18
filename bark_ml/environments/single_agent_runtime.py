@@ -67,7 +67,8 @@ class SingleAgentRuntime(Runtime):
     reward, done, info = self._evaluator.Evaluate(
       observed_world=observed_world,
       action=action)
-  
+    
+    # print(action, observed_next_state, reward)
     # render
     if self._render:
       self.render()

@@ -1,6 +1,7 @@
 py_library(
     name = "agents",
-    srcs = ["sac_agent.py",
+    srcs = ["__init__.py",
+            "sac_agent.py",
             "ppo_agent.py",
             "tfa_agent.py"],
     data = ["@bark_project//python:bark.so"],
