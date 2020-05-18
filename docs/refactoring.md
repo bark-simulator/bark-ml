@@ -88,5 +88,7 @@ BarkMLBehaviorSACAgent(BARKMLBehavior):
 - improve evaluator (DONE)
 - fix cont. integration (DONE)
 - get sac running (DONE)
-- train and validate performance
-- fix motion primitive behavior model
+- train and validate performance (IN PROGRESS FOR SAC)
+- fix motion primitive behavior model (DISCUSSED WITH KLEMENS; NEXT)
+- intersection blueprint
+- improve and validate cpp observer

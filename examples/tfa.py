@@ -62,7 +62,7 @@ def run_configuration(argv):
     runner.Visualize(5)
   
   # store all used params of the training
-  # params.save("/Users/hart/2020/bark-ml/examples/tfa_params.json")
+  # params.Save("/Users/hart/2020/bark-ml/examples/tfa_params.json")
 
 
 if __name__ == '__main__':
