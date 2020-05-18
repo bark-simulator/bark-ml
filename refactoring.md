@@ -85,7 +85,7 @@ BarkMLBehaviorSACAgent(BARKMLBehavior):
 
 
 # ToDos:
-- scenarios closer to reality
+- scenarios closer to reality (DONE)
 - get sac running
 - improve observer (DONE)
 - improve evaluator (DONE)

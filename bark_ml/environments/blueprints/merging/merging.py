@@ -18,6 +18,7 @@ from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteML
 
+
 class MergingLaneCorridorConfig(LaneCorridorConfig):
   def __init__(self,
                params=None,
@@ -30,6 +31,7 @@ class MergingLaneCorridorConfig(LaneCorridorConfig):
     lane_corr = self._road_corridor.lane_corridors[0]
     return GoalDefinitionPolygon(lane_corr.polygon)
 
+
 class MergingBlueprint(Blueprint):
   def __init__(self,
                params=None,
@@ -39,14 +41,18 @@ class MergingBlueprint(Blueprint):
     left_lane = MergingLaneCorridorConfig(
       params=params,
       road_ids=[0, 1],
+      min_vel=10.,
+      max_vel=15.,
       lane_corridor_id=0,
       controlled_ids=None)
     right_lane = MergingLaneCorridorConfig(
       params=params,
       road_ids=[0, 1],
       lane_corridor_id=1,
-      s_min=0.,
-      s_max=20.,
+      s_min=5.,
+      s_max=25.,
+      min_vel=8.,
+      max_vel=12.,
       controlled_ids=True)
     scenario_generation = \
       ConfigWithEase(
