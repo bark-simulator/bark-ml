@@ -12,6 +12,7 @@ import bark_ml.environments.gym
 # env = gym.make("highway-v0")
 env = gym.make("merging-v0")
 
+
 env.reset()
 done = False
 while done is False:

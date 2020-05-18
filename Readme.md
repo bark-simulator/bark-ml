@@ -20,7 +20,9 @@ BARK-ML supported machine learning libraries:
 First, install the virtual python enviornment (`bash install.sh`) and enter it (`source dev_into.sh`).
 
 Continuous environments: `bazel run //examples:continuous_env`:
-Discrete environments: `bazel run //examples:discrete_env`:
+<p align="center">
+<img src="utils/bark-ml.gif" alt="BARK-ML Highway" />
+</p>
 
 Available environments:
 
