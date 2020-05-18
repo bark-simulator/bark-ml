@@ -37,4 +37,4 @@ class BehaviorDiscreteML(BehaviorMPMacroActions):
 
   @property
   def action_space(self):
-    return Discrete(self._behavior.GetNumMotionPrimitives(None))
+    return Discrete(self.GetNumMotionPrimitives(None))
