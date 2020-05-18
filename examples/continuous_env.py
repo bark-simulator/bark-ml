@@ -16,6 +16,6 @@ env = gym.make("merging-v0")
 env.reset()
 done = False
 while done is False:
-  action = np.random.uniform(low=np.array([-0.5, -0.02]), high=np.array([0.5, 0.02]), size=(2, ))
+  action = np.random.uniform(low=np.array([-0.5, -0.1]), high=np.array([0.5, 0.1]), size=(2, ))
   observed_next_state, reward, done, info = env.step(action)
   print(f"Observed state: {observed_next_state}, Action: {action}, Reward: {reward}, Done: {done}")
