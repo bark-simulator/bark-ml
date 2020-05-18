@@ -10,8 +10,9 @@ import bark_ml.environments.gym
 
 # cont. highway env
 env = gym.make("highway-v0")
-env.reset()
+# env = gym.make("merging-v0")
 
+env.reset()
 done = False
 while done is False:
   action = np.random.uniform(low=-0.1, high=0.1, size=(2, ))

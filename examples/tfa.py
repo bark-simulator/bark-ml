@@ -15,6 +15,7 @@ from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, BehaviorPPOAgent
 from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner
 
+
 # params = ParameterServer(filename="/Users/hart/2020/bark-ml/examples/tfa_params.json")
 params = ParameterServer()
 # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/2020/bark-ml/examples/train/"

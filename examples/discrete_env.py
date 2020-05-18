@@ -10,11 +10,9 @@ import bark_ml.environments.gym
 
 # discrete highway env
 env = gym.make("highway-v1")
+# env = gym.make("merging-v1")
 
-# TODO(@hart): make parameters settable
-env._render = False
 env.reset()
-
 done = False
 while done is False:
   action = np.random.randint(low=0, high=3)

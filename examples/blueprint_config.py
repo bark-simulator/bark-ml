@@ -30,7 +30,6 @@ env = SingleAgentRuntime(blueprint=bp,
 
 # gym interface
 env.reset()
-
 done = False
 while done is False:
   action = np.random.uniform(low=-0.1, high=0.1, size=(2, ))
