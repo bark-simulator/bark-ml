@@ -1,35 +1,31 @@
-# BARK-ML
 
-<img src="utils/bark_ml_logo.png" width="65%" align="center" />
+<p align="center">
+<img src="utils/bark_ml_logo.png" width="65%" alt="BARK-ML" />
+</p>
+
+## BARK-ML - Machine Learning for Autonomous Driving
 
 ![CI Build](https://github.com/bark-simulator/bark-ml/workflows/CI/badge.svg)
 
-Machine learning plays a vital role in decision making for autonomous agents. It enables learning based on experiences, a life-long improvement of the agents' behavior and much more.
-With recent advances, especially, in the field of reinforcement learning great leaps in behavior generation of autonomous systems have been achieved.
+BARK-ML provides <i>simple-to-use</i> [OpenAi-Gym](https://github.com/openai/gym) environments for several scenarios, such as highway driving, merging and intersections.
+Additionally, BARK-ML integrates <i>state-of-the-art</i> machine learning libraries to learn driving behaviors for autonomous vehicles.
 
-BARK-ML takes state-of-the-art machine learning methods and applies these to a deterministic simulation of autonomous agents (BARK). The current agent models are based on the tf-agents library (https://github.com/tensorflow/agents). Due to the modular design and concept of BARK-ML, we hope to support a wider range of machine learning libraries in the future.
+BARK-ML supported machine learning libraries:
 
-Reinforcement learning models that are currently available in BARK-ML:
+* [TF-Agents](https://github.com/tensorflow/agents)
+* [Baselines](https://github.com/openai/baselines) (Planned)
 
-* Soft-Actor-Critic (SAC)
-* Proximal Policy Optimization (PPO)
+### Quick-Start
 
+First, install the virtual python enviornment by running `bash install.sh` and enter it with `source dev_into.sh`.
 
-## Quick-Start
+Continuous environment: `bazel run //examples:continuous_env`:
+Discrete environment: `bazel run //examples:continuous_env`:
+TF-Agents exanple: `bazel run //examples:tfa`:
 
-To use BARK-ML a virtual python environment is recommended and can be installed using the command `bash install.sh`.
-Next, to enter the created virtual environment run the command `source dev_into.sh`. To verify the functionality of BARK-ML run the tests with the command `bazel test //...`.
+Available environments:
 
-## Configurations (Getting Started)
-
-Configurations are designed to run experiments in an hermetic container.
-
-To train a configuration use the following command inside the virtual environment:
-
-```
-bazel run //configurations/highway:configuration -- --base_dir=/tmp/ --mode=train
-```
-
-There are three modes the configurations can be run with: `train`, `visualize` and `evaluate`. You can use these flags in the above stated bazel command.
-
-Currently, you need to set the absolute path in the `config.json` for the checkpoints and summaries to work. You can visualize the training using tensoboard as follows: `tensorboard --logdir ./configurations/highway/summaries/`.
+* `highway-v0`: Continuous highway environment
+* `highway-v1`: Discrete highway environment
+* `merging-v0`: Continuous highway environment
+* `merging-v1`: Discrete highway environment
