@@ -19,7 +19,7 @@ BARK-ML supported machine learning libraries:
 
 Bef, install the virtual python enviornment (`bash install.sh`) and enter it (`source dev_into.sh`).
 
-Continuous environments example: `bazel run //examples:continuous_env`
+Continuous environments with random actions: `bazel run //examples:continuous_env`
 <p align="center">
 <img src="docs/images/bark-ml.gif" alt="BARK-ML Highway" />
 </p>
@@ -33,7 +33,12 @@ Available environments:
 
 ## TF-Agents
 
-The TF-Agents example can be run using: `bazel run //examples:tfa`.
+TF-Agents example (trained 15.000 episodes): `bazel run //examples:tfa`.
+
+<p align="center">
+<img src="docs/images/bark_ml_highway.gif" alt="BARK-ML Highway" />
+</p>
+
 
 ## License
 

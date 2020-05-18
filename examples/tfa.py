@@ -11,6 +11,8 @@ from absl import flags
 
 # BARK imports
 from bark_project.modules.runtime.commons.parameters import ParameterServer
+from modules.runtime.viewer.matplotlib_viewer import MPViewer
+from modules.runtime.viewer.video_renderer import VideoRenderer
 
 # BARK-ML imports
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint
@@ -37,8 +39,16 @@ def run_configuration(argv):
   bp = ContinuousHighwayBlueprint(params,
                                   number_of_senarios=10,
                                   random_seed=0)
+  viewer = MPViewer(params=params,
+                    x_range=[-35, 35],
+                    y_range=[-35, 35],
+                    follow_agent_id=True)
+  viewer = VideoRenderer(renderer=viewer,
+                         world_step_time=0.2,
+                         fig_path="/home/hart/Dokumente/2020/bark-ml/video/")
   env = SingleAgentRuntime(blueprint=bp,
-                          render=False)
+                           viewer=viewer,
+                           render=False)
 
   # PPO-agent
   # ppo_agent = BehaviorPPOAgent(environment=env,
@@ -53,16 +63,19 @@ def run_configuration(argv):
                               params=params)
   env.ml_behavior = sac_agent
   runner = SACRunner(params=params,
-                    environment=env,
-                    agent=sac_agent)
+                     environment=env,
+                     agent=sac_agent)
 
   if FLAGS.mode == "train":
     runner.Train()
   elif FLAGS.mode == "visualize":
-    runner.Visualize(5)
+    runner.Visualize(2)
   
   # store all used params of the training
   # params.Save("/Users/hart/2020/bark-ml/examples/tfa_params.json")
+
+  viewer.export_video(
+    filename="/home/hart/Dokumente/2020/bark-ml/video/video", remove_image_dir=False)
 
 
 if __name__ == '__main__':
