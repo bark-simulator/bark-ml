@@ -1,6 +1,6 @@
 
 <p align="center">
-<img src="utils/bark_ml_logo.png" width="65%" alt="BARK-ML" />
+<img src="docs/images/bark_ml_logo.png" width="65%" alt="BARK-ML" />
 </p>
 
 # BARK-ML - Machine Learning for Autonomous Driving
@@ -21,7 +21,7 @@ First, install the virtual python enviornment (`bash install.sh`) and enter it (
 
 Continuous environments: `bazel run //examples:continuous_env`:
 <p align="center">
-<img src="utils/bark-ml.gif" alt="BARK-ML Highway" />
+<img src="docs/images/bark-ml.gif" alt="BARK-ML Highway" />
 </p>
 
 Available environments:

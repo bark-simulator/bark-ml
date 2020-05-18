@@ -45,8 +45,7 @@ runner = PPORunner(params=params,
 #                    environment=env,
 #                    agent=sac_agent)
 
-# print(env.reset())
-# print(env.step())
-# runner.Train()
+
+runner.Train()
 runner.Visualize(5)
 # params.save("/Users/hart/2020/bark-ml/examples/tfa_params.json")
