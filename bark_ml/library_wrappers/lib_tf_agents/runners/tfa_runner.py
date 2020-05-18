@@ -58,7 +58,7 @@ class TFARunner:
         env=self._wrapped_env,
         policy=self._agent._agent.collect_policy,
         observers=[self._agent._replay_buffer.add_batch],
-        num_episodes=self._params["ML"]["TFARunner"]["InitialCollectionEpisodes", "", 1])
+        num_episodes=self._params["ML"]["TFARunner"]["InitialCollectionEpisodes", "", 50])
 
   def GetCollectionDriver(self):
     self._collection_driver = dynamic_episode_driver.DynamicEpisodeDriver(

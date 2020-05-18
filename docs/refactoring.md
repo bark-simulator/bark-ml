@@ -88,6 +88,7 @@ BarkMLBehaviorSACAgent(BARKMLBehavior):
 - improve observer (DONE)
 - improve evaluator (DONE)
 
-- get sac running
+- get sac running (IN PROGRESS)
+- fix cont. integration (IN PROGRESS)
 - train and validate performance
-- fix cont. integration
+- fix motion primitive behavior model
