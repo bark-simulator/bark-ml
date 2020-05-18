@@ -7,7 +7,6 @@
 - benchmark running over agent models
 - maybe: training agents over benchmark database
 
-
 # End User Interfaces
 
 runtime_rl = blueprints.filter("highway", "dense", "macro_actions)
@@ -15,7 +14,6 @@ runtime_rl = blueprints.filter("highway", "dense", "macro_actions)
 RuntimeRL(behavior_ml= BehaviorMacroActions(),)
 
 # Internal Interfaces
-
 
 ## 1 BarkMLBehavior and Runtime Definition (DONE)
 
@@ -41,14 +39,12 @@ Constructors
     # has to call plan method
 
 
-
 ## 2 Setup some blueprints (DONE)
 
 dir_gym_blueprints:
     blue_print_gym.py =
 
     read_blueprint.py
-
 
 
 class BluePrint:
@@ -64,10 +60,12 @@ bark_sac = blue
 gym_env = blueprints.filter("gym",)
 
 ## 3 Check other libraries apart from tf agents
+
 -> baselines, tf-agents (DONE), diadem
 
 
 ## 4 BarkML runner generate statistics and reusable models
+
 --> integrated tf_agents runner
 BarkMlRun
     self.sucessful_scenario_ids =[]
@@ -83,8 +81,8 @@ BarkMLBehaviorSACAgent(BARKMLBehavior):
         nn_state = slf.observer.observe
 
 
-
 # ToDos:
+
 - scenarios closer to reality (DONE)
 - set training flag in eval to false (DONE)
 - improve observer (DONE)
