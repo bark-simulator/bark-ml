@@ -1,0 +1,18 @@
+<<: *base
+agents:
+  # sub agents must be first to initialize before ensemble agent (otherwise they are not found)
+  sub_agent:
+    <<: *base_dqfd_agent
+    is_main_agent: 0
+    # avoid that agent manager passes observations as ensemble agent cares for observation
+    observe_via_agent_manager: 0 
+    # controls how many instances are initialized, ensemble agent uses each instance
+    num_instances: 5
+  default_agent:
+    <<: *base_ensemble_agent
+    is_main_agent: 1
+    agents_name_prefix: "sub_agent"
+
+experiment: 
+  <<: *base_experiment
+  max_episodes: 70

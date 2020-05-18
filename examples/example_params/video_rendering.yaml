@@ -1,0 +1,19 @@
+<<: *base
+agents:
+  default_agent:
+    <<: *base_dqfd_agent
+    is_main_agent: 1
+experiment: 
+  <<: *base_experiment
+  max_episodes: 70
+visualization:
+  render_every_n_episodes: 20
+  render_every_n_steps: 1
+  render_environment: 1
+  realtime_factor: 0.5
+
+  # video rendering properties
+  figures_path: ./figures     # path where all step screenshots and videos are stored
+  video_path: "./videos/{episode}"       # path where all videos are stored
+  figure_filename: "{step}.png" # pattern how screenshots will be named
+  framerate: 5   # how many frames per second

@@ -100,6 +100,11 @@ git_repository(
     remote = "https://github.com/ceres-solver/ceres-solver",
 )
 
+local_repository(
+    name = "diadem_project",
+    path = "/home/julo/diadem"
+)
+
 new_local_repository(
     name = "python_linux",
     path = "./python/venv/",
