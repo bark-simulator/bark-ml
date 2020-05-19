@@ -25,19 +25,19 @@ class BehaviorDiscreteML(BehaviorMPMacroActions):
     motion_primitives = []
     # stay on lane; acc = 0
     motion_primitives.append(
-      PrimitiveConstAccStayLane(self._params, self._dynamic_model, 0, 2.5))
+      PrimitiveConstAccStayLane(params, 0))
     # stay on lane; acc = -1.
     motion_primitives.append(
-      PrimitiveConstAccStayLane(self._params, self._dynamic_model, -1., 2.5))
+      PrimitiveConstAccStayLane(params, -1.))
     # stay on lane; acc = +1.
     motion_primitives.append(
-      PrimitiveConstAccStayLane(self._params, self._dynamic_model, 1., 2.5))
+      PrimitiveConstAccStayLane(params, 1.))
     # change to the left lane
     motion_primitives.append(
-      PrimitiveConstAccChangeToLeft(self._params, self._dynamic_model, 2.5))
+      PrimitiveConstAccChangeToLeft(params))
     # change to the right lane
     motion_primitives.append(
-      PrimitiveConstAccChangeToRight(self._params, self._dynamic_model, 2.5))
+      PrimitiveConstAccChangeToRight(params))
     for mp in motion_primitives:
       super().AddMotionPrimitive(mp)
 
