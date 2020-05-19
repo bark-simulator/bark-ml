@@ -48,10 +48,10 @@ class PyLibraryWrappersTFAgentTests(unittest.TestCase):
     ml_behaviors = []
     ml_behaviors.append(
       BehaviorPPOAgent(environment=env,
-               params=params))
+                       params=params))
     ml_behaviors.append(
       BehaviorSACAgent(environment=env,
-               params=params))
+                       params=params))
     
     for ml_behavior in ml_behaviors:
       # set agent

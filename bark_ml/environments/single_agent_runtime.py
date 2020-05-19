@@ -47,7 +47,7 @@ class SingleAgentRuntime(Runtime):
     eval_id = self._scenario._eval_agent_ids[0]
     self._world = self._observer.Reset(self._world)
     self._world = self._evaluator.Reset(self._world)
-    self._world.agents[eval_id].behavior_model = self._ml_behavior.Clone()
+    self._world.agents[eval_id].behavior_model = self._ml_behavior
     
     # observe
     observed_world = self._world.Observe([eval_id])[0]
