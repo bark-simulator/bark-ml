@@ -90,5 +90,6 @@
     "dense": "cpp",
     "__functional_03": "cpp",
     "*.ipp": "cpp"
-  }
+  },
+  "python.pythonPath": "${workspaceFolder}/python/venv/bin/python",
 }

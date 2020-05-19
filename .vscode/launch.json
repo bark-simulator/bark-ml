@@ -11,7 +11,7 @@
 					"program": "${file}",
 					"console": "integratedTerminal",
 					"env": {
-							"PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml"
+						"PYTHONPATH": "${workspaceFolder}/bazel-bark-ml/bark_ml/commons/"
 			 }
 			},
 			{

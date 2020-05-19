@@ -14,6 +14,7 @@ BARK-ML supported machine learning libraries:
 
 * [TF-Agents](https://github.com/tensorflow/agents)
 * [Baselines](https://github.com/openai/baselines) (Planned)
+* [Diadem](https://github.com/juloberno/diadem)
 
 ## Gym Environments
 

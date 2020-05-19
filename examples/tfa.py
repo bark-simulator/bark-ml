@@ -30,7 +30,7 @@ flags.DEFINE_enum("mode",
 
 
 def run_configuration(argv):
-  # params = ParameterServer(filename="/Users/hart/2020/bark-ml/examples/tfa_params.json")
+  # params = ParameterServer(filename="/Users/hart/2020/bark-ml/examples/example_params/tfa_params.json")
   params = ParameterServer()
   params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/2020/bark-ml/checkpoints/"
   params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/2020/bark-ml/checkpoints/"
@@ -73,7 +73,7 @@ def run_configuration(argv):
     runner.Visualize(3)
   
   # store all used params of the training
-  # params.Save("/Users/hart/2020/bark-ml/examples/tfa_params.json")
+  # params.Save("/Users/hart/2020/bark-ml/examples/example_params/tfa_params.json")
 
   viewer.export_video(
     filename="/Users/hart/2020/bark-ml/video/video", remove_image_dir=False)
