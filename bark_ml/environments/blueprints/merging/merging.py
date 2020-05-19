@@ -43,6 +43,8 @@ class MergingBlueprint(Blueprint):
       road_ids=[0, 1],
       min_vel=10.,
       max_vel=15.,
+      s_min=5.,
+      s_max=25.,
       lane_corridor_id=0,
       controlled_ids=None)
     right_lane = MergingLaneCorridorConfig(

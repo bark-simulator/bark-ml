@@ -26,7 +26,7 @@ class BehaviorLongitudinalML(BehaviorMPMacroActions):
     # add motion primitives
     motion_primitives = []
     for acc in np.linspace(-4., 3., num=10):
-      # stay on lane; acc = 0
+      # stay on lane
       super().AddMotionPrimitive(
         PrimitiveConstAccStayLane(self._params, self._dynamic_model, acc, 2.5))
 

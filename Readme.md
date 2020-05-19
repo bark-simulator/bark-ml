@@ -17,7 +17,7 @@ BARK-ML supported machine learning libraries:
 
 ## Gym Environments
 
-Bef, install the virtual python enviornment (`bash install.sh`) and enter it (`source dev_into.sh`).
+Before running the examples, install the virtual python environment (`bash install.sh`) and enter it (`source dev_into.sh`).
 
 Continuous environments with random actions: `bazel run //examples:continuous_env`
 <p align="center">
@@ -28,8 +28,10 @@ Available environments:
 
 * `highway-v0`: Continuous highway environment
 * `highway-v1`: Discrete highway environment
-* `merging-v0`: Continuous highway environment
-* `merging-v1`: Discrete highway environment
+* `merging-v0`: Continuous merging environment
+* `merging-v1`: Discrete merging environment
+* `intersection-v0`: Continuous intersection environment
+* `intersection-v1`: Discrete intersection environment
 
 ## TF-Agents
 
@@ -38,7 +40,6 @@ TF-Agents example (trained 15.000 episodes): `bazel run //examples:tfa`.
 <p align="center">
 <img src="docs/images/bark_ml_highway.gif" alt="BARK-ML Highway" />
 </p>
-
 
 ## License
 
