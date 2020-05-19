@@ -100,9 +100,10 @@ git_repository(
     remote = "https://github.com/ceres-solver/ceres-solver",
 )
 
-local_repository(
+git_repository(
     name = "diadem_project",
-    path = "/home/julo/diadem"
+    commit = "741b9ea7a96657e399ae039ab922a8baf0b0fce1",
+    remote = "https://github.com/juloberno/diadem"
 )
 
 new_local_repository(
