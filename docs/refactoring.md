@@ -7,13 +7,13 @@
 - benchmark running over agent models
 - maybe: training agents over benchmark database
 
-# End User Interfaces
+## End User Interfaces
 
 runtime_rl = blueprints.filter("highway", "dense", "macro_actions)
 
 RuntimeRL(behavior_ml= BehaviorMacroActions(),)
 
-# Internal Interfaces
+## Internal Interfaces
 
 ## 1 BarkMLBehavior and Runtime Definition (DONE)
 
@@ -65,6 +65,7 @@ gym_env = blueprints.filter("gym",)
 
 
 ## 4 BarkML runner generate statistics and reusable models
+
 --> integrated tf_agents runner
 BarkMlRun
     self.sucessful_scenario_ids =[]
@@ -79,8 +80,7 @@ BarkMLBehaviorSACAgent(BARKMLBehavior):
     def plan(observed_world):
         nn_state = slf.observer.observe
 
-
-# ToDos:
+## ToDos:
 
 - scenarios closer to reality (DONE)
 - set training flag in eval to false (DONE)
@@ -89,8 +89,10 @@ BarkMLBehaviorSACAgent(BARKMLBehavior):
 - fix cont. integration (DONE)
 - get sac running (DONE)
 - train and validate performance (SAC IN EXAMPLE TRAINS; DONE)
-- fix motion primitive behavior model (DISCUSSED WITH KLEMENS; NEXT)
+- fix motion primitive behavior model (SIMPLISTIC MODEL FOR NOW)
+- after BARK merge, deps on master (DONE)
+
 - cluster deployment (CONCEPT)
 - intersection blueprint
 - improve and validate cpp observer
-- after BARk merge, deps on master 
+- change dependencies structure as in BARK
