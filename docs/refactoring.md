@@ -93,6 +93,7 @@ BarkMLBehaviorSACAgent(BARKMLBehavior):
 - after BARK merge, deps on master (DONE)
 
 - cluster deployment (CONCEPT)
-- intersection blueprint
+- intersection blueprint (DONE)
 - improve and validate cpp observer
 - change dependencies structure as in BARK
+- implement long. acc. model
