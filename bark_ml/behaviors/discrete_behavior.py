@@ -26,15 +26,24 @@ class BehaviorDiscreteML(BehaviorMPMacroActions):
     # TODO(@hart): make generic and configurable
     # add motion primitives
     motion_primitives = []
+    # stay on lane; acc = 0
     motion_primitives.append(
-      PrimitiveConstAccStayLane(self._params, self._dynamic_model, 0, 0.1))
+      PrimitiveConstAccStayLane(self._params, self._dynamic_model, 0, 2.5))
+    # stay on lane; acc = -1.
     motion_primitives.append(
-      PrimitiveConstAccChangeToLeft(self._params, self._dynamic_model, 0.1))
+      PrimitiveConstAccStayLane(self._params, self._dynamic_model, -1., 2.5))
+    # stay on lane; acc = +1.
     motion_primitives.append(
-      PrimitiveConstAccChangeToRight(self._params, self._dynamic_model, 0.1))
+      PrimitiveConstAccStayLane(self._params, self._dynamic_model, 1., 2.5))
+    # change to the left lane
+    motion_primitives.append(
+      PrimitiveConstAccChangeToLeft(self._params, self._dynamic_model, 2.5))
+    # change to the right lane
+    motion_primitives.append(
+      PrimitiveConstAccChangeToRight(self._params, self._dynamic_model, 2.5))
     for mp in motion_primitives:
       super().AddMotionPrimitive(mp)
 
   @property
   def action_space(self):
-    return Discrete(self._behavior.GetNumMotionPrimitives(None))
+    return Discrete(super().GetNumMotionPrimitives(None))
