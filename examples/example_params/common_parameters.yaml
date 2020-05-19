@@ -5,8 +5,8 @@ base:
       observe_via_agent_manager: 1
       num_instances: 1
       summary: &base_agent_summary
-        running_average: 40
-        summary_every: 200
+        running_average: 100
+        summary_every: 1000
 
     base_dqfd_agent: &base_dqfd_agent
       <<: *base_agent
@@ -108,17 +108,18 @@ base:
       random_train_sample: 1
       anneal_over: episodes
       log_level: INFO
-      update_model_every_num_steps: 1
+      update_model_every_num_steps: 50
       freeze_every_num_environment_steps: 1000000000000
       freeze_every_num_episodes: 1000
+      restore_on_start: false
       checkpoints_to_keep: 100
       final_evaluation_on_test: 0
       final_evaluation_on_train: 0
       explore: 1
       max_agent_steps: 70
-      final_evaluation_batch_size: 1024
-      tmp_evaluation_every: 1000
-      tmp_evaluation_batch_size: 1024
+      final_evaluation_batch_size: 1000
+      tmp_evaluation_every: 100
+      tmp_evaluation_batch_size: 100
       tmp_evaluation_on_test: 1
       tmp_evaluation_on_train: 1
       name: experiment

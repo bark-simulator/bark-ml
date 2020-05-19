@@ -10,17 +10,23 @@ Run the experiment
 
 Important sidemark: the Agent is defined in the parameters, not in the main file!
 
-
 """
 
+try:
+    import debug_settings
+except:
+    pass
+
 import tensorflow as tf
+from tensorflow.python.util import deprecation
+deprecation._PRINT_DEPRECATION_WARNINGS = False
 import sys
 import os
 
 from diadem.agents import AgentContext, AgentManager
 from diadem.experiment import Experiment
 from diadem.experiment.visualizers import OnlineVisualizer
-from diadem.summary import PandasSummary
+from diadem.summary import PandasSummary, ConsoleSummary
 from diadem.common import Params
 from diadem.preprocessors import Normalization
 
@@ -40,7 +46,7 @@ bp = DiscreteHighwayBlueprint(bark_params,
 observer = NearestAgentsObserver(bark_params)
 runtime = SingleAgentRuntime(blueprint=bp,
                          observer=observer,
-                         render=True)
+                         render=False)
 
 
 def run_dqn_algorithm(parameter_files):
@@ -50,9 +56,9 @@ def run_dqn_algorithm(parameter_files):
     context = AgentContext(
         environment=environment,
         datamanager=None,
-        preprocessor=Normalization(environment=environment),
+        preprocessor=None,
         optimizer=tf.train.AdamOptimizer,
-        summary_service=PandasSummary()
+        summary_service=ConsoleSummary()
     )
     agent = AgentManager(
         params=diadem_params,
@@ -65,8 +71,8 @@ def run_dqn_algorithm(parameter_files):
     exp.run()
 
 
-
+# replace second parameter file with other defaults to get categorical, standard dqn or quantile agents
 if __name__ == '__main__':
     # basic Double DQN with Prioritized Experience Replay
     run_dqn_algorithm(parameter_files=["examples/example_params/common_parameters.yaml",
-                                                 "examples/example_params/dqn_basic.yaml"])
+                                                 "examples/example_params/dqn_distributional_quantile.yaml"])
