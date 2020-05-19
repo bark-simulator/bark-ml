@@ -43,6 +43,8 @@ class MergingBlueprint(Blueprint):
       road_ids=[0, 1],
       min_vel=10.,
       max_vel=15.,
+      s_min=5.,
+      s_max=25.,
       lane_corridor_id=0,
       controlled_ids=None)
     right_lane = MergingLaneCorridorConfig(
@@ -97,8 +99,7 @@ class DiscreteMergingBlueprint(MergingBlueprint):
                params=None,
                number_of_senarios=25,
                random_seed=0):
-    dynamic_model = SingleTrackModel(params)
-    ml_behavior = BehaviorDiscreteML(dynamic_model, params)
+    ml_behavior = BehaviorDiscreteML(params)
     MergingBlueprint.__init__(self,
                               params=params,
                               number_of_senarios=number_of_senarios,

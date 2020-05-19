@@ -91,9 +91,10 @@ BarkMLBehaviorSACAgent(BARKMLBehavior):
 - train and validate performance (SAC IN EXAMPLE TRAINS; DONE)
 - fix motion primitive behavior model (SIMPLISTIC MODEL FOR NOW)
 - after BARK merge, deps on master (DONE)
+- implement long. acc. model (PART. DONE)
+- intersection blueprint (DONE)
+
 
 - cluster deployment (CONCEPT)
-- intersection blueprint (DONE)
-- improve and validate cpp observer
-- change dependencies structure as in BARK
-- implement long. acc. model
+- improve and validate cpp observer (NEXT)
+- change dependencies structure as in BARK (IN PROGRESS)

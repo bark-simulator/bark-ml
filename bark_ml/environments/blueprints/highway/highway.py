@@ -98,8 +98,7 @@ class DiscreteHighwayBlueprint(HighwayBlueprint):
                params=None,
                number_of_senarios=25,
                random_seed=0):
-    dynamic_model = SingleTrackModel(params)
-    ml_behavior = BehaviorDiscreteML(dynamic_model, params)
+    ml_behavior = BehaviorDiscreteML(params)
     HighwayBlueprint.__init__(self,
                               params=params,
                               number_of_senarios=number_of_senarios,

@@ -21,8 +21,7 @@ from bark.world import World, MakeTestWorldHighway
 class PyBehaviorTests(unittest.TestCase):
   def test_discrete_behavior(self):
     params = ParameterServer()
-    dynamic_model = SingleTrackModel(params)
-    discrete_behavior = BehaviorDiscreteML(dynamic_model, params)
+    discrete_behavior = BehaviorDiscreteML(params)
     # sets 0-th motion primitive active
     discrete_behavior.ActionToBehavior(0)
     print(discrete_behavior.action_space)
@@ -33,7 +32,6 @@ class PyBehaviorTests(unittest.TestCase):
     # sets numpy array as next action
     cont_behavior.ActionToBehavior(np.array([0., 0.]))
     print(cont_behavior.action_space)
-
 
 
 if __name__ == '__main__':

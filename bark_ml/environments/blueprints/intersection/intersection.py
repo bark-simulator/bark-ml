@@ -18,7 +18,6 @@ from bark_ml.evaluators.goal_reached import GoalReached
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteML
-from bark_ml.behaviors.longitudinal_behavior import BehaviorLongitudinalML
 
 
 class IntersectionLaneCorridorConfig(LaneCorridorConfig):
@@ -115,8 +114,7 @@ class DiscreteIntersectionBlueprint(IntersectionBlueprint):
                params=None,
                number_of_senarios=25,
                random_seed=0):
-    dynamic_model = SingleTrackModel(params)
-    ml_behavior = BehaviorLongitudinalML(dynamic_model, params)
+    ml_behavior = BehaviorDiscreteML(params)
     IntersectionBlueprint.__init__(self,
                                    params=params,
                                    number_of_senarios=number_of_senarios,

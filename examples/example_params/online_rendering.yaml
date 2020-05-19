@@ -1,0 +1,12 @@
+<<: *base
+agents:
+  default_agent:
+    <<: *base_dqfd_agent
+    is_main_agent: 1
+experiment: 
+  <<: *base_experiment
+  max_episodes: 70
+visualization:
+  render_every_n_episodes: 2
+  render_every_n_steps: 1
+  realtime_factor: 10

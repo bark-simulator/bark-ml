@@ -30,25 +30,25 @@ flags.DEFINE_enum("mode",
 
 
 def run_configuration(argv):
-  # params = ParameterServer(filename="/Users/hart/2020/bark-ml/examples/tfa_params.json")
+  # params = ParameterServer(filename="/Users/hart/2020/bark-ml/examples/example_params/tfa_params.json")
   params = ParameterServer()
   params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/2020/bark-ml/checkpoints/"
   params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/2020/bark-ml/checkpoints/"
-
+  params["World"]["remove_agents_out_of_map"] = True
 
   # create environment
   bp = ContinuousMergingBlueprint(params,
-                                  number_of_senarios=10,
+                                  number_of_senarios=500,
                                   random_seed=0)
-  # viewer = MPViewer(params=params,
-  #                   x_range=[-35, 35],
-  #                   y_range=[-35, 35],
-  #                   follow_agent_id=True)
-  # viewer = VideoRenderer(renderer=viewer,
-  #                        world_step_time=0.2,
-  #                        fig_path="/home/hart/Dokumente/2020/bark-ml/video/")
+  viewer = MPViewer(params=params,
+                    x_range=[-35, 35],
+                    y_range=[-35, 35],
+                    follow_agent_id=True)
+  viewer = VideoRenderer(renderer=viewer,
+                         world_step_time=0.2,
+                         fig_path="/Users/hart/2020/bark-ml/video/")
   env = SingleAgentRuntime(blueprint=bp,
-                           # viewer=viewer,
+                           viewer=viewer,
                            render=False)
 
   # PPO-agent
@@ -70,13 +70,13 @@ def run_configuration(argv):
   if FLAGS.mode == "train":
     runner.Train()
   elif FLAGS.mode == "visualize":
-    runner.Visualize(5)
+    runner.Visualize(3)
   
   # store all used params of the training
-  # params.Save("/Users/hart/2020/bark-ml/examples/tfa_params.json")
+  # params.Save("/Users/hart/2020/bark-ml/examples/example_params/tfa_params.json")
 
-  # viewer.export_video(
-  #   filename="/home/hart/Dokumente/2020/bark-ml/video/video", remove_image_dir=False)
+  viewer.export_video(
+    filename="/Users/hart/2020/bark-ml/video/video", remove_image_dir=False)
 
 
 if __name__ == '__main__':
