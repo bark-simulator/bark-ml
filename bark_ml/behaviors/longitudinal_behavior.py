@@ -14,14 +14,11 @@ from bark_ml.commons.py_spaces import Discrete
 
 class BehaviorLongitudinalML(BehaviorMPMacroActions):
   def __init__(self,
-               dynamic_model=None,
                params=None):
     BehaviorMPMacroActions.__init__(
       self,
-      dynamic_model,
       params)
     self._params = params
-    self._dynamic_model = dynamic_model
 
     # add motion primitives
     motion_primitives = []

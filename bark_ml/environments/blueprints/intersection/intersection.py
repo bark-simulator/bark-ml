@@ -115,8 +115,7 @@ class DiscreteIntersectionBlueprint(IntersectionBlueprint):
                params=None,
                number_of_senarios=25,
                random_seed=0):
-    dynamic_model = SingleTrackModel(params)
-    ml_behavior = BehaviorLongitudinalML(dynamic_model, params)
+    ml_behavior = BehaviorLongitudinalML(params)
     IntersectionBlueprint.__init__(self,
                                    params=params,
                                    number_of_senarios=number_of_senarios,

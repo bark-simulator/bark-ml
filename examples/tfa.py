@@ -70,7 +70,7 @@ def run_configuration(argv):
   if FLAGS.mode == "train":
     runner.Train()
   elif FLAGS.mode == "visualize":
-    runner.Visualize(2)
+    runner.Visualize(5)
   
   # store all used params of the training
   # params.Save("/Users/hart/2020/bark-ml/examples/tfa_params.json")
