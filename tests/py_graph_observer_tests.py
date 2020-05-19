@@ -17,6 +17,7 @@ from src.wrappers.dynamic_model import DynamicModel
 from src.evaluators.goal_reached import GoalReached
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from src.rl_runtime import RuntimeRL
+from bark.models.dynamic import StateDefinition
 
 class PyGraphObserverTests(unittest.TestCase):
 
@@ -43,7 +44,21 @@ class PyGraphObserverTests(unittest.TestCase):
       scenario = scenario_generation.create_single_scenario()
       graph, actions = runtime.reset(scenario)
 
-      # return
+      world = scenario.get_world_state()
+      nodes = list(graph.nodes.items())
+
+      assert len(nodes) == len(world.agents.items())
+
+      # test incrementing ids starting from zero
+      for (i, node) in enumerate(nodes):
+        assert node[0] == i
+
+      # test world ego_agent is the first 
+      # node by comparing position
+      assert nodes[0][1]['x'] == 0.5118
+      assert nodes[0][1]['y'] == 0.508
+      
+      #return
 
       print('\n ------------ Globals ------------')
       for (key, value) in graph.graph.items():
@@ -62,7 +77,7 @@ class PyGraphObserverTests(unittest.TestCase):
         print(item)
 
       # comment out this return statement to generate a dataset
-      #return
+      return
 
       # The following code generates a dataset by running
       # the scenario for the specified number of steps. 
@@ -98,8 +113,8 @@ class PyGraphObserverTests(unittest.TestCase):
 
         # Save datum in da
         datum = dict()
-        datum["graph_data"] = nx.node_link_data(graph)
-        datum["graph_labels"] = actions
+        datum["graph"] = nx.node_link_data(graph)
+        datum["actions"] = actions
         data_collector.append(datum)
         
         # runtime.render()

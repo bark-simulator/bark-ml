@@ -5,6 +5,7 @@ import math
 import operator
 import networkx as nx
 from typing import Dict
+from collections import OrderedDict
 
 from bark.models.dynamic import StateDefinition
 from bark.world import ObservedWorld
@@ -30,34 +31,42 @@ class GraphObserver(StateObserver):
   def observe(self, world):
     """see base class"""
     ego_agent = world.ego_agent
-    graph = nx.Graph(ego_agent_id=ego_agent.id,
-                     normalization_ref=self.normalization_data)
+    graph = nx.OrderedGraph(normalization_ref=self.normalization_data)
 
-    actions = {} # generated for now (steering, acceleration)
-
-    # make ego_agent the first element, sort others by id
-    # there should be a more elegant way to do this
-    agents = list(world.agents.values())
-    agents.remove(ego_agent)
-    agents.sort(key=lambda agent: agent.id)
-    agents.insert(0, ego_agent)
+    actions = OrderedDict() # generated for now (steering, acceleration)
+    
+    agents = self._preprocess_agents(world)
     
     # add nodes
-    for agent in agents:
+    for (index, agent) in agents:
       # create node
       features = self._extract_features(agent)
-      graph.add_node(agent.id, **features)
+      graph.add_node(index, **features)
 
       # generate actions
-      actions[agent.id] = self._generate_actions(features)
+      actions[index] = self._generate_actions(features)
       
       # create edges to all other agents
       nearby_agents = self._nearby_agents(agent, agents, self._visible_distance)
 
-      for other_agent in nearby_agents:
-        graph.add_edge(agent.id, other_agent.id)
+      for (nearby_agent_index, _) in nearby_agents:
+        graph.add_edge(index, nearby_agent_index)
 
     return graph, actions
+
+  def _preprocess_agents(self, world):
+    """ 
+    Returns a list of tuples, consisting
+    of an index and an agent object element.
+    """
+    # make ego_agent the first element, sort others by id
+    # there should be a more elegant way to do this
+    ego_agent = world.ego_agent
+    agents = list(world.agents.values())
+    agents.remove(ego_agent)
+    agents.sort(key=lambda agent: agent.id)
+    agents.insert(0, ego_agent)
+    return list(enumerate(agents))
 
   def _nearby_agents(self, center_agent, agents, radius: float):
     """
@@ -65,21 +74,21 @@ class GraphObserver(StateObserver):
     radius of the 'center_agent's position.
     """
     center_agent_pos = self._position(center_agent)
-    other_agents = filter(lambda a: a.id != center_agent.id, agents)
+    other_agents = filter(lambda a: a[1].id != center_agent.id, agents)
     nearby_agents = []
 
-    for agent in other_agents:
+    for (index, agent) in other_agents:
       agent_pos = self._position(agent)
       distance = Distance(center_agent_pos, agent_pos)
 
       if distance <= radius:
-        nearby_agents.append(agent)
+        nearby_agents.append((index, agent))
     
     return nearby_agents
 
   def _extract_features(self, agent) -> Dict[str, float]:
     """Returns dict containing all features of the agent"""
-    res = {}
+    res = OrderedDict()
     
     # get basic information
     state = agent.state
@@ -109,14 +118,14 @@ class GraphObserver(StateObserver):
     return res
 
   def _generate_actions(self, features: Dict[str, float]) -> Dict[str, float]:
-    labels = dict()
+    actions = OrderedDict()
     steering = features["goal_theta"] - features["theta"]
-    labels["steering"] = steering
+    actions["steering"] = steering
     
     dt = 2 # time constant in s for planning horizon
     acc = 2. * (features["goal_d"] - features["vel"] * dt) / (dt**2)
-    labels["acceleration"] = acc
-    return labels
+    actions["acceleration"] = acc
+    return actions
 
   def _normalize_value(self, value, range):
     return 2 * (value - range[0]) / (range[1] - range[0]) - 1
@@ -146,7 +155,7 @@ class GraphObserver(StateObserver):
     E.g. all distances (between agents, between objects, etc.)
     are scaled relative to the 'distance' range. 
     """
-    d = {}
+    d = OrderedDict()
     d['x'] = self._world_x_range
     d['y'] = self._world_y_range
     d['theta'] = self._theta_range
