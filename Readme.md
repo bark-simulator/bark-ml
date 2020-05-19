@@ -14,6 +14,7 @@ BARK-ML supported machine learning libraries:
 
 * [TF-Agents](https://github.com/tensorflow/agents)
 * [Baselines](https://github.com/openai/baselines) (Planned)
+* [Diadem](https://github.com/juloberno/diadem)
 
 ## Gym Environments
 
@@ -30,6 +31,8 @@ Available environments:
 * `highway-v1`: Discrete highway environment
 * `merging-v0`: Continuous highway environment
 * `merging-v1`: Discrete highway environment
+* `intersection-v0`: Continuous intersection environment
+* `intersection-v1`: Discrete intersection environment
 
 ## TF-Agents
 

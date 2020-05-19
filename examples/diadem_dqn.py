@@ -9,13 +9,12 @@
 Run the experiment
 
 Important sidemark: the Agent is defined in the parameters, not in the main file!
-
 """
 
 try:
-    import debug_settings
+  import debug_settings
 except:
-    pass
+  pass
 
 import tensorflow as tf
 from tensorflow.python.util import deprecation
@@ -40,39 +39,41 @@ from bark_ml.environments.blueprints import DiscreteHighwayBlueprint
 # create scenario
 bark_params = ParameterServer()
 bp = DiscreteHighwayBlueprint(bark_params,
-                                number_of_senarios=10,
-                                random_seed=0)
+                              number_of_senarios=10,
+                              random_seed=0)
 
 observer = NearestAgentsObserver(bark_params)
 runtime = SingleAgentRuntime(blueprint=bp,
-                         observer=observer,
-                         render=False)
+                             observer=observer,
+                             render=False)
 
 
 def run_dqn_algorithm(parameter_files):
-    exp_dir = "tmp_exp_dir"
-    diadem_params = Params(filename=parameter_files)
-    environment = DiademBarkEnvironment(runtime=runtime)
-    context = AgentContext(
-        environment=environment,
-        datamanager=None,
-        preprocessor=None,
-        optimizer=tf.train.AdamOptimizer,
-        summary_service=ConsoleSummary()
-    )
-    agent = AgentManager(
-        params=diadem_params,
-        context=context
-    )
-
-    exp = Experiment(
-        params=diadem_params['experiment'], main_dir=exp_dir, context=context, agent=agent,
-                         visualizer=None)
-    exp.run()
+  exp_dir = "tmp_exp_dir"
+  diadem_params = Params(filename=parameter_files)
+  environment = DiademBarkEnvironment(runtime=runtime)
+  context = AgentContext(
+    environment=environment,
+    datamanager=None,
+    preprocessor=None,
+    optimizer=tf.train.AdamOptimizer,
+    summary_service=ConsoleSummary()
+  )
+  agent = AgentManager(
+    params=diadem_params,
+    context=context
+  )
+  exp = Experiment(
+    params=diadem_params['experiment'],
+    main_dir=exp_dir,
+    context=context,
+    agent=agent,
+    visualizer=None)
+  exp.run()
 
 
 # replace second parameter file with other defaults to get categorical, standard dqn or quantile agents
 if __name__ == '__main__':
-    # basic Double DQN with Prioritized Experience Replay
-    run_dqn_algorithm(parameter_files=["examples/example_params/common_parameters.yaml",
-                                                 "examples/example_params/dqn_distributional_quantile.yaml"])
+  # basic Double DQN with Prioritized Experience Replay
+  run_dqn_algorithm(parameter_files=["examples/example_params/common_parameters.yaml",
+                                      "examples/example_params/dqn_distributional_quantile.yaml"])
