@@ -4,14 +4,14 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-from gym import Space
+import gym
 import numpy as np
 
 
-class Discrete(Space):
+class Discrete(gym.spaces.Discrete):
     def __init__(self, n):
         self._n = n
-        super(Discrete, self).__init__((), np.int64)
+        super(Discrete, self).__init__( n)
 
     def sample(self):
         return self.np_random.randint(self._n)
@@ -41,7 +41,7 @@ class Discrete(Space):
         return isinstance(other, Discrete) and self._n == other._n
 
 
-class BoundedContinuous(Space):
+class BoundedContinuous(gym.Space):
   def __init__(self,
                 n,
                 low=None,

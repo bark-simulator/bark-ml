@@ -16,11 +16,9 @@ Important sidemark: the Agent is defined in the parameters, not in the main file
 import tensorflow as tf
 import sys
 import os
-print(os.getcwd())
-print (sys.path)
+
 from diadem.agents import AgentContext, AgentManager
-#from diadem.environments import GymEnvironment
-#from diadem.experiment import Experiment
+from diadem.experiment import Experiment
 from diadem.experiment.visualizers import OnlineVisualizer
 from diadem.summary import PandasSummary
 from diadem.common import Params
@@ -30,7 +28,7 @@ from bark_ml.library_wrappers.lib_diadem.diadem_bark_environment import DiademBa
 
 from bark_project.modules.runtime.commons.parameters import ParameterServer
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-from bark_ml_library.observers import NearestObserver
+from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.environments.blueprints import DiscreteHighwayBlueprint
 
 # create scenario
@@ -39,7 +37,7 @@ bp = DiscreteHighwayBlueprint(bark_params,
                                 number_of_senarios=10,
                                 random_seed=0)
 
-observer = NearestObserver(bark_params)
+observer = NearestAgentsObserver(bark_params)
 runtime = SingleAgentRuntime(blueprint=bp,
                          observer=observer,
                          render=True)

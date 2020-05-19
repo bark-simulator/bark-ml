@@ -61,6 +61,7 @@ py_test(
   deps = [
     "//bark_ml/environments:single_agent_runtime",
     "//bark_ml/environments:blueprints",
+    "//bark_ml/observers:observers",
     "//bark_ml/library_wrappers/lib_diadem:diadem"
   ]
 )
