@@ -6,8 +6,7 @@
 
 import numpy as np
 
-from bark.models.behavior import BehaviorModel, BehaviorMPContinuousActions, \
-  PrimitiveConstAccStayLane, PrimitiveConstAccChangeToLeft, PrimitiveConstAccChangeToRight
+from bark.models.behavior import BehaviorModel, BehaviorMPContinuousActions
 from bark.models.dynamic import SingleTrackModel
 from bark_ml.commons.py_spaces import Discrete
 
@@ -18,11 +17,20 @@ class BehaviorDiscreteML(BehaviorMPContinuousActions):
     BehaviorMPContinuousActions.__init__(
       self,
       params)
-    self._params = params
+    self._min_max_acc = params["ML"]["BehaviorDiscreteML"][
+      "MinMaxAcc", "", [-3., 3.]]
+    self._acc_d_steps = params["ML"]["BehaviorDiscreteML"][
+      "AccDiscretizationSteps", "", 10]
+    self._min_max_steer = params["ML"]["BehaviorDiscreteML"][
+      "MinMaxSteeringRate", "", [-.2, .2]]
+    self._steer_d_steps = params["ML"]["BehaviorDiscreteML"][
+      "SteeringRateDiscretizationSteps", "", 5]
 
     # add motion primitives
-    for acc in np.linspace(-3., 3., num=8):
-      for steering_rate in np.linspace(-.2, .2, num=7):
+    for acc in np.linspace(
+      self._min_max_acc[0], self._min_max_acc[1], self._acc_d_steps):
+      for steering_rate in np.linspace(
+        self._min_max_steer[0], self._min_max_steer[1], self._steer_d_steps):
         super().AddMotionPrimitive(
           np.array([acc, steering_rate], dtype=np.float32))
 
