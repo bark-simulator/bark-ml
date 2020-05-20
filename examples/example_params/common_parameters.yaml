@@ -1,0 +1,134 @@
+base:
+  base_agents:
+    base_agent: &base_agent
+      is_main_agent: 1
+      observe_via_agent_manager: 1
+      num_instances: 1
+      summary: &base_agent_summary
+        running_average: 100
+        summary_every: 1000
+
+    base_dqfd_agent: &base_dqfd_agent
+      <<: *base_agent
+      agent_type: dqfd
+      training: 1
+      use_only_cpu: 0
+      allow_gpu_growth: 0
+      exploration: &dqfd_agent_exploration
+        initialize_guidance_steps: 0
+        type: random
+        epsilon: &base_dqfd_agent_exploration_epsilon
+          start_value: 0.9
+          end_value: 0.1
+          num_steps: 90000
+          anneal_type: lin
+      discount_factor: 0.95
+      double_q_learning: 1
+      target_update_rate: 1
+      n_step: 1
+      supervised_margin: 0.5
+      network: &base_dqfd_agent_fully_network
+        type: fully_connected
+        max_gradient: 10
+        reg_param: 0.01
+        neurons_per_hidden_layer:
+        - 300
+        - 300
+        - 300
+        - 300
+        batch_size: 1024
+        loss_one_step_weight: 1
+        loss_n_step_weight: 1
+        loss_supervised_weight: 1
+        optimizer: &base_dqfd_agent_optimizer
+          learning_rate: 5.0e-05
+          beta1: 0.9
+          beta2: 0.999
+          epsilon: 1.0e-07
+          use_locking: false
+          name: Adam
+      guidance:
+        guiding_factor: 1
+      prioritizing: &base_dqfd_agent_prioritizing
+        per_epsilon_alpha: 0.001
+        per_epsilon_demo: 1
+        per_alpha: 0.25
+        replay_buffer_size: 100000
+        store_replay_every: 1
+        demo_capacity_factor: 0.25
+        per_beta: &base_dqfd_agent_prioritizing_beta
+          start_value: 0.6
+          end_value: 1
+          num_steps: 75000
+          anneal_type: lin
+
+    base_categorical_agent: &base_categorical_agent
+      <<: *base_dqfd_agent
+      agent_type: distr_dqfd
+      distributional_q_learning: 1
+      loss:
+        discount_factor: 0.95
+      network: &base_agent_categorical_fully_network
+        <<: *base_dqfd_agent_fully_network
+        min_reward: &min_reward -1000
+        max_reward: &max_reward 100
+        num_atoms: &num_atoms 200
+        quantile_regression: 0
+
+    base_quantile_agent: &base_quantile_agent
+      <<: *base_dqfd_agent
+      agent_type: distr_dqfd
+      distributional_q_learning: 1
+      loss:
+        discount_factor: 0.95
+        huber_loss:
+          delta: 1
+      network: &base_agent_quantile_fully_network
+        <<: *base_dqfd_agent_fully_network
+        min_reward: *min_reward
+        max_reward: *max_reward
+        num_atoms: *num_atoms
+        quantile_regression: 1
+
+    base_ensemble_agent: &base_ensemble_agent
+      <<: *base_agent
+      agent_type: "ensemble"
+      agents_name_prefix: "sub_agent"
+
+  base_parameters: &base
+    datamanager: &base_datamanager
+      data_folder: data
+
+    # template experiment
+    experiment: &base_experiment
+      max_episodes: 10
+      num_cycles: 1
+      training: 1
+      analyse_memory: 0
+      random_train_sample: 1
+      anneal_over: episodes
+      log_level: INFO
+      update_model_every_num_steps: 50
+      freeze_every_num_environment_steps: 1000000000000
+      freeze_every_num_episodes: 1000
+      restore_on_start: false
+      checkpoints_to_keep: 100
+      final_evaluation_on_test: 0
+      final_evaluation_on_train: 0
+      explore: 1
+      max_agent_steps: 70
+      final_evaluation_batch_size: 1000
+      tmp_evaluation_every: 100
+      tmp_evaluation_batch_size: 100
+      tmp_evaluation_on_test: 1
+      tmp_evaluation_on_train: 1
+      name: experiment
+      run_on_gluster: 0
+      visualization: &base_experiment_visualisation
+        render_every: 20
+        render_environment: 0
+        realtime_factor: 0.5
+      update_model_every_num_episodes: 1
+    agents:
+      default_agent:
+        <<: *base_dqfd_agent

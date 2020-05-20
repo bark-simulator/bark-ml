@@ -73,8 +73,6 @@ http_archive(
     ],
 )
 
-
-
 load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")
 boost_deps()
 
@@ -100,6 +98,12 @@ git_repository(
     name = "com_google_ceres_solver",
     commit = "e51e9b46f6ca88ab8b2266d0e362771db6d98067",
     remote = "https://github.com/ceres-solver/ceres-solver",
+)
+
+git_repository(
+    name = "diadem_project",
+    commit = "741b9ea7a96657e399ae039ab922a8baf0b0fce1",
+    remote = "https://github.com/juloberno/diadem"
 )
 
 new_local_repository(
