@@ -58,7 +58,7 @@ class NearestObserver {
         params_->GetInt(
           "ML::NearestObserver::NNearestAgents", "Nearest agents number", 4);
       min_vel_ = params_->GetReal("ML::NearestObserver::MinVel", "", 0.0);
-      max_vel_ = params_->GetReal("ML::NearestObserver::MaxVel", "", 25.0);
+      max_vel_ = params_->GetReal("ML::NearestObserver::MaxVel", "", 50.0);
       max_dist_ = params_->GetReal("ML::NearestObserver::MaxDist", "", 75.0);
       state_size_ = params_->GetInt("ML::NearestObserver::StateSize", "", 4);
       observation_len_ = nearest_agent_num_ * state_size_;
@@ -117,12 +117,12 @@ class NearestObserver {
 
   WorldPtr Reset(const WorldPtr& world) {
     const auto& x_y = world->BoundingBox();
-    Point2d x_range = x_y.first;
-    Point2d y_range = x_y.second;
-    min_x_ = x_range.get<0>();
-    max_x_ = x_range.get<1>();
-    min_y_ = y_range.get<0>();
-    max_y_ = y_range.get<1>();
+    Point2d bb0 = x_y.first;
+    Point2d bb1 = x_y.second;
+    min_x_ = bb0.get<0>();
+    max_x_ = bb1.get<0>();
+    min_y_ = bb0.get<1>();
+    max_y_ = bb1.get<1>();
     return world;
   }
 

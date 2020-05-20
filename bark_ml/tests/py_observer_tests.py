@@ -45,7 +45,8 @@ class PyObserverTests(unittest.TestCase):
 
     # under test
     observer = NearestObserver(params)
-
+    observer.Reset(world)
+    
     eval_id = env._scenario._eval_agent_ids[0]
     observed_world = world.Observe([eval_id])[0]
     observed_state = observer.Observe(observed_world)
