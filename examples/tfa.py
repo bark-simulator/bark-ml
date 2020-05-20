@@ -30,25 +30,16 @@ flags.DEFINE_enum("mode",
 
 
 def run_configuration(argv):
-  # params = ParameterServer(filename="/Users/hart/2020/bark-ml/examples/example_params/tfa_params.json")
-  params = ParameterServer()
-  # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/home/hart/Dokumente/2020/bark-ml/checkpoints/"
-  # params["ML"]["TFARunner"]["SummaryPath"] = "/home/hart/Dokumente/2020/bark-ml/checkpoints/"
+  params = ParameterServer(filename="examples/example_params/tfa_params.json")
+  # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/tmp/checkpoints/"
+  # params["ML"]["TFARunner"]["SummaryPath"] = "/tmp/checkpoints/"
   params["World"]["remove_agents_out_of_map"] = True
 
   # create environment
   bp = ContinuousMergingBlueprint(params,
                                   number_of_senarios=500,
                                   random_seed=0)
-  # viewer = MPViewer(params=params,
-  #                   x_range=[-35, 35],
-  #                   y_range=[-35, 35],
-  #                   follow_agent_id=True)
-  # viewer = VideoRenderer(renderer=viewer,
-  #                        world_step_time=0.2,
-  #                        fig_path="/Users/hart/2020/bark-ml/video/")
   env = SingleAgentRuntime(blueprint=bp,
-                           # viewer=viewer,
                            render=False)
 
   # PPO-agent
@@ -74,9 +65,6 @@ def run_configuration(argv):
   
   # store all used params of the training
   # params.Save("/Users/hart/2020/bark-ml/examples/example_params/tfa_params.json")
-
-  # viewer.export_video(
-  #   filename="/Users/hart/2020/bark-ml/video/video", remove_image_dir=False)
 
 
 if __name__ == '__main__':
