@@ -34,7 +34,8 @@ class PyObserverTests(unittest.TestCase):
     eval_id = env._scenario._eval_agent_ids[0]
     observed_world = world.Observe([eval_id])[0]
     observed_state = observer.Observe(observed_world)
-    print(observed_state)
+    print(observed_state, observer.observation_space.shape)
+
     
   def test_nearest_observer_cpp(self):
     params = ParameterServer()
@@ -50,7 +51,7 @@ class PyObserverTests(unittest.TestCase):
     eval_id = env._scenario._eval_agent_ids[0]
     observed_world = world.Observe([eval_id])[0]
     observed_state = observer.Observe(observed_world)
-    print(observed_state)
+    print(observed_state, observer.observation_space.shape)
 
 
 if __name__ == '__main__':

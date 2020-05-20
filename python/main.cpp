@@ -45,7 +45,7 @@ void python_spaces(py::module m) {
   py::class_<Box<float>, std::shared_ptr<Box<float>>>(m, "Box")
     .def(py::init<const Matrix_t<float>&,
                   const Matrix_t<float>&,
-                  const std::vector<int>&>())
+                  const std::tuple<int>&>())
     .def_property_readonly("low", &Box<float>::low)
     .def_property_readonly("high", &Box<float>::high)
     .def_property_readonly("shape", &Box<float>::shape);

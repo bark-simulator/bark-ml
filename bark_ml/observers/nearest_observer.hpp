@@ -131,7 +131,7 @@ class NearestObserver {
     low.setZero();
     Matrix_t<float> high(1, observation_len_);
     high.setOnes();
-    std::vector<int> shape{1, observation_len_};
+    std::tuple<int> shape{observation_len_};
     return Box<float>(low, high, shape);
   }
 

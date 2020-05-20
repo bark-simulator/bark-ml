@@ -32,8 +32,8 @@ flags.DEFINE_enum("mode",
 def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/tfa_params.json")
   # params = ParameterServer()
-  # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/tmp/checkpoints/"
-  # params["ML"]["TFARunner"]["SummaryPath"] = "/tmp/checkpoints/"
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/home/hart/Dokumente/2020/bark-ml/checkpoints/"
+  params["ML"]["TFARunner"]["SummaryPath"] = "/home/hart/Dokumente/2020/bark-ml/checkpoints/"
   params["World"]["remove_agents_out_of_map"] = True
 
   # create environment
