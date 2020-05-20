@@ -32,14 +32,14 @@ flags.DEFINE_enum("mode",
 def run_configuration(argv):
   # params = ParameterServer(filename="/Users/hart/2020/bark-ml/examples/example_params/tfa_params.json")
   params = ParameterServer()
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/home/hart/Dokumente/2020/bark-ml/checkpoints/"
-  params["ML"]["TFARunner"]["SummaryPath"] = "/home/hart/Dokumente/2020/bark-ml/checkpoints/"
-  # params["World"]["remove_agents_out_of_map"] = True
+  # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/home/hart/Dokumente/2020/bark-ml/checkpoints/"
+  # params["ML"]["TFARunner"]["SummaryPath"] = "/home/hart/Dokumente/2020/bark-ml/checkpoints/"
+  params["World"]["remove_agents_out_of_map"] = True
 
   # create environment
-  bp = ContinuousIntersectionBlueprint(params,
-                                       number_of_senarios=500,
-                                       random_seed=0)
+  bp = ContinuousMergingBlueprint(params,
+                                  number_of_senarios=500,
+                                  random_seed=0)
   # viewer = MPViewer(params=params,
   #                   x_range=[-35, 35],
   #                   y_range=[-35, 35],
@@ -70,7 +70,7 @@ def run_configuration(argv):
   if FLAGS.mode == "train":
     runner.Train()
   elif FLAGS.mode == "visualize":
-    runner.Visualize(3)
+    runner.Visualize(5)
   
   # store all used params of the training
   # params.Save("/Users/hart/2020/bark-ml/examples/example_params/tfa_params.json")
