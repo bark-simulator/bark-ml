@@ -11,7 +11,7 @@ from bark.models.dynamic import StateDefinition
 from bark.world import ObservedWorld
 from bark.geometry import Distance, Point2d
 from modules.runtime.commons.parameters import ParameterServer
-from src.observers.observer import StateObserver
+from bark_ml.observers.observer import StateObserver
 
 class GraphObserver(StateObserver):
   
@@ -30,7 +30,6 @@ class GraphObserver(StateObserver):
 
   def Observe(self, world):
     """see base class"""
-    ego_agent = world.ego_agent
     graph = nx.OrderedGraph(normalization_ref=self.normalization_data)
 
     actions = OrderedDict() # generated for now (steering, acceleration)
@@ -106,7 +105,7 @@ class GraphObserver(StateObserver):
     res["goal_d"] = goal_d
     res["goal_theta"] = goal_theta
 
-    if self._normalization_enabled:
+    if self._NormalizationEnabled:
       n = self.normalization_data
 
       for k in ["x", "y", "theta", "vel"]:
@@ -158,8 +157,8 @@ class GraphObserver(StateObserver):
     d = OrderedDict()
     d['x'] = self._world_x_range
     d['y'] = self._world_y_range
-    d['theta'] = self._theta_range
-    d['vel'] = self._velocity_range
+    d['theta'] = self._ThetaRange
+    d['vel'] = self._VelocityRange
     d['distance'] = [0, \
       np.linalg.norm([self._world_x_range[1], self._world_y_range[1]])]
     return d
