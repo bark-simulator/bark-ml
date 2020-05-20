@@ -15,4 +15,4 @@ jobs:
       - name: Entering the virtual python environment..
         run: . ./python/venv/bin/activate
       - name: Runing bazel tests..
-        run: bazel test //examples:diadem_dqn
+        run: bazel run //examples:diadem_dqn
