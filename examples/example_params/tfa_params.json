@@ -1,4 +1,7 @@
 {
+    "World": {
+        "remove_agents_out_of_map": true
+    },
     "BehaviorDynamicModel": {
         "IntegrationTimeDelta": 0.05000000074505806
     },
@@ -16,7 +19,7 @@
         "GoalReachedEvaluator": {
             "GoalReward": 1.0,
             "CollisionPenalty": -1.0,
-            "MaxSteps": 50
+            "MaxSteps": 60
         },
         "StateObserver": {
             "VelocityRange": [
@@ -51,13 +54,12 @@
             "TargetUpdatePeriod": 3,
             "Gamma": 0.995,
             "RewardScaleFactor": 1.0,
-            "GradientClipping": 0,
             "AgentName": "sac_agent",
             "DebugSummaries": false,
             "ReplayBufferCapacity": 10000,
             "ParallelBufferCalls": 1,
             "BatchSize": 512,
-            "BufferNumSteps": 1,
+            "BufferNumSteps": 2,
             "BufferPrefetch": 3
         },
         "BehaviorTFAAgents": {
@@ -66,7 +68,7 @@
         },
         "TFARunner": {
             "EvaluationSteps": 25,
-            "InitialCollectionEpisodes": 1,
+            "InitialCollectionEpisodes": 50,
             "CollectionEpisodesPerStep": 1
         }
     },
@@ -89,7 +91,9 @@
     "DynamicModel": {
         "wheel_base": 2.700000047683716,
         "delta_max": 0.20000000298023224,
-        "lat_acc_max": 4.0
+        "lat_acc_max": 4.0,
+        "lon_acceleration_max": 4.0,
+        "lon_acceleration_min": -8.0
     },
     "agent": {
         "MaxHistoryLength": 50
