@@ -28,7 +28,7 @@ class GraphObserver(StateObserver):
      # the radius an agent can 'see' in meters
     self._visible_distance = 50
 
-  def observe(self, world):
+  def Observe(self, world):
     """see base class"""
     ego_agent = world.ego_agent
     graph = nx.OrderedGraph(normalization_ref=self.normalization_data)
