@@ -1,4 +1,5 @@
-// Copyright (c) 2019 fortiss GmbH, Patrick Hart, Julian Bernhard, Klemens Esterle, Tobias Kessler
+// Copyright (c) 2020 Patrick Hart, Julian Bernhard,
+// Klemens Esterle, Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
@@ -14,8 +15,8 @@
 #include "boost/variant.hpp"
 
 #include "modules/commons/params/params.hpp"
-#include "src/observers/nearest_observer.hpp"
-#include "src/commons/spaces.hpp"
+#include "bark_ml/observers/nearest_observer.hpp"
+#include "bark_ml/commons/spaces.hpp"
 
 PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
 
@@ -29,8 +30,8 @@ void python_observers(py::module m) {
   py::class_<NearestObserver,
               std::shared_ptr<NearestObserver>>(m, "NearestObserver")
     .def(py::init<ParamsPtr>())
-    .def("observe", &NearestObserver::Observe)
-    .def("reset", &NearestObserver::Reset)
+    .def("Observe", &NearestObserver::Observe)
+    .def("Reset", &NearestObserver::Reset)
     .def_property_readonly(
       "observation_space", &NearestObserver::ObservationSpace);
 }
@@ -50,9 +51,8 @@ void python_spaces(py::module m) {
     .def_property_readonly("shape", &Box<float>::shape);
 }
 
-PYBIND11_MODULE(bark_ml, m) {
-  m.doc() = "Wrapper for bark-ml.";
-
+PYBIND11_MODULE(bark_ml_library, m) {
+  m.doc() = "Additional cpp entities for bark-ml.";
   python_observers(
     m.def_submodule("observers", "c++ observers"));
   python_evaluators(

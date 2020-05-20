@@ -5,11 +5,6 @@ def _maybe(repo_rule, name, **kwargs):
         repo_rule(name = name, **kwargs)
 
 def load_bark():
-  # _maybe(
-  #   native.local_repository,
-  #   name = "bark_project",
-  #   path="/home/hart/Dokumente/2020/bark",
-  # )
   _maybe(
     git_repository,
     name = "bark_project",
