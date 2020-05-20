@@ -12,7 +12,7 @@ RUN bash /tmp/installers/install_python_venv.sh
 
 RUN pip3 install --upgrade pip
 RUN pip3 install virtualenv
-RUN pip3 install -r /tmp/installers/requirements_diadem.txt
+RUN pip3 install -r /tmp/installers/requirements.txt
 
 # renewe bash
 CMD [ "/bin/bash" ]
