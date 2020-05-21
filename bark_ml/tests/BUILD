@@ -1,8 +1,10 @@
 py_test(
     name = "py_environment_tests",
     srcs = ["py_environment_tests.py"],
-    data = ["@bark_project//python:bark.so"],
-    imports = ["../external/bark_project/python/"],
+    data = ["@bark_project//python:bark.so",
+            "//python:bark_ml_library.so"],
+    imports = ["../external/bark_project/python/",
+               "../../python/"],
     deps = ["//bark_ml/environments:single_agent_runtime",
             "//bark_ml/environments:gym",
             "//bark_ml/commons:py_spaces"],
