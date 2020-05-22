@@ -12,6 +12,7 @@ from bark.models.dynamic import SingleTrackModel
 from bark.world.opendrive import XodrDrivingDirection
 from bark.world.goal_definition import GoalDefinitionPolygon
 from bark.models.behavior import BehaviorIntersectionRuleBased
+from bark.world.goal_definition import GoalDefinitionPolygon
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
 from bark_ml.evaluators.goal_reached import GoalReached
@@ -26,6 +27,15 @@ class IntersectionLaneCorridorConfig(LaneCorridorConfig):
                **kwargs):
     super(IntersectionLaneCorridorConfig, self).__init__(params, **kwargs)
 
+  def controlled_goal(self, world):
+    road_corr = world.map.GetRoadCorridor(
+      self._road_ids, XodrDrivingDirection.forward)
+    lane_corr = self._road_corridor.lane_corridors[0]
+    # lanes are sorted by their s-value
+    lanes = lane_corr.lanes
+    s_val = max(lanes.keys())
+    return GoalDefinitionPolygon(lanes[s_val].polygon)
+
 
 class IntersectionBlueprint(Blueprint):
   def __init__(self,
@@ -35,41 +45,41 @@ class IntersectionBlueprint(Blueprint):
                ml_behavior=None):
     lane_corridors = []
     lane_corridors.append(
-      LaneCorridorConfig(params=params,
-                        source_pos=[-40, -3],
-                        sink_pos=[40, -3],
-                        behavior_model=BehaviorIntersectionRuleBased(params),
-                        min_vel=10.,
-                        max_vel=15.,
-                        ds_min=10.,
-                        ds_max=15.,
-                        s_min=5.,
-                        s_max=50.,
-                        controlled_ids=None))
+      IntersectionLaneCorridorConfig(params=params,
+                                     source_pos=[-40, -3],
+                                     sink_pos=[40, -3],
+                                     behavior_model=BehaviorIntersectionRuleBased(params),
+                                     min_vel=10.,
+                                     max_vel=15.,
+                                     ds_min=10.,
+                                     ds_max=15.,
+                                     s_min=5.,
+                                     s_max=50.,
+                                     controlled_ids=None))
     lane_corridors.append(
-      LaneCorridorConfig(params=params,
-                        source_pos=[40, 3],
-                        sink_pos=[-40, 3],
-                        behavior_model=BehaviorIntersectionRuleBased(params),
-                        min_vel=10.,
-                        max_vel=15.,
-                        ds_min=15.,
-                        ds_max=15.,
-                        s_min=5.,
-                        s_max=50.,
-                        controlled_ids=None))
+      IntersectionLaneCorridorConfig(params=params,
+                                     source_pos=[40, 3],
+                                     sink_pos=[-40, 3],
+                                     behavior_model=BehaviorIntersectionRuleBased(params),
+                                     min_vel=10.,
+                                     max_vel=15.,
+                                     ds_min=15.,
+                                     ds_max=15.,
+                                     s_min=5.,
+                                     s_max=50.,
+                                     controlled_ids=None))
     lane_corridors.append(
-      LaneCorridorConfig(params=params,
-                        source_pos=[3, -30],
-                        sink_pos=[-40, 3],
-                        behavior_model=BehaviorIntersectionRuleBased(params),
-                        min_vel=5.,
-                        max_vel=10.,
-                        ds_min=10.,
-                        ds_max=15.,
-                        s_min=10.,
-                        s_max=25.,
-                        controlled_ids=True))
+      IntersectionLaneCorridorConfig(params=params,
+                                     source_pos=[3, -30],
+                                     sink_pos=[-40, 3],
+                                     behavior_model=BehaviorIntersectionRuleBased(params),
+                                     min_vel=5.,
+                                     max_vel=10.,
+                                     ds_min=10.,
+                                     ds_max=15.,
+                                     s_min=10.,
+                                     s_max=25.,
+                                     controlled_ids=True))
 
     scenario_generation = \
       ConfigWithEase(

@@ -40,7 +40,8 @@ py_test(
   name = "tfa",
   srcs = ["tfa.py"],
   data = ["@bark_project//python:bark.so",
-          "//python:bark_ml_library.so"],
+          "//python:bark_ml_library.so",
+          "//examples/example_params:example_params"],
   imports = ['../python/'],
   deps = [
     "//bark_ml/environments:single_agent_runtime",

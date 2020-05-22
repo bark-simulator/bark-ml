@@ -17,6 +17,7 @@ from bark_ml.evaluators.goal_reached import GoalReached
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteML
+# from bark_ml_library.observers import NearestObserver
 
 
 class MergingLaneCorridorConfig(LaneCorridorConfig):
