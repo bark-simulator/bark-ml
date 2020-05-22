@@ -1,8 +1,7 @@
 py_test(
     name = "py_environment_tests",
     srcs = ["py_environment_tests.py"],
-    data = ["@bark_project//python:bark.so",
-            "//python:bark_ml_library.so"],
+    data = ["@bark_project//python:bark.so"],
     imports = ["../external/bark_project/python/",
                "../../python/"],
     deps = ["//bark_ml/environments:single_agent_runtime",
@@ -25,8 +24,7 @@ py_test(
 py_test(
     name = "py_observer_tests",
     srcs = ["py_observer_tests.py"],
-    data = ["@bark_project//python:bark.so",
-            "//python:bark_ml_library.so"],
+    data = ["@bark_project//python:bark.so"],
     imports = ["../external/bark_project/python/",
                "../../python/"],
     deps = ["@bark_project//modules/runtime:runtime",

@@ -17,7 +17,7 @@ from bark_ml.evaluators.goal_reached import GoalReached
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteML
-from bark_ml_library.observers import NearestObserver
+# from bark_ml_library.observers import NearestObserver
 
 
 class MergingLaneCorridorConfig(LaneCorridorConfig):
@@ -70,7 +70,7 @@ class MergingBlueprint(Blueprint):
                       follow_agent_id=True)
     dt = 0.2
     evaluator = GoalReached(params)
-    observer = NearestObserver(params)
+    observer = NearestAgentsObserver(params)
     ml_behavior = ml_behavior
 
     super().__init__(
