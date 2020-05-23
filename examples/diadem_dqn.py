@@ -21,10 +21,11 @@ from tensorflow.python.util import deprecation
 deprecation._PRINT_DEPRECATION_WARNINGS = False
 import sys
 import os
+import logging
 import matplotlib as mpl
-if os.environ.get('DISPLAY', '') == '':
-  print('no display found. Using non-interactive Agg backend')
-  mpl.use('Agg')
+#if os.environ.get('DISPLAY', '') == '':
+#  print('no display found. Using non-interactive Agg backend')
+mpl.use('Agg')
 
 from diadem.agents import AgentContext, AgentManager
 from diadem.experiment import Experiment
@@ -50,6 +51,11 @@ observer = NearestAgentsObserver(bark_params)
 runtime = SingleAgentRuntime(blueprint=bp,
                              observer=observer,
                              render=False)
+
+if not os.path.exists("examples"):
+  logging.info("changing directory")
+  os.chdir("diadem_dqn.runfiles/bark_ml")
+
 
 
 def run_dqn_algorithm(parameter_files):

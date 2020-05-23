@@ -123,7 +123,7 @@ base:
       tmp_evaluation_on_test: 1
       tmp_evaluation_on_train: 1
       name: experiment
-      run_on_gluster: 0
+      run_on_gluster: 1
       visualization: &base_experiment_visualisation
         render_every: 20
         render_environment: 0

@@ -8,7 +8,7 @@ def bark_ml_dependencies():
   _maybe(
     git_repository,
     name = "bark_project",
-    branch = "master",
+    commit = "6e1080ed07f9a47973e553c78697910c90b84bf2",
     remote = "https://github.com/bark-simulator/bark",
   )
 
@@ -29,6 +29,6 @@ cc_library(
   _maybe(
     git_repository,
     name = "diadem_project",
-    commit = "741b9ea7a96657e399ae039ab922a8baf0b0fce1",
+    commit = "e1d5cef06499e3eecfe96c774958237321933dfd",
     remote = "https://github.com/juloberno/diadem"
   )

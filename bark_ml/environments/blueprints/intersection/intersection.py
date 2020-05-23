@@ -18,8 +18,8 @@ from bark_ml.environments.blueprints.blueprint import Blueprint
 from bark_ml.evaluators.goal_reached import GoalReached
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
-from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteML
-
+from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML, \
+    BehaviorDiscreteMotionPrimitivesML
 
 class IntersectionLaneCorridorConfig(LaneCorridorConfig):
   def __init__(self,
@@ -124,7 +124,7 @@ class DiscreteIntersectionBlueprint(IntersectionBlueprint):
                params=None,
                number_of_senarios=25,
                random_seed=0):
-    ml_behavior = BehaviorDiscreteML(params)
+    ml_behavior = BehaviorDiscreteMacroActionsML(params)
     IntersectionBlueprint.__init__(self,
                                    params=params,
                                    number_of_senarios=number_of_senarios,
