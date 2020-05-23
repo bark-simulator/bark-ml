@@ -5,6 +5,7 @@
 # https://opensource.org/licenses/MIT
 
 import gym
+from gym import Space
 import numpy as np
 
 
@@ -41,11 +42,11 @@ class Discrete(gym.spaces.Discrete):
         return isinstance(other, Discrete) and self._n == other._n
 
 
-class BoundedContinuous(gym.Space):
+class BoundedContinuous(Space):
   def __init__(self,
-                n,
-                low=None,
-                high=None):
+               n,
+               low=None,
+               high=None):
     self._n = n
     self._low = low
     self._high = high

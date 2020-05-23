@@ -43,7 +43,7 @@ class SingleAgentRuntime(Runtime):
     """
     super().reset(scenario=scenario)
     assert len(self._scenario._eval_agent_ids) == 1, \
-      "This runtime only supports only a single agent!"
+      "This runtime only supports a single agent!"
     eval_id = self._scenario._eval_agent_ids[0]
     self._world = self._observer.Reset(self._world)
     self._world = self._evaluator.Reset(self._world)
@@ -56,7 +56,8 @@ class SingleAgentRuntime(Runtime):
   def step(self, action):
     # set actions
     eval_id = self._scenario._eval_agent_ids[0]
-    self._world.agents[eval_id].behavior_model.ActionToBehavior(action)
+    if eval_id in self._world.agents:
+      self._world.agents[eval_id].behavior_model.ActionToBehavior(action)
 
     # step and observe
     self._world.Step(self._step_time)

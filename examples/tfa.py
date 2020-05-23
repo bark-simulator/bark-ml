@@ -15,7 +15,8 @@ from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from modules.runtime.viewer.video_renderer import VideoRenderer
 
 # BARK-ML imports
-from bark_ml.environments.blueprints import ContinuousHighwayBlueprint
+from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
+  ContinuousMergingBlueprint, ContinuousIntersectionBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, BehaviorPPOAgent
 from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner
@@ -29,25 +30,17 @@ flags.DEFINE_enum("mode",
 
 
 def run_configuration(argv):
-  # params = ParameterServer(filename="/Users/hart/2020/bark-ml/examples/tfa_params.json")
-  params = ParameterServer()
+  params = ParameterServer(filename="examples/example_params/tfa_params.json")
+  # params = ParameterServer()
   params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/home/hart/Dokumente/2020/bark-ml/checkpoints/"
   params["ML"]["TFARunner"]["SummaryPath"] = "/home/hart/Dokumente/2020/bark-ml/checkpoints/"
-
+  params["World"]["remove_agents_out_of_map"] = True
 
   # create environment
-  bp = ContinuousHighwayBlueprint(params,
-                                  number_of_senarios=10,
+  bp = ContinuousMergingBlueprint(params,
+                                  number_of_senarios=500,
                                   random_seed=0)
-  viewer = MPViewer(params=params,
-                    x_range=[-35, 35],
-                    y_range=[-35, 35],
-                    follow_agent_id=True)
-  viewer = VideoRenderer(renderer=viewer,
-                         world_step_time=0.2,
-                         fig_path="/home/hart/Dokumente/2020/bark-ml/video/")
   env = SingleAgentRuntime(blueprint=bp,
-                           viewer=viewer,
                            render=False)
 
   # PPO-agent
@@ -69,13 +62,10 @@ def run_configuration(argv):
   if FLAGS.mode == "train":
     runner.Train()
   elif FLAGS.mode == "visualize":
-    runner.Visualize(2)
+    runner.Visualize(5)
   
   # store all used params of the training
-  # params.Save("/Users/hart/2020/bark-ml/examples/tfa_params.json")
-
-  viewer.export_video(
-    filename="/home/hart/Dokumente/2020/bark-ml/video/video", remove_image_dir=False)
+  # params.Save("/home/hart/Dokumente/2020/bark-ml/examples/example_params/tfa_params.json")
 
 
 if __name__ == '__main__':

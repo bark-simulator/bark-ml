@@ -28,7 +28,7 @@ class GoalReached(StateEvaluator):
     self._max_steps = \
       self._params["ML"]["GoalReachedEvaluator"]["MaxSteps",
         "Maximum steps per episode.",
-        50]
+        60]
     self._eval_agent = eval_agent
 
   def _add_evaluators(self):

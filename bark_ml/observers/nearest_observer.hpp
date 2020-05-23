@@ -37,7 +37,11 @@ using modules::world::ObservedWorldPtr;
 using modules::geometry::Point2d;
 using modules::geometry::Line;
 using modules::geometry::Distance;
-using modules::models::dynamic::StateDefinition;
+using modules::geometry::Norm0To2PI;
+using modules::models::dynamic::StateDefinition::X_POSITION;
+using modules::models::dynamic::StateDefinition::Y_POSITION;
+using modules::models::dynamic::StateDefinition::THETA_POSITION;
+using modules::models::dynamic::StateDefinition::VEL_POSITION;
 using ObservedState = Eigen::Matrix<float, 1, Eigen::Dynamic>;
 using modules::commons::transformation::FrenetPosition;
 using State = Eigen::Matrix<float, Eigen::Dynamic, 1>;
@@ -46,26 +50,31 @@ using State = Eigen::Matrix<float, Eigen::Dynamic, 1>;
 class NearestObserver {
  public:
   explicit NearestObserver(const ParamsPtr& params) :
-    params_(params) {
+    params_(params),
+    min_x_(0.), max_x_(100.),
+    min_y_(0.), max_y_(100.),
+    min_theta_(0.), max_theta_(2*3.14) {
       nearest_agent_num_ =
         params_->GetInt(
-          "ML::NearestObserver::n_nearest_agents", "Nearest agents number", 4);
-      min_theta_ = params_->GetReal("ML::NearestObserver::min_theta", "", -3.14);
-      max_theta_ = params_->GetReal("ML::NearestObserver::max_theta", "", 3.14);
-      min_vel_ = params_->GetReal("ML::NearestObserver::min_vel", "", 0.0);
-      max_vel_ = params_->GetReal("ML::NearestObserver::max_vel", "", 25.0);
-      max_dist_ = params_->GetReal("ML::NearestObserver::max_dist", "", 75.0);
-      state_size_ = params_->GetInt("ML::NearestObserver::state_size", "", 4);
+          "ML::NearestObserver::NNearestAgents", "Nearest agents number", 4);
+      min_vel_ = params_->GetReal("ML::NearestObserver::MinVel", "", 0.0);
+      max_vel_ = params_->GetReal("ML::NearestObserver::MaxVel", "", 50.0);
+      max_dist_ = params_->GetReal("ML::NearestObserver::MaxDist", "", 75.0);
+      state_size_ = params_->GetInt("ML::NearestObserver::StateSize", "", 4);
       observation_len_ = nearest_agent_num_ * state_size_;
   }
 
-  // TODO(@hart): add NormState fct. or integrate in this fct.
+  float Norm(const float val, const float mi, const float ma) const {
+    return (val - mi)/(ma - mi);
+  }
+
   ObservedState FilterState(const State& state) const {
     ObservedState ret_state(1, state_size_);
-    ret_state << state(StateDefinition::X_POSITION),
-                 state(StateDefinition::Y_POSITION),
-                 state(StateDefinition::THETA_POSITION),
-                 state(StateDefinition::VEL_POSITION);
+    const float normalized_angle = Norm0To2PI(state(THETA_POSITION));
+    ret_state << Norm(state(X_POSITION), min_x_, max_x_),
+                 Norm(state(Y_POSITION), min_y_, max_y_),
+                 Norm(normalized_angle, min_theta_, max_theta_),
+                 Norm(state(VEL_POSITION), min_vel_, max_vel_);
     return ret_state;
   }
 
@@ -99,7 +108,7 @@ class NearestObserver {
       if (agent.second->GetAgentId() != observed_world->GetEgoAgentId()) {
         ObservedState other_agent_state =
           FilterState(agent.second->GetCurrentState());
-        state.block(0, row_idx*state_size_, 1, state_size_) = other_agent_state;
+        state.block(0, row_idx*state_size_, 1, state_size_) = other_agent_state;  // NOLINT
         row_idx++;
       }
     }
@@ -107,6 +116,13 @@ class NearestObserver {
   }
 
   WorldPtr Reset(const WorldPtr& world) {
+    const auto& x_y = world->BoundingBox();
+    Point2d bb0 = x_y.first;
+    Point2d bb1 = x_y.second;
+    min_x_ = bb0.get<0>();
+    max_x_ = bb1.get<0>();
+    min_y_ = bb0.get<1>();
+    max_y_ = bb1.get<1>();
     return world;
   }
 
@@ -115,14 +131,15 @@ class NearestObserver {
     low.setZero();
     Matrix_t<float> high(1, observation_len_);
     high.setOnes();
-    std::vector<int> shape{1, observation_len_};
+    std::tuple<int> shape{observation_len_};
     return Box<float>(low, high, shape);
   }
 
  private:
   ParamsPtr params_;
   int state_size_, nearest_agent_num_, observation_len_;
-  float min_theta_, max_theta_, min_vel_, max_vel_, max_dist_;
+  float min_theta_, max_theta_, min_vel_, max_vel_, max_dist_,
+         min_x_, max_x_, min_y_, max_y_;
 };
 
 }  // namespace observers
