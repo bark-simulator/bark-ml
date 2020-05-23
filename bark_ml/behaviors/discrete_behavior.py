@@ -42,7 +42,7 @@ class BehaviorDiscreteMotionPrimitivesML(BehaviorMPContinuousActions):
 class BehaviorDiscreteMacroActionsML(BehaviorMPMacroActions):
   def __init__(self,
                params=None):
-    self._macro_action_params = params.AddChild("ML")
+    self._macro_action_params = params.AddChild("ML").AddChild("BehaviorMPMacroActions")
     self._macro_action_params["BehaviorMPMacroActions"]["CheckValidityInPlan", "", False]
     default_model = BehaviorMacroActionsFromParamServer(self._macro_action_params)
     super().__init__(self._macro_action_params, default_model.GetMotionPrimitives())

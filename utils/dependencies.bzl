@@ -29,6 +29,6 @@ cc_library(
   _maybe(
     git_repository,
     name = "diadem_project",
-    commit = "e1d5cef06499e3eecfe96c774958237321933dfd",
+    commit = "64b2987fbdd69ad533f30b545568c691ad5afb00",
     remote = "https://github.com/juloberno/diadem"
   )

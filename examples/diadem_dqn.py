@@ -22,6 +22,7 @@ deprecation._PRINT_DEPRECATION_WARNINGS = False
 import sys
 import os
 import logging
+logging.getLogger().setLevel(logging.INFO)
 import matplotlib as mpl
 #if os.environ.get('DISPLAY', '') == '':
 #  print('no display found. Using non-interactive Agg backend')
@@ -31,7 +32,7 @@ from diadem.agents import AgentContext, AgentManager
 from diadem.experiment import Experiment
 from diadem.experiment.visualizers import OnlineVisualizer
 from diadem.summary import PandasSummary, ConsoleSummary
-from diadem.common import Params
+from diadem.common import Params, config_logging
 from diadem.preprocessors import Normalization
 
 from bark_ml.library_wrappers.lib_diadem.diadem_bark_environment import DiademBarkEnvironment
@@ -42,9 +43,13 @@ from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.environments.blueprints import DiscreteMergingBlueprint
 
 # create scenario
-bark_params = ParameterServer()
+if not os.path.exists("examples"):
+  logging.info("changing directory")
+  os.chdir("diadem_dqn.runfiles/bark_ml")
+
+bark_params = ParameterServer(filename="examples/example_params/diadem_params.json")
 bp = DiscreteMergingBlueprint(bark_params,
-                                number_of_senarios=1000,
+                                number_of_senarios=100,
                                 random_seed=0)
 
 observer = NearestAgentsObserver(bark_params)
@@ -52,15 +57,11 @@ runtime = SingleAgentRuntime(blueprint=bp,
                              observer=observer,
                              render=False)
 
-if not os.path.exists("examples"):
-  logging.info("changing directory")
-  os.chdir("diadem_dqn.runfiles/bark_ml")
-
-
 
 def run_dqn_algorithm(parameter_files):
     exp_dir = "tmp_exp_dir"
     diadem_params = Params(filename=parameter_files)
+    config_logging(console=False, filename=logging.INFO)
     environment = DiademBarkEnvironment(runtime=runtime)
     context = AgentContext(
         environment=environment,
