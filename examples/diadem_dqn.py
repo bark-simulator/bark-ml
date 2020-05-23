@@ -35,12 +35,12 @@ from bark_ml.library_wrappers.lib_diadem.diadem_bark_environment import DiademBa
 from bark_project.modules.runtime.commons.parameters import ParameterServer
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
-from bark_ml.environments.blueprints import DiscreteHighwayBlueprint
+from bark_ml.environments.blueprints import DiscreteMergingBlueprint
 
 # create scenario
 bark_params = ParameterServer()
-bp = DiscreteHighwayBlueprint(bark_params,
-                                number_of_senarios=10,
+bp = DiscreteMergingBlueprint(bark_params,
+                                number_of_senarios=1000,
                                 random_seed=0)
 
 observer = NearestAgentsObserver(bark_params)
@@ -58,7 +58,7 @@ def run_dqn_algorithm(parameter_files):
         datamanager=None,
         preprocessor=None,
         optimizer=tf.train.AdamOptimizer,
-        summary_service=ConsoleSummary()
+        summary_service=PandasSummary()
     )
     agent = AgentManager(
         params=diadem_params,
@@ -75,4 +75,4 @@ def run_dqn_algorithm(parameter_files):
 if __name__ == '__main__':
     # basic Double DQN with Prioritized Experience Replay
     run_dqn_algorithm(parameter_files=["examples/example_params/common_parameters.yaml",
-                                                 "examples/example_params/dqn_distributional_quantile.yaml"])
+                                                 "examples/example_params/dqn_basic.yaml"])

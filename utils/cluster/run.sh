@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --qos lowprio
+#SBATCH --qos normal
 #SBATCH -c 4
 ##SBATCH --gres=gpu:1
 #SBATCH --mem=10GB
 
-srun singularity exec --nv ../images/bark_ml.img python3 -u ./configuration 
+srun singularity exec --nv ../images/barkml_diadem.img python3 -u ./diadem_dqn 

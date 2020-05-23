@@ -70,8 +70,8 @@ base:
         discount_factor: 0.95
       network: &base_agent_categorical_fully_network
         <<: *base_dqfd_agent_fully_network
-        min_reward: &min_reward -1000
-        max_reward: &max_reward 100
+        min_reward: &min_reward -1
+        max_reward: &max_reward 1
         num_atoms: &num_atoms 200
         quantile_regression: 0
 
@@ -118,7 +118,7 @@ base:
       explore: 1
       max_agent_steps: 70
       final_evaluation_batch_size: 1000
-      tmp_evaluation_every: 100
+      tmp_evaluation_every: 1000
       tmp_evaluation_batch_size: 100
       tmp_evaluation_on_test: 1
       tmp_evaluation_on_train: 1
