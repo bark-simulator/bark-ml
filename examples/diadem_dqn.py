@@ -40,7 +40,7 @@ from bark_ml.environments.blueprints import DiscreteHighwayBlueprint
 bark_params = ParameterServer()
 bp = DiscreteHighwayBlueprint(bark_params,
                               number_of_senarios=10,
-                              random_seed=0
+                              random_seed=0,
                               viewer=False)
 
 observer = NearestAgentsObserver(bark_params)
