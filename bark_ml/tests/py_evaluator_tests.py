@@ -32,7 +32,12 @@ class PyEvaluatorTests(unittest.TestCase):
     observed_world = world.Observe([eval_id])[0]
     evaluator = GoalReached(params)
     action = np.array([0., 0.], dtype=np.float32)
+    start_time = time.time()
     print(evaluator.Evaluate(observed_world, action))
+    end_time = time.time()
+    print(f"It took {end_time-start_time} seconds.")
+    
+
     
   def test_goal_reached_cpp_evaluator(self):
     params = ParameterServer()
@@ -45,7 +50,12 @@ class PyEvaluatorTests(unittest.TestCase):
     observed_world = world.Observe([eval_id])[0]
     evaluator = GoalReachedEvaluator(params)
     action = np.array([0., 0.], dtype=np.float32)
+    start_time = time.time()
     print(evaluator.Evaluate(observed_world, action))
+    end_time = time.time()
+    print(f"It took {end_time-start_time} seconds.")
+
+
   
 if __name__ == '__main__':
   unittest.main()

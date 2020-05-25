@@ -56,7 +56,7 @@ class NearestObserver : public BaseObserver {
     min_y_(0.), max_y_(100.),
     min_theta_(0.), max_theta_(2*3.14) {
       nearest_agent_num_ =
-        params_->GetInt(
+        params->GetInt(
           "ML::NearestObserver::NNearestAgents", "Nearest agents number", 4);
       min_vel_ = params->GetReal("ML::NearestObserver::MinVel", "", 0.0);
       max_vel_ = params->GetReal("ML::NearestObserver::MaxVel", "", 50.0);
