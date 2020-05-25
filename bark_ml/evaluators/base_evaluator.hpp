@@ -12,7 +12,6 @@
 #include <vector>
 #include <tuple>
 #include <map>
-#include <string>
 #include <functional>
 #include <Eigen/Dense>
 #include <boost/variant.hpp>
@@ -53,6 +52,7 @@ using State = Eigen::Matrix<float, Eigen::Dynamic, 1>;
 using Reward = float;
 using Done = bool;
 using EvalResults = std::map<std::string, EvaluationReturn>;
+
 
 class BaseEvaluator {
  public:

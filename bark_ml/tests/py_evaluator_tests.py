@@ -45,7 +45,7 @@ class PyEvaluatorTests(unittest.TestCase):
     observed_world = world.Observe([eval_id])[0]
     evaluator = GoalReachedEvaluator(params)
     action = np.array([0., 0.], dtype=np.float32)
-    # print(evaluator.Evaluate(observed_world, action))
+    print(evaluator.Evaluate(observed_world, action))
   
 if __name__ == '__main__':
   unittest.main()
