@@ -17,6 +17,7 @@ cc_library(
   ],
   deps = [
     "@bark_project//modules/world:world",
+    "@bark_project//modules/world/evaluation:evaluation",
     "//bark_ml/commons:spaces",
     "//bark_ml/commons:commons"
   ],
