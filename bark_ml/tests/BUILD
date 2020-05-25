@@ -41,7 +41,7 @@ py_test(
     data = ["@bark_project//python:bark.so",
             "//python:bark_ml_library.so"],
     imports = ["../external/bark_project/python/",
-               "../python/"],
+               "../../python/"],
     deps = ["//bark_ml/environments:single_agent_runtime",
             "//bark_ml/behaviors:behaviors",
             "//bark_ml/commons:py_spaces"],

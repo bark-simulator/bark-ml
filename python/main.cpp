@@ -16,6 +16,7 @@
 
 #include "modules/commons/params/params.hpp"
 #include "bark_ml/observers/nearest_observer.hpp"
+#include "bark_ml/evaluators/goal_reached.hpp"
 #include "bark_ml/commons/spaces.hpp"
 
 PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
@@ -23,6 +24,7 @@ PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
 namespace py = pybind11;
 using modules::commons::ParamsPtr;
 using observers::NearestObserver;
+using evaluators::GoalReachedEvaluator;
 using spaces::Box;
 using spaces::Matrix_t;
 
@@ -37,8 +39,11 @@ void python_observers(py::module m) {
 }
 
 void python_evaluators(py::module m) {
-  // py::class_<World, std::shared_ptr<World>>(m, "NearestObserver")
-  //   .def(py::init<ParamsPtr>());
+  py::class_<GoalReachedEvaluator,
+             std::shared_ptr<GoalReachedEvaluator>>(m, "GoalReachedEvaluator")
+    .def(py::init<ParamsPtr>())
+    .def("Evaluate", &GoalReachedEvaluator::Evaluate)
+    .def("Reset", &GoalReachedEvaluator::Reset);
 }
 
 void python_spaces(py::module m) {
