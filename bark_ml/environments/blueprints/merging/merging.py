@@ -38,7 +38,8 @@ class MergingBlueprint(Blueprint):
                params=None,
                number_of_senarios=250,
                random_seed=0,
-               ml_behavior=None):
+               ml_behavior=None,
+               viewer=True):
     left_lane = MergingLaneCorridorConfig(
       params=params,
       road_ids=[0, 1],
@@ -64,10 +65,11 @@ class MergingBlueprint(Blueprint):
         random_seed=random_seed,
         params=params,
         lane_corridor_configs=[left_lane, right_lane])
-    viewer = MPViewer(params=params,
-                      x_range=[-35, 35],
-                      y_range=[-35, 35],
-                      follow_agent_id=True)
+    if viewer:
+      viewer = MPViewer(params=params,
+                        x_range=[-35, 35],
+                        y_range=[-35, 35],
+                        follow_agent_id=True)
     dt = 0.2
     evaluator = GoalReached(params)
     observer = NearestObserver(params)
@@ -86,23 +88,27 @@ class ContinuousMergingBlueprint(MergingBlueprint):
   def __init__(self,
                params=None,
                number_of_senarios=25,
-               random_seed=0):
+               random_seed=0,
+               viewer=True):
     ml_behavior = BehaviorContinuousML(params)
     MergingBlueprint.__init__(self,
                               params=params,
                               number_of_senarios=number_of_senarios,
                               random_seed=random_seed,
-                              ml_behavior=ml_behavior)
+                              ml_behavior=ml_behavior,
+                              viewer=True)
 
 
 class DiscreteMergingBlueprint(MergingBlueprint):
   def __init__(self,
                params=None,
                number_of_senarios=25,
-               random_seed=0):
+               random_seed=0,
+               viewer=True):
     ml_behavior = BehaviorDiscreteML(params)
     MergingBlueprint.__init__(self,
                               params=params,
                               number_of_senarios=number_of_senarios,
                               random_seed=random_seed,
-                              ml_behavior=ml_behavior)
+                              ml_behavior=ml_behavior,
+                              viewer=True)

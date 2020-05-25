@@ -43,7 +43,8 @@ class IntersectionBlueprint(Blueprint):
                params=None,
                number_of_senarios=250,
                random_seed=0,
-               ml_behavior=None):
+               ml_behavior=None,
+               viewer=True):
     lane_corridors = []
     lane_corridors.append(
       IntersectionLaneCorridorConfig(params=params,
@@ -89,10 +90,11 @@ class IntersectionBlueprint(Blueprint):
         random_seed=random_seed,
         params=params,
         lane_corridor_configs=lane_corridors)
-    viewer = MPViewer(params=params,
-                      x_range=[-35, 35],
-                      y_range=[-35, 35],
-                      follow_agent_id=True)
+    if viewer:
+      viewer = MPViewer(params=params,
+                        x_range=[-35, 35],
+                        y_range=[-35, 35],
+                        follow_agent_id=True)
     dt = 0.2
     evaluator = GoalReached(params)
     observer = NearestObserver(params)
@@ -111,23 +113,27 @@ class ContinuousIntersectionBlueprint(IntersectionBlueprint):
   def __init__(self,
                params=None,
                number_of_senarios=25,
-               random_seed=0):
+               random_seed=0,
+               viewer=True):
     ml_behavior = BehaviorContinuousML(params)
     IntersectionBlueprint.__init__(self,
                                    params=params,
                                    number_of_senarios=number_of_senarios,
                                    random_seed=random_seed,
-                                   ml_behavior=ml_behavior)
+                                   ml_behavior=ml_behavior,
+                                   viewer=True)
 
 
 class DiscreteIntersectionBlueprint(IntersectionBlueprint):
   def __init__(self,
                params=None,
                number_of_senarios=25,
-               random_seed=0):
+               random_seed=0,
+               viewer=True):
     ml_behavior = BehaviorDiscreteML(params)
     IntersectionBlueprint.__init__(self,
                                    params=params,
                                    number_of_senarios=number_of_senarios,
                                    random_seed=random_seed,
-                                   ml_behavior=ml_behavior)
+                                   ml_behavior=ml_behavior,
+                                   viewer=True)

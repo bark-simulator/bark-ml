@@ -21,10 +21,6 @@ from tensorflow.python.util import deprecation
 deprecation._PRINT_DEPRECATION_WARNINGS = False
 import sys
 import os
-import matplotlib as mpl
-if os.environ.get('DISPLAY', '') == '':
-  print('no display found. Using non-interactive Agg backend')
-  mpl.use('Agg')
 
 from diadem.agents import AgentContext, AgentManager
 from diadem.experiment import Experiment
@@ -44,7 +40,8 @@ from bark_ml.environments.blueprints import DiscreteHighwayBlueprint
 bark_params = ParameterServer()
 bp = DiscreteHighwayBlueprint(bark_params,
                               number_of_senarios=10,
-                              random_seed=0)
+                              random_seed=0
+                              viewer=False)
 
 observer = NearestAgentsObserver(bark_params)
 runtime = SingleAgentRuntime(blueprint=bp,
