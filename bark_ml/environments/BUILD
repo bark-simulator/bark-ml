@@ -8,7 +8,7 @@ py_library(
                 ["@bark_project//python:bark.so",
                  "//python:bark_ml_library.so"],
     imports = ["../external/bark_project/python/",
-               "../../../python/"],
+               "../../python/"],
     deps = ["//bark_ml/observers:observers",
             "//bark_ml/evaluators:evaluators",
             "//bark_ml/behaviors:behaviors",

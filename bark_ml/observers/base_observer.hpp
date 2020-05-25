@@ -35,7 +35,8 @@ class BaseObserver {
   explicit BaseObserver(const ParamsPtr& params) :
     params_(params) {}
 
-  virtual ObservedState Observe(const ObservedWorldPtr& observed_world) const = 0;
+  virtual ObservedState Observe(
+    const ObservedWorldPtr& observed_world) const = 0;
   virtual WorldPtr Reset(const WorldPtr& world) = 0;
   virtual Box<float> ObservationSpace() const = 0;
 
