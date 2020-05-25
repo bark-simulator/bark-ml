@@ -76,5 +76,6 @@ def run_dqn_algorithm(parameter_files):
 # replace second parameter file with other defaults to get categorical, standard dqn or quantile agents
 if __name__ == '__main__':
   # basic Double DQN with Prioritized Experience Replay
-  run_dqn_algorithm(parameter_files=["examples/example_params/common_parameters.yaml",
-                                      "examples/example_params/dqn_distributional_quantile.yaml"])
+  # run_dqn_algorithm(parameter_files=["examples/example_params/common_parameters.yaml",
+  #                                     "examples/example_params/dqn_distributional_quantile.yaml"])
+  run_dqn_algorithm(parameter_files=["examples/example_params/dqn_basic.yaml"])
