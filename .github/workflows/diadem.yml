@@ -14,5 +14,5 @@ jobs:
         run: virtualenv -p python3 ./python/venv  --system-site-packages
       - name: Entering the virtual python environment..
         run: . ./python/venv/bin/activate
-      - name: Runing bazel tests..
-        run: bazel run //examples:diadem_dqn
+      - name: Running bazel tests..
+        run: bazel test :diadem_tests

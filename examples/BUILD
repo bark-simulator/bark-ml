@@ -51,7 +51,7 @@ py_test(
   ]
 )
 
-py_binary(
+py_test(
   name = "diadem_dqn",
   srcs = ["diadem_dqn.py"],
   data = ["@bark_project//python:bark.so",

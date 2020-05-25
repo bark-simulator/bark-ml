@@ -33,7 +33,10 @@ class PyObserverTests(unittest.TestCase):
 
     eval_id = env._scenario._eval_agent_ids[0]
     observed_world = world.Observe([eval_id])[0]
+    start_time = time.time()
     observed_state = observer.Observe(observed_world)
+    end_time = time.time()
+    print(f"It took {end_time-start_time} seconds.")
     print(observed_state, observer.observation_space.shape)
 
     
@@ -50,7 +53,10 @@ class PyObserverTests(unittest.TestCase):
     
     eval_id = env._scenario._eval_agent_ids[0]
     observed_world = world.Observe([eval_id])[0]
+    start_time = time.time()
     observed_state = observer.Observe(observed_world)
+    end_time = time.time()
+    print(f"It took {end_time-start_time} seconds.")
     print(observed_state, observer.observation_space.shape)
 
 

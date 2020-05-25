@@ -53,7 +53,7 @@ def run_configuration(argv):
 
   # SAC-agent
   sac_agent = BehaviorSACAgent(environment=env,
-                              params=params)
+                               params=params)
   env.ml_behavior = sac_agent
   runner = SACRunner(params=params,
                      environment=env,

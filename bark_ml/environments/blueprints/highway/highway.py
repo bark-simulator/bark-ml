@@ -14,9 +14,9 @@ from bark.world.goal_definition import GoalDefinitionStateLimitsFrenet
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
 from bark_ml.evaluators.goal_reached import GoalReached
-from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteML
+from bark_ml_library.observers import NearestObserver
 
 
 class HighwayLaneCorridorConfig(LaneCorridorConfig):
@@ -40,7 +40,8 @@ class HighwayBlueprint(Blueprint):
                params=None,
                number_of_senarios=250,
                random_seed=0,
-               ml_behavior=None):
+               ml_behavior=None,
+               viewer=True):
 
     params["BehaviorIDMClassic"]["DesiredVelocity"] = 30.
     left_lane = HighwayLaneCorridorConfig(params=params,
@@ -62,13 +63,14 @@ class HighwayBlueprint(Blueprint):
         random_seed=random_seed,
         params=params,
         lane_corridor_configs=[left_lane, right_lane])
-    viewer = MPViewer(params=params,
-                      x_range=[-35, 35],
-                      y_range=[-35, 35],
-                      follow_agent_id=True)
+    if viewer:
+      viewer = MPViewer(params=params,
+                        x_range=[-35, 35],
+                        y_range=[-35, 35],
+                        follow_agent_id=True)
     dt = 0.2
     evaluator = GoalReached(params)
-    observer = NearestAgentsObserver(params)
+    observer = NearestObserver(params)
     ml_behavior = ml_behavior
 
     super().__init__(
@@ -84,23 +86,27 @@ class ContinuousHighwayBlueprint(HighwayBlueprint):
   def __init__(self,
                params=None,
                number_of_senarios=25,
-               random_seed=0):
+               random_seed=0,
+               viewer=True):
     ml_behavior = BehaviorContinuousML(params)
     HighwayBlueprint.__init__(self,
                               params=params,
                               number_of_senarios=number_of_senarios,
                               random_seed=random_seed,
-                              ml_behavior=ml_behavior)
+                              ml_behavior=ml_behavior,
+                              viewer=True)
 
 
 class DiscreteHighwayBlueprint(HighwayBlueprint):
   def __init__(self,
                params=None,
                number_of_senarios=25,
-               random_seed=0):
+               random_seed=0,
+               viewer=True):
     ml_behavior = BehaviorDiscreteML(params)
     HighwayBlueprint.__init__(self,
                               params=params,
                               number_of_senarios=number_of_senarios,
                               random_seed=random_seed,
-                              ml_behavior=ml_behavior)
+                              ml_behavior=ml_behavior,
+                              viewer=True)
