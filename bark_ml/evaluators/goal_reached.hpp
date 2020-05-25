@@ -61,8 +61,13 @@ using EvalResults = std::map<std::string, EvaluationReturn>;
 class GoalReachedEvaluator : public BaseEvaluator {
  public:
   explicit GoalReachedEvaluator(const ParamsPtr& params) :
-    BaseEvaluator(params),
-    col_penalty_(-1.), goal_reward_(1.), max_steps_(50) {
+    BaseEvaluator(params) {
+    col_penalty_ = params->GetReal(
+      "ML::GoalReachedEvaluator::ColPenalty", "", -1.);
+    goal_reward_ = params->GetReal(
+      "ML::GoalReachedEvaluator::GoalReward", "", 1.);
+    max_steps_ = params->GetInt(
+      "ML::GoalReachedEvaluator::MaxSteps", "", 50);
   }
 
   void AddEvaluators(WorldPtr& world) {  // NOLINT

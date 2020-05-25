@@ -22,6 +22,7 @@
 #include "modules/models/dynamic/dynamic_model.hpp"
 #include "bark_ml/commons/spaces.hpp"
 #include "bark_ml/commons/commons.hpp"
+#include "bark_ml/observers/base_observer.hpp"
 
 namespace observers {
 using modules::commons::ParamsPtr;
@@ -47,20 +48,20 @@ using modules::commons::transformation::FrenetPosition;
 using State = Eigen::Matrix<float, Eigen::Dynamic, 1>;
 
 
-class NearestObserver {
+class NearestObserver : public BaseObserver {
  public:
   explicit NearestObserver(const ParamsPtr& params) :
-    params_(params),
+    BaseObserver(params),
     min_x_(0.), max_x_(100.),
     min_y_(0.), max_y_(100.),
     min_theta_(0.), max_theta_(2*3.14) {
       nearest_agent_num_ =
         params_->GetInt(
           "ML::NearestObserver::NNearestAgents", "Nearest agents number", 4);
-      min_vel_ = params_->GetReal("ML::NearestObserver::MinVel", "", 0.0);
-      max_vel_ = params_->GetReal("ML::NearestObserver::MaxVel", "", 50.0);
-      max_dist_ = params_->GetReal("ML::NearestObserver::MaxDist", "", 75.0);
-      state_size_ = params_->GetInt("ML::NearestObserver::StateSize", "", 4);
+      min_vel_ = params->GetReal("ML::NearestObserver::MinVel", "", 0.0);
+      max_vel_ = params->GetReal("ML::NearestObserver::MaxVel", "", 50.0);
+      max_dist_ = params->GetReal("ML::NearestObserver::MaxDist", "", 75.0);
+      state_size_ = params->GetInt("ML::NearestObserver::StateSize", "", 4);
       observation_len_ = nearest_agent_num_ * state_size_;
   }
 
@@ -136,7 +137,6 @@ class NearestObserver {
   }
 
  private:
-  ParamsPtr params_;
   int state_size_, nearest_agent_num_, observation_len_;
   float min_theta_, max_theta_, min_vel_, max_vel_, max_dist_,
          min_x_, max_x_, min_y_, max_y_;
