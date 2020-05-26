@@ -5,6 +5,9 @@
 # https://opensource.org/licenses/MIT
 
 # TensorFlow Agents (https://github.com/tensorflow/agents) example
+import os
+from pathlib import Path
+
 import gym
 from absl import app
 from absl import flags
@@ -32,8 +35,8 @@ flags.DEFINE_enum("mode",
 def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/tfa_params.json")
   # params = ParameterServer()
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/home/hart/Dokumente/2020/bark-ml/checkpoints/"
-  params["ML"]["TFARunner"]["SummaryPath"] = "/home/hart/Dokumente/2020/bark-ml/checkpoints/"
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = os.path.join(Path.home(), "checkpoints/")
+  params["ML"]["TFARunner"]["SummaryPath"] = os.path.join(Path.home(), "checkpoints/")
   params["World"]["remove_agents_out_of_map"] = True
 
   # create environment
@@ -65,8 +68,9 @@ def run_configuration(argv):
     runner.Visualize(5)
   
   # store all used params of the training
-  # params.Save("/home/hart/Dokumente/2020/bark-ml/examples/example_params/tfa_params.json")
+  # params.Save(os.path.join(Path.home(), "examples/example_params/tfa_params.json"))
 
 
 if __name__ == '__main__':
   app.run(run_configuration)
+  print('********************************************** Finished **********************************************')
