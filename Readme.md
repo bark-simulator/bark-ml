@@ -43,6 +43,13 @@ TF-Agents SAC-example: `bazel run //examples:tfa`.
 <img src="docs/images/bark-ml.gif" alt="BARK-ML Highway" />
 </p>
 
+## Running tests
+
+```
+bazel test :unit_tests  
+bazel test :examples_tests
+```
+
 ## License
 
 BARK-ML specific code is distributed under MIT License.
