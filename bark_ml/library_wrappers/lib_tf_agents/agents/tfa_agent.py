@@ -20,26 +20,27 @@ from bark_ml.library_wrappers.lib_tf_agents.tfa_wrapper import TFAWrapper
 
 # TODO(@hart): pass individual observer?
 class BehaviorTFAAgent:
-  def __init__(self,
-               environment=None,
-               params=None):
-    self._params = params
-    self._environment = environment
-    self._wrapped_env = tf_py_environment.TFPyEnvironment(
-      TFAWrapper(self._environment))
-    self._ckpt = tf.train.Checkpoint(step=tf.Variable(0, dtype=tf.int64))
-    self._agent = self.GetAgent(self._wrapped_env, params)
-    self._ckpt = tf.train.Checkpoint(step=tf.Variable(0, dtype=tf.int64),
-                                     agent=self._agent)
-    self._ckpt_manager = self.GetCheckpointer()
-    self._logger = logging.getLogger()
-    self._training = False
+    def __init__(self,
+                environment=None,
+                params=None):
+                
+        self._params = params
+        self._environment = environment
+        self._wrapped_env = tf_py_environment.TFPyEnvironment(
+        TFAWrapper(self._environment))
+        self._ckpt = tf.train.Checkpoint(step=tf.Variable(0, dtype=tf.int64))
+        self._agent = self.GetAgent(self._wrapped_env, params)
+        self._ckpt = tf.train.Checkpoint(step=tf.Variable(0, dtype=tf.int64),
+                                        agent=self._agent)
+        self._ckpt_manager = self.GetCheckpointer()
+        self._logger = logging.getLogger()
+        self._training = False
 
-  def Reset(self):
-    pass
+    def Reset(self):
+        pass
 
-  def Act(self, state):
-    pass
+    def Act(self, state):
+        pass
 
   def GetCheckpointer(self):
     checkpointer = Checkpointer(

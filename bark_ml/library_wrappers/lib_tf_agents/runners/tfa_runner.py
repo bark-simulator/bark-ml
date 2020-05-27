@@ -82,7 +82,7 @@ class TFARunner:
     """Agent specific
     """
     pass
-
+    
   def Evaluate(self):
     self._agent._training = False
     global_iteration = self._agent._agent._train_step_counter.numpy()
