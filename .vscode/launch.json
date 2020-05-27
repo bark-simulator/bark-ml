@@ -4,44 +4,68 @@
 	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
 	"version": "0.2.0",
 	"configurations": [
+	{
+		"name": "Python: Current File TF2RL",
+		"type": "python",
+		"request": "launch",
+		"program": "${file}",
+		"console": "integratedTerminal",
+		"env": {
+			"PYTHONPATH": "${workspaceFolder}/bazel-bin/tests/py_bark_agent_tests.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/tests/py_bark_agent_tests.runfiles/bark_project:${workspaceFolder}/bazel-bin/tests/py_bark_agent_tests.runfiles/bark_ml"
+		},
+		"justMyCode": false,
+		"args": [
+			//"--help",
+			"--gpu",
+			"-1",
+			"--expert-path-dir",
+			"${workspaceFolder}/results/20200514T120031.302066_SAC_",
+			"--max-steps",
+			"20000",
+			//"--show-test-images",
+			"--save-test-movie"
+		]
+	},
+	{
+		"name": "Python: Current File",
+		"type": "python",
+		"request": "launch",
+		"program": "${file}",
+		"console": "integratedTerminal",
+		"env": {
+					"PYTHONPATH": "${workspaceFolder}/bazel-bark-ml/bark_ml/commons/"
+		}
+	},
+	{
+		"name": "(gdb) Launch",
+		"type": "cppdbg",
+		"request": "launch",
+		"program": "${workspaceFolder}/bazel-bin/bark_ml/tests/observer_tests",
+		"args": [],
+		"stopAtEntry": false,
+		"cwd": "${workspaceFolder}",
+		"environment": [],
+		"externalConsole": false,
+		"setupCommands": [
 			{
-					"name": "Python: Current File",
-					"type": "python",
-					"request": "launch",
-					"program": "${file}",
-					"console": "integratedTerminal",
-					"env": {
-						"PYTHONPATH": "${workspaceFolder}/bazel-bark-ml/bark_ml/commons/"
-			 }
-			},
-			{
-					"name": "(gdb) Launch",
-					"type": "cppdbg",
-					"request": "launch",
-					"program": "${workspaceFolder}/bazel-bin/bark_ml/tests/observer_tests",
-					"args": [],
-					"stopAtEntry": false,
-					"cwd": "${workspaceFolder}",
-					"environment": [],
-					"externalConsole": false,
-					"setupCommands": [
-							{
-									"description": "Enable pretty-printing for gdb",
-									"text": "-enable-pretty-printing",
-									"ignoreFailures": true
-							}
-					]
-			},
-			{
-					"name": "(gdb) Attach",
-					"type": "cppdbg",
-					"request": "attach",
-					"program": "${workspaceFolder}/python/venv/bin/python3",
-					"cwd" : "${workspaceFolder}",
-					"additionalSOLibSearchPath":"${workspaceFolder}/bazel-bin/examples/tfa.runfiles/__main__/python",
-					"processId": "${command:pickProcess}",
-					"MIMode": "gdb",
-					"sourceFileMap" : {"/proc/self/cwd/": "${workspaceFolder}"}
-					}
-	]
+				"description": "Enable pretty-printing for gdb",
+				"text": "-enable-pretty-printing",
+				"ignoreFailures": true
+			}
+		]
+	},
+	{
+		"name": "(gdb) Attach",
+		"type": "cppdbg",
+		"request": "attach",
+		"program": "${workspaceFolder}/python/venv/bin/python3",
+		"cwd": "${workspaceFolder}",
+		"additionalSOLibSearchPath": "${workspaceFolder}/bazel-bin/examples/tfa.runfiles/__main__/python",
+		"processId": "${command:pickProcess}",
+		"MIMode": "gdb",
+		"sourceFileMap": {
+			"/proc/self/cwd/": "${workspaceFolder}"
+		}
+	}
+]
 }
