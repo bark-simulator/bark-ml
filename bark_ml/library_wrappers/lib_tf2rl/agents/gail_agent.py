@@ -6,6 +6,8 @@ tf.compat.v1.enable_v2_behavior()
 
 # tf2rl imports
 import tf2rl
+from tf2rl.algos.ddpg import DDPG
+from tf2rl.algos.gail import GAIL
 
 # BARK imports
 from bark_ml.library_wrappers.lib_tf2rl.agents.tf2rl_agent import BehaviorTF2RLAgent
@@ -18,7 +20,8 @@ class BehaviorGAILAgent(BehaviorTF2RLAgent, BehaviorContinuousML):
                  environment=None,
                  params=None):
         
-        BehaviorTF2RLAgent.__init__(environment=environment,
+        BehaviorTF2RLAgent.__init__(self,
+                                    environment=environment,
                                     params=params)
         BehaviorContinuousML.__init__(self, params)
 

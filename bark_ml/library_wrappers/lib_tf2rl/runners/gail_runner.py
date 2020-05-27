@@ -48,13 +48,15 @@ class GAILRunner(TF2RLRunner):
         expert_trajs = restore_latest_n_traj(args.expert_path_dir,
                                             n_path=args.n_path, max_steps=args.max_steps)
         
-        self._trainer=IRLtrainer(policy=policy,
-                        env=self._unwrapped_runtime,
-                        args=args,
-                        irl=irl,
-                        expert_obs=expert_trajs["obses"],
-                        expert_next_obs=expert_trajs["next_obses"],
-                        expert_act=expert_trajs["acts"])
+        trainer=IRLtrainer(policy=policy,
+                           env=self._unwrapped_runtime,
+                           args=args,
+                           irl=irl,
+                           expert_obs=expert_trajs["obses"],
+                           expert_next_obs=expert_trajs["next_obses"],
+                           expert_act=expert_trajs["acts"])
+
+        return trainer
 
 
     def get_args_from_params(self):
