@@ -20,7 +20,7 @@ jobs:
         run: virtualenv -p python3 ./python/venv  --system-site-packages
       - name: Entering the virtual python environment..
         run: . ./python/venv/bin/activate
-      - name: Running unit tests..
-        run: bazel test :unit_tests
-      - name: Running examples..
-        run: bazel test :examples_tests
+      - name: Installing requirements
+        run: pip3.7 install --no-cache-dir --upgrade --trusted-host pypi.org -r utils/requirements.txt
+      - name: Runing bazel tests..
+        run: bazel test //...
