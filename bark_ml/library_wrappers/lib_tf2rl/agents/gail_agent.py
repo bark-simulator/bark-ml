@@ -9,17 +9,18 @@ import tf2rl
 
 # BARK imports
 from bark_ml.library_wrappers.lib_tf2rl.agents.tf2rl_agent import BehaviorTF2RLAgent
+from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 
-
-class BehaviorGAILAgent(BehaviorTF2RLAgent):
+class BehaviorGAILAgent(BehaviorTF2RLAgent, BehaviorContinuousML):
     """GAIL agent based on the tf2rl library."""
 
     def __init__(self,
                  environment=None,
                  params=None):
         
-        super().__init__(environment=environment,
-                         params=params)
+        BehaviorTF2RLAgent.__init__(environment=environment,
+                                    params=params)
+        BehaviorContinuousML.__init__(self, params)
 
         self._generator = self._get_generator()
         self._discriminator = self._get_discriminator()
