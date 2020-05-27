@@ -23,7 +23,7 @@
 					"--max-steps",
 					"20000",
 					//"--show-test-images",
-					"--save-test-movie"
+					//"--save-test-movie"
 				] 
 			},
 			{
