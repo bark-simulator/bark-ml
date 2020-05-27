@@ -16,20 +16,18 @@ from tf2rl.experiments.utils import restore_latest_n_traj
 from bark_ml.library_wrappers.lib_tf2rl.runners.tf2rl_runner import TF2RLRunner
 
 class GAILRunner(TF2RLRunner):
-    """Runner that takes the runtime and agent
-      and runs the training and evaluation as specified.
-    """
+    """GAIL runner implementation based on tf2rl library."""
+
     def __init__(self,
-                runtime=None,
+                environment=None,
                 agent=None,
-                params=ParameterServer(),
-                unwrapped_runtime=None):
-      super().__init__(self,
-                        runtime=runtime,
+                params=None):
+        
+        super().__init__(self,
+                        environment=environment,
                         agent=agent,
                         params=params)
-      
-      self._unwrapped_runtime = unwrapped_runtime
+    
 
     def _train(self):
         """Traines the GAIL agent with the IRLtrainer which was
@@ -64,9 +62,10 @@ class GAILRunner(TF2RLRunner):
         can be given to the IRLtrainer.
         """
         
+        """
         # experiment settings
         args.max_steps
-        args.episode_max_steps 
+        args.episode_max_steps
         args.n_experiments
         args.show_progress
         args.save_model_interval
@@ -85,5 +84,6 @@ class GAILRunner(TF2RLRunner):
         args.save_test_path
         args.save_test_movie
         args.show_test_images
+        """
 
       return args

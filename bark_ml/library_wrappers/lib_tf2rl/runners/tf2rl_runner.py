@@ -20,6 +20,7 @@ class TF2RLRunner:
                  environment=None,
                  agent=None,
                  params=None):
+                 
         self._params = params
         self._agent = agent
         self._environment = environment
@@ -130,7 +131,7 @@ class TF2RLRunner:
                 self._unwrapped_runtime.render()
 
         """
-        
+
 
     def SetupSummaryWriter(self):
         """Not sure whether necessary or not"""
