@@ -44,39 +44,11 @@ class TF2RLRunner:
 
   def Evaluate(self):
     """Evaluates the agent."""
-
-    # TODO: use the logger of the trainer object.
-    #logger.info("Evaluating the agent's performance in {} episodes."
-    #.format(str(self._params["ML"]["Runner"]["evaluation_steps"])))
-
-    rewards = []
-    steps = []
-
-    for _ in range(0, self._params["ML"]["Runner"]["evaluation_steps"]):
-      obs = self._environment.reset()
-      is_terminal = False
-
-      while not is_terminal:
-        action = self._agent.Act(obs)
-        obs, reward, is_terminal, _ = self._environment.step(action)
-        rewards.append(reward)
-        steps.append(1)
-
-    mean_reward = np.sum(np.array(rewards)) / self._params["ML"]["Runner"]["evaluation_steps"]
-    mean_steps = np.sum(np.array(steps)) / self._params["ML"]["Runner"]["evaluation_steps"]
-
-    # TODO: use the summary writer of the trainer
-    #tf.summary.scalar("mean_reward",
-    #                mean_reward)
-    #tf.summary.scalar("mean_steps",
-    #                mean_steps)
-
-    #logger.info(
-    #"The agent achieved on average {} reward and {} steps in \
-    #{} episodes." \
-    #.format(str(mean_reward),
-    #        str(mean_steps),
-    #        str(self._params["ML"]["Runner"]["evaluation_steps"])))
+    # does not realy matter, it will only be written in the summary writer.
+    # it has got a meaning during training, where the same method is used for evaluation, and
+    # there in the summary writer it really makes sense to keep track of the step number.
+    total_steps = 0   
+    self._trainer.evaluate_policy(total_steps=total_steps)
 
     
 
@@ -93,45 +65,5 @@ class TF2RLRunner:
         obs, reward, is_terminal, _ = self._environment.step(action)
         print(reward)
         self._environment.render()
-
-    
-  def SetupSummaryWriter(self):
-    """Not sure whether necessary or not"""
-
-    """if self._params["ML"]["TFARunner"]["SummaryPath"] is not None:
-        try:
-        self._summary_writer = tf.summary.create_file_writer(
-            self._params["ML"]["TFARunner"]["SummaryPath"])
-        except:
-        pass
-    self.get_initial_collection_driver()
-    self.get_collection_driver()
-    """
-
-  def GetInitialCollectionDriver(self):
-    """Not sure whether necessary or not"""
-
-    """self._initial_collection_driver = \
-        dynamic_episode_driver.DynamicEpisodeDriver(
-        env=self._wrapped_env,
-        policy=self._agent._agent.collect_policy,
-        observers=[self._agent._replay_buffer.add_batch],
-        num_episodes=self._params["ML"]["TFARunner"]["InitialCollectionEpisodes", "", 50])
-        """
-
-  def GetCollectionDriver(self):
-    """Not sure whether necessary or not"""
-
-    """self._collection_driver = dynamic_episode_driver.DynamicEpisodeDriver(
-        env=self._wrapped_env,
-        policy=self._agent._agent.collect_policy,
-        observers=[self._agent._replay_buffer.add_batch],
-        num_episodes=self._params["ML"]["TFARunner"]["CollectionEpisodesPerStep", "", 1])
-      """
-
-  def CollectInitialEpisodes(self):
-    """Not sure whether necessary or not"""
-
-    """self._initial_collection_driver.run()"""
 
   

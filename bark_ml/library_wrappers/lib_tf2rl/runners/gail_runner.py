@@ -46,7 +46,8 @@ class GAILRunner(TF2RLRunner):
 
     # getting the expert trajectories from the .pkl file:
     expert_trajs = restore_latest_n_traj(args.expert_path_dir,
-                                        n_path=args.n_path, max_steps=args.max_steps)
+                                        n_path=args.n_path,
+                                        max_steps=args.max_steps)
     
     trainer = IRLtrainer(policy=policy,
                          env=self._environment,
