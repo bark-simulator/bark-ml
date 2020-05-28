@@ -101,7 +101,9 @@
             "memory_resource": "cpp",
             "dense": "cpp",
             "__functional_03": "cpp",
-            "*.ipp": "cpp"
+            "*.ipp": "cpp",
+            "editor.rulers": [30]
         }
-    }
+    },
+    
 }
