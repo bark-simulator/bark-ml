@@ -62,6 +62,30 @@ class GAILRunner(TF2RLRunner):
   def get_args_from_params(self):
     """creates an args object from the ParameterServer object, that
     can be given to the IRLtrainer.
+    Args:
+      EXPERIMENT SETTINGS:
+        - max_steps:              int, Maximum number steps to interact with env.
+        - episode_max_steps:      int, Maximum steps in an episode
+        - n_experiments:          int, Number of experiments
+        - show_progress:          bool, Call `render` in training process
+        - save_model_interval:    int, Interval to save model
+        - save_summary_interval:  int, Interval to save summary
+        - normalize_obs:          bool, Normalize observation
+        - logdir:                 str, Output directory
+        - model_dir:              str, Directory to restore model
+      REPLAY BUFFER:
+        - expert_path_dir:        str, Directory that contains expert trajectories
+        - use_propritized_rb:     bool, Flag to use prioritized experience replay
+        - use_nstep_rb:           bool, Flag to use nstep experience replay
+        - n_step:                 int, Number of steps to look over
+      TEST SETTINGS:
+        - test_interval:          int, Interval to evaluate trained model
+        - show_test_progress:     bool, Call `render` in evaluation process
+        - test_episodes:          int, Number of episodes to evaluate at once
+        - save_test_path:         str, Save trajectories of evaluation
+        - save_test_movie:        bool, Save rendering results
+        - show_test_images:       bool, Show input images to neural networks when an episode finishes
+
     """
     
     # experiment settings
@@ -75,6 +99,7 @@ class GAILRunner(TF2RLRunner):
     args.logdir = params['tf2rl']['runner']['logdir']
     args.model_dir = params['tf2rl']['runner']['model_dir']
     # replay buffer
+    args.expert_path_dir = params['tf2rl']['runner']['expert_path_dir']
     args.use_prioritized_rb = params['tf2rl']['runner']['use_prioritized_rb']
     args.use_nstep_rb = params['tf2rl']['runner']['use_nstep_rb']
     args.n_step = params['tf2rl']['runner']['n_step']

@@ -59,11 +59,11 @@ class BehaviorTFAAgent:
 
   def Load(self):
     try:
-    self._ckpt.restore(self._ckpt_manager.latest_checkpoint)
+      self._ckpt.restore(self._ckpt_manager.latest_checkpoint)
     except:
-    return RuntimeError("Could not load agent.")
+      return RuntimeError("Could not load agent.")
     if self._ckpt_manager.latest_checkpoint:
-    self._logger.info("Restored agent from {}".format(
-        self._ckpt_manager.latest_checkpoint))
+      self._logger.info("Restored agent from {}".format(
+          self._ckpt_manager.latest_checkpoint))
     else:
-    self._logger.info("Initializing agent from scratch.")
+      self._logger.info("Initializing agent from scratch.")
