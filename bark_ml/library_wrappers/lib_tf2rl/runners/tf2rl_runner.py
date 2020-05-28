@@ -27,24 +27,6 @@ class TF2RLRunner:
 
     self._trainer = self._GetTrainer()
 
-    # TODO 
-    # set up logger
-    """self._eval_metrics = [
-    tf_metrics.AverageReturnMetric(
-        buffer_size=self._params["ML"]["TFARunner"]["EvaluationSteps", "", 25]),
-    tf_metrics.AverageEpisodeLengthMetric(
-        buffer_size=self._params["ML"]["TFARunner"]["EvaluationSteps", "", 25])
-    ]
-    
-    self._summary_writer = None
-    self._params = params or ParameterServer()
-    
-    self._wrapped_env = tf_py_environment.TFPyEnvironment(
-    TFAWrapper(self._environment))
-    self.GetInitialCollectionDriver()
-    self.GetCollectionDriver()
-    self._logger = logging.getLogger()"""
-
 
   def GetTrainer(self):
     """Creates an trainer instance. Agent specific."""
@@ -62,77 +44,57 @@ class TF2RLRunner:
 
   def Evaluate(self):
     """Evaluates the agent."""
-    # TODO 
-    # write Evaluate method which is general for all tf2rl agents
-    # this was just copied from the runner file for the previous version bark-ml
 
-    """
-    ##################################################################
-    #global_iteration = self._agent._agent._train_step_counter.numpy()
-    ##################################################################
-    logger.info("Evaluating the agent's performance in {} episodes."
-    .format(str(self._params["ML"]["Runner"]["evaluation_steps"])))
-    # Ticket (https://github.com/tensorflow/agents/issues/59) recommends
-    # to do the rendering in the original environment
+    # TODO: use the logger of the trainer object.
+    #logger.info("Evaluating the agent's performance in {} episodes."
+    #.format(str(self._params["ML"]["Runner"]["evaluation_steps"])))
+
     rewards = []
     steps = []
-    if self._unwrapped_runtime is not None:
-    for _ in range(0, self._params["ML"]["Runner"]["evaluation_steps"]):
-        obs = self._unwrapped_runtime.reset()
-        is_terminal = False
 
-        while not is_terminal:
-        action = self._agent._generator.get_action(obs)
-        obs, reward, is_terminal, _ = self._unwrapped_runtime.step(action)
+    for _ in range(0, self._params["ML"]["Runner"]["evaluation_steps"]):
+      obs = self._environment.reset()
+      is_terminal = False
+
+      while not is_terminal:
+        action = self._agent.Act(obs)
+        obs, reward, is_terminal, _ = self._environment.step(action)
         rewards.append(reward)
         steps.append(1)
 
-    mean_reward = np.sum(np.array(rewards))/self._params["ML"]["Runner"]["evaluation_steps"]
-    mean_steps = np.sum(np.array(steps))/self._params["ML"]["Runner"]["evaluation_steps"]
-    tf.summary.scalar("mean_reward",
-                    mean_reward)
-    tf.summary.scalar("mean_steps",
-                    mean_steps)
+    mean_reward = np.sum(np.array(rewards)) / self._params["ML"]["Runner"]["evaluation_steps"]
+    mean_steps = np.sum(np.array(steps)) / self._params["ML"]["Runner"]["evaluation_steps"]
 
-    #########################################
+    # TODO: use the summary writer of the trainer
     #tf.summary.scalar("mean_reward",
-    #                  mean_reward,
-    #                  step=global_iteration)
+    #                mean_reward)
     #tf.summary.scalar("mean_steps",
-    #                  mean_steps,
-    #                  step=global_iteration)
-    #########################################
-    logger.info(
-    "The agent achieved on average {} reward and {} steps in \
-    {} episodes." \
-    .format(str(mean_reward),
-            str(mean_steps),
-            str(self._params["ML"]["Runner"]["evaluation_steps"])))
+    #                mean_steps)
 
-    """
+    #logger.info(
+    #"The agent achieved on average {} reward and {} steps in \
+    #{} episodes." \
+    #.format(str(mean_reward),
+    #        str(mean_steps),
+    #        str(self._params["ML"]["Runner"]["evaluation_steps"])))
 
-  def Visualize(self):
+    
+
+  def Visualize(self, num_episodes=1):
     """Visualizes the agent."""
-    # TODO 
-    # write Visualize method which is general for all tf2rl agents
-    # this was just copied from the runner file for the previous version bark-ml
 
-    """
-    if self._unwrapped_runtime is not None:
-        for _ in range(0, num_episodes):
-        obs = self._unwrapped_runtime.reset()
-        is_terminal = False
-        while not is_terminal:
-            print(obs)
-            action = self._agent._generator.get_action(obs)
-            # TODO(@hart); make generic for multi agent planning
-            obs, reward, is_terminal, _ = self._unwrapped_runtime.step(action)
-            print(reward)
-            self._unwrapped_runtime.render()
+    for _ in range(0, num_episodes):
+      obs = self._environment.reset()
+      is_terminal = False
 
-    """
+      while not is_terminal:
+        print(obs)
+        action = self._agent.Act(obs)
+        obs, reward, is_terminal, _ = self._environment.step(action)
+        print(reward)
+        self._environment.render()
 
-
+    
   def SetupSummaryWriter(self):
     """Not sure whether necessary or not"""
 

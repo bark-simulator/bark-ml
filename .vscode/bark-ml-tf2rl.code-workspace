@@ -1,12 +1,15 @@
 {
 	"folders": [
-		{
-			"path": ".."
-		},
-		{
-			"path": "../../tf2rl"
-		}
-	],
+        {
+            "path": ".."
+        },
+        {
+            "path": "../../tf2rl"
+        },
+        {
+            "path": "../../bark"
+        }
+    ],
     "settings": {
         "files.associations": {
             "memory": "cpp",
