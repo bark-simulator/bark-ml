@@ -1,0 +1,1 @@
+from bark_ml.library_wrappers.lib_tf2rl.agents.gail_agent import BehaviorGAILAgent
