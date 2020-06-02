@@ -7,16 +7,13 @@ flags.DEFINE_string(
     help='The name of the py file to generate a launch config for.',
     default="")
 
-
-def generate(argv):
+def generate(script_path):
     """
     Generates a copy & paste configuration for the VS Code launch.json
     """
-    path = str(FLAGS.script_path) 
+    path = str(script_path) 
     path_without_py = path if not path.endswith('.py') else path[0:-3]
-    print(path_without_py)
-    config = f"""
-    {{
+    config = f"""{{
         "name": "Python: examples/tfa",
         "type": "python",
         "request": "launch",
@@ -33,8 +30,12 @@ def generate(argv):
             f"${{workspaceFolder}}/bazel-bin/{path_without_py}.runfiles/bark_ml/python/" 
     config += """"
         }
-    },
-    """
-    print(config)
+    },"""
+    return config
 
-app.run(generate)
+def main(argv):
+    """ main """
+    print(generate(FLAGS.script_path))
+
+if __name__ == '__main__':
+    app.run(main)
