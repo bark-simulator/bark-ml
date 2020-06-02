@@ -1,0 +1,9 @@
+<<: *base
+agents:
+  default_agent:
+    <<: *base_quantile_agent
+    is_main_agent: 1
+
+experiment: 
+  <<: *base_experiment
+  max_episodes: 150000
