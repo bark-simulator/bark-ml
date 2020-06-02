@@ -25,7 +25,7 @@ class TF2RLRunner:
     self._agent = agent
     self._environment = environment
 
-    self._trainer = self._GetTrainer()
+    self._trainer = self.GetTrainer()
 
 
   def GetTrainer(self):

@@ -21,8 +21,8 @@ class BehaviorGAILAgent(BehaviorTF2RLAgent, BehaviorContinuousML):
                 params=None):
       
     BehaviorTF2RLAgent.__init__(self,
-                                environment=environment,
-                                params=params)
+                                    environment=environment,
+                                    params=params)
     BehaviorContinuousML.__init__(self, params)
 
     self._generator = self._get_generator()
