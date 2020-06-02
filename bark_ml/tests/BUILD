@@ -60,3 +60,15 @@ py_test(
             "//bark_ml/commons:py_spaces"],
     visibility = ["//visibility:public"],
 )
+
+py_test(
+    name = "py_library_tf2rl_tests",
+    srcs = ["py_library_tf2rl_tests.py"],
+    data = ["data/mock_expert_trajectories.pkl"],
+    imports = ["../external/bark_project/python/"],
+    deps = [
+            "//bark_ml/library_wrappers/lib_tf2rl:utils",
+            ],
+    visibility = ["//visibility:public"],
+    size = "small"
+)
