@@ -8,12 +8,13 @@ class TestCorrectGenerated(unittest.TestCase):
 
     def test_example_tfa_correct_generated(self):
         """
-        Test: Print an example.
+        Test: Generate the config for example/tfa.py
         """
 
         # Dont reformat this multi line string!!! 
         # All strange formatting is intended.
-        expected = """{
+        expected = """
+    {
         "name": "Python: examples/tfa",
         "type": "python",
         "request": "launch",
@@ -28,12 +29,13 @@ class TestCorrectGenerated(unittest.TestCase):
     
     def test_no_path_given(self):
         """
-        Test: Print an example.
+        Test: Generate generic version if no path given.
         """
 
         # Dont reformat this multi line string!!! 
         # All strange formatting is intended.
-        expected = """{
+        expected = """
+    {
         "name": "Python: <ADD-PYTHON-EXECUTABLE-PATH-WITHOUT-.PY>",
         "type": "python",
         "request": "launch",

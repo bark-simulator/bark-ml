@@ -20,7 +20,8 @@ def generate(script_path = None):
     if not path_without_py:
         path_without_py = '<ADD-PYTHON-EXECUTABLE-PATH-WITHOUT-.PY>'
 
-    config = f"""{{
+    config = f"""
+    {{
         "name": "Python: {path_without_py}",
         "type": "python",
         "request": "launch",
