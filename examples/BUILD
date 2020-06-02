@@ -8,6 +8,16 @@ py_test(
     "//bark_ml/environments:gym",
   ]
 )
+py_test(
+  name = "data_generation",
+  srcs = ["data_generation.py"],
+  data = ["@bark_project//python:bark.so",
+          "//python:bark_ml_library.so"],
+  imports = ['../python/'],
+  deps = [
+    "//bark_ml/environments:gym",
+  ]
+)
 
 py_test(
   name = "discrete_env",
