@@ -7,14 +7,21 @@ flags.DEFINE_string(
     help='The name of the py file to generate a launch config for.',
     default="")
 
-def generate(script_path):
+def generate(script_path = None):
     """
     Generates a copy & paste configuration for the VS Code launch.json
     """
+    if not script_path:
+        script_path = ""
+
     path = str(script_path) 
     path_without_py = path if not path.endswith('.py') else path[0:-3]
+
+    if not path_without_py:
+        path_without_py = '<ADD-PYTHON-EXECUTABLE-PATH-WITHOUT-.PY>'
+
     config = f"""{{
-        "name": "Python: examples/tfa",
+        "name": "Python: {path_without_py}",
         "type": "python",
         "request": "launch",
         "program": "${{workspaceFolder}}/{path_without_py}.py\","""
