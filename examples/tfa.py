@@ -12,6 +12,10 @@ import gym
 from absl import app
 from absl import flags
 
+# this will disable all BARK log messages
+import os
+os.environ['GLOG_minloglevel'] = '3' 
+
 # BARK imports
 from bark_project.modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
@@ -25,6 +29,7 @@ from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, Beha
 from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner
 
 
+# for training: bazel run //examples:tfa -- --mode=train
 FLAGS = flags.FLAGS
 flags.DEFINE_enum("mode",
                   "visualize",
@@ -41,7 +46,7 @@ def run_configuration(argv):
 
   # create environment
   bp = ContinuousMergingBlueprint(params,
-                                  number_of_senarios=500,
+                                  number_of_senarios=2500,
                                   random_seed=0)
   env = SingleAgentRuntime(blueprint=bp,
                            render=False)
@@ -73,4 +78,3 @@ def run_configuration(argv):
 
 if __name__ == '__main__':
   app.run(run_configuration)
-  print('********************************************** Finished **********************************************')
