@@ -51,7 +51,7 @@ py_test(
   ]
 )
 
-py_test(
+py_binary(
   name = "gail",
   srcs = ["gail.py"],
   data = ["@bark_project//python:bark.so",
