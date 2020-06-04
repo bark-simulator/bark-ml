@@ -23,7 +23,7 @@ class GAILRunner(TF2RLRunner):
               agent=None,
               params=None):
       
-    super().__init__(self,
+    TF2RLRunner.__init__(self,
                     environment=environment,
                     agent=agent,
                     params=params)
@@ -42,12 +42,12 @@ class GAILRunner(TF2RLRunner):
     irl = self._agent._discriminator  # the agent's discriminator network so in our case the GAIL network
 
     # creating args from the ParameterServer which can be given to the IRLtrainer:
-    args = self._get_args_from_params()
+    args = self.get_args_from_params()
 
     # getting the expert trajectories from the .pkl file:
-    expert_trajs = restore_latest_n_traj(args.expert_path_dir,
-                                        n_path=args.n_path,
-                                        max_steps=args.max_steps)
+    expert_trajs = restore_latest_n_traj(dirname=args['expert_path_dir'],
+                                        # n_path=args['n_path'],
+                                        max_steps=args['max_steps'])
     
     trainer = IRLtrainer(policy=policy,
                          env=self._environment,
@@ -88,30 +88,30 @@ class GAILRunner(TF2RLRunner):
         - show_test_images:       bool, Show input images to neural networks when an episode finishes
 
     """
-    
+    args = {}
     # experiment settings
-    args.max_steps = params['ML']['Runner']['tf2rl']['max_steps']
-    args.episode_max_steps = params['ML']['Runner']['tf2rl']['episode_max_steps']
-    args.n_experiments = params['ML']['Runner']['tf2rl']['n_experiments']
-    args.show_progress = params['ML']['Runner']['tf2rl']['show_progress']
-    args.save_model_interval = params['ML']['Runner']['tf2rl']['save_model_interval]
-    args.save_summary_interval = params['ML']['Runner']['tf2rl']['save_summary_interval']
-    args.normalize_obs = params['ML']['Runner']['tf2rl']['normalize_obs']
-    args.logdir = params['ML']['Runner']['tf2rl']['logdir']
-    args.model_dir = params['ML']['Runner']['tf2rl']['model_dir']
+    args['max_steps'] = self._params['ML']['Runner']['tf2rl']['max_steps']
+    args['episode_max_steps'] = self._params['ML']['Runner']['tf2rl']['episode_max_steps']
+    args['n_experiments'] = self._params['ML']['Runner']['tf2rl']['n_experiments']
+    args['show_progress'] = self._params['ML']['Runner']['tf2rl']['show_progress']
+    args['save_model_interval'] = self._params['ML']['Runner']['tf2rl']['save_model_interval']
+    args['save_summary_interval'] = self._params['ML']['Runner']['tf2rl']['save_summary_interval']
+    args['normalize_obs'] = self._params['ML']['Runner']['tf2rl']['normalize_obs']
+    args['logdir'] = self._params['ML']['Runner']['tf2rl']['logdir']
+    args['model_dir'] = self._params['ML']['Runner']['tf2rl']['model_dir']
 
     # replay buffer
-    args.expert_path_dir = params['ML']['Runner']['tf2rl']['expert_path_dir']
-    args.use_prioritized_rb = params['ML']['Runner']['tf2rl']['use_prioritized_rb']
-    args.use_nstep_rb = params['ML']['Runner']['tf2rl']['use_nstep_rb']
-    args.n_step = params['ML']['Runner']['tf2rl']['n_step']
+    args['expert_path_dir'] = self._params['ML']['Runner']['tf2rl']['expert_path_dir']
+    args['use_prioritized_rb'] = self._params['ML']['Runner']['tf2rl']['use_prioritized_rb']
+    args['use_nstep_rb'] = self._params['ML']['Runner']['tf2rl']['use_nstep_rb']
+    args['n_step'] = self._params['ML']['Runner']['tf2rl']['n_step']
 
     # test settings
-    args.test_interval = params['ML']['Runner']['tf2rl']['test_interval']
-    args.show_test_progress = params['ML']['Runner']['tf2rl']['show_test_progress']
-    args.test_episodes = params['ML']['Runner']['tf2rl']['test_episodes']
-    args.save_test_path = params['ML']['Runner']['tf2rl']['save_test_path']
-    args.save_test_movie = params['ML']['Runner']['tf2rl']['save_test_movie']
-    args.show_test_images = params['ML']['Runner']['tf2rl']['show_test_images']
+    args['test_interval'] = self._params['ML']['Runner']['tf2rl']['test_interval']
+    args['show_test_progress'] = self._params['ML']['Runner']['tf2rl']['show_test_progress']
+    args['test_episodes'] = self._params['ML']['Runner']['tf2rl']['test_episodes']
+    args['save_test_path'] = self._params['ML']['Runner']['tf2rl']['save_test_path']
+    args['save_test_movie'] = self._params['ML']['Runner']['tf2rl']['save_test_movie']
+    args['show_test_images'] = self._params['ML']['Runner']['tf2rl']['show_test_images']
 
     return args
