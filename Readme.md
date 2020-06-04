@@ -43,6 +43,12 @@ TF-Agents SAC-example: `bazel run //examples:tfa`.
 <img src="docs/images/bark-ml.gif" alt="BARK-ML Highway" />
 </p>
 
+## GAIL 
+
+<p align="center">
+<img src="https://github.com/GAIL-4-BARK/bark-ml/blob/gail-4-bark/wiki/docs/images/gail_overview.gif" width="65%" alt="BARK-ML" />
+</p>
+
 ## Running tests
 
 ```
