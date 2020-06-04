@@ -12,10 +12,6 @@ import gym
 from absl import app
 from absl import flags
 
-# this will disable all BARK log messages
-import os
-os.environ['GLOG_minloglevel'] = '3' 
-
 # BARK imports
 from bark_project.modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
@@ -25,47 +21,42 @@ from modules.runtime.viewer.video_renderer import VideoRenderer
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
   ContinuousMergingBlueprint, ContinuousIntersectionBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, BehaviorPPOAgent
-from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner
+from bark_ml.library_wrappers.lib_tf2rl.agents.gail_agent import BehaviorGAILAgent
+from bark_ml.library_wrappers.lib_tf2rl.runners.gail_runner import GAILRunner
 
 
-# for training: bazel run //examples:tfa -- --mode=train
 FLAGS = flags.FLAGS
 flags.DEFINE_enum("mode",
                   "visualize",
                   ["train", "visualize", "evaluate"],
                   "Mode the configuration should be executed in.")
 
+flags.DEFINE_string("train_out",
+                  help="The absolute path to where the checkpoints and summaries are saved during training.",
+                  default=os.path.join(Path.home(), ".bark-ml/gail"))
+
 
 def run_configuration(argv):
-  params = ParameterServer(filename="examples/example_params/tfa_params.json")
+  params = ParameterServer(filename="examples/example_params/gail_params.json")
   # params = ParameterServer()
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = os.path.join(Path.home(), "checkpoints/")
-  params["ML"]["TFARunner"]["SummaryPath"] = os.path.join(Path.home(), "checkpoints/")
+  params["ML"]["BehaviorGAILAgents"]["CheckpointPath"] = os.path.join(FLAGS.train_out, "checkpoints")
+  params["ML"]["GAILRunner"]["SummaryPath"] = os.path.join(FLAGS.train_out, "summary")
   params["World"]["remove_agents_out_of_map"] = True
 
   # create environment
   bp = ContinuousMergingBlueprint(params,
-                                  number_of_senarios=2500,
+                                  number_of_senarios=500,
                                   random_seed=0)
   env = SingleAgentRuntime(blueprint=bp,
                            render=False)
 
-  # PPO-agent
-  # ppo_agent = BehaviorPPOAgent(environment=env,
-  #                              params=params)
-  # env.ml_behavior = ppo_agent
-  # runner = PPORunner(params=params,
-  #                    environment=env,
-  #                    agent=ppo_agent)
-
-  # SAC-agent
-  sac_agent = BehaviorSACAgent(environment=env,
+  # GAIL agent
+  gail_agent = BehaviorGAILAgent(environment=env,
                                params=params)
-  env.ml_behavior = sac_agent
-  runner = SACRunner(params=params,
+  env.ml_behavior = gail_agent
+  runner = GAILRunner(params=params,
                      environment=env,
-                     agent=sac_agent)
+                     agent=gail_agent)
 
   if FLAGS.mode == "train":
     runner.Train()
@@ -73,7 +64,7 @@ def run_configuration(argv):
     runner.Visualize(5)
   
   # store all used params of the training
-  # params.Save(os.path.join(Path.home(), "examples/example_params/tfa_params.json"))
+  params.Save(os.path.join(FLAGS.train_out, "examples/example_params/gail_params.json"))
 
 
 if __name__ == '__main__':
