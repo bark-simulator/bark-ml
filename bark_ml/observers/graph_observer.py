@@ -6,6 +6,7 @@ import operator
 import networkx as nx
 from typing import Dict
 from collections import OrderedDict
+from itertools import islice
 
 from bark.models.dynamic import StateDefinition
 from bark.world import ObservedWorld
@@ -21,19 +22,23 @@ class GraphObserver(StateObserver):
                params=ParameterServer()):
     StateObserver.__init__(self, params)
 
-    self._observation_len = 1 # i.e. one graph
+    self.feature_len = 6
+    self.agent_limit = 5
+
     self._normalize_observations = normalize_observations
     self._use_edge_attributes = use_edge_attributes
 
      # the radius an agent can 'see' in meters
     self._visible_distance = 50
 
+  @classmethod
+  def attribute_keys(cls):
+    return ["x", "y", "theta", "vel", "goal_d", "goal_theta"]
+
   def Observe(self, world):
     """see base class"""
     graph = nx.OrderedGraph(normalization_ref=self.normalization_data)
-
     actions = OrderedDict() # generated for now (steering, acceleration)
-    
     agents = self._preprocess_agents(world)
     
     # add nodes
@@ -50,8 +55,71 @@ class GraphObserver(StateObserver):
 
       for (nearby_agent_index, _) in nearby_agents:
         graph.add_edge(index, nearby_agent_index)
+    
+    observation = self._observation_from_graph(graph)
+    
+    # keep this for now, TODO: move into test
+    # reconstructed_graph = GraphObserver.graph_from_observation(observation)
+    # rec_obs = self._observation_from_graph(reconstructed_graph)
+    # assert observation == rec_obs, "Failure in graph en/decoding!"
 
-    return graph, actions
+    return obs #, actions
+
+  def _observation_from_graph(self, graph):
+    obs = np.zeros(self._len_state)
+    num_nodes = len(graph.nodes)
+
+    obs[0] = self.agent_limit
+    obs[1] = num_nodes
+    obs[2] = self.feature_len
+    
+    # node attributes
+    for (node_id, attributes) in graph.nodes.data():
+      start_idx = 3 + node_id * self.feature_len
+      end_idx = start_idx + self.feature_len
+      obs[start_idx:end_idx] = list(attributes.values())
+
+    adj_start_idx = 3 + self.agent_limit * self.feature_len
+
+    # adjacency list
+    for source, target in graph.edges:
+      edge_idx = adj_start_idx + source * num_nodes + target
+      obs[edge_idx] = 1
+
+    print(obs)
+    print(graph.edges)
+
+    return obs
+
+  @classmethod
+  def graph_from_observation(cls, observation):
+    graph = nx.OrderedGraph()
+
+    node_limit = int(observation[0])
+    num_nodes = int(observation[1])
+    num_features = int(observation[2])
+
+    obs = observation[3:]
+
+    for node_id in range(num_nodes):
+      start_idx = node_id * num_features
+      end_idx = start_idx + num_features
+      features = obs[start_idx:end_idx]
+
+      attributes = dict(zip(GraphObserver.attribute_keys(), features))
+      graph.add_node(node_id, **attributes)
+    
+    adj_start_idx = node_limit * num_features
+    adj_lists = np.array_split(obs[adj_start_idx:], node_limit + 1)
+    
+    for (node_id, adj_list) in enumerate(adj_lists):
+      print(adj_list)
+      for target_node_id in np.flatnonzero(adj_list):
+        graph.add_edge(node_id, target_node_id)
+
+    print(graph.nodes.data())
+    print(graph.edges)
+    return graph
 
   def _preprocess_agents(self, world):
     """ 
@@ -165,10 +233,19 @@ class GraphObserver(StateObserver):
 
   @property
   def observation_space(self):
+    #  0 ... 100 for the indices of num_agents and num_features
+    # -1 ... 1   for all agent attributes
+    #  0 ... 1   for 1 for the adjacency vector
     return spaces.Box(
-      low=np.zeros(self._observation_len),
-      high=np.ones(self._observation_len))
+      low=np.concatenate((
+        np.zeros(3),
+        np.full(self.agent_limit * self.feature_len, -1),
+        np.zeros(self.agent_limit ** 2))),
+      high=np.concatenate((
+        np.array([100, 100, 100]), 
+        np.ones(self._len_state - 2)
+      )))
 
   @property
   def _len_state(self):
-    return 1
+    return 2 + (self.agent_limit * self.feature_len) + (self.agent_limit ** 2)

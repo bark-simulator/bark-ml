@@ -18,9 +18,9 @@ from modules.runtime.viewer.video_renderer import VideoRenderer
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
   ContinuousMergingBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, BehaviorPPOAgent
+from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, BehaviorPPOAgent, BehaviorGraphSACAgent
 from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner
-
+from bark_ml.observers.graph_observer import GraphObserver
 
 FLAGS = flags.FLAGS
 flags.DEFINE_enum("mode",
@@ -28,13 +28,18 @@ flags.DEFINE_enum("mode",
                   ["train", "visualize", "evaluate"],
                   "Mode the configuration should be executed in.")
 
+# this will disable all BARK log messages
+import os
+os.environ['GLOG_minloglevel'] = '3' 
 
 def run_configuration(argv):
   # params = ParameterServer(filename="/Users/hart/2020/bark-ml/examples/example_params/tfa_params.json")
   params = ParameterServer()
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/2020/bark-ml/checkpoints/"
-  params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/2020/bark-ml/checkpoints/"
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/marco.oliva/2020/bark-ml/checkpoints/"
+  params["ML"]["TFARunner"]["SummaryPath"] = "/Users/marco.oliva/2020/bark-ml/checkpoints/"
   params["World"]["remove_agents_out_of_map"] = True
+
+  observer = GraphObserver(params=params)
 
   # create environment
   bp = ContinuousMergingBlueprint(params,
@@ -46,8 +51,9 @@ def run_configuration(argv):
                     follow_agent_id=True)
   viewer = VideoRenderer(renderer=viewer,
                          world_step_time=0.2,
-                         fig_path="/Users/hart/2020/bark-ml/video/")
+                         fig_path="/Users/marco.oliva/2020/bark-ml/video/")
   env = SingleAgentRuntime(blueprint=bp,
+                           observer=observer,
                            viewer=viewer,
                            render=False)
 
@@ -60,12 +66,13 @@ def run_configuration(argv):
   #                    agent=ppo_agent)
 
   # SAC-agent
-  sac_agent = BehaviorSACAgent(environment=env,
-                              params=params)
+  sac_agent = BehaviorGraphSACAgent(environment=env, params=params)
   env.ml_behavior = sac_agent
   runner = SACRunner(params=params,
                      environment=env,
                      agent=sac_agent)
+
+  print(observer.observation_space)
 
   if FLAGS.mode == "train":
     runner.Train()
@@ -76,7 +83,7 @@ def run_configuration(argv):
   # params.Save("/Users/hart/2020/bark-ml/examples/example_params/tfa_params.json")
 
   viewer.export_video(
-    filename="/Users/hart/2020/bark-ml/video/video", remove_image_dir=False)
+    filename="/Users/marco.oliva/2020/bark-ml/video/video", remove_image_dir=False)
 
 
 if __name__ == '__main__':
