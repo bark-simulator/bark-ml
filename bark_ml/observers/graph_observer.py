@@ -63,7 +63,7 @@ class GraphObserver(StateObserver):
     # rec_obs = self._observation_from_graph(reconstructed_graph)
     # assert observation == rec_obs, "Failure in graph en/decoding!"
 
-    return obs #, actions
+    return observation #, actions
 
   def _observation_from_graph(self, graph):
     obs = np.zeros(self._len_state)
@@ -85,9 +85,6 @@ class GraphObserver(StateObserver):
     for source, target in graph.edges:
       edge_idx = adj_start_idx + source * num_nodes + target
       obs[edge_idx] = 1
-
-    print(obs)
-    print(graph.edges)
 
     return obs
 
@@ -113,12 +110,9 @@ class GraphObserver(StateObserver):
     adj_lists = np.array_split(obs[adj_start_idx:], node_limit + 1)
     
     for (node_id, adj_list) in enumerate(adj_lists):
-      print(adj_list)
       for target_node_id in np.flatnonzero(adj_list):
         graph.add_edge(node_id, target_node_id)
 
-    print(graph.nodes.data())
-    print(graph.edges)
     return graph
 
   def _preprocess_agents(self, world):

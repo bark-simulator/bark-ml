@@ -3,7 +3,7 @@ import tensorflow as tf
 # from gnn.gnn import GNN
 from tf2_gnn.layers import GNN, GNNInput
 from tf_agents.utils import common
-from source.commons import select_col, find_value_ids, select_row, select_range
+from bark.source.commons import select_col, find_value_ids, select_row, select_range
 
 
 class GNNWrapper(tf.keras.Model):

@@ -26,8 +26,7 @@ from tf_agents.networks import network
 from tf_agents.networks import utils
 from tf_agents.utils import common
 
-from source.gnn_wrapper import GNNWrapper
-
+from bark_ml.library_wrappers.lib_tf_agents.gnn import GNNWrapper
 
 @gin.configurable
 class GNNActorNetwork(network.Network):

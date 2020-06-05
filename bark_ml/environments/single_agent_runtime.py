@@ -57,6 +57,7 @@ class SingleAgentRuntime(Runtime):
     # set actions
     eval_id = self._scenario._eval_agent_ids[0]
     if eval_id in self._world.agents:
+      print(f'action: {action}')
       self._world.agents[eval_id].behavior_model.ActionToBehavior(action)
 
     # step and observe
