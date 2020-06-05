@@ -12,7 +12,6 @@ from tf_agents.utils.common import Checkpointer
 from tf_agents.trajectories import time_step as ts
 
 from bark_ml.library_wrappers.lib_tf_agents.tfa_wrapper import GNNActorNetwork
-
 from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAAgent
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 
@@ -34,16 +33,6 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
     self._eval_policy = self.GetEvalPolicy()
 
   def GetAgent(self, env, params):
-    
-    def _normal_projection_net(action_spec, init_means_output_factor=0.1):
-      return normal_projection_network.NormalProjectionNetwork(
-        action_spec,
-        mean_transform=None,
-        state_dependent_std=True,
-        init_means_output_factor=init_means_output_factor,
-        std_transform=sac_agent.std_clip_transform,
-        scale_distribution=True)
-
     # actor network
     actor_net = GNNActorNetwork(
       input_tensor_spec=env.observation_spec(),
@@ -51,12 +40,10 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
     )
 
     # critic network - make this a GNN
-    critic_net = critic_network.CriticNetwork(
-      (env.observation_spec(), env.action_spec()),
-      observation_fc_layer_params=None,
-      action_fc_layer_params=None,
-      joint_fc_layer_params=tuple(
-        self._params["ML"]["BehaviorSACAgent"]["CriticJointFcLayerParams", "", [512, 256, 256]]))
+    critic_net = GNNActorNetwork(
+      input_tensor_spec=env.observation_spec(),
+      output_tensor_spec=env.action_spec()
+    )
     
     # agent
     tf_agent = sac_agent.SacAgent(
