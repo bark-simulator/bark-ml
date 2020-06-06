@@ -31,6 +31,7 @@ class GraphObserver(StateObserver):
   def Observe(self, world):
     """see base class"""
     graph = nx.OrderedGraph(normalization_ref=self.normalization_data)
+    #graph = nx.Graph(normalization_ref=self.normalization_data)
 
     actions = OrderedDict() # generated for now (steering, acceleration)
     
@@ -45,6 +46,8 @@ class GraphObserver(StateObserver):
       # generate actions
       actions[index] = self._generate_actions(features)
       
+    # Second loop for edges necessary -> otherwise order of graph_nodes is disrupted
+    for (index, agent) in agents:
       # create edges to all other agents
       nearby_agents = self._nearby_agents(agent, agents, self._visible_distance)
 
