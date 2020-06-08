@@ -50,6 +50,8 @@ class GraphObserver(StateObserver):
       # generate actions
       actions[index] = self._generate_actions(features)
       
+    # Second loop for edges necessary -> otherwise order of graph_nodes is disrupted
+    for (index, agent) in agents:
       # create edges to all other agents
       nearby_agents = self._nearby_agents(agent, agents, self._visible_distance)
 
@@ -160,36 +162,62 @@ class GraphObserver(StateObserver):
 
     # get information related to goal
     goal_center = agent.goal_definition.goal_shape.center[0:2]
+    res["goal_x"] = goal_center[0] # goal position in x
+    res["goal_y"] = goal_center[1] # goal position in y
     goal_dx = goal_center[0] - res["x"] # distance to goal in x coord
+    res["goal_dx"] = goal_dx
     goal_dy = goal_center[1] - res["y"] # distance to goal in y coord
+    res["goal_dy"] = goal_dy
     goal_theta = np.arctan2(goal_dy, goal_dx) # theta for straight line to goal
+    res["goal_theta"] = goal_theta
     goal_d = np.sqrt(goal_dx**2 + goal_dy**2) # distance to goal
     res["goal_d"] = goal_d
-    res["goal_theta"] = goal_theta
+    
+    goal_velocity = np.mean(agent.goal_definition.velocity_range)
+    res["goal_vel"] = goal_velocity
 
-    if self._NormalizationEnabled:
+    if self._normalize_observations:
       n = self.normalization_data
 
       for k in ["x", "y", "theta", "vel"]:
         res[k] = self._normalize_value(res[k], n[k])
-      
+      res["goal_x"] = self._normalize_value(res["goal_x"], n["x"])
+      res["goal_y"] = self._normalize_value(res["goal_y"], n["y"])
+      res["goal_dx"] = self._normalize_value(res["goal_dx"], n["dx"])
+      res["goal_dy"] = self._normalize_value(res["goal_dy"], n["dy"])
       res["goal_d"] = self._normalize_value(res["goal_d"], n["distance"])
       res["goal_theta"] = self._normalize_value(res["goal_theta"], n["theta"])
+      res["goal_vel"] = self._normalize_value(res["goal_vel"], n["vel"])
     
     return res
 
   def _generate_actions(self, features: Dict[str, float]) -> Dict[str, float]:
     actions = OrderedDict()
     steering = features["goal_theta"] - features["theta"]
-    actions["steering"] = steering
     
-    dt = 2 # time constant in s for planning horizon
-    acc = 2. * (features["goal_d"] - features["vel"] * dt) / (dt**2)
+    v_0 = features["vel"]
+    dv = features["goal_vel"] - v_0
+    acc = (1./features["goal_d"])*dv*(dv/2+v_0)
+    
+    if self._normalize_observations:
+      range_steering = [-0.1, 0.1]
+      range_acc = [-0.6, 0.6]
+      steering = self._normalize_value(steering, range_steering)
+      acc = self._normalize_value(acc, range_acc)
+
+    actions["steering"] = steering
     actions["acceleration"] = acc
+
     return actions
 
   def _normalize_value(self, value, range):
-    return 2 * (value - range[0]) / (range[1] - range[0]) - 1
+    """norms to [-1, 1] with
+    value <= range[0] -> returns -1
+    value >= range[1] -> returns 1"""
+    normed = 2 * (value - range[0]) / (range[1] - range[0]) - 1
+    normed = max(-1, normed) # values lower -1 clipped
+    normed = min(1, normed) # values bigger 1 clipped
+    return normed
 
   def reset(self, world):
     return world
@@ -217,12 +245,16 @@ class GraphObserver(StateObserver):
     are scaled relative to the 'distance' range. 
     """
     d = OrderedDict()
+    x_range = self._world_x_range[1] - self._world_x_range[0]
+    y_range = self._world_y_range[1] - self._world_y_range[0]
+    max_dist = np.linalg.norm([x_range, y_range])
     d['x'] = self._world_x_range
     d['y'] = self._world_y_range
     d['theta'] = self._ThetaRange
     d['vel'] = self._VelocityRange
-    d['distance'] = [0, \
-      np.linalg.norm([self._world_x_range[1], self._world_y_range[1]])]
+    d['distance'] = [0, max_dist]
+    d['dx'] = [-x_range, x_range]
+    d['dy'] = [-y_range, y_range]
     return d
 
   @property
