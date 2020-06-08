@@ -203,13 +203,11 @@ class GNNActorNetwork(network.Network):
 
 import time
 import tensorflow as tf
-# from gnn.gnn import GNN
 from tf2_gnn.layers import GNN, GNNInput
 from tf_agents.utils import common
-#from bark.source.commons import select_col, find_value_ids, select_row, select_range
 from bark_ml.observers.graph_observer import GraphObserver
 from tf2_gnn import GraphObserverModel
-
+from networkx.readwrite import json_graph
 
 class GNNWrapper(tf.keras.Model):
   def __init__(self,
@@ -234,11 +232,10 @@ class GNNWrapper(tf.keras.Model):
     params["hidden_dim"] = node_layers_def[0]["units"]
     
     self._gnn = GraphObserverModel(
-      model="RGCN", 
-      task="NodeLevelRegression",
-      max_epochs= 300, 
-      patience=30
-    )
+      model = "RGCN", 
+      task = "NodeLevelRegression",
+      max_epochs= 200, 
+      patience=30)
 
   # @tf.function
   def call(self, observation, training=False):
@@ -250,49 +247,16 @@ class GNNWrapper(tf.keras.Model):
     Returns:
         (np.array, np.array) -- Return edges and values
     """
+    # this is a networkx.OrderGraph object
     graph = GraphObserver.graph_from_observation(observation)
+
+    graph_dict = json_graph.node_link_data(graph)
+    print(f'graph_dict: {graph_dicts}')
+
+    # how to input the graph to get a prediction?
+    output = self._gnn(graph_dict)
     
-    output = self._gnn(graph)
-    print(f'output: {output}')
-
-    # print("Decoding graph...")
-    # print(graph.nodes)
-    # print(graph.edges)
-
-    # step through layers
-    # : HERE WE CAN CALL MSFT
-    # : always is a single graph
-    # : use dense layer to reduce graph output
-    # tf.print(edge_index)
-
-    # print("\n--------------------------------------------\n")
-    # node_features = list(map(lambda n: graph.nodes[n].values(), graph.nodes))
-    # print(node_features)
-    # print("\n--------------------------------------------\n")
-
-    # adjacency_list = tf.constant(graph.edges, dtype=tf.int32)
-
-    # layer_input = GNNInput(
-    #   node_features = tf.random.normal(shape=(4, 6)),
-    #   adjacency_lists = adjacency_list,
-    #   node_to_graph_map = tf.fill(dims=(len(graph.nodes),), value=0),
-    #   num_graphs = 1
-    # )
-
-    # layer_input = GNNInput(
-    # node_features = tf.random.normal(shape=(5, 3)),
-    #   adjacency_lists = (
-    #       tf.constant([[0, 1], [1, 2], [3, 4]], dtype=tf.int32),
-    #       tf.constant([[1, 2], [3, 4]], dtype=tf.int32),
-    #       tf.constant([[2, 0]], dtype=tf.int32)
-    #   ),
-    #   node_to_graph_map = tf.fill(dims=(5,), value=0),
-    #   num_graphs = 1
-    # )
-    
-    # gnn_output = self._gnn(layer_input, training=training)
-    # out = self._dense_proj(gnn_output)
-    return np.array([[0.5, 0.0]])
+    return output
 
   def batch_call(self, graph, training=False):
     """Calls the network multiple times
