@@ -72,8 +72,6 @@ def run_configuration(argv):
                      environment=env,
                      agent=sac_agent)
 
-  print(observer.observation_space)
-
   if FLAGS.mode == "train":
     runner.Train()
   elif FLAGS.mode == "visualize":
@@ -83,7 +81,8 @@ def run_configuration(argv):
   # params.Save("/Users/hart/2020/bark-ml/examples/example_params/tfa_params.json")
 
   viewer.export_video(
-    filename="/Users/marco.oliva/2020/bark-ml/video/video", remove_image_dir=False)
+    filename="/Users/marco.oliva/2020/bark-ml/video/video", 
+    remove_image_dir=False)
 
 
 if __name__ == '__main__':

@@ -140,7 +140,7 @@ class GNNActorNetwork(network.Network):
         name=name)
     self._gnn = GNNWrapper(
       node_layers_def=[
-        {"units" : 2, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
+        {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
         {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
         {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
       ],
@@ -208,6 +208,7 @@ from tf2_gnn.layers import GNN, GNNInput
 from tf_agents.utils import common
 #from bark.source.commons import select_col, find_value_ids, select_row, select_range
 from bark_ml.observers.graph_observer import GraphObserver
+from tf2_gnn import GraphObserverModel
 
 
 class GNNWrapper(tf.keras.Model):
@@ -231,7 +232,13 @@ class GNNWrapper(tf.keras.Model):
 
     params = GNN.get_default_hyperparameters()
     params["hidden_dim"] = node_layers_def[0]["units"]
-    self._gnn = GNN(params)
+    
+    self._gnn = GraphObserverModel(
+      model="RGCN", 
+      task="NodeLevelRegression",
+      max_epochs= 300, 
+      patience=30
+    )
 
   # @tf.function
   def call(self, observation, training=False):
@@ -244,6 +251,9 @@ class GNNWrapper(tf.keras.Model):
         (np.array, np.array) -- Return edges and values
     """
     graph = GraphObserver.graph_from_observation(observation)
+    
+    output = self._gnn(graph)
+    print(f'output: {output}')
 
     # print("Decoding graph...")
     # print(graph.nodes)
@@ -282,7 +292,7 @@ class GNNWrapper(tf.keras.Model):
     
     # gnn_output = self._gnn(layer_input, training=training)
     # out = self._dense_proj(gnn_output)
-    return np.array([[.0, .0]])
+    return np.array([[0.5, 0.0]])
 
   def batch_call(self, graph, training=False):
     """Calls the network multiple times

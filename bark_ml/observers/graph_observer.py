@@ -38,7 +38,7 @@ class GraphObserver(StateObserver):
   def Observe(self, world):
     """see base class"""
     graph = nx.OrderedGraph(normalization_ref=self.normalization_data)
-    actions = OrderedDict() # generated for now (steering, acceleration)
+    actions = OrderedDict() # generated for now (acceleration, steering)
     agents = self._preprocess_agents(world)
     
     # add nodes
