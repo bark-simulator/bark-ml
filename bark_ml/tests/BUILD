@@ -24,7 +24,8 @@ py_test(
 py_test(
     name = "py_observer_tests",
     srcs = ["py_observer_tests.py"],
-    data = ["@bark_project//python:bark.so"],
+    data = ["@bark_project//python:bark.so",
+            "//python:bark_ml_library.so"],
     imports = ["../external/bark_project/python/",
                "../../python/"],
     deps = ["@bark_project//modules/runtime:runtime",
@@ -40,7 +41,7 @@ py_test(
     data = ["@bark_project//python:bark.so",
             "//python:bark_ml_library.so"],
     imports = ["../external/bark_project/python/",
-               "../python/"],
+               "../../python/"],
     deps = ["//bark_ml/environments:single_agent_runtime",
             "//bark_ml/behaviors:behaviors",
             "//bark_ml/commons:py_spaces"],

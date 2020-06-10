@@ -17,7 +17,7 @@ from bark_project.modules.runtime.commons.parameters import ParameterServer
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, DiscreteHighwayBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
-# from bark_ml_library.observers import NearestObserver
+from bark_ml_library.observers import NearestObserver
 
 
 class PyObserverTests(unittest.TestCase):
@@ -33,25 +33,31 @@ class PyObserverTests(unittest.TestCase):
 
     eval_id = env._scenario._eval_agent_ids[0]
     observed_world = world.Observe([eval_id])[0]
+    start_time = time.time()
     observed_state = observer.Observe(observed_world)
+    end_time = time.time()
+    print(f"It took {end_time-start_time} seconds.")
     print(observed_state, observer.observation_space.shape)
 
     
-  # def test_nearest_observer_cpp(self):
-  #   params = ParameterServer()
-  #   bp = ContinuousHighwayBlueprint(params)
-  #   env = SingleAgentRuntime(blueprint=bp, render=True)
-  #   env.reset()
-  #   world = env._world
+  def test_nearest_observer_cpp(self):
+    params = ParameterServer()
+    bp = ContinuousHighwayBlueprint(params)
+    env = SingleAgentRuntime(blueprint=bp, render=True)
+    env.reset()
+    world = env._world
 
-  #   # under test
-  #   observer = NearestObserver(params)
-  #   observer.Reset(world)
+    # under test
+    observer = NearestObserver(params)
+    observer.Reset(world)
     
-  #   eval_id = env._scenario._eval_agent_ids[0]
-  #   observed_world = world.Observe([eval_id])[0]
-  #   observed_state = observer.Observe(observed_world)
-  #   print(observed_state, observer.observation_space.shape)
+    eval_id = env._scenario._eval_agent_ids[0]
+    observed_world = world.Observe([eval_id])[0]
+    start_time = time.time()
+    observed_state = observer.Observe(observed_world)
+    end_time = time.time()
+    print(f"It took {end_time-start_time} seconds.")
+    print(observed_state, observer.observation_space.shape)
 
 
 if __name__ == '__main__':

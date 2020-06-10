@@ -1,8 +1,8 @@
-load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository", "new_git_repository")
 
 def _maybe(repo_rule, name, **kwargs):
-    if name not in native.existing_rules():
-        repo_rule(name = name, **kwargs)
+  # if name not in native.existing_rules():
+  repo_rule(name = name, **kwargs)
 
 def bark_ml_dependencies():
   _maybe(
@@ -31,4 +31,13 @@ cc_library(
     name = "diadem_project",
     commit = "64b2987fbdd69ad533f30b545568c691ad5afb00",
     remote = "https://github.com/juloberno/diadem"
+  )
+
+  # if we include glog twice, gflags are defined mult. times
+  _maybe(
+    new_git_repository,
+    name = "com_github_google_glog",
+    commit = "195d416e3b1c8dc06980439f6acd3ebd40b6b820",
+    remote = "https://github.com/google/glog",
+    build_file="//:utils/glog.BUILD"
   )

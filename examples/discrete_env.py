@@ -9,9 +9,9 @@ import numpy as np
 import bark_ml.environments.gym
 
 # discrete highway env
-# env = gym.make("highway-v1")
+env = gym.make("highway-v1")
 # env = gym.make("merging-v1")
-env = gym.make("intersection-v1")
+# env = gym.make("intersection-v1")
 
 env.reset()
 done = False
