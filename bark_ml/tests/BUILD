@@ -85,6 +85,7 @@ py_test(
     imports = ["../external/bark_project/python/"],
     deps = [
             "//bark_ml/library_wrappers/lib_tf2rl/runners",
+            "@bark_project//modules/runtime:runtime",
             ],
     visibility = ["//visibility:public"],
     size = "small",
