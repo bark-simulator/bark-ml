@@ -86,6 +86,8 @@ class GAILRunner(TF2RLRunner):
         - save_test_path:         str, Save trajectories of evaluation
         - save_test_movie:        bool, Save rendering results
         - show_test_images:       bool, Show input images to neural networks when an episode finishes
+      OTHER:
+        - gpu:                    int, name of gpu device
 
     """
     args = {}
@@ -113,5 +115,8 @@ class GAILRunner(TF2RLRunner):
     args['save_test_path'] = self._params['ML']['GAILRunner']['tf2rl']['save_test_path']
     args['save_test_movie'] = self._params['ML']['GAILRunner']['tf2rl']['save_test_movie']
     args['show_test_images'] = self._params['ML']['GAILRunner']['tf2rl']['show_test_images']
+
+    # other:
+    args['gpu'] = self._params['ML']['GAILRunner']['tf2rl']['gpu']
 
     return args

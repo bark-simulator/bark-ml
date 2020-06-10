@@ -52,9 +52,9 @@
                 "save_model_interval": 10000,
                 "save_summary_interval": 1000,
                 "normalize_obs": false,
-                "logdir": "gail_data/logs",
-                "model_dir": "gail_data/models",
-                "expert_path_dir": "gail_data/expert_data",
+                "logdir": "bark_ml/tests/gail_data/logs",
+                "model_dir": "bark_ml/tests/gail_data/models",
+                "expert_path_dir": "bark_ml/tests/gail_data/expert_data",
                 "use_prioritized_rb": false,
                 "use_nstep_rb": false,
                 "n_step": 4,
@@ -63,7 +63,8 @@
                 "test_episodes": 5,
                 "save_test_path": false,
                 "save_test_movie": false,
-                "show_test_images": false
+                "show_test_images": false,
+                "gpu": 0
             }
         },
         "BehaviorSACAgent": {

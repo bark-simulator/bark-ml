@@ -83,7 +83,8 @@ py_test(
     srcs = ["py_gail_runner_tests.py"],
     data = [
             "@bark_project//python:bark.so",
-            "//bark_ml/tests/gail_data:gail_testdata",
+            "gail_testfiles",
+            "gail_testdirs",
             ],
     imports = ["../external/bark_project/python/"],
     deps = [
@@ -92,4 +93,18 @@ py_test(
             ],
     visibility = ["//visibility:public"],
     size = "small",
+)
+
+filegroup(
+    name = "gail_testfiles",
+    srcs = glob([
+                "gail_data/*",
+                ]),
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "gail_testdirs",
+    srcs = ["gail_data"],
+    visibility = ["//visibility:public"],
 )
