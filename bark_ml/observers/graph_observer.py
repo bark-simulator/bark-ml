@@ -52,7 +52,6 @@ class GraphObserver(StateObserver):
       
       # create edges to all other agents
       nearby_agents = self._nearby_agents(agent, agents, self._visible_distance)
-
       for (nearby_agent_index, _) in nearby_agents:
         graph.add_edge(index, nearby_agent_index)
     

@@ -251,7 +251,7 @@ class GNNWrapper(tf.keras.Model):
     graph = GraphObserver.graph_from_observation(observation)
 
     graph_dict = json_graph.node_link_data(graph)
-    print(f'graph_dict: {graph_dicts}')
+    print(f'graph_dict: {graph_dict}')
 
     # how to input the graph to get a prediction?
     output = self._gnn(graph_dict)
