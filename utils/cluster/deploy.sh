@@ -1,11 +1,11 @@
 #!/bin/bash
 # $1 configuration, $2 user, $3 goal name
 echo "Building $.."
-singularity exec --nv utils/docker/barkml_diadem.img bazel build //examples:diadem_dqn
+bazel build //configurations/$1:configuration
 
 echo "Uploading.."
-rsync bazel-bin/examples/diadem_dqn* bernhard@8gpu:/mnt/glusterdata/home/$1/$2 -a --copy-links -v -z -P
-rsync utils/cluster/run.sh bernhard@8gpu:/mnt/glusterdata/home/$1/$2/run.sh -a --copy-links -v -z -P
+rsync bazel-bin/configurations/$1/ 8gpu:/mnt/glusterdata/home/$2/$3 -a --copy-links -v -z -P
+rsync ./configurations/run.sh 8gpu:/mnt/glusterdata/home/$2/$3/run.sh -a --copy-links -v -z -P
 
 # ssh 8gpu && cd $3 && sbatch run.sh
 # echo "Training started!"

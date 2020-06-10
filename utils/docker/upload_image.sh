@@ -1,2 +1,2 @@
 #!/bin/bash
-rsync ./barkml_diadem.img bernhard@8gpu:/mnt/glusterdata/home/$1/images/barkml_diadem.img -a -v -z -P
+rsync ./bark_ml.img 8gpu:/mnt/glusterdata/home/$1/images/bark_ml.img -a -v -z -P
