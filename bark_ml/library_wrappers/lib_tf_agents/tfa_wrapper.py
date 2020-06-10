@@ -5,6 +5,7 @@ import tensorflow as tf
 from tf_agents.environments import py_environment
 from tf_agents.specs import array_spec
 from tf_agents.trajectories import time_step as ts
+from collections import OrderedDict
 
 tf.compat.v1.enable_v2_behavior()
 
@@ -207,7 +208,7 @@ from tf2_gnn.layers import GNN, GNNInput
 from tf_agents.utils import common
 from bark_ml.observers.graph_observer import GraphObserver
 from tf2_gnn import GraphObserverModel
-from networkx.readwrite import json_graph
+import networkx as nx
 
 class GNNWrapper(tf.keras.Model):
   def __init__(self,
@@ -249,14 +250,25 @@ class GNNWrapper(tf.keras.Model):
     """
     # this is a networkx.OrderGraph object
     graph = GraphObserver.graph_from_observation(observation)
+    num_nodes = len(graph.nodes)
+    #random actions generated when we trying to predict actions from observation
+    #later, when we receive reward as true actions, we replace random actions by true actions here
+    list_random_actions = []
+    for agent_id in range(num_nodes): 
+      list_random_actions[agent_id] = OrderedDict([('steering', 0.0), ('acceleration', 0.0)])
+    
 
-    graph_dict = json_graph.node_link_data(graph)
-    print(f'graph_dict: {graph_dict}')
+    graph_dict = nx.node_link_data(graph)
+
+    raw_data = {}
+    raw_data['graph'] = graph_dict
+    raw_dat['actions'] = list_random_actions
+    print(f'entire graph model: {raw_data}')
 
     # how to input the graph to get a prediction?
-    output = self._gnn(graph_dict)
+    predicted_output, true_output= self._gnn(raw_data) #here true_output just random output
     
-    return output
+    return predicted_output
 
   def batch_call(self, graph, training=False):
     """Calls the network multiple times
