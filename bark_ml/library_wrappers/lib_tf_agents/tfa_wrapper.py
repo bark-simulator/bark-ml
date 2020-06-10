@@ -266,7 +266,7 @@ class GNNWrapper(tf.keras.Model):
     print(f'entire graph model: {raw_data}')
 
     # how to input the graph to get a prediction?
-    predicted_output, true_output= self._gnn(raw_data) #here true_output just random output
+    predicted_output, true_output= self._gnn([raw_data]) #here true_output just random output
     
     return predicted_output
 
