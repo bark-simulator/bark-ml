@@ -81,7 +81,10 @@ py_test(
 py_test(
     name = "py_gail_runner_tests",
     srcs = ["py_gail_runner_tests.py"],
-    data = ["@bark_project//python:bark.so"],
+    data = [
+            "@bark_project//python:bark.so",
+            "//bark_ml/tests/gail_data:gail_testdata",
+            ],
     imports = ["../external/bark_project/python/"],
     deps = [
             "//bark_ml/library_wrappers/lib_tf2rl/runners",
