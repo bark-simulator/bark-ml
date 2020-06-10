@@ -26,7 +26,7 @@ logging.getLogger().setLevel(logging.INFO)
 import matplotlib as mpl
 #if os.environ.get('DISPLAY', '') == '':
 #  print('no display found. Using non-interactive Agg backend')
-mpl.use('Agg')
+#mpl.use('Agg')
 
 from diadem.agents import AgentContext, AgentManager
 from diadem.experiment import Experiment
@@ -55,13 +55,13 @@ bp = DiscreteMergingBlueprint(bark_params,
 observer = NearestAgentsObserver(bark_params)
 runtime = SingleAgentRuntime(blueprint=bp,
                              observer=observer,
-                             render=False)
+                             render=True)
 
 
 def run_dqn_algorithm(parameter_files):
     exp_dir = "tmp_exp_dir"
     diadem_params = Params(filename=parameter_files)
-    config_logging(console=False, filename=logging.INFO)
+    config_logging(console=True)
     environment = DiademBarkEnvironment(runtime=runtime)
     context = AgentContext(
         environment=environment,
