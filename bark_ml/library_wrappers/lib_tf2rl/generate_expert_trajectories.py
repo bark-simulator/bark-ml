@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
+import multiprocessing
 
 # Bark
 from modules.runtime.scenario.scenario_generation.interaction_dataset_scenario_generation import \
@@ -249,7 +250,7 @@ def main_function(argv):
     param_servers = create_parameter_servers_for_scenarios(
         interaction_dataset_path)
 
-    with ThreadPoolExecutor(max_workers=8) as executor:
+    with ThreadPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
         futures = []
         for map, track in param_servers.keys():
             futures.append(executor.submit(generate_and_store_expert_trajectories, map, track, expert_trajectories_path, param_servers[(map, track)]))
