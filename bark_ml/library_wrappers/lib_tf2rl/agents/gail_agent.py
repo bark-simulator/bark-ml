@@ -43,7 +43,7 @@ class BehaviorGAILAgent(BehaviorTF2RLAgent, BehaviorContinuousML):
     pass
 
 
-  def Act(self, state):
+  def Act(self, obs):
     """Has to be implemented here"""
     pass
 

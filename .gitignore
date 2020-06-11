@@ -163,7 +163,13 @@ web/node_modules
 .vscode/.vs_code_bazel_build/vs_code_aspect.bzl
 .vscode/.vs_code_bazel_build/BUILD
 tests/data/database_maps_DR_DEU_Merging_MT_shifted.xodr
+
 *.png
 *.p
 
 /checkpoints/**
+
+# GAIL-TF2RL tests
+bark_ml/tests/gail_data/expert_data/*
+bark_ml/tests/gail_data/logs/*
+bark_ml/tests/gail_data/models/*
