@@ -112,6 +112,7 @@ def calculate_action(current_observation, next_observation, current_time, next_t
 
     action = []
 
+    # TODO action is not only the delta, Please include dynamics
     for i in range(len(next_observation)):
         action.append((next_observation[i] - current_observation[i]) / delta_t)
 
@@ -148,24 +149,14 @@ def store_expert_trajectories(map: str, track: str, expert_trajectories_path: st
     """
     Stores the expert trajectories
     """
-    import numpy as np
-
-    # Transform lists into np array
-    # for key in expert_traj:
-    #     expert_traj[key]['obs'] = np.array(expert_traj[key]['obs'])
-    #     expert_traj[key]['act'] = np.array(expert_traj[key]['act'])
-    #     expert_traj[key]['time'] = np.array(expert_traj[key]['time'])
-    #     expert_traj[key]['done'] = np.array(expert_traj[key]['done'])
-    #     expert_traj[key]['merge'] = np.array(expert_traj[key]['merge'])
-
-    # Store to pickle file
-    directory = os.path.join(expert_trajectories_path, map.replace('.xodr', ''))
+    directory = os.path.join(expert_trajectories_path,
+                             map.replace('.xodr', ''))
     Path(directory).mkdir(parents=True, exist_ok=True)
-    filename = os.path.join(directory, f"{track.replace('.csv', '')}.pkl")
+    filename = os.path.join(directory, f"{track.replace('.csv', '.pkl')}")
 
     with open(filename, 'wb') as handle:
-        pickle.dump(expert_trajectories, handle, protocol=pickle.HIGHEST_PROTOCOL)
-    # Well, now it should hopefully be saved
+        pickle.dump(expert_trajectories, handle,
+                    protocol=pickle.HIGHEST_PROTOCOL)
 
 
 def simulate_scenario(param_server, speed_factor=1):
@@ -198,10 +189,13 @@ def simulate_scenario(param_server, speed_factor=1):
 
 
 def generate_expert_trajectories_for_scenario(param_server, speed_factor=1):
+    """
+    Simulates a scenario, measures the environment and calculates the actions.
+    """
     expert_trajectories = simulate_scenario(param_server, speed_factor)
 
     for agent_id in expert_trajectories:
-        num_observations = len(expert_trajectories[agent_id])
+        num_observations = len(expert_trajectories[agent_id]['obs'])
         for i in range(0, num_observations - 1):
             agent_trajectory = expert_trajectories[agent_id]
 
@@ -221,6 +215,14 @@ def generate_expert_trajectories_for_scenario(param_server, speed_factor=1):
             [0] * len(expert_trajectories[agent_id]['act'][0]))
         expert_trajectories[agent_id]['done'].append(1)
 
+        assert len(expert_trajectories[agent_id]['obs']
+                   ) == len(expert_trajectories[agent_id]['act'])
+        assert len(expert_trajectories[agent_id]['obs']
+                   ) == len(expert_trajectories[agent_id]['time'])
+        assert len(expert_trajectories[agent_id]['obs']
+                   ) == len(expert_trajectories[agent_id]['merge'])
+        assert len(expert_trajectories[agent_id]['obs']
+                   ) == len(expert_trajectories[agent_id]['done'])
     return expert_trajectories
 
 
@@ -237,10 +239,10 @@ def main_function(argv):
         interaction_dataset_path)
 
     for map, track in param_servers.keys():
-        print(f"Simulating: {map}, {track}")
+        print(f"********** Simulating: {map}, {track} **********")
         expert_trajectories = generate_expert_trajectories_for_scenario(
             param_servers[(map, track)])
-        print("Finished")
+        print(f"********** Finished: {map}, {track} **********")
         store_expert_trajectories(
             map, track, expert_trajectories_path, expert_trajectories)
 
