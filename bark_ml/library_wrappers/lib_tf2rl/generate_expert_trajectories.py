@@ -44,22 +44,36 @@ def list_files_in_dir(dir_path: str, file_ending: str):
     return files
 
 
+def list_dirs_in_dir(dir_path: str):
+    """
+    Lists all dirs in the given dir.
+    """
+    dirs = [f for f in os.listdir(
+        dir_path) if not os.path.isfile(os.path.join(dir_path, f)) and not f == '.git']
+    dirs = [os.path.join(dir_path, f) for f in dirs]
+    return dirs
+
+
 def get_map_files(interaction_dataset_path: str):
     """
     Extracts all track file paths from the interaction dataset
     """
-    maps_path = os.path.join(interaction_dataset_path,
-                             "DR_DEU_Merging_MT/map/")
-    return list_files_in_dir(maps_path, '.xodr')
+    map_files = []
+    for scene in list_dirs_in_dir(interaction_dataset_path):
+        map_files.extend(list_files_in_dir(
+            os.path.join(scene, "map"), '.xodr'))
+    return map_files
 
 
 def get_track_files(interaction_dataset_path: str):
     """
     Extracts all map file paths from the interaction dataset
     """
-    maps_path = os.path.join(interaction_dataset_path,
-                             "DR_DEU_Merging_MT/tracks/")
-    return list_files_in_dir(maps_path, '.csv')
+    map_files = []
+    for scene in list_dirs_in_dir(interaction_dataset_path):
+        map_files.extend(list_files_in_dir(
+            os.path.join(scene, "tracks"), '.csv'))
+    return map_files
 
 
 def create_parameter_servers_for_scenarios(interaction_dataset_path: str):
@@ -86,8 +100,11 @@ def create_parameter_servers_for_scenarios(interaction_dataset_path: str):
             param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["StartTs"] = start_ts
             param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EndTs"] = end_ts
             param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EgoTrackId"] = track_ids[0]
-            param_servers[(map.split('/')[-1], track.split('/')
-                           [-1])] = param_server
+            map_id = map.replace(
+                '/map', '').replace(os.path.join(interaction_dataset_path, ''), '').replace('.xodr', '')
+            track_id = track.replace(
+                '/tracks', '').replace(os.path.join(interaction_dataset_path, ''), '').replace('.csv', '')
+            param_servers[map_id, track_id] = param_server
 
     return param_servers
 
@@ -152,9 +169,9 @@ def store_expert_trajectories(map: str, track: str, expert_trajectories_path: st
     Stores the expert trajectories
     """
     directory = os.path.join(expert_trajectories_path,
-                             map.replace('.xodr', ''))
+                             map)
     Path(directory).mkdir(parents=True, exist_ok=True)
-    filename = os.path.join(directory, f"{track.replace('.csv', '.pkl')}")
+    filename = os.path.join(directory, f"{track.split('/')[1]}.pkl")
 
     with open(filename, 'wb') as handle:
         pickle.dump(expert_trajectories, handle,
@@ -227,6 +244,7 @@ def generate_expert_trajectories_for_scenario(param_server, speed_factor=1):
                    ) == len(expert_trajectories[agent_id]['done'])
     return expert_trajectories
 
+
 def generate_and_store_expert_trajectories(map: str, track: str, expert_trajectories_path: str, param_server):
     """
     Generates and stores the expert trajectories for one scenario.
@@ -237,6 +255,7 @@ def generate_and_store_expert_trajectories(map: str, track: str, expert_trajecto
     store_expert_trajectories(
         map, track, expert_trajectories_path, expert_trajectories)
     print(f"********** Finished: {map}, {track} **********")
+
 
 def main_function(argv):
     """ main """
@@ -253,10 +272,12 @@ def main_function(argv):
     with ThreadPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
         futures = []
         for map, track in param_servers.keys():
-            futures.append(executor.submit(generate_and_store_expert_trajectories, map, track, expert_trajectories_path, param_servers[(map, track)]))
-        
+            futures.append(executor.submit(generate_and_store_expert_trajectories,
+                                           map, track, expert_trajectories_path, param_servers[(map, track)]))
+
         for future in futures:
             future.result()
+
 
 if __name__ == '__main__':
     flags.mark_flag_as_required('interaction_dataset_path')
