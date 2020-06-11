@@ -41,13 +41,12 @@ def define_scenario(interaction_dataset_path: str,
     param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EgoTrackId"] = egoTrackId
     return param_server
 
-def create_scenario(param_server: ParameterServer, num_scenarios:int=1, random_seed: int =0):
+def create_scenario_generator(param_server: ParameterServer, num_scenarios:int=1, random_seed: int =0):
     """
     Creates the actual scenario.
     """
-    scenario_generation = InteractionDatasetScenarioGeneration(num_scenarios=1, random_seed=0, params=param_server)
-    scenario = scenario_generation.get_scenario(0)
-    return scenario
+    scenario_generation = InteractionDatasetScenarioGeneration(num_scenarios=num_scenarios, random_seed=random_seed, params=param_server)
+    return scenario_generation
 
 def generate_expert_trajectories(argv):
     """ main """
@@ -57,17 +56,17 @@ def generate_expert_trajectories(argv):
         raise ValueError(
             f"Interaction dataset not found at location: {interaction_dataset_path}")
     param_server = define_scenario(interaction_dataset_path)
-    scenario = create_scenario(param_server)
+    scenario_generation = create_scenario_generator(param_server)
 
     # Initialize
     sim_step_time = 0.2
     sim_time_steps = 130
-
-    # Run the scenario in a loop
-    world_state = scenario.GetWorldState()
-    for _ in range(0, sim_time_steps):
-        world_state.DoPlanning(sim_step_time)
-        world_state.DoExecution(sim_step_time)
+    for scenario, idx in scenario_generation:
+        # Run the scenario in a loop
+        world_state = scenario.GetWorldState()
+        for _ in range(0, sim_time_steps):
+            world_state.DoPlanning(sim_step_time)
+            world_state.DoExecution(sim_step_time)
 
 if __name__ == '__main__':
     flags.mark_flag_as_required('interaction_dataset_path')
