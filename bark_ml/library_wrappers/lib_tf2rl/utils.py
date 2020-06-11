@@ -16,12 +16,13 @@ def load_expert_trajectory_file(filepath: str):
         expert_trajectories = dict(pickle.load(pickle_file))
 
     for key, value in expert_trajectories.items():
-        if ("obs" not in value or 
-            "act" not in value or 
-            "done" not in value or 
-            "time" not in value or 
-            "merge" not in value):
-            raise ValueError(f"""{filepath} does not contain valid expert trajectories.
-        {key}, {value} are invalid.""")
+        if ("obs" not in value or
+                "act" not in value or
+                "done" not in value or
+                "time" not in value or
+                "merge" not in value):
+            raise ValueError(f"{filepath} does not contain valid "
+                             "expert trajectories.\n"
+                             f"{key}, {value} are invalid.")
 
     return expert_trajectories

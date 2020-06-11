@@ -7,7 +7,8 @@
 import os
 import pickle
 import unittest
-from bark_ml.library_wrappers.lib_tf2rl.utils import load_expert_trajectory_file
+from bark_ml.library_wrappers.lib_tf2rl.utils \
+     import load_expert_trajectory_file
 
 
 class PyLibraryWrappersTF2RLUtilsTests(unittest.TestCase):
@@ -69,7 +70,8 @@ class PyLibraryWrappersTF2RLUtilsTests(unittest.TestCase):
 
     def test_file_contains_expert_trajectories(self):
         """
-        Test: Assert that error is thrown if the file does not contain expert trajectories.
+        Test: Assert that error is thrown if the file does not
+                contain expert trajectories.
         """
         load_expert_trajectory_file(self.file_path)
 
