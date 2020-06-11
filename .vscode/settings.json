@@ -92,4 +92,6 @@
     "*.ipp": "cpp"
   },
   "python.pythonPath": "${workspaceFolder}/python/venv/bin/python",
+  "python.linting.pep8Enabled": true,
+  "python.linting.pylintEnabled": true
 }

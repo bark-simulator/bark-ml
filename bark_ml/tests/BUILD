@@ -67,10 +67,12 @@ py_test(
 )
 
 py_test(
-    name = "py_library_tf2rl_tests",
-    srcs = ["py_library_tf2rl_tests.py"],
+    name = "py_library_tf2rl_utils_tests",
+    srcs = ["py_library_tf2rl_utils_tests.py"],
     data = ["data/mock_expert_trajectories.pkl"],
-    imports = ["../external/bark_project/python/"],
+    imports = [
+            "../external/bark_project/python/"
+            ],
     deps = [
             "//bark_ml/library_wrappers/lib_tf2rl:utils",
             ],
