@@ -71,7 +71,7 @@ def create_parameter_servers_for_scenarios(interaction_dataset_path: str):
             param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["StartTs"] = start_ts
             param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EndTs"] = end_ts
             # param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EgoTrackId"] = egoTrackId
-            param_servers[(map, track)] = param_server
+            param_servers[(map.split('/')[-1], track.split('/')[-1])] = param_server
 
     return param_servers
 
