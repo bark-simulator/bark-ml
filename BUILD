@@ -6,7 +6,7 @@ test_suite(
     "//bark_ml/tests:py_evaluator_tests",
     "//bark_ml/tests:py_behavior_tests",
     "//bark_ml/tests:py_library_tfa_tests",
-    "//bark_ml/tests:py_library_tf2rl_tests"
+    "//bark_ml/tests:py_library_tf2rl_utils_tests",
     "//utils/tests:test_generate_launch_configuration"
   ]
 )
