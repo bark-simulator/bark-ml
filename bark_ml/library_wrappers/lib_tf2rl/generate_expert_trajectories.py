@@ -5,6 +5,7 @@ import pickle
 import matplotlib.pyplot as plt
 from pathlib import Path
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
 
 # Bark
 from modules.runtime.scenario.scenario_generation.interaction_dataset_scenario_generation import \
@@ -225,6 +226,16 @@ def generate_expert_trajectories_for_scenario(param_server, speed_factor=1):
                    ) == len(expert_trajectories[agent_id]['done'])
     return expert_trajectories
 
+def generate_and_store_expert_trajectories(map: str, track: str, expert_trajectories_path: str, param_server):
+    """
+    Generates and stores the expert trajectories for one scenario.
+    """
+    print(f"********** Simulating: {map}, {track} **********")
+    expert_trajectories = generate_expert_trajectories_for_scenario(
+        param_server)
+    store_expert_trajectories(
+        map, track, expert_trajectories_path, expert_trajectories)
+    print(f"********** Finished: {map}, {track} **********")
 
 def main_function(argv):
     """ main """
@@ -238,14 +249,13 @@ def main_function(argv):
     param_servers = create_parameter_servers_for_scenarios(
         interaction_dataset_path)
 
-    for map, track in param_servers.keys():
-        print(f"********** Simulating: {map}, {track} **********")
-        expert_trajectories = generate_expert_trajectories_for_scenario(
-            param_servers[(map, track)])
-        print(f"********** Finished: {map}, {track} **********")
-        store_expert_trajectories(
-            map, track, expert_trajectories_path, expert_trajectories)
-
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        futures = []
+        for map, track in param_servers.keys():
+            futures.append(executor.submit(generate_and_store_expert_trajectories, map, track, expert_trajectories_path, param_servers[(map, track)]))
+        
+        for future in futures:
+            future.result()
 
 if __name__ == '__main__':
     flags.mark_flag_as_required('interaction_dataset_path')
