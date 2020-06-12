@@ -7,7 +7,20 @@ py_library(
     visibility = ["//visibility:public"],
 )
 
-py_library(
-    name = "utils",
-    srcs = ["utils.py"],
+
+py_binary(
+  name = "generate_expert_trajectories",
+  srcs = ["generate_expert_trajectories.py"],
+  deps = ["@bark_project//modules/runtime/commons:parameters",
+          "@bark_project//modules/runtime/commons:xodr_parser",
+          "@bark_project//modules/runtime/viewer:matplotlib_viewer",
+          "@bark_project//modules/benchmark:benchmark_runner",
+          "@bark_project//modules/benchmark:benchmark_analyzer",
+          "@bark_project//modules/runtime/scenario/scenario_generation:scenario_generation",
+          "@bark_project//modules/runtime:runtime",
+          "//bark_ml/observers:observers"],
+  data = ["@bark_project//python:bark.so",
+          "@bark_project//modules/runtime/tests:xodr_data",
+          "//python:bark_ml_library.so",
+          ]
 )
