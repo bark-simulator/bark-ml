@@ -42,30 +42,30 @@ def run_configuration(argv):
   observer = GraphObserver(params=params)
 
   # create environment
-  bp = ContinuousMergingBlueprint(params,
-                                  number_of_senarios=500,
-                                  random_seed=0)
-  viewer = MPViewer(params=params,
-                    x_range=[-35, 35],
-                    y_range=[-35, 35],
-                    follow_agent_id=True)
-  viewer = VideoRenderer(renderer=viewer,
-                         world_step_time=0.2,
-                         fig_path="/Users/marco.oliva/2020/bark-ml/video/")
-  env = SingleAgentRuntime(blueprint=bp,
-                           observer=observer,
-                           viewer=viewer,
-                           render=False)
+  # bp = ContinuousMergingBlueprint(
+  #   params,
+  #   number_of_senarios=500,
+  #   random_seed=0)
 
-  # PPO-agent
-  # ppo_agent = BehaviorPPOAgent(environment=env,
-  #                              params=params)
-  # env.ml_behavior = ppo_agent
-  # runner = PPORunner(params=params,
-  #                    environment=env,
-  #                    agent=ppo_agent)
+  bp = ContinuousHighwayBlueprint(params, number_of_senarios=500, random_seed=0)
+  
+  viewer = MPViewer(
+    params=params,
+    x_range=[-35, 35],
+    y_range=[-35, 35],
+    follow_agent_id=True)
+  
+  viewer = VideoRenderer(
+    renderer=viewer,
+    world_step_time=0.2,
+    fig_path="/Users/marco.oliva/2020/bark-ml/video/")
+  
+  env = SingleAgentRuntime(
+    blueprint=bp,
+    observer=observer,
+    viewer=viewer,
+    render=False)
 
-  # SAC-agent
   sac_agent = BehaviorGraphSACAgent(environment=env, params=params)
   env.ml_behavior = sac_agent
   runner = SACRunner(params=params,

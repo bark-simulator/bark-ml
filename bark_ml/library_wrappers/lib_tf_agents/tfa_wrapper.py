@@ -248,27 +248,29 @@ class GNNWrapper(tf.keras.Model):
     Returns:
         (np.array, np.array) -- Return edges and values
     """
-    # this is a networkx.OrderGraph object
-    graph = GraphObserver.graph_from_observation(observation)
-    num_nodes = len(graph.nodes)
-    #random actions generated when we trying to predict actions from observation
-    #later, when we receive reward as true actions, we replace random actions by true actions here
-    list_random_actions = []
-    for agent_id in range(num_nodes): 
-      list_random_actions[agent_id] = OrderedDict([('steering', 0.0), ('acceleration', 0.0)])
+    return tf.constant([0, 0])
+
+    # # this is a networkx.OrderGraph object
+    # graph = GraphObserver.graph_from_observation(observation)
+    # num_nodes = len(graph.nodes)
+    # #random actions generated when we trying to predict actions from observation
+    # #later, when we receive reward as true actions, we replace random actions by true actions here
+    # list_random_actions = []
+    # for agent_id in range(num_nodes): 
+    #   list_random_actions[agent_id] = OrderedDict([('steering', 0.0), ('acceleration', 0.0)])
     
 
-    graph_dict = nx.node_link_data(graph)
+    # graph_dict = nx.node_link_data(graph)
 
-    raw_data = {}
-    raw_data['graph'] = graph_dict
-    raw_dat['actions'] = list_random_actions
-    print(f'entire graph model: {raw_data}')
+    # raw_data = {}
+    # raw_data['graph'] = graph_dict
+    # raw_dat['actions'] = list_random_actions
+    # print(f'entire graph model: {raw_data}')
 
-    # how to input the graph to get a prediction?
-    predicted_output, true_output= self._gnn([raw_data]) #here true_output just random output
+    # # how to input the graph to get a prediction?
+    # predicted_output, true_output= self._gnn([raw_data]) #here true_output just random output
     
-    return predicted_output
+    # return predicted_output
 
   def batch_call(self, graph, training=False):
     """Calls the network multiple times
