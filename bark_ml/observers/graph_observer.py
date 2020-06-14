@@ -24,7 +24,7 @@ class GraphObserver(StateObserver):
     StateObserver.__init__(self, params)
 
     self.feature_len = 11
-    self.agent_limit = 10
+    self.agent_limit = 50
 
     self._normalize_observations = normalize_observations
     self._use_edge_attributes = use_edge_attributes
@@ -162,7 +162,7 @@ class GraphObserver(StateObserver):
 
       if distance <= radius:
         nearby_agents.append((index, agent))
-    
+
     return nearby_agents
 
   def _extract_features(self, agent) -> Dict[str, float]:
@@ -205,6 +205,10 @@ class GraphObserver(StateObserver):
       res["goal_theta"] = self._normalize_value(res["goal_theta"], n["theta"])
       res["goal_vel"] = self._normalize_value(res["goal_vel"], n["vel"])
     
+    #####################################################
+    #    If you change the number of features,          #
+    #    please adapt self.feature_len accordingly.     #
+    #####################################################
     return res
 
   def _generate_actions(self, features: Dict[str, float]) -> Dict[str, float]:
