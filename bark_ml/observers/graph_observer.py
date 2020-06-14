@@ -23,11 +23,14 @@ class GraphObserver(StateObserver):
                params=ParameterServer()):
     StateObserver.__init__(self, params)
 
-    self.feature_len = 11
-    self.agent_limit = 50
-
     self._normalize_observations = normalize_observations
     self._use_edge_attributes = use_edge_attributes
+
+    # the number of features of a node in the graph
+    self.feature_len = 11
+
+    # the maximum number of agents that can be observed
+    self.agent_limit = 50
 
      # the radius an agent can 'see' in meters
     self._visible_distance = 50
@@ -145,7 +148,7 @@ class GraphObserver(StateObserver):
     agents.remove(ego_agent)
     agents.sort(key=lambda agent: agent.id)
     agents.insert(0, ego_agent)
-    return list(enumerate(agents))
+    return list(enumerate(agents))[:self.agent_limit]
 
   def _nearby_agents(self, center_agent, agents, radius: float):
     """
