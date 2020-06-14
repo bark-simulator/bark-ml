@@ -68,6 +68,21 @@ class GraphObserver(StateObserver):
     return tf.convert_to_tensor(observation, dtype=tf.float32, name='observation')
 
   def _observation_from_graph(self, graph):
+    """ Encodes the given graph into a bounded array with fixed size.
+
+    The returned array 'a' has the following contents:
+    a[0]:                         (int) the maximum number of possibly contained nodes
+    a[1]:                         (int) the actual number of contained nodes
+    a[2]:                         (int) the number of features per node
+    a[4: a[1] * a[2]]:            (floats) the node feature values
+    a[a[1] * a[2]: a[0] * a[2]]:  (int) all entries have value -1
+    a[-a[0] ** 2:]:               (0 or 1) an adjacency matrix in vector form
+
+    :type graph: A nx.Graph object.
+    :param graph:
+    
+    :rtype: list
+    """
     num_nodes = len(graph.nodes)
     obs = [self.agent_limit, num_nodes, self.feature_len]
     
@@ -75,8 +90,7 @@ class GraphObserver(StateObserver):
     for (node_id, attributes) in graph.nodes.data():
       obs.extend(list(attributes.values()))
 
-
-    # fill placeholders with -1
+    # fill empty spots (difference between existing and max agents) with -1
     obs.extend(np.full((self.agent_limit - num_nodes) * self.feature_len, -1))
 
     # build adjacency list
