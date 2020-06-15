@@ -115,6 +115,5 @@ class TFARunner:
       is_terminal = False
       while not is_terminal:
         action_step = self._agent._eval_policy.action(ts.transition(state, reward=0.0, discount=1.0))
-        print(f'action step: {action_step}')
-        state, reward, is_terminal, _ = self._environment.step(action_step.action.numpy()[0])
+        state, reward, is_terminal, _ = self._environment.step(action_step.action.numpy())
         self._environment.render()

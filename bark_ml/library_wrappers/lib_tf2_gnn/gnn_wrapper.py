@@ -1,9 +1,11 @@
 import time
 import tensorflow as tf
-# from gnn.gnn import GNN
 from tf2_gnn.layers import GNN, GNNInput
 from tf_agents.utils import common
-from bark.source.commons import select_col, find_value_ids, select_row, select_range
+from bark_ml.observers.graph_observer import GraphObserver
+from tf2_gnn import GraphObserverModel
+import networkx as nx
+from typing import OrderedDict
 
 
 class GNNWrapper(tf.keras.Model):
@@ -21,52 +23,55 @@ class GNNWrapper(tf.keras.Model):
     # self._number_of_edges = None
 
     self._node_layers_def = node_layers_def
-    # self._old_gnn = GNN(node_layers_def,
-    #                     edge_layers_def,
-    #                     name=name)
     self._dense_proj = tf.keras.layers.Dense(node_layers_def[-1]["units"],
                                              activation='relu',
                                              trainable=True)
-    # self._gnn = common.function(self._gnn)
+
     params = GNN.get_default_hyperparameters()
     params["hidden_dim"] = node_layers_def[0]["units"]
-    # TODO(@hart): modify the size of the network
-    self._gnn = GNN(params)
+    
+    self._gnn = GraphObserverModel(
+      model = "RGCN", 
+      task = "NodeLevelRegression",
+      max_epochs= 200, 
+      patience=30)
 
   # @tf.function
-  def call(self, graph, training=False):
+  def call(self, observation, training=False):
     """Call function for the CGNN
     
     Arguments:
-        graph {np.array} -- Graph definitoin
+        graph {np.array} -- Graph definition
     
     Returns:
         (np.array, np.array) -- Return edges and values
     """
-    number_of_edges = tf.cast(find_value_ids(select_col(graph, 0), -1.)[0], tf.int32)
-    number_of_nodes = tf.cast(find_value_ids(select_col(graph, 2), -1.)[0], tf.int32)
+    #return tf.constant([0, 0])
 
-    edge_index = tf.cast(graph[:number_of_edges, 0:2], tf.int32)
-    values = tf.reshape(graph[:number_of_nodes, 2:(2+self._h0_dim)], [-1, self._h0_dim])
-    edges = tf.reshape(graph[:number_of_edges, (2+self._h0_dim):(2+self._h0_dim+self._e0_dim)], [-1, self._e0_dim])
+    #this is a networkx.OrderGraph object
+    graph = GraphObserver.graph_from_observation(observation)
+    num_nodes = len(graph.nodes)
+    #random actions generated when we trying to predict actions from observation
+    #later, when we receive reward as true actions, we replace random actions by true actions here
+    list_random_actions = []
+    for agent_id in range(num_nodes): 
+      list_random_actions.append({
+        'steering': 0.0,
+        'acceleration': 0.0
+      })
+    
 
-    # step through layers
-    # : HERE WE CAN CALL MSFT
-    # : always is a single graph
-    # : use dense layer to reduce graph output
-    # tf.print(edge_index)
+    graph_dict = nx.node_link_data(graph)
 
-    layer_input = GNNInput(
-      node_features = values,
-      adjacency_lists = (
-        edge_index,
-      ),
-      node_to_graph_map = tf.fill(dims=(number_of_nodes,), value=0),
-      num_graphs = 1)
-    gnn_output = self._gnn(layer_input, training=training)
-    out =  self._dense_proj(gnn_output)
-    return out
-    # return self._old_gnn(edge_index, values, edges)
+    raw_data = {}
+    raw_data['graph'] = graph_dict
+    raw_data['actions'] = list_random_actions
+    #print(f'entire graph model: {raw_data}')
+
+    # how to input the graph to get a prediction?
+    predicted_output, _ = self._gnn([raw_data]) #here true_output just random output
+    
+    return predicted_output
 
   def batch_call(self, graph, training=False):
     """Calls the network multiple times
@@ -82,11 +87,11 @@ class GNNWrapper(tf.keras.Model):
         self._zero_var = tf.zeros(shape=(0, 1, self._node_layers_def[-1]["units"]))
       return self._zero_var
     if len(graph.shape) == 3:
-      return tf.map_fn(lambda g: self.call(g)[0], graph)
+      return tf.map_fn(lambda g: self.call(g), graph)
     if len(graph.shape) == 4:
       return tf.map_fn(lambda g: self.batch_call(g), graph)
     else:
-      return self.call(graph)[0]
+      return self.call(graph)
   
   def reset(self):
     self._gnn.reset()

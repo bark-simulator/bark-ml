@@ -26,11 +26,11 @@ from tf_agents.networks import network
 from tf_agents.networks import utils
 from tf_agents.utils import common
 
-from bark_ml.library_wrappers.lib_tf_agents.gnn import GNNWrapper
+from bark_ml.library_wrappers.lib_tf2_gnn import GNNWrapper
 
 @gin.configurable
-class GNNActorNetwork(network.Network):
-  """Creates an actor network."""
+class GNNCriticNetwork(network.Network):
+  """Creates a critic network."""
 
   def __init__(self,
                input_tensor_spec,
@@ -39,7 +39,7 @@ class GNNActorNetwork(network.Network):
                dropout_layer_params=None,
                conv_layer_params=None,
                activation_fn=tf.keras.activations.relu,
-               name='ActorNetwork'):
+               name='CriticNetwork'):
     """Creates an instance of `ActorNetwork`.
     Args:
       input_tensor_spec: A nest of `tensor_spec.TensorSpec` representing the
@@ -66,7 +66,7 @@ class GNNActorNetwork(network.Network):
         item, or if the action data type is not `float`.
     """
 
-    super(GNNActorNetwork, self).__init__(
+    super(GNNCriticNetwork, self).__init__(
         input_tensor_spec=input_tensor_spec,
         state_spec=(),
         name=name)
@@ -117,11 +117,12 @@ class GNNActorNetwork(network.Network):
   def call(self, observations, step_type=(), network_state=(), training=False):
     del step_type  # unused.
     # graph transform
-    observations = self._gnn.batch_call(observations)
-    observations = tf.nest.flatten(observations)
-    output = tf.cast(observations[0], tf.float32)
-    for layer in self._mlp_layers:
-      output = layer(output, training=training)
+    observations = tf.constant([0, 0]) # self._gnn.batch_call(observations)
+    #observations = tf.nest.flatten(observations)
+    output = tf.cast(observations, tf.float32)
+
+    # for layer in self._mlp_layers:
+    #   output = layer(output, training=training)
 
     actions = common.scale_to_spec(output, self._single_action_spec)
     output_actions = tf.nest.pack_sequence_as(self._output_tensor_spec,

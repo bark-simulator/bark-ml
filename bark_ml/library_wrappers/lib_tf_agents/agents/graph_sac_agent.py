@@ -11,7 +11,7 @@ from tf_agents.replay_buffers import tf_uniform_replay_buffer
 from tf_agents.utils.common import Checkpointer
 from tf_agents.trajectories import time_step as ts
 
-from bark_ml.library_wrappers.lib_tf_agents.tfa_wrapper import GNNActorNetwork
+from bark_ml.library_wrappers.lib_tf2_gnn import GNNActorNetwork, GNNCriticNetwork
 from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAAgent
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 
@@ -39,8 +39,8 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
       output_tensor_spec=env.action_spec()
     )
 
-    # critic network - make this a GNN
-    critic_net = GNNActorNetwork(
+    # critic network
+    critic_net = GNNCriticNetwork(
       input_tensor_spec=env.observation_spec(),
       output_tensor_spec=env.action_spec()
     )
