@@ -37,7 +37,7 @@ class GraphObserver(StateObserver):
 
   @classmethod
   def attribute_keys(cls):
-    return ["x", "y", "theta", "vel", "goal_d", "goal_theta"]
+    return ["x", "y", "theta", "vel", "goal_x", "goal_y", "goal_dx", "goal_dy", "goal_theta", "goal_d", "goal_vel"]
 
   def Observe(self, world):
     """see base class"""
@@ -62,11 +62,6 @@ class GraphObserver(StateObserver):
         graph.add_edge(index, nearby_agent_index)
     
     observation = self._observation_from_graph(graph)
-    
-    # keep this for now, TODO: move into test
-    # reconstructed_graph = GraphObserver.graph_from_observation(observation)
-    # rec_obs = self._observation_from_graph(reconstructed_graph)
-    # assert observation == rec_obs, "Failure in graph en/decoding!"
 
     return tf.convert_to_tensor(observation, dtype=tf.float32, name='observation')
 
@@ -96,15 +91,15 @@ class GraphObserver(StateObserver):
     # fill empty spots (difference between existing and max agents) with -1
     obs.extend(np.full((self.agent_limit - num_nodes) * self.feature_len, -1))
 
-    # build adjacency list
-    adjacency_list = np.zeros(self.agent_limit ** 2)
-    
+    # build adjacency matrix and convert to list
+    adjacency_matrix = np.zeros((self.agent_limit,self.agent_limit))
     for source, target in graph.edges:
-      edge_idx = source * num_nodes + target
-      adjacency_list[edge_idx] = 1
-
+      adjacency_matrix[source, target] = 1
+    
+    adjacency_list = adjacency_matrix.reshape(-1)
     obs.extend(adjacency_list)
 
+    # Validity check
     assert len(obs) == self._len_state, f'Observation has invalid length ({len(obs)}, expected: {self._len_state})'
     
     return obs
@@ -128,11 +123,12 @@ class GraphObserver(StateObserver):
       graph.add_node(node_id, **attributes)
     
     adj_start_idx = node_limit * num_features
-    adj_lists = np.array_split(obs[adj_start_idx:], node_limit + 1)
+    adj_list = obs[adj_start_idx:]
+    adj_matrix = np.reshape(adj_list,(node_limit, -1))
     
-    for (node_id, adj_list) in enumerate(adj_lists):
-      for target_node_id in np.flatnonzero(adj_list):
-        graph.add_edge(node_id, target_node_id)
+    for (source_id, source_edges) in enumerate(adj_matrix):
+      for target_id in np.flatnonzero(source_edges):
+        graph.add_edge(source_id, target_id)
 
     return graph
 
@@ -171,8 +167,12 @@ class GraphObserver(StateObserver):
   def _extract_features(self, agent) -> Dict[str, float]:
     """Returns dict containing all features of the agent"""
     res = OrderedDict()
+
+    # Init data (to keep ordering always equal for reading and writing!!)
+    for label in self.attribute_keys():
+      res[label] = "inf"
     
-    # get basic information
+    # Update information with real data
     state = agent.state
     res["x"] = state[int(StateDefinition.X_POSITION)] # maybe not needed
     res["y"] = state[int(StateDefinition.Y_POSITION)] # maybe not needed
