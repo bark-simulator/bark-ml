@@ -6,6 +6,9 @@
         "IntegrationTimeDelta": 0.05000000074505806
     },
     "ML": {
+        "Settings": {
+            "GPUUse": 0
+        },
         "BehaviorContinuousML": {
             "ActionsLowerBound": [
                 -5.0,
@@ -36,14 +39,69 @@
         "NearestAgentsObserver": {
             "MaxOtherDistance": 100
         },
-        "BehaviorGAILAgent": {
-            "TODO": "Needs implementation"
+        "BehaviorSACAgent": {
+            "ActorFcLayerParams": [
+                512,
+                256,
+                256
+            ],
+            "CriticJointFcLayerParams": [
+                512,
+                256,
+                256
+            ],
+            "ActorLearningRate": 0.0003,
+            "CriticLearningRate": 0.0003,
+            "AlphaLearningRate": 0.0003,
+            "TargetUpdateTau": 0.05,
+            "TargetUpdatePeriod": 3,
+            "Gamma": 0.995,
+            "RewardScaleFactor": 1.0,
+            "AgentName": "sac_agent",
+            "DebugSummaries": false,
+            "ReplayBufferCapacity": 10000,
+            "ParallelBufferCalls": 1,
+            "BatchSize": 512,
+            "BufferNumSteps": 2,
+            "BufferPrefetch": 3
         },
         "BehaviorTFAAgents": {
             "CheckpointPath": "",
             "NumCheckpointsToKeep": 3
         },
         "TFARunner": {
+            "EvaluationSteps": 25,
+            "InitialCollectionEpisodes": 50,
+            "CollectionEpisodesPerStep": 1
+        },
+        "BehaviorGAILAgent": {
+            "Generator": {
+                "ActorFcLayerParams": [
+                400,
+                300
+                ],
+                "CriticJointFcLayerParams": [
+                400,
+                300
+                ],
+                "BatchSize": 100
+            },
+            "Discriminator": {
+                "FcLayerParams": [
+                    400,
+                    300
+                ],
+                "BatchSize": 32
+            },
+            "WarmUp": 10000,
+            "EnableSN": false,           
+            "AgentName": "gail_agent"
+        },
+        "BehaviorT2RLAgents": {
+            "CheckpointPath": "",
+            "NumCheckpointsToKeep": 3
+        },
+        "TF2RLRunner": {
             "EvaluationSteps": 25,
             "InitialCollectionEpisodes": 50,
             "CollectionEpisodesPerStep": 1
