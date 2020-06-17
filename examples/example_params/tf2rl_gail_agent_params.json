@@ -6,9 +6,6 @@
         "IntegrationTimeDelta": 0.05000000074505806
     },
     "ML": {
-        "Settings": {
-            "GPUUse": 0
-        },
         "BehaviorContinuousML": {
             "ActionsLowerBound": [
                 -5.0,
@@ -65,43 +62,11 @@
             "BufferNumSteps": 2,
             "BufferPrefetch": 3
         },
-        "BehaviorTFAAgents": {
+        "BehaviorTF2RLGAILAgents": {
             "CheckpointPath": "",
             "NumCheckpointsToKeep": 3
         },
-        "TFARunner": {
-            "EvaluationSteps": 25,
-            "InitialCollectionEpisodes": 50,
-            "CollectionEpisodesPerStep": 1
-        },
-        "BehaviorGAILAgent": {
-            "Generator": {
-                "ActorFcLayerParams": [
-                400,
-                300
-                ],
-                "CriticJointFcLayerParams": [
-                400,
-                300
-                ],
-                "BatchSize": 100
-            },
-            "Discriminator": {
-                "FcLayerParams": [
-                    400,
-                    300
-                ],
-                "BatchSize": 32
-            },
-            "WarmUp": 10000,
-            "EnableSN": false,           
-            "AgentName": "gail_agent"
-        },
-        "BehaviorT2RLAgents": {
-            "CheckpointPath": "",
-            "NumCheckpointsToKeep": 3
-        },
-        "TF2RLRunner": {
+        "TF2RLGAILRunner": {
             "EvaluationSteps": 25,
             "InitialCollectionEpisodes": 50,
             "CollectionEpisodesPerStep": 1

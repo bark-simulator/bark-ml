@@ -1,10 +1,3 @@
-# Copyright (c) 2020 Patrick Hart, Julian Bernhard,
-# Klemens Esterle, Tobias Kessler
-#
-# This software is released under the MIT License.
-# https://opensource.org/licenses/MIT
-
-# TensorFlow Agents (https://github.com/tensorflow/agents) example
 import os
 from pathlib import Path
 
@@ -21,8 +14,10 @@ from modules.runtime.viewer.video_renderer import VideoRenderer
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
   ContinuousMergingBlueprint, ContinuousIntersectionBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-from bark_ml.library_wrappers.lib_tf2rl.agents.gail_agent import BehaviorGAILAgent
-from bark_ml.library_wrappers.lib_tf2rl.runners.gail_runner import GAILRunner
+from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent # potential use as expert
+from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner # potential use as expert
+from bark_ml.library_wrappers.lib_tf2rl.agents import BehaviorGAILAgent
+from bark_ml.library_wrappers.lib_tf2rl.runners import GAILRunner
 
 
 FLAGS = flags.FLAGS
@@ -31,30 +26,16 @@ flags.DEFINE_enum("mode",
                   ["train", "visualize", "evaluate"],
                   "Mode the configuration should be executed in.")
 
-flags.DEFINE_string("train_out",
-                  help="The absolute path to where the checkpoints and summaries are saved during training.",
-                  # default=os.path.join(Path.home(), ".bark-ml/gail")
-                  default=os.path.join(Path.home(), "")
-                  )
-
-flags.DEFINE_string("test_env",
-                  help="Example environment in accord with tf2rl to test our code.",
-                  default="Pendulum-v0"
-                  )
-
-flags.DEFINE_string("gpu",
-                  help="-1 for CPU, 0 for GPU",
-                  default=0
-                  )
-
 
 def run_configuration(argv):
-  params = ParameterServer(filename="examples/example_params/gail_params.json")
+  """
+  Parameters so far only copied but dynamics and other parameters should be transferable
+  """
+  params = ParameterServer(filename="examples/example_params/tf2rl_gail_agent_params.json")
   # params = ParameterServer()
-  params["ML"]["BehaviorT2RLAgents"]["CheckpointPath"] = os.path.join(FLAGS.train_out, "checkpoints/")
-  params["ML"]["TF2RLRunner"]["SummaryPath"] = os.path.join(FLAGS.train_out, "summary")
+  params["ML"]["BehaviorTF2RLGAILAgents"]["CheckpointPath"] = os.path.join(Path.home(), "checkpoints/")
+  params["ML"]["TF2RLGAILRunner"]["SummaryPath"] = os.path.join(Path.home(), "checkpoints/")
   params["World"]["remove_agents_out_of_map"] = True
-  params["ML"]["Settings"]["GPUUse"] = FLAGS.gpu
 
   # create environment
   bp = ContinuousMergingBlueprint(params,
@@ -62,9 +43,6 @@ def run_configuration(argv):
                                   random_seed=0)
   env = SingleAgentRuntime(blueprint=bp,
                            render=False)
-
-  # Only for test purposes
-  # env = gym.make(FLAGS.test_env)
 
   # SAC-agent
   # sac_agent = BehaviorSACAgent(environment=env,
@@ -88,8 +66,10 @@ def run_configuration(argv):
     runner.Visualize(5)
   
   # store all used params of the training
-  params.Save(os.path.join(FLAGS.train_out, "examples/example_params/gail_params.json"))
+  # params.Save(os.path.join(Path.home(), "examples/example_params/tfa_params.json"))
 
 
 if __name__ == '__main__':
+
   app.run(run_configuration)
+  print('********************************************** Finished **********************************************')

@@ -168,6 +168,7 @@ tests/data/database_maps_DR_DEU_Merging_MT_shifted.xodr
 *.p
 
 /checkpoints/**
+**/expert_trajectories/**
 
 # GAIL-TF2RL tests
 bark_ml/tests/gail_data/expert_data/*
