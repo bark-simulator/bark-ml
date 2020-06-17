@@ -95,6 +95,24 @@ py_test(
     size = "small",
 )
 
+py_test(
+    name = "py_gail_gym_training_tests",
+    srcs = ["py_gail_gym_training_tests.py"],
+    data = [
+            "@bark_project//python:bark.so",
+            "gail_testfiles",
+            "gail_testdirs",
+            ],
+    imports = ["../external/bark_project/python/"],
+    deps = [
+            "//bark_ml/library_wrappers/lib_tf2rl/runners",
+            "//bark_ml/library_wrappers/lib_tf2rl/agents",
+            "@bark_project//modules/runtime:runtime",
+            ],
+    visibility = ["//visibility:public"],
+    size = "small",
+)
+
 filegroup(
     name = "gail_testfiles",
     srcs = glob([
