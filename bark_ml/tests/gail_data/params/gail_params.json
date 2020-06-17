@@ -93,7 +93,7 @@
                 ],
                 "BatchSize": 32
             },
-            "WarmUp": 10000,
+            "WarmUp": 1000,
             "EnableSN": false,           
             "AgentName": "gail_agent"
         },
@@ -106,8 +106,8 @@
             "InitialCollectionEpisodes": 50,
             "CollectionEpisodesPerStep": 1,
             "tf2rl": {
-                "max_steps": 1000000,
-                "episode_max_steps": 1000,
+                "max_steps": 100000,
+                "episode_max_steps": 100,
                 "n_experiments": 1,
                 "show_progress": false,
                 "save_model_interval": 10000,
@@ -127,8 +127,7 @@
                 "test_episodes": 5,
                 "save_test_path": false,
                 "save_test_movie": false,
-                "show_test_images": false,
-                "gpu": 0
+                "show_test_images": false
             }
         }
     },

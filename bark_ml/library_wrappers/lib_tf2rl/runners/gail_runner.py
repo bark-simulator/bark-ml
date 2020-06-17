@@ -124,6 +124,6 @@ class GAILRunner(TF2RLRunner):
     args['show_test_images'] = self._params['ML']['GAILRunner']['tf2rl']['show_test_images']
 
     # other:
-    args['gpu'] = self._params['ML']['GAILRunner']['tf2rl']['gpu']
+    args['gpu'] = self._params["ML"]["Settings"]["GPUUse", "", 0]
 
     return argparse.Namespace(**args)
