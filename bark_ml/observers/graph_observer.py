@@ -64,9 +64,9 @@ class GraphObserver(StateObserver):
     observation = self._observation_from_graph(graph)
     
     # keep this for now, TODO: move into test
-    # reconstructed_graph = GraphObserver.graph_from_observation(observation)
-    # rec_obs = self._observation_from_graph(reconstructed_graph)
-    # assert observation == rec_obs, "Failure in graph en/decoding!"
+    reconstructed_graph = GraphObserver.graph_from_observation(observation)
+    rec_obs = self._observation_from_graph(reconstructed_graph)
+    assert observation == rec_obs, "Failure in graph en/decoding!"
 
     return tf.convert_to_tensor(observation, dtype=tf.float32, name='observation')
 
@@ -74,12 +74,12 @@ class GraphObserver(StateObserver):
     """ Encodes the given graph into a bounded array with fixed size.
 
     The returned array 'a' has the following contents:
-    a[0]:                         (int) the maximum number of possibly contained nodes
-    a[1]:                         (int) the actual number of contained nodes
-    a[2]:                         (int) the number of features per node
-    a[4: a[1] * a[2]]:            (floats) the node feature values
-    a[a[1] * a[2]: a[0] * a[2]]:  (int) all entries have value -1
-    a[-a[0] ** 2:]:               (0 or 1) an adjacency matrix in vector form
+    a[0]:                            (int) the maximum number of possibly contained nodes
+    a[1]:                            (int) the actual number of contained nodes
+    a[2]:                            (int) the number of features per node
+    a[3: a[1] * a[2]]:               (floats) the node feature values
+    a[3 + a[1] * a[2]: a[0] * a[2]]: (int) all entries have value -1
+    a[-a[0] ** 2:]:                  (0 or 1) an adjacency matrix in vector form
 
     :type graph: A nx.Graph object.
     :param graph:
@@ -100,7 +100,7 @@ class GraphObserver(StateObserver):
     adjacency_list = np.zeros(self.agent_limit ** 2)
     
     for source, target in graph.edges:
-      edge_idx = source * num_nodes + target
+      edge_idx = source * self.agent_limit + target
       adjacency_list[edge_idx] = 1
 
     obs.extend(adjacency_list)
