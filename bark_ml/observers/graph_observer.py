@@ -79,7 +79,7 @@ class GraphObserver(StateObserver):
     a[2]:                         (int) the number of features per node
     a[4: a[1] * a[2]]:            (floats) the node feature values
     a[a[1] * a[2]: a[0] * a[2]]:  (int) all entries have value -1
-    a[-a[0] ** 2:]:               (0 or 1) an adjacency matrix in vector form
+    a[-(a[0] ** 2):]:               (0 or 1) an adjacency matrix in vector form
 
     :type graph: A nx.Graph object.
     :param graph:
