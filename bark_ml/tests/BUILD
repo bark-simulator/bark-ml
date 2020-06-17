@@ -113,6 +113,26 @@ py_test(
     size = "small",
 )
 
+py_test(
+    name = "py_gail_bark_training_tests",
+    srcs = ["py_gail_bark_training_tests.py"],
+    data = [
+            "@bark_project//python:bark.so",
+            "//python:bark_ml_library.so",
+            "gail_testfiles",
+            "gail_testdirs",
+            ],
+    imports = ["../external/bark_project/python/"],
+    deps = [
+            "//bark_ml/environments:single_agent_runtime",
+            "//bark_ml/environments:blueprints",
+            "//bark_ml/library_wrappers/lib_tf2rl/runners",
+            "//bark_ml/library_wrappers/lib_tf2rl/agents",
+            ],
+    visibility = ["//visibility:public"],
+    size = "small",
+)
+
 filegroup(
     name = "gail_testfiles",
     srcs = glob([

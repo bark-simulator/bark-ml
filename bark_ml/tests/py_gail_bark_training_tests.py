@@ -1,9 +1,9 @@
 import os
+import unittest
+import numpy as np
 from pathlib import Path
 
 import gym
-from absl import app
-from absl import flags
 
 # BARK imports
 from bark_project.modules.runtime.commons.parameters import ParameterServer
@@ -14,31 +14,9 @@ from modules.runtime.viewer.video_renderer import VideoRenderer
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
   ContinuousMergingBlueprint, ContinuousIntersectionBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
+from bark_ml.library_wrappers.lib_tf2rl.tf2rl_wrapper import TF2RLWrapper
 from bark_ml.library_wrappers.lib_tf2rl.agents.gail_agent import BehaviorGAILAgent
 from bark_ml.library_wrappers.lib_tf2rl.runners.gail_runner import GAILRunner
-
-
-FLAGS = flags.FLAGS
-flags.DEFINE_enum("mode",
-                  "visualize",
-                  ["train", "visualize", "evaluate"],
-                  "Mode the configuration should be executed in.")
-
-flags.DEFINE_string("train_out",
-                  help="The absolute path to where the checkpoints and summaries are saved during training.",
-                  # default=os.path.join(Path.home(), ".bark-ml/gail")
-                  default=os.path.join(Path.home(), "gail_data")
-                  )
-
-flags.DEFINE_string("test_env",
-                  help="Example environment in accord with tf2rl to test our code.",
-                  default="Pendulum-v0"
-                  )
-
-flags.DEFINE_string("gpu",
-                  help="-1 for CPU, 0 for GPU",
-                  default=0
-                  )
 
 
 class PyTrainingBARKTests(unittest.TestCase):
@@ -47,16 +25,9 @@ class PyTrainingBARKTests(unittest.TestCase):
 
         params = ParameterServer(filename="bark_ml/tests/gail_data/params/gail_params_bark.json")
 
-        # changing the logging directories if not the default is used. (Which would be the same as it is in the json file.)
-        params["ML"]["GAILRunner"]["tf2rl"]["logdir"] = os.path.join(FLAGS.train_out, "logs", "bark")
-        params["ML"]["GAILRunner"]["tf2rl"]["model_dir"] = os.path.join(FLAGS.train_out, "models", "bark")
-
-        params["World"]["remove_agents_out_of_map"] = True
-        params["ML"]["Settings"]["GPUUse"] = FLAGS.gpu
-
-        if len(os.listdir(params["ML"]["GAILRunner"]["tf2rl"]["expert_path_dir"])) == 0:
+        """if len(os.listdir(params["ML"]["GAILRunner"]["tf2rl"]["expert_path_dir"])) == 0:
             print("No expert trajectories found, plaese generate demonstrations first")
-            exit()
+            exit()"""
 
         # create environment
         bp = ContinuousMergingBlueprint(params,
@@ -64,22 +35,30 @@ class PyTrainingBARKTests(unittest.TestCase):
                                         random_seed=0)
         env = SingleAgentRuntime(blueprint=bp,
                                 render=False)
+
+        # wrapped environment for compatibility with batk-ml
+        wrapped_env = TF2RLWrapper(env)
         
+        # TODO: loading the expert trajectories:
+        expert_trajs = {
+            'obses': np.zeros((1000, 16), dtype=np.float32),
+            'next_obses': np.zeros((1000, 16), dtype=np.float32),
+            'acts': np.zeros((1000, 2), dtype=np.float32)
+        }
+
         # create agent and runner:
         agent = BehaviorGAILAgent(
-            environment=env,
+            environment=wrapped_env,
             params=params
         )
         env.ml_behavior = agent
         runner = GAILRunner(
-            environment=env,
+            environment=wrapped_env,
             agent=agent,
-            params=params)
+            params=params,
+            expert_trajs=expert_trajs)
 
-        if FLAGS.mode == "train":
-            runner.Train()
-        elif FLAGS.mode == "visualize":
-            runner.Visualize(5)
+        runner.Train()
 
 
 if __name__ == '__main__':

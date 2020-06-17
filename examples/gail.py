@@ -51,8 +51,10 @@ flags.DEFINE_string("gpu",
 def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/gail_params.json")
   # params = ParameterServer()
-  params["ML"]["BehaviorT2RLAgents"]["CheckpointPath"] = os.path.join(FLAGS.train_out, "checkpoints/")
-  params["ML"]["TF2RLRunner"]["SummaryPath"] = os.path.join(FLAGS.train_out, "summary")
+  # changing the logging directories if not the default is used. (Which would be the same as it is in the json file.)
+  params["ML"]["GAILRunner"]["tf2rl"]["logdir"] = os.path.join(FLAGS.train_out, "logs", "bark")
+  params["ML"]["GAILRunner"]["tf2rl"]["model_dir"] = os.path.join(FLAGS.train_out, "models", "bark")
+
   params["World"]["remove_agents_out_of_map"] = True
   params["ML"]["Settings"]["GPUUse"] = FLAGS.gpu
 
