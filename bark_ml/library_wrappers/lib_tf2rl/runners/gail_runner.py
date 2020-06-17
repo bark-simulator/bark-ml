@@ -16,18 +16,24 @@ from tf2rl.experiments.utils import restore_latest_n_traj
 # BARK-ML imports
 from bark_ml.library_wrappers.lib_tf2rl.runners.tf2rl_runner import TF2RLRunner
 
+
 class GAILRunner(TF2RLRunner):
   """GAIL runner implementation based on tf2rl library."""
 
   def __init__(self,
               environment=None,
               agent=None,
-              params=None):
-      
+              params=None,
+              expert_trajs=None):
+    
+    self._expert_trajs = expert_trajs
+    
     TF2RLRunner.__init__(self,
                     environment=environment,
                     agent=agent,
                     params=params)
+      
+    
     
 
   def _train(self):
@@ -44,19 +50,14 @@ class GAILRunner(TF2RLRunner):
 
     # creating args from the ParameterServer which can be given to the IRLtrainer:
     args = self._get_args_from_params()
-
-    # getting the expert trajectories from the .pkl file:
-    expert_trajs = restore_latest_n_traj(dirname=args.expert_path_dir,
-                                        # n_path=args['n_path'],
-                                        max_steps=args.max_steps)
     
     trainer = IRLTrainer(policy=policy,
                          env=self._environment,
                          args=args,
                          irl=irl,
-                         expert_obs=expert_trajs["obses"],
-                         expert_next_obs=expert_trajs["next_obses"],
-                         expert_act=expert_trajs["acts"])
+                         expert_obs=self._expert_trajs["obses"],
+                         expert_next_obs=self._expert_trajs["next_obses"],
+                         expert_act=self._expert_trajs["acts"])
 
     return trainer
 
