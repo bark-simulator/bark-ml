@@ -1,0 +1,3 @@
+[submodule "tf2-gnn"]
+	path = tf2-gnn
+	url = https://github.com/TrungQuocNguyen/tf2-gnn.git

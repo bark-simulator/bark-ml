@@ -59,3 +59,17 @@ py_test(
             "//bark_ml/commons:py_spaces"],
     visibility = ["//visibility:public"],
 )
+
+py_test(
+    name = "py_graph_observer_tests",
+    srcs = ["py_graph_observer_tests.py"],
+    data = ["@bark_project//python:bark.so",
+            "//python:bark_ml_library.so"],
+    imports = ["../external/bark_project/python/",
+               "../../python/"],
+    deps = ["@bark_project//modules/runtime:runtime",
+            "//bark_ml/environments:single_agent_runtime",
+            "//bark_ml/behaviors:behaviors",
+            "//bark_ml/commons:py_spaces"],
+    visibility = ["//visibility:public"],
+)

@@ -4,8 +4,10 @@ import numpy as np
 import math
 import operator
 import networkx as nx
+import tensorflow as tf
 from typing import Dict
 from collections import OrderedDict
+from itertools import islice
 
 from bark.models.dynamic import StateDefinition
 from bark.world import ObservedWorld
@@ -21,20 +23,26 @@ class GraphObserver(StateObserver):
                params=ParameterServer()):
     StateObserver.__init__(self, params)
 
-    self._observation_len = 1 # i.e. one graph
     self._normalize_observations = normalize_observations
     self._use_edge_attributes = use_edge_attributes
+
+    # the number of features of a node in the graph
+    self.feature_len = 11
+
+    # the maximum number of agents that can be observed
+    self.agent_limit = 50
 
      # the radius an agent can 'see' in meters
     self._visible_distance = 50
 
+  @classmethod
+  def attribute_keys(cls):
+    return ["x", "y", "theta", "vel", "goal_x", "goal_y", "goal_dx", "goal_dy", "goal_theta", "goal_d", "goal_vel"]
+
   def Observe(self, world):
     """see base class"""
     graph = nx.OrderedGraph(normalization_ref=self.normalization_data)
-    #graph = nx.Graph(normalization_ref=self.normalization_data)
-
     actions = OrderedDict() # generated for now (steering, acceleration)
-    
     agents = self._preprocess_agents(world)
     
     # add nodes
@@ -50,11 +58,79 @@ class GraphObserver(StateObserver):
     for (index, agent) in agents:
       # create edges to all other agents
       nearby_agents = self._nearby_agents(agent, agents, self._visible_distance)
-
       for (nearby_agent_index, _) in nearby_agents:
         graph.add_edge(index, nearby_agent_index)
+    
+    observation = self._observation_from_graph(graph)
 
-    return graph, actions
+    return tf.convert_to_tensor(observation, dtype=tf.float32, name='observation')
+
+  def _observation_from_graph(self, graph):
+    """ Encodes the given graph into a bounded array with fixed size.
+
+    The returned array 'a' has the following contents:
+    a[0]:                         (int) the maximum number of possibly contained nodes
+    a[1]:                         (int) the actual number of contained nodes
+    a[2]:                         (int) the number of features per node
+    a[4: a[1] * a[2]]:            (floats) the node feature values
+    a[a[1] * a[2]: a[0] * a[2]]:  (int) all entries have value -1
+    a[-a[0] ** 2:]:               (0 or 1) an adjacency matrix in vector form
+
+    :type graph: A nx.Graph object.
+    :param graph:
+    
+    :rtype: list
+    """
+    num_nodes = len(graph.nodes)
+    obs = [self.agent_limit, num_nodes, self.feature_len]
+    
+    # append node features
+    for (node_id, attributes) in graph.nodes.data():
+      obs.extend(list(attributes.values()))
+
+    # fill empty spots (difference between existing and max agents) with -1
+    obs.extend(np.full((self.agent_limit - num_nodes) * self.feature_len, -1))
+
+    # build adjacency matrix and convert to list
+    adjacency_matrix = np.zeros((self.agent_limit,self.agent_limit))
+    for source, target in graph.edges:
+      adjacency_matrix[source, target] = 1
+    
+    adjacency_list = adjacency_matrix.reshape(-1)
+    obs.extend(adjacency_list)
+
+    # Validity check
+    assert len(obs) == self._len_state, f'Observation has invalid length ({len(obs)}, expected: {self._len_state})'
+    
+    return obs
+
+  @classmethod
+  def graph_from_observation(cls, observation):
+    graph = nx.OrderedGraph()
+
+    node_limit = int(observation[0])
+    num_nodes = int(observation[1])
+    num_features = int(observation[2])
+
+    obs = observation[3:]
+
+    for node_id in range(num_nodes):
+      start_idx = node_id * num_features
+      end_idx = start_idx + num_features
+      features = obs[start_idx:end_idx]
+
+      attributes = dict(zip(GraphObserver.attribute_keys(), features))
+      graph.add_node(node_id, **attributes)
+    
+    adj_start_idx = node_limit * num_features
+    adj_list = obs[adj_start_idx:]
+    adj_matrix = np.reshape(adj_list,(node_limit, -1))
+    
+    for (source_id, source_edges) in enumerate(adj_matrix):
+      for target_id in np.flatnonzero(source_edges):
+        graph.add_edge(source_id, target_id)
+
+    return graph
 
   def _preprocess_agents(self, world):
     """ 
@@ -68,7 +144,7 @@ class GraphObserver(StateObserver):
     agents.remove(ego_agent)
     agents.sort(key=lambda agent: agent.id)
     agents.insert(0, ego_agent)
-    return list(enumerate(agents))
+    return list(enumerate(agents))[:self.agent_limit]
 
   def _nearby_agents(self, center_agent, agents, radius: float):
     """
@@ -85,14 +161,18 @@ class GraphObserver(StateObserver):
 
       if distance <= radius:
         nearby_agents.append((index, agent))
-    
+
     return nearby_agents
 
   def _extract_features(self, agent) -> Dict[str, float]:
     """Returns dict containing all features of the agent"""
     res = OrderedDict()
+
+    # Init data (to keep ordering always equal for reading and writing!!)
+    for label in self.attribute_keys():
+      res[label] = "inf"
     
-    # get basic information
+    # Update information with real data
     state = agent.state
     res["x"] = state[int(StateDefinition.X_POSITION)] # maybe not needed
     res["y"] = state[int(StateDefinition.Y_POSITION)] # maybe not needed
@@ -128,6 +208,10 @@ class GraphObserver(StateObserver):
       res["goal_theta"] = self._normalize_value(res["goal_theta"], n["theta"])
       res["goal_vel"] = self._normalize_value(res["goal_vel"], n["vel"])
     
+    #####################################################
+    #    If you change the number of features,          #
+    #    please adapt self.feature_len accordingly.     #
+    #####################################################
     return res
 
   def _generate_actions(self, features: Dict[str, float]) -> Dict[str, float]:
@@ -198,10 +282,19 @@ class GraphObserver(StateObserver):
 
   @property
   def observation_space(self):
+    #  0 ... 100 for the indices of num_agents and num_features
+    # -1 ... 1   for all agent attributes
+    #  0 ... 1   for 1 for the adjacency vector
     return spaces.Box(
-      low=np.zeros(self._observation_len),
-      high=np.ones(self._observation_len))
+      low=np.concatenate((
+        np.zeros(3),
+        np.full(self.agent_limit * self.feature_len, -1),
+        np.zeros(self.agent_limit ** 2))),
+      high=np.concatenate((
+        np.array([100, 100, 100]), 
+        np.ones(self._len_state - 3)
+      )))
 
   @property
   def _len_state(self):
-    return 1
+    return 3 + (self.agent_limit * self.feature_len) + (self.agent_limit ** 2)
