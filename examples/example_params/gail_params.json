@@ -101,10 +101,35 @@
             "CheckpointPath": "",
             "NumCheckpointsToKeep": 3
         },
-        "TF2RLRunner": {
+        "GAILRunner": {
             "EvaluationSteps": 25,
             "InitialCollectionEpisodes": 50,
-            "CollectionEpisodesPerStep": 1
+            "CollectionEpisodesPerStep": 1,
+            "tf2rl": {
+                "max_steps": 1000000,
+                "episode_max_steps": 1000,
+                "n_experiments": 1,
+                "show_progress": false,
+                "save_model_interval": 10000,
+                "save_summary_interval": 1000,
+                "dir_suffix": "",
+                "normalize_obs": false,
+                "logdir": "bark_ml/tests/gail_data/logs",
+                "logging_level": "INFO",
+                "model_dir": "bark_ml/tests/gail_data/models",
+                "expert_path_dir": "bark_ml/tests/gail_data/expert_data",
+                "use_prioritized_rb": false,
+                "use_nstep_rb": false,
+                "n_step": 4,
+                "evaluate": false,
+                "test_interval": 10000,
+                "show_test_progress": false,
+                "test_episodes": 5,
+                "save_test_path": false,
+                "save_test_movie": false,
+                "show_test_images": false,
+                "gpu": 0
+            }
         }
     },
     "BehaviorIDMClassic": {

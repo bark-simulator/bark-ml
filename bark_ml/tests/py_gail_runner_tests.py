@@ -32,7 +32,7 @@ class PyGAILRunnerTests(unittest.TestCase):
             exit()
 
         env_name = "Pendulum-v0"
-        env = gym.make(env_name)
+        env = gym.make(env_name) 
 
         units = [400, 300]
 
