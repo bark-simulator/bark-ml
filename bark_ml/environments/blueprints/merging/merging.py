@@ -4,13 +4,13 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-from bark_project.modules.runtime.commons.parameters import ParameterServer
-from bark_project.modules.runtime.viewer.matplotlib_viewer import MPViewer
-from bark_project.modules.runtime.scenario.scenario_generation.config_with_ease import \
+from bark.runtime.commons.parameters import ParameterServer
+from bark.runtime.viewer.matplotlib_viewer import MPViewer
+from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
-from bark.models.dynamic import SingleTrackModel
-from bark.world.opendrive import XodrDrivingDirection
-from bark.world.goal_definition import GoalDefinitionPolygon
+from bark.core.models.dynamic import SingleTrackModel
+from bark.core.world.opendrive import XodrDrivingDirection
+from bark.core.world.goal_definition import GoalDefinitionPolygon
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
 from bark_ml.evaluators.goal_reached import GoalReached

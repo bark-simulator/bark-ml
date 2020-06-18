@@ -5,7 +5,7 @@ import tensorflow as tf
 tf.compat.v1.enable_v2_behavior()
 
 # BARK imports
-from bark_project.modules.runtime.commons.parameters import ParameterServer
+from bark.runtime.commons.parameters import ParameterServer
 
 # tf agent imports
 from tf_agents.drivers import dynamic_step_driver

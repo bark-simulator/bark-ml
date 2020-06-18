@@ -13,9 +13,9 @@ import time
 
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteML
-from bark_project.modules.runtime.commons.parameters import ParameterServer
-from bark.models.dynamic import SingleTrackModel
-from bark.world import World, MakeTestWorldHighway
+from bark.runtime.commons.parameters import ParameterServer
+from bark.core.models.dynamic import SingleTrackModel
+from bark.core.world import World, MakeTestWorldHighway
 
 
 class PyBehaviorTests(unittest.TestCase):

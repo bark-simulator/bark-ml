@@ -7,9 +7,9 @@
 
 from gym import spaces
 import numpy as np
-from bark.models.dynamic import StateDefinition
-from bark.world import World, ObservedWorld
-from bark_project.modules.runtime.commons.parameters import ParameterServer
+from bark.core.models.dynamic import StateDefinition
+from bark.core.world import World, ObservedWorld
+from bark.runtime.commons.parameters import ParameterServer
 import math
 import operator
 

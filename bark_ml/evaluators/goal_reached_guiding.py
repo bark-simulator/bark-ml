@@ -4,10 +4,10 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-from bark.world.evaluation import \
+from bark.core.world.evaluation import \
   EvaluatorGoalReached, EvaluatorCollisionEgoAgent, \
   EvaluatorStepCount, EvaluatorDrivableArea
-from bark_project.modules.runtime.commons.parameters import ParameterServer
+from bark.runtime.commons.parameters import ParameterServer
 
 from bark_ml.evaluators.evaluator import StateEvaluator
 
