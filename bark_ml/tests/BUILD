@@ -76,7 +76,7 @@ py_test(
             "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
             "//bark_ml/library_wrappers/lib_tf_agents/runners:runners",
             "//bark_ml/commons:py_spaces",
-            "//bark_ml/library_wrappers/lib_tf2rl:utils"],
+            "//bark_ml/library_wrappers/lib_tf2rl:load_expert_trajectories"],
     visibility = ["//visibility:public"],
     size = "small"
 )
