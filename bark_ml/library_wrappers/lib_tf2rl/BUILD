@@ -7,6 +7,11 @@ py_library(
     visibility = ["//visibility:public"],
 )
 
+py_library(
+    name = "load_expert_trajectories",
+    srcs = ["load_expert_trajectories.py"],
+    visibility = ["//visibility:public"]
+)
 
 py_binary(
   name = "generate_expert_trajectories",
@@ -22,5 +27,6 @@ py_binary(
   data = ["@bark_project//python:bark.so",
           "@bark_project//modules/runtime/tests:xodr_data",
           "//python:bark_ml_library.so",
-          ]
+          ],
+  visibility = ["//visibility:public"]
 )
