@@ -6,7 +6,12 @@ test_suite(
     "//bark_ml/tests:py_evaluator_tests",
     "//bark_ml/tests:py_behavior_tests",
     "//bark_ml/tests:py_library_tfa_tests",
-    "//utils/tests:test_generate_launch_configuration"
+    "//utils/tests:test_generate_launch_configuration",
+    "//bark_ml/tests:py_library_tf2rl_tests",
+    "//bark_ml/tests:py_gail_runner_tests",
+    "//bark_ml/tests:py_gail_agent_tests",
+    "//bark_ml/tests:py_gail_gym_training_tests",
+    "//bark_ml/tests:py_gail_bark_training_tests"
   ]
 )
 
@@ -16,7 +21,9 @@ test_suite(
     "//examples:blueprint_config",
     "//examples:continuous_env",
     "//examples:discrete_env",
-    "//examples:tfa"
+    "//examples:tfa",
+    "//examples:gail",
+    "//examples:tf2rl_gail_agent"
   ]
 )
 
