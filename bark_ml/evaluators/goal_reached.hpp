@@ -18,10 +18,10 @@
 #include <boost/variant.hpp>
 
 #include "bark_ml/evaluators/base_evaluator.hpp"
-#include "modules/world/evaluation/evaluator_goal_reached.hpp"
-#include "modules/world/evaluation/evaluator_step_count.hpp"
-#include "modules/world/evaluation/evaluator_collision_ego_agent.hpp"
-#include "modules/world/evaluation/evaluator_drivable_area.hpp"
+#include "bark/world/evaluation/evaluator_goal_reached.hpp"
+#include "bark/world/evaluation/evaluator_step_count.hpp"
+#include "bark/world/evaluation/evaluator_collision_ego_agent.hpp"
+#include "bark/world/evaluation/evaluator_drivable_area.hpp"
 
 namespace evaluators {
 using modules::commons::ParamsPtr;

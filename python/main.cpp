@@ -14,7 +14,7 @@
 #include "pybind11/eigen.h"
 #include "boost/variant.hpp"
 
-#include "modules/commons/params/params.hpp"
+#include "bark/commons/params/params.hpp"
 #include "bark_ml/evaluators/base_evaluator.hpp"
 #include "bark_ml/evaluators/goal_reached.hpp"
 #include "bark_ml/observers/nearest_observer.hpp"

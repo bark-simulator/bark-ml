@@ -6,8 +6,8 @@
 
 import numpy as np
 
-from bark.models.behavior import BehaviorModel, BehaviorMPContinuousActions
-from bark.models.dynamic import SingleTrackModel
+from bark.core.models.behavior import BehaviorModel, BehaviorMPContinuousActions
+from bark.core.models.dynamic import SingleTrackModel
 from bark_ml.commons.py_spaces import Discrete
 
 
