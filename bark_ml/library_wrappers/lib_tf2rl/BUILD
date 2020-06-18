@@ -27,5 +27,6 @@ py_binary(
   data = ["@bark_project//python:bark.so",
           "@bark_project//modules/runtime/tests:xodr_data",
           "//python:bark_ml_library.so",
-          ]
+          ],
+  visibility = ["//visibility:public"]
 )
