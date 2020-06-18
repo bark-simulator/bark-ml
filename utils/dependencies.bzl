@@ -11,7 +11,11 @@ def bark_ml_dependencies():
     branch = "master",
     remote = "https://github.com/bark-simulator/bark",
   )
-
+  # _maybe(
+  #   native.local_repository,
+  #   name = "bark_project",
+  #   path = "/Users/hart/Development/bark"
+  # )
   _maybe(
     native.new_local_repository,
     name = "python_linux",

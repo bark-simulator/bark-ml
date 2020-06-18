@@ -15,11 +15,11 @@
 #include <functional>
 #include <Eigen/Dense>
 
-#include "modules/commons/params/params.hpp"
-#include "modules/world/world.hpp"
-#include "modules/world/observed_world.hpp"
-#include "modules/world/goal_definition/goal_definition_state_limits_frenet.hpp"
-#include "modules/models/dynamic/dynamic_model.hpp"
+#include "bark/commons/params/params.hpp"
+#include "bark/world/world.hpp"
+#include "bark/world/observed_world.hpp"
+#include "bark/world/goal_definition/goal_definition_state_limits_frenet.hpp"
+#include "bark/models/dynamic/dynamic_model.hpp"
 #include "bark_ml/commons/spaces.hpp"
 #include "bark_ml/commons/commons.hpp"
 #include "bark_ml/observers/base_observer.hpp"
