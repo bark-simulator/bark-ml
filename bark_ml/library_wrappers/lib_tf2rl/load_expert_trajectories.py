@@ -12,9 +12,9 @@ def load_expert_trajectories(dirname: str):
     expert_trajectory_files = load_expert_trajectory_files(dirname)
     expert_trajectories = defaultdict(list)
 
-    for pickle_file, content in expert_trajectory_files.items():
-        for agent_id, values in content.items():
-            for key, value in values.items():
+    for _, content in expert_trajectory_files.items():
+        for _, per_agent_values in content.items():
+            for key, value in per_agent_values.items():
                 expert_trajectories[key].extend(value)
 
     dt = expert_trajectories['time'][1] - expert_trajectories['time'][0]
