@@ -73,7 +73,7 @@ def run_configuration(argv):
     runner.Visualize(5)
   
   # store all used params of the training
-  # params.Save(os.path.join(Path.home(), "examples/example_params/tfa_params.json"))
+  params.Save(os.path.join(Path.home(), "examples/example_params/tfa_params.json"))
 
 
 if __name__ == '__main__':
