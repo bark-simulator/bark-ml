@@ -44,6 +44,11 @@ def run_configuration(argv):
   params["ML"]["TFARunner"]["SummaryPath"] = os.path.join(Path.home(), "checkpoints/")
   params["World"]["remove_agents_out_of_map"] = True
 
+  #Test - difference between both commands?
+  # x = tuple(params["ML"]["BehaviorSACAgent"]["CriticJointFcLayerParams", "", [1, 2, 256]])
+  # y = tuple(params["ML"]["BehaviorSACAgent"]["CriticJointFcLayerParams"])
+  # print(x)
+
   # create environment
   bp = ContinuousMergingBlueprint(params,
                                   number_of_senarios=2500,
@@ -73,7 +78,7 @@ def run_configuration(argv):
     runner.Visualize(5)
   
   # store all used params of the training
-  # params.Save(os.path.join(Path.home(), "examples/example_params/tfa_params.json"))
+  params.Save(os.path.join(Path.home(), "examples/example_params/tfa_params.json"))
 
 
 if __name__ == '__main__':

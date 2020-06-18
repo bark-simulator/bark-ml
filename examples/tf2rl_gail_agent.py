@@ -70,6 +70,4 @@ def run_configuration(argv):
 
 
 if __name__ == '__main__':
-
   app.run(run_configuration)
-  print('********************************************** Finished **********************************************')
