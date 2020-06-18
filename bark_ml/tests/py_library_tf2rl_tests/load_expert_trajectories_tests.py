@@ -7,11 +7,11 @@
 import os
 import pickle
 import unittest
-from bark_ml.library_wrappers.lib_tf2rl.utils \
+from bark_ml.library_wrappers.lib_tf2rl.load_expert_trajectories \
      import load_expert_trajectory_file
 
 
-class PyLibraryWrappersTF2RLUtilsTests(unittest.TestCase):
+class LoadExpertTrajectoriesTest(unittest.TestCase):
     """
     Tests for the tf2rl utils.
     """

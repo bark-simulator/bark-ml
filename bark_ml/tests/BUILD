@@ -65,17 +65,3 @@ py_test(
     visibility = ["//visibility:public"],
     size = "small",
 )
-
-py_test(
-    name = "py_library_tf2rl_utils_tests",
-    srcs = ["py_library_tf2rl_utils_tests.py"],
-    data = ["data/mock_expert_trajectories.pkl"],
-    imports = [
-            "../external/bark_project/python/"
-            ],
-    deps = [
-            "//bark_ml/library_wrappers/lib_tf2rl:utils",
-            ],
-    visibility = ["//visibility:public"],
-    size = "small"
-)

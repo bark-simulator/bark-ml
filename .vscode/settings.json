@@ -91,7 +91,5 @@
     "__functional_03": "cpp",
     "*.ipp": "cpp"
   },
-  "python.pythonPath": "${workspaceFolder}/python/venv/bin/python",
-  "python.linting.pycodestyleEnabled": true,
-  "python.linting.pylintEnabled": true
+  "python.pythonPath": "python/venv/bin/python",
 }
