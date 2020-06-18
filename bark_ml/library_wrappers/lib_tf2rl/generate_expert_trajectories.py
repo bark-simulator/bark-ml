@@ -120,10 +120,12 @@ def create_scenario(param_server: ParameterServer):
             param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EndTs"])
 
 
-def calculate_action(current_observation, next_observation, current_time, next_time):
+def calculate_action(current_observation, next_observation, current_time, next_time, wheel_base):
     """
     Calculate the action based on the cars previous and current state
     """
+    import math
+
     delta_t = next_time - current_time
     if delta_t == 0:
         print("Zero division")
@@ -131,9 +133,14 @@ def calculate_action(current_observation, next_observation, current_time, next_t
 
     action = []
 
-    # TODO action is not only the delta, Please include dynamics
-    for i in range(len(next_observation)):
-        action.append((next_observation[i] - current_observation[i]) / delta_t)
+    # Calculate streering angle
+    d_theta = (next_observation[2] - current_observation[2]) / delta_t
+    steering_angle = math.atan(wheel_base * d_theta)
+    action.append(steering_angle)
+
+    # Calculate acceleration
+    acceleration = (next_observation[3] - current_observation[3]) / delta_t
+    action.append(acceleration)
 
     return action
 
