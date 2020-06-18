@@ -67,21 +67,6 @@ py_test(
 )
 
 py_test(
-    name = "py_library_tf2rl_tests",
-    srcs = ["py_library_tf2rl_tests.py"],
-    data = ["data/mock_expert_trajectories.pkl"],
-    imports = ["../external/bark_project/python/"],
-    deps = ["//bark_ml/environments:single_agent_runtime",
-            "//bark_ml/environments:gym",
-            "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
-            "//bark_ml/library_wrappers/lib_tf_agents/runners:runners",
-            "//bark_ml/commons:py_spaces",
-            "//bark_ml/library_wrappers/lib_tf2rl:load_expert_trajectories"],
-    visibility = ["//visibility:public"],
-    size = "small"
-)
-
-py_test(
     name = "py_gail_runner_tests",
     srcs = ["py_gail_runner_tests.py"],
     data = [
