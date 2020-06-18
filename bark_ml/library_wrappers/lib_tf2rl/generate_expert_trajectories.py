@@ -131,7 +131,6 @@ def calculate_action(current_observation, next_observation, current_time, next_t
 
     delta_t = next_time - current_time
     if delta_t == 0:
-        print("Zero division")
         return [0, 0]
 
     action = []
@@ -235,7 +234,7 @@ def generate_expert_trajectories_for_scenario(param_server, speed_factor=1):
             next_observation = agent_trajectory["obs"][i + 1]
 
             action = calculate_action(
-                current_observation, next_observation, current_time, next_time)
+                current_observation, next_observation, current_time, next_time, 2.7)
             expert_trajectories[agent_id]['act'].append(action)
             expert_trajectories[agent_id]['done'].append(0)
 
