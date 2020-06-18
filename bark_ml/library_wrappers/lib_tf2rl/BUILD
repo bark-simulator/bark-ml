@@ -9,13 +9,19 @@ py_library(
 
 py_library(
     name = "load_expert_trajectories",
-    srcs = ["load_expert_trajectories.py"],
+    srcs = [
+      "load_expert_trajectories.py",
+      "load_save_utils.py"
+          ],
     visibility = ["//visibility:public"]
 )
 
 py_binary(
   name = "generate_expert_trajectories",
-  srcs = ["generate_expert_trajectories.py"],
+  srcs = [
+    "generate_expert_trajectories.py",
+    "load_save_utils.py"
+    ],
   deps = ["@bark_project//modules/runtime/commons:parameters",
           "@bark_project//modules/runtime/commons:xodr_parser",
           "@bark_project//modules/runtime/viewer:matplotlib_viewer",
