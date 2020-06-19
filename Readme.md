@@ -37,7 +37,7 @@ Available environments:
 
 ## TF-Agents
 
-TF-Agents SAC-example: `bazel run //examples:tfa`.
+TF-Agents SAC-example: `bazel run //bark_ml/examples:tfa`.
 
 <p align="center">
 <img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/bark-ml.gif" alt="BARK-ML Highway" />
