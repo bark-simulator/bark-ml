@@ -3,7 +3,6 @@ import tensorflow as tf
 from tf2_gnn.layers import GNN, GNNInput
 from tf_agents.utils import common
 from bark_ml.observers.graph_observer import GraphObserver
-from tf2_gnn import GraphObserverModel
 import networkx as nx
 from typing import OrderedDict
 
