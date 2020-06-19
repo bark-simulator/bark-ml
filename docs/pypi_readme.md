@@ -59,15 +59,12 @@ SAC-Agent learning a merging scenario:
 
 ```python
 import gym
-from absl import app
-from absl import flags
 import os
 os.environ['GLOG_minloglevel'] = '3' 
 
 # BARK imports
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
-from bark.runtime.viewer.video_renderer import VideoRenderer
 
 # BARK-ML imports
 from bark_ml.environments.blueprints import ContinuousMergingBlueprint
