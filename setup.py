@@ -17,7 +17,7 @@ if sys.platform != 'linux':
 
 setup(
     name = "bark-ml",
-    version = "0.1.3",
+    version = "0.1.4",
     description = "Machine Learning Applied to Autonomous Driving",
     long_description=long_description,
     long_description_content_type="text/markdown",
