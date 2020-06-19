@@ -19,7 +19,7 @@ BARK-ML supported machine learning libraries:
 
 ## Gym Environments
 
-Before running the examples, install the virtual python environment (`bash install.sh`) and enter it (`source dev_into.sh`).
+Before running the examples, install the virtual python environment (`bash utils/install.sh`) and enter it (`source utils/dev_into.sh`).
 
 Continuous environments: `bazel run //bark_ml/examples:continuous_env`
 <p align="center">
