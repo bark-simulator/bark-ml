@@ -17,9 +17,13 @@ BARK-ML supported machine learning libraries:
 * [Baselines](https://github.com/openai/baselines) (Planned)
 * [Diadem](https://github.com/juloberno/diadem)
 
-Install using `pip install bark-ml`.
+Install BARK-ML using `pip install bark-ml`.
 
 ## Gym Environments
+
+<p align="center">
+<img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/bark-ml.gif" alt="BARK-ML Highway" />
+</p>
 
 ```python
 import gym
@@ -51,7 +55,7 @@ Available environments:
 
 ## TF-Agents
 
-Below is the full sample code for an Soft Actor Critic (SAC) agent learning to handle a merging scenario.
+SAC-Agent learning a merging scenario:
 
 ```python
 import gym
