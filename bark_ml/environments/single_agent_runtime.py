@@ -61,7 +61,9 @@ class SingleAgentRuntime(Runtime):
 
     # step and observe
     self._world.Step(self._step_time)
-    observed_world = self._world.Observe([eval_id])[0]
+    observed_world = self._world.Observe([eval_id])
+
+    print(f'world {observed_world}')
 
     # observe and evaluate
     observed_next_state = self._observer.Observe(observed_world)
@@ -69,7 +71,6 @@ class SingleAgentRuntime(Runtime):
       observed_world=observed_world,
       action=action)
     
-    # print(action, observed_next_state, reward)
     # render
     if self._render:
       self.render()

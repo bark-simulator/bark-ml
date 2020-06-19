@@ -122,5 +122,6 @@ class GNNActorNetwork(network.Network):
     actions = common.scale_to_spec(output, self._single_action_spec)
     output_actions = tf.nest.pack_sequence_as(self._output_tensor_spec,
                                               [actions])
-
+    output_actions = tf.expand_dims(output_actions, axis=0)
+    
     return output_actions, network_state
