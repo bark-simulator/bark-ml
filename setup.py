@@ -17,7 +17,7 @@ if sys.platform != 'linux':
 
 setup(
     name = "bark-ml",
-    version = "0.1.2",
+    version = "0.1.3",
     description = "Machine Learning Applied to Autonomous Driving",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -35,6 +35,7 @@ setup(
         'tensorboard>=2.2.2',
         'tf-agents>=0.5.0',
         'tensorflow-probability>=0.10.0',
+        'bark-simulator>=0.1.0',
     ],
     ext_modules=ext_modules,
     test_suite='nose.collector',
