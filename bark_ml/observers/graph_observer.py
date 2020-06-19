@@ -42,7 +42,6 @@ class GraphObserver(StateObserver):
   def Observe(self, world):
     """see base class"""
     graph = nx.OrderedGraph(normalization_ref=self.normalization_data)
-    actions = OrderedDict() # generated for now (steering, acceleration)
     agents = self._preprocess_agents(world)
     
     # add nodes
@@ -51,9 +50,6 @@ class GraphObserver(StateObserver):
       features = self._extract_features(agent)
       graph.add_node(index, **features)
 
-      # generate actions
-      actions[index] = self._generate_actions(features)
-      
     # Second loop for edges necessary -> otherwise order of graph_nodes is disrupted
     for (index, agent) in agents:
       # create edges to all other agents
@@ -63,7 +59,11 @@ class GraphObserver(StateObserver):
     
     observation = self._observation_from_graph(graph)
 
-    return tf.convert_to_tensor(observation, dtype=tf.float32, name='observation')
+    return tf.convert_to_tensor(
+      observation, 
+      dtype=tf.float32, 
+      name='observation'
+    )
 
   def _observation_from_graph(self, graph):
     """ Encodes the given graph into a bounded array with fixed size.
@@ -92,7 +92,7 @@ class GraphObserver(StateObserver):
     obs.extend(np.full((self.agent_limit - num_nodes) * self.feature_len, -1))
 
     # build adjacency matrix and convert to list
-    adjacency_matrix = np.zeros((self.agent_limit,self.agent_limit))
+    adjacency_matrix = np.zeros((self.agent_limit, self.agent_limit))
     for source, target in graph.edges:
       adjacency_matrix[source, target] = 1
     

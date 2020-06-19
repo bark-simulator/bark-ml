@@ -30,7 +30,7 @@ from bark_ml.library_wrappers.lib_tf2_gnn import GNNWrapper
 
 @gin.configurable
 class GNNActorNetwork(network.Network):
-  """Creates an actor network."""
+  """Creates an actor GNN."""
 
   def __init__(self,
                input_tensor_spec,
@@ -72,14 +72,7 @@ class GNNActorNetwork(network.Network):
         name=name)
     self._gnn = GNNWrapper(
       node_layers_def=[
-        {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
-        {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
-        {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
-      ],
-      edge_layers_def=[
-        {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
-        {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
-        {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
+        {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"}
       ],
       h0_dim=4,
       e0_dim=2)
@@ -95,7 +88,7 @@ class GNNActorNetwork(network.Network):
       raise ValueError('Only float actions are supported by this network.')
 
     # TODO(kbanoop): Replace mlp_layers with encoding networks.
-    self._mlp_layers = utils.mlp_layers(
+    self._dense_layers = utils.mlp_layers(
         conv_layer_params,
         fc_layer_params,
         dropout_layer_params,
@@ -104,7 +97,7 @@ class GNNActorNetwork(network.Network):
             scale=1. / 3., mode='fan_in', distribution='uniform'),
         name='input_mlp')
 
-    self._mlp_layers.append(
+    self._dense_layers.append(
         tf.keras.layers.Dense(
             flat_action_spec[0].shape.num_elements(),
             activation=tf.keras.activations.tanh,
@@ -116,14 +109,15 @@ class GNNActorNetwork(network.Network):
 
   def call(self, observations, step_type=(), network_state=(), training=False):
     del step_type  # unused.
-    # graph transform
-    observations = self._gnn.batch_call(observations)
-    #observations = tf.nest.flatten(observations)
-    output = tf.cast(observations, tf.float32)
 
-    # for layer in self._mlp_layers:
-    #   output = layer(output, training=training)
+    output = self._gnn.batch_call(observations)
+    #output = tf.nest.flatten(output)
+    output = tf.cast(output, tf.float32)
 
+    for layer in self._dense_layers:
+      output = layer(output, training=training)
+
+    print(f'critic out: {output}')
     actions = common.scale_to_spec(output, self._single_action_spec)
     output_actions = tf.nest.pack_sequence_as(self._output_tensor_spec,
                                               [actions])
