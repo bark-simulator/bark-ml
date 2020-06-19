@@ -47,6 +47,8 @@ setup(
         'notebook>=6.0.3',
         'jupyter>=1.0.0',
         'ipython>=7.13.0',
+        'tf-agents>=0.5.0',
+        'tensorflow>=2.2.0',
         'bark-simulator>=0.1.0'
     ],
     ext_modules=ext_modules,
