@@ -20,14 +20,14 @@ fi
 build_dir=bazel-bin/bark_ml/$pkg_name.runfiles
 
 echo "Copying setup.py to project pirectory at $build_dir/$workspace_name"
-#copy setup.py file to build directory
+# copy setup.py file to build directory
 cp setup.py $build_dir/$workspace_name
 
 echo "Copying README.md to project directory at $build_dir/$workspace_name"
-#copy READEME.md file to build directory
-cp README.md $build_dir/$workspace_name
+# copy READEME.md file to build directory
+cp -R docs/pypi_readme.md $build_dir/$workspace_name/Readme.md
 
-#copy LICENSE file to build directory
+# copy LICENSE file to build directory
 cp LICENSE $build_dir/$workspace_name
 
 #read bazel generated manifest to generate manifest for pip package
