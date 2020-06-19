@@ -17,11 +17,15 @@ if sys.platform != 'linux':
 
 setup(
     name = "bark-ml",
-    version = "0.1.4",
+    version = "0.2.1",
     description = "Machine Learning Applied to Autonomous Driving",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    classifiers = ["Development Status :: 3 - Alpha", "Intended Audience :: Developers", "License :: OSI Approved :: MIT License", "Operating System :: POSIX", "Programming Language :: Python :: 3.7"],
+    classifiers = ["Development Status :: 4 - Beta",
+                   "Intended Audience :: Science/Research",
+                   "License :: OSI Approved :: MIT License",
+                   "Operating System :: OS Independent",
+                   "Programming Language :: Python :: 3.7"],
     keywords = "simulator autonomous driving machine learning",
     url = "https://github.com/bark-simulator/bark-ml",
     author = "Patrick Hart, Julian Bernhard, Klemens Esterle, Tobias Kessler",
