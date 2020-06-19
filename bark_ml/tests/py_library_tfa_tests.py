@@ -12,7 +12,7 @@ import matplotlib
 import time
 
 # BARK imports
-from bark_project.modules.runtime.commons.parameters import ParameterServer
+from bark.runtime.commons.parameters import ParameterServer
 
 # BARK-ML imports
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \

@@ -4,7 +4,8 @@ cc_binary(
   name = "bark_ml_library.so",
   srcs = glob(["*.cpp", "*.hpp"]),
   deps = [
-    "//bark_ml/observers:nearest_observer",
+    "//bark_ml/observers:cpp_observers",
+    "//bark_ml/evaluators:cpp_evaluators",
     "//bark_ml/commons:spaces",
     # external
     "@python_linux//:python-lib",

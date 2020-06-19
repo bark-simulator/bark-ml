@@ -2,7 +2,7 @@ import tensorflow as tf
 import logging
 
 # BARK imports
-from bark.models.behavior import BehaviorModel
+from bark.core.models.behavior import BehaviorModel
 
 # tfa
 from tf_agents.networks import actor_distribution_network

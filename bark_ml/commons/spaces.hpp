@@ -23,7 +23,7 @@ template<typename T>
 struct Box {
   Box(const Matrix_t<T>& low,
       const Matrix_t<T>& high,
-      const std::vector<int>& shape) :
+      const std::tuple<int>& shape) :
     low_(low), high_(high), shape_(shape) {}
   Matrix_t<T> low() const {
     return low_;
@@ -31,12 +31,12 @@ struct Box {
   Matrix_t<T> high() const {
     return high_;
   }
-  std::vector<int> shape() {
+  std::tuple<int> shape() {
     return shape_;
   }
   const Matrix_t<T> low_;
   const Matrix_t<T> high_;
-  const std::vector<int> shape_;
+  const std::tuple<int> shape_;
 };
 
 }  // namespace spaces

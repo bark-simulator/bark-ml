@@ -6,8 +6,8 @@ py_library(
         "gnn_actor_network.py",
         "gnn_critic_network.py"
     ],
-    data = ["@bark_project//python:bark.so"],
-    imports = ["../external/bark_project/python/"],
-    deps = ["@bark_project//modules/runtime:runtime"],
+    data = ["@bark_project//bark/python_wrapper:core.so"],
+    imports = ["../external/bark_project/bark/python_wrapper/"],
+    deps = ["@bark_project//bark/runtime:runtime"],
     visibility = ["//visibility:public"],
 )

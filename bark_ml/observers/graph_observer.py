@@ -9,10 +9,10 @@ from typing import Dict
 from collections import OrderedDict
 from itertools import islice
 
-from bark.models.dynamic import StateDefinition
-from bark.world import ObservedWorld
-from bark.geometry import Distance, Point2d
-from modules.runtime.commons.parameters import ParameterServer
+from bark.core.models.dynamic import StateDefinition
+from bark.core.world import ObservedWorld
+from bark.core.geometry import Distance, Point2d
+from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.observers.observer import StateObserver
 
 class GraphObserver(StateObserver):

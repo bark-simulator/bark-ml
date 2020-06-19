@@ -7,7 +7,7 @@
 import gym
 from gym.envs.registration import register
 
-from bark_project.modules.runtime.commons.parameters import ParameterServer
+from bark.runtime.commons.parameters import ParameterServer
 
 from bark_ml.environments.blueprints.highway.highway import \
   ContinuousHighwayBlueprint, DiscreteHighwayBlueprint
