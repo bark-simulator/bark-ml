@@ -4,6 +4,7 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
+import os
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.scenario.scenario_generation.config_with_ease import \
@@ -17,7 +18,7 @@ from bark_ml.evaluators.goal_reached import GoalReached
 # from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteML
-from bark_ml_library.observers import NearestObserver
+from bark_ml.core.observers import NearestObserver
 
 
 class MergingLaneCorridorConfig(LaneCorridorConfig):
@@ -61,7 +62,7 @@ class MergingBlueprint(Blueprint):
     scenario_generation = \
       ConfigWithEase(
         num_scenarios=number_of_senarios,
-        map_file_name="bark_ml/environments/blueprints/merging/DR_DEU_Merging_MT_v01_shifted.xodr",  # NOLINT
+        map_file_name=os.path.join(os.path.dirname(__file__), "../../../environments/blueprints/merging/DR_DEU_Merging_MT_v01_shifted.xodr"),  # NOLINT
         random_seed=random_seed,
         params=params,
         lane_corridor_configs=[left_lane, right_lane])
