@@ -29,6 +29,14 @@ class PyTrainingBARKTests(unittest.TestCase):
             print("No expert trajectories found, plaese generate demonstrations first")
             exit()"""
 
+        # creating the dirs for logging if they are not present already:
+        if not os.path.exists(params["ML"]["GAILRunner"]["tf2rl"]["logdir"]):
+            os.makedirs(params["ML"]["GAILRunner"]["tf2rl"]["logdir"])
+        if not os.path.exists(params["ML"]["GAILRunner"]["tf2rl"]["model_dir"]):
+            os.makedirs(params["ML"]["GAILRunner"]["tf2rl"]["model_dir"])
+        if not os.path.exists(params["ML"]["GAILRunner"]["tf2rl"]["expert_path_dir"]):
+            os.makedirs(params["ML"]["GAILRunner"]["tf2rl"]["expert_path_dir"])    
+
         # create environment
         bp = ContinuousMergingBlueprint(params,
                                         number_of_senarios=500,
@@ -59,6 +67,7 @@ class PyTrainingBARKTests(unittest.TestCase):
             expert_trajs=expert_trajs)
 
         runner.Train()
+        #runner.Visualize(5)
 
 
 if __name__ == '__main__':

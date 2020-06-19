@@ -26,6 +26,14 @@ class PyGAILRunnerTests(unittest.TestCase):
 
         params = ParameterServer(filename="bark_ml/tests/gail_data/params/gail_params_open-ai.json")
 
+        # creating the dirs for logging if they are not present already:
+        if not os.path.exists(params["ML"]["GAILRunner"]["tf2rl"]["logdir"]):
+            os.makedirs(params["ML"]["GAILRunner"]["tf2rl"]["logdir"])
+        if not os.path.exists(params["ML"]["GAILRunner"]["tf2rl"]["model_dir"]):
+            os.makedirs(params["ML"]["GAILRunner"]["tf2rl"]["model_dir"])
+        if not os.path.exists(params["ML"]["GAILRunner"]["tf2rl"]["expert_path_dir"]):
+            os.makedirs(params["ML"]["GAILRunner"]["tf2rl"]["expert_path_dir"])   
+
         if len(os.listdir(params["ML"]["GAILRunner"]["tf2rl"]["expert_path_dir"])) == 0:
             print("No expert trajectories found, plaese generate demonstrations first")
             print("python tf2rl/examples/run_sac.py --env-name=Pendulum-v0 --save-test-path --test-interval=50000")

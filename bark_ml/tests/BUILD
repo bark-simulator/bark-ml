@@ -91,6 +91,7 @@ py_test(
             "//bark_ml/library_wrappers/lib_tf2rl/runners",
             "@bark_project//modules/runtime:runtime",
             ],
+    tags=["no-sandbox"],
     visibility = ["//visibility:public"],
     size = "small",
 )
@@ -109,6 +110,7 @@ py_test(
             "//bark_ml/library_wrappers/lib_tf2rl/agents",
             "@bark_project//modules/runtime:runtime",
             ],
+    tags=["no-sandbox"],
     visibility = ["//visibility:public"],
     size = "small",
 )
@@ -129,6 +131,7 @@ py_test(
             "//bark_ml/library_wrappers/lib_tf2rl/runners",
             "//bark_ml/library_wrappers/lib_tf2rl/agents",
             ],
+    tags=["no-sandbox"],
     visibility = ["//visibility:public"],
     size = "small",
 )
