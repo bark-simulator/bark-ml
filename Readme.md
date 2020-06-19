@@ -1,6 +1,6 @@
 
 <p align="center">
-<img src="docs/images/bark_ml_logo.png" width="65%" alt="BARK-ML" />
+<img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/bark_ml_logo.png" width="65%" alt="BARK-ML" />
 </p>
 
 # BARK-ML - Machine Learning for Autonomous Driving
@@ -23,7 +23,7 @@ Before running the examples, install the virtual python environment (`bash insta
 
 Continuous environments: `bazel run //bark_ml/examples:continuous_env`
 <p align="center">
-<img src="docs/images/bark_ml_highway.gif" alt="BARK-ML Highway" />
+<img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/bark_ml_highway.gif" alt="BARK-ML Highway" />
 </p>
 
 Available environments:
@@ -40,7 +40,7 @@ Available environments:
 TF-Agents SAC-example: `bazel run //examples:tfa`.
 
 <p align="center">
-<img src="docs/images/bark-ml.gif" alt="BARK-ML Highway" />
+<img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/bark-ml.gif" alt="BARK-ML Highway" />
 </p>
 
 ## License
