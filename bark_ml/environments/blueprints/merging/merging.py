@@ -4,6 +4,7 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
+import os
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.scenario.scenario_generation.config_with_ease import \
@@ -61,7 +62,7 @@ class MergingBlueprint(Blueprint):
     scenario_generation = \
       ConfigWithEase(
         num_scenarios=number_of_senarios,
-        map_file_name="bark_ml/environments/blueprints/merging/DR_DEU_Merging_MT_v01_shifted.xodr",  # NOLINT
+        map_file_name="./DR_DEU_Merging_MT_v01_shifted.xodr",  # NOLINT
         random_seed=random_seed,
         params=params,
         lane_corridor_configs=[left_lane, right_lane])
