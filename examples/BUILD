@@ -6,7 +6,7 @@ py_test(
   srcs = ["continuous_env.py"],
   data = ["@bark_project//bark/python_wrapper:core.so",
           "//bark_ml:generate_core"],
-  imports = ["../python_wrapper/"],
+  imports = ["../bark_ml/python_wrapper/"],
   deps = [
     "//bark_ml/environments:gym",
   ]
@@ -17,7 +17,7 @@ py_test(
   srcs = ["discrete_env.py"],
   data = ["@bark_project//bark/python_wrapper:core.so",
           "//bark_ml:generate_core"],
-  imports = ["../python_wrapper/"],
+  imports = ["../bark_ml/python_wrapper/"],
   deps = [
     "//bark_ml/environments:gym",
   ]
@@ -28,7 +28,7 @@ py_test(
   srcs = ["blueprint_config.py"],
   data = ["@bark_project//bark/python_wrapper:core.so",
           "//bark_ml:generate_core"],
-  imports = ["../python_wrapper/"],
+  imports = ["../bark_ml/python_wrapper/"],
   deps = [
     "//bark_ml/observers:observers",
     "//bark_ml/evaluators:evaluators",
@@ -44,8 +44,8 @@ py_test(
   srcs = ["tfa.py"],
   data = ["@bark_project//bark/python_wrapper:core.so",
           "//bark_ml:generate_core",
-          "//bark_ml/examples/example_params:example_params"],
-  imports = ["../python_wrapper/"],
+          "//examples/example_params:example_params"],
+  imports = ["../bark_ml/python_wrapper/"],
   deps = [
     "//bark_ml/environments:single_agent_runtime",
     "//bark_ml/environments:blueprints",
@@ -59,9 +59,10 @@ py_test(
   srcs = ["diadem_dqn.py"],
   data = ["@bark_project//bark/python_wrapper:core.so",
           "//bark_ml:generate_core",
-          "//bark_ml/examples/example_params:example_params"
+          "//examples/example_params:example_params"
         ],
-  imports = ["../python_wrapper/", "./external/diadem_project/"],
+  imports = ["../bark_ml/python_wrapper/",
+             "./external/diadem_project/"],
   deps = [
     "//bark_ml/environments:single_agent_runtime",
     "//bark_ml/environments:blueprints",
