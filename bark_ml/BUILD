@@ -25,7 +25,6 @@ py_test (
 py_test(
   name = "pip_package",
   srcs = ["pip_package.py", "__init__.py"],
-  data = [":generate_core",
-          "//bark_ml/examples/example_params:example_params"],
+  data = [":generate_core"],
   deps = [":py_tests"]
 )

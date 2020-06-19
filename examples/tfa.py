@@ -35,7 +35,7 @@ flags.DEFINE_enum("mode",
 
 
 def run_configuration(argv):
-  params = ParameterServer(filename="bark_ml/examples/example_params/tfa_params.json")
+  params = ParameterServer(filename="examples/example_params/tfa_params.json")
   # params = ParameterServer()
   # NOTE: Modify these paths in order to save the checkpoints and summaries
   # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/home/hart/Dokumente/2020/bark-ml/checkpoints/"
