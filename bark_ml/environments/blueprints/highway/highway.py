@@ -60,7 +60,7 @@ class HighwayBlueprint(Blueprint):
     scenario_generation = \
       ConfigWithEase(
         num_scenarios=number_of_senarios,
-        map_file_name="./city_highway_straight.xodr",
+        map_file_name=os.path.join(os.path.dirname(__file__), "../../../environments/blueprints/highway/city_highway_straight.xodr"),  # NOLINT
         random_seed=random_seed,
         params=params,
         lane_corridor_configs=[left_lane, right_lane])
