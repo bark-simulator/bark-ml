@@ -37,7 +37,7 @@ class PyGAILRunnerTests(unittest.TestCase):
         if len(os.listdir(params["ML"]["GAILRunner"]["tf2rl"]["expert_path_dir"])) == 0:
             print("No expert trajectories found, plaese generate demonstrations first")
             print("python tf2rl/examples/run_sac.py --env-name=Pendulum-v0 --save-test-path --test-interval=50000")
-            print("After that, save expert trajectories into bark_ml/tests/gail_data/expert_data")
+            print("After that, save expert trajectories into bark_ml/tests/gail_data/expert_data/open-ai")
             exit()
 
         # creating environment:

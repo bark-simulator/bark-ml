@@ -27,10 +27,13 @@ flags.DEFINE_string("interaction_dataset_path",
                     help="The absolute path to the local interaction dataset clone.",
                     default=None)
 
-FLAGS = flags.FLAGS
 flags.DEFINE_string("expert_trajectories_path",
                     help="The absolute path to the folder where the expert trajectories are safed.",
                     default=None)
+
+flags.DEFINE_bool("debug",
+                  help="Debug mode.",
+                  default=False)
 
 
 def list_files_in_dir(dir_path: str, file_ending: str):
@@ -120,20 +123,26 @@ def create_scenario(param_server: ParameterServer):
             param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EndTs"])
 
 
-def calculate_action(current_observation, next_observation, current_time, next_time):
+def calculate_action(current_observation, next_observation, current_time, next_time, wheel_base):
     """
     Calculate the action based on the cars previous and current state
     """
+    import math
+
     delta_t = next_time - current_time
     if delta_t == 0:
-        print("Zero division")
         return [0, 0]
 
     action = []
 
-    # TODO action is not only the delta, Please include dynamics
-    for i in range(len(next_observation)):
-        action.append((next_observation[i] - current_observation[i]) / delta_t)
+    # Calculate streering angle
+    d_theta = (next_observation[2] - current_observation[2]) / delta_t
+    steering_angle = math.atan(wheel_base * d_theta)
+    action.append(steering_angle)
+
+    # Calculate acceleration
+    acceleration = (next_observation[3] - current_observation[3]) / delta_t
+    action.append(acceleration)
 
     return action
 
@@ -193,8 +202,7 @@ def simulate_scenario(param_server, speed_factor=1):
     # Run the scenario in a loop
     world_state = scenario.GetWorldState()
     for _ in range(0, sim_steps):
-        world_state.DoPlanning(sim_step_time)
-        world_state.DoExecution(sim_step_time)
+        world_state.Step(sim_step_time)
 
         observations = measure_world(world_state, observer)
 
@@ -204,6 +212,7 @@ def simulate_scenario(param_server, speed_factor=1):
             expert_trajectories[agent_id]['obs'].append(values['obs'])
             expert_trajectories[agent_id]['time'].append(values['time'])
             expert_trajectories[agent_id]['merge'].append(values['merge'])
+            expert_trajectories[agent_id]['wheelbase'].append(scenario._agent_list)
     return expert_trajectories
 
 
@@ -225,7 +234,7 @@ def generate_expert_trajectories_for_scenario(param_server, speed_factor=1):
             next_observation = agent_trajectory["obs"][i + 1]
 
             action = calculate_action(
-                current_observation, next_observation, current_time, next_time)
+                current_observation, next_observation, current_time, next_time, 2.7)
             expert_trajectories[agent_id]['act'].append(action)
             expert_trajectories[agent_id]['done'].append(0)
 
@@ -269,15 +278,19 @@ def main_function(argv):
     param_servers = create_parameter_servers_for_scenarios(
         interaction_dataset_path)
 
-    with ThreadPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
-        futures = []
+    if not FLAGS.debug:
+        with ThreadPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
+            futures = []
+            for map, track in param_servers.keys():
+                futures.append(executor.submit(generate_and_store_expert_trajectories,
+                                            map, track, expert_trajectories_path, param_servers[(map, track)]))
+
+            for future in futures:
+                future.result()
+    else:
         for map, track in param_servers.keys():
-            futures.append(executor.submit(generate_and_store_expert_trajectories,
-                                           map, track, expert_trajectories_path, param_servers[(map, track)]))
-
-        for future in futures:
-            future.result()
-
+            generate_and_store_expert_trajectories(map, track, expert_trajectories_path, param_servers[(map, track)])
+ 
 
 if __name__ == '__main__':
     flags.mark_flag_as_required('interaction_dataset_path')
