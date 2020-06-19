@@ -73,7 +73,7 @@ void python_spaces(py::module m) {
     .def_property_readonly("shape", &Box<float>::shape);
 }
 
-PYBIND11_MODULE(bark_ml_library, m) {
+PYBIND11_MODULE(core, m) {
   m.doc() = "Additional cpp entities for bark-ml.";
   python_observers(
     m.def_submodule("observers", "c++ observers"));

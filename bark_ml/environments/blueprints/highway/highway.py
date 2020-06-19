@@ -16,7 +16,7 @@ from bark_ml.environments.blueprints.blueprint import Blueprint
 from bark_ml.evaluators.goal_reached import GoalReached
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteML
-from bark_ml_library.observers import NearestObserver
+from bark_ml.core.observers import NearestObserver
 
 
 class HighwayLaneCorridorConfig(LaneCorridorConfig):
