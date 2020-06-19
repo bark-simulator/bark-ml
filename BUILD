@@ -12,16 +12,16 @@ test_suite(
 test_suite(
   name = "examples_tests",
   tests = [
-    "//bark_ml/examples:blueprint_config",
-    "//bark_ml/examples:continuous_env",
-    "//bark_ml/examples:discrete_env",
-    "//bark_ml/examples:tfa"
+    "//examples:blueprint_config",
+    "//examples:continuous_env",
+    "//examples:discrete_env",
+    "//examples:tfa"
   ]
 )
 
 test_suite(
   name = "diadem_tests",
   tests = [
-    "//bark_ml/examples:diadem_dqn",
+    "//examples:diadem_dqn",
   ]
 )
