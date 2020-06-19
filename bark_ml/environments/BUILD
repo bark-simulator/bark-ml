@@ -6,7 +6,7 @@ py_library(
     data = glob(["blueprints/*/*.xodr",
                  "blueprints/*/*.json"]) +
                 ["@bark_project//bark/python_wrapper:core.so",
-                 "//bark_ml/python_wrapper:bark_ml_library.so"],
+                 "//bark_ml:generate_core"],
     imports = ["../external/bark_project/bark/python_wrapper/",
                "../python_wrapper/"],
     deps = ["//bark_ml/observers:observers",

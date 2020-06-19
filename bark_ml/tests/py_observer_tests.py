@@ -17,7 +17,7 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, DiscreteHighwayBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
-from bark_ml_library.observers import NearestObserver
+from bark_ml.core.observers import NearestObserver
 
 
 class PyObserverTests(unittest.TestCase):
