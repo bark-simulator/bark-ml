@@ -4,6 +4,7 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
+import os
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.scenario.scenario_generation.config_with_ease import \
@@ -59,7 +60,7 @@ class HighwayBlueprint(Blueprint):
     scenario_generation = \
       ConfigWithEase(
         num_scenarios=number_of_senarios,
-        map_file_name="bark_ml/environments/blueprints/highway/city_highway_straight.xodr",  # NOLINT
+        map_file_name="./city_highway_straight.xodr",
         random_seed=random_seed,
         params=params,
         lane_corridor_configs=[left_lane, right_lane])

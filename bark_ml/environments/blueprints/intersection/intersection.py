@@ -4,6 +4,7 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
+import os
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.scenario.scenario_generation.config_with_ease import \
@@ -86,7 +87,7 @@ class IntersectionBlueprint(Blueprint):
     scenario_generation = \
       ConfigWithEase(
         num_scenarios=number_of_senarios,
-        map_file_name="bark_ml/environments/blueprints/intersection/4way_intersection.xodr",  # NOLINT
+        map_file_name="./4way_intersection.xodr",
         random_seed=random_seed,
         params=params,
         lane_corridor_configs=lane_corridors)
