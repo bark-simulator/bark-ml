@@ -9,19 +9,25 @@ import gym
 from absl import app
 from absl import flags
 
+# this will disable all BARK log messages
+import os
+os.environ['GLOG_minloglevel'] = '3' 
+
 # BARK imports
-from bark_project.modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.viewer.matplotlib_viewer import MPViewer
-from modules.runtime.viewer.video_renderer import VideoRenderer
+from bark.runtime.commons.parameters import ParameterServer
+from bark.runtime.viewer.matplotlib_viewer import MPViewer
+from bark.runtime.viewer.video_renderer import VideoRenderer
 
 # BARK-ML imports
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
-  ContinuousMergingBlueprint
+  ContinuousMergingBlueprint, ContinuousIntersectionBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, BehaviorPPOAgent, BehaviorGraphSACAgent
 from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner
 from bark_ml.observers.graph_observer import GraphObserver
 
+
+# for training: bazel run //examples:tfa -- --mode=train
 FLAGS = flags.FLAGS
 flags.DEFINE_enum("mode",
                   "visualize",
@@ -33,19 +39,21 @@ import os
 os.environ['GLOG_minloglevel'] = '3' 
 
 def run_configuration(argv):
-  # params = ParameterServer(filename="/Users/hart/2020/bark-ml/examples/example_params/tfa_params.json")
-  params = ParameterServer()
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/marco.oliva/2020/bark-ml/checkpoints/"
-  params["ML"]["TFARunner"]["SummaryPath"] = "/Users/marco.oliva/2020/bark-ml/checkpoints/"
+  params = ParameterServer(filename="examples/example_params/tfa_params.json")
+  # params = ParameterServer()
+  # NOTE: Modify these paths in order to save the checkpoints and summaries
+  # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/home/hart/Dokumente/2020/bark-ml/checkpoints/"
+  # params["ML"]["TFARunner"]["SummaryPath"] = "/home/hart/Dokumente/2020/bark-ml/checkpoints/"
   params["World"]["remove_agents_out_of_map"] = True
 
   observer = GraphObserver(params=params)
 
   # create environment
-  # bp = ContinuousMergingBlueprint(
-  #   params,
-  #   number_of_senarios=500,
-  #   random_seed=0)
+  bp = ContinuousMergingBlueprint(params,
+                                  number_of_senarios=2500,
+                                  random_seed=0)
+  env = SingleAgentRuntime(blueprint=bp,
+                           render=False)
 
   bp = ContinuousHighwayBlueprint(params, number_of_senarios=500, random_seed=0)
   
@@ -66,7 +74,9 @@ def run_configuration(argv):
     viewer=viewer,
     render=False)
 
-  sac_agent = BehaviorGraphSACAgent(environment=env, params=params)
+  # SAC-agent
+  sac_agent = BehaviorSACAgent(environment=env,
+                               params=params)
   env.ml_behavior = sac_agent
   runner = SACRunner(params=params,
                      environment=env,
@@ -75,14 +85,10 @@ def run_configuration(argv):
   if FLAGS.mode == "train":
     runner.Train()
   elif FLAGS.mode == "visualize":
-    runner.Visualize(3)
+    runner.Visualize(5)
   
   # store all used params of the training
-  # params.Save("/Users/hart/2020/bark-ml/examples/example_params/tfa_params.json")
-
-  viewer.export_video(
-    filename="/Users/marco.oliva/2020/bark-ml/video/video", 
-    remove_image_dir=False)
+  # params.Save("/home/hart/Dokumente/2020/bark-ml/examples/example_params/tfa_params.json")
 
 
 if __name__ == '__main__':
