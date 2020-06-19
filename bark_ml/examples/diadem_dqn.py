@@ -78,4 +78,4 @@ if __name__ == '__main__':
   # basic Double DQN with Prioritized Experience Replay
   # run_dqn_algorithm(parameter_files=["examples/example_params/common_parameters.yaml",
   #                                     "examples/example_params/dqn_distributional_quantile.yaml"])
-  run_dqn_algorithm(parameter_files=["examples/example_params/dqn_basic.yaml"])
+  run_dqn_algorithm(parameter_files=["bark_ml/examples/example_params/dqn_basic.yaml"])
