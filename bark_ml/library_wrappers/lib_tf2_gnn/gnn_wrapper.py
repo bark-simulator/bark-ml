@@ -18,13 +18,7 @@ class GNNWrapper(tf.keras.Model):
     super(GNNWrapper, self).__init__(name=name)
     self._h0_dim = h0_dim
     self._e0_dim = e0_dim
-    self._zero_var = None
-    # self._number_of_edges = None
-
     self._node_layers_def = node_layers_def
-    self._projection_layer = tf.keras.layers.Dense(node_layers_def[-1]["units"],
-                                                  activation='relu',
-                                                  trainable=True)
 
     params = GNN.get_default_hyperparameters()
     params["hidden_dim"] = node_layers_def[0]["units"]
@@ -60,9 +54,7 @@ class GNNWrapper(tf.keras.Model):
         np.array -- Batch of values
     """
     if graph.shape[0] == 0:
-      if self._zero_var is None:
-        self._zero_var = tf.zeros(shape=(0, 1, self._node_layers_def[-1]["units"]))
-      return self._zero_var
+      return tf.zeros(shape=(1, self._node_layers_def[-1]["units"]))
     if len(graph.shape) == 1:
       return self.call(graph)
     if len(graph.shape) == 2:

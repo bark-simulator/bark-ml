@@ -76,14 +76,16 @@ class GNNActorNetwork(network.Network):
       ],
       h0_dim=4,
       e0_dim=2)
+
     if len(tf.nest.flatten(input_tensor_spec)) > 1:
       raise ValueError('Only a single observation is supported by this network')
-
+    
     flat_action_spec = tf.nest.flatten(output_tensor_spec)
+    
     if len(flat_action_spec) > 1:
       raise ValueError('Only a single action is supported by this network')
+    
     self._single_action_spec = flat_action_spec[0]
-
     if self._single_action_spec.dtype not in [tf.float32, tf.float64]:
       raise ValueError('Only float actions are supported by this network.')
 
@@ -108,16 +110,15 @@ class GNNActorNetwork(network.Network):
     self._output_tensor_spec = output_tensor_spec
 
   def call(self, observations, step_type=(), network_state=(), training=False):
-    del step_type  # unused.
+    del step_type # unused.
 
     output = self._gnn.batch_call(observations)
-    #output = tf.nest.flatten(output)
     output = tf.cast(output, tf.float32)
+    output = output[0] # extract ego state (node 0)
 
     for layer in self._dense_layers:
       output = layer(output, training=training)
 
-    print(f'critic out: {output}')
     actions = common.scale_to_spec(output, self._single_action_spec)
     output_actions = tf.nest.pack_sequence_as(self._output_tensor_spec,
                                               [actions])
