@@ -125,12 +125,11 @@ class GNNCriticNetwork(network.Network):
             name='value'))
 
   def call(self, inputs, step_type=(), network_state=(), training=False):
-    observations, actions = inputs
     del step_type # unused.
 
-    print(f'critic inputs: {inputs}')
-
+    observations, actions = inputs
     observations = tf.cast(tf.nest.flatten(observations)[0], tf.float32)
+    
     for layer in self._observation_layers:
       observations = layer(observations, training=training)
 

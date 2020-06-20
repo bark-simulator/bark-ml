@@ -111,10 +111,17 @@ class GNNActorNetwork(network.Network):
 
   def call(self, observations, step_type=(), network_state=(), training=False):
     del step_type # unused.
-
+    
     output = self._gnn.batch_call(observations)
     output = tf.cast(output, tf.float32)
-    output = output[0] # extract ego state (node 0)
+
+    # extract ego state (node 0)
+    if len(output.shape) == 2:
+      output = output[0]
+    if len(output.shape) == 3:
+      
+      print('fix this')
+      return None
 
     for layer in self._dense_layers:
       output = layer(output, training=training)

@@ -35,8 +35,8 @@ flags.DEFINE_enum("mode",
                   "Mode the configuration should be executed in.")
 
 # this will disable all BARK log messages
-import os
-os.environ['GLOG_minloglevel'] = '3' 
+#import os
+#os.environ['GLOG_minloglevel'] = '3' 
 
 def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/tfa_params.json")
@@ -75,8 +75,8 @@ def run_configuration(argv):
     render=False)
 
   # SAC-agent
-  sac_agent = BehaviorSACAgent(environment=env,
-                               params=params)
+  sac_agent = BehaviorGraphSACAgent(environment=env,
+                                    params=params)
   env.ml_behavior = sac_agent
   runner = SACRunner(params=params,
                      environment=env,

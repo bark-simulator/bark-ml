@@ -30,14 +30,16 @@ class GraphObserver(StateObserver):
     self.feature_len = 11
 
     # the maximum number of agents that can be observed
-    self.agent_limit = 50
+    self.agent_limit = 6
 
      # the radius an agent can 'see' in meters
     self._visible_distance = 50
 
   @classmethod
   def attribute_keys(cls):
-    return ["x", "y", "theta", "vel", "goal_x", "goal_y", "goal_dx", "goal_dy", "goal_theta", "goal_d", "goal_vel"]
+    return ["x", "y", "theta", "vel", "goal_x", 
+    "goal_y", "goal_dx", "goal_dy", "goal_theta",
+     "goal_d", "goal_vel"]
 
   def Observe(self, world):
     """see base class"""
@@ -100,7 +102,8 @@ class GraphObserver(StateObserver):
     obs.extend(adjacency_list)
 
     # Validity check
-    assert len(obs) == self._len_state, f'Observation has invalid length ({len(obs)}, expected: {self._len_state})'
+    assert len(obs) == self._len_state, f'Observation \
+      has invalid length ({len(obs)}, expected: {self._len_state})'
     
     return obs
 
@@ -124,7 +127,7 @@ class GraphObserver(StateObserver):
     
     adj_start_idx = node_limit * num_features
     adj_list = obs[adj_start_idx:]
-    adj_matrix = np.reshape(adj_list,(node_limit, -1))
+    adj_matrix = np.reshape(adj_list, (node_limit, -1))
     
     for (source_id, source_edges) in enumerate(adj_matrix):
       for target_id in np.flatnonzero(source_edges):
