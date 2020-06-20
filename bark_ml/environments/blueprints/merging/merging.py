@@ -12,6 +12,7 @@ from bark.runtime.scenario.scenario_generation.config_with_ease import \
 from bark.core.models.dynamic import SingleTrackModel
 from bark.core.world.opendrive import XodrDrivingDirection
 from bark.core.world.goal_definition import GoalDefinitionPolygon
+from bark.core.models.behavior import BehaviorMobilRuleBased
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
 from bark_ml.evaluators.goal_reached import GoalReached
@@ -41,6 +42,7 @@ class MergingBlueprint(Blueprint):
                random_seed=0,
                ml_behavior=None,
                viewer=True):
+    params["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
     left_lane = MergingLaneCorridorConfig(
       params=params,
       road_ids=[0, 1],
@@ -58,6 +60,7 @@ class MergingBlueprint(Blueprint):
       s_max=25.,
       min_vel=8.,
       max_vel=12.,
+      behavior_model=BehaviorMobilRuleBased(params),
       controlled_ids=True)
     scenario_generation = \
       ConfigWithEase(
