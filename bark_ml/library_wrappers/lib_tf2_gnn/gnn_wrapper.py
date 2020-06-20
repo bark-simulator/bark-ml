@@ -27,7 +27,6 @@ class GNNWrapper(tf.keras.Model):
   # @tf.function
   def call(self, observation, training=False):
     """Call function for the GNN"""
-    print(f'call shape: {observation.shape}')
     graph = GraphObserver.graph_from_observation(observation)
 
     features = []
@@ -69,7 +68,6 @@ class GNNWrapper(tf.keras.Model):
       return tf.map_fn(lambda g: self.batch_call(g), graph)
     else:
       raise ValueError(f'Graph has invalid shape {graph.shape}')
-      
       
   def reset(self):
     self._gnn.reset()

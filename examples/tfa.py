@@ -49,9 +49,9 @@ def run_configuration(argv):
                                   number_of_senarios=2500,
                                   random_seed=0)
   env = SingleAgentRuntime(blueprint=bp,
-                           render=False)
+                           render=True)
 
-  bp = ContinuousHighwayBlueprint(params, number_of_senarios=500, random_seed=0)
+  bp = ContinuousHighwayBlueprint(params, number_of_senarios=800, random_seed=0)
   
   viewer = MPViewer(
     params=params,
@@ -82,6 +82,8 @@ def run_configuration(argv):
     runner.Train()
   elif FLAGS.mode == "visualize":
     runner.Visualize(5)
+  elif FLAGS.mode == "evaluate":
+    runner.Evaluate()
   
   # store all used params of the training
   # params.Save("/home/hart/Dokumente/2020/bark-ml/examples/example_params/tfa_params.json")

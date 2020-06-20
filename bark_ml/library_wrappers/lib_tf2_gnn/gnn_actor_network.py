@@ -103,8 +103,7 @@ class GNNActorNetwork(network.Network):
 
   def call(self, observations, step_type=(), network_state=(), training=False):
     del step_type # unused.
-
-    print(type(observations))
+    
     output = self._gnn.batch_call(observations)
     output = tf.cast(output, tf.float32)
     

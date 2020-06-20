@@ -92,7 +92,8 @@ class TFARunner:
       self._eval_metrics,
       self._wrapped_env,
       self._agent._agent.policy,
-      num_episodes=self._params["ML"]["TFARunner"]["EvaluationSteps", "", 20])
+      num_episodes=self._params["ML"]["TFARunner"]["EvaluationSteps", "", 20],
+      use_function=False)
     metric_utils.log_metrics(self._eval_metrics)
     tf.summary.scalar("mean_reward",
                       self._eval_metrics[0].result().numpy(),
