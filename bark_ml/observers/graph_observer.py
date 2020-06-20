@@ -110,7 +110,7 @@ class GraphObserver(StateObserver):
   @classmethod
   def graph_from_observation(cls, observation):
     graph = nx.OrderedGraph()
-
+    
     node_limit = int(observation[0])
     num_nodes = int(observation[1])
     num_features = int(observation[2])

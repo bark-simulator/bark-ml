@@ -10,8 +10,8 @@ from absl import app
 from absl import flags
 
 # this will disable all BARK log messages
-import os
-os.environ['GLOG_minloglevel'] = '3' 
+# import os
+# os.environ['GLOG_minloglevel'] = '3' 
 
 # BARK imports
 from bark.runtime.commons.parameters import ParameterServer
@@ -34,17 +34,13 @@ flags.DEFINE_enum("mode",
                   ["train", "visualize", "evaluate"],
                   "Mode the configuration should be executed in.")
 
-# this will disable all BARK log messages
-#import os
-#os.environ['GLOG_minloglevel'] = '3' 
-
 def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/tfa_params.json")
   # params = ParameterServer()
   # NOTE: Modify these paths in order to save the checkpoints and summaries
   # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/home/hart/Dokumente/2020/bark-ml/checkpoints/"
   # params["ML"]["TFARunner"]["SummaryPath"] = "/home/hart/Dokumente/2020/bark-ml/checkpoints/"
-  params["World"]["remove_agents_out_of_map"] = True
+  params["World"]["remove_agents_out_of_map"] = False
 
   observer = GraphObserver(params=params)
 

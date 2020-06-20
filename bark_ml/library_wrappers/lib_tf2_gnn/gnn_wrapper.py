@@ -28,7 +28,6 @@ class GNNWrapper(tf.keras.Model):
   def call(self, observation, training=False):
     """Call function for the GNN"""
     print(f'call shape: {observation.shape}')
-
     graph = GraphObserver.graph_from_observation(observation)
 
     features = []
@@ -55,8 +54,6 @@ class GNNWrapper(tf.keras.Model):
     Returns:
         np.array -- Batch of values
     """
-    print(f'batch shape: {graph.shape}')
-
     if graph.shape[0] == 0:
       return tf.zeros(shape=(1, self._node_layers_def[-1]["units"]))
     if len(graph.shape) == 1:

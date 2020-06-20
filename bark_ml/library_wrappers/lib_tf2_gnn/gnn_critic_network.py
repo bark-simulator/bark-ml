@@ -137,9 +137,12 @@ class GNNCriticNetwork(network.Network):
     for layer in self._action_layers:
       actions = layer(actions, training=training)
 
+    actions = tf.reshape(actions, [observations.shape[0], -1])
     joint = tf.concat([observations, actions], 1)
     for layer in self._joint_layers:
       joint = layer(joint, training=training)
+    
 
-    output = tf.reshape(joint, [-1])
+    output = tf.transpose(joint)
+    print(f'critic out {output.shape}')
     return output, network_state

@@ -89,40 +89,33 @@ class GNNActorNetwork(network.Network):
     if self._single_action_spec.dtype not in [tf.float32, tf.float64]:
       raise ValueError('Only float actions are supported by this network.')
 
-    # TODO(kbanoop): Replace mlp_layers with encoding networks.
-    self._dense_layers = utils.mlp_layers(
-        conv_layer_params,
-        fc_layer_params,
-        dropout_layer_params,
-        activation_fn=activation_fn,
-        kernel_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
-            scale=1. / 3., mode='fan_in', distribution='uniform'),
-        name='input_mlp')
-
-    self._dense_layers.append(
+    self._dense_layers = [
         tf.keras.layers.Dense(
             flat_action_spec[0].shape.num_elements(),
+            input_shape=(None, 80),
             activation=tf.keras.activations.tanh,
             kernel_initializer=tf.keras.initializers.RandomUniform(
                 minval=-0.003, maxval=0.003),
-            name='action'))
+            name='action')
+    ]
 
     self._output_tensor_spec = output_tensor_spec
 
   def call(self, observations, step_type=(), network_state=(), training=False):
     del step_type # unused.
-    
+
+    print(type(observations))
     output = self._gnn.batch_call(observations)
     output = tf.cast(output, tf.float32)
-
+    
     # extract ego state (node 0)
     if len(output.shape) == 2:
       output = output[0]
-    if len(output.shape) == 3:
-      
-      print('fix this')
-      return None
-
+      output = tf.expand_dims(output, axis=0)
+    if len(output.shape) == 3: 
+      output = tf.gather(output, 0, axis=1)
+      output = tf.expand_dims(output, axis=1)
+    
     for layer in self._dense_layers:
       output = layer(output, training=training)
 
