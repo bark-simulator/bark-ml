@@ -3,6 +3,7 @@ import tensorflow as tf  # pylint: disable=g-explicit-tensorflow-version-import
 
 from tf_agents.networks import network
 from tf_agents.networks import utils
+from bark_ml.library_wrappers.lib_tf2_gnn import GNNWrapper
 
 @gin.configurable
 class GNNCriticNetwork(network.Network):
@@ -10,9 +11,6 @@ class GNNCriticNetwork(network.Network):
 
   def __init__(self,
                input_tensor_spec,
-               observation_conv_layer_params=None,
-               observation_fc_layer_params=None,
-               observation_dropout_layer_params=None,
                action_fc_layer_params=None,
                action_dropout_layer_params=None,
                joint_fc_layer_params=None,
@@ -25,20 +23,6 @@ class GNNCriticNetwork(network.Network):
     Args:
       input_tensor_spec: A tuple of (observation, action) each a nest of
         `tensor_spec.TensorSpec` representing the inputs.
-      observation_conv_layer_params: Optional list of convolution layer
-        parameters for observations, where each item is a length-three tuple
-        indicating (num_units, kernel_size, stride).
-      observation_fc_layer_params: Optional list of fully connected parameters
-        for observations, where each item is the number of units in the layer.
-      observation_dropout_layer_params: Optional list of dropout layer
-        parameters, each item is the fraction of input units to drop or a
-        dictionary of parameters according to the keras.Dropout documentation.
-        The additional parameter `permanent', if set to True, allows to apply
-        dropout at inference for approximated Bayesian inference. The dropout
-        layers are interleaved with the fully connected layers; there is a
-        dropout layer after each fully connected layer, except if the entry in
-        the list is None. This list must have the same length of
-        observation_fc_layer_params, or be None.
       action_fc_layer_params: Optional list of fully connected parameters for
         actions, where each item is the number of units in the layer.
       action_dropout_layer_params: Optional list of dropout layer parameters,
@@ -88,16 +72,15 @@ class GNNCriticNetwork(network.Network):
       raise ValueError('Only a single action is supported by this network')
     self._single_action_spec = flat_action_spec[0]
 
-    # TODO(kbanoop): Replace mlp_layers with encoding networks.
-    self._observation_layers = utils.mlp_layers(
-        observation_conv_layer_params,
-        observation_fc_layer_params,
-        observation_dropout_layer_params,
-        activation_fn=activation_fn,
-        kernel_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
-            scale=1. / 3., mode='fan_in', distribution='uniform'),
-        name='observation_encoding')
+    self._gnn = GNNWrapper(
+      node_layers_def=[{
+        "units" : 80, 
+        "activation": "relu", 
+        "dropout_rate": 0.0, 
+        "type": "DenseLayer"}
+      ])
 
+    # TODO(kbanoop): Replace mlp_layers with encoding networks.
     self._action_layers = utils.mlp_layers(
         None,
         action_fc_layer_params,
@@ -107,18 +90,12 @@ class GNNCriticNetwork(network.Network):
             scale=1. / 3., mode='fan_in', distribution='uniform'),
         name='action_encoding')
 
-    self._joint_layers = utils.mlp_layers(
-        None,
-        joint_fc_layer_params,
-        joint_dropout_layer_params,
-        activation_fn=activation_fn,
-        kernel_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
-            scale=1. / 3., mode='fan_in', distribution='uniform'),
-        name='joint_mlp')
+    self._joint_layers = []
 
     self._joint_layers.append(
         tf.keras.layers.Dense(
             1,
+            input_shape=(82,),
             activation=output_activation_fn,
             kernel_initializer=tf.keras.initializers.RandomUniform(
                 minval=-0.003, maxval=0.003),
@@ -128,17 +105,33 @@ class GNNCriticNetwork(network.Network):
     del step_type # unused.
 
     observations, actions = inputs
-    observations = tf.cast(tf.nest.flatten(observations)[0], tf.float32)
-    
-    for layer in self._observation_layers:
-      observations = layer(observations, training=training)
+    batch_size = observations.shape[0]
 
-    actions = tf.cast(tf.nest.flatten(actions)[0], tf.float32)
+    actions = tf.cast(actions, tf.float32)
+    observations = tf.cast(observations, tf.float32)
+
+    # if batch_size == 0:
+    #   return tf.constant([0, 0], dtype=tf.float32), network_state
+
+    # if batch_size == 0:
+    #   observations = tf.zeros([1, observations.shape[-1]])
+
+    observations = self._gnn.batch_call(observations)
+
+    if batch_size > 0:
+      observations = tf.gather(observations, 0, axis=1) # extract ego state
+      observations = tf.reshape(observations, [batch_size, -1])
+      actions = tf.reshape(actions, [batch_size, -1])
+    else:
+      actions = tf.zeros([1, actions.shape[-1]])
+
+    print(f'obs shape: {observations.shape}')
+
     for layer in self._action_layers:
       actions = layer(actions, training=training)
 
-    actions = tf.reshape(actions, [observations.shape[0], -1])
     joint = tf.concat([observations, actions], 1)
+    print(joint.shape)
     for layer in self._joint_layers:
       joint = layer(joint, training=training)
     

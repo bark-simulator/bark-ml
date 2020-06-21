@@ -1,6 +1,3 @@
-
-
-
 py_test(
     name = "py_environment_tests",
     srcs = ["py_environment_tests.py"],
@@ -75,5 +72,16 @@ py_test(
             "//bark_ml/environments:single_agent_runtime",
             "//bark_ml/behaviors:behaviors",
             "//bark_ml/commons:py_spaces"],
+    visibility = ["//visibility:public"],
+)
+
+py_test(
+    name = "py_gnn_wrapper_tests",
+    srcs = ["py_gnn_wrapper_tests.py"],
+    data = ["@bark_project//bark/python_wrapper:core.so",
+            "//python:bark_ml_library.so"],
+    imports = ["../external/bark_project/python/",
+               "../../python/"],
+    deps = ["//bark_ml/commons:py_spaces"],
     visibility = ["//visibility:public"],
 )

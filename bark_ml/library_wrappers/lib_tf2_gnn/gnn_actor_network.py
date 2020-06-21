@@ -71,11 +71,12 @@ class GNNActorNetwork(network.Network):
         state_spec=(),
         name=name)
     self._gnn = GNNWrapper(
-      node_layers_def=[
-        {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"}
-      ],
-      h0_dim=4,
-      e0_dim=2)
+      node_layers_def=[{
+        "units" : 80, 
+        "activation": "relu", 
+        "dropout_rate": 0.0, 
+        "type": "DenseLayer"}
+      ])
 
     if len(tf.nest.flatten(input_tensor_spec)) > 1:
       raise ValueError('Only a single observation is supported by this network')

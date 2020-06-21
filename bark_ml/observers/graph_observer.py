@@ -283,6 +283,9 @@ class GraphObserver(StateObserver):
     d['dy'] = [-y_range, y_range]
     return d
 
+  def sample(self):
+    return self.observation_space.sample()
+
   @property
   def observation_space(self):
     #  0 ... 100 for the indices of num_agents and num_features

@@ -11,13 +11,9 @@ class GNNWrapper(tf.keras.Model):
 
   def __init__(self,
                node_layers_def,
-               h0_dim,
-               e0_dim,
                name='GNN',
                **kwargs):
     super(GNNWrapper, self).__init__(name=name)
-    self._h0_dim = h0_dim
-    self._e0_dim = e0_dim
     self._node_layers_def = node_layers_def
 
     params = GNN.get_default_hyperparameters()
