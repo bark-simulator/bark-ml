@@ -109,13 +109,6 @@ class GNNCriticNetwork(network.Network):
 
     actions = tf.cast(actions, tf.float32)
     observations = tf.cast(observations, tf.float32)
-
-    # if batch_size == 0:
-    #   return tf.constant([0, 0], dtype=tf.float32), network_state
-
-    # if batch_size == 0:
-    #   observations = tf.zeros([1, observations.shape[-1]])
-
     observations = self._gnn.batch_call(observations)
 
     if batch_size > 0:
@@ -125,13 +118,10 @@ class GNNCriticNetwork(network.Network):
     else:
       actions = tf.zeros([1, actions.shape[-1]])
 
-    print(f'obs shape: {observations.shape}')
-
     for layer in self._action_layers:
       actions = layer(actions, training=training)
 
     joint = tf.concat([observations, actions], 1)
-    print(joint.shape)
     for layer in self._joint_layers:
       joint = layer(joint, training=training)
     
