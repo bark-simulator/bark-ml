@@ -24,7 +24,7 @@
 PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
 
 namespace py = pybind11;
-using modules::commons::ParamsPtr;
+using bark::commons::ParamsPtr;
 using observers::NearestObserver;
 using evaluators::GoalReachedEvaluator;
 using spaces::Box;
