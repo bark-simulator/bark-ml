@@ -23,11 +23,13 @@
 #include "bark_ml/commons/spaces.hpp"
 #include "bark_ml/commons/commons.hpp"
 
+namespace bark_ml {
 namespace observers {
-using modules::commons::ParamsPtr;
+
+using bark::commons::ParamsPtr;
 using spaces::Box;
-using modules::world::WorldPtr;
-using modules::world::ObservedWorldPtr;
+using bark::world::WorldPtr;
+using bark::world::ObservedWorldPtr;
 using ObservedState = Eigen::Matrix<float, 1, Eigen::Dynamic>;
 
 class BaseObserver {
@@ -45,5 +47,6 @@ class BaseObserver {
 };
 
 }  // namespace observers
+}  // namespace bark_ml
 
 #endif  // BARK_ML_OBSERVERS_BASE_OBSERVER_HPP_

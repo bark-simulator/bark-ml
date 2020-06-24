@@ -24,11 +24,11 @@
 PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
 
 namespace py = pybind11;
-using modules::commons::ParamsPtr;
-using observers::NearestObserver;
-using evaluators::GoalReachedEvaluator;
-using spaces::Box;
-using spaces::Matrix_t;
+using bark::commons::ParamsPtr;
+using bark_ml::observers::NearestObserver;
+using bark_ml::evaluators::GoalReachedEvaluator;
+using bark_ml::spaces::Box;
+using bark_ml::spaces::Matrix_t;
 
 
 namespace pybind11 { namespace detail {

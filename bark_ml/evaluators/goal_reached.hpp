@@ -23,35 +23,37 @@
 #include "bark/world/evaluation/evaluator_collision_ego_agent.hpp"
 #include "bark/world/evaluation/evaluator_drivable_area.hpp"
 
+namespace bark_ml {
 namespace evaluators {
-using modules::commons::ParamsPtr;
-using modules::world::Agent;
+using bark::commons::ParamsPtr;
+using bark::world::Agent;
 using spaces::Box;
 using commons::Norm;
 using spaces::Matrix_t;
-using modules::world::AgentMap;
-using modules::world::AgentPtr;
-using modules::world::WorldPtr;
-using modules::world::evaluation::EvaluationReturn;
-using modules::world::evaluation::EvaluatorGoalReached;
-using modules::world::evaluation::EvaluatorCollisionEgoAgent;
-using modules::world::evaluation::EvaluatorStepCount;
-using modules::world::evaluation::EvaluatorDrivableArea;
-using modules::world::evaluation::EvaluatorPtr;
-using modules::world::goal_definition::GoalDefinitionStateLimitsFrenet;
-using modules::world::ObservedWorldPtr;
-using modules::geometry::Point2d;
-using modules::geometry::Line;
-using modules::geometry::Distance;
-using modules::geometry::Norm0To2PI;
-using modules::models::dynamic::Input;
-using modules::models::dynamic::StateDefinition::X_POSITION;
-using modules::models::dynamic::StateDefinition::Y_POSITION;
-using modules::models::dynamic::StateDefinition::THETA_POSITION;
-using modules::models::dynamic::StateDefinition::VEL_POSITION;
+using bark::world::AgentMap;
+using bark::world::AgentPtr;
+using bark::world::WorldPtr;
+using bark::world::evaluation::EvaluationReturn;
+using bark::world::evaluation::EvaluatorGoalReached;
+using bark::world::evaluation::EvaluatorCollisionEgoAgent;
+using bark::world::evaluation::EvaluatorStepCount;
+using bark::world::evaluation::EvaluatorDrivableArea;
+using bark::world::evaluation::EvaluatorPtr;
+using bark::world::goal_definition::GoalDefinitionStateLimitsFrenet;
+using bark::world::ObservedWorldPtr;
+using bark::geometry::Point2d;
+using bark::geometry::Line;
+using bark::geometry::Distance;
+using bark::geometry::Norm0To2PI;
+using bark::models::dynamic::Input;
+using bark::models::dynamic::StateDefinition::X_POSITION;
+using bark::models::dynamic::StateDefinition::Y_POSITION;
+using bark::models::dynamic::StateDefinition::THETA_POSITION;
+using bark::models::dynamic::StateDefinition::VEL_POSITION;
 using ObservedState = Eigen::Matrix<float, 1, Eigen::Dynamic>;
-using modules::commons::transformation::FrenetPosition;
+using bark::commons::transformation::FrenetPosition;
 using State = Eigen::Matrix<float, Eigen::Dynamic, 1>;
+using bark_ml::evaluators::BaseEvaluator;
 
 using Reward = float;
 using Done = bool;
@@ -108,5 +110,6 @@ class GoalReachedEvaluator : public BaseEvaluator {
 };
 
 }  // namespace evaluators
+}  // namespace bark_ml
 
 #endif  // BARK_ML_EVALUATORS_GOAL_REACHED_HPP_

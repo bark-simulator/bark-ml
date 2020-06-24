@@ -5,8 +5,8 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef SRC_COMMONS_SPACES_HPP_
-#define SRC_COMMONS_SPACES_HPP_
+#ifndef BARK_ML_COMMONS_SPACES_HPP_
+#define BARK_ML_COMMONS_SPACES_HPP_
 
 #include <memory>
 #include <tuple>
@@ -14,6 +14,7 @@
 #include <Eigen/Dense>
 
 
+namespace bark_ml {
 namespace spaces {
 
 template<typename T>
@@ -40,5 +41,6 @@ struct Box {
 };
 
 }  // namespace spaces
+}  // namespace bark_ml
 
-#endif  // SRC_COMMONS_SPACES_HPP_
+#endif  // BARK_ML_COMMONS_SPACES_HPP_
