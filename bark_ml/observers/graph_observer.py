@@ -13,6 +13,7 @@ from bark.core.models.dynamic import StateDefinition
 from bark.core.world import ObservedWorld
 from bark.core.geometry import Distance, Point2d
 from bark.runtime.commons.parameters import ParameterServer
+
 from bark_ml.observers.observer import StateObserver
 
 class GraphObserver(StateObserver):
@@ -27,7 +28,7 @@ class GraphObserver(StateObserver):
     self._use_edge_attributes = use_edge_attributes
 
     # the number of features of a node in the graph
-    self.feature_len = 11
+    self.feature_len = 13
 
     # the maximum number of agents that can be observed
     self.agent_limit = 6
@@ -37,9 +38,8 @@ class GraphObserver(StateObserver):
 
   @classmethod
   def attribute_keys(cls):
-    return ["x", "y", "theta", "vel", "goal_x", 
-    "goal_y", "goal_dx", "goal_dy", "goal_theta",
-     "goal_d", "goal_vel"]
+    return ["x", "y", "theta", "vel", "goal_x", "goal_y", "goal_dx", "goal_dy", "goal_theta", "goal_d",
+            "goal_vel", "d_ditch_left", "d_ditch_right"]
 
   def Observe(self, world):
     """see base class"""
@@ -198,6 +198,22 @@ class GraphObserver(StateObserver):
     goal_velocity = np.mean(agent.goal_definition.velocity_range)
     res["goal_vel"] = goal_velocity
 
+    # get information related to road
+    agent_posi = self._position(agent)   
+    # Get all possible lane corridors
+    agent_lane = agent.road_corridor.GetCurrentLaneCorridor(agent_posi)
+    lane_corridors = agent.road_corridor.GetLeftRightLaneCorridor(agent_posi) # corridors left and right of agents' corridor, None if not existent
+    lanes = [lane_corridors[0], agent_lane, lane_corridors[1]]
+    lanes = list(filter(None, lanes)) #filter out non existing lanes (right or left of agent)
+
+    # Calculate Distance to left and right road bounds
+    road_bound_left = lanes[0].left_boundary
+    d_ditch_left = Distance(road_bound_left, agent_posi)
+    road_bound_right = lanes[-1].right_boundary
+    d_ditch_right = Distance(road_bound_right, agent_posi)
+    res["d_ditch_left"] = d_ditch_left
+    res["d_ditch_right"] = d_ditch_right
+
     if self._normalize_observations:
       n = self.normalization_data
 
@@ -210,6 +226,8 @@ class GraphObserver(StateObserver):
       res["goal_d"] = self._normalize_value(res["goal_d"], n["distance"])
       res["goal_theta"] = self._normalize_value(res["goal_theta"], n["theta"])
       res["goal_vel"] = self._normalize_value(res["goal_vel"], n["vel"])
+      res["d_ditch_left"] = self._normalize_value(res["d_ditch_left"], n["road"])
+      res["d_ditch_right"] = self._normalize_value(res["d_ditch_right"], n["road"])
     
     #####################################################
     #    If you change the number of features,          #
@@ -281,6 +299,7 @@ class GraphObserver(StateObserver):
     d['distance'] = [0, max_dist]
     d['dx'] = [-x_range, x_range]
     d['dy'] = [-y_range, y_range]
+    d['road'] = [0, 15] # may need adjustment for if 3 lanes are broader than 15 m
     return d
 
   def sample(self):
