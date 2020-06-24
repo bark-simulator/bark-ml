@@ -24,6 +24,7 @@
 #include "bark_ml/commons/commons.hpp"
 #include "bark_ml/observers/base_observer.hpp"
 
+namespace bark_ml {
 namespace observers {
 using bark::commons::ParamsPtr;
 using bark::world::Agent;
@@ -143,5 +144,6 @@ class NearestObserver : public BaseObserver {
 };
 
 }  // namespace observers
+}  // namespace bark_ml
 
 #endif  // BARK_ML_OBSERVERS_NEAREST_OBSERVER_HPP_

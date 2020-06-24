@@ -23,6 +23,7 @@
 #include "bark/world/evaluation/evaluator_collision_ego_agent.hpp"
 #include "bark/world/evaluation/evaluator_drivable_area.hpp"
 
+namespace bark_ml {
 namespace evaluators {
 using bark::commons::ParamsPtr;
 using bark::world::Agent;
@@ -52,6 +53,7 @@ using bark::models::dynamic::StateDefinition::VEL_POSITION;
 using ObservedState = Eigen::Matrix<float, 1, Eigen::Dynamic>;
 using bark::commons::transformation::FrenetPosition;
 using State = Eigen::Matrix<float, Eigen::Dynamic, 1>;
+using bark_ml::evaluators::BaseEvaluator;
 
 using Reward = float;
 using Done = bool;
@@ -108,5 +110,6 @@ class GoalReachedEvaluator : public BaseEvaluator {
 };
 
 }  // namespace evaluators
+}  // namespace bark_ml
 
 #endif  // BARK_ML_EVALUATORS_GOAL_REACHED_HPP_
