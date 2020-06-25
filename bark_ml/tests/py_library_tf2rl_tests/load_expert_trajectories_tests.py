@@ -7,9 +7,8 @@
 import os
 import pickle
 import unittest
-from bark_ml.library_wrappers.lib_tf2rl.load_expert_trajectories \
-     import load_expert_trajectory_file
-
+from bark_ml.library_wrappers.lib_tf2rl.load_expert_trajectories import *
+from bark_ml.library_wrappers.lib_tf2rl.load_save_utils import *
 
 class LoadExpertTrajectoriesTest(unittest.TestCase):
     """
@@ -20,34 +19,17 @@ class LoadExpertTrajectoriesTest(unittest.TestCase):
         """
         setup
         """
-        self.expert_trajectories = {}
-        for agent_id in range(5):
-            self.expert_trajectories[agent_id] = {
-                'obs': [],
-                'act': [],
-                'done': [],
-                'time': [],
-                'merge': []
-            }
+        self.expert_trajectories_directory = os.path.join(os.path.dirname(__file__), "data")
+        self.pickle_files = list_files_in_dir(self.expert_trajectories_directory, '*.pkl')
 
-        self.file_path = "expert_trajectories.pkl"
-        with open(self.file_path, "wb") as output_file:
-            self.file_path = os.path.abspath(output_file.name)
-            pickle.dump(self.expert_trajectories, output_file)
-
-    def tearDown(self):
-        """
-        tear down
-        """
-        os.remove(self.file_path)
-
-    def test_load_pkl_file(self):
-        """
-        Test: Load the pkl file containing the expert trajectories.
-        """
-        expert_trajectories_loaded = load_expert_trajectory_file(
-            self.file_path)
-        self.assertEqual(self.expert_trajectories, expert_trajectories_loaded)
+        self.expert_trajectories_per_file = load_expert_trajectory_files(
+            self.expert_trajectories_directory)
+        assert self.expert_trajectories_per_file    
+        
+        self.expert_trajectories, self.dt = load_expert_trajectories(
+            self.expert_trajectories_directory)
+        assert self.expert_trajectories
+        assert (self.dt - 100) < 10e5 
 
     def test_assert_file_exists(self):
         """
@@ -56,35 +38,23 @@ class LoadExpertTrajectoriesTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             load_expert_trajectory_file("non_existent_file.pkl")
 
-    def test_assert_is_pkl_file(self):
-        """
-        Test: Assert that a non pkl file is not loaded.
-        """
-        import shutil
-        new_file_name = self.file_path.replace('.pkl', '.txt')
-        shutil.copyfile(self.file_path, new_file_name)
-
-        with self.assertRaises(ValueError):
-            load_expert_trajectory_file(new_file_name)
-        os.remove(new_file_name)
-
     def test_file_contains_expert_trajectories(self):
         """
         Test: Assert that error is thrown if the file does not
                 contain expert trajectories.
         """
-        load_expert_trajectory_file(self.file_path)
-
         errornous_content = {
             "foo": "bar"
         }
 
-        with open(self.file_path, "wb") as pickle_file:
+        file_path = 'test.pkl'
+        with open(file_path, "wb") as pickle_file:
             pickle.dump(errornous_content, pickle_file)
+            file_path = pickle_file.name
 
-        with self.assertRaises(ValueError):
-            load_expert_trajectory_file(self.file_path)
-
+        no_expert_trajectories_contained = load_expert_trajectory_file(file_path)
+        assert not no_expert_trajectories_contained
+        os.remove(file_path)
 
 if __name__ == '__main__':
     unittest.main()

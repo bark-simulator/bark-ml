@@ -1,6 +1,8 @@
+
 py_test(
     name = "load_expert_trajectories_tests",
-    srcs = ["load_expert_trajectories_tests.py"],
+    srcs = [ "load_expert_trajectories_tests.py"],
+    data = [ "//bark_ml/tests/py_library_tf2rl_tests/data:expert_trajectories" ],
     imports = [
             "../../external/bark_project/python/"
             ],
