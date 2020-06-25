@@ -80,7 +80,7 @@ def create_parameter_servers_for_scenarios(interaction_dataset_path: str):
             param_server = ParameterServer()
             param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["MapFilename"] = map
             param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackFilename"] = track
-            param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackIds"] = track_ids
+            param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackIds"] = list(track_ids)
             param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["StartTs"] = start_ts
             param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EndTs"] = end_ts
             param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EgoTrackId"] = track_ids[0]
