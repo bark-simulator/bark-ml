@@ -1,5 +1,5 @@
 filegroup(
-    name = "expert_trajectories",
-    srcs = glob(["*.pkl"]),
+    name = "tf2rl_tests_data",
+    srcs = glob(["*.pkl", 'interaction_data_set_mock/**']),
     visibility = ["//visibility:public"],
 )
