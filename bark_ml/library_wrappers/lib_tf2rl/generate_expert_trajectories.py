@@ -290,12 +290,12 @@ def main_function(argv):
         interaction_dataset_path)
 
     sim_time_step = 100
-    if not FLAGS.debug:
+    if not FLAGS.debug and not FLAGS.renderer:
         with ThreadPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
             futures = []
             for map, track in param_servers.keys():
                 futures.append(executor.submit(generate_and_store_expert_trajectories,
-                                            map, track, expert_trajectories_path, param_servers[(map, track)], sim_time_step, FLAGS.renderer))
+                                            map, track, expert_trajectories_path, param_servers[(map, track)], sim_time_step))
 
             for future in futures:
                 future.result()
