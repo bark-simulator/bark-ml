@@ -41,3 +41,6 @@ class CalculateActionTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+# TODO Create tests
