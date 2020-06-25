@@ -1,6 +1,6 @@
 import os
 
-def list_files_in_dir(dir_path: str, file_ending: str):
+def list_files_in_dir(dir_path: str, file_ending: str = '') -> list:
     """
     Lists all files in the given dir ending with the given ending.
     """
@@ -12,7 +12,7 @@ def list_files_in_dir(dir_path: str, file_ending: str):
     return files
 
 
-def list_dirs_in_dir(dir_path: str):
+def list_dirs_in_dir(dir_path: str) -> list:
     """
     Lists all dirs in the given dir.
     """
