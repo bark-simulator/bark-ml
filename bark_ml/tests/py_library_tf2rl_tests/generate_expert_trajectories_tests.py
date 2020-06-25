@@ -115,5 +115,43 @@ class CreateScenarioTests(unittest.TestCase):
         assert scenario.map_file_name.endswith('bark_ml/tests/py_library_tf2rl_tests/data/interaction_data_set_mock/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_v01_shifted.xodr')
         self.assertEqual(len(scenario._agent_list), 86)
 
+class SimulateScenarioTests(unittest.TestCase):
+    """
+    Tests: simulate_scenario
+    """
+
+    def setUp(self):
+        """
+        Setup
+        """
+        param_servers = create_parameter_servers_for_scenarios(interaction_data_set_mock_path)
+        self.assertIn(known_key, param_servers)
+        
+        param_server = param_servers[known_key]
+        param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackIds"] = [63,64,65,66,67,68]
+        param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["StartTs"] = 232000
+        param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EndTs"] = 259000
+        param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EgoTrackId"] = 65
+        self.param_server = param_server
+
+    def test_simulate_scenario_no_renderer(self):
+        """
+        Test: Replay scenario with pygame renderer
+        """
+        simulate_scenario(self.param_server, sim_time_step=100)
+
+    def test_simulate_scenario_pygame(self):
+        """
+        Test: Replay scenario with pygame renderer
+        """
+        simulate_scenario(self.param_server, sim_time_step=100, renderer="pygame")
+    
+    def test_simulate_scenario_matplotlib(self):
+        """
+        Test: Replay scenario with matplotlib renderer
+        """
+        simulate_scenario(self.param_server, sim_time_step=100, renderer="matplotlib")
+
+
 if __name__ == '__main__':
     unittest.main()

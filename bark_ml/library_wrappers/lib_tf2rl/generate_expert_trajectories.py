@@ -8,6 +8,10 @@ from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 import multiprocessing
 
+from modules.runtime.viewer.pygame_viewer import PygameViewer
+from modules.runtime.viewer.matplotlib_viewer import MPViewer
+from modules.runtime.viewer.video_renderer import VideoRenderer
+
 from bark_ml.library_wrappers.lib_tf2rl.load_save_utils import *
 
 # Bark
@@ -36,6 +40,11 @@ flags.DEFINE_string("expert_trajectories_path",
 flags.DEFINE_bool("debug",
                   help="Debug mode.",
                   default=False)
+
+flags.DEFINE_enum("renderer",
+                  "",
+                  ["", "matplotlib", "pygame"],
+                  "The renderer to use during replay of the interaction dataset.")
 
 
 def get_map_files(interaction_dataset_path: str):
@@ -168,22 +177,34 @@ def store_expert_trajectories(map: str, track: str, expert_trajectories_path: st
                     protocol=pickle.HIGHEST_PROTOCOL)
 
 
-def simulate_scenario(param_server, speed_factor=1):
+def simulate_scenario(param_server, sim_time_step: float, renderer: str = ""):
     """
     Simulates one scenario.
     """
     scenario, start_ts, end_ts = create_scenario(param_server)
 
-    sim_step_time = 100*speed_factor/1000
-    sim_steps = int((end_ts - start_ts)/(sim_step_time*1000))
+    sim_steps = int((end_ts - start_ts)/(sim_time_step))
+    sim_time_step_seconds = sim_time_step / 1000
 
     observer = NearestAgentsObserver(param_server)
     expert_trajectories = {}
+    
+    if renderer:
+        fig = plt.figure(figsize=[10, 10])
+
+        if renderer == "pygame":
+            viewer = PygameViewer(params=param_server, use_world_bounds=True, axis=fig.gca())
+        else:
+            viewer = MPViewer(params=param_server, use_world_bounds=True, axis=fig.gca())
 
     # Run the scenario in a loop
     world_state = scenario.GetWorldState()
     for _ in range(0, sim_steps):
-        world_state.Step(sim_step_time)
+        world_state.Step(sim_time_step_seconds)
+    
+        if renderer:
+            viewer.clear()
+            viewer.drawWorld(world_state, scenario._eval_agent_ids)
 
         observations = measure_world(world_state, observer)
 
@@ -194,14 +215,17 @@ def simulate_scenario(param_server, speed_factor=1):
             expert_trajectories[agent_id]['time'].append(values['time'])
             expert_trajectories[agent_id]['merge'].append(values['merge'])
             expert_trajectories[agent_id]['wheelbase'].append(scenario._agent_list)
+    
+    if renderer:
+        plt.close()
     return expert_trajectories
 
 
-def generate_expert_trajectories_for_scenario(param_server, speed_factor=1):
+def generate_expert_trajectories_for_scenario(param_server, sim_time_step: float, renderer: str):
     """
     Simulates a scenario, measures the environment and calculates the actions.
     """
-    expert_trajectories = simulate_scenario(param_server, speed_factor)
+    expert_trajectories = simulate_scenario(param_server, sim_time_step, renderer)
 
     for agent_id in expert_trajectories:
         num_observations = len(expert_trajectories[agent_id]['obs'])
@@ -235,13 +259,13 @@ def generate_expert_trajectories_for_scenario(param_server, speed_factor=1):
     return expert_trajectories
 
 
-def generate_and_store_expert_trajectories(map: str, track: str, expert_trajectories_path: str, param_server):
+def generate_and_store_expert_trajectories(map: str, track: str, expert_trajectories_path: str, param_server, sim_time_step: float, renderer: str):
     """
     Generates and stores the expert trajectories for one scenario.
     """
     print(f"********** Simulating: {map}, {track} **********")
     expert_trajectories = generate_expert_trajectories_for_scenario(
-        param_server)
+        param_server, sim_time_step, renderer)
     store_expert_trajectories(
         map, track, expert_trajectories_path, expert_trajectories)
     print(f"********** Finished: {map}, {track} **********")
@@ -259,18 +283,19 @@ def main_function(argv):
     param_servers = create_parameter_servers_for_scenarios(
         interaction_dataset_path)
 
+    sim_time_step = 1000
     if not FLAGS.debug:
         with ThreadPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
             futures = []
             for map, track in param_servers.keys():
                 futures.append(executor.submit(generate_and_store_expert_trajectories,
-                                            map, track, expert_trajectories_path, param_servers[(map, track)]))
+                                            map, track, expert_trajectories_path, param_servers[(map, track)], sim_time_step, FLAGS.renderer))
 
             for future in futures:
                 future.result()
     else:
         for map, track in param_servers.keys():
-            generate_and_store_expert_trajectories(map, track, expert_trajectories_path, param_servers[(map, track)])
+            generate_and_store_expert_trajectories(map, track, expert_trajectories_path, param_servers[(map, track)], sim_time_step, FLAGS.renderer)
  
 
 if __name__ == '__main__':
