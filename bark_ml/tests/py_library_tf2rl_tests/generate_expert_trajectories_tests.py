@@ -1,6 +1,7 @@
 import os
 import pickle
 import unittest
+import numpy as np
 from bark_ml.library_wrappers.lib_tf2rl.generate_expert_trajectories \
      import *
 
@@ -115,11 +116,10 @@ class CreateScenarioTests(unittest.TestCase):
         assert scenario.map_file_name.endswith('bark_ml/tests/py_library_tf2rl_tests/data/interaction_data_set_mock/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_v01_shifted.xodr')
         self.assertEqual(len(scenario._agent_list), 86)
 
-class SimulateScenarioTests(unittest.TestCase):
+class SimulationBasedTests(unittest.TestCase):
     """
-    Tests: simulate_scenario
+    Base class for simulation based tests
     """
-
     def setUp(self):
         """
         Setup
@@ -131,26 +131,79 @@ class SimulateScenarioTests(unittest.TestCase):
         param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackIds"] = [63,64,65,66,67,68]
         param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["StartTs"] = 232000
         param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EndTs"] = 259000
-        param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EgoTrackId"] = 65
+        self.test_agent_id = 65
+        param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EgoTrackId"] = self.test_agent_id
         self.param_server = param_server
+        self.expert_trajectories = {}
+
+class SimulateScenarioTests(SimulationBasedTests):
+    """
+    Tests: simulate_scenario
+    """
 
     def test_simulate_scenario_no_renderer(self):
         """
-        Test: Replay scenario with pygame renderer
+        Test: Replay scenario with no renderer
         """
-        simulate_scenario(self.param_server, sim_time_step=100)
+        self.expert_trajectories = simulate_scenario(self.param_server, sim_time_step=100)
 
     def test_simulate_scenario_pygame(self):
         """
         Test: Replay scenario with pygame renderer
         """
-        simulate_scenario(self.param_server, sim_time_step=100, renderer="pygame")
-    
+        self.expert_trajectories = simulate_scenario(self.param_server, sim_time_step=100, renderer="pygame")
+
+    @unittest.skip("Takes long for rendering")    
     def test_simulate_scenario_matplotlib(self):
         """
         Test: Replay scenario with matplotlib renderer
         """
-        simulate_scenario(self.param_server, sim_time_step=100, renderer="matplotlib")
+        self.expert_trajectories = simulate_scenario(self.param_server, sim_time_step=100, renderer="matplotlib")
+
+    def tearDown(self):
+        """
+        Tear down
+
+        Use this to check if the contents of self.expert_trajectories is as expected after all three simulations are run.
+        """
+        #TODO Check if simulation was correct
+        pass
+
+class MeasureWorldTests(SimulationBasedTests):
+    """
+    Tests: measure_world
+    """
+    def setUp(self):
+        """
+        Setup
+        """
+        super().setUp()
+        scenario, start_ts, end_ts = create_scenario(self.param_server)
+        self.sim_time_step = 100
+        self.sim_steps = int((end_ts - start_ts)/(self.sim_time_step))
+        self.sim_time_step_seconds = self.sim_time_step / 1000
+
+        self.observer = NearestAgentsObserver(self.param_server)
+        self.world_state = scenario.GetWorldState()
+
+    def test_measure_world(self):
+        """
+        Test: measure_world
+        """
+        current_measurement = np.array([0] * 12)
+        previous_measurement = np.array([0] * 12)
+        for _ in range(0, self.sim_steps):
+            self.world_state.Step(self.sim_time_step_seconds)    
+
+            previous_measurement = current_measurement
+            all_measurements = measure_world(self.world_state, self.observer)
+
+            if self.test_agent_id in all_measurements:
+                current_measurement = all_measurements[self.test_agent_id]['obs']
+
+                difference = current_measurement - previous_measurement
+                print(difference)
+                #TODO Check if the difference is as expected
 
 
 if __name__ == '__main__':

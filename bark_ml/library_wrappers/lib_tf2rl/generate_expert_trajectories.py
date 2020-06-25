@@ -7,6 +7,7 @@ from pathlib import Path
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 import multiprocessing
+import numpy as np
 
 from modules.runtime.viewer.pygame_viewer import PygameViewer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
@@ -145,10 +146,13 @@ def measure_world(world_state, observer):
 
     observations = {}
 
-    for obs_world in world_state.Observe(agents_valid):
+    observed_worlds = world_state.Observe(agents_valid)
+
+    for obs_world in observed_worlds:
         agent_id = obs_world.ego_agent.id
+        obs = np.array(observer.Observe(obs_world))
         observations[agent_id] = {
-            "obs": observer.Observe(obs_world),
+            "obs": obs,
             "time": world_state.time,
             "merge": None
         }
