@@ -67,10 +67,10 @@ class GetMapAndTrackFilesTests(unittest.TestCase):
     
     def test_interaction_data_set_path_invalid(self):
         """
-        Test: The given path is invalid
+        Test: The given path is not an interaction dataset path
         """
-        map_files = get_map_files(os.path.dirname(__file__))
-        print(map_files)
+        with self.assertRaises(ValueError):
+            map_files = get_map_files(os.path.dirname(__file__))
 
 
 if __name__ == '__main__':
