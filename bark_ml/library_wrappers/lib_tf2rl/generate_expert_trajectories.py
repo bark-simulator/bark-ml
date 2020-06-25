@@ -28,75 +28,60 @@ from absl import app
 from absl import flags
 
 FLAGS = flags.FLAGS
-flags.DEFINE_string("interaction_dataset_path",
-                    help="The absolute path to the local interaction dataset clone.",
+flags.DEFINE_string("map_file",
+                    help="The absolute path to the map file in Xodr format that should be replayed.",
+                    default=None)
+
+FLAGS = flags.FLAGS
+flags.DEFINE_string("tracks_folder",
+                    help="The absolute path to the folder containing the corresponding tracks as csv.",
                     default=None)
 
 flags.DEFINE_string("expert_trajectories_path",
                     help="The absolute path to the folder where the expert trajectories are safed.",
                     default=None)
 
-flags.DEFINE_bool("debug",
-                  help="Debug mode.",
-                  default=False)
-
 flags.DEFINE_enum("renderer",
                   "",
                   ["", "matplotlib", "pygame"],
                   "The renderer to use during replay of the interaction dataset.")
 
-
-def get_map_files(interaction_dataset_path: str):
-    """
-    Extracts all track file paths from the interaction dataset
-    """
-    map_files = []
-    for scene in list_dirs_in_dir(interaction_dataset_path):
-        map_files.extend(list_files_in_dir(
-            os.path.join(scene, "map"), '.xodr'))
-    return map_files
-
-
-def get_track_files(interaction_dataset_path: str):
+def get_track_files(tracks_folder: str):
     """
     Extracts all map file paths from the interaction dataset
     """
-    map_files = []
-    for scene in list_dirs_in_dir(interaction_dataset_path):
-        map_files.extend(list_files_in_dir(
-            os.path.join(scene, "tracks"), '.csv'))
+    map_files = list_files_in_dir(tracks_folder, '.csv')
     return map_files
 
 
-def create_parameter_servers_for_scenarios(interaction_dataset_path: str):
+def create_parameter_servers_for_scenarios(map_file: str, tracks_folder: str):
     """
     Creates the parameter server and defines the scenario.
     """
     import pandas as pd
 
-    maps = get_map_files(interaction_dataset_path)
-    tracks = get_track_files(interaction_dataset_path)
+    if not map_file.endswith('.xodr'):
+        raise ValueError(f"Map file has to be in Xodr file format. Given: {map_file}")
+
+    tracks = get_track_files(tracks_folder)
 
     param_servers = {}
     for track in tracks:
-        for map in maps:
-            df = pd.read_csv(track)
-            track_ids = df.track_id.unique()
-            start_ts = df.timestamp_ms.min()
-            end_ts = df.timestamp_ms.max()
+        df = pd.read_csv(track)
+        track_ids = df.track_id.unique()
+        start_ts = df.timestamp_ms.min()
+        end_ts = df.timestamp_ms.max()
 
-            param_server = ParameterServer()
-            param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["MapFilename"] = map
-            param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackFilename"] = track
-            param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackIds"] = list(track_ids)
-            param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["StartTs"] = start_ts
-            param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EndTs"] = end_ts
-            param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EgoTrackId"] = track_ids[0]
-            map_id = map.replace(
-                '/map', '').replace(os.path.join(interaction_dataset_path, ''), '').replace('.xodr', '')
-            track_id = track.replace(
-                '/tracks', '').replace(os.path.join(interaction_dataset_path, ''), '').replace('.csv', '')
-            param_servers[map_id, track_id] = param_server
+        param_server = ParameterServer()
+        param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["MapFilename"] = map_file
+        param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackFilename"] = track
+        param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackIds"] = list(track_ids)
+        param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["StartTs"] = start_ts
+        param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EndTs"] = end_ts
+        param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EgoTrackId"] = track_ids[0]
+        map_id = map_file.split('/')[-1].replace('.xodr', '')
+        track_id = track.split('/')[-1].replace('.csv', '')
+        param_servers[map_id, track_id] = param_server
 
     return param_servers
 
@@ -172,7 +157,7 @@ def store_expert_trajectories(map: str, track: str, expert_trajectories_path: st
     directory = os.path.join(expert_trajectories_path,
                              map)
     Path(directory).mkdir(parents=True, exist_ok=True)
-    filename = os.path.join(directory, f"{track.split('/')[1]}.pkl")
+    filename = os.path.join(directory, f"{track}.pkl")
 
     with open(filename, 'wb') as handle:
         pickle.dump(expert_trajectories, handle,
@@ -279,32 +264,27 @@ def generate_and_store_expert_trajectories(map: str, track: str, expert_trajecto
 
 def main_function(argv):
     """ main """
-    interaction_dataset_path = os.path.expanduser(
-        str(FLAGS.interaction_dataset_path))
+    map_file = os.path.expanduser(
+        str(FLAGS.map_file))
+    tracks_folder = os.path.expanduser(
+        str(FLAGS.tracks_folder))
     expert_trajectories_path = os.path.expanduser(
         str(FLAGS.expert_trajectories_path))
-    if not os.path.exists(interaction_dataset_path):
+    if not os.path.exists(map_file):
         raise ValueError(
-            f"Interaction dataset not found at location: {interaction_dataset_path}")
-    param_servers = create_parameter_servers_for_scenarios(
-        interaction_dataset_path)
+            f"Maps file not found at location: {map_file}")
+    if not os.path.exists(tracks_folder):
+        raise ValueError(
+            f"Tracks not found at location: {tracks_folder}")
+    param_servers = create_parameter_servers_for_scenarios(map_file, tracks_folder)
 
     sim_time_step = 100
-    if not FLAGS.debug and not FLAGS.renderer:
-        with ThreadPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
-            futures = []
-            for map, track in param_servers.keys():
-                futures.append(executor.submit(generate_and_store_expert_trajectories,
-                                            map, track, expert_trajectories_path, param_servers[(map, track)], sim_time_step))
-
-            for future in futures:
-                future.result()
-    else:
-        for map, track in param_servers.keys():
-            generate_and_store_expert_trajectories(map, track, expert_trajectories_path, param_servers[(map, track)], sim_time_step, FLAGS.renderer)
+    for map, track in param_servers.keys():
+        generate_and_store_expert_trajectories(map, track, expert_trajectories_path, param_servers[(map, track)], sim_time_step, FLAGS.renderer)
  
 
 if __name__ == '__main__':
-    flags.mark_flag_as_required('interaction_dataset_path')
+    flags.mark_flag_as_required('map_file')
+    flags.mark_flag_as_required('tracks_folder')
     flags.mark_flag_as_required('expert_trajectories_path')
     app.run(main_function)

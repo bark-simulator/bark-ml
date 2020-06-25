@@ -9,10 +9,12 @@ from bark_ml.library_wrappers.lib_tf2rl.generate_expert_trajectories \
 # Please add a new test case class for every function you test.
 # Modularise the tests as much as possible, but on a reasonable scale.
 
-interaction_data_set_mock_path = os.path.join(
-    os.path.dirname(__file__), 'data/interaction_data_set_mock')
-known_key = ('DR_DEU_Merging_MT/DR_DEU_Merging_MT_v01_shifted',
-             'DR_DEU_Merging_MT/vehicle_tracks_013')
+tracks_folder = os.path.join(
+    os.path.dirname(__file__), 'data/interaction_data_set_mock/DR_DEU_Merging_MT/tracks')
+map_file = os.path.join(
+    os.path.dirname(__file__), 'data/interaction_data_set_mock/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_v01_shifted.xodr')
+known_key = ('DR_DEU_Merging_MT_v01_shifted',
+             'vehicle_tracks_013')
 
 
 class CalculateActionTests(unittest.TestCase):
@@ -57,28 +59,18 @@ class GetMapAndTrackFilesTests(unittest.TestCase):
         """
         Test: get_track_files
         """
-        track_files = get_track_files(interaction_data_set_mock_path)
+        track_files = get_track_files(tracks_folder)
 
         self.assertIs(len(track_files), 1)
         self.assertIs(track_files[0].endswith(
             'bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/data/interaction_data_set_mock/DR_DEU_Merging_MT/tracks/vehicle_tracks_013.csv'), True)
-
-    def test_load_map_files(self):
-        """
-        Test: get_map_files
-        """
-        map_files = get_map_files(interaction_data_set_mock_path)
-
-        self.assertIs(len(map_files), 1)
-        self.assertIs(map_files[0].endswith(
-            'bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/data/interaction_data_set_mock/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_v01_shifted.xodr'), True)
 
     def test_interaction_data_set_path_invalid(self):
         """
         Test: The given path is not an interaction dataset path
         """
         with self.assertRaises(ValueError):
-            map_files = get_map_files(os.path.dirname(__file__))
+            track_files = get_track_files(__file__)
 
 
 class CreateParameterServersForScenariosTests(unittest.TestCase):
@@ -92,7 +84,7 @@ class CreateParameterServersForScenariosTests(unittest.TestCase):
         """
 
         param_servers = create_parameter_servers_for_scenarios(
-            interaction_data_set_mock_path)
+            map_file, tracks_folder)
         self.assertIn(known_key, param_servers)
 
         param_server = param_servers[known_key]
@@ -123,7 +115,7 @@ class CreateScenarioTests(unittest.TestCase):
         Test: Valid scenario
         """
         param_servers = create_parameter_servers_for_scenarios(
-            interaction_data_set_mock_path)
+            map_file, tracks_folder)
         self.assertIn(known_key, param_servers)
 
         scenario, start_ts, end_ts = create_scenario(param_servers[known_key])

@@ -18,7 +18,7 @@ class SimulationBasedTests(unittest.TestCase):
         Setup
         """
         param_servers = create_parameter_servers_for_scenarios(
-            interaction_data_set_mock_path)
+            map_file, tracks_folder)
         self.assertIn(known_key, param_servers)
 
         param_server = param_servers[known_key]
@@ -150,7 +150,7 @@ class StoreExpertTrajectoriesTests(unittest.TestCase):
         Test: store_expert_trajectories
         """
         map = "test_map_name"
-        track = "test/test_track_name"
+        track = "test_track_name"
         expert_trajectories_path = os.path.join(os.path.dirname(__file__), 'test_store_expert_trajectories')
         expert_trajectories = {'foo': 'bar'}
         file_name = store_expert_trajectories(map, track, expert_trajectories_path, expert_trajectories)
