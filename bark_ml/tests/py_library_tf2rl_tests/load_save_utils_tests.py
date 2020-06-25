@@ -28,6 +28,7 @@ class LoadSaveUtilsTestsTests(unittest.TestCase):
             Path(filename).touch()
         
         self.directories = [os.path.join(self.directory, f"{i}") for i in range(5)]
+        self.directories.append(os.path.join(self.directory, '.git'))
         for filename in self.directories:
             Path(filename).mkdir()
 
@@ -63,8 +64,21 @@ class LoadSaveUtilsTestsTests(unittest.TestCase):
         """
         Test: Directories are correct listed
         """
-        self.assertEqual(list_dirs_in_dir(self.directory).sort(), self.directories.sort())
+        dirs = list_dirs_in_dir(self.directory, include_git=True)
+        for dir in dirs:
+            assert dir in self.directories
+        for dir in self.directories:
+            assert dir in dirs
+
         self.assertEqual(list_files_in_dir(self.directories[0]), [])
+
+    def test_list_valid_directories_exclude_git(self):
+        """
+        Test: Directories are correct listed with git excluded
+        """
+        dirs = list_dirs_in_dir(self.directory)
+        for dir in dirs:
+            assert not dir.endswith('.git')
 
     def test_list_directories_in_file(self):
         """

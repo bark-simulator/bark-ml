@@ -12,12 +12,14 @@ def list_files_in_dir(dir_path: str, file_ending: str = '') -> list:
     return files
 
 
-def list_dirs_in_dir(dir_path: str) -> list:
+def list_dirs_in_dir(dir_path: str, include_git: bool = False) -> list:
     """
     Lists all dirs in the given dir.
     """
     assert os.path.isdir(dir_path)
     dirs = [f for f in os.listdir(
-        dir_path) if not os.path.isfile(os.path.join(dir_path, f)) and not f == '.git']
+        dir_path) if not os.path.isfile(os.path.join(dir_path, f))]
+    if not include_git:
+        dirs = [d for d in dirs if not d.endswith('.git')]
     dirs = [os.path.join(dir_path, f) for f in dirs]
     return dirs
