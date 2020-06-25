@@ -28,3 +28,11 @@ py_test(
     visibility = ["//visibility:public"],
     size = "small"
 )
+
+py_test(
+    name = "load_save_utils_tests",
+    srcs = ["load_save_utils_tests.py"],
+    deps = ["//bark_ml/library_wrappers/lib_tf2rl:load_save_utils"],
+    visibility = ["//visibility:public"],
+    size = "small"
+)
