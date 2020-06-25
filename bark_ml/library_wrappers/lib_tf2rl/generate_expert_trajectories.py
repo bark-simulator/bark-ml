@@ -123,26 +123,39 @@ def create_scenario(param_server: ParameterServer):
             param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EndTs"])
 
 
-def calculate_action(current_observation, next_observation, current_time, next_time, wheel_base):
+def calculate_action(observations, time_step=0.1, wheel_base=2.7):
     """
     Calculate the action based on the cars previous and current state
     """
     import math
+    from numpy import polyfit
 
-    delta_t = next_time - current_time
-    if delta_t == 0:
-        return [0, 0]
+    thetas = []
+    velocities = []
+    for element in observations:
+        thetas.append(element[2])
+        velocities.append(element[3])
 
-    action = []
+    # Calculate streering angle and acceleration
+    d_theta = 0
+    acceleration = 0
+    if len(observations) == 2:
+        # Calculate streering angle
+        d_theta = (thetas[1] - thetas[0]) / time_step
+        # Calculate acceleration
+        acceleration = (velocities[2] - velocities[1]) / time_step
+    else:
+        assert(len(observations) == 3)
+        # Fit thetas into a parabola and get the derivative
+        p = polyfit([0, time_step, 2*time_step], thetas, 2)
+        d_theta = 2*p[0]*thetas[1] + p[1]
 
-    # Calculate streering angle
-    d_theta = (next_observation[2] - current_observation[2]) / delta_t
+        # Fit velocities into a parabola and get the derivative
+        p = polyfit([0, time_step, 2*time_step], velocities, 2)
+        acceleration = 2*p[0]*velocities[1] + p[1]
+
     steering_angle = math.atan(wheel_base * d_theta)
-    action.append(steering_angle)
-
-    # Calculate acceleration
-    acceleration = (next_observation[3] - current_observation[3]) / delta_t
-    action.append(acceleration)
+    action = [steering_angle, acceleration]
 
     return action
 
@@ -230,13 +243,18 @@ def generate_expert_trajectories_for_scenario(param_server, speed_factor=1):
             current_time = agent_trajectory["time"][i]
             next_time = agent_trajectory["time"][i + 1]
 
-            current_observation = agent_trajectory["obs"][i]
-            next_observation = agent_trajectory["obs"][i + 1]
-
-            action = calculate_action(
-                current_observation, next_observation, current_time, next_time, 2.7)
-            expert_trajectories[agent_id]['act'].append(action)
             expert_trajectories[agent_id]['done'].append(0)
+
+            current_obs = []
+            if i == 0:
+                current_obs = agent_trajectory["obs"][i:i + 2]
+            else:
+                current_obs = agent_trajectory["obs"][i - 1:i + 2]
+
+            time_step = next_time - current_time
+            action = calculate_action(current_obs, time_step, 2.7)
+            
+            expert_trajectories[agent_id]['act'].append(action)
 
         # add zeros depending on the action-state size
         expert_trajectories[agent_id]['act'].append(
