@@ -5,135 +5,8 @@ import numpy as np
 import shutil
 from bark_ml.library_wrappers.lib_tf2rl.generate_expert_trajectories \
     import *
-
-# Please add a new test case class for every function you test.
-# Modularise the tests as much as possible, but on a reasonable scale.
-
-interaction_data_set_mock_path = os.path.join(
-    os.path.dirname(__file__), 'data/interaction_data_set_mock')
-known_key = ('DR_DEU_Merging_MT/DR_DEU_Merging_MT_v01_shifted',
-             'DR_DEU_Merging_MT/vehicle_tracks_013')
-
-
-class CalculateActionTests(unittest.TestCase):
-    """
-    Tests for the calculate action function.
-    """
-
-    def test_calculate_action(self):
-        """
-        Test: Calculate the action based on two consecutive observations.
-        """
-        # TODO Add more working examples as just this single
-        observations = [[0] * 12, [1000] * 12]
-        timestamps = [1000, 2000]
-
-        expected_action = [1.2160906747839564, 1.0]
-
-        self.assertEqual(
-            expected_action,
-            calculate_action(observations[1], observations[0], timestamps[1], timestamps[0], 2.7))
-
-    def test_calculate_action_timestamps_are_equal(self):
-        """
-        Test: Calculate the action based on two consecutive observations.
-        """
-        observations = [[0] * 12, [1000] * 12]
-        timestamps = [1000, 1000]
-
-        expected_action = [0.0, 0.0]
-
-        self.assertEqual(
-            expected_action,
-            calculate_action(observations[1], observations[0], timestamps[1], timestamps[0], 2.7))
-
-
-class GetMapAndTrackFilesTests(unittest.TestCase):
-    """
-    Tests: get_track_files and get_map_files
-    """
-
-    def test_get_track_files(self):
-        """
-        Test: get_track_files
-        """
-        track_files = get_track_files(interaction_data_set_mock_path)
-
-        self.assertIs(len(track_files), 1)
-        self.assertIs(track_files[0].endswith(
-            'bark_ml/tests/py_library_tf2rl_tests/data/interaction_data_set_mock/DR_DEU_Merging_MT/tracks/vehicle_tracks_013.csv'), True)
-
-    def test_load_map_files(self):
-        """
-        Test: get_map_files
-        """
-        map_files = get_map_files(interaction_data_set_mock_path)
-
-        self.assertIs(len(map_files), 1)
-        self.assertIs(map_files[0].endswith(
-            'bark_ml/tests/py_library_tf2rl_tests/data/interaction_data_set_mock/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_v01_shifted.xodr'), True)
-
-    def test_interaction_data_set_path_invalid(self):
-        """
-        Test: The given path is not an interaction dataset path
-        """
-        with self.assertRaises(ValueError):
-            map_files = get_map_files(os.path.dirname(__file__))
-
-
-class CreateParameterServersForScenariosTests(unittest.TestCase):
-    """
-    Tests: create_parameter_servers_for_scenarios
-    """
-
-    def test_create_parameter_servers_for_scenarios(self):
-        """
-        Test: Valid parameter server
-        """
-
-        param_servers = create_parameter_servers_for_scenarios(
-            interaction_data_set_mock_path)
-        self.assertIn(known_key, param_servers)
-
-        param_server = param_servers[known_key]
-        assert param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["MapFilename"].endswith(
-            'bark_ml/tests/py_library_tf2rl_tests/data/interaction_data_set_mock/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_v01_shifted.xodr')
-        assert param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackFilename"].endswith(
-            'bark_ml/tests/py_library_tf2rl_tests/data/interaction_data_set_mock/DR_DEU_Merging_MT/tracks/vehicle_tracks_013.csv')
-
-        track_ids = [i for i in range(1, 87) if i != 18]
-        self.assertEqual(param_server["Scenario"]["Generation"]
-                         ["InteractionDatasetScenarioGeneration"]["TrackIds"], track_ids)
-
-        self.assertEqual(param_server["Scenario"]["Generation"]
-                         ["InteractionDatasetScenarioGeneration"]["StartTs"], 100)
-        self.assertEqual(param_server["Scenario"]["Generation"]
-                         ["InteractionDatasetScenarioGeneration"]["EndTs"], 327300)
-
-        param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EgoTrackId"] = 1
-
-
-class CreateScenarioTests(unittest.TestCase):
-    """
-    Tests: create_scenario
-    """
-
-    def test_create_scenario(self):
-        """
-        Test: Valid scenario
-        """
-        param_servers = create_parameter_servers_for_scenarios(
-            interaction_data_set_mock_path)
-        self.assertIn(known_key, param_servers)
-
-        scenario, start_ts, end_ts = create_scenario(param_servers[known_key])
-        self.assertEqual(start_ts, 100)
-        self.assertEqual(end_ts, 327300)
-
-        assert scenario.map_file_name.endswith(
-            'bark_ml/tests/py_library_tf2rl_tests/data/interaction_data_set_mock/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_v01_shifted.xodr')
-        self.assertEqual(len(scenario._agent_list), 86)
-
+from base_tests import *
+from simulation_based_tests import *
 
 class SimulationBasedTests(unittest.TestCase):
     """
@@ -158,8 +31,7 @@ class SimulationBasedTests(unittest.TestCase):
         self.param_server = param_server
         self.expert_trajectories = {}
         self.sim_time_step = 100
-
-
+        
 class SimulateScenarioTests(SimulationBasedTests):
     """
     Tests: simulate_scenario
@@ -171,22 +43,6 @@ class SimulateScenarioTests(SimulationBasedTests):
         """
         self.expert_trajectories = simulate_scenario(
             self.param_server, sim_time_step=self.sim_time_step)
-
-    @unittest.skip("Does not work when using bazel test :unit_tests" + " Comment out this line to run it, but comment it again before pushing and running the :unit_tests")
-    def test_simulate_scenario_pygame(self):
-        """
-        Test: Replay scenario with pygame renderer
-        """
-        self.expert_trajectories = simulate_scenario(
-            self.param_server, sim_time_step=self.sim_time_step, renderer="pygame")
-
-    @unittest.skip("Does not work when using bazel test :unit_tests" + " Comment out this line to run it, but comment it again before pushing and running the :unit_tests")
-    def test_simulate_scenario_matplotlib(self):
-        """
-        Test: Replay scenario with matplotlib renderer
-        """
-        self.expert_trajectories = simulate_scenario(
-            self.param_server, sim_time_step=self.sim_time_step, renderer="matplotlib")
 
     def tearDown(self):
         """
@@ -270,7 +126,6 @@ class GenerateExpertTrajectoriesForScenarioTests(SimulationBasedTests):
         """
         Test: generate_expert_trajectories_for_scenario
         """
-        self.setUp()
         self.expert_trajectories = generate_expert_trajectories_for_scenario(self.param_server, self.sim_time_step)
 
         for agent_id in self.expert_trajectories:
@@ -298,14 +153,48 @@ class StoreExpertTrajectoriesTests(unittest.TestCase):
         track = "test/test_track_name"
         expert_trajectories_path = os.path.join(os.path.dirname(__file__), 'test_store_expert_trajectories')
         expert_trajectories = {'foo': 'bar'}
-        store_expert_trajectories(map, track, expert_trajectories_path, expert_trajectories)
+        file_name = store_expert_trajectories(map, track, expert_trajectories_path, expert_trajectories)
 
-        file_name = os.path.join(expert_trajectories_path, 'test_map_name', 'test_track_name.pkl')
         with open(file_name, 'rb') as pickle_file:
             loaded_expert_trajectories = dict(pickle.load(pickle_file))
             self.assertDictEqual(loaded_expert_trajectories, expert_trajectories)
         shutil.rmtree(expert_trajectories_path)
 
+class GenerateAndStoreExpertTrajectories(SimulationBasedTests):
+    """
+    Tests: generate_and_store_expert_trajectories
+    """
+    def test_generate_and_store_expert_trajectories(self):
+        """
+        Test: generate_and_store_expert_trajectories
+        """
+        self.setUp()
+        store_path = os.path.join(os.path.dirname(__file__), 'test_generate_and_store_expert_trajectories')
+        filename = generate_and_store_expert_trajectories(known_key[0], known_key[1], store_path, self.param_server, sim_time_step=self.sim_time_step)
+
+        expected_path = os.path.join(os.path.dirname(__file__), 'data', 'expert_trajectories', 'vehicle_tracks_013.pkl') 
+        with open(expected_path, 'rb') as pickle_file:
+            loaded_expert_trajectories = dict(pickle.load(pickle_file))
+
+        with open(filename, 'rb') as pickle_file:
+            generated_expert_trajectories = dict(pickle.load(pickle_file))
+
+        for agent_id in loaded_expert_trajectories:
+            self.assertIn(agent_id, generated_expert_trajectories)
+
+            for key, values in loaded_expert_trajectories[agent_id].items():
+                self.assertIn(key, generated_expert_trajectories[agent_id])
+
+                generated_values = generated_expert_trajectories[agent_id][key]
+                for i in range(len(generated_values)):
+                    if type(generated_values[i]) == list:
+                        self.assertListEqual(generated_values[i], values[i])
+                    elif type(generated_values[i]) == np.ndarray:
+                        assert (generated_values[i] == values[i]).all()
+                    else:
+                        self.assertEqual(generated_values[i], values[i])
+
+        shutil.rmtree(store_path)
 
 if __name__ == '__main__':
     unittest.main()

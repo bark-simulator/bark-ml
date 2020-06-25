@@ -15,13 +15,13 @@
 			}
 		},
 		{
-			"name": "Python: bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests",
+			"name": "Python: bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/base_tests",
 			"type": "python",
 			"request": "launch",
-			"program": "${workspaceFolder}/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests.py",
+			"program": "${workspaceFolder}/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/base_tests.py",
 			"console": "integratedTerminal",
 			"env": {
-				"PYTHONPATH": "${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests.runfiles/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests.runfiles/bark_project/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests.runfiles/com_github_interaction_dataset_interaction_dataset/python/:"
+				"PYTHONPATH": "${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/base_tests.runfiles/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/base_tests.runfiles/bark_project/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/base_tests.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/base_tests.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/base_tests.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/base_tests.runfiles/com_github_interaction_dataset_interaction_dataset/python/:"
 			}
 		},
 		{

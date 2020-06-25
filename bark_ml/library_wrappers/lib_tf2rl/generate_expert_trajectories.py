@@ -178,6 +178,8 @@ def store_expert_trajectories(map: str, track: str, expert_trajectories_path: st
         pickle.dump(expert_trajectories, handle,
                     protocol=pickle.HIGHEST_PROTOCOL)
 
+    return filename
+
 
 def simulate_scenario(param_server, sim_time_step: float, renderer: str = ""):
     """
@@ -263,17 +265,17 @@ def generate_expert_trajectories_for_scenario(param_server, sim_time_step: float
     return expert_trajectories
 
 
-def generate_and_store_expert_trajectories(map: str, track: str, expert_trajectories_path: str, param_server, sim_time_step: float, renderer: str):
+def generate_and_store_expert_trajectories(map: str, track: str, expert_trajectories_path: str, param_server, sim_time_step: float, renderer: str = ""):
     """
     Generates and stores the expert trajectories for one scenario.
     """
     print(f"********** Simulating: {map}, {track} **********")
     expert_trajectories = generate_expert_trajectories_for_scenario(
         param_server, sim_time_step, renderer)
-    store_expert_trajectories(
+    filename = store_expert_trajectories(
         map, track, expert_trajectories_path, expert_trajectories)
     print(f"********** Finished: {map}, {track} **********")
-
+    return filename
 
 def main_function(argv):
     """ main """

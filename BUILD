@@ -7,7 +7,8 @@ test_suite(
     "//bark_ml/tests:py_behavior_tests",
     "//bark_ml/tests:py_library_tfa_tests",
     "//bark_ml/tests/py_library_tf2rl_tests:load_expert_trajectories_tests",
-    "//bark_ml/tests/py_library_tf2rl_tests:generate_expert_trajectories_tests",
+    "//bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests:base_tests",
+    "//bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests:simulation_based_tests",
     "//bark_ml/tests/py_library_tf2rl_tests:load_save_utils_tests",
     "//utils/tests:test_generate_launch_configuration",
   ]
