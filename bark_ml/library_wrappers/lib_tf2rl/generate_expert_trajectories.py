@@ -8,6 +8,8 @@ from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 import multiprocessing
 
+from bark_ml.library_wrappers.lib_tf2rl.load_save_utils import *
+
 # Bark
 from modules.runtime.scenario.scenario_generation.interaction_dataset_scenario_generation import \
     InteractionDatasetScenarioGeneration
@@ -34,27 +36,6 @@ flags.DEFINE_string("expert_trajectories_path",
 flags.DEFINE_bool("debug",
                   help="Debug mode.",
                   default=False)
-
-
-def list_files_in_dir(dir_path: str, file_ending: str):
-    """
-    Lists all files in the given dir ending with the given ending.
-    """
-    files = [f for f in os.listdir(
-        dir_path) if os.path.isfile(os.path.join(dir_path, f))]
-    files = [f for f in files if str(f).endswith(file_ending)]
-    files = [os.path.join(dir_path, f) for f in files]
-    return files
-
-
-def list_dirs_in_dir(dir_path: str):
-    """
-    Lists all dirs in the given dir.
-    """
-    dirs = [f for f in os.listdir(
-        dir_path) if not os.path.isfile(os.path.join(dir_path, f)) and not f == '.git']
-    dirs = [os.path.join(dir_path, f) for f in dirs]
-    return dirs
 
 
 def get_map_files(interaction_dataset_path: str):
