@@ -22,7 +22,7 @@ class CalculateActionTests(unittest.TestCase):
 
         expected_action = [1.2160906747839564, 1.0]
 
-        self.assertEquals(
+        self.assertEqual(
             expected_action,
             calculate_action(observations[1], observations[0], timestamps[1], timestamps[0], 2.7))
 
@@ -35,7 +35,7 @@ class CalculateActionTests(unittest.TestCase):
 
         expected_action = [0.0, 0.0]
 
-        self.assertEquals(
+        self.assertEqual(
             expected_action,
             calculate_action(observations[1], observations[0], timestamps[1], timestamps[0], 2.7))
 
