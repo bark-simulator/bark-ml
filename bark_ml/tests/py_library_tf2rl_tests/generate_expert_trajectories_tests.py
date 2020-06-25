@@ -147,13 +147,14 @@ class SimulateScenarioTests(SimulationBasedTests):
         """
         self.expert_trajectories = simulate_scenario(self.param_server, sim_time_step=100)
 
+    @unittest.skip("Does not work when using bazel test :unit_tests" + " Comment out this line to run it, but comment it again before pushing and running the :unit_tests")    
     def test_simulate_scenario_pygame(self):
         """
         Test: Replay scenario with pygame renderer
         """
         self.expert_trajectories = simulate_scenario(self.param_server, sim_time_step=100, renderer="pygame")
 
-    @unittest.skip("Takes long for rendering")    
+    @unittest.skip("Does not work when using bazel test :unit_tests" + " Comment out this line to run it, but comment it again before pushing and running the :unit_tests")    
     def test_simulate_scenario_matplotlib(self):
         """
         Test: Replay scenario with matplotlib renderer
