@@ -42,7 +42,6 @@ class CalculateActionTests(unittest.TestCase):
             expected_action,
             calculate_action(observations[1], observations[0], timestamps[1], timestamps[0], 2.7))
 
-
 class GetMapAndTrackFilesTests(unittest.TestCase):
     """
     Tests: get_track_files and get_map_files
@@ -73,14 +72,15 @@ class GetMapAndTrackFilesTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             map_files = get_map_files(os.path.dirname(__file__))
 
-class CreateParameterServersForScenariosTest(unittest.TestCase):
+class CreateParameterServersForScenariosTests(unittest.TestCase):
     """
     Tests: create_parameter_servers_for_scenarios
     """
     def test_create_parameter_servers_for_scenarios(self):
         """
-        Test: 
+        Test: Valid parameter server
         """
+
         param_servers = create_parameter_servers_for_scenarios(interaction_data_set_mock_path)
         self.assertIn(known_key, param_servers)
 
@@ -96,6 +96,24 @@ class CreateParameterServersForScenariosTest(unittest.TestCase):
 
         param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EgoTrackId"] = 1
 
+class CreateScenarioTests(unittest.TestCase):
+    """
+    Tests: create_scenario
+    """
+
+    def test_create_scenario(self):
+        """
+        Test: Valid scenario
+        """
+        param_servers = create_parameter_servers_for_scenarios(interaction_data_set_mock_path)
+        self.assertIn(known_key, param_servers)
+
+        scenario, start_ts, end_ts = create_scenario(param_servers[known_key])
+        self.assertEqual(start_ts, 100)
+        self.assertEqual(end_ts, 327300)
+
+        assert scenario.map_file_name.endswith('bark_ml/tests/py_library_tf2rl_tests/data/interaction_data_set_mock/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_v01_shifted.xodr')
+        self.assertEqual(len(scenario._agent_list), 86)
 
 if __name__ == '__main__':
     unittest.main()
