@@ -30,7 +30,7 @@
 			"request": "launch",
 			"program": "${workspaceFolder}/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.py",
 			"console": "integratedTerminal",
-			"args": ["--interaction_dataset_path=~/Repositories/interaction_dataset", "--expert_trajectories_path=~/Repositories/gail-4-bark/bark-ml/expert_trajectories", "--debug", "--visual"],
+			"args": ["--interaction_dataset_path=~/Repositories/interaction_dataset", "--expert_trajectories_path=~/Repositories/gail-4-bark/bark-ml/expert_trajectories", "--debug", "--renderer=matplotlib"],
 			"env": {
 				"PYTHONPATH": "${workspaceFolder}/bazel-bark-ml/bark_ml/commons/:${workspaceFolder}/bazel-bin/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.runfiles/:${workspaceFolder}/bazel-bin/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.runfiles/bark_project/:${workspaceFolder}/bazel-bin/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.runfiles/com_github_interaction_dataset_interaction_dataset/python/"
 			}
