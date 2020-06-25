@@ -56,7 +56,7 @@ class LoadSaveUtilsTestsTests(unittest.TestCase):
         """
         Test: List a file instead of a directory
         """
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             list_files_in_dir(self.files_txt[0])
     
 
@@ -84,7 +84,7 @@ class LoadSaveUtilsTestsTests(unittest.TestCase):
         """
         Test: List a file instead of a directory
         """
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             list_dirs_in_dir(self.files_txt[0])
 
 if __name__ == '__main__':
