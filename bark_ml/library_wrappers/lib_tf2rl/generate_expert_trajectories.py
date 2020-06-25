@@ -9,8 +9,6 @@ from concurrent.futures import ThreadPoolExecutor
 import multiprocessing
 import numpy as np
 
-from modules.runtime.viewer.pygame_viewer import PygameViewer
-from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from modules.runtime.viewer.video_renderer import VideoRenderer
 
 from bark_ml.library_wrappers.lib_tf2rl.load_save_utils import *
@@ -197,8 +195,10 @@ def simulate_scenario(param_server, sim_time_step: float, renderer: str = ""):
         fig = plt.figure(figsize=[10, 10])
 
         if renderer == "pygame":
+            from modules.runtime.viewer.pygame_viewer import PygameViewer
             viewer = PygameViewer(params=param_server, use_world_bounds=True, axis=fig.gca())
         else:
+            from modules.runtime.viewer.matplotlib_viewer import MPViewer
             viewer = MPViewer(params=param_server, use_world_bounds=True, axis=fig.gca())
 
     # Run the scenario in a loop
@@ -218,14 +218,14 @@ def simulate_scenario(param_server, sim_time_step: float, renderer: str = ""):
             expert_trajectories[agent_id]['obs'].append(values['obs'])
             expert_trajectories[agent_id]['time'].append(values['time'])
             expert_trajectories[agent_id]['merge'].append(values['merge'])
-            expert_trajectories[agent_id]['wheelbase'].append(scenario._agent_list)
+            expert_trajectories[agent_id]['wheelbase'].append(2.7)
     
     if renderer:
         plt.close()
     return expert_trajectories
 
 
-def generate_expert_trajectories_for_scenario(param_server, sim_time_step: float, renderer: str):
+def generate_expert_trajectories_for_scenario(param_server, sim_time_step: float, renderer: str = ""):
     """
     Simulates a scenario, measures the environment and calculates the actions.
     """
@@ -287,7 +287,7 @@ def main_function(argv):
     param_servers = create_parameter_servers_for_scenarios(
         interaction_dataset_path)
 
-    sim_time_step = 1000
+    sim_time_step = 100
     if not FLAGS.debug:
         with ThreadPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
             futures = []
