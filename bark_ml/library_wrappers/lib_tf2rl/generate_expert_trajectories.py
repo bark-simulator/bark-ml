@@ -166,6 +166,15 @@ def measure_world(world_state, observer):
         agent_id = obs_world.ego_agent.id
         obs = np.array(observer.Observe(obs_world))
         observations[agent_id] = {
+            # TODO Discuss the 'obs'. 
+            # obs_world should be on what we train, maybe stacked with the obs.
+            # The obs_world is what our cars sensors are measuring.
+            # The 'obs' are just the ego state + two nearest cars.
+            # We should change this to use obs_world as 'obs'
+            # We have to ask Tobias if the observer is a class that the car can access
+            # when our code is deployed. I don't think so. I think the obs_world is 
+            # what we should use.
+            # "world_state": obs_world,
             "obs": obs,
             "time": world_state.time,
             "merge": None
