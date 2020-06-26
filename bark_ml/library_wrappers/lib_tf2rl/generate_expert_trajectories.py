@@ -122,6 +122,10 @@ def create_scenario(param_server: ParameterServer):
             param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["StartTs"],
             param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EndTs"])
 
+def is_collinear(values, time_step, threshold=1e-6):
+    y1 = values[1] - values[0]
+    y2 = values[2] - values[0]
+    return abs(y2 - 2 * y1) < threshold
 
 def calculate_action(observations, time_step=0.1, wheel_base=2.7):
     """
@@ -129,6 +133,9 @@ def calculate_action(observations, time_step=0.1, wheel_base=2.7):
     """
     import math
     from numpy import polyfit
+
+    if time_step == 0:
+        return [0.0, 0.0]
 
     thetas = []
     velocities = []
@@ -143,16 +150,27 @@ def calculate_action(observations, time_step=0.1, wheel_base=2.7):
         # Calculate streering angle
         d_theta = (thetas[1] - thetas[0]) / time_step
         # Calculate acceleration
-        acceleration = (velocities[2] - velocities[1]) / time_step
+        acceleration = (velocities[1] - velocities[0]) / time_step
     else:
         assert(len(observations) == 3)
-        # Fit thetas into a parabola and get the derivative
-        p = polyfit([0, time_step, 2*time_step], thetas, 2)
-        d_theta = 2*p[0]*thetas[1] + p[1]
 
-        # Fit velocities into a parabola and get the derivative
-        p = polyfit([0, time_step, 2*time_step], velocities, 2)
-        acceleration = 2*p[0]*velocities[1] + p[1]
+        # Check collinearity of theta values
+        if is_collinear(thetas, time_step):
+            # Fit thetas into a line and get the derivative
+            d_theta = (thetas[2] - thetas[1]) / time_step
+        else:
+            # Fit thetas into a parabola and get the derivative
+            p = polyfit([0, time_step, 2*time_step], thetas, 2)
+            d_theta = 2*p[0]*thetas[1] + p[1]
+
+        # Check collinearity of velocity values
+        if is_collinear(velocities, time_step):
+            # Fit fit velocities into a line and get the derivative
+            acceleration = (velocities[2] - velocities[1]) / time_step
+        else:
+            # Fit velocities into a parabola and get the derivative
+            p = polyfit([0, time_step, 2*time_step], velocities, 2)
+            acceleration = 2*p[0]*velocities[1] + p[1]
 
     steering_angle = math.atan(wheel_base * d_theta)
     action = [steering_angle, acceleration]
