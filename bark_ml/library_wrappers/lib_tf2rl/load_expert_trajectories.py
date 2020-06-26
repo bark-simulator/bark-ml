@@ -1,6 +1,47 @@
 import os
 import pickle
+import numpy as np
+from collections import defaultdict
 
+from bark_ml.library_wrappers.lib_tf2rl.load_save_utils import *
+
+def load_expert_trajectories(dirname: str):
+    """
+    Loads all expert trajectories and flattens the observations and actions.
+    """
+    expert_trajectory_files = load_expert_trajectory_files(dirname)
+    expert_trajectories = defaultdict(list)
+
+    for _, content in expert_trajectory_files.items():
+        for _, per_agent_values in content.items():
+            for key, value in per_agent_values.items():
+                expert_trajectories[key].extend(value)
+
+    dt = expert_trajectories['time'][1] - expert_trajectories['time'][0]
+
+    return {
+        'obses': np.array(expert_trajectories['obs'])[:-1],
+        'next_obses': np.array(expert_trajectories['obs'])[1:],
+        'acts': np.array(expert_trajectories['act'])[:-1],
+        # 'dones': expert_trajectories[1:],
+        # 'merges': expert_trajectories[1:]
+        }, dt
+
+def load_expert_trajectory_files(dirname: str):
+    """
+    Loads all found pickle files in the directory.
+    """
+    pickle_files = list_files_in_dir(dirname, file_ending='.pkl')
+    expert_trajectories = {}
+
+    for pickle_file in pickle_files:
+        loaded_expert_trajectories = load_expert_trajectory_file(pickle_file)
+        if loaded_expert_trajectories:
+            expert_trajectories[pickle_file] = loaded_expert_trajectories
+
+    if not expert_trajectories:
+        raise ValueError(f"Could not find valid expert trajectories in {dirname}.")
+    return expert_trajectories
 
 def load_expert_trajectory_file(filepath: str):
     """
@@ -21,8 +62,6 @@ def load_expert_trajectory_file(filepath: str):
                 "done" not in value or
                 "time" not in value or
                 "merge" not in value):
-            raise ValueError(f"{filepath} does not contain valid "
-                             "expert trajectories.\n"
-                             f"{key}, {value} are invalid.")
+            return None
 
     return expert_trajectories
