@@ -5,140 +5,141 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Python: bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories",
+			"name": "Python: bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/base_tests",
+			"type": "python",
+			"request": "launch",
+			"program": "${workspaceFolder}/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/base_tests.py",
+			"console": "integratedTerminal",
+			"env": {
+				"PYTHONPATH": "${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/base_tests.runfiles/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/base_tests.runfiles/bark_project/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/base_tests.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/base_tests.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/base_tests.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/base_tests.runfiles/com_github_interaction_dataset_interaction_dataset/python/:"
+			}
+		},
+		{
+			"name": "Python: bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/simulation_based_tests",
+			"type": "python",
+			"request": "launch",
+			"program": "${workspaceFolder}/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/simulation_based_tests.py",
+			"console": "integratedTerminal",
+			"env": {
+				"PYTHONPATH": "${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/simulation_based_tests.runfiles/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/simulation_based_tests.runfiles/bark_project/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/simulation_based_tests.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/simulation_based_tests.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/simulation_based_tests.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/simulation_based_tests.runfiles/com_github_interaction_dataset_interaction_dataset/python/:"
+			}
+		},
+		{
+			"name": "Python: bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/rendered_tests",
+			"type": "python",
+			"request": "launch",
+			"program": "${workspaceFolder}/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/rendered_tests.py",
+			"console": "integratedTerminal",
+			"env": {
+				"PYTHONPATH": "${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/rendered_tests.runfiles/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/rendered_tests.runfiles/bark_project/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/rendered_tests.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/rendered_tests.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/rendered_tests.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/rendered_tests.runfiles/com_github_interaction_dataset_interaction_dataset/python/:"
+			}
+		},
+		{
+			"name": "Python: bark_ml/tests/py_library_tf2rl_tests/load_save_utils_tests",
+			"type": "python",
+			"request": "launch",
+			"program": "${workspaceFolder}/bark_ml/tests/py_library_tf2rl_tests/load_save_utils_tests.py",
+			"console": "integratedTerminal",
+			"env": {
+				"PYTHONPATH": "${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/load_save_utils_tests.runfiles/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/load_save_utils_tests.runfiles/bark_project/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/load_save_utils_tests.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/load_save_utils_tests.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/load_save_utils_tests.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/load_save_utils_tests.runfiles/com_github_interaction_dataset_interaction_dataset/python/:"
+			}
+		},
+		{
+			"name": "Python: bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories (DR_DEU_Merging_MT_v01_shifted)",
 			"type": "python",
 			"request": "launch",
 			"program": "${workspaceFolder}/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.py",
 			"console": "integratedTerminal",
-			"args": ["--interaction_dataset_path=~/Repositories/interaction_dataset", "--expert_trajectories_path=~/Repositories/gail-4-bark/bark-ml/expert_trajectories", "--debug"],
+			"args": ["--map_file=~/Repositories/interaction_dataset/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_v01_shifted.xodr", "--tracks_folder=~/Repositories/interaction_dataset/DR_DEU_Merging_MT/tracks", "--expert_trajectories_path=~/Repositories/gail-4-bark/bark-ml/expert_trajectories", "--renderer=pygame"],
 			"env": {
 				"PYTHONPATH": "${workspaceFolder}/bazel-bark-ml/bark_ml/commons/:${workspaceFolder}/bazel-bin/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.runfiles/:${workspaceFolder}/bazel-bin/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.runfiles/bark_project/:${workspaceFolder}/bazel-bin/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.runfiles/com_github_interaction_dataset_interaction_dataset/python/"
 			}
 		},
 		{
-			"name": "Python: bark_ml/tests/py_library_tf2rl_utils_tests",
+			"name": "Python: bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories (DR_DEU_Merging_MT_v01_shifted_extended)",
 			"type": "python",
 			"request": "launch",
-			"program": "${workspaceFolder}/bark_ml/tests/py_library_tf2rl_utils_tests.py",
+			"program": "${workspaceFolder}/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.py",
 			"console": "integratedTerminal",
+			"args": ["--map_file=~/Repositories/interaction_dataset/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_v01_shifted_extended.xodr", "--tracks_folder=~/Repositories/interaction_dataset/DR_DEU_Merging_MT/tracks", "--expert_trajectories_path=~/Repositories/gail-4-bark/bark-ml/expert_trajectories", "--renderer=pygame"],
 			"env": {
-				"PYTHONPATH": "${workspaceFolder}/bazel-bark-ml/bark_ml/commons/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_utils_tests.runfiles/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_utils_tests.runfiles/bark_project/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_utils_tests.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_utils_tests.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_utils_tests.runfiles/bark_ml/python/"
+				"PYTHONPATH": "${workspaceFolder}/bazel-bark-ml/bark_ml/commons/:${workspaceFolder}/bazel-bin/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.runfiles/:${workspaceFolder}/bazel-bin/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.runfiles/bark_project/:${workspaceFolder}/bazel-bin/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.runfiles/com_github_interaction_dataset_interaction_dataset/python/"
 			}
 		},
 		{
-			"name": "Python: examples/gail",
+			"name": "Python: bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories (DR_CHN_Merging_ZS_partial_v02)",
 			"type": "python",
 			"request": "launch",
-			"program": "${workspaceFolder}/examples/gail.py",
+			"program": "${workspaceFolder}/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.py",
 			"console": "integratedTerminal",
+			"args": ["--map_file=~/Repositories/interaction_dataset/DR_CHN_Merging_ZS/map/DR_CHN_Merging_ZS_partial_v02.xodr", "--tracks_folder=~/Repositories/interaction_dataset/DR_CHN_Merging_ZS/tracks", "--expert_trajectories_path=~/Repositories/gail-4-bark/bark-ml/expert_trajectories", "--renderer=pygame"],
 			"env": {
-				"PYTHONPATH": "${workspaceFolder}/bazel-bark-ml/bark_ml/commons/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_ml/python/"
+				"PYTHONPATH": "${workspaceFolder}/bazel-bark-ml/bark_ml/commons/:${workspaceFolder}/bazel-bin/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.runfiles/:${workspaceFolder}/bazel-bin/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.runfiles/bark_project/:${workspaceFolder}/bazel-bin/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/bark_ml/library_wrappers/lib_tf2rl/generate_expert_trajectories.runfiles/com_github_interaction_dataset_interaction_dataset/python/"
 			}
 		},
-		{
-			"name": "Python: Current File TF2RL",
-			"type": "python",
-			"request": "launch",
-			"program": "${file}",
-			"console": "integratedTerminal",
-			"env": {
-				"PYTHONPATH": "${workspaceFolder}/bazel-bin/tests/py_bark_agent_tests.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/tests/py_bark_agent_tests.runfiles/bark_project:${workspaceFolder}/bazel-bin/tests/py_bark_agent_tests.runfiles/bark_ml"
+			{
+				"name": "Python: bark_ml/tests/py_library_tf2rl_tests/load_expert_trajectories_tests",
+				"type": "python",
+				"request": "launch",
+				"program": "${workspaceFolder}/bark_ml/tests/py_library_tf2rl_tests/load_expert_trajectories_tests.py",
+				"console": "integratedTerminal",
+				"justMyCode": false,
+				"env": {
+					"PYTHONPATH": "${workspaceFolder}/bazel-bark-ml/bark_ml/commons/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/load_expert_trajectories_tests.runfiles/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/load_expert_trajectories_tests.runfiles/bark_project/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/load_expert_trajectories_tests.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/load_expert_trajectories_tests.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/load_expert_trajectories_tests.runfiles/bark_ml/python/"
+				}
 			},
-			"justMyCode": false,
-			"args": [
-				//"--help",
-				"--gpu",
-				"-1",
-				"--expert-path-dir",
-				"${workspaceFolder}/results/20200514T120031.302066_SAC_",
-				"--max-steps",
-				"20000",
-				//"--show-test-images",
-				//"--save-test-movie"
-			] 
-		},
-		{
-				"name": "Python: Current File",
+			{
+				"name": "Python: examples/gail",
+				"type": "python",
+				"request": "launch",
+				"program": "${workspaceFolder}/examples/gail.py",
+				"console": "integratedTerminal",
+				"env": {
+					"PYTHONPATH": "${workspaceFolder}/bazel-bark-ml/bark_ml/commons/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_ml/python/"
+				}
+			},
+			{
+				"name": "Python: examples/tfa",
+				"type": "python",
+				"request": "launch",
+				"program": "${workspaceFolder}/examples/tfa.py",
+				"console": "integratedTerminal",
+				"args": ["--mode=train", ],
+				"env": {
+					"PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/tfa.runfiles/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/com_github_interaction_dataset_interaction_dataset/python/:"
+				}
+			},	
+			{
+				"name": "Python: Current File TF2RL",
 				"type": "python",
 				"request": "launch",
 				"program": "${file}",
 				"console": "integratedTerminal",
 				"env": {
-					"PYTHONPATH": "${workspaceFolder}/bazel-bark-ml/bark_ml/commons/"
-			}
-		},
+					"PYTHONPATH": "${workspaceFolder}/bazel-bin/tests/py_bark_agent_tests.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/tests/py_bark_agent_tests.runfiles/bark_project:${workspaceFolder}/bazel-bin/tests/py_bark_agent_tests.runfiles/bark_ml"
+				},
+				"justMyCode": false,
+				"args": [
+					//"--help",
+					"--gpu",
+					"-1",
+					"--expert-path-dir",
+					"${workspaceFolder}/results/20200514T120031.302066_SAC_",
+					"--max-steps",
+					"20000",
+					//"--show-test-images",
+					//"--save-test-movie"
+				] 
+			},
 		{
-			"name":"Python: Current File",
-			"type":"python",
-			"request":"launch",
-			"program":"${file}",
-			"console":"integratedTerminal",
-			"env": {
-				"PYTHONPATH": "${workspaceFolder}/utils/python"
-			}
-		},
-		{
-			"name": "Python: examples/tfa",
+			"name": "Python: utils/tests/test_generate_launch_configuration",
 			"type": "python",
 			"request": "launch",
-			"program": "${workspaceFolder}/examples/tfa.py",
+			"program": "${workspaceFolder}/utils/tests/test_generate_launch_configuration.py",
 			"console": "integratedTerminal",
 			"env": {
-				"PYTHONPATH": "${workspaceFolder}/bazel-bark-ml/bark_ml/commons/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/python/"
-			},
-			"justMyCode": false,
-			"args": [
-				"--",
-				"--mode=train",
-				"--helpfull"
-				// "--train_out=<absolute-path-to-where-you-want-the-checkpoints-and-summaries>"
-			] 
+				"PYTHONPATH": "${workspaceFolder}/bazel-bin/utils/tests/test_generate_launch_configuration.runfiles/bark_ml/utils/python:"
+			}
 		},
-		{
-			"name": "Python: examples/gail",
-			"type": "python",
-			"request": "launch",
-			"program": "${workspaceFolder}/examples/gail.py",
-			"console": "integratedTerminal",
-			"env": {
-				"PYTHONPATH": "${workspaceFolder}/bazel-bark-ml/bark_ml/commons/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_ml/python/"
-			},
-			"justMyCode": false,
-			"args": [
-				"--",
-				"--mode=train",
-				"--helpfull"
-				// "--train_out=<absolute-path-to-where-you-want-the-checkpoints-and-summaries>"
-			] 
-		},
-			{
-					"name": "(gdb) Launch",
-					"type": "cppdbg",
-					"request": "launch",
-					"program": "${workspaceFolder}/bazel-bin/bark_ml/tests/observer_tests",
-					"args": [],
-					"stopAtEntry": false,
-					"cwd": "${workspaceFolder}",
-					"environment": [],
-					"externalConsole": false,
-					"setupCommands": [
-							{
-									"description": "Enable pretty-printing for gdb",
-									"text": "-enable-pretty-printing",
-									"ignoreFailures": true
-							}
-					]
-			},
-			{
-					"name": "(gdb) Attach",
-					"type": "cppdbg",
-					"request": "attach",
-					"program": "${workspaceFolder}/python/venv/bin/python3",
-					"cwd" : "${workspaceFolder}",
-					"additionalSOLibSearchPath":"${workspaceFolder}/bazel-bin/examples/tfa.runfiles/__main__/python",
-					"processId": "${command:pickProcess}",
-					"MIMode": "gdb",
-					"sourceFileMap" : {"/proc/self/cwd/": "${workspaceFolder}"}
-					}
 	]
 }
