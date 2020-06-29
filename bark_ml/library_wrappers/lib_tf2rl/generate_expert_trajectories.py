@@ -215,7 +215,9 @@ def simulate_scenario(param_server, sim_time_step: float, renderer: str = ""):
     sim_steps = int((end_ts - start_ts)/(sim_time_step))
     sim_time_step_seconds = sim_time_step / 1000
 
+    param_server["ML"]["StateObserver"]["MaxNumAgents"] = 3
     observer = NearestAgentsObserver(param_server)
+
     expert_trajectories = {}
     
     if renderer:
