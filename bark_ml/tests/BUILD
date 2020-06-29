@@ -119,6 +119,7 @@ py_test(
     tags=["no-sandbox"],
     visibility = ["//visibility:public"],
     size = "small",
+    timeout = "moderate"
 )
 
 py_test(
@@ -140,6 +141,7 @@ py_test(
     tags=["no-sandbox"],
     visibility = ["//visibility:public"],
     size = "small",
+    timeout = "moderate"
 )
 
 filegroup(
