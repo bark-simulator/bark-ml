@@ -5,6 +5,26 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
+			"name": "Python: bark_ml/tests/py_library_tf2rl_tests/py_gail_gym_training_tests",
+			"type": "python",
+			"request": "launch",
+			"program": "${workspaceFolder}/bark_ml/tests/py_library_tf2rl_tests/py_gail_gym_training_tests.py",
+			"console": "integratedTerminal",
+			"env": {
+				"PYTHONPATH": "${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/py_gail_gym_training_tests.runfiles/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/py_gail_gym_training_tests.runfiles/bark_project/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/py_gail_gym_training_tests.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/py_gail_gym_training_tests.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/py_gail_gym_training_tests.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/py_gail_gym_training_tests.runfiles/com_github_interaction_dataset_interaction_dataset/python/:"
+			}
+		},
+		{
+			"name": "Python: bark_ml/tests/py_library_tf2rl_tests/gail_data/run_sac",
+			"type": "python",
+			"request": "launch",
+			"program": "${workspaceFolder}/bark_ml/tests/py_library_tf2rl_tests/gail_data/run_sac.py",
+			"console": "integratedTerminal",
+			"env": {
+				"PYTHONPATH": "${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/gail_data/run_sac.runfiles/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/gail_data/run_sac.runfiles/bark_project/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/gail_data/run_sac.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/gail_data/run_sac.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/gail_data/run_sac.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/gail_data/run_sac.runfiles/com_github_interaction_dataset_interaction_dataset/python/:"
+			}
+		},
+		{
 			"name": "Python: bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/base_tests",
 			"type": "python",
 			"request": "launch",

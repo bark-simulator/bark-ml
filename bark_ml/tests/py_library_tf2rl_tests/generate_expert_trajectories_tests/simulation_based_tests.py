@@ -168,7 +168,6 @@ class GenerateAndStoreExpertTrajectories(SimulationBasedTests):
         """
         Test: generate_and_store_expert_trajectories
         """
-        self.setUp()
         store_path = os.path.join(os.path.dirname(__file__), 'test_generate_and_store_expert_trajectories')
         filename = generate_and_store_expert_trajectories(known_key[0], known_key[1], store_path, self.param_server, sim_time_step=self.sim_time_step)
 
