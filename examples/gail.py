@@ -1,10 +1,3 @@
-# Copyright (c) 2020 Patrick Hart, Julian Bernhard,
-# Klemens Esterle, Tobias Kessler
-#
-# This software is released under the MIT License.
-# https://opensource.org/licenses/MIT
-
-# TensorFlow Agents (https://github.com/tensorflow/agents) example
 import os
 from pathlib import Path
 
@@ -33,15 +26,30 @@ flags.DEFINE_enum("mode",
 
 flags.DEFINE_string("train_out",
                   help="The absolute path to where the checkpoints and summaries are saved during training.",
-                  default=os.path.join(Path.home(), ".bark-ml/gail"))
+                  # default=os.path.join(Path.home(), ".bark-ml/gail")
+                  default=os.path.join(Path.home(), "")
+                  )
+
+flags.DEFINE_string("test_env",
+                  help="Example environment in accord with tf2rl to test our code.",
+                  default="Pendulum-v0"
+                  )
+
+flags.DEFINE_string("gpu",
+                  help="-1 for CPU, 0 for GPU",
+                  default=0
+                  )
 
 
 def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/gail_params.json")
   # params = ParameterServer()
-  params["ML"]["BehaviorGAILAgents"]["CheckpointPath"] = os.path.join(FLAGS.train_out, "checkpoints")
-  params["ML"]["GAILRunner"]["SummaryPath"] = os.path.join(FLAGS.train_out, "summary")
+  # changing the logging directories if not the default is used. (Which would be the same as it is in the json file.)
+  params["ML"]["GAILRunner"]["tf2rl"]["logdir"] = os.path.join(FLAGS.train_out, "logs", "bark")
+  params["ML"]["GAILRunner"]["tf2rl"]["model_dir"] = os.path.join(FLAGS.train_out, "models", "bark")
+
   params["World"]["remove_agents_out_of_map"] = True
+  params["ML"]["Settings"]["GPUUse"] = FLAGS.gpu
 
   # create environment
   bp = ContinuousMergingBlueprint(params,
@@ -50,7 +58,18 @@ def run_configuration(argv):
   env = SingleAgentRuntime(blueprint=bp,
                            render=False)
 
-  # GAIL agent
+  # Only for test purposes
+  # env = gym.make(FLAGS.test_env)
+
+  # SAC-agent
+  # sac_agent = BehaviorSACAgent(environment=env,
+  #                              params=params)
+  # env.ml_behavior = sac_agent
+  # runner = SACRunner(params=params,
+  #                    environment=env,
+  #                    agent=sac_agent)
+
+  # GAIL-agent
   gail_agent = BehaviorGAILAgent(environment=env,
                                params=params)
   env.ml_behavior = gail_agent

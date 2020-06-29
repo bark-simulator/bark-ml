@@ -64,6 +64,6 @@ class TF2RLRunner:
         action = self._agent.Act(obs)
         obs, reward, is_terminal, _ = self._environment.step(action)
         print(reward)
-        self._environment.render()
+        _ = self._environment.render()
 
   

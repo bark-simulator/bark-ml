@@ -162,9 +162,16 @@ web/node_modules
 *.img
 .vscode/.vs_code_bazel_build/vs_code_aspect.bzl
 .vscode/.vs_code_bazel_build/BUILD
+.vscode/*.code-workspace
 tests/data/database_maps_DR_DEU_Merging_MT_shifted.xodr
+
 *.png
 *.p
 
 /checkpoints/**
 **/expert_trajectories/**
+
+# GAIL-TF2RL tests
+bark_ml/tests/gail_data/expert_data/*
+bark_ml/tests/gail_data/logs/*
+bark_ml/tests/gail_data/models/*
