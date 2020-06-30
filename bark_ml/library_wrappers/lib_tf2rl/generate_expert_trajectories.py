@@ -46,6 +46,7 @@ flags.DEFINE_enum("renderer",
                   ["", "matplotlib", "pygame"],
                   "The renderer to use during replay of the interaction dataset.")
 
+
 def get_track_files(tracks_folder: str):
     """
     Extracts all map file paths from the interaction dataset
@@ -61,7 +62,8 @@ def create_parameter_servers_for_scenarios(map_file: str, tracks_folder: str):
     import pandas as pd
 
     if not map_file.endswith('.xodr'):
-        raise ValueError(f"Map file has to be in Xodr file format. Given: {map_file}")
+        raise ValueError(
+            f"Map file has to be in Xodr file format. Given: {map_file}")
 
     tracks = get_track_files(tracks_folder)
 
@@ -75,7 +77,8 @@ def create_parameter_servers_for_scenarios(map_file: str, tracks_folder: str):
         param_server = ParameterServer()
         param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["MapFilename"] = map_file
         param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackFilename"] = track
-        param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackIds"] = list(track_ids)
+        param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackIds"] = list(
+            track_ids)
         param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["StartTs"] = start_ts
         param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EndTs"] = end_ts
         param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EgoTrackId"] = track_ids[0]
@@ -96,10 +99,12 @@ def create_scenario(param_server: ParameterServer):
             param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["StartTs"],
             param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EndTs"])
 
+
 def is_collinear(values, time_step, threshold=1e-6):
     y1 = values[1] - values[0]
     y2 = values[2] - values[0]
     return abs(y2 - 2 * y1) < threshold
+
 
 def calculate_action(observations, time_step=0.1, wheel_base=2.7):
     """
@@ -166,15 +171,6 @@ def measure_world(world_state, observer):
         agent_id = obs_world.ego_agent.id
         obs = np.array(observer.Observe(obs_world))
         observations[agent_id] = {
-            # TODO Discuss the 'obs'. 
-            # obs_world should be on what we train, maybe stacked with the obs.
-            # The obs_world is what our cars sensors are measuring.
-            # The 'obs' are just the ego state + two nearest cars.
-            # We should change this to use obs_world as 'obs'
-            # We have to ask Tobias if the observer is a class that the car can access
-            # when our code is deployed. I don't think so. I think the obs_world is 
-            # what we should use.
-            # "world_state": obs_world,
             "obs": obs,
             "time": world_state.time,
             "merge": None
@@ -190,12 +186,12 @@ def measure_world(world_state, observer):
     return observations
 
 
-def store_expert_trajectories(map: str, track: str, expert_trajectories_path: str, expert_trajectories: dict):
+def store_expert_trajectories(map_file: str, track: str, expert_trajectories_path: str, expert_trajectories: dict):
     """
     Stores the expert trajectories
     """
     directory = os.path.join(expert_trajectories_path,
-                             map)
+                             map_file)
     Path(directory).mkdir(parents=True, exist_ok=True)
     filename = os.path.join(directory, f"{track}.pkl")
 
@@ -206,38 +202,53 @@ def store_expert_trajectories(map: str, track: str, expert_trajectories_path: st
     return filename
 
 
+def get_viewer(renderer: str):
+    """Getter for a viewer to display the simulation.
+
+    Args:
+        renderer (str): The renderer type used. [pygame, matplotlib]
+
+    Returns:
+        modules.runtime.viewer.Viewer: A viewer depending on the renderer type
+    """
+    fig = plt.figure(figsize=[10, 10])
+
+    if renderer == "pygame":
+        from modules.runtime.viewer.pygame_viewer import PygameViewer
+        viewer = PygameViewer(params=param_server,
+                              use_world_bounds=True, axis=fig.gca())
+    else:
+        from modules.runtime.viewer.matplotlib_viewer import MPViewer
+        viewer = MPViewer(params=param_server,
+                          use_world_bounds=True, axis=fig.gca())
+        return viewer
+
+
 def simulate_scenario(param_server, sim_time_step: float, renderer: str = ""):
     """
     Simulates one scenario.
     """
     scenario, start_ts, end_ts = create_scenario(param_server)
 
-    sim_steps = int((end_ts - start_ts)/(sim_time_step))
+    sim_steps = int((end_ts - start_ts) / sim_time_step)
     sim_time_step_seconds = sim_time_step / 1000
 
     param_server["ML"]["StateObserver"]["MaxNumAgents"] = 3
     observer = NearestAgentsObserver(param_server)
 
     expert_trajectories = {}
-    
-    if renderer:
-        fig = plt.figure(figsize=[10, 10])
 
-        if renderer == "pygame":
-            from modules.runtime.viewer.pygame_viewer import PygameViewer
-            viewer = PygameViewer(params=param_server, use_world_bounds=True, axis=fig.gca())
-        else:
-            from modules.runtime.viewer.matplotlib_viewer import MPViewer
-            viewer = MPViewer(params=param_server, use_world_bounds=True, axis=fig.gca())
+    if renderer:
+        viewer = get_viewer(renderer)
 
     # Run the scenario in a loop
     world_state = scenario.GetWorldState()
     for _ in range(0, sim_steps):
         world_state.Step(sim_time_step_seconds)
-    
+
         if renderer:
             viewer.clear()
-            viewer.drawWorld(world_state, scenario._eval_agent_ids)
+            viewer.drawWorld(world_state, scenario.eval_agent_ids)
 
         observations = measure_world(world_state, observer)
 
@@ -248,7 +259,7 @@ def simulate_scenario(param_server, sim_time_step: float, renderer: str = ""):
             expert_trajectories[agent_id]['time'].append(values['time'])
             expert_trajectories[agent_id]['merge'].append(values['merge'])
             expert_trajectories[agent_id]['wheelbase'].append(2.7)
-    
+
     if renderer:
         plt.close()
     return expert_trajectories
@@ -258,7 +269,8 @@ def generate_expert_trajectories_for_scenario(param_server, sim_time_step: float
     """
     Simulates a scenario, measures the environment and calculates the actions.
     """
-    expert_trajectories = simulate_scenario(param_server, sim_time_step, renderer)
+    expert_trajectories = simulate_scenario(
+        param_server, sim_time_step, renderer)
 
     for agent_id in expert_trajectories:
         num_observations = len(expert_trajectories[agent_id]['obs'])
@@ -278,7 +290,7 @@ def generate_expert_trajectories_for_scenario(param_server, sim_time_step: float
 
             time_step = next_time - current_time
             action = calculate_action(current_obs, time_step, 2.7)
-            
+
             expert_trajectories[agent_id]['act'].append(action)
 
         # add zeros depending on the action-state size
@@ -297,17 +309,18 @@ def generate_expert_trajectories_for_scenario(param_server, sim_time_step: float
     return expert_trajectories
 
 
-def generate_and_store_expert_trajectories(map: str, track: str, expert_trajectories_path: str, param_server, sim_time_step: float, renderer: str = ""):
+def generate_and_store_expert_trajectories(map_file: str, track: str, expert_trajectories_path: str, param_server, sim_time_step: float, renderer: str = ""):
     """
     Generates and stores the expert trajectories for one scenario.
     """
-    print(f"********** Simulating: {map}, {track} **********")
+    print(f"********** Simulating: {map_file}, {track} **********")
     expert_trajectories = generate_expert_trajectories_for_scenario(
         param_server, sim_time_step, renderer)
     filename = store_expert_trajectories(
-        map, track, expert_trajectories_path, expert_trajectories)
-    print(f"********** Finished: {map}, {track} **********")
+        map_file, track, expert_trajectories_path, expert_trajectories)
+    print(f"********** Finished: {map_file}, {track} **********")
     return filename
+
 
 def main_function(argv):
     """ main """
@@ -323,12 +336,14 @@ def main_function(argv):
     if not os.path.exists(tracks_folder):
         raise ValueError(
             f"Tracks not found at location: {tracks_folder}")
-    param_servers = create_parameter_servers_for_scenarios(map_file, tracks_folder)
+    param_servers = create_parameter_servers_for_scenarios(
+        map_file, tracks_folder)
 
     sim_time_step = 100
-    for map, track in param_servers.keys():
-        generate_and_store_expert_trajectories(map, track, expert_trajectories_path, param_servers[(map, track)], sim_time_step, FLAGS.renderer)
- 
+    for map_file, track in param_servers.keys():
+        generate_and_store_expert_trajectories(map_file, track, expert_trajectories_path, param_servers[(
+            map_file, track)], sim_time_step, FLAGS.renderer)
+
 
 if __name__ == '__main__':
     flags.mark_flag_as_required('map_file')
