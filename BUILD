@@ -1,4 +1,13 @@
 test_suite(
+  name = "all",
+  tests = [
+    ":unit_tests",
+    ":gail_tests",
+    "_generate_load_tests"
+  ]
+)
+
+test_suite(
   name = "unit_tests",
   tests = [
     "//bark_ml/tests:py_environment_tests",
