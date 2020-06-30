@@ -78,7 +78,7 @@ class LoadSaveUtilsTestsTests(unittest.TestCase):
         """
         dirs = list_dirs_in_dir(self.directory)
         for directory in dirs:
-            assert not dir.endswith('.git')
+            assert not directory.endswith('.git')
 
     def test_list_directories_in_file(self):
         """
