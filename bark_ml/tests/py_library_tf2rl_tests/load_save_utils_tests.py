@@ -65,10 +65,10 @@ class LoadSaveUtilsTestsTests(unittest.TestCase):
         Test: Directories are correct listed
         """
         dirs = list_dirs_in_dir(self.directory, include_git=True)
-        for dir in dirs:
-            assert dir in self.directories
-        for dir in self.directories:
-            assert dir in dirs
+        for directory in dirs:
+            assert directory in self.directories
+        for directory in self.directories:
+            assert directory in dirs
 
         self.assertEqual(list_files_in_dir(self.directories[0]), [])
 
@@ -77,7 +77,7 @@ class LoadSaveUtilsTestsTests(unittest.TestCase):
         Test: Directories are correct listed with git excluded
         """
         dirs = list_dirs_in_dir(self.directory)
-        for dir in dirs:
+        for directory in dirs:
             assert not dir.endswith('.git')
 
     def test_list_directories_in_file(self):
