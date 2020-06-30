@@ -154,6 +154,24 @@ class CreateScenarioTests(unittest.TestCase):
             'bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/data/interaction_data_set_mock/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_v01_shifted.xodr')
         self.assertEqual(len(scenario._agent_list), 86)
 
+class GetViewerTests(unittest.TestCase):
+    """Tests: get_viewer
+    """
+
+    def test_correct_viewer_given(self):
+        """Test: Is the returned viewer of the correct type.
+        """
+        from modules.runtime.viewer.pygame_viewer import PygameViewer
+        from modules.runtime.viewer.matplotlib_viewer import MPViewer
+
+        param_servers = create_parameter_servers_for_scenarios(
+            map_file, tracks_folder)
+        self.assertIn(known_key, param_servers)
+
+        viewer = get_viewer(param_servers[known_key], "pygame")
+        self.assertEqual(type(viewer), PygameViewer)
+        viewer = get_viewer(param_servers[known_key], "matplotlib")
+        self.assertEqual(type(viewer), MPViewer)
 
 if __name__ == '__main__':
     unittest.main()

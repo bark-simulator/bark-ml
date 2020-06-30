@@ -8,10 +8,11 @@ from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 import multiprocessing
 import numpy as np
+from typing import Tuple
 
-from modules.runtime.viewer.video_renderer import VideoRenderer
-
-from bark_ml.library_wrappers.lib_tf2rl.load_save_utils import *
+import gym
+from absl import app
+from absl import flags
 
 # Bark
 from modules.runtime.scenario.scenario_generation.interaction_dataset_scenario_generation import \
@@ -20,12 +21,13 @@ from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from modules.runtime.viewer.video_renderer import VideoRenderer
 
+from modules.runtime.viewer.video_renderer import VideoRenderer
+from modules.runtime.scenario.scenario import Scenario
+
 # Bark-ML
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
-
-import gym
-from absl import app
-from absl import flags
+from bark_ml.observers.observer import StateObserver
+from bark_ml.library_wrappers.lib_tf2rl.load_save_utils import *
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string("map_file",
@@ -33,12 +35,12 @@ flags.DEFINE_string("map_file",
                     default=None)
 
 FLAGS = flags.FLAGS
-flags.DEFINE_string("tracks_folder",
-                    help="The absolute path to the folder containing the corresponding tracks as csv.",
+flags.DEFINE_string("tracks_dir",
+                    help="The absolute path to the dir containing the corresponding tracks as csv.",
                     default=None)
 
 flags.DEFINE_string("expert_trajectories_path",
-                    help="The absolute path to the folder where the expert trajectories are safed.",
+                    help="The absolute path to the dir where the expert trajectories are safed.",
                     default=None)
 
 flags.DEFINE_enum("renderer",
@@ -47,17 +49,30 @@ flags.DEFINE_enum("renderer",
                   "The renderer to use during replay of the interaction dataset.")
 
 
-def get_track_files(tracks_folder: str):
+def get_track_files(tracks_dir: str) -> list:
+    """Extracts all track file names in the given directory.
+
+    Args:
+        tracks_dir (str): The directory to search for track files
+
+    Returns:
+        list: The track files
     """
-    Extracts all map file paths from the interaction dataset
-    """
-    map_files = list_files_in_dir(tracks_folder, '.csv')
-    return map_files
+    return list_files_in_dir(tracks_dir, '.csv')
 
 
-def create_parameter_servers_for_scenarios(map_file: str, tracks_folder: str):
-    """
-    Creates the parameter server and defines the scenario.
+def create_parameter_servers_for_scenarios(map_file: str, tracks_dir: str) -> dict:
+    """Generate a parameter server for every track file in the given directory.
+
+    Args:
+        map_file (str): The path of the map_file
+        tracks_dir (str): The directory containing the track files
+
+    Raises:
+        ValueError: Map is not in Xodr format.
+
+    Returns:
+        dict: The parameter servers by mao and track files.
     """
     import pandas as pd
 
@@ -65,7 +80,7 @@ def create_parameter_servers_for_scenarios(map_file: str, tracks_folder: str):
         raise ValueError(
             f"Map file has to be in Xodr file format. Given: {map_file}")
 
-    tracks = get_track_files(tracks_folder)
+    tracks = get_track_files(tracks_dir)
 
     param_servers = {}
     for track in tracks:
@@ -89,9 +104,14 @@ def create_parameter_servers_for_scenarios(map_file: str, tracks_folder: str):
     return param_servers
 
 
-def create_scenario(param_server: ParameterServer):
-    """
-    Creates the actual scenario.
+def create_scenario(param_server: ParameterServer) -> Tuple[Scenario, float, float]:
+    """Creates a bark scenario based on the given parameter server.
+
+    Args:
+        param_server (ParameterServer): The parameter server
+
+    Returns:
+        Tuple[Scenario, float, float]: The bark scenario, the start timestamp, the end timestamp
     """
     scenario_generation = InteractionDatasetScenarioGeneration(
         num_scenarios=1, random_seed=0, params=param_server)
@@ -106,9 +126,16 @@ def is_collinear(values, time_step, threshold=1e-6):
     return abs(y2 - 2 * y1) < threshold
 
 
-def calculate_action(observations, time_step=0.1, wheel_base=2.7):
-    """
-    Calculate the action based on the cars previous and current state
+def calculate_action(observations: list, time_step=0.1, wheel_base=2.7) -> list:
+    """Calculate the action based on some observations.
+
+    Args:
+        observations (list): The observations.
+        time_step (float, optional): The timestap between two observations. Defaults to 0.1.
+        wheel_base (float, optional): The wheelbase of the car form which the observations are. Defaults to 2.7.
+
+    Returns:
+        list: The action vector
     """
     import math
     from numpy import polyfit
@@ -157,10 +184,17 @@ def calculate_action(observations, time_step=0.1, wheel_base=2.7):
     return action
 
 
-def measure_world(world_state, observer):
+def measure_world(world_state, observer: StateObserver) -> dict:
+    """Measures the given world state using the observer.
+
+    Args:
+        world_state (World): The bark world state
+        observer (StateObserver): The observer used to observe the world
+
+    Returns:
+        dict: The observation, time and merge measurement
     """
-    Append the current timestamp trajectory of active agents to expert trajectory
-    """
+
     agents_valid = list(world_state.agents_valid.keys())
 
     observations = {}
@@ -186,9 +220,17 @@ def measure_world(world_state, observer):
     return observations
 
 
-def store_expert_trajectories(map_file: str, track: str, expert_trajectories_path: str, expert_trajectories: dict):
-    """
-    Stores the expert trajectories
+def store_expert_trajectories(map_file: str, track: str, expert_trajectories_path: str, expert_trajectories: dict) -> str:
+    """Stores the expert trajectories to a pickle binary file.
+
+    Args:
+        map_file (str): The name of the map file that was simulated
+        track (str): The name of the track file that was simulated
+        expert_trajectories_path (str): The output path
+        expert_trajectories (dict): The observations and actions
+
+    Returns:
+        str: The final filename of the stored expert trajectories
     """
     directory = os.path.join(expert_trajectories_path,
                              map_file)
@@ -202,10 +244,11 @@ def store_expert_trajectories(map_file: str, track: str, expert_trajectories_pat
     return filename
 
 
-def get_viewer(renderer: str):
+def get_viewer(param_server: ParameterServer, renderer: str):
     """Getter for a viewer to display the simulation.
 
     Args:
+        param_server (ParameterServer): The parameters that specify the scenario.
         renderer (str): The renderer type used. [pygame, matplotlib]
 
     Returns:
@@ -221,12 +264,19 @@ def get_viewer(renderer: str):
         from modules.runtime.viewer.matplotlib_viewer import MPViewer
         viewer = MPViewer(params=param_server,
                           use_world_bounds=True, axis=fig.gca())
-        return viewer
+    return viewer
 
 
-def simulate_scenario(param_server, sim_time_step: float, renderer: str = ""):
-    """
-    Simulates one scenario.
+def simulate_scenario(param_server: ParameterServer, sim_time_step: float, renderer: str = "") -> dict:
+    """Simulates one scenario with the given parameters.
+
+    Args:
+        param_server (ParameterServer): The parameters that specify the scenario.
+        sim_time_step (float): The timestep used for the simulation.
+        renderer (str, optional): The renderer used during simulation [pygame, matplotlib]. Defaults to "".
+
+    Returns:
+        dict: The expert trajectories recorded during simulation.
     """
     scenario, start_ts, end_ts = create_scenario(param_server)
 
@@ -238,15 +288,16 @@ def simulate_scenario(param_server, sim_time_step: float, renderer: str = ""):
 
     expert_trajectories = {}
 
+    viewer = None
     if renderer:
-        viewer = get_viewer(renderer)
+        viewer = get_viewer(param_server, renderer)
 
     # Run the scenario in a loop
     world_state = scenario.GetWorldState()
     for _ in range(0, sim_steps):
         world_state.Step(sim_time_step_seconds)
 
-        if renderer:
+        if viewer:
             viewer.clear()
             viewer.drawWorld(world_state, scenario.eval_agent_ids)
 
@@ -260,14 +311,21 @@ def simulate_scenario(param_server, sim_time_step: float, renderer: str = ""):
             expert_trajectories[agent_id]['merge'].append(values['merge'])
             expert_trajectories[agent_id]['wheelbase'].append(2.7)
 
-    if renderer:
+    if viewer:
         plt.close()
     return expert_trajectories
 
 
-def generate_expert_trajectories_for_scenario(param_server, sim_time_step: float, renderer: str = ""):
-    """
-    Simulates a scenario, measures the environment and calculates the actions.
+def generate_expert_trajectories_for_scenario(param_server: ParameterServer, sim_time_step: float, renderer: str = "") -> dict:
+    """Simulates a scenario, measures the environment and calculates the actions.
+
+    Args:
+        param_server (ParameterServer): The parameters that specify the scenario.
+        sim_time_step (float): The timestep used for the simulation.
+        renderer (str, optional): The renderer used during simulation [pygame, matplotlib]. Defaults to "".
+
+    Returns:
+        dict: The expert trajectories recorded during simulation.
     """
     expert_trajectories = simulate_scenario(
         param_server, sim_time_step, renderer)
@@ -309,9 +367,19 @@ def generate_expert_trajectories_for_scenario(param_server, sim_time_step: float
     return expert_trajectories
 
 
-def generate_and_store_expert_trajectories(map_file: str, track: str, expert_trajectories_path: str, param_server, sim_time_step: float, renderer: str = ""):
-    """
-    Generates and stores the expert trajectories for one scenario.
+def generate_and_store_expert_trajectories(map_file: str, track: str, expert_trajectories_path: str, param_server: ParameterServer, sim_time_step: float, renderer: str = "") -> str:
+    """Generates and stores the expert trajectories for one scenario.
+
+    Args:
+        map_file (str): The name of the map file that was simulated
+        track (str): The name of the track file that was simulated
+        expert_trajectories_path (str): The output path
+        param_server (ParameterServer): The parameters that specify the scenario.
+        sim_time_step (float): The timestep used for the simulation.
+        renderer (str, optional): The renderer used during simulation [pygame, matplotlib]. Defaults to "".
+
+    Returns:
+        str: The final filename of the stored expert trajectories
     """
     print(f"********** Simulating: {map_file}, {track} **********")
     expert_trajectories = generate_expert_trajectories_for_scenario(
@@ -322,22 +390,30 @@ def generate_and_store_expert_trajectories(map_file: str, track: str, expert_tra
     return filename
 
 
-def main_function(argv):
-    """ main """
+def main_function(argv: list):
+    """The main function.
+
+    Args:
+        argv (list): The command line arguments 
+
+    Raises:
+        ValueError: map_file flag is invalid
+        ValueError: tracks_dir is invalid
+    """
     map_file = os.path.expanduser(
         str(FLAGS.map_file))
-    tracks_folder = os.path.expanduser(
-        str(FLAGS.tracks_folder))
+    tracks_dir = os.path.expanduser(
+        str(FLAGS.tracks_dir))
     expert_trajectories_path = os.path.expanduser(
         str(FLAGS.expert_trajectories_path))
     if not os.path.exists(map_file):
         raise ValueError(
-            f"Maps file not found at location: {map_file}")
-    if not os.path.exists(tracks_folder):
+            f"Map file not found at location: {map_file}")
+    if not os.path.exists(tracks_dir):
         raise ValueError(
-            f"Tracks not found at location: {tracks_folder}")
+            f"Tracks not found at location: {tracks_dir}")
     param_servers = create_parameter_servers_for_scenarios(
-        map_file, tracks_folder)
+        map_file, tracks_dir)
 
     sim_time_step = 100
     for map_file, track in param_servers.keys():
@@ -347,6 +423,6 @@ def main_function(argv):
 
 if __name__ == '__main__':
     flags.mark_flag_as_required('map_file')
-    flags.mark_flag_as_required('tracks_folder')
+    flags.mark_flag_as_required('tracks_dir')
     flags.mark_flag_as_required('expert_trajectories_path')
     app.run(main_function)
