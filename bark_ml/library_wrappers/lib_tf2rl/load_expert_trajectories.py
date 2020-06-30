@@ -2,12 +2,17 @@ import os
 import pickle
 import numpy as np
 from collections import defaultdict
-
+from typing import Tuple
 from bark_ml.library_wrappers.lib_tf2rl.load_save_utils import *
 
-def load_expert_trajectories(dirname: str):
-    """
-    Loads all expert trajectories and flattens the observations and actions.
+def load_expert_trajectories(dirname: str) -> Tuple[dict, float]:
+    """Loads all expert trajectories and flattens the observations and actions.
+
+    Args:
+        dirname (str): The directory to search for expert trajectories files
+
+    Returns:
+        Tuple[dict, float]: The expert trajectories, The time between two consecutive observations
     """
     expert_trajectory_files = load_expert_trajectory_files(dirname)
     expert_trajectories = defaultdict(list)
@@ -27,9 +32,17 @@ def load_expert_trajectories(dirname: str):
         # 'merges': expert_trajectories[1:]
         }, dt
 
-def load_expert_trajectory_files(dirname: str):
-    """
-    Loads all found pickle files in the directory.
+def load_expert_trajectory_files(dirname: str) -> dict:
+    """Loads all found pickle files in the directory.
+
+    Args:
+        dirname (str): The directory to search for expert trajectories files
+
+    Raises:
+        ValueError: If no valid expert trajctories could be found in the given directory.
+
+    Returns:
+        dict: The expert trajectories by filename
     """
     pickle_files = list_files_in_dir(dirname, file_ending='.pkl')
     expert_trajectories = {}
@@ -43,9 +56,18 @@ def load_expert_trajectory_files(dirname: str):
         raise ValueError(f"Could not find valid expert trajectories in {dirname}.")
     return expert_trajectories
 
-def load_expert_trajectory_file(filepath: str):
-    """
-    Loads the given expert trajectory pickle file.
+def load_expert_trajectory_file(filepath: str) -> dict:
+    """Loads the given expert trajectory pickle file.
+
+    Args:
+        filepath (str): The path to the expert trajectory file
+
+    Raises:
+        ValueError: The given path does not exist
+        ValueError: The given path is not a .pkl file
+
+    Returns:
+        dict: The expert trajectories in the file
     """
     if not os.path.exists(filepath):
         raise ValueError(f"{filepath} does not exist.")
