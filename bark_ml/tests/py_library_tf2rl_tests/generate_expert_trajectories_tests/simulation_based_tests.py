@@ -100,12 +100,7 @@ class MeasureWorldTests(SimulationBasedTests):
                 current_measurement = all_measurements[self.test_agent_id]['obs']
 
                 difference = current_measurement - previous_measurement
-
-                for i in range(difference.shape[0]):
-                    if max_values[i] < difference[i]:
-                        max_values[i] = difference[i]
-                    if min_values[i] > difference[i]:
-                        min_values[i] = difference[i]
+                self.set_min_max_values(difference, min_values, max_values)
 
         expected_max_values = np.array([0.54980648, 0.55021292, 0.48717329, 0.01684499, 0.5499202,
                                         0.55034626, 0.49115214, 0.02198388, 0.54953927, 0.5503884, 0.4895606, 0.02255795])
@@ -116,6 +111,20 @@ class MeasureWorldTests(SimulationBasedTests):
             self.assertAlmostEqual(expected_max_values[i], max_values[i])
             self.assertAlmostEqual(expected_min_values[i], min_values[i])
 
+    @staticmethod
+    def set_min_max_values(difference, min_values, max_values):
+        """Updates the current min and max values with the calculated differences. 
+
+        Args:
+            difference (list): The calculated differences
+            min_values (list): The current min values
+            max_values (list): The current max values
+        """
+        for i in range(difference.shape[0]):
+            if max_values[i] < difference[i]:
+                max_values[i] = difference[i]
+            if min_values[i] > difference[i]:
+                min_values[i] = difference[i]
 
 class GenerateExpertTrajectoriesForScenarioTests(SimulationBasedTests):
     """
@@ -149,11 +158,11 @@ class StoreExpertTrajectoriesTests(unittest.TestCase):
         """
         Test: store_expert_trajectories
         """
-        map = "test_map_name"
+        test_map_name = "test_map_name"
         track = "test_track_name"
         expert_trajectories_path = os.path.join(os.path.dirname(__file__), 'test_store_expert_trajectories')
         expert_trajectories = {'foo': 'bar'}
-        file_name = store_expert_trajectories(map, track, expert_trajectories_path, expert_trajectories)
+        file_name = store_expert_trajectories(test_map_name, track, expert_trajectories_path, expert_trajectories)
 
         with open(file_name, 'rb') as pickle_file:
             loaded_expert_trajectories = dict(pickle.load(pickle_file))
@@ -164,6 +173,7 @@ class GenerateAndStoreExpertTrajectories(SimulationBasedTests):
     """
     Tests: generate_and_store_expert_trajectories
     """
+
     def test_generate_and_store_expert_trajectories(self):
         """
         Test: generate_and_store_expert_trajectories
@@ -185,15 +195,24 @@ class GenerateAndStoreExpertTrajectories(SimulationBasedTests):
                 self.assertIn(key, generated_expert_trajectories[agent_id])
 
                 generated_values = generated_expert_trajectories[agent_id][key]
-                for i in range(len(generated_values)):
-                    if type(generated_values[i]) == list:
-                        self.assertListEqual(generated_values[i], values[i])
-                    elif type(generated_values[i]) == np.ndarray:
-                        assert (generated_values[i] == values[i]).all()
-                    else:
-                        self.assertEqual(generated_values[i], values[i])
+                self.assert_equals(generated_values, values)
 
         shutil.rmtree(store_path)
+
+    def assert_equals(self, actual_values, expected_values):
+        """Asserts that the given actual values are equal to the expected values.
+
+        Args:
+            actual_values (list): The calculated actual values
+            expected_values (list): The expected values
+        """
+        for i in range(len(actual_values)):
+            if type(actual_values[i]) == list:
+                self.assertListEqual(actual_values[i], expected_values[i])
+            elif type(actual_values[i]) == np.ndarray:
+                assert (actual_values[i] == expected_values[i]).all()
+            else:
+                self.assertEqual(actual_values[i], expected_values[i])
 
 if __name__ == '__main__':
     unittest.main()
