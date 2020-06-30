@@ -1,9 +1,9 @@
 test_suite(
-  name = "all",
+  name = "all_tests",
   tests = [
     ":unit_tests",
     ":gail_tests",
-    "_generate_load_tests"
+    ":generate_load_tests"
   ]
 )
 
