@@ -13,11 +13,11 @@ import time
 
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteML
-from bark_project.modules.runtime.commons.parameters import ParameterServer
+from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, DiscreteHighwayBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.evaluators.goal_reached import GoalReached
-from bark_ml_library.evaluators import GoalReachedEvaluator
+from bark_ml.core.evaluators import GoalReachedEvaluator
 
 
 class PyEvaluatorTests(unittest.TestCase):

@@ -5,8 +5,8 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef SRC_COMMONS_COMMONS_HPP_
-#define SRC_COMMONS_COMMONS_HPP_
+#ifndef BARK_ML_COMMONS_COMMONS_HPP_
+#define BARK_ML_COMMONS_COMMONS_HPP_
 
 #include <memory>
 #include <tuple>
@@ -14,6 +14,7 @@
 #include <Eigen/Dense>
 
 
+namespace bark_ml {
 namespace commons {
 
 template<typename T>
@@ -22,5 +23,6 @@ inline const T Norm(const T& val, const T& min_val, const T& max_val) {
 }
 
 }  // namespace commons
+}  // namespace bark_ml
 
-#endif  // SRC_COMMONS_COMMONS_HPP_
+#endif  // BARK_ML_COMMONS_COMMONS_HPP_

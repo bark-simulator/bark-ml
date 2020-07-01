@@ -96,5 +96,14 @@ class PyGAILRunnerTests(unittest.TestCase):
         # then running the method to get some actual values and then check for equality with self.assertEqual(...)
         raise NotImplementedError("Intended to fail!\nOpen bark_ml/tests/py_library_tf2rl_tests/py_gail_runner_tests.py and see comments.")
 
+    
+    def test_get_trainer(self):
+        """get_trainer
+        """
+        trainer = self.runner.GetTrainer()
+        self.assertEqual(trainer._policy.actor_units, [400, 300])
+
+        self.assertEqual(trainer._expert_obs, self.expert_trajs['obses'])
+
 if __name__ == '__main__':
     unittest.main()

@@ -4,20 +4,22 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-from bark_project.modules.runtime.commons.parameters import ParameterServer
-from bark_project.modules.runtime.viewer.matplotlib_viewer import MPViewer
-from bark_project.modules.runtime.scenario.scenario_generation.config_with_ease import \
+import os
+from bark.runtime.commons.parameters import ParameterServer
+from bark.runtime.viewer.matplotlib_viewer import MPViewer
+from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
-from bark.models.dynamic import SingleTrackModel
-from bark.world.opendrive import XodrDrivingDirection
-from bark.world.goal_definition import GoalDefinitionPolygon
+from bark.core.models.dynamic import SingleTrackModel
+from bark.core.world.opendrive import XodrDrivingDirection
+from bark.core.world.goal_definition import GoalDefinitionPolygon
+from bark.core.models.behavior import BehaviorMobilRuleBased
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
 from bark_ml.evaluators.goal_reached import GoalReached
 # from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteML
-from bark_ml_library.observers import NearestObserver
+from bark_ml.core.observers import NearestObserver
 
 
 class MergingLaneCorridorConfig(LaneCorridorConfig):
@@ -40,6 +42,7 @@ class MergingBlueprint(Blueprint):
                random_seed=0,
                ml_behavior=None,
                viewer=True):
+    params["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
     left_lane = MergingLaneCorridorConfig(
       params=params,
       road_ids=[0, 1],
@@ -57,11 +60,12 @@ class MergingBlueprint(Blueprint):
       s_max=25.,
       min_vel=8.,
       max_vel=12.,
+      behavior_model=BehaviorMobilRuleBased(params),
       controlled_ids=True)
     scenario_generation = \
       ConfigWithEase(
         num_scenarios=number_of_senarios,
-        map_file_name="bark_ml/environments/blueprints/merging/DR_DEU_Merging_MT_v01_shifted.xodr",  # NOLINT
+        map_file_name=os.path.join(os.path.dirname(__file__), "../../../environments/blueprints/merging/DR_DEU_Merging_MT_v01_shifted.xodr"),  # NOLINT
         random_seed=random_seed,
         params=params,
         lane_corridor_configs=[left_lane, right_lane])

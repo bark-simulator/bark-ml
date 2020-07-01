@@ -13,7 +13,7 @@ import matplotlib
 # matplotlib.use('PS')
 import time
 
-from bark_project.modules.runtime.commons.parameters import ParameterServer
+from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
   DiscreteHighwayBlueprint, ContinuousMergingBlueprint, DiscreteMergingBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime

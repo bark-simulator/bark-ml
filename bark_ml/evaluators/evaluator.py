@@ -5,7 +5,7 @@
 # https://opensource.org/licenses/MIT
 
 from abc import ABC, abstractmethod
-from bark_project.modules.runtime.commons.parameters import ParameterServer
+from bark.runtime.commons.parameters import ParameterServer
 
 
 class StateEvaluator(ABC):

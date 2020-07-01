@@ -11,11 +11,15 @@ def bark_ml_dependencies():
     commit = "cc393384134188bf68d098a9efa486ff36069577",
     remote = "https://github.com/bark-simulator/bark",
   )
-
+  # _maybe(
+  #   native.local_repository,
+  #   name = "bark_project",
+  #   path = "/Users/hart/Development/bark"
+  # )
   _maybe(
     native.new_local_repository,
     name = "python_linux",
-    path = "./python/venv/",
+    path = "./bark_ml/python_wrapper/venv/",
     build_file_content = """
 cc_library(
     name = "python-lib",
