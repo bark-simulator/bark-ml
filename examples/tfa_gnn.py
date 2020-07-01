@@ -39,7 +39,8 @@ def run_configuration(argv):
   # params = ParameterServer()
   # NOTE: Modify these paths in order to save the checkpoints and summaries
   # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/marco.oliva/Development/bark-ml_logs"
-  #params["ML"]["TFARunner"]["SummaryPath"] = "/Users/marco.oliva/Development/bark-ml_logs/"
+  params["ML"]["TFARunner"]["SummaryPath"] = "/Users/marco.oliva/Development/bark-ml_logs/"
+  params["ML"]["BehaviorSACAgent"]["DebugSummaries"] = True
   params["ML"]["BehaviorTFAAgents"]["NumCheckpointsToKeep"] = None
   params["ML"]["SACRunner"]["NumberOfCollections"] = 100
   params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 5
@@ -74,6 +75,7 @@ def run_configuration(argv):
   runner = SACRunner(params=params,
                      environment=env,
                      agent=sac_agent)
+  runner.SetupSummaryWriter()
 
   if FLAGS.mode == "train":
     runner.Train()
