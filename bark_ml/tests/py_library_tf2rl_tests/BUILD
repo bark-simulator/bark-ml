@@ -3,7 +3,7 @@ py_test(
     name = "load_expert_trajectories_tests",
     srcs = [ "load_expert_trajectories_tests.py"],
     data = [ "//bark_ml/tests/py_library_tf2rl_tests/data:tf2rl_tests_data" ],
-    imports = ["../external/bark_project/bark/python_wrapper/"],
+    imports = ["../../external/bark_project/bark/python_wrapper/"],
     deps = [
             "//bark_ml/library_wrappers/lib_tf2rl:load_expert_trajectories",
             ],

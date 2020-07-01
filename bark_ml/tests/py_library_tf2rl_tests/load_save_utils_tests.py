@@ -32,7 +32,6 @@ class LoadSaveUtilsTestsTests(unittest.TestCase):
         for filename in self.directories:
             Path(filename).mkdir()
 
-
     def tearDown(self):
         """
         Tear down
@@ -86,6 +85,7 @@ class LoadSaveUtilsTestsTests(unittest.TestCase):
         """
         with self.assertRaises(ValueError):
             list_dirs_in_dir(self.files_txt[0])
+
 
 if __name__ == '__main__':
     unittest.main()

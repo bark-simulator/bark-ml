@@ -18,7 +18,7 @@ from tf_agents.trajectories import time_step as ts
 
 # BARK-ML imports
 from bark_ml.library_wrappers.lib_tf_agents.tfa_wrapper import TFAWrapper
-
+from collections import defaultdict
 
 class TFARunner:
   def __init__(self,
@@ -115,3 +115,40 @@ class TFARunner:
         action_step = self._agent._eval_policy.action(ts.transition(state, reward=0.0, discount=1.0))
         state, reward, is_terminal, _ = self._environment.step(action_step.action.numpy())
         self._environment.render()
+
+  
+  def GenerateExpertTrajectories(self, num_trajectories: int = 1000, render: bool = False) -> dict:
+    """Generates expert trajectories based on a tfa agent.
+
+    Args:
+        num_trajectories (int, optional): The minimal number of generated expert trajectories. Defaults to 1000. (Has priority before num_episodes.)
+        render (bool, optional): Render the simulation during simulation. Defaults to False.
+
+    Returns:
+        dict: The expert trajectories.
+    """
+    self._agent._training = False
+    expert_trajectories = {'obs': [], 'next_obs': [], 'act': []}
+
+    while len(expert_trajectories['act']) <= num_trajectories:
+      state = self._environment.reset()
+      is_terminal = False
+      expert_trajectories['obs'].append(state)
+
+      while not is_terminal:
+        action_step = self._agent._eval_policy.action(ts.transition(state, reward=0.0, discount=1.0))
+        state, reward, is_terminal, _ = self._environment.step(action_step.action.numpy())
+
+        if render:
+          self._environment.render()
+
+        expert_trajectories['obs'].append(state)
+        expert_trajectories['next_obs'].append(state)
+        expert_trajectories['act'].append(action_step.action.numpy())
+
+      expert_trajectories['obs'] = expert_trajectories['obs'][:-1]
+
+    assert len(expert_trajectories['obs']) == len(expert_trajectories['next_obs'])
+    assert len(expert_trajectories['obs']) == len(expert_trajectories['act'])
+
+    return expert_trajectories

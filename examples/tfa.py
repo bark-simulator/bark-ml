@@ -6,7 +6,9 @@
 
 # TensorFlow Agents (https://github.com/tensorflow/agents) example
 import os
+import sys
 from pathlib import Path
+import pickle
 
 import gym
 from absl import app
@@ -33,9 +35,29 @@ from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner
 FLAGS = flags.FLAGS
 flags.DEFINE_enum("mode",
                   "visualize",
-                  ["train", "visualize", "evaluate"],
+                  ["train", "visualize", "evaluate", "generate"],
                   "Mode the configuration should be executed in.")
+flags.DEFINE_integer("num_episodes",
+                  default=5,
+                  help="The number of episodes to run a simulation. Defaults to 5. (Ignored when training.)") 
+flags.DEFINE_integer("num_trajectories",
+                  default=1000,
+                  help="The minimal number of expert trajectories that have to be generated. Defaults to 1000. (Only used when generating.)") 
+flags.DEFINE_boolean("render",
+                  default=True,
+                  help="Render during generation of expert trajectories.") 
 
+default_output_file: str = os.path.join(os.path.dirname(__file__), "expert_trajectories.pkl")
+flags.DEFINE_string("output_file",
+                  default=default_output_file,
+                  help="The minimal number of expert trajectories that have to be generated. Defaults to " + default_output_file)  
+
+def save_expert_trajectories(output_file: str, expert_trajectories: dict):
+  _output_file = os.path.expanduser(output_file)
+  Path(os.path.dirname(_output_file)).mkdir(parents=True, exist_ok=True)
+
+  with open(_output_file, 'wb') as handle:
+      pickle.dump(expert_trajectories, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/tfa_params.json")
@@ -70,11 +92,13 @@ def run_configuration(argv):
     runner.SetupSummaryWriter()
     runner.Train()
   elif FLAGS.mode == "visualize":
-    runner.Visualize(5)
-  
+    runner.Visualize(FLAGS.num_episodes)
+  elif FLAGS.mode == "generate":
+    expert_trajectories = runner.GenerateExpertTrajectories(num_trajectories=FLAGS.num_trajectories, render=FLAGS.render)
+    save_expert_trajectories(output_file=FLAGS.output_file, expert_trajectories=expert_trajectories)
   # store all used params of the training
   # params.Save(os.path.join(Path.home(), "examples/example_params/tfa_params.json"))
-
+  sys.exit(0)
 
 if __name__ == '__main__':
   app.run(run_configuration)

@@ -20,16 +20,15 @@ class LoadExpertTrajectoriesTest(unittest.TestCase):
         setup
         """
         self.expert_trajectories_directory = os.path.join(os.path.dirname(__file__), "data")
-        self.pickle_files = list_files_in_dir(self.expert_trajectories_directory, '*.pkl')
+        self.pickle_files = list_files_in_dir(self.expert_trajectories_directory, '.pkl')
 
         self.expert_trajectories_per_file = load_expert_trajectory_files(
             self.expert_trajectories_directory)
         assert self.expert_trajectories_per_file    
         
-        self.expert_trajectories, self.dt = load_expert_trajectories(
+        self.expert_trajectories = load_expert_trajectories(
             self.expert_trajectories_directory)
         assert self.expert_trajectories
-        assert (self.dt - 100) < 10e5 
 
     def test_assert_file_exists(self):
         """

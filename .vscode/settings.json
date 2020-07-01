@@ -91,7 +91,7 @@
     "__functional_03": "cpp",
     "*.ipp": "cpp"
   },
-  "python.pythonPath": "python/venv/bin/python",
+  "python.pythonPath": "bark_ml/python_wrapper/venv/bin/python",
   "python.testing.unittestArgs": [
     "-v",
     "-s",

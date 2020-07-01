@@ -15,22 +15,13 @@ def load_expert_trajectories(dirname: str) -> Tuple[dict, float]:
         Tuple[dict, float]: The expert trajectories, The time between two consecutive observations
     """
     expert_trajectory_files = load_expert_trajectory_files(dirname)
-    expert_trajectories = defaultdict(list)
+    expert_trajectories = {'obs': [], 'next_obs': [], 'act': []}
 
     for _, content in expert_trajectory_files.items():
-        for _, per_agent_values in content.items():
-            for key, value in per_agent_values.items():
-                expert_trajectories[key].extend(value)
+        for key, value in content.items():
+            expert_trajectories[key].extend(value)
 
-    dt = expert_trajectories['time'][1] - expert_trajectories['time'][0]
-
-    return {
-        'obses': np.array(expert_trajectories['obs'])[:-1],
-        'next_obses': np.array(expert_trajectories['obs'])[1:],
-        'acts': np.array(expert_trajectories['act'])[:-1],
-        # 'dones': expert_trajectories[1:],
-        # 'merges': expert_trajectories[1:]
-        }, dt
+    return expert_trajectories
 
 def load_expert_trajectory_files(dirname: str) -> dict:
     """Loads all found pickle files in the directory.
@@ -78,12 +69,15 @@ def load_expert_trajectory_file(filepath: str) -> dict:
     with open(filepath, "rb") as pickle_file:
         expert_trajectories = dict(pickle.load(pickle_file))
 
-    for key, value in expert_trajectories.items():
-        if ("obs" not in value or
-                "act" not in value or
-                "done" not in value or
-                "time" not in value or
-                "merge" not in value):
-            return None
+    if set(expert_trajectories.keys()) != set(['obs', 'next_obs', 'act']):
+        return None
+
+    # for key, value in expert_trajectories.items():
+    #     if ("obs" not in value or
+    #             "act" not in value or
+    #             "done" not in value or
+    #             "time" not in value or
+    #             "merge" not in value):
+    #         return None
 
     return expert_trajectories
