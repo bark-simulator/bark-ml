@@ -66,6 +66,22 @@ py_test(
 )
 
 py_test(
+  name = "tfa_gnn",
+  srcs = ["tfa_gnn.py"],
+  data = ["@bark_project//bark/python_wrapper:core.so",
+          "//python:bark_ml_library.so",
+          "//examples/example_params:example_params"],
+  imports = ['../python/'],
+  deps = [
+    "//bark_ml/environments:single_agent_runtime",
+    "//bark_ml/environments:blueprints",
+    "//bark_ml/library_wrappers/lib_tf2_gnn:lib_tf2_gnn",
+    "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
+    "//bark_ml/library_wrappers/lib_tf_agents/runners:runners",
+  ]
+)
+
+py_test(
   name = "diadem_dqn",
   srcs = ["diadem_dqn.py"],
   data = ["@bark_project//bark/python_wrapper:core.so",

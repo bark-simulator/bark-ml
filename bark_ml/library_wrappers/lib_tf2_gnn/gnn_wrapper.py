@@ -10,17 +10,21 @@ from typing import OrderedDict
 class GNNWrapper(tf.keras.Model):
 
   def __init__(self,
-               node_layers_def,
+               num_layers=4,
+               num_units=16,
                name='GNN',
                **kwargs):
     super(GNNWrapper, self).__init__(name=name)
-    self._node_layers_def = node_layers_def
+
+    self.num_layers = num_layers
+    self.num_units = num_units
 
     params = GNN.get_default_hyperparameters()
-    params["hidden_dim"] = node_layers_def[0]["units"]
+    params["num_layers"] = num_layers
+    params["hidden_dim"] = num_units
     self._gnn = GNN(params)
 
-  # @tf.function
+  #@tf.function
   def call(self, observation, training=False):
     """Call function for the GNN"""
     graph = GraphObserver.graph_from_observation(observation)
@@ -38,7 +42,7 @@ class GNNWrapper(tf.keras.Model):
       num_graphs = 1,
     )
 
-    return self._gnn(gnn_input)
+    return self._gnn(gnn_input, training=training)
 
   def batch_call(self, graph, training=False):
     """Calls the network multiple times
@@ -50,18 +54,18 @@ class GNNWrapper(tf.keras.Model):
         np.array -- Batch of values
     """
     if graph.shape[0] == 0:
-      return tf.zeros(shape=(1, self._node_layers_def[-1]["units"]))
+      return tf.random.normal(shape=(0, self.num_units))
     if len(graph.shape) == 1:
-      return self.call(graph)
+      return self.call(graph, training=training)
     if len(graph.shape) == 2:
       if graph.shape[0] == 1:
-        return self.call(tf.reshape(graph, [-1]))
+        return self.call(tf.reshape(graph, [-1]), training=training)
       else:
-        return tf.map_fn(lambda g: self.call(g), graph)
+        return tf.map_fn(lambda g: self.call(g, training=training), graph)
     if len(graph.shape) == 3:
-      return tf.map_fn(lambda g: self.call(g), graph)
+      return tf.map_fn(lambda g: self.call(g, training=training), graph)
     if len(graph.shape) == 4:
-      return tf.map_fn(lambda g: self.batch_call(g), graph)
+      return tf.map_fn(lambda g: self.batch_call(g, training=training), graph)
     else:
       raise ValueError(f'Graph has invalid shape {graph.shape}')
       

@@ -72,23 +72,12 @@ class GNNCriticNetwork(network.Network):
       raise ValueError('Only a single action is supported by this network')
     self._single_action_spec = flat_action_spec[0]
 
-    self._gnn = GNNWrapper(
-      node_layers_def=[{
-        "units" : 80, 
-        "activation": "relu", 
-        "dropout_rate": 0.0, 
-        "type": "DenseLayer"}
-      ])
+    self._gnn = GNNWrapper(num_layers=2, num_units=80)
 
     # TODO(kbanoop): Replace mlp_layers with encoding networks.
     self._action_layers = utils.mlp_layers(
-        None,
-        action_fc_layer_params,
-        action_dropout_layer_params,
-        activation_fn=activation_fn,
-        kernel_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
-            scale=1. / 3., mode='fan_in', distribution='uniform'),
-        name='action_encoding')
+      fc_layer_params=action_fc_layer_params
+    )
 
     self._joint_layers = []
 
@@ -109,14 +98,14 @@ class GNNCriticNetwork(network.Network):
 
     actions = tf.cast(actions, tf.float32)
     observations = tf.cast(observations, tf.float32)
-    observations = self._gnn.batch_call(observations)
+    observations = self._gnn.batch_call(observations, training=training)
 
     if batch_size > 0:
       observations = tf.gather(observations, 0, axis=1) # extract ego state
       observations = tf.reshape(observations, [batch_size, -1])
       actions = tf.reshape(actions, [batch_size, -1])
     else:
-      actions = tf.zeros([1, actions.shape[-1]])
+      actions = tf.zeros([0, actions.shape[-1]])
 
     for layer in self._action_layers:
       actions = layer(actions, training=training)

@@ -42,7 +42,8 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
 
     # critic network
     critic_net = GNNCriticNetwork(
-      input_tensor_spec=(env.observation_spec(), env.action_spec())
+      input_tensor_spec=(env.observation_spec(), env.action_spec()),
+      action_fc_layer_params=[80, 80, 80]
     )
     
     # agent
@@ -63,7 +64,7 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
       gamma=self._params["ML"]["BehaviorSACAgent"]["Gamma", "", 0.995],
       reward_scale_factor=self._params["ML"]["BehaviorSACAgent"]["RewardScaleFactor", "", 1.],
       train_step_counter=self._ckpt.step,
-      name=self._params["ML"]["BehaviorSACAgent"]["AgentName", "", "sac_agent"],
+      name=self._params["ML"]["BehaviorSACAgent"]["AgentName", "", "gnn_sac_agent"],
       debug_summaries=self._params["ML"]["BehaviorSACAgent"]["DebugSummaries", "", False])
     
     tf_agent.initialize()

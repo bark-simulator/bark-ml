@@ -38,11 +38,11 @@ def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/tfa_params.json")
   # params = ParameterServer()
   # NOTE: Modify these paths in order to save the checkpoints and summaries
-  # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/home/hart/Dokumente/2020/bark-ml/checkpoints/"
-  # params["ML"]["TFARunner"]["SummaryPath"] = "/home/hart/Dokumente/2020/bark-ml/checkpoints/"
-  params["World"]["remove_agents_out_of_map"] = True
+  # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/marco.oliva/Development/bark-ml_logs"
+  #params["ML"]["TFARunner"]["SummaryPath"] = "/Users/marco.oliva/Development/bark-ml_logs/"
+  params["World"]["remove_agents_out_of_map"] = False
 
-  # viewer = MPViewer(
+    # viewer = MPViewer(
   #   params=params,
   #   x_range=[-35, 35],
   #   y_range=[-35, 35],
@@ -53,20 +53,20 @@ def run_configuration(argv):
   #   world_step_time=0.2,
   #   fig_path="/Users/marco.oliva/2020/bark-ml/video/")
 
-  observer = GraphObserver(params=params)
-
   # create environment
-  bp = ContinuousMergingBlueprint(params,
+  bp = ContinuousHighwayBlueprint(params,
                                   number_of_senarios=2500,
                                   random_seed=0)
 
-  env = SingleAgentRuntime(blueprint=bp,
-                           render=True)
+  observer = GraphObserver(params=params)
+  
+  env = SingleAgentRuntime(
+    blueprint=bp,
+    observer=observer,
+    render=False)
 
-  # SAC-agent
-  sac_agent = BehaviorSACAgent(environment=env,
-                               params=params)
-
+  sac_agent = BehaviorGraphSACAgent(environment=env,
+                                    params=params)
   env.ml_behavior = sac_agent
   runner = SACRunner(params=params,
                      environment=env,

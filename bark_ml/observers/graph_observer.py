@@ -28,7 +28,7 @@ class GraphObserver(StateObserver):
     self._use_edge_attributes = use_edge_attributes
 
     # the number of features of a node in the graph
-    self.feature_len = 13
+    self.feature_len = 11 # 13
 
     # the maximum number of agents that can be observed
     self.agent_limit = 6
@@ -39,7 +39,7 @@ class GraphObserver(StateObserver):
   @classmethod
   def attribute_keys(cls):
     return ["x", "y", "theta", "vel", "goal_x", "goal_y", "goal_dx", "goal_dy", "goal_theta", "goal_d",
-            "goal_vel", "d_ditch_left", "d_ditch_right"]
+            "goal_vel"] #, "d_ditch_left", "d_ditch_right"]
 
   def Observe(self, world):
     """see base class"""
@@ -207,12 +207,12 @@ class GraphObserver(StateObserver):
     lanes = list(filter(None, lanes)) #filter out non existing lanes (right or left of agent)
 
     # Calculate Distance to left and right road bounds
-    road_bound_left = lanes[0].left_boundary
-    d_ditch_left = Distance(road_bound_left, agent_posi)
-    road_bound_right = lanes[-1].right_boundary
-    d_ditch_right = Distance(road_bound_right, agent_posi)
-    res["d_ditch_left"] = d_ditch_left
-    res["d_ditch_right"] = d_ditch_right
+    # road_bound_left = lanes[0].left_boundary
+    # d_ditch_left = Distance(road_bound_left, agent_posi)
+    # road_bound_right = lanes[-1].right_boundary
+    # d_ditch_right = Distance(road_bound_right, agent_posi)
+    #res["d_ditch_left"] = d_ditch_left
+    #res["d_ditch_right"] = d_ditch_right
 
     if self._normalize_observations:
       n = self.normalization_data
@@ -226,8 +226,8 @@ class GraphObserver(StateObserver):
       res["goal_d"] = self._normalize_value(res["goal_d"], n["distance"])
       res["goal_theta"] = self._normalize_value(res["goal_theta"], n["theta"])
       res["goal_vel"] = self._normalize_value(res["goal_vel"], n["vel"])
-      res["d_ditch_left"] = self._normalize_value(res["d_ditch_left"], n["road"])
-      res["d_ditch_right"] = self._normalize_value(res["d_ditch_right"], n["road"])
+      #res["d_ditch_left"] = self._normalize_value(res["d_ditch_left"], n["road"])
+      #res["d_ditch_right"] = self._normalize_value(res["d_ditch_right"], n["road"])
     
     #####################################################
     #    If you change the number of features,          #
