@@ -40,6 +40,9 @@ def run_configuration(argv):
   # NOTE: Modify these paths in order to save the checkpoints and summaries
   # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/marco.oliva/Development/bark-ml_logs"
   #params["ML"]["TFARunner"]["SummaryPath"] = "/Users/marco.oliva/Development/bark-ml_logs/"
+  params["ML"]["BehaviorTFAAgents"]["NumCheckpointsToKeep"] = None
+  params["ML"]["SACRunner"]["NumberOfCollections"] = 100
+  params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 5
   params["World"]["remove_agents_out_of_map"] = False
 
     # viewer = MPViewer(

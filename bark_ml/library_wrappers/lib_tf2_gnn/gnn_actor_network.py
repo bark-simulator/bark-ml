@@ -70,7 +70,7 @@ class GNNActorNetwork(network.Network):
         input_tensor_spec=input_tensor_spec,
         state_spec=(),
         name=name)
-    self._gnn = GNNWrapper(num_layers=1, num_units=80)
+    self._gnn = GNNWrapper(num_layers=5, num_units=80)
 
     if len(tf.nest.flatten(input_tensor_spec)) > 1:
       raise ValueError('Only a single observation is supported by this network')
