@@ -6,7 +6,7 @@ py_test(
   srcs = ["continuous_env.py"],
   data = ["@bark_project//bark/python_wrapper:core.so",
           "//bark_ml:generate_core"],
-  imports = ["../bark_ml/python_wrapper/"],
+    imports = ["../external/bark_project/bark/python_wrapper/"],
   deps = [
     "//bark_ml/environments:gym",
   ]
@@ -17,7 +17,7 @@ py_test(
   srcs = ["discrete_env.py"],
   data = ["@bark_project//bark/python_wrapper:core.so",
           "//bark_ml:generate_core"],
-  imports = ["../bark_ml/python_wrapper/"],
+    imports = ["../external/bark_project/bark/python_wrapper/"],
   deps = [
     "//bark_ml/environments:gym",
   ]
@@ -28,7 +28,7 @@ py_test(
   srcs = ["blueprint_config.py"],
   data = ["@bark_project//bark/python_wrapper:core.so",
           "//bark_ml:generate_core"],
-  imports = ["../bark_ml/python_wrapper/"],
+    imports = ["../external/bark_project/bark/python_wrapper/"],
   deps = [
     "//bark_ml/observers:observers",
     "//bark_ml/evaluators:evaluators",
@@ -45,7 +45,7 @@ py_test(
   data = ["@bark_project//bark/python_wrapper:core.so",
           "//bark_ml:generate_core",
           "//examples/example_params:example_params"],
-  imports = ["../bark_ml/python_wrapper/"],
+    imports = ["../external/bark_project/bark/python_wrapper/"],
   deps = [
     "//bark_ml/environments:single_agent_runtime",
     "//bark_ml/environments:blueprints",
@@ -57,10 +57,11 @@ py_test(
 py_binary(
   name = "gail",
   srcs = ["gail.py"],
-  data = ["@bark_project//python:bark.so",
+    data = [
+            "@bark_project//bark/python_wrapper:core.so",
           "//python:bark_ml_library.so",
           "//examples/example_params:example_params"],
-  imports = ['../python/'],
+  # imports = ['../python/'],
   deps = [
     "//bark_ml/environments:single_agent_runtime",
     "//bark_ml/environments:blueprints",
@@ -76,7 +77,7 @@ py_test(
           "//bark_ml:generate_core",
           "//examples/example_params:example_params"
         ],
-  imports = ["../bark_ml/python_wrapper/",
+    imports = ["../external/bark_project/bark/python_wrapper/",
              "./external/diadem_project/"],
   deps = [
     "//bark_ml/environments:single_agent_runtime",

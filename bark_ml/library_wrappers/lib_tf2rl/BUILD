@@ -1,9 +1,9 @@
 py_library(
     name = "tf2rl_wrapper",
     srcs = ["tf2rl_wrapper.py"],
-    data = ["@bark_project//python:bark.so"],
-    imports = ["../external/bark_project/python/"],
-    deps = ["@bark_project//modules/runtime:runtime"],
+    data = ["@bark_project//bark/python_wrapper:core.so"],
+    imports = ["../external/bark_project/bark/python_wrapper/"],
+    deps = ["@bark_project//bark/runtime:runtime"],
     visibility = ["//visibility:public"],
 )
 
@@ -28,17 +28,17 @@ py_binary(
     "generate_expert_trajectories.py",
     ],
   deps = ["//bark_ml/library_wrappers/lib_tf2rl:load_save_utils",
-          "@bark_project//modules/runtime/commons:parameters",
-          "@bark_project//modules/runtime/commons:xodr_parser",
-          "@bark_project//modules/runtime/viewer:matplotlib_viewer",
-          "@bark_project//modules/benchmark:benchmark_runner",
-          "@bark_project//modules/benchmark:benchmark_analyzer",
-          "@bark_project//modules/runtime/scenario/scenario_generation:scenario_generation",
-          "@bark_project//modules/runtime:runtime",
+          "@bark_project//bark/runtime/commons:parameters",
+          "@bark_project//bark/runtime/commons:xodr_parser",
+          "@bark_project//bark/runtime/viewer:matplotlib_viewer",
+          "@bark_project//bark/benchmark:benchmark_runner",
+          "@bark_project//bark/benchmark:benchmark_analyzer",
+          "@bark_project//bark/runtime/scenario/scenario_generation:scenario_generation",
+          "@bark_project//bark/runtime:runtime",
           "//bark_ml/observers:observers"],
-  data = ["@bark_project//python:bark.so",
-          "@bark_project//modules/runtime/tests:xodr_data",
-          "//python:bark_ml_library.so",
+  data = [
+          "@bark_project//bark/python_wrapper:core.so",
+          "//bark_ml:generate_core"
           ],
   visibility = ["//visibility:public"]
 )

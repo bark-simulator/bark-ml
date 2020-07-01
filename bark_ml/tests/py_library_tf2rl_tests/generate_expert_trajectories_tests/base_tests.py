@@ -161,8 +161,8 @@ class GetViewerTests(unittest.TestCase):
     def test_correct_viewer_given(self):
         """Test: Is the returned viewer of the correct type.
         """
-        from modules.runtime.viewer.pygame_viewer import PygameViewer
-        from modules.runtime.viewer.matplotlib_viewer import MPViewer
+        from bark.runtime.viewer.pygame_viewer import PygameViewer
+        from bark.runtime.viewer.matplotlib_viewer import MPViewer
 
         param_servers = create_parameter_servers_for_scenarios(
             map_file, tracks_folder)

@@ -2,9 +2,8 @@
 py_test(
     name = "base_tests",
     srcs = ["base_tests.py"],
-    imports = [
-            "../../../external/bark_project/python/"
-        ],
+    imports = ["../../../external/bark_project/bark/python_wrapper/"],
+
     deps = [
             "//bark_ml/library_wrappers/lib_tf2rl:generate_expert_trajectories",
         ],

@@ -5,7 +5,7 @@ import tensorflow as tf
 tf.compat.v1.enable_v2_behavior()
 
 # BARK imports
-#from bark_project.modules.runtime.commons.parameters import ParameterServer
+#from bark_project.bark.runtime.commons.parameters import ParameterServer
 
 # tf2rl imports
 import tf2rl

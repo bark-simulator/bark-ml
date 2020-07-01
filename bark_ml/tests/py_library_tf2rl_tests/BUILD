@@ -3,9 +3,7 @@ py_test(
     name = "load_expert_trajectories_tests",
     srcs = [ "load_expert_trajectories_tests.py"],
     data = [ "//bark_ml/tests/py_library_tf2rl_tests/data:tf2rl_tests_data" ],
-    imports = [
-            "../../external/bark_project/python/"
-            ],
+    imports = ["../external/bark_project/bark/python_wrapper/"],
     deps = [
             "//bark_ml/library_wrappers/lib_tf2rl:load_expert_trajectories",
             ],
@@ -25,13 +23,13 @@ py_test(
     name = "py_gail_runner_tests",
     srcs = ["py_gail_runner_tests.py"],
     data = [
-            "@bark_project//python:bark.so",
+            "@bark_project//bark/python_wrapper:core.so",
             "//bark_ml/tests/py_library_tf2rl_tests/gail_data",
             ],
-    imports = ["../../external/bark_project/python/"],
+    imports = ["../../external/bark_project/bark/python_wrapper/"],
     deps = [
             "//bark_ml/library_wrappers/lib_tf2rl/runners",
-            "@bark_project//modules/runtime:runtime",
+            "@bark_project//bark/runtime:runtime",
             ],
     tags=["no-sandbox"],
     visibility = ["//visibility:public"],
@@ -42,13 +40,13 @@ py_test(
     name = "py_gail_agent_tests",
     srcs = ["py_gail_agent_tests.py"],
     data = [
-            "@bark_project//python:bark.so",
+            "@bark_project//bark/python_wrapper:core.so",
             "//bark_ml/tests/py_library_tf2rl_tests/gail_data",
             ],
-    imports = ["../../external/bark_project/python/"],
+    imports = ["../../external/bark_project/bark/python_wrapper/"],
     deps = [
             "//bark_ml/library_wrappers/lib_tf2rl/agents",
-            "@bark_project//modules/runtime:runtime",
+            "@bark_project//bark/runtime:runtime",
             ],
     tags=["no-sandbox"],
     visibility = ["//visibility:public"],
@@ -59,14 +57,14 @@ py_test(
     name = "py_gail_gym_training_tests",
     srcs = ["py_gail_gym_training_tests.py"],
     data = [
-            "@bark_project//python:bark.so",
+            "@bark_project//bark/python_wrapper:core.so",
             "//bark_ml/tests/py_library_tf2rl_tests/gail_data",
             ],
-    imports = ["../../external/bark_project/python/"],
+    imports = ["../../external/bark_project/bark/python_wrapper/"],
     deps = [
             "//bark_ml/library_wrappers/lib_tf2rl/runners",
             "//bark_ml/library_wrappers/lib_tf2rl/agents",
-            "@bark_project//modules/runtime:runtime",
+            "@bark_project//bark/runtime:runtime",
             ],
     tags=["no-sandbox"],
     visibility = ["//visibility:public"],
@@ -78,11 +76,10 @@ py_test(
     name = "py_gail_bark_training_tests",
     srcs = ["py_gail_bark_training_tests.py"],
     data = [
-            "@bark_project//python:bark.so",
-            "//python:bark_ml_library.so",
+            "@bark_project//bark/python_wrapper:core.so",
             "//bark_ml/tests/py_library_tf2rl_tests/gail_data",
             ],
-    imports = ["../../external/bark_project/python/"],
+    imports = ["../../external/bark_project/bark/python_wrapper/"],
     deps = [
             "//bark_ml/environments:single_agent_runtime",
             "//bark_ml/environments:blueprints",

@@ -1,5 +1,5 @@
-from bark_project.modules.runtime.commons.parameters import ParameterServer
-from bark_project.modules.runtime.runtime import Runtime
+from bark_project.bark.runtime.commons.parameters import ParameterServer
+from bark_project.bark.runtime.runtime import Runtime
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.library_wrappers.lib_tf2rl.agents.tf2rl_agent import BehaviorTF2RLAgent
 from tf2rl.algos.gail import GAIL

@@ -5,7 +5,7 @@ import tensorflow as tf
 tf.compat.v1.enable_v2_behavior()
 
 # BARK imports
-from bark.models.behavior import BehaviorModel
+from bark.core.models.behavior import BehaviorModel
 
 # tf2rl imports
 import tf2rl

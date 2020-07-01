@@ -3,7 +3,7 @@ import gym
 import os
 
 # BARK imports
-from bark_project.modules.runtime.commons.parameters import ParameterServer
+from bark_project.bark.runtime.commons.parameters import ParameterServer
 
 # BARK-ML imports
 from bark_ml.library_wrappers.lib_tf2rl.runners.gail_runner import GAILRunner 

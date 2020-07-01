@@ -11,7 +11,6 @@ py_test(
             "//bark_ml/environments:gym",
             "//bark_ml/commons:py_spaces"],
     visibility = ["//visibility:public"],
-    size = "small",
 )
 
 py_test(
@@ -23,7 +22,6 @@ py_test(
             "//bark_ml/behaviors:behaviors",
             "//bark_ml/commons:py_spaces"],
     visibility = ["//visibility:public"],
-    size = "small",
 )
 
 py_test(
@@ -38,7 +36,6 @@ py_test(
             "//bark_ml/behaviors:behaviors",
             "//bark_ml/commons:py_spaces"],
     visibility = ["//visibility:public"],
-    size = "small",
 )
 
 py_test(
@@ -52,7 +49,6 @@ py_test(
             "//bark_ml/behaviors:behaviors",
             "//bark_ml/commons:py_spaces"],
     visibility = ["//visibility:public"],
-    size = "small",
 )
 
 py_test(
@@ -66,5 +62,4 @@ py_test(
             "//bark_ml/library_wrappers/lib_tf_agents/runners:runners",
             "//bark_ml/commons:py_spaces"],
     visibility = ["//visibility:public"],
-    size = "small",
 )

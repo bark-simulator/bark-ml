@@ -15,14 +15,14 @@ from absl import app
 from absl import flags
 
 # Bark
-from modules.runtime.scenario.scenario_generation.interaction_dataset_scenario_generation import \
+from bark.runtime.scenario.scenario_generation.interaction_dataset_scenario_generation import \
     InteractionDatasetScenarioGeneration
-from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.viewer.matplotlib_viewer import MPViewer
-from modules.runtime.viewer.video_renderer import VideoRenderer
+from bark.runtime.commons.parameters import ParameterServer
+from bark.runtime.viewer.matplotlib_viewer import MPViewer
+from bark.runtime.viewer.video_renderer import VideoRenderer
 
-from modules.runtime.viewer.video_renderer import VideoRenderer
-from modules.runtime.scenario.scenario import Scenario
+from bark.runtime.viewer.video_renderer import VideoRenderer
+from bark.runtime.scenario.scenario import Scenario
 
 # Bark-ML
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
@@ -252,16 +252,16 @@ def get_viewer(param_server: ParameterServer, renderer: str):
         renderer (str): The renderer type used. [pygame, matplotlib]
 
     Returns:
-        modules.runtime.viewer.Viewer: A viewer depending on the renderer type
+        bark.runtime.viewer.Viewer: A viewer depending on the renderer type
     """
     fig = plt.figure(figsize=[10, 10])
 
     if renderer == "pygame":
-        from modules.runtime.viewer.pygame_viewer import PygameViewer
+        from bark.runtime.viewer.pygame_viewer import PygameViewer
         viewer = PygameViewer(params=param_server,
                               use_world_bounds=True, axis=fig.gca())
     else:
-        from modules.runtime.viewer.matplotlib_viewer import MPViewer
+        from bark.runtime.viewer.matplotlib_viewer import MPViewer
         viewer = MPViewer(params=param_server,
                           use_world_bounds=True, axis=fig.gca())
     return viewer
