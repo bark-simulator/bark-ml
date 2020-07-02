@@ -57,6 +57,12 @@ flags.DEFINE_string("output_dir",
                   help="The output directory. Defaults to " + default_output_dir)  
 
 def save_expert_trajectories(output_dir: str, expert_trajectories: dict):
+  """Saves the given expert trajectories.
+
+  Args:
+      output_dir (str): The output folder.
+      expert_trajectories (dict): The expert trajectories.
+  """
   _output_dir = os.path.expanduser(output_dir)
   Path(_output_dir).mkdir(parents=True, exist_ok=True)
 
@@ -65,6 +71,14 @@ def save_expert_trajectories(output_dir: str, expert_trajectories: dict):
     joblib.dump(expert_trajectories, filename)
 
 def run_configuration(argv):
+  """Main
+
+  Args:
+      argv: The commandline argumends
+
+  Raises:
+      ValueError: If the given agent is not sac or ppo
+  """
   params = ParameterServer(filename="examples/example_params/tfa_params.json")
   # params = ParameterServer()
   params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = os.path.join(Path.home(), "checkpoints", FLAGS.agent)
