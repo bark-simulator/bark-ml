@@ -128,27 +128,32 @@ class TFARunner:
         dict: The expert trajectories.
     """
     self._agent._training = False
-    expert_trajectories = {'obs': [], 'next_obs': [], 'act': []}
+    per_scenario_expert_trajectories = {}
 
-    while len(expert_trajectories['act']) <= num_trajectories:
+    scenario_id = 0
+    total_trajectories = 0
+    while total_trajectories <= num_trajectories:
+      expert_trajectories = {'obs': [], 'act': []}
+
       state = self._environment.reset()
-      is_terminal = False
       expert_trajectories['obs'].append(state)
+      is_terminal = False
 
       while not is_terminal:
         action_step = self._agent._eval_policy.action(ts.transition(state, reward=0.0, discount=1.0))
+
         state, reward, is_terminal, _ = self._environment.step(action_step.action.numpy())
+        expert_trajectories['obs'].append(state)
+        expert_trajectories['act'].append(action_step.action.numpy())
 
         if render:
           self._environment.render()
 
-        expert_trajectories['obs'].append(state)
-        expert_trajectories['next_obs'].append(state)
-        expert_trajectories['act'].append(action_step.action.numpy())
+      expert_trajectories['act'].append(expert_trajectories['act'][-1])
+      assert len(expert_trajectories['obs']) == len(expert_trajectories['act'])
 
-      expert_trajectories['obs'] = expert_trajectories['obs'][:-1]
+      per_scenario_expert_trajectories[scenario_id] = expert_trajectories
+      scenario_id += 1
+      total_trajectories += len(expert_trajectories['obs'])
 
-    assert len(expert_trajectories['obs']) == len(expert_trajectories['next_obs'])
-    assert len(expert_trajectories['obs']) == len(expert_trajectories['act'])
-
-    return expert_trajectories
+    return per_scenario_expert_trajectories

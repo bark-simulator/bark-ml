@@ -8,7 +8,7 @@
 import os
 import sys
 from pathlib import Path
-import pickle
+import joblib
 
 import gym
 from absl import app
@@ -37,9 +37,13 @@ flags.DEFINE_enum("mode",
                   "visualize",
                   ["train", "visualize", "evaluate", "generate"],
                   "Mode the configuration should be executed in.")
+flags.DEFINE_enum("agent",
+                  "sac",
+                  ["sac", "ppo"],
+                  "The tfa agent type.")
 flags.DEFINE_integer("num_episodes",
                   default=5,
-                  help="The number of episodes to run a simulation. Defaults to 5. (Ignored when training.)") 
+                  help="The number of episodes to run a simulation. Defaults to 5. (Only used when visualizing.)") 
 flags.DEFINE_integer("num_trajectories",
                   default=1000,
                   help="The minimal number of expert trajectories that have to be generated. Defaults to 1000. (Only used when generating.)") 
@@ -47,23 +51,24 @@ flags.DEFINE_boolean("render",
                   default=True,
                   help="Render during generation of expert trajectories.") 
 
-default_output_file: str = os.path.join(os.path.dirname(__file__), "expert_trajectories.pkl")
-flags.DEFINE_string("output_file",
-                  default=default_output_file,
-                  help="The minimal number of expert trajectories that have to be generated. Defaults to " + default_output_file)  
+default_output_dir: str = os.path.join(os.path.dirname(__file__), "expert_trajectories")
+flags.DEFINE_string("output_dir",
+                  default=default_output_dir,
+                  help="The output directory. Defaults to " + default_output_dir)  
 
-def save_expert_trajectories(output_file: str, expert_trajectories: dict):
-  _output_file = os.path.expanduser(output_file)
-  Path(os.path.dirname(_output_file)).mkdir(parents=True, exist_ok=True)
+def save_expert_trajectories(output_dir: str, expert_trajectories: dict):
+  _output_dir = os.path.expanduser(output_dir)
+  Path(_output_dir).mkdir(parents=True, exist_ok=True)
 
-  with open(_output_file, 'wb') as handle:
-      pickle.dump(expert_trajectories, handle, protocol=pickle.HIGHEST_PROTOCOL)
+  for scenario_id, expert_trajectories in expert_trajectories.items():
+    filename = os.path.join(_output_dir, f'{scenario_id}.jblb')
+    joblib.dump(expert_trajectories, filename)
 
 def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/tfa_params.json")
   # params = ParameterServer()
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = os.path.join(Path.home(), "checkpoints/")
-  params["ML"]["TFARunner"]["SummaryPath"] = os.path.join(Path.home(), "checkpoints/")
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = os.path.join(Path.home(), "checkpoints", FLAGS.agent)
+  params["ML"]["TFARunner"]["SummaryPath"] = os.path.join(Path.home(), "checkpoints", FLAGS.agent)
   params["World"]["remove_agents_out_of_map"] = True
 
   # create environment
@@ -73,21 +78,25 @@ def run_configuration(argv):
   env = SingleAgentRuntime(blueprint=bp,
                            render=False)
 
-  # PPO-agent
-  # ppo_agent = BehaviorPPOAgent(environment=env,
-  #                              params=params)
-  # env.ml_behavior = ppo_agent
-  # runner = PPORunner(params=params,
-  #                    environment=env,
-  #                    agent=ppo_agent)
 
-  # SAC-agent
-  sac_agent = BehaviorSACAgent(environment=env,
-                               params=params)
-  env.ml_behavior = sac_agent
-  runner = SACRunner(params=params,
-                     environment=env,
-                     agent=sac_agent)
+  if FLAGS.agent == 'ppo':
+    ppo_agent = BehaviorPPOAgent(environment=env,
+                                 params=params)
+    env.ml_behavior = ppo_agent
+    runner = PPORunner(params=params,
+                       environment=env,
+                       agent=ppo_agent)
+  elif FLAGS.agent == 'sac':
+    sac_agent = BehaviorSACAgent(environment=env,
+                                params=params)
+    env.ml_behavior = sac_agent
+    runner = SACRunner(params=params,
+                      environment=env,
+                      agent=sac_agent)
+  else:
+    raise ValueError(f'{FLAGS.agent} is no valid agent. Use sac or ppo.')
+
+
   if FLAGS.mode == "train":
     runner.SetupSummaryWriter()
     runner.Train()
@@ -95,7 +104,8 @@ def run_configuration(argv):
     runner.Visualize(FLAGS.num_episodes)
   elif FLAGS.mode == "generate":
     expert_trajectories = runner.GenerateExpertTrajectories(num_trajectories=FLAGS.num_trajectories, render=FLAGS.render)
-    save_expert_trajectories(output_file=FLAGS.output_file, expert_trajectories=expert_trajectories)
+    save_expert_trajectories(output_dir=os.path.join(FLAGS.output_dir, FLAGS.agent), expert_trajectories=expert_trajectories)
+
   # store all used params of the training
   # params.Save(os.path.join(Path.home(), "examples/example_params/tfa_params.json"))
   sys.exit(0)
