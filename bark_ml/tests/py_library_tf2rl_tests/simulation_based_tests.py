@@ -149,53 +149,38 @@ class GenerateExpertTrajectoriesForScenarioTests(SimulationBasedTests):
             dones[-1] = 1
 
 
-class StoreExpertTrajectoriesTests(unittest.TestCase):
-    """
-    Tests: store_expert_trajectories
-    """
-
-    def test_store_expert_trajectories(self):
-        """
-        Test: store_expert_trajectories
-        """
-        test_map_name = "test_map_name"
-        track = "test_track_name"
-        expert_trajectories_path = os.path.join(os.path.dirname(__file__), 'test_store_expert_trajectories')
-        expert_trajectories = {'foo': 'bar'}
-        file_name = store_expert_trajectories(test_map_name, track, expert_trajectories_path, expert_trajectories)
-
-        with open(file_name, 'rb') as pickle_file:
-            loaded_expert_trajectories = dict(pickle.load(pickle_file))
-            self.assertDictEqual(loaded_expert_trajectories, expert_trajectories)
-        shutil.rmtree(expert_trajectories_path)
-
 class GenerateAndStoreExpertTrajectories(SimulationBasedTests):
     """
     Tests: generate_and_store_expert_trajectories
     """
+    def assert_file_equal(self, expected_path: str, generated_path: str):
+        with open(expected_path, 'rb') as pickle_file:
+            loaded_expert_trajectories = dict(pickle.load(pickle_file))
+
+        with open(generated_path, 'rb') as pickle_file:
+            generated_expert_trajectories = dict(pickle.load(pickle_file))
+
+        for key in ['obs', 'act']:
+            self.assertIn(key, loaded_expert_trajectories.keys())
+            self.assertIn(key, generated_expert_trajectories.keys())
+
+        self.assertEqual(len(loaded_expert_trajectories['obs']), len(generated_expert_trajectories['obs']))
+
+        for i in range(len(loaded_expert_trajectories['obs'])):
+            self.assertListEqual(list(loaded_expert_trajectories['obs'][i]), list(generated_expert_trajectories['obs'][i]))
+            self.assertListEqual(list(loaded_expert_trajectories['act'][i]), list(generated_expert_trajectories['act'][i]))
 
     def test_generate_and_store_expert_trajectories(self):
         """
         Test: generate_and_store_expert_trajectories
         """
         store_path = os.path.join(os.path.dirname(__file__), 'test_generate_and_store_expert_trajectories')
-        filename = generate_and_store_expert_trajectories(known_key[0], known_key[1], store_path, self.param_server, sim_time_step=self.sim_time_step)
+        filenames = generate_and_store_expert_trajectories(known_key[0], known_key[1], store_path, self.param_server, sim_time_step=self.sim_time_step)
 
-        expected_path = os.path.join(os.path.dirname(__file__), 'data', 'expert_trajectories', 'vehicle_tracks_013.pkl') 
-        with open(expected_path, 'rb') as pickle_file:
-            loaded_expert_trajectories = dict(pickle.load(pickle_file))
+        expected_paths = [os.path.join(os.path.dirname(__file__), 'data', 'expert_trajectories', f.split('/')[-1]) for f in filenames] 
 
-        with open(filename, 'rb') as pickle_file:
-            generated_expert_trajectories = dict(pickle.load(pickle_file))
-
-        for agent_id in loaded_expert_trajectories:
-            self.assertIn(agent_id, generated_expert_trajectories)
-
-            for key, values in loaded_expert_trajectories[agent_id].items():
-                self.assertIn(key, generated_expert_trajectories[agent_id])
-
-                generated_values = generated_expert_trajectories[agent_id][key]
-                self.assert_equals(generated_values, values)
+        for i in range(len(expected_paths)):
+            self.assert_file_equal(expected_paths[i], filenames[i])
 
         shutil.rmtree(store_path)
 

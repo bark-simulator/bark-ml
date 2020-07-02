@@ -220,7 +220,7 @@ def measure_world(world_state, observer: StateObserver) -> dict:
     return observations
 
 
-def store_expert_trajectories(map_file: str, track: str, expert_trajectories_path: str, expert_trajectories: dict) -> str:
+def store_expert_trajectories(map_file: str, track: str, expert_trajectories_path: str, expert_trajectories: dict) -> list:
     """Stores the expert trajectories to a pickle binary file.
 
     Args:
@@ -230,18 +230,22 @@ def store_expert_trajectories(map_file: str, track: str, expert_trajectories_pat
         expert_trajectories (dict): The observations and actions
 
     Returns:
-        str: The final filename of the stored expert trajectories
+        list: The final filenames of the stored expert trajectories
     """
     directory = os.path.join(expert_trajectories_path,
                              map_file)
     Path(directory).mkdir(parents=True, exist_ok=True)
-    filename = os.path.join(directory, f"{track}.pkl")
 
-    with open(filename, 'wb') as handle:
-        pickle.dump(expert_trajectories, handle,
-                    protocol=pickle.HIGHEST_PROTOCOL)
+    filenames = []
 
-    return filename
+    for agent_id, agent_trajectory in expert_trajectories.items():
+        filename = os.path.join(directory, f"{track}_agentid{agent_id}.pkl")
+
+        with open(filename, 'wb') as handle:
+            pickle.dump(expert_trajectories[agent_id], handle,
+                        protocol=pickle.HIGHEST_PROTOCOL)
+        filenames.append(filename)
+    return filenames
 
 
 def get_viewer(param_server: ParameterServer, renderer: str):
@@ -366,8 +370,7 @@ def generate_expert_trajectories_for_scenario(param_server: ParameterServer, sim
                    ) == len(expert_trajectories[agent_id]['done'])
     return expert_trajectories
 
-
-def generate_and_store_expert_trajectories(map_file: str, track: str, expert_trajectories_path: str, param_server: ParameterServer, sim_time_step: float, renderer: str = "") -> str:
+def generate_and_store_expert_trajectories(map_file: str, track: str, expert_trajectories_path: str, param_server: ParameterServer, sim_time_step: float, renderer: str = "") -> list:
     """Generates and stores the expert trajectories for one scenario.
 
     Args:
@@ -379,15 +382,15 @@ def generate_and_store_expert_trajectories(map_file: str, track: str, expert_tra
         renderer (str, optional): The renderer used during simulation [pygame, matplotlib]. Defaults to "".
 
     Returns:
-        str: The final filename of the stored expert trajectories
+        list: The final filenames of the stored expert trajectories
     """
     print(f"********** Simulating: {map_file}, {track} **********")
     expert_trajectories = generate_expert_trajectories_for_scenario(
         param_server, sim_time_step, renderer)
-    filename = store_expert_trajectories(
+    filenames = store_expert_trajectories(
         map_file, track, expert_trajectories_path, expert_trajectories)
     print(f"********** Finished: {map_file}, {track} **********")
-    return filename
+    return filenames
 
 
 def main_function(argv: list):

@@ -91,7 +91,7 @@ class GetMapAndTrackFilesTests(unittest.TestCase):
 
         self.assertIs(len(track_files), 1)
         self.assertIs(track_files[0].endswith(
-            'bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/data/interaction_data_set_mock/DR_DEU_Merging_MT/tracks/vehicle_tracks_013.csv'), True)
+            'bark_ml/tests/py_library_tf2rl_tests/data/interaction_data_set_mock/DR_DEU_Merging_MT/tracks/vehicle_tracks_013.csv'), True)
 
     def test_interaction_data_set_path_invalid(self):
         """
@@ -117,9 +117,9 @@ class CreateParameterServersForScenariosTests(unittest.TestCase):
 
         param_server = param_servers[known_key]
         assert param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["MapFilename"].endswith(
-            'bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/data/interaction_data_set_mock/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_v01_shifted.xodr')
+            'bark_ml/tests/py_library_tf2rl_tests/data/interaction_data_set_mock/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_v01_shifted.xodr')
         assert param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackFilename"].endswith(
-            'bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/data/interaction_data_set_mock/DR_DEU_Merging_MT/tracks/vehicle_tracks_013.csv')
+            'bark_ml/tests/py_library_tf2rl_tests/data/interaction_data_set_mock/DR_DEU_Merging_MT/tracks/vehicle_tracks_013.csv')
 
         track_ids = [i for i in range(1, 87) if i != 18]
         self.assertEqual(param_server["Scenario"]["Generation"]
@@ -151,7 +151,7 @@ class CreateScenarioTests(unittest.TestCase):
         self.assertEqual(end_ts, 327300)
 
         assert scenario.map_file_name.endswith(
-            'bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests/data/interaction_data_set_mock/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_v01_shifted.xodr')
+            'bark_ml/tests/py_library_tf2rl_tests/data/interaction_data_set_mock/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_v01_shifted.xodr')
         self.assertEqual(len(scenario._agent_list), 86)
 
 class GetViewerTests(unittest.TestCase):
