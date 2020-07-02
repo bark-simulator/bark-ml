@@ -13,10 +13,12 @@ class TF2RLWrapper():
         self.observation_space = Box(low=env.observation_space.low, high=env.observation_space.high)
     
     def step(self, action):
+        """same as in BARK"""
         return self._env.step(action)
 
     
     def reset(self):
+        """same as in BARK"""
         return self._env.reset()
 
 
