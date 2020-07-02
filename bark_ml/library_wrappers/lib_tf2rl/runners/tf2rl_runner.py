@@ -4,13 +4,8 @@ import time
 import tensorflow as tf
 tf.compat.v1.enable_v2_behavior()
 
-# BARK imports
-#from bark_project.bark.runtime.commons.parameters import ParameterServer
-
 # tf2rl imports
 import tf2rl
-
-# BARK-ML imports
 
 
 class TF2RLRunner:
@@ -20,6 +15,7 @@ class TF2RLRunner:
                 environment=None,
                 agent=None,
                 params=None):
+    """TF2RL base class initialization"""
       
     self._params = params
     self._agent = agent
@@ -44,9 +40,6 @@ class TF2RLRunner:
 
   def Evaluate(self):
     """Evaluates the agent."""
-    # does not realy matter, it will only be written in the summary writer.
-    # it has got a meaning during training, where the same method is used for evaluation, and
-    # there in the summary writer it really makes sense to keep track of the step number.
     total_steps = 0   
     self._trainer.evaluate_policy(total_steps=total_steps)
 
@@ -64,6 +57,6 @@ class TF2RLRunner:
         action = self._agent.Act(obs)
         obs, reward, is_terminal, _ = self._environment.step(action)
         print(reward)
-        _ = self._environment.render()
+        self._environment.render()
 
   
