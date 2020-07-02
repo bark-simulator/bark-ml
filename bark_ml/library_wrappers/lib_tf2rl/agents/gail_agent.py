@@ -45,7 +45,7 @@ class BehaviorGAILAgent(BehaviorTF2RLAgent, BehaviorContinuousML):
                 400, 300]],
             critic_units=self._params["ML"]["BehaviorGAILAgent"]["Generator"]["CriticJointFcLayerParams", "", [
                 400, 300]],
-            n_warmup=self._params["ML"]["BehaviorGAILAgent"]["WarmUp", "", 10000],
+            n_warmup=self._params["ML"]["BehaviorGAILAgent"]["WarmUp", "", 1000],
             batch_size=self._params["ML"]["BehaviorGAILAgent"]["Generator"]["BatchSize", "", 100])
         return policy
 

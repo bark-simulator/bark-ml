@@ -93,7 +93,7 @@
                 ],
                 "BatchSize": 32
             },
-            "WarmUp": 10000,
+            "WarmUp": 1000,
             "EnableSN": false,           
             "AgentName": "gail_agent"
         },
