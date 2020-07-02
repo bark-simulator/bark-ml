@@ -153,6 +153,12 @@ class GenerateAndStoreExpertTrajectories(SimulationBasedTests):
     Tests: generate_and_store_expert_trajectories
     """
     def assert_file_equal(self, expected_path: str, generated_path: str):
+        """Asserts that the given files contain the same expert trajectories.
+
+        Args:
+            expected_path (str): The path to the expected trajectories.
+            generated_path (str): The path to the generated trajectories.
+        """
         loaded_expert_trajectories = joblib.load(expected_path)
         generated_expert_trajectories = joblib.load(generated_path)
 
