@@ -14,9 +14,20 @@ from tf2rl.algos.gail import GAIL
 from tf2rl.experiments.utils import restore_latest_n_traj
 
 class sample_agent():
+    """dummy class just to test the runner. Has got the same values as a normal GAIL agent."""
     def __init__(self, generator, discriminator):
-        self._generator = generator
-        self._discriminator = discriminator
+        """initialize tht sample agent."""
+        self.generator = generator
+        self.discriminator = discriminator
+
+
+def dir_check(params):
+    """checks some dirs whether they are present or not.
+    If they are not, the function creates them.
+    """
+    for key in ['logdir', 'model_dir', 'expert_path_dir']:
+        if not os.path.exists(params["ML"]["GAILRunner"]["tf2rl"][key]):
+            os.makedirs(params["ML"]["GAILRunner"]["tf2rl"][key])
 
 
 class PyGAILRunnerTests(unittest.TestCase):
@@ -29,12 +40,7 @@ class PyGAILRunnerTests(unittest.TestCase):
         self.params = ParameterServer(filename=os.path.join(os.path.dirname(__file__), "gail_data/params/gail_params_open-ai.json"))
 
         # creating the dirs for logging if they are not present already:
-        if not os.path.exists(self.params["ML"]["GAILRunner"]["tf2rl"]["logdir"]):
-            os.makedirs(self.params["ML"]["GAILRunner"]["tf2rl"]["logdir"])
-        if not os.path.exists(self.params["ML"]["GAILRunner"]["tf2rl"]["model_dir"]):
-            os.makedirs(self.params["ML"]["GAILRunner"]["tf2rl"]["model_dir"])
-        if not os.path.exists(self.params["ML"]["GAILRunner"]["tf2rl"]["expert_path_dir"]):
-            os.makedirs(self.params["ML"]["GAILRunner"]["tf2rl"]["expert_path_dir"])   
+        dir_check(self.params)
 
         if len(os.listdir(self.params["ML"]["GAILRunner"]["tf2rl"]["expert_path_dir"])) == 0:
             print("No expert trajectories found, plaese generate demonstrations first")
@@ -80,21 +86,6 @@ class PyGAILRunnerTests(unittest.TestCase):
             agent=self.agent,
             params=self.params,
             expert_trajs=self.expert_trajs)
-
-
-    def test_initialization(self):
-        """
-        tests the __init__() method of the GAILRunner class.
-        """
-        # I moved all code to the setup function, as there was no real testing happening.
-        # Please add code that uses the unittest assertion methods like self.assertEqual(...)
-        # To test actual functionality
-        # 
-        # Just running the __init__ method is a good sanity check if everything compiles 
-        # and runs as expected, but this is not a test. A test runs some methods, gets the result and 
-        # checks if the result is expected, by for example hardcoding the expected values in the test,
-        # then running the method to get some actual values and then check for equality with self.assertEqual(...)
-        raise NotImplementedError("Intended to fail!\nOpen bark_ml/tests/py_library_tf2rl_tests/py_gail_runner_tests.py and see comments.")
 
     
     def test_get_trainer(self):

@@ -100,7 +100,7 @@ class GAILRunner(TF2RLRunner):
 
     """
     args = {}
-    for key in list(self._params['ML']['GAILRunner']['tf2rl'].keys()):
+    for key in list(self._params['ML']['GAILRunner']['tf2rl'].__dict__):
       args[key] = self._params['ML']['GAILRunner']['tf2rl'][key]
 
     return argparse.Namespace(**args)

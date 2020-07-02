@@ -32,8 +32,8 @@ class BehaviorGAILAgent(BehaviorTF2RLAgent, BehaviorContinuousML):
         # self._collect_policy = self.GetCollectionPolicy()
         # self._eval_policy = self.GetEvalPolicy()
 
-        self._generator = self._get_generator()
-        self._discriminator = self._get_discriminator()
+        self.generator = self._get_generator()
+        self.discriminator = self._get_discriminator()
 
     def _get_generator(self):
         policy = DDPG(
@@ -72,7 +72,7 @@ class BehaviorGAILAgent(BehaviorTF2RLAgent, BehaviorContinuousML):
     #   return self._eval_policy
 
     def Act(self, state):
-        return self._generator.get_action(state)
+        return self.generator.get_action(state)
 
     def Plan(self, observed_world, dt):
         """In SAC never called and additionally itself calls
