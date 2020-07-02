@@ -57,16 +57,16 @@ py_test(
 py_binary(
   name = "gail",
   srcs = ["gail.py"],
-    data = [
-            "@bark_project//bark/python_wrapper:core.so",
-          "//python:bark_ml_library.so",
+  data = ["@bark_project//bark/python_wrapper:core.so",
+          "//bark_ml:generate_core",
           "//examples/example_params:example_params"],
-  # imports = ['../python/'],
+    imports = ["../external/bark_project/bark/python_wrapper/"],
   deps = [
     "//bark_ml/environments:single_agent_runtime",
     "//bark_ml/environments:blueprints",
     "//bark_ml/library_wrappers/lib_tf2rl/agents:agents",
     "//bark_ml/library_wrappers/lib_tf2rl/runners:runners",
+    "//bark_ml/library_wrappers/lib_tf2rl:load_expert_trajectories",
   ]
 )
 

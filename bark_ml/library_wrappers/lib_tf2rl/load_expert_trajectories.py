@@ -18,9 +18,17 @@ def load_expert_trajectories(dirname: str) -> dict:
     Returns:
         dict: The expert trajectories in tf2rl format: {'obs': [], 'next_obs': [], 'act': []}
     """
-    joblib_files = list_files_in_dir(dirname, file_ending='.jblb')
+    joblib_files = list_files_in_dir(os.path.expanduser(dirname), file_ending='.jblb')
     expert_trajectories = load_trajectories(joblib_files)
     
     if not expert_trajectories:
         raise ValueError(f"Could not find valid expert trajectories in {dirname}.")
+
+    assert len(expert_trajectories['obses']) == len(expert_trajectories['next_obses'])
+    assert len(expert_trajectories['obses']) == len(expert_trajectories['acts'])
+
+    assert expert_trajectories['obses'].shape[1] == 16
+    assert expert_trajectories['next_obses'].shape[1] == 16
+    assert expert_trajectories['acts'].shape[1] == 2
+
     return expert_trajectories

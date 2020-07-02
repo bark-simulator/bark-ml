@@ -9,7 +9,7 @@ from tf_agents.trajectories import time_step as ts
 from tf_agents.policies import greedy_policy
 import tensorflow as tf
 tf.compat.v1.enable_v2_behavior()
-
+import gym
 
 class BehaviorGAILAgent(BehaviorTF2RLAgent, BehaviorContinuousML):
     """GAIL agent based on the tf2rl library."""
@@ -79,3 +79,9 @@ class BehaviorGAILAgent(BehaviorTF2RLAgent, BehaviorContinuousML):
         unimplemented functions there so ommited
         """
         pass
+
+    
+    @property
+    def action_space(self):
+        import gym
+        return gym.spaces.Box(0, 1, (2,))

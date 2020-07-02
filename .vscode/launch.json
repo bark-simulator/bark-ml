@@ -107,15 +107,16 @@
 				"env": {
 					"PYTHONPATH": "${workspaceFolder}/bazel-bark-ml/bark_ml/commons/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/load_expert_trajectories_tests.runfiles/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/load_expert_trajectories_tests.runfiles/bark_project/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/load_expert_trajectories_tests.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/load_expert_trajectories_tests.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/load_expert_trajectories_tests.runfiles/bark_ml/python/"
 				}
-			},
+			},    
 			{
-				"name": "Python: examples/gail",
+				"name": "Python: examples/gail (--mode=train)",
 				"type": "python",
 				"request": "launch",
 				"program": "${workspaceFolder}/examples/gail.py",
 				"console": "integratedTerminal",
+				"args": ["--mode=train", "--expert_trajectories=~/Repositories/gail-4-bark/bark-ml/examples/expert_trajectories/sac"],
 				"env": {
-					"PYTHONPATH": "${workspaceFolder}/bazel-bark-ml/bark_ml/commons/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_ml/python/"
+					"PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/gail.runfiles/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/com_github_interaction_dataset_interaction_dataset/python/:"
 				}
 			},
 			{
@@ -146,7 +147,7 @@
 				"request": "launch",
 				"program": "${workspaceFolder}/examples/tfa.py",
 				"console": "integratedTerminal",
-				"args": ["--mode=generate", "--num_trajectories=1000"],
+				"args": ["--mode=generate", "--num_trajectories=100"],
 				"env": {
 					"PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/tfa.runfiles/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/com_github_interaction_dataset_interaction_dataset/python/:"
 				}

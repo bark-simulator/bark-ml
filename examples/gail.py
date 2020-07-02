@@ -12,10 +12,11 @@ from bark.runtime.viewer.video_renderer import VideoRenderer
 
 # BARK-ML imports
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
-  ContinuousMergingBlueprint, ContinuousIntersectionBlueprint
+  ContinuousMergingBlueprint, ContinuousIntersectionBlueprint, GailMergingBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.library_wrappers.lib_tf2rl.agents.gail_agent import BehaviorGAILAgent
 from bark_ml.library_wrappers.lib_tf2rl.runners.gail_runner import GAILRunner
+from bark_ml.library_wrappers.lib_tf2rl.load_expert_trajectories import load_expert_trajectories
 
 
 FLAGS = flags.FLAGS
@@ -30,16 +31,14 @@ flags.DEFINE_string("train_out",
                   default=os.path.join(Path.home(), "")
                   )
 
-flags.DEFINE_string("test_env",
-                  help="Example environment in accord with tf2rl to test our code.",
-                  default="Pendulum-v0"
-                  )
-
-flags.DEFINE_string("gpu",
+flags.DEFINE_integer("gpu",
                   help="-1 for CPU, 0 for GPU",
                   default=0
                   )
 
+flags.DEFINE_string("expert_trajectories",
+                    help="The absolute path to the dir where the expert trajectories are safed.",
+                    default=None)
 
 def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/gail_params.json")
@@ -48,34 +47,29 @@ def run_configuration(argv):
   params["ML"]["GAILRunner"]["tf2rl"]["logdir"] = os.path.join(FLAGS.train_out, "logs", "bark")
   params["ML"]["GAILRunner"]["tf2rl"]["model_dir"] = os.path.join(FLAGS.train_out, "models", "bark")
 
+  Path(params["ML"]["GAILRunner"]["tf2rl"]["logdir"]).mkdir(exist_ok=True, parents=True)
+  Path(params["ML"]["GAILRunner"]["tf2rl"]["model_dir"]).mkdir(exist_ok=True, parents=True)
+
   params["World"]["remove_agents_out_of_map"] = True
   params["ML"]["Settings"]["GPUUse"] = FLAGS.gpu
 
   # create environment
-  bp = ContinuousMergingBlueprint(params,
+  bp = GailMergingBlueprint(params,
                                   number_of_senarios=500,
                                   random_seed=0)
   env = SingleAgentRuntime(blueprint=bp,
                            render=False)
 
-  # Only for test purposes
-  # env = gym.make(FLAGS.test_env)
-
-  # SAC-agent
-  # sac_agent = BehaviorSACAgent(environment=env,
-  #                              params=params)
-  # env.ml_behavior = sac_agent
-  # runner = SACRunner(params=params,
-  #                    environment=env,
-  #                    agent=sac_agent)
-
   # GAIL-agent
   gail_agent = BehaviorGAILAgent(environment=env,
                                params=params)
   env.ml_behavior = gail_agent
+
+  expert_trajectories = load_expert_trajectories(FLAGS.expert_trajectories)
   runner = GAILRunner(params=params,
                      environment=env,
-                     agent=gail_agent)
+                     agent=gail_agent,
+                     expert_trajs=expert_trajectories)
 
   if FLAGS.mode == "train":
     runner.Train()
@@ -87,4 +81,5 @@ def run_configuration(argv):
 
 
 if __name__ == '__main__':
+  flags.mark_flag_as_required("expert_trajectories")
   app.run(run_configuration)

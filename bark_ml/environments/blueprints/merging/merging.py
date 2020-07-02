@@ -20,7 +20,7 @@ from bark_ml.evaluators.goal_reached import GoalReached
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteML
 from bark_ml.core.observers import NearestObserver
-
+from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 
 class MergingLaneCorridorConfig(LaneCorridorConfig):
   def __init__(self,
@@ -88,6 +88,7 @@ class MergingBlueprint(Blueprint):
       ml_behavior=ml_behavior)
 
 
+
 class ContinuousMergingBlueprint(MergingBlueprint):
   def __init__(self,
                params=None,
@@ -116,3 +117,17 @@ class DiscreteMergingBlueprint(MergingBlueprint):
                               random_seed=random_seed,
                               ml_behavior=ml_behavior,
                               viewer=True)
+
+
+class GailMergingBlueprint(ContinuousMergingBlueprint):
+  def __init__(self,
+          params=None,
+          number_of_senarios=250,
+          random_seed=0,
+          viewer=True):
+    ContinuousMergingBlueprint.__init__(self,
+                              params=params,
+                              number_of_senarios=number_of_senarios,
+                              random_seed=random_seed,
+                              viewer=True)
+    self._observer = NearestAgentsObserver(params)
