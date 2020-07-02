@@ -133,6 +133,7 @@ class TFARunner:
     scenario_id = 0
     total_trajectories = 0
     while total_trajectories <= num_trajectories:
+      print(f'Generated {total_trajectories}/{num_trajectories} expert trajectories.')
       expert_trajectories = {'obs': [], 'act': []}
 
       state = self._environment.reset()
