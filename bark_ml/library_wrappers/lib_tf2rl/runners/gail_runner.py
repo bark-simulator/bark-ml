@@ -5,9 +5,6 @@ import argparse
 import tensorflow as tf
 tf.compat.v1.enable_v2_behavior()
 
-# BARK imports
-#from bark_project.bark.runtime.commons.parameters import ParameterServer
-
 # tf2rl imports
 import tf2rl
 from tf2rl.experiments.irl_trainer import IRLTrainer
@@ -25,6 +22,13 @@ class GAILRunner(TF2RLRunner):
               agent=None,
               params=None,
               expert_trajs=None):
+    """initializing a TF2RL GAIL agent.
+    Args:
+      - environment: BARK runtime or open-ai gym type environment.
+      - agent: TF2RL GAIL agent
+      - params: BARK ParameterServer
+      - expert_trajs: Expert trajectories.
+    """
     
     self._expert_trajs = expert_trajs
     
@@ -45,8 +49,8 @@ class GAILRunner(TF2RLRunner):
   
   def GetTrainer(self):
     """Creates an IRLtrainer instance."""
-    policy = self._agent._generator   # the agent's generator network, so in our case the DDPG agent
-    irl = self._agent._discriminator  # the agent's discriminator network so in our case the GAIL network
+    policy = self._agent.generator   # the agent's generator network, so in our case the DDPG agent
+    irl = self._agent.discriminator  # the agent's discriminator network so in our case the GAIL network
 
     # creating args from the ParameterServer which can be given to the IRLtrainer:
     args = self._get_args_from_params()
@@ -96,35 +100,7 @@ class GAILRunner(TF2RLRunner):
 
     """
     args = {}
-    # experiment settings
-    args['max_steps'] = self._params['ML']['GAILRunner']['tf2rl']['max_steps']
-    args['episode_max_steps'] = self._params['ML']['GAILRunner']['tf2rl']['episode_max_steps']
-    args['n_experiments'] = self._params['ML']['GAILRunner']['tf2rl']['n_experiments']
-    args['show_progress'] = self._params['ML']['GAILRunner']['tf2rl']['show_progress']
-    args['save_model_interval'] = self._params['ML']['GAILRunner']['tf2rl']['save_model_interval']
-    args['save_summary_interval'] = self._params['ML']['GAILRunner']['tf2rl']['save_summary_interval']
-    args['dir_suffix'] = self._params['ML']['GAILRunner']['tf2rl']['dir_suffix']
-    args['normalize_obs'] = self._params['ML']['GAILRunner']['tf2rl']['normalize_obs']
-    args['logdir'] = self._params['ML']['GAILRunner']['tf2rl']['logdir']
-    args['logging_level'] = self._params['ML']['GAILRunner']['tf2rl']['logging_level']
-    args['model_dir'] = self._params['ML']['GAILRunner']['tf2rl']['model_dir']
-
-    # replay buffer
-    args['expert_path_dir'] = self._params['ML']['GAILRunner']['tf2rl']['expert_path_dir']
-    args['use_prioritized_rb'] = self._params['ML']['GAILRunner']['tf2rl']['use_prioritized_rb']
-    args['use_nstep_rb'] = self._params['ML']['GAILRunner']['tf2rl']['use_nstep_rb']
-    args['n_step'] = self._params['ML']['GAILRunner']['tf2rl']['n_step']
-
-    # test settings
-    args['evaluate'] = self._params['ML']['GAILRunner']['tf2rl']['evaluate']
-    args['test_interval'] = self._params['ML']['GAILRunner']['tf2rl']['test_interval']
-    args['show_test_progress'] = self._params['ML']['GAILRunner']['tf2rl']['show_test_progress']
-    args['test_episodes'] = self._params['ML']['GAILRunner']['tf2rl']['test_episodes']
-    args['save_test_path'] = self._params['ML']['GAILRunner']['tf2rl']['save_test_path']
-    args['save_test_movie'] = self._params['ML']['GAILRunner']['tf2rl']['save_test_movie']
-    args['show_test_images'] = self._params['ML']['GAILRunner']['tf2rl']['show_test_images']
-
-    # other:
-    args['gpu'] = self._params["ML"]["Settings"]["GPUUse", "", 0]
+    for key in list(self._params['ML']['GAILRunner']['tf2rl'].keys()):
+      args[key] = self._params['ML']['GAILRunner']['tf2rl'][key]
 
     return argparse.Namespace(**args)
