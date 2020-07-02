@@ -7,7 +7,7 @@ class TF2RLWrapper():
     """
 
     def __init__(self, env):
-
+        """initialize the wrapper"""
         self._env = env
         self.action_space = Box(low=env.action_space.low, high=env.action_space.high)
         self.observation_space = Box(low=env.observation_space.low, high=env.observation_space.high)
