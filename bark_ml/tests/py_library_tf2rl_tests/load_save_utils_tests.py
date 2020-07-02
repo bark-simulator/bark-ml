@@ -23,7 +23,7 @@ class LoadSaveUtilsTestsTests(unittest.TestCase):
         for filename in self.files_txt:
             Path(filename).touch()
         
-        self.files_pkl = [os.path.join(self.directory, f"{i}.pkl") for i in range(5)]
+        self.files_pkl = [os.path.join(self.directory, f"{i}.jblb") for i in range(5)]
         for filename in self.files_pkl:
             Path(filename).touch()
         
@@ -43,7 +43,7 @@ class LoadSaveUtilsTestsTests(unittest.TestCase):
         Test: Files are correct listed
         """
         self.assertEqual(list_files_in_dir(self.directory, '.txt').sort(), self.files_txt.sort())
-        self.assertEqual(list_files_in_dir(self.directory, '.pkl').sort(), self.files_pkl.sort())
+        self.assertEqual(list_files_in_dir(self.directory, '.jblb').sort(), self.files_pkl.sort())
 
         files_all = self.files_txt
         files_all.extend(self.files_pkl)

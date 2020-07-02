@@ -9,6 +9,7 @@ from concurrent.futures import ThreadPoolExecutor
 import multiprocessing
 import numpy as np
 from typing import Tuple
+import joblib
 
 import gym
 from absl import app
@@ -221,7 +222,7 @@ def measure_world(world_state, observer: StateObserver) -> dict:
 
 
 def store_expert_trajectories(map_file: str, track: str, expert_trajectories_path: str, expert_trajectories: dict) -> list:
-    """Stores the expert trajectories to a pickle binary file.
+    """Stores the expert trajectories to a joblib binary file.
 
     Args:
         map_file (str): The name of the map file that was simulated
@@ -239,11 +240,9 @@ def store_expert_trajectories(map_file: str, track: str, expert_trajectories_pat
     filenames = []
 
     for agent_id, agent_trajectory in expert_trajectories.items():
-        filename = os.path.join(directory, f"{track}_agentid{agent_id}.pkl")
+        filename = os.path.join(directory, f"{track}_agentid{agent_id}.jblb")
 
-        with open(filename, 'wb') as handle:
-            pickle.dump(expert_trajectories[agent_id], handle,
-                        protocol=pickle.HIGHEST_PROTOCOL)
+        joblib.dump(expert_trajectories[agent_id], filename)
         filenames.append(filename)
     return filenames
 

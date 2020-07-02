@@ -1,5 +1,4 @@
 import os
-import pickle
 import unittest
 import numpy as np
 import shutil
@@ -154,11 +153,8 @@ class GenerateAndStoreExpertTrajectories(SimulationBasedTests):
     Tests: generate_and_store_expert_trajectories
     """
     def assert_file_equal(self, expected_path: str, generated_path: str):
-        with open(expected_path, 'rb') as pickle_file:
-            loaded_expert_trajectories = dict(pickle.load(pickle_file))
-
-        with open(generated_path, 'rb') as pickle_file:
-            generated_expert_trajectories = dict(pickle.load(pickle_file))
+        loaded_expert_trajectories = joblib.load(expected_path)
+        generated_expert_trajectories = joblib.load(generated_path)
 
         for key in ['obs', 'act']:
             self.assertIn(key, loaded_expert_trajectories.keys())
