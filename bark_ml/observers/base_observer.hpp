@@ -1,5 +1,7 @@
-// Copyright (c) Patrick Hart, Julian Bernhard,
-// Klemens Esterle, Tobias Kessler
+// Copyright (c) fortiss GmbH
+//
+// Authors: Patrick Hart, Julian Bernhard, Klemens Esterle, and
+// Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
