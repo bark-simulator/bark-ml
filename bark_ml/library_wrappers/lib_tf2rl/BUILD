@@ -4,7 +4,7 @@ py_library(
     data = ["@bark_project//bark/python_wrapper:core.so"],
     imports = ["../external/bark_project/bark/python_wrapper/"],
     deps = ["@bark_project//bark/runtime:runtime",
-    "@tf2rl_repo"],
+    "@com_github_keiohta_tf2rl"],
     visibility = ["//visibility:public"],
 )
 

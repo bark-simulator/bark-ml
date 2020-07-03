@@ -5,6 +5,7 @@ py_test(
     data = [ "//bark_ml/tests/py_library_tf2rl_tests/data:generate_expert_trajectories_tests_data" ],
     imports = ["../../external/bark_project/bark/python_wrapper/"],
     deps = [
+            "@com_github_keiohta_tf2rl",
             "//bark_ml/library_wrappers/lib_tf2rl:load_expert_trajectories",
             ],
     visibility = ["//visibility:public"],

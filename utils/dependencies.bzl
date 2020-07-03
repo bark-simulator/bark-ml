@@ -48,7 +48,7 @@ cc_library(
 
   _maybe(
     new_git_repository,
-    name = "tf2rl_repo",
+    name = "com_github_keiohta_tf2rl",
     branch = "master",
     remote = "https://github.com/keiohta/tf2rl",
     build_file="//:utils/tf2rl.BUILD"

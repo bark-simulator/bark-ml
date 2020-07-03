@@ -35,7 +35,8 @@ def generate(script_path = None):
             f"${{workspaceFolder}}/bazel-bin/{path_without_py}.runfiles/bark_project/python/:" \
             f"${{workspaceFolder}}/bazel-bin/{path_without_py}.runfiles/bark_ml/:" \
             f"${{workspaceFolder}}/bazel-bin/{path_without_py}.runfiles/bark_ml/python/:" \
-            f"${{workspaceFolder}}/bazel-bin/{path_without_py}.runfiles/com_github_interaction_dataset_interaction_dataset/python/:" 
+            f"${{workspaceFolder}}/bazel-bin/{path_without_py}.runfiles/com_github_interaction_dataset_interaction_dataset/python/:"\
+            f"${{workspaceFolder}}/bazel-bin/{path_without_py}.runfiles/com_github_keiohta_tf2rl"
     config += """"
         }
     },"""

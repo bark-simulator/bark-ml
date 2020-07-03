@@ -58,7 +58,7 @@ py_binary(
           "//bark_ml:generate_core",
           "//examples/example_params:example_params"],
     imports = ["../external/bark_project/bark/python_wrapper/"],
-  deps = ["@tf2rl_repo",
+  deps = ["@com_github_keiohta_tf2rl",
     "//bark_ml/environments:single_agent_runtime",
     "//bark_ml/environments:blueprints",
     "//bark_ml/library_wrappers/lib_tf2rl/agents:agents",
