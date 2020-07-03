@@ -3,7 +3,8 @@ py_library(
     srcs = ["tf2rl_wrapper.py"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
     imports = ["../external/bark_project/bark/python_wrapper/"],
-    deps = ["@bark_project//bark/runtime:runtime"],
+    deps = ["@bark_project//bark/runtime:runtime",
+    "@tf2rl_repo"],
     visibility = ["//visibility:public"],
 )
 

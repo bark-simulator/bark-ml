@@ -45,3 +45,11 @@ cc_library(
     remote = "https://github.com/google/glog",
     build_file="//:utils/glog.BUILD"
   )
+
+  _maybe(
+    new_git_repository,
+    name = "tf2rl_repo",
+    branch = "master",
+    remote = "https://github.com/keiohta/tf2rl",
+    build_file="//:utils/tf2rl.BUILD"
+  )

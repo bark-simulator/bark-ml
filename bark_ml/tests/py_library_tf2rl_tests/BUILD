@@ -128,8 +128,3 @@ py_test(
     size = "small",
     timeout = "moderate"
 )
-
-py_test(
-    name = "py_gail_gym_training_generate_expert_trajectories.py",
-    srcs = [ "py_gail_gym_training_generate_expert_trajectories.py" ],
-)
