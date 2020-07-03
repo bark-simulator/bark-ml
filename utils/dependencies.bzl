@@ -8,7 +8,8 @@ def bark_ml_dependencies():
   _maybe(
     git_repository,
     name = "bark_project",
-    branch = "master",
+    # branch = "master",
+    commit = "619e3449051cd3b82de12f9c88d4583007113256",
     remote = "https://github.com/bark-simulator/bark",
   )
   # _maybe(

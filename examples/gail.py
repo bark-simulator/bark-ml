@@ -54,7 +54,7 @@ def run_configuration(argv):
   params["ML"]["Settings"]["GPUUse"] = FLAGS.gpu
 
   # create environment
-  bp = ContinuousMergingBlueprint(params,
+  bp = GailMergingBlueprint(params,
                                   number_of_senarios=500,
                                   random_seed=0)
   env = SingleAgentRuntime(blueprint=bp,
