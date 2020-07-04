@@ -9,10 +9,11 @@ from typing import Dict
 from collections import OrderedDict
 from itertools import islice
 
-from bark.models.dynamic import StateDefinition
-from bark.world import ObservedWorld
-from bark.geometry import Distance, Point2d, SignedDistance
-from modules.runtime.commons.parameters import ParameterServer
+from bark.core.models.dynamic import StateDefinition
+from bark.core.world import ObservedWorld
+from bark.core.geometry import Distance, Point2d
+from bark.runtime.commons.parameters import ParameterServer
+
 from bark_ml.observers.observer import StateObserver
 
 class GraphObserver(StateObserver):
@@ -27,10 +28,10 @@ class GraphObserver(StateObserver):
     self._use_edge_attributes = use_edge_attributes
 
     # the number of features of a node in the graph
-    self.feature_len = 13
+    self.feature_len = 11 # 13
 
     # the maximum number of agents that can be observed
-    self.agent_limit = 50
+    self.agent_limit = 6
 
      # the radius an agent can 'see' in meters
     self._visible_distance = 50
@@ -38,12 +39,11 @@ class GraphObserver(StateObserver):
   @classmethod
   def attribute_keys(cls):
     return ["x", "y", "theta", "vel", "goal_x", "goal_y", "goal_dx", "goal_dy", "goal_theta", "goal_d",
-            "goal_vel", "d_ditch_left", "d_ditch_right"]
+            "goal_vel"] #, "d_ditch_left", "d_ditch_right"]
 
   def Observe(self, world):
     """see base class"""
     graph = nx.OrderedGraph(normalization_ref=self.normalization_data)
-    actions = OrderedDict() # generated for now (steering, acceleration)
     agents = self._preprocess_agents(world)
     
     # add nodes
@@ -52,9 +52,6 @@ class GraphObserver(StateObserver):
       features = self._extract_features(agent)
       graph.add_node(index, **features)
 
-      # generate actions
-      actions[index] = self._generate_actions(features)
-      
     # Second loop for edges necessary -> otherwise order of graph_nodes is disrupted
     for (index, agent) in agents:
       # create edges to all other agents
@@ -64,18 +61,22 @@ class GraphObserver(StateObserver):
     
     observation = self._observation_from_graph(graph)
 
-    return tf.convert_to_tensor(observation, dtype=tf.float32, name='observation')
+    return tf.convert_to_tensor(
+      observation, 
+      dtype=tf.float32, 
+      name='observation'
+    )
 
   def _observation_from_graph(self, graph):
     """ Encodes the given graph into a bounded array with fixed size.
 
     The returned array 'a' has the following contents:
-    a[0]:                         (int) the maximum number of possibly contained nodes
-    a[1]:                         (int) the actual number of contained nodes
-    a[2]:                         (int) the number of features per node
-    a[4: a[1] * a[2]]:            (floats) the node feature values
-    a[a[1] * a[2]: a[0] * a[2]]:  (int) all entries have value -1
-    a[-a[0] ** 2:]:               (0 or 1) an adjacency matrix in vector form
+    a[0]:                            (int) the maximum number of possibly contained nodes
+    a[1]:                            (int) the actual number of contained nodes
+    a[2]:                            (int) the number of features per node
+    a[3: a[1] * a[2]]:               (floats) the node feature values
+    a[3 + a[1] * a[2]: a[0] * a[2]]: (int) all entries have value -1
+    a[-a[0] ** 2:]:                  (0 or 1) an adjacency matrix in vector form
 
     :type graph: A nx.Graph object.
     :param graph:
@@ -93,7 +94,7 @@ class GraphObserver(StateObserver):
     obs.extend(np.full((self.agent_limit - num_nodes) * self.feature_len, -1))
 
     # build adjacency matrix and convert to list
-    adjacency_matrix = np.zeros((self.agent_limit,self.agent_limit))
+    adjacency_matrix = np.zeros((self.agent_limit, self.agent_limit))
     for source, target in graph.edges:
       adjacency_matrix[source, target] = 1
     
@@ -101,14 +102,15 @@ class GraphObserver(StateObserver):
     obs.extend(adjacency_list)
 
     # Validity check
-    assert len(obs) == self._len_state, f'Observation has invalid length ({len(obs)}, expected: {self._len_state})'
+    assert len(obs) == self._len_state, f'Observation \
+      has invalid length ({len(obs)}, expected: {self._len_state})'
     
     return obs
 
   @classmethod
   def graph_from_observation(cls, observation):
     graph = nx.OrderedGraph()
-
+    
     node_limit = int(observation[0])
     num_nodes = int(observation[1])
     num_features = int(observation[2])
@@ -125,7 +127,7 @@ class GraphObserver(StateObserver):
     
     adj_start_idx = node_limit * num_features
     adj_list = obs[adj_start_idx:]
-    adj_matrix = np.reshape(adj_list,(node_limit, -1))
+    adj_matrix = np.reshape(adj_list, (node_limit, -1))
     
     for (source_id, source_edges) in enumerate(adj_matrix):
       for target_id in np.flatnonzero(source_edges):
@@ -205,12 +207,12 @@ class GraphObserver(StateObserver):
     lanes = list(filter(None, lanes)) #filter out non existing lanes (right or left of agent)
 
     # Calculate Distance to left and right road bounds
-    road_bound_left = lanes[0].left_boundary
-    d_ditch_left = Distance(road_bound_left, agent_posi)
-    road_bound_right = lanes[-1].right_boundary
-    d_ditch_right = Distance(road_bound_right, agent_posi)
-    res["d_ditch_left"] = d_ditch_left
-    res["d_ditch_right"] = d_ditch_right
+    # road_bound_left = lanes[0].left_boundary
+    # d_ditch_left = Distance(road_bound_left, agent_posi)
+    # road_bound_right = lanes[-1].right_boundary
+    # d_ditch_right = Distance(road_bound_right, agent_posi)
+    #res["d_ditch_left"] = d_ditch_left
+    #res["d_ditch_right"] = d_ditch_right
 
     if self._normalize_observations:
       n = self.normalization_data
@@ -224,8 +226,8 @@ class GraphObserver(StateObserver):
       res["goal_d"] = self._normalize_value(res["goal_d"], n["distance"])
       res["goal_theta"] = self._normalize_value(res["goal_theta"], n["theta"])
       res["goal_vel"] = self._normalize_value(res["goal_vel"], n["vel"])
-      res["d_ditch_left"] = self._normalize_value(res["d_ditch_left"], n["road"])
-      res["d_ditch_right"] = self._normalize_value(res["d_ditch_right"], n["road"])
+      #res["d_ditch_left"] = self._normalize_value(res["d_ditch_left"], n["road"])
+      #res["d_ditch_right"] = self._normalize_value(res["d_ditch_right"], n["road"])
     
     #####################################################
     #    If you change the number of features,          #
@@ -299,6 +301,9 @@ class GraphObserver(StateObserver):
     d['dy'] = [-y_range, y_range]
     d['road'] = [0, 15] # may need adjustment for if 3 lanes are broader than 15 m
     return d
+
+  def sample(self):
+    return self.observation_space.sample()
 
   @property
   def observation_space(self):

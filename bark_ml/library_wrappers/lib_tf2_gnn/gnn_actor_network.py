@@ -30,7 +30,7 @@ from bark_ml.library_wrappers.lib_tf2_gnn import GNNWrapper
 
 @gin.configurable
 class GNNActorNetwork(network.Network):
-  """Creates an actor network."""
+  """Creates an actor GNN."""
 
   def __init__(self,
                input_tensor_spec,
@@ -70,62 +70,58 @@ class GNNActorNetwork(network.Network):
         input_tensor_spec=input_tensor_spec,
         state_spec=(),
         name=name)
-    self._gnn = GNNWrapper(
-      node_layers_def=[
-        {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
-        {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
-        {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
-      ],
-      edge_layers_def=[
-        {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
-        {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
-        {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
-      ],
-      h0_dim=4,
-      e0_dim=2)
+    self._gnn = GNNWrapper(num_layers=5, num_units=80)
+
     if len(tf.nest.flatten(input_tensor_spec)) > 1:
       raise ValueError('Only a single observation is supported by this network')
-
+    
     flat_action_spec = tf.nest.flatten(output_tensor_spec)
+    
     if len(flat_action_spec) > 1:
       raise ValueError('Only a single action is supported by this network')
+    
     self._single_action_spec = flat_action_spec[0]
-
     if self._single_action_spec.dtype not in [tf.float32, tf.float64]:
       raise ValueError('Only float actions are supported by this network.')
+    
+    # insert projection network
+    self._dense_layers = utils.mlp_layers(
+      fc_layer_params=fc_layer_params
+    )
 
-    # TODO(kbanoop): Replace mlp_layers with encoding networks.
-    self._mlp_layers = utils.mlp_layers(
-        conv_layer_params,
-        fc_layer_params,
-        dropout_layer_params,
-        activation_fn=activation_fn,
-        kernel_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
-            scale=1. / 3., mode='fan_in', distribution='uniform'),
-        name='input_mlp')
-
-    self._mlp_layers.append(
+    self._dense_layers.append(
         tf.keras.layers.Dense(
             flat_action_spec[0].shape.num_elements(),
             activation=tf.keras.activations.tanh,
             kernel_initializer=tf.keras.initializers.RandomUniform(
                 minval=-0.003, maxval=0.003),
-            name='action'))
+            name='action')
+    )
 
     self._output_tensor_spec = output_tensor_spec
 
-  def call(self, observations, step_type=(), network_state=(), training=False):
-    del step_type  # unused.
-    # graph transform
-    observations = self._gnn.batch_call(observations)
-    #observations = tf.nest.flatten(observations)
-    output = tf.cast(observations, tf.float32)
+    self.actions = []
 
-    # for layer in self._mlp_layers:
-    #   output = layer(output, training=training)
+  def call(self, observations, step_type=(), network_state=(), training=False):
+    del step_type # unused.
+    
+    output = self._gnn.batch_call(observations, training=training)
+    output = tf.cast(output, tf.float32)
+
+    # extract ego state (node 0)
+    if len(output.shape) == 2 and output.shape[0] != 0:
+      output = output[0]
+      output = tf.expand_dims(output, axis=0)
+    if len(output.shape) == 3:
+      output = tf.gather(output, 0, axis=1)
+      output = tf.expand_dims(output, axis=1)
+
+    for layer in self._dense_layers:
+      output = layer(output, training=training)
 
     actions = common.scale_to_spec(output, self._single_action_spec)
     output_actions = tf.nest.pack_sequence_as(self._output_tensor_spec,
                                               [actions])
+    output_actions = tf.expand_dims(output_actions, axis=0)
 
     return output_actions, network_state

@@ -6,7 +6,7 @@ import numpy as np
 tf.compat.v1.enable_v2_behavior()
 
 # BARK imports
-from bark_project.modules.runtime.commons.parameters import ParameterServer
+from bark.runtime.commons.parameters import ParameterServer
 
 # tf agent imports
 from tf_agents.drivers import dynamic_step_driver
@@ -30,14 +30,16 @@ class SACRunner(TFARunner):
                        agent=agent,
                        params=params)
 
-  def _train(self):
+  def _train(self):    
     iterator = iter(self._agent._dataset)
-    for _ in range(0, self._params["ML"]["SACRunner"]["NumberOfCollections", "", 10000]):
+    for i in range(0, self._params["ML"]["SACRunner"]["NumberOfCollections", "", 2000]):
       self._agent._training = True
+      
       global_iteration = self._agent._agent._train_step_counter.numpy()
       self._collection_driver.run()
       experience, _ = next(iterator)
       self._agent._agent.train(experience)
+      
       if global_iteration % self._params["ML"]["SACRunner"]["EvaluateEveryNSteps", "", 100] == 0:
         self.Evaluate()
         self._agent.Save()

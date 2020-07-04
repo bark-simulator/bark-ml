@@ -5,7 +5,7 @@ import tensorflow as tf
 tf.compat.v1.enable_v2_behavior()
 
 # BARK imports
-from bark_project.modules.runtime.commons.parameters import ParameterServer
+from bark.runtime.commons.parameters import ParameterServer
 
 # tf agent imports
 from tf_agents.drivers import dynamic_step_driver
@@ -49,8 +49,8 @@ class TFARunner:
           self._params["ML"]["TFARunner"]["SummaryPath"])
       except:
         pass
-    self.get_initial_collection_driver()
-    self.get_collection_driver()
+    self.GetInitialCollectionDriver()
+    self.GetCollectionDriver()
 
   def GetInitialCollectionDriver(self):
     self._initial_collection_driver = \
@@ -92,7 +92,8 @@ class TFARunner:
       self._eval_metrics,
       self._wrapped_env,
       self._agent._agent.policy,
-      num_episodes=self._params["ML"]["TFARunner"]["EvaluationSteps", "", 20])
+      num_episodes=self._params["ML"]["TFARunner"]["EvaluationSteps", "", 20],
+      use_function=False)
     metric_utils.log_metrics(self._eval_metrics)
     tf.summary.scalar("mean_reward",
                       self._eval_metrics[0].result().numpy(),
