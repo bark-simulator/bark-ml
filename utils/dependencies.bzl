@@ -8,14 +8,19 @@ def bark_ml_dependencies():
   _maybe(
     git_repository,
     name = "bark_project",
-    commit = "cc393384134188bf68d098a9efa486ff36069577",
+    # branch = "master",
+    commit = "619e3449051cd3b82de12f9c88d4583007113256",
     remote = "https://github.com/bark-simulator/bark",
   )
-
+  # _maybe(
+  #   native.local_repository,
+  #   name = "bark_project",
+  #   path = "/Users/hart/Development/bark"
+  # )
   _maybe(
     native.new_local_repository,
     name = "python_linux",
-    path = "./python/venv/",
+    path = "./bark_ml/python_wrapper/venv/",
     build_file_content = """
 cc_library(
     name = "python-lib",
@@ -40,4 +45,12 @@ cc_library(
     commit = "195d416e3b1c8dc06980439f6acd3ebd40b6b820",
     remote = "https://github.com/google/glog",
     build_file="//:utils/glog.BUILD"
+  )
+
+  _maybe(
+    new_git_repository,
+    name = "com_github_keiohta_tf2rl",
+    branch = "master",
+    remote = "https://github.com/keiohta/tf2rl",
+    build_file="//:utils/tf2rl.BUILD"
   )

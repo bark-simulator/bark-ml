@@ -1,5 +1,7 @@
-# Copyright (c) 2020 Patrick Hart, Julian Bernhard,
-# Klemens Esterle, Tobias Kessler
+# Copyright (c) 2020 fortiss GmbH
+#
+# Authors: Patrick Hart, Julian Bernhard, Klemens Esterle, and
+# Tobias Kessler
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
@@ -13,7 +15,7 @@ import matplotlib
 # matplotlib.use('PS')
 import time
 
-from bark_project.modules.runtime.commons.parameters import ParameterServer
+from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
   DiscreteHighwayBlueprint, ContinuousMergingBlueprint, DiscreteMergingBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime

@@ -5,7 +5,7 @@ import tensorflow as tf
 tf.compat.v1.enable_v2_behavior()
 
 # BARK imports
-from bark_project.modules.runtime.commons.parameters import ParameterServer
+from bark.runtime.commons.parameters import ParameterServer
 
 # tf agent imports
 from tf_agents.drivers import dynamic_step_driver
@@ -18,7 +18,7 @@ from tf_agents.trajectories import time_step as ts
 
 # BARK-ML imports
 from bark_ml.library_wrappers.lib_tf_agents.tfa_wrapper import TFAWrapper
-
+from collections import defaultdict
 
 class TFARunner:
   def __init__(self,
@@ -49,8 +49,6 @@ class TFARunner:
           self._params["ML"]["TFARunner"]["SummaryPath"])
       except:
         pass
-    self.get_initial_collection_driver()
-    self.get_collection_driver()
 
   def GetInitialCollectionDriver(self):
     self._initial_collection_driver = \
@@ -117,3 +115,46 @@ class TFARunner:
         action_step = self._agent._eval_policy.action(ts.transition(state, reward=0.0, discount=1.0))
         state, reward, is_terminal, _ = self._environment.step(action_step.action.numpy())
         self._environment.render()
+
+  
+  def GenerateExpertTrajectories(self, num_trajectories: int = 1000, render: bool = False) -> dict:
+    """Generates expert trajectories based on a tfa agent.
+
+    Args:
+        num_trajectories (int, optional): The minimal number of generated expert trajectories. Defaults to 1000. (Has priority before num_episodes.)
+        render (bool, optional): Render the simulation during simulation. Defaults to False.
+
+    Returns:
+        dict: The expert trajectories.
+    """
+    self._agent._training = False
+    per_scenario_expert_trajectories = {}
+
+    scenario_id = 0
+    total_trajectories = 0
+    while total_trajectories <= num_trajectories:
+      print(f'Generated {total_trajectories}/{num_trajectories} expert trajectories.')
+      expert_trajectories = {'obs': [], 'act': []}
+
+      state = self._environment.reset()
+      expert_trajectories['obs'].append(state)
+      is_terminal = False
+
+      while not is_terminal:
+        action_step = self._agent._eval_policy.action(ts.transition(state, reward=0.0, discount=1.0))
+
+        state, reward, is_terminal, _ = self._environment.step(action_step.action.numpy())
+        expert_trajectories['obs'].append(state)
+        expert_trajectories['act'].append(action_step.action.numpy())
+
+        if render:
+          self._environment.render()
+
+      expert_trajectories['act'].append(expert_trajectories['act'][-1])
+      assert len(expert_trajectories['obs']) == len(expert_trajectories['act'])
+
+      per_scenario_expert_trajectories[scenario_id] = expert_trajectories
+      scenario_id += 1
+      total_trajectories += len(expert_trajectories['obs'])
+
+    return per_scenario_expert_trajectories

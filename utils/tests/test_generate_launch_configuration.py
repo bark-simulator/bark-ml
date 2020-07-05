@@ -21,10 +21,11 @@ class TestCorrectGenerated(unittest.TestCase):
         "program": "${workspaceFolder}/examples/tfa.py",
         "console": "integratedTerminal",
         "env": {
-            "PYTHONPATH": "${workspaceFolder}/bazel-bark-ml/bark_ml/commons/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/python/"
+            "PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/tfa.runfiles/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/com_github_interaction_dataset_interaction_dataset/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/com_github_keiohta_tf2rl"
         }
     },"""
         actual = generate("examples/tfa")
+        print(actual)
         self.assertEqual(actual.strip(), expected.strip())
     
     def test_no_path_given(self):
@@ -42,7 +43,7 @@ class TestCorrectGenerated(unittest.TestCase):
         "program": "${workspaceFolder}/<ADD-PYTHON-EXECUTABLE-PATH-WITHOUT-.PY>.py",
         "console": "integratedTerminal",
         "env": {
-            "PYTHONPATH": "${workspaceFolder}/bazel-bark-ml/bark_ml/commons/:${workspaceFolder}/bazel-bin/<ADD-PYTHON-EXECUTABLE-PATH-WITHOUT-.PY>.runfiles/:${workspaceFolder}/bazel-bin/<ADD-PYTHON-EXECUTABLE-PATH-WITHOUT-.PY>.runfiles/bark_project/:${workspaceFolder}/bazel-bin/<ADD-PYTHON-EXECUTABLE-PATH-WITHOUT-.PY>.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/<ADD-PYTHON-EXECUTABLE-PATH-WITHOUT-.PY>.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/<ADD-PYTHON-EXECUTABLE-PATH-WITHOUT-.PY>.runfiles/bark_ml/python/"
+            "PYTHONPATH": "${workspaceFolder}/bazel-bin/<ADD-PYTHON-EXECUTABLE-PATH-WITHOUT-.PY>.runfiles/:${workspaceFolder}/bazel-bin/<ADD-PYTHON-EXECUTABLE-PATH-WITHOUT-.PY>.runfiles/bark_project/:${workspaceFolder}/bazel-bin/<ADD-PYTHON-EXECUTABLE-PATH-WITHOUT-.PY>.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/<ADD-PYTHON-EXECUTABLE-PATH-WITHOUT-.PY>.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/<ADD-PYTHON-EXECUTABLE-PATH-WITHOUT-.PY>.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/<ADD-PYTHON-EXECUTABLE-PATH-WITHOUT-.PY>.runfiles/com_github_interaction_dataset_interaction_dataset/python/:${workspaceFolder}/bazel-bin/<ADD-PYTHON-EXECUTABLE-PATH-WITHOUT-.PY>.runfiles/com_github_keiohta_tf2rl"
         }
     },"""
         self.assertEqual(generate('').strip(), expected.strip())

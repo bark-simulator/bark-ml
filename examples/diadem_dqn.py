@@ -31,7 +31,7 @@ from diadem.preprocessors import Normalization
 
 from bark_ml.library_wrappers.lib_diadem.diadem_bark_environment import DiademBarkEnvironment
 
-from bark_project.modules.runtime.commons.parameters import ParameterServer
+from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.environments.blueprints import DiscreteHighwayBlueprint
@@ -78,4 +78,4 @@ if __name__ == '__main__':
   # basic Double DQN with Prioritized Experience Replay
   # run_dqn_algorithm(parameter_files=["examples/example_params/common_parameters.yaml",
   #                                     "examples/example_params/dqn_distributional_quantile.yaml"])
-  run_dqn_algorithm(parameter_files=["examples/example_params/dqn_basic.yaml"])
+  run_dqn_algorithm(parameter_files=["bark_ml/examples/example_params/dqn_basic.yaml"])

@@ -1,5 +1,7 @@
-# Copyright (c) 2020 Patrick Hart, Julian Bernhard,
-# Klemens Esterle, Tobias Kessler
+# Copyright (c) 2020 fortiss GmbH
+#
+# Authors: Patrick Hart, Julian Bernhard, Klemens Esterle, and
+# Tobias Kessler
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
@@ -7,9 +9,9 @@
 
 from gym import spaces
 import numpy as np
-from bark.models.dynamic import StateDefinition
-from bark.world import World, ObservedWorld
-from bark_project.modules.runtime.commons.parameters import ParameterServer
+from bark.core.models.dynamic import StateDefinition
+from bark.core.world import World, ObservedWorld
+from bark.runtime.commons.parameters import ParameterServer
 import math
 import operator
 

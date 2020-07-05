@@ -17,12 +17,16 @@ jobs:
               apt-get install --reinstall python3.7-tk
               pip3 install virtualenv==16.7.8
       - name: Setting up virtual environment
-        run: virtualenv -p python3 ./python/venv  --system-site-packages
+        run: virtualenv -p python3 ./bark_ml/python_wrapper/venv  --system-site-packages
       - name: Entering the virtual python environment..
-        run: . ./python/venv/bin/activate
+        run: . ./bark_ml/python_wrapper/venv/bin/activate
       - name: Installing additional requirements for gail 4 bark
         run: pip install -r utils/docker/installers/requirements.txt
-      - name: Running unit tests..
+      - name: Running unit tests
         run: bazel test :unit_tests
-      - name: Running examples..
+      - name: Running generate and load tests
+        run: bazel test :generate_load_tests
+      - name: Running examples
         run: bazel test :examples_tests
+      - name: Running gail tests
+        run: bazel test :gail_tests

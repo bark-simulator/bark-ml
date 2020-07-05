@@ -1,10 +1,4 @@
-"""In case a wrapper is needed around the bark runtime for be usable by tf2rl
-as a simple environment. So far the only thing that was found is that if 
-args.save_test_movie is True, that is a gif is saved about the testing, the 
-render() function is called with an extra argument mode=\"rgb_array\". 
-The bark runtime does not except such an argument, so if the movie saving
-function is needed to be used then a wrapper around this is needed.
-"""
+from gym.spaces.box import Box
 
 
 class TF2RLWrapper():
@@ -13,16 +7,18 @@ class TF2RLWrapper():
     """
 
     def __init__(self, env):
-
+        """initialize the wrapper"""
         self._env = env
-        self.action_space = env.action_space
-        self.observation_space = env.observation_space
+        self.action_space = Box(low=env.action_space.low, high=env.action_space.high)
+        self.observation_space = Box(low=env.observation_space.low, high=env.observation_space.high)
     
     def step(self, action):
+        """same as in BARK"""
         return self._env.step(action)
 
     
     def reset(self):
+        """same as in BARK"""
         return self._env.reset()
 
 
