@@ -20,6 +20,7 @@ class GNNWrapper(tf.keras.Model):
     self.num_units = num_units
 
     params = GNN.get_default_hyperparameters()
+    #params["global_exchange_mode"] = "mlp"
     params["num_layers"] = num_layers
     params["hidden_dim"] = num_units
     self._gnn = GNN(params)

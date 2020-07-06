@@ -21,6 +21,7 @@ returned.
 
 import gin
 import tensorflow as tf  # pylint: disable=g-explicit-tensorflow-version-import
+import numpy as np
 
 from tf_agents.networks import network
 from tf_agents.networks import utils
@@ -70,7 +71,7 @@ class GNNActorNetwork(network.Network):
         input_tensor_spec=input_tensor_spec,
         state_spec=(),
         name=name)
-    self._gnn = GNNWrapper(num_layers=5, num_units=80)
+    self._gnn = GNNWrapper(num_layers=2, num_units=80)
 
     if len(tf.nest.flatten(input_tensor_spec)) > 1:
       raise ValueError('Only a single observation is supported by this network')
@@ -123,5 +124,5 @@ class GNNActorNetwork(network.Network):
     output_actions = tf.nest.pack_sequence_as(self._output_tensor_spec,
                                               [actions])
     output_actions = tf.expand_dims(output_actions, axis=0)
-
+    
     return output_actions, network_state

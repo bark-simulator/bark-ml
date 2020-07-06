@@ -1,5 +1,6 @@
 import gin
 import tensorflow as tf  # pylint: disable=g-explicit-tensorflow-version-import
+import numpy as np
 
 from tf_agents.networks import network
 from tf_agents.networks import utils
@@ -73,6 +74,7 @@ class GNNCriticNetwork(network.Network):
     self._single_action_spec = flat_action_spec[0]
 
     self._gnn = GNNWrapper(num_layers=2, num_units=80)
+    self.step = 0
 
     # TODO(kbanoop): Replace mlp_layers with encoding networks.
     self._action_layers = utils.mlp_layers(
@@ -96,9 +98,9 @@ class GNNCriticNetwork(network.Network):
     observations, actions = inputs
     batch_size = observations.shape[0]
 
+    observations = self._gnn.batch_call(observations, training=training)
     actions = tf.cast(actions, tf.float32)
     observations = tf.cast(observations, tf.float32)
-    observations = self._gnn.batch_call(observations, training=training)
 
     if batch_size > 0:
       observations = tf.gather(observations, 0, axis=1) # extract ego state
@@ -115,4 +117,11 @@ class GNNCriticNetwork(network.Network):
       joint = layer(joint, training=training)
     
     output = tf.transpose(joint)
+    
+    if batch_size > 0:
+      tf.summary.scalar('Mean Value', np.mean(output), step=self.step)
+      self.step += 1
+    
     return output, network_state
+
+step = 0

@@ -19,8 +19,7 @@ from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.viewer.video_renderer import VideoRenderer
 
 # BARK-ML imports
-from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
-  ContinuousMergingBlueprint, ContinuousIntersectionBlueprint
+from bark_ml.environments.blueprints import ContinuousHighwayBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, BehaviorPPOAgent, BehaviorGraphSACAgent
 from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner
@@ -61,6 +60,7 @@ def run_configuration(argv):
                                   random_seed=0)
 
   env = SingleAgentRuntime(blueprint=bp,
+                           observer=observer,
                            render=True)
 
   # SAC-agent
