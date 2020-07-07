@@ -1,16 +1,22 @@
 import unittest
-import gym
 import os
+import numpy as np
 
 # BARK imports
 from bark_project.bark.runtime.commons.parameters import ParameterServer
 
 # BARK-ML imports
+from bark_ml.library_wrappers.lib_tf2rl.tf2rl_wrapper import TF2RLWrapper
 from bark_ml.library_wrappers.lib_tf2rl.runners.gail_runner import GAILRunner 
 from bark_ml.library_wrappers.lib_tf2rl.agents.gail_agent import BehaviorGAILAgent
+from bark_ml.environments.blueprints import ContinuousMergingBlueprint
+from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 
 # TF2RL imports:
 from tf2rl.experiments.utils import restore_latest_n_traj
+
+# other:
+from bark_ml.tests.py_library_tf2rl_tests.py_gail_runner_tests import dir_check
 
 
 class PyTrainingGymTests(unittest.TestCase):
@@ -19,41 +25,39 @@ class PyTrainingGymTests(unittest.TestCase):
         """
         Setup
         """
-        self.params = ParameterServer(filename=os.path.join(os.path.dirname(__file__), "gail_data/params/gail_params_open-ai.json"))
+        params = ParameterServer(filename=os.path.join(os.path.dirname(__file__), "gail_data/params/gail_params_bark.json"))
 
         # creating the dirs for logging if they are not present already:
-        if not os.path.exists(self.params["ML"]["GAILRunner"]["tf2rl"]["logdir"]):
-            os.makedirs(self.params["ML"]["GAILRunner"]["tf2rl"]["logdir"])
-        if not os.path.exists(self.params["ML"]["GAILRunner"]["tf2rl"]["model_dir"]):
-            os.makedirs(self.params["ML"]["GAILRunner"]["tf2rl"]["model_dir"])
-        if not os.path.exists(self.params["ML"]["GAILRunner"]["tf2rl"]["expert_path_dir"]):
-            os.makedirs(self.params["ML"]["GAILRunner"]["tf2rl"]["expert_path_dir"])
+        dir_check(self.params)
 
-        if len(os.listdir(self.params["ML"]["GAILRunner"]["tf2rl"]["expert_path_dir"])) == 0:
-            print("No expert trajectories found, plaese generate demonstrations first")
-            print("python tf2rl/examples/run_sac.py --env-name=Pendulum-v0 --save-test-path --test-interval=50000")
-            print("After that, save expert trajectories into bark_ml/tests/gail_data/expert_data")
-            exit()
+        # create environment
+        bp = ContinuousMergingBlueprint(params,
+                                        number_of_senarios=500,
+                                        random_seed=0)
+        env = SingleAgentRuntime(blueprint=bp,
+                                render=False)
 
-        # create example environment:
-        env_name = "Pendulum-v0"
-        self.env = gym.make(env_name) 
-
-        # getting the expert trajectories from the .pkl file:
-        self.expert_trajs = restore_latest_n_traj(dirname=self.params["ML"]["GAILRunner"]["tf2rl"]["expert_path_dir"],
-                                            max_steps=self.params["ML"]["GAILRunner"]["tf2rl"]["max_steps"])
-
-        # create angent and runner:
-        self.agent = BehaviorGAILAgent(
-            environment=self.env,
-            params=self.params
-        )
+        # wrapped environment for compatibility with batk-ml
+        wrapped_env = TF2RLWrapper(env)
         
-        self.runner = GAILRunner(
-            environment=self.env,
-            agent=self.agent,
-            params=self.params,
-            expert_trajs=self.expert_trajs)
+        # Dummy expert trajectories:
+        expert_trajs = {
+            'obses': np.zeros((1000, 16), dtype=np.float32),
+            'next_obses': np.zeros((1000, 16), dtype=np.float32),
+            'acts': np.zeros((1000, 2), dtype=np.float32)
+        }
+
+        # create agent and runner:
+        agent = BehaviorGAILAgent(
+            environment=wrapped_env,
+            params=params
+        )
+        env.ml_behavior = agent
+        runner = GAILRunner(
+            environment=wrapped_env,
+            agent=agent,
+            params=params,
+            expert_trajs=expert_trajs)
 
     def test_initialization(self):
         """

@@ -11,6 +11,7 @@ from bark_ml.library_wrappers.lib_tf2rl.runners.gail_runner import GAILRunner
 # TF2RL imports
 from tf2rl.algos.ddpg import DDPG
 from tf2rl.algos.gail import GAIL
+from tf2rl.experiments.irl_trainer import IRLTrainer
 from tf2rl.experiments.utils import restore_latest_n_traj
 
 class sample_agent():
@@ -21,15 +22,6 @@ class sample_agent():
         self.discriminator = discriminator
 
 
-def dir_check(params):
-    """checks some dirs whether they are present or not.
-    If they are not, the function creates them.
-    """
-    for key in ['logdir', 'model_dir', 'expert_path_dir']:
-        if not os.path.exists(params["ML"]["GAILRunner"]["tf2rl"][key]):
-            os.makedirs(params["ML"]["GAILRunner"]["tf2rl"][key])
-
-
 class PyGAILRunnerTests(unittest.TestCase):
     # TODO docstring
     
@@ -38,9 +30,11 @@ class PyGAILRunnerTests(unittest.TestCase):
         setup
         """
         self.params = ParameterServer(filename=os.path.join(os.path.dirname(__file__), "gail_data/params/gail_params_open-ai.json"))
-
+        
         # creating the dirs for logging if they are not present already:
-        dir_check(self.params)
+        for key in ['logdir', 'model_dir', 'expert_path_dir']:
+            if not os.path.exists(self.params["ML"]["GAILRunner"]["tf2rl"][key]):
+                os.makedirs(self.params["ML"]["GAILRunner"]["tf2rl"][key])
 
         if len(os.listdir(self.params["ML"]["GAILRunner"]["tf2rl"]["expert_path_dir"])) == 0:
             print("No expert trajectories found, plaese generate demonstrations first")
@@ -85,16 +79,22 @@ class PyGAILRunnerTests(unittest.TestCase):
             environment=self.env,
             agent=self.agent,
             params=self.params,
-            expert_trajs=self.expert_trajs)
+            expert_trajs=self.expert_trajs) 
 
     
     def test_get_trainer(self):
         """get_trainer
         """
         trainer = self.runner.GetTrainer()
-        self.assertEqual(trainer._policy.actor_units, [400, 300])
-
-        self.assertEqual(trainer._expert_obs, self.expert_trajs['obses'])
+        # assertions:
+        self.assertIsInstance(trainer, IRLTrainer)
+        self.assertIsInstance(trainer._irl, GAIL)
+        self.assertIsInstance(trainer._policy, DDPG)
+        self.assertEqual(trainer._irl, self.discriminator)
+        self.assertEqual(trainer._policy, self.generator)
+        self.assertTrue((trainer._expert_obs == self.expert_trajs["obses"]).all())
+        self.assertTrue((trainer._expert_next_obs == self.expert_trajs["next_obses"]).all())
+        self.assertTrue((trainer._expert_act == self.expert_trajs["acts"]).all())
 
 if __name__ == '__main__':
     unittest.main()
