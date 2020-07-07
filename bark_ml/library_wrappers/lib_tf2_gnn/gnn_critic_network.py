@@ -1,5 +1,6 @@
 import gin
 import tensorflow as tf  # pylint: disable=g-explicit-tensorflow-version-import
+import numpy as np
 
 from tf_agents.networks import network
 from tf_agents.networks import utils
@@ -72,23 +73,34 @@ class GNNCriticNetwork(network.Network):
       raise ValueError('Only a single action is supported by this network')
     self._single_action_spec = flat_action_spec[0]
 
-    self._gnn = GNNWrapper(num_layers=2, num_units=80)
+    self._gnn = GNNWrapper(num_layers=4, num_units=64)
 
     # TODO(kbanoop): Replace mlp_layers with encoding networks.
     self._action_layers = utils.mlp_layers(
-      fc_layer_params=action_fc_layer_params
-    )
+        None,
+        action_fc_layer_params,
+        action_dropout_layer_params,
+        activation_fn=activation_fn,
+        kernel_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
+            scale=1. / 3., mode='fan_in', distribution='uniform'),
+        name='action_encoding')
 
-    self._joint_layers = []
+    self._joint_layers = utils.mlp_layers(
+        None,
+        joint_fc_layer_params,
+        joint_dropout_layer_params,
+        activation_fn=activation_fn,
+        kernel_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
+            scale=1. / 3., mode='fan_in', distribution='uniform'),
+        name='joint_mlp')
 
     self._joint_layers.append(
-        tf.keras.layers.Dense(
-            1,
-            input_shape=(82,),
-            activation=output_activation_fn,
-            kernel_initializer=tf.keras.initializers.RandomUniform(
-                minval=-0.003, maxval=0.003),
-            name='value'))
+      tf.keras.layers.Dense(
+        1,
+        activation=output_activation_fn,
+        kernel_initializer=tf.keras.initializers.RandomUniform(
+            minval=-0.003, maxval=0.003),
+        name='value'))
 
   def call(self, inputs, step_type=(), network_state=(), training=False):
     del step_type # unused.
@@ -96,13 +108,13 @@ class GNNCriticNetwork(network.Network):
     observations, actions = inputs
     batch_size = observations.shape[0]
 
+    node_embeddings = self._gnn.batch_call(observations, training=training)
     actions = tf.cast(actions, tf.float32)
-    observations = tf.cast(observations, tf.float32)
-    observations = self._gnn.batch_call(observations, training=training)
+    node_embeddings = tf.cast(node_embeddings, tf.float32)
 
     if batch_size > 0:
-      observations = tf.gather(observations, 0, axis=1) # extract ego state
-      observations = tf.reshape(observations, [batch_size, -1])
+      node_embeddings = tf.gather(node_embeddings, 0, axis=1) # extract ego state
+      node_embeddings = tf.reshape(node_embeddings, [batch_size, -1])
       actions = tf.reshape(actions, [batch_size, -1])
     else:
       actions = tf.zeros([0, actions.shape[-1]])
@@ -110,7 +122,7 @@ class GNNCriticNetwork(network.Network):
     for layer in self._action_layers:
       actions = layer(actions, training=training)
 
-    joint = tf.concat([observations, actions], 1)
+    joint = tf.concat([node_embeddings, actions], 1)
     for layer in self._joint_layers:
       joint = layer(joint, training=training)
     

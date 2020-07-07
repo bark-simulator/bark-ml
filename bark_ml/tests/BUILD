@@ -80,8 +80,14 @@ py_test(
     srcs = ["py_gnn_wrapper_tests.py"],
     data = ["@bark_project//bark/python_wrapper:core.so",
             "//python:bark_ml_library.so"],
-    imports = ["../external/bark_project/python/",
+    imports = ["../external/bark_project/bark/python_wrapper/",
                "../../python/"],
-    deps = ["//bark_ml/commons:py_spaces"],
+    deps = [
+        "//bark_ml/environments:single_agent_runtime",
+        "//bark_ml/environments:blueprints",
+        "//bark_ml/library_wrappers/lib_tf2_gnn:lib_tf2_gnn",
+        "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
+        "//bark_ml/library_wrappers/lib_tf_agents/runners:runners",
+    ],
     visibility = ["//visibility:public"],
 )

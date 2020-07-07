@@ -30,7 +30,7 @@ class SACRunner(TFARunner):
                        agent=agent,
                        params=params)
 
-  def _train(self):    
+  def _train(self):
     iterator = iter(self._agent._dataset)
     for i in range(0, self._params["ML"]["SACRunner"]["NumberOfCollections", "", 2000]):
       self._agent._training = True

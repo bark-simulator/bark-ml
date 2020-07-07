@@ -8,6 +8,7 @@
 import gym
 from absl import app
 from absl import flags
+import tensorflow as tf
 
 # this will disable all BARK log messages
 # import os
@@ -42,8 +43,9 @@ def run_configuration(argv):
   params["ML"]["TFARunner"]["SummaryPath"] = "/home/silvan/working_bark/training_gnn/summary"
   params["ML"]["BehaviorSACAgent"]["DebugSummaries"] = True
   params["ML"]["BehaviorTFAAgents"]["NumCheckpointsToKeep"] = None
-  params["ML"]["SACRunner"]["NumberOfCollections"] = 100
-  params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 5
+  #params["ML"]["SACRunner"]["NumberOfCollections"] = 2000
+  params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 50
+  params["ML"]["BehaviorSACAgent"]["BatchSize"] = 32
   params["World"]["remove_agents_out_of_map"] = False
 
     # viewer = MPViewer(
@@ -56,6 +58,8 @@ def run_configuration(argv):
   #   renderer=viewer,
   #   world_step_time=0.2,
   #   fig_path="/Users/marco.oliva/2020/bark-ml/video/")
+
+  #tf.summary.trace_on(graph=True, profiler=True)
 
   # create environment
   bp = ContinuousHighwayBlueprint(params,
