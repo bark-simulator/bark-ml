@@ -86,7 +86,7 @@
         "BrakeForLaneEnd": false,
         "BrakeForLaneEndEnabledDistance": 60.0,
         "BrakeForLaneEndDistanceOffset": 15.0,
-        "NumTrajectoryTimePoints": 11.0
+        "NumTrajectoryTimePoints": 11
     },
     "DynamicModel": {
         "wheel_base": 2.700000047683716,

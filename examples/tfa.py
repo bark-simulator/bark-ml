@@ -41,7 +41,7 @@ def run_configuration(argv):
   # NOTE: Modify these paths in order to save the checkpoints and summaries
   params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/home/silvan/working_bark/training_sac/checkpoints"
   params["ML"]["TFARunner"]["SummaryPath"] = "/home/silvan/working_bark/training_sac/summary"
-  params["World"]["remove_agents_out_of_map"] = True
+  params["World"]["remove_agents_out_of_map"] = False
 
   # viewer = MPViewer(
   #   params=params,
