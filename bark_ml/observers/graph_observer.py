@@ -21,11 +21,13 @@ class GraphObserver(StateObserver):
   def __init__(self,
                normalize_observations=True,
                use_edge_attributes=True,
+               output_supervised_data = False,
                params=ParameterServer()):
     StateObserver.__init__(self, params)
 
     self._normalize_observations = normalize_observations
     self._use_edge_attributes = use_edge_attributes
+    self._output_supervised_data = output_supervised_data
 
     # the number of features of a node in the graph
     self.feature_len = 11 # 13
@@ -60,12 +62,16 @@ class GraphObserver(StateObserver):
         graph.add_edge(index, nearby_agent_index)
     
     observation = self._observation_from_graph(graph)
+    if self._output_supervised_data == False:
+      return tf.convert_to_tensor(
+        observation, 
+        dtype=tf.float32, 
+        name='observation'
+      )
+    else:
+      actions = self._generate_actions(features)
+      return (graph,actions)
 
-    return tf.convert_to_tensor(
-      observation, 
-      dtype=tf.float32, 
-      name='observation'
-    )
 
   def _observation_from_graph(self, graph):
     """ Encodes the given graph into a bounded array with fixed size.
@@ -105,7 +111,12 @@ class GraphObserver(StateObserver):
     assert len(obs) == self._len_state, f'Observation \
       has invalid length ({len(obs)}, expected: {self._len_state})'
     
-    return obs
+    #return obs
+    return tf.convert_to_tensor(
+        obs, 
+        dtype=tf.float32, 
+        name='observation'
+      )
 
   @classmethod
   def graph_from_observation(cls, observation):
