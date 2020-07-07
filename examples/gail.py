@@ -14,6 +14,7 @@ from bark.runtime.viewer.video_renderer import VideoRenderer
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
   ContinuousMergingBlueprint, ContinuousIntersectionBlueprint, GailMergingBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
+from bark_ml.library_wrappers.lib_tf2rl.tf2rl_wrapper import TF2RLWrapper
 from bark_ml.library_wrappers.lib_tf2rl.agents.gail_agent import BehaviorGAILAgent
 from bark_ml.library_wrappers.lib_tf2rl.runners.gail_runner import GAILRunner
 from bark_ml.library_wrappers.lib_tf2rl.load_expert_trajectories import load_expert_trajectories
@@ -54,20 +55,23 @@ def run_configuration(argv):
   params["ML"]["Settings"]["GPUUse"] = FLAGS.gpu
 
   # create environment
-  bp = GailMergingBlueprint(params,
+  bp = ContinuousMergingBlueprint(params,
                                   number_of_senarios=500,
                                   random_seed=0)
   env = SingleAgentRuntime(blueprint=bp,
-                           render=False)
+                          render=False)
+
+  # wrapped environment for compatibility with tf2rl
+  wrapped_env = TF2RLWrapper(env)
 
   # GAIL-agent
-  gail_agent = BehaviorGAILAgent(environment=env,
+  gail_agent = BehaviorGAILAgent(environment=wrapped_env,
                                params=params)
   env.ml_behavior = gail_agent
 
   expert_trajectories = load_expert_trajectories(FLAGS.expert_trajectories)
   runner = GAILRunner(params=params,
-                     environment=env,
+                     environment=wrapped_env,
                      agent=gail_agent,
                      expert_trajs=expert_trajectories)
 
