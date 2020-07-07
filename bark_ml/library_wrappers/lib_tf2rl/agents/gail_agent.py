@@ -27,15 +27,14 @@ class BehaviorGAILAgent(BehaviorTF2RLAgent, BehaviorContinuousML):
                                     environment=environment,
                                     params=params)
         BehaviorContinuousML.__init__(self, params)
-        # self._replay_buffer = self.GetReplayBuffer()
-        # self._dataset = self.GetDataset()
-        # self._collect_policy = self.GetCollectionPolicy()
-        # self._eval_policy = self.GetEvalPolicy()
 
         self.generator = self._get_generator()
         self.discriminator = self._get_discriminator()
 
     def _get_generator(self):
+        """Returns instantiated policy -
+        parameters from ./examples/example_params/gail_params.json
+        """
         policy = DDPG(
             state_shape=self._environment.observation_space.shape,
             action_dim=self._environment.action_space.high.size,
@@ -54,7 +53,9 @@ class BehaviorGAILAgent(BehaviorTF2RLAgent, BehaviorContinuousML):
         return policy
 
     def _get_discriminator(self):
-        """Instantiate discriminator network here."""
+        """Returns instantiated discriminator network -
+        parameters from ./examples/example_params/gail_params.json
+        """
         irl = GAIL(
             state_shape=self._environment.observation_space.shape,
             action_dim=self._environment.action_space.high.size,
@@ -66,27 +67,24 @@ class BehaviorGAILAgent(BehaviorTF2RLAgent, BehaviorContinuousML):
             gpu=self._params["ML"]["Settings"]["GPUUse", "", 0])
         return irl
 
-    # def GetEvalPolicy(self):
-    #   return greedy_policy.GreedyPolicy(self._agent.policy)
-
     def Reset(self):
-        pass
-
-    # @property
-    # def eval_policy(self):
-    #   return self._eval_policy
-
-    def Act(self, state):
-        return self.generator.get_action(state)
-
-    def Plan(self, observed_world, dt):
-        """In SAC never called and additionally itself calls
-        unimplemented functions there so ommited
+        """Currently ommited due to missing example in SAC
         """
         pass
 
-    
+    def Act(self, state):
+        """Returns action corresponding to state
+        """
+        return self.generator.get_action(state)
+
+    def Plan(self, observed_world, dt):
+        """Currently ommited due to missing example in SAC
+        """
+        pass
+
     @property
     def action_space(self):
+        """Attribute additionally needed
+        """
         import gym
         return gym.spaces.Box(0, 1, (2,))

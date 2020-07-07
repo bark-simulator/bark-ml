@@ -15,8 +15,8 @@ from tf2rl.experiments.utils import restore_latest_n_traj
 
 
 class PyLibraryWrappersGAILAgentTests(unittest.TestCase):
-    # TODO docstring
     """
+    Tests of some gail agent methods
     """
 
     def setUp(self):
@@ -35,16 +35,23 @@ class PyLibraryWrappersGAILAgentTests(unittest.TestCase):
 
     def test_agent_wrapping(self):
         """
-        tests __init__() method of BehaviorGAILAgent class
+        tests generator and discriminator instances in __init__() method of BehaviorGAILAgent class
         """
-        # TODO Write real tests
-        # Just running the __init__ method is a good sanity check if everything compiles
-        # and runs as expected, but this is not a test. A test runs some methods, gets the result and
-        # checks if the result is expected, by for example hardcoding the expected values in the test,
-        # then running the method to get some actual values and then check for equality with self.assertEqual(...)
-        raise NotImplementedError("Intended to fail!\nOpen bark_ml/tests/py_library_tf2rl_tests/py_gail_agent_tests.py and see comments.")
-        pass
+        self.assertIsInstance(self.agent.generator, DDPG)
+        self.assertIsInstance(self.agent.discriminator, GAIL)
 
+    def test_agent_parameters(self):
+        """
+        tests some passed parameters of __init__() method of BehaviorGAILAgent class
+        """
+        self.assertIsInstance(self.env.observation_space.shape, tuple)
+        self.assertGreater(self.env.observation_space.shape[0], 0)
+        self.assertIsInstance(self.env.action_space.high.size, int)
+        self.assertGreater(self.env.action_space.high.size, 0)
+        self.assertGreater(self.agent.generator.n_warmup, 0)
+        self.assertGreater(self.agent.generator.batch_size, 0)
+
+        self.assertGreater(self.agent.discriminator.batch_size, 0)
 
 if __name__ == '__main__':
     unittest.main()

@@ -20,18 +20,14 @@ class BehaviorTF2RLAgent:
   def __init__(self,
                 environment=None,
                 params=None):
+    """constructor
+
+    Args:
+        environment (Runtime, optional): A environment with a gym environment interface. Defaults to None.
+        params (ParameterServer, optional): The parameter server holding the settings. Defaults to None.
+    """
     self._params = params
     self._environment = environment
-
-    # TODO: Copies from BehaviorTFAAgent class needed?
-    # self._wrapped_env = tf_py_environment.TFPyEnvironment(
-    # TFAWrapper(self._environment))
-    # self._ckpt = tf.train.Checkpoint(step=tf.Variable(0, dtype=tf.int64))
-    # self._agent = self.GetAgent(self._wrapped_env, params)
-    # self._ckpt = tf.train.Checkpoint(step=tf.Variable(0, dtype=tf.int64),
-    #                                 agent=self._agent)
-    # self._ckpt_manager = self.GetCheckpointer()
-    # self._logger = logging.getLogger()
     self._training = False
     pass
 
@@ -52,17 +48,13 @@ class BehaviorTF2RLAgent:
 
 
   def Save(self):
-    """TODO: Consider implementation after talking with Feri
+    """Placeholder
     """
-    # save_path = self._ckpt_manager.save(
-    # global_step=self._agent._train_step_counter)
-    # self._logger.info("Saved checkpoint for step {}.".format(
-    # int(self._agent._train_step_counter.numpy())))
     pass
 
 
   def Load(self):
-    """Never called in SAC either so ommited
+    """Placeholder
     """
     pass
 
