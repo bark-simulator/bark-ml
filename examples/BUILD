@@ -15,9 +15,9 @@ py_test(
   name = "data_generation",
   srcs = ["data_generation.py"],
   data = ["@bark_project//bark/python_wrapper:core.so",
-          "//python:bark_ml_library.so",
+          "//bark_ml:generate_core",
           "//examples/example_params:example_params"],
-  imports = ['../python/'],
+  imports = ['../bark_ml/python_wrapper/'],
   deps = [
     "//bark_ml/environments:gym",
     "//bark_ml/environments:single_agent_runtime",
@@ -75,9 +75,9 @@ py_test(
   name = "tfa_gnn",
   srcs = ["tfa_gnn.py"],
   data = ["@bark_project//bark/python_wrapper:core.so",
-          "//python:bark_ml_library.so",
+          "//bark_ml:generate_core",
           "//examples/example_params:example_params"],
-  imports = ['../python/'],
+  imports = ["../bark_ml/python_wrapper/"],
   deps = [
     "//bark_ml/environments:single_agent_runtime",
     "//bark_ml/environments:blueprints",
