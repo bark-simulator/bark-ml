@@ -38,7 +38,7 @@ class BehaviorGAILAgent(BehaviorTF2RLAgent, BehaviorContinuousML):
         policy = DDPG(
             state_shape=self._environment.observation_space.shape,
             action_dim=self._environment.action_space.high.size,
-            max_action=self._environment.action_space.high[0],
+            max_action=self._environment.action_space.high,
             lr_actor=self._params["ML"]["BehaviorGAILAgent"]["Generator"]["LearningRateActor", "", 0.001],
             lr_critic=self._params["ML"]["BehaviorGAILAgent"]["Generator"]["LearningRateCritic", "", 0.001],
             actor_units=self._params["ML"]["BehaviorGAILAgent"]["Generator"]["ActorFcLayerParams", "", [
@@ -86,5 +86,4 @@ class BehaviorGAILAgent(BehaviorTF2RLAgent, BehaviorContinuousML):
     def action_space(self):
         """Attribute additionally needed
         """
-        import gym
-        return gym.spaces.Box(0, 1, (2,))
+        return self._environment.action_space
