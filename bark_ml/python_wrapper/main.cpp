@@ -24,11 +24,11 @@
 PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
 
 namespace py = pybind11;
-using modules::commons::ParamsPtr;
-using observers::NearestObserver;
-using evaluators::GoalReachedEvaluator;
-using spaces::Box;
-using spaces::Matrix_t;
+using bark::commons::ParamsPtr;
+using bark_ml::observers::NearestObserver;
+using bark_ml::evaluators::GoalReachedEvaluator;
+using bark_ml::spaces::Box;
+using bark_ml::spaces::Matrix_t;
 
 
 namespace pybind11 { namespace detail {
@@ -73,7 +73,7 @@ void python_spaces(py::module m) {
     .def_property_readonly("shape", &Box<float>::shape);
 }
 
-PYBIND11_MODULE(bark_ml_library, m) {
+PYBIND11_MODULE(core, m) {
   m.doc() = "Additional cpp entities for bark-ml.";
   python_observers(
     m.def_submodule("observers", "c++ observers"));
