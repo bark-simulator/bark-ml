@@ -38,7 +38,7 @@ class DataGenerator(ABC):
     #self.params["World"]["remove_agents_out_of_map"] = True #seems not to work as intended
     self.bp = ContinuousHighwayBlueprint(self.params, number_of_senarios=num_scenarios, random_seed=0)
     #self.bp = ContinuousIntersectionBlueprint(self.params, number_of_senarios=num_scenarios, random_seed=0)
-    self.observer = GraphObserver(normalize_observations=True, params=self.params)
+    self.observer = GraphObserver(normalize_observations=True, output_supervised_data=True, params=self.params)
     self.env = SingleAgentRuntime(blueprint=self.bp, observer=self.observer, render=True)
 
 
@@ -60,7 +60,8 @@ class DataGenerator(ABC):
       print(i)
       i+=1
       observed_next_state, reward, done, info = self.env.step(action)
-      graph = observed_next_state[0]
+      
+      graph =  observed_next_state[0]
       actions = observed_next_state[1]
 
       # Save datum in data_scenario
@@ -96,6 +97,7 @@ class DataGenerator(ABC):
 
 
 # Main part
-graph_generator = DataGenerator(num_scenarios=10)#, dump_dir='/home/silvan/working_bark/data_generation/data/lane_change_right')
+if __name__ == '__main__':
+  graph_generator = DataGenerator(num_scenarios=100, dump_dir='/home/silvan/working_bark/supervised_learning/data/')
 
-graph_generator.run_scenarios()
+  graph_generator.run_scenarios()

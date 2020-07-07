@@ -25,7 +25,8 @@ py_test(
     "//bark_ml/library_wrappers/lib_tf2_gnn:lib_tf2_gnn",
     "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
     "//bark_ml/library_wrappers/lib_tf_agents/runners:runners",
-  ]
+  ],
+  visibility = ["//visibility:public"],
 )
 
 py_test(
