@@ -76,6 +76,8 @@
         },
         "BehaviorGAILAgent": {
             "Generator": {
+                "LearningRateActor": 0.001,
+                "LearningRateCritic": 0.001,
                 "ActorFcLayerParams": [
                 400,
                 300
@@ -84,6 +86,8 @@
                 400,
                 300
                 ],
+                "Sigma": 0.1,
+                "Tau": 0.005,
                 "BatchSize": 100
             },
             "Discriminator": {
@@ -91,9 +95,10 @@
                     400,
                     300
                 ],
+                "LearningRate": 0.001,
                 "BatchSize": 32
             },
-            "WarmUp": 100,
+            "WarmUp": 1000,
             "EnableSN": false,           
             "AgentName": "gail_agent"
         },
