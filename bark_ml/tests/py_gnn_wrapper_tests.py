@@ -44,7 +44,7 @@ class PyGNNWrapperTests(unittest.TestCase):
     iterator = iter(agent._dataset)
     trainable_variables = []
 
-    for i in range(8):
+    for i in range(4):
       agent._training = True
       runner._collection_driver.run()
       experience, _ = next(iterator)

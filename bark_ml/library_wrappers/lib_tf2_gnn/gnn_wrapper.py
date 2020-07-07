@@ -1,6 +1,7 @@
 import time
 import tensorflow as tf
 from tf2_gnn.layers import GNN, GNNInput
+from tf2_gnn.layers.message_passing import GGNN
 from tf_agents.utils import common
 from bark_ml.observers.graph_observer import GraphObserver
 import networkx as nx
@@ -20,9 +21,10 @@ class GNNWrapper(tf.keras.Model):
     self.num_units = num_units
 
     params = GNN.get_default_hyperparameters()
-    #params["global_exchange_mode"] = "mlp"
+    params["global_exchange_mode"] = "mlp"
     params["num_layers"] = num_layers
     params["hidden_dim"] = num_units
+    params["message_calculation_class"] = "ggnn"
     self._gnn = GNN(params)
 
   #@tf.function
