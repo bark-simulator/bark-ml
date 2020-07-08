@@ -4,7 +4,7 @@ py_test(
   name = "py_learn_actor_tests",
   srcs = ["py_learn_actor_tests.py"],
   data = ["@bark_project//bark/python_wrapper:core.so",
-          "//python:bark_ml_library.so",
+          "//bark_ml:generate_core",
           "//examples/example_params:example_params"],
   imports = ['../python/'],
   deps =   [
@@ -13,5 +13,6 @@ py_test(
     "//bark_ml/library_wrappers/lib_tf2_gnn:lib_tf2_gnn",
     "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
     "//bark_ml/library_wrappers/lib_tf_agents/runners:runners",
+    "//examples:data_generation"
   ]
 )
