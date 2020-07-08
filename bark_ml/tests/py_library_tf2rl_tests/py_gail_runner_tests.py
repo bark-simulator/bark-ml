@@ -21,13 +21,6 @@ from tf2rl.algos.gail import GAIL
 from tf2rl.experiments.irl_trainer import IRLTrainer
 from tf2rl.experiments.utils import restore_latest_n_traj
 
-class sample_agent():
-    """dummy class just to test the runner. Has got the same values as a normal GAIL agent."""
-    def __init__(self, generator, discriminator):
-        """initialize tht sample agent."""
-        self.generator = generator
-        self.discriminator = discriminator
-
 
 class PyGAILRunnerTests(unittest.TestCase):
     # TODO docstring
@@ -59,7 +52,7 @@ class PyGAILRunnerTests(unittest.TestCase):
         self.expert_trajs = {
             'obses': np.zeros((10, 16)),
             'next_obses': np.ones((10, 16)),
-            'acts': np.ones((10, 2)) * 2
+            'acts': 2 * np.ones((10, 2))
         }
 
         # create agent and runner:
