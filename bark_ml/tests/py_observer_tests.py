@@ -62,21 +62,5 @@ class PyObserverTests(unittest.TestCase):
     print(f"It took {end_time-start_time} seconds.")
     print(observed_state, observer.observation_space.shape)
 
-  def test_graph_observer(self):
-      params = ParameterServer()
-      bp = ContinuousHighwayBlueprint(params)
-      env = SingleAgentRuntime(blueprint=bp, render=True)
-      env.reset()
-      world = env._world
-
-      # under test
-      observer = GraphObserver(params)
-
-      eval_id = env._scenario._eval_agent_ids[0]
-      observed_world = world.Observe([eval_id])[0]
-      observed_state = observer.Observe(observed_world)
-      print('Hello')
-      print(observed_state)
-
 if __name__ == '__main__':
   unittest.main()
