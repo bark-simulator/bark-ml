@@ -48,8 +48,12 @@ class GoalReached(StateEvaluator):
     if success or collision or step_count > self._max_steps:
       done = True
     # calculate reward
+    if collision == False:
+      no_collision_reward = 0.01
+    else:
+      no_collision_reward = 0.0
     reward = collision * self._col_penalty + \
-      success * self._goal_reward
+      success * self._goal_reward + no_collision_reward
     return reward, done, eval_results
     
   def Reset(self, world):
