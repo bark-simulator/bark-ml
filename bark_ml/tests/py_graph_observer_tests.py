@@ -11,7 +11,7 @@ import tensorflow as tf
 import networkx as nx
 
 # BARK imports
-from bark_project.modules.runtime.commons.parameters import ParameterServer
+from bark.runtime.commons.parameters import ParameterServer
 
 # BARK-ML imports
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
@@ -87,7 +87,8 @@ class PyGraphObserverTests(unittest.TestCase):
 
     # Reconstruct the observation
     rec_obs = self.observer._observation_from_graph(reconstructed_graph)
-    assert (observation == rec_obs).all()
+    assert observed_state.__class__ == rec_obs.__class__
+    assert tf.reduce_all(tf.equal(observed_state, rec_obs))
 
   def test_norming(self):
     observer = GraphObserver()
