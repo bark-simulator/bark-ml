@@ -23,7 +23,12 @@ from tf2rl.experiments.utils import restore_latest_n_traj
 
 
 class PyGAILRunnerTests(unittest.TestCase):
-    # TODO docstring
+    """Tests the GAILRunner class.
+    It tests the followings:
+        - TF2RLWrapper wraps the BARK runtime correctly.
+        - __init__ method of the GAILRunner
+        - get_trainer method of the GAILRunner
+    """
     
     def setUp(self):
         """

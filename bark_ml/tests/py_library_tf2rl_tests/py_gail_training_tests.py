@@ -15,53 +15,16 @@ from bark_ml.library_wrappers.lib_tf2rl.agents.gail_agent import BehaviorGAILAge
 from tf2rl.experiments.utils import restore_latest_n_traj
 
 
-"""This test aims to test whether the agent learns or not.
-The aim is to learn that the expert action is always the multiplicative
-of the observation by 2. The expert trajectories are generated accordingly.
-The environment also gives back a reward 1 if the action is nearly the double
-of the observation and -1 otherways. (The reward of the environment during training does not
-matter actually, but it is easier to see this way, wheteher the agent learns or not.)
-The agent is trained for a while, and the test passes if the accuracy of the trained agent on 
-some test observations is significantly better than it was before training.
-"""
-
-
-class test_env():
-    """simple environment to check whether the gail agent learns or not.
-    The environment gives back the reward 1 if:
-        action ~= obs * 2
-    The reward is -1 in every other case.
-    Every episode consists of 1 step.
-    """
-    def __init__(self):
-        """initializes the test environment."""
-        self.action_space = Box(low=np.array([-2, -2]), high=np.array([2, 2]))
-        self.observation_space = Box(low=np.array([-1, -1]), high=np.array([1, 1]))
-
-        self.reset()
-
-
-    def step(self, action):
-        """step function of the environment"""
-        if np.allclose(2., action / self.obs, rtol=5e-2, atol=1e-1):
-            reward = 1
-            next_obs = self.obs
-            done = True
-        else:
-            reward = -1
-            next_obs = self.obs
-            done = True
-
-        return next_obs, reward, done, None
-
-    
-    def reset(self):
-        """resets the agent"""
-        self.obs = np.random.uniform(low=-1, high=1, size=(2,)).astype(np.float32)
-        return self.obs
-
-
 class PyTrainingBARKTests(unittest.TestCase):
+    """This test aims to test whether the agent learns or not.
+    The aim is to learn that the expert action is always the multiplicative
+    of the observation by 2. The expert trajectories are generated accordingly.
+    The environment also gives back a reward 1 if the action is nearly the double
+    of the observation and -1 otherways. (The reward of the environment during training does not
+    matter actually, but it is easier to see this way, wheteher the agent learns or not.)
+    The agent is trained for a while, and the test passes if the accuracy of the trained agent on 
+    some test observations is significantly better than it was before training.
+    """
 
     def setUp(self):
         """
@@ -75,10 +38,6 @@ class PyTrainingBARKTests(unittest.TestCase):
                 self.params["ML"]["GAILRunner"]["tf2rl"][key])
             if not os.path.exists(self.params["ML"]["GAILRunner"]["tf2rl"][key]):
                 os.makedirs(self.params["ML"]["GAILRunner"]["tf2rl"][key])
-
-        #self.params["ML"]["BehaviorGAILAgent"]["Generator"]["ActorFcLayerParams"] = [100, 100]
-        #self.params["ML"]["BehaviorGAILAgent"]["Generator"]["CriticJointFcLayerParams"] = [100, 100]
-        #self.params["ML"]["BehaviorGAILAgent"]["Discriminator"]["FcLayerParams"] = [100, 100]
 
         # create environment
         self.env = test_env()
@@ -118,13 +77,46 @@ class PyTrainingBARKTests(unittest.TestCase):
         actions = self.runner._agent.Act(test_obses)
         accuracy_after = np.sum(np.isclose(actions / test_obses, 2., rtol=5e-2, atol=1e-1)) / (test_obses.shape[0] * test_obses.shape[1])
 
-        print('Accuracy before: {}'.format(accuracy_before))
-        print('Accuracy after: {}'.format(accuracy_after))
-
+        # assert that the performance after training is much better:
         if accuracy_before == 0:
-            self.assertGreater(accuracy_after, 0.3)
+            self.assertGreater(accuracy_after, 0.4)
         else:
             self.assertGreater(accuracy_after, accuracy_before * 10)
+
+
+class test_env():
+    """simple environment to check whether the gail agent learns or not.
+    The environment gives back the reward 1 if:
+        action ~= obs * 2
+    The reward is -1 in every other case.
+    Every episode consists of 1 step.
+    """
+    def __init__(self):
+        """initializes the test environment."""
+        self.action_space = Box(low=np.array([-2, -2]), high=np.array([2, 2]))
+        self.observation_space = Box(low=np.array([-1, -1]), high=np.array([1, 1]))
+
+        self.reset()
+
+
+    def step(self, action):
+        """step function of the environment"""
+        if np.allclose(2., action / self.obs, rtol=5e-2, atol=1e-1):
+            reward = 1
+            next_obs = self.obs
+            done = True
+        else:
+            reward = -1
+            next_obs = self.obs
+            done = True
+
+        return next_obs, reward, done, None
+
+    
+    def reset(self):
+        """resets the agent"""
+        self.obs = np.random.uniform(low=-1, high=1, size=(2,)).astype(np.float32)
+        return self.obs
 
 if __name__ == '__main__':
     unittest.main()

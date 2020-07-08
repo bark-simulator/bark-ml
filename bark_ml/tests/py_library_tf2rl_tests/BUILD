@@ -96,27 +96,8 @@ py_test(
 )
 
 py_test(
-    name = "py_gail_gym_training_tests",
-    srcs = ["py_gail_gym_training_tests.py"],
-    data = [
-            "@bark_project//bark/python_wrapper:core.so",
-            "//bark_ml/tests/py_library_tf2rl_tests/gail_data",
-            ],
-    imports = ["../../external/bark_project/bark/python_wrapper/"],
-    deps = [
-            "//bark_ml/library_wrappers/lib_tf2rl/runners",
-            "//bark_ml/library_wrappers/lib_tf2rl/agents",
-            "@bark_project//bark/runtime:runtime",
-            ],
-    tags=["no-sandbox"],
-    visibility = ["//visibility:public"],
-    size = "small",
-    timeout = "moderate"
-)
-
-py_test(
-    name = "py_gail_bark_training_tests",
-    srcs = ["py_gail_bark_training_tests.py"],
+    name = "py_gail_training_tests",
+    srcs = ["py_gail_training_tests.py"],
     data = [
             "@bark_project//bark/python_wrapper:core.so",
             "//bark_ml/tests/py_library_tf2rl_tests/gail_data",
