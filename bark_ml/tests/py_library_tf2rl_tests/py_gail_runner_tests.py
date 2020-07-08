@@ -39,6 +39,8 @@ class PyGAILRunnerTests(unittest.TestCase):
 
         # creating the dirs for logging if they are not present already:
         for key in ['logdir', 'model_dir', 'expert_path_dir']:
+            self.params["ML"]["GAILRunner"]["tf2rl"][key] = os.path.join(Path.home(), 
+                self.params["ML"]["GAILRunner"]["tf2rl"][key])
             if not os.path.exists(self.params["ML"]["GAILRunner"]["tf2rl"][key]):
                 os.makedirs(self.params["ML"]["GAILRunner"]["tf2rl"][key])
 
@@ -92,6 +94,7 @@ class PyGAILRunnerTests(unittest.TestCase):
         self.assertTrue((trainer._expert_obs == self.expert_trajs["obses"]).all())
         self.assertTrue((trainer._expert_next_obs == self.expert_trajs["next_obses"]).all())
         self.assertTrue((trainer._expert_act == self.expert_trajs["acts"]).all())
+        # TODO: shape of expert trajectories matches the shape of environent spaces!
 
 if __name__ == '__main__':
     unittest.main()

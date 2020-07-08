@@ -123,8 +123,6 @@ py_test(
             ],
     imports = ["../../external/bark_project/bark/python_wrapper/"],
     deps = [
-            "//bark_ml/environments:single_agent_runtime",
-            "//bark_ml/environments:blueprints",
             "//bark_ml/library_wrappers/lib_tf2rl/runners",
             "//bark_ml/library_wrappers/lib_tf2rl/agents",
             ],
