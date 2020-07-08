@@ -76,8 +76,8 @@
         },
         "BehaviorGAILAgent": {
             "Generator": {
-                "LearningRateActor": 0.0005,
-                "LearningRateCritic": 0.0005,
+                "LearningRateActor": 0.0001,
+                "LearningRateCritic": 0.0001,
                 "ActorFcLayerParams": [
                 400,
                 300
@@ -95,7 +95,7 @@
                     400,
                     300
                 ],
-                "LearningRate": 0.0005,
+                "LearningRate": 0.001,
                 "BatchSize": 32
             },
             "WarmUp": 1000,
@@ -111,7 +111,7 @@
             "InitialCollectionEpisodes": 50,
             "CollectionEpisodesPerStep": 1,
             "tf2rl": {
-                "max_steps": 20000,
+                "max_steps": 40000,
                 "episode_max_steps": 10,
                 "n_experiments": 1,
                 "show_progress": false,

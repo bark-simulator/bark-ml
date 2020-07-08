@@ -3,6 +3,7 @@ import gym
 import os
 import numpy as np
 from gym.spaces.box import Box
+from pathlib import Path
 
 # BARK imports
 from bark_project.bark.runtime.commons.parameters import ParameterServer
@@ -81,20 +82,33 @@ class PyGAILRunnerTests(unittest.TestCase):
         self.assertTrue((self.wrapped_env.action_space.high == self.env.action_space.high).all())
         self.assertTrue((self.wrapped_env.action_space.low == self.env.action_space.low).all())
 
+
+    def test_runner_init(self):
+        """tests the init function of the runner."""
+        self.assertEqual(self.runner._expert_trajs, self.expert_trajs)
+        self.assertEqual(self.runner._agent, self.agent)
+        self.assertEqual(self.runner._environment, self.wrapped_env)
+        self.assertEqual(self.runner._params, self.params)
+
     
     def test_get_trainer(self):
         """get_trainer"""
         trainer = self.runner.GetTrainer()
-        # assertions:
+        
         self.assertIsInstance(trainer, IRLTrainer)
         self.assertIsInstance(trainer._irl, GAIL)
         self.assertIsInstance(trainer._policy, DDPG)
         self.assertEqual(trainer._irl, self.agent.discriminator)
         self.assertEqual(trainer._policy, self.agent.generator)
+        self.assertEqual(trainer._env, self.wrapped_env)
+
         self.assertTrue((trainer._expert_obs == self.expert_trajs["obses"]).all())
         self.assertTrue((trainer._expert_next_obs == self.expert_trajs["next_obses"]).all())
         self.assertTrue((trainer._expert_act == self.expert_trajs["acts"]).all())
-        # TODO: shape of expert trajectories matches the shape of environent spaces!
+        self.assertEqual(trainer._env.observation_space.shape[0], self.expert_trajs["obses"].shape[1])
+        self.assertEqual(trainer._env.observation_space.shape[0], self.expert_trajs["next_obses"].shape[1])
+        self.assertEqual(trainer._env.action_space.shape[0], self.expert_trajs["acts"].shape[1])
+
 
 if __name__ == '__main__':
     unittest.main()
