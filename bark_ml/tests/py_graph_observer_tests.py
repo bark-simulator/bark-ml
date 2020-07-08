@@ -63,9 +63,12 @@ class PyGraphObserverTests(unittest.TestCase):
     predicted_len = self.metadata["predicted_len"]    
 
     # Check if formal parameter of observed_state are correct
-    assert tf.is_tensor(observed_state)
-    assert (observed_state.dtype == tf.float32) or (observed_state.dtype == tf.float64)
-    assert observed_state.shape == (predicted_len,)
+    self.assertTrue(tf.is_tensor(observed_state))
+    #assert tf.is_tensor(observed_state)
+    self.assertTrue((observed_state.dtype == tf.float32) or (observed_state.dtype == tf.float64))
+    #assert (observed_state.dtype == tf.float32) or (observed_state.dtype == tf.float64)
+    #assert observed_state.shape == (predicted_len,)
+    self.assertEqual(observed_state.shape, (predicted_len,))
 
 
   def test_reconstruction_to_graph(self):
@@ -76,8 +79,10 @@ class PyGraphObserverTests(unittest.TestCase):
     n_nodes = self.metadata["n_nodes"]
 
     # Check if parameter of graph are correct
-    assert reconstructed_graph.__class__ == nx.OrderedGraph
-    assert len(reconstructed_graph.nodes) == n_nodes
+    self.assertEqual(reconstructed_graph.__class__, nx.OrderedGraph)
+    #assert reconstructed_graph.__class__ == nx.OrderedGraph
+    self.assertEqual(len(reconstructed_graph.nodes), n_nodes)
+    #assert len(reconstructed_graph.nodes) == n_nodes
 
   def test_reconstruction_to_observation(self):
     # Get graph at first
@@ -87,18 +92,21 @@ class PyGraphObserverTests(unittest.TestCase):
 
     # Reconstruct the observation
     rec_obs = self.observer._observation_from_graph(reconstructed_graph)
-    assert observed_state.__class__ == rec_obs.__class__
-    assert tf.reduce_all(tf.equal(observed_state, rec_obs))
+    self.assertEqual(observed_state.__class__, rec_obs.__class__)
+    self.assertTrue(tf.reduce_all(tf.equal(observed_state, rec_obs)))
+    #assert observed_state.__class__ == rec_obs.__class__
+    #assert tf.reduce_all(tf.equal(observed_state, rec_obs))
 
   def test_norming(self):
     observer = GraphObserver()
     range_ = [-10, 10]
     eps = 1*10-6
 
-    assert abs(1 - observer._normalize_value(10, range=range_))< eps
-    assert abs(-1 - observer._normalize_value(-10, range=range_)) < eps
-    assert abs(1 - observer._normalize_value(100, range=range_)) < eps
-    assert abs(0.1 - observer._normalize_value(1, range=range_)) < eps
+    self.assertTrue(abs(1 - observer._normalize_value(10, range=range_))< eps)
+    self.assertTrue(abs(-1 - observer._normalize_value(-10, range=range_)) < eps)
+    self.assertTrue(abs(1 - observer._normalize_value(100, range=range_)) < eps)
+    self.assertTrue(abs(0.1 - observer._normalize_value(1, range=range_)) < eps)
         
 if __name__ == '__main__':
-  unittest.main()
+  suite = unittest.TestLoader().loadTestsFromTestCase(PyGraphObserverTests)
+  unittest.TextTestRunner(verbosity=2).run(suite)
