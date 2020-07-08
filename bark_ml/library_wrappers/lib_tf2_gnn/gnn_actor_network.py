@@ -113,7 +113,6 @@ class GNNActorNetwork(network.Network):
     
     output = self._gnn.batch_call(observations, training=training)
     output = tf.cast(output, tf.float32)
-
     # extract ego state (node 0)
     if len(output.shape) == 2 and output.shape[0] != 0:
       output = output[0]
@@ -125,11 +124,10 @@ class GNNActorNetwork(network.Network):
     for layer in self._dense_layers:
       output = layer(output, training=training)
 
-    #outer_rank = nest_utils.get_outer_rank(observations, self.input_tensor_spec)
-    #output, _ = self.projection_net(output, outer_rank, training=training)
+    outer_rank = nest_utils.get_outer_rank(observations, self.input_tensor_spec) #in
+    output, _ = self.projection_net(output, outer_rank, training=training) #in
 
-    #output = common.scale_to_spec(output, self._single_action_spec)
+    #output = common.scale_to_spec(output, self._single_action_spec) #in
     output_actions = tf.nest.pack_sequence_as(self._output_tensor_spec, [output])
-    output_actions = tf.expand_dims(output_actions, axis=0)
-    
+    #output_actions = tf.expand_dims(output_actions, axis=0)
     return output_actions, network_state
