@@ -24,7 +24,7 @@ class PyLibraryWrappersGAILAgentTests(unittest.TestCase):
         setup
         """
         self.params = ParameterServer(filename=os.path.join(os.path.dirname(
-            __file__), "gail_data/params/gail_params_open-ai.json"))
+            __file__), "gail_data/params/gail_params_bark.json"))
 
         # create environment
         env_name = "Pendulum-v0"
