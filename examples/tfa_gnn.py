@@ -36,11 +36,11 @@ flags.DEFINE_enum("mode",
                   "Mode the configuration should be executed in.")
 
 def run_configuration(argv):
-  #params = ParameterServer(filename="examples/example_params/tfa_params.json")
-  params = ParameterServer()
+  params = ParameterServer(filename="examples/example_params/tfa_params.json")
+  # params = ParameterServer()
   # NOTE: Modify these paths in order to save the checkpoints and summaries
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/home/silvan/working_bark/training_gnn/checkpoints"
-  params["ML"]["TFARunner"]["SummaryPath"] = "/home/silvan/working_bark/training_gnn/summary"
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/marco.oliva/Development/bark-ml_logs"
+  params["ML"]["TFARunner"]["SummaryPath"] = "/Users/marco.oliva/Development/bark-ml_logs/"
   params["ML"]["BehaviorSACAgent"]["DebugSummaries"] = True
   params["ML"]["BehaviorTFAAgents"]["NumCheckpointsToKeep"] = None
   #params["ML"]["SACRunner"]["NumberOfCollections"] = 2000
@@ -72,8 +72,6 @@ def run_configuration(argv):
     blueprint=bp,
     observer=observer,
     render=False)
-  #print("env.action_spec():",env.action_spec())
-  print("env.action_space:",env.action_space)
 
   sac_agent = BehaviorGraphSACAgent(environment=env,
                                     params=params)

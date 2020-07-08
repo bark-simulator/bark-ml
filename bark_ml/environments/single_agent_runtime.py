@@ -57,11 +57,16 @@ class SingleAgentRuntime(Runtime):
     # set actions
     eval_id = self._scenario._eval_agent_ids[0]
     if eval_id in self._world.agents:
-      self._world.agents[eval_id].behavior_model.ActionToBehavior(action)
+      self._world.agents[eval_id].behavior_model.ActionToBehavior(action[0])
     
     # step and observe
     self._world.Step(self._step_time)
-    observed_world = self._world.Observe([eval_id])[0]
+    observed_world = self._world.Observe([eval_id])    
+    
+    if len(observed_world) > 0:
+      observed_world = observed_world[0]
+    else:
+      raise Exception('No world instance available.')
 
     # observe and evaluate
     observed_next_state = self._observer.Observe(observed_world)

@@ -11,20 +11,23 @@ from absl import flags
 import time, json, pickle
 from abc import ABC
 
-# BARK imports
-from bark.runtime.commons.parameters import ParameterServer
-from bark.runtime.viewer.matplotlib_viewer import MPViewer
-from bark.runtime.viewer.video_renderer import VideoRenderer
+#Maybe not needed any longer
+from modules.runtime.scenario.scenario_generation.deterministic \
+  import DeterministicScenarioGeneration
+from modules.runtime.scenario.scenario_generation.configurable_scenario_generation \
+  import ConfigurableScenarioGeneration
 
+# BARK imports
+from bark_project.modules.runtime.commons.parameters import ParameterServer
+from modules.runtime.viewer.matplotlib_viewer import MPViewer
+from modules.runtime.viewer.video_renderer import VideoRenderer
 
 # BARK-ML imports
-from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
-  ContinuousMergingBlueprint, ContinuousIntersectionBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-#from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, BehaviorPPOAgent, BehaviorGraphSACAgent
-#from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner
 from bark_ml.observers.graph_observer import GraphObserver
-#from bark_ml.library_wrappers.lib_tf2_gnn import GNNActorNetwork, GNNCriticNetwork
+#from bark_ml_library.observers import NearestObserver
+from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
+  DiscreteHighwayBlueprint, ContinuousIntersectionBlueprint, ContinuousMergingBlueprint
 
 class DataGenerator(ABC):
   """Data Generator class"""
@@ -33,12 +36,11 @@ class DataGenerator(ABC):
     self.num_scenarios = num_scenarios
 
     # Adapt params (start from default_params)
-    self.params = ParameterServer(filename="examples/example_params/tfa_params.json")
-    self.params["World"]["remove_agents_out_of_map"] = False
+    self.params = ParameterServer()
     #self.params["World"]["remove_agents_out_of_map"] = True #seems not to work as intended
     self.bp = ContinuousHighwayBlueprint(self.params, number_of_senarios=num_scenarios, random_seed=0)
     #self.bp = ContinuousIntersectionBlueprint(self.params, number_of_senarios=num_scenarios, random_seed=0)
-    self.observer = GraphObserver(normalize_observations=True, output_supervised_data=True, params=self.params)
+    self.observer = GraphObserver(normalize_observations=True, params=self.params)
     self.env = SingleAgentRuntime(blueprint=self.bp, observer=self.observer, render=True)
 
 
@@ -51,17 +53,13 @@ class DataGenerator(ABC):
     data_scenario = list()
     self.env.reset(scenario = scenario)
     done = False
-    i = 0
     while done is False:
       #for i in range(10):
       action = np.random.uniform(low=np.array([-0.5, -0.02]), high=np.array([0.5, 0.02]), size=(2, ))
       #agent_actions = observed_next_state[1][0] #use predicted values
       #action = np.array([agent_actions["acceleration"], agent_actions["steering"]])
-      print(i)
-      i+=1
       observed_next_state, reward, done, info = self.env.step(action)
-      
-      graph =  observed_next_state[0]
+      graph = observed_next_state[0]
       actions = observed_next_state[1]
 
       # Save datum in data_scenario
@@ -97,7 +95,6 @@ class DataGenerator(ABC):
 
 
 # Main part
-if __name__ == '__main__':
-  graph_generator = DataGenerator(num_scenarios=100, dump_dir='/home/silvan/working_bark/supervised_learning/data/')
+graph_generator = DataGenerator(num_scenarios=200, dump_dir='/home/silvan/working_bark/data_generation/data/lane_change_right')
 
-  graph_generator.run_scenarios()
+graph_generator.run_scenarios()

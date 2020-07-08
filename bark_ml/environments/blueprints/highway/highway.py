@@ -1,12 +1,9 @@
-# Copyright (c) 2020 fortiss GmbH
-#
-# Authors: Patrick Hart, Julian Bernhard, Klemens Esterle, and
-# Tobias Kessler
+# Copyright (c) 2020 Patrick Hart, Julian Bernhard,
+# Klemens Esterle, Tobias Kessler
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-import os
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.scenario.scenario_generation.config_with_ease import \
@@ -19,7 +16,7 @@ from bark_ml.environments.blueprints.blueprint import Blueprint
 from bark_ml.evaluators.goal_reached import GoalReached
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteML
-from bark_ml.core.observers import NearestObserver
+from bark_ml_library.observers import NearestObserver
 
 
 class HighwayLaneCorridorConfig(LaneCorridorConfig):
@@ -62,7 +59,7 @@ class HighwayBlueprint(Blueprint):
     scenario_generation = \
       ConfigWithEase(
         num_scenarios=number_of_senarios,
-        map_file_name=os.path.join(os.path.dirname(__file__), "../../../environments/blueprints/highway/city_highway_straight.xodr"),  # NOLINT
+        map_file_name="bark_ml/environments/blueprints/highway/city_highway_straight.xodr",  # NOLINT
         random_seed=random_seed,
         params=params,
         lane_corridor_configs=[left_lane, right_lane])

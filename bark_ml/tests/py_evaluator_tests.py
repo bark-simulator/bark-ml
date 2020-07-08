@@ -1,7 +1,5 @@
-# Copyright (c) 2020 fortiss GmbH
-#
-# Authors: Patrick Hart, Julian Bernhard, Klemens Esterle, and
-# Tobias Kessler
+# Copyright (c) 2020 Patrick Hart, Julian Bernhard,
+# Klemens Esterle, Tobias Kessler
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
@@ -19,7 +17,7 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, DiscreteHighwayBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.evaluators.goal_reached import GoalReached
-from bark_ml.core.evaluators import GoalReachedEvaluator
+from bark_ml_library.evaluators import GoalReachedEvaluator
 
 
 class PyEvaluatorTests(unittest.TestCase):

@@ -1,7 +1,5 @@
-// Copyright (c) fortiss GmbH
-//
-// Authors: Patrick Hart, Julian Bernhard, Klemens Esterle, and
-// Tobias Kessler
+// Copyright (c) Patrick Hart, Julian Bernhard,
+// Klemens Esterle, Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
@@ -25,13 +23,11 @@
 #include "bark_ml/commons/spaces.hpp"
 #include "bark_ml/commons/commons.hpp"
 
-namespace bark_ml {
 namespace observers {
-
-using bark::commons::ParamsPtr;
+using modules::commons::ParamsPtr;
 using spaces::Box;
-using bark::world::WorldPtr;
-using bark::world::ObservedWorldPtr;
+using modules::world::WorldPtr;
+using modules::world::ObservedWorldPtr;
 using ObservedState = Eigen::Matrix<float, 1, Eigen::Dynamic>;
 
 class BaseObserver {
@@ -49,6 +45,5 @@ class BaseObserver {
 };
 
 }  // namespace observers
-}  // namespace bark_ml
 
 #endif  // BARK_ML_OBSERVERS_BASE_OBSERVER_HPP_
