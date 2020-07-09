@@ -76,8 +76,8 @@
         },
         "BehaviorGAILAgent": {
             "Generator": {
-                "LearningRateActor": 0.001,
-                "LearningRateCritic": 0.001,
+                "LearningRateActor": 0.0003,
+                "LearningRateCritic": 0.0003,
                 "ActorFcLayerParams": [
                 400,
                 300
@@ -95,7 +95,7 @@
                     400,
                     300
                 ],
-                "LearningRate": 0.001,
+                "LearningRate": 0.0001,
                 "BatchSize": 32
             },
             "WarmUp": 1000,
@@ -128,7 +128,7 @@
                 "n_step": 4,
                 "evaluate": false,
                 "test_interval": 10000,
-                "show_test_progress": false,
+                "show_test_progress": true,
                 "test_episodes": 5,
                 "save_test_path": false,
                 "save_test_movie": false,

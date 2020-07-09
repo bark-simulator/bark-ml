@@ -87,14 +87,17 @@ class PyTF2RLWrapperTests(unittest.TestCase):
 
             self.env_orig.obs = init_obs.copy()
             etalon_next_obs, _, _, _ = self.env_orig.step(action)
+            # wrapped without normalization
             self.wrapped_env._env.obs = init_obs.copy()
             wrapped_next_obs, _, _, _ = self.wrapped_env.step(action)
+            self.assertTrue((etalon_next_obs == wrapped_next_obs).all())
+            self.assertTrue((etalon_next_obs == self.wrapped_env._env.obs).all())
+            # wrapped with normalization
             self.wrapped_env_norm._env.obs = init_obs.copy()
             action = self.normalize_action(action)
             wrapped_norm_next_obs, _, _, _ = self.wrapped_env_norm.step(action)
-
-            self.assertTrue((etalon_next_obs == wrapped_next_obs).all())
             self.assertTrue(np.allclose(self.wrapped_env_norm._normalize_observation(etalon_next_obs), wrapped_norm_next_obs))
+            self.assertTrue(np.allclose(etalon_next_obs, self.wrapped_env_norm._env.obs))
 
 
     def normalize_action(self, action):
