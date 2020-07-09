@@ -28,7 +28,7 @@ class TF2RLWrapper():
         if self._normalize_features:
             rescaled_action = self._rescale_action(action.copy())
             next_obs, reward, done, _ = self._env.step(rescaled_action)
-            next_obs = self._normalize_observation(next_obs)
+            next_obs = self._normalize_observation(next_obs.copy())
             return next_obs, reward, done, None
         else
             return self._env.step(action)
@@ -40,7 +40,7 @@ class TF2RLWrapper():
         - If normalization is not needed: Simply calls the reset function of the runtime.
         """
         if self._normalize_features:
-            return self._normalize_observation(self._env.reset())
+            return self._normalize_observation(self._env.reset().copy())
         else:
             return self._env.reset()
 
