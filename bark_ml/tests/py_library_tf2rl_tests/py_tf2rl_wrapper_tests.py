@@ -14,12 +14,12 @@ class PyTF2RLWrapperTests(unittest.TestCase):
 
     def setUp(self):
         """Initial setup for the tests."""
-        obs_low = np.array([-5., -8.])
-        obs_high = np.array([3., 7.])
-        act_low = np.array([-0.5, -1.2])
-        act_high = np.array([0.3, 1.4])
-        self.observation_space = Box(low=obs_low, high=obs_high)
-        self.action_space = Box(low=act_low, high=act_high)
+        self.obs_low = np.array([-5., -8.])
+        self.obs_high = np.array([3., 7.])
+        self.act_low = np.array([-0.5, -1.2])
+        self.act_high = np.array([0.3, 1.4])
+        self.observation_space = Box(low=self.obs_low, high=self.obs_high)
+        self.action_space = Box(low=self.act_low, high=self.act_high)
 
         self.env_orig = test_env(observation_space=self.observation_space,
             action_space=self.action_space)
@@ -85,7 +85,28 @@ class PyTF2RLWrapperTests(unittest.TestCase):
 
     def test_step(self):
         """tests the step function of the TF2RLWrapper"""
-        
+        for _ in range(100):
+            init_obs = np.random.uniform(low=self.obs_low, high=self.obs_high)
+            action = np.random.uniform(low=self.act_low, high=self.act_high)
+
+            self.env_orig.obs = init_obs.copy()
+            etalon_next_obs, _, _, _ = self.env_orig.step(action)
+            self.wrapped_env._env.obs = init_obs.copy()
+            wrapped_next_obs, _, _, _ = self.wrapped_env.step(action)
+            self.wrapped_env_norm._env.obs = init_obs.copy()
+            action = self.normalize_action(action)
+            wrapped_norm_next_obs, _, _, _ = self.wrapped_env_norm.step(action)
+
+            self.assertTrue((etalon_next_obs == wrapped_next_obs).all())
+            self.assertTrue(np.allclose(self.wrapped_env_norm._normalize_observation(etalon_next_obs), wrapped_norm_next_obs))
+
+
+    def normalize_action(self, action):
+        """normalizes an action to be between -1 and 1"""
+        action -= self.act_low
+        action /= (self.act_high - self.act_low)
+        action = action * 2. - 1.
+        return action
 
 
 class test_env():
