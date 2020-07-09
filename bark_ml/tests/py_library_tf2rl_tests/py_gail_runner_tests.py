@@ -73,14 +73,6 @@ class PyGAILRunnerTests(unittest.TestCase):
             expert_trajs=self.expert_trajs)
 
 
-    def test_TF2RLWrapper(self):
-        """tests the wrapper class."""
-        self.assertIsInstance(self.wrapped_env.action_space, Box)
-        self.assertIsInstance(self.wrapped_env.observation_space, Box)
-        self.assertTrue((self.wrapped_env.action_space.high == self.env.action_space.high).all())
-        self.assertTrue((self.wrapped_env.action_space.low == self.env.action_space.low).all())
-
-
     def test_runner_init(self):
         """tests the init function of the runner."""
         self.assertEqual(self.runner._expert_trajs, self.expert_trajs)

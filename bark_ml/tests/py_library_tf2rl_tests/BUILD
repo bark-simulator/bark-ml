@@ -112,3 +112,17 @@ py_test(
     size = "small",
     timeout = "moderate"
 )
+
+py_test(
+    name = "py_tf2rl_wrapper_tests",
+    srcs = ["py_tf2rl_wrapper_tests.py"],
+    data = [
+            "@bark_project//bark/python_wrapper:core.so",
+            ],
+    imports = ["../../external/bark_project/bark/python_wrapper/"],
+    deps = [
+            "//bark_ml/library_wrappers/lib_tf2rl:tf2rl_wrapper",
+            ],
+    visibility = ["//visibility:public"],
+    size = "small",
+)

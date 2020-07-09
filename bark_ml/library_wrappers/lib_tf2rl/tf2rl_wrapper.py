@@ -6,7 +6,7 @@ class TF2RLWrapper():
     a tf2rl angent and runner.
     """
 
-    def __init__(self, env, normalize_features=True):
+    def __init__(self, env, normalize_features=False):
         """initialize the wrapper"""
         self._env = env
         self._normalize_features = normalize_features
@@ -30,7 +30,7 @@ class TF2RLWrapper():
             next_obs, reward, done, _ = self._env.step(rescaled_action)
             next_obs = self._normalize_observation(next_obs.copy())
             return next_obs, reward, done, None
-        else
+        else:
             return self._env.step(action)
 
     
