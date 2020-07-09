@@ -83,7 +83,7 @@ def run_configuration(argv):
   if FLAGS.mode == "train":
     runner.Train()
   elif FLAGS.mode == "visualize":
-    runner.Visualize(5)
+    runner.Visualize(20)
   
   # store all used params of the training
   params.Save(os.path.join(FLAGS.train_out, "examples/example_params/gail_params.json"))
