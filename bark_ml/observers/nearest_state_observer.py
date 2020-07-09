@@ -80,11 +80,19 @@ class NearestAgentsObserver(StateObserver):
   @property
   def observation_space(self):
     # TODO(@hart): use from spaces.py
-    return spaces.Box(
-      low=np.zeros(self._len_ego_state + \
-        self._max_num_vehicles*self._len_relative_agent_state),
-      high = np.ones(self._len_ego_state + \
-        self._max_num_vehicles*self._len_relative_agent_state))
+    if self._NormalizationEnabled:
+      return spaces.Box(
+        low=np.zeros(self._len_ego_state + \
+          self._max_num_vehicles*self._len_relative_agent_state),
+        high = np.ones(self._len_ego_state + \
+          self._max_num_vehicles*self._len_relative_agent_state))
+    else:
+      return spaces.Box(
+        low=np.array([self._world_x_range[0], self._world_y_range[0],\
+          self._ThetaRange[0], self._VelocityRange[0]] * (self._max_num_vehicles + 1)),
+        high=np.array([self._world_x_range[1], self._world_y_range[1],\
+          self._ThetaRange[1], self._VelocityRange[1]] * (self._max_num_vehicles + 1))
+      )
 
   def _norm(self, agent_state):
     if not self._NormalizationEnabled:

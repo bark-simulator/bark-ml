@@ -23,10 +23,6 @@ class PyTF2RLWrapperTests(unittest.TestCase):
 
         self.env_orig = test_env(observation_space=self.observation_space,
             action_space=self.action_space)
-        #self.env_test = test_env(observation_space=self.observation_space,
-        #    action_space=self.action_space)
-        #self.env_normalized = test_env(observation_space=self.observation_space,
-        #    action_space=self.action_space,)
         
         self.wrapped_env = TF2RLWrapper(self.env_orig)
         self.wrapped_env_norm = TF2RLWrapper(self.env_orig, normalize_features=True)
