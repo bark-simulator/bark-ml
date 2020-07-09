@@ -62,18 +62,17 @@ def run_configuration(argv):
                           render=False)
 
   # wrapped environment for compatibility with tf2rl
-  wrapped_env = TF2RLWrapper(env, normalize_features=True)
+  wrapped_env = TF2RLWrapper(env, 
+    normalize_features=params["ML"]["Settings"]["NormalizeFeatures"])
 
   # GAIL-agent
   gail_agent = BehaviorGAILAgent(environment=wrapped_env,
                                params=params)
 
-  #env.ml_behavior = gail_agent
-
   expert_trajectories = load_expert_trajectories(FLAGS.expert_trajectories,
-                                                normalize_features=True,
-                                                env=env # the unwrapped env has to be used, since that contains the unnormalized spaces.
-                                                ) 
+    normalize_features=params["ML"]["Settings"]["NormalizeFeatures"],
+    env=env # the unwrapped env has to be used, since that contains the unnormalized spaces.
+    ) 
 
   runner = GAILRunner(params=params,
                      environment=wrapped_env,

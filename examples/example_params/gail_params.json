@@ -7,7 +7,8 @@
     },
     "ML": {
         "Settings": {
-            "GPUUse": 0
+            "GPUUse": 0,
+            "NormalizeFeatures": true
         },
         "BehaviorContinuousML": {
             "ActionsLowerBound": [
