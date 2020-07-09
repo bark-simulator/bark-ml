@@ -1,100 +1,112 @@
 import unittest
 import gym
 import os
+import numpy as np
+from gym.spaces.box import Box
+from pathlib import Path
 
 # BARK imports
 from bark_project.bark.runtime.commons.parameters import ParameterServer
 
 # BARK-ML imports
-from bark_ml.library_wrappers.lib_tf2rl.runners.gail_runner import GAILRunner 
+from bark_ml.library_wrappers.lib_tf2rl.tf2rl_wrapper import TF2RLWrapper
+from bark_ml.library_wrappers.lib_tf2rl.runners.gail_runner import GAILRunner
+from bark_ml.library_wrappers.lib_tf2rl.agents.gail_agent import BehaviorGAILAgent
+from bark_ml.environments.blueprints import ContinuousMergingBlueprint
+from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 
 # TF2RL imports
 from tf2rl.algos.ddpg import DDPG
 from tf2rl.algos.gail import GAIL
+from tf2rl.experiments.irl_trainer import IRLTrainer
 from tf2rl.experiments.utils import restore_latest_n_traj
-
-class sample_agent():
-    """dummy class just to test the runner. Has got the same values as a normal GAIL agent."""
-    def __init__(self, generator, discriminator):
-        """initialize tht sample agent."""
-        self.generator = generator
-        self.discriminator = discriminator
-
-
-def dir_check(params):
-    """checks some dirs whether they are present or not.
-    If they are not, the function creates them.
-    """
-    for key in ['logdir', 'model_dir', 'expert_path_dir']:
-        if not os.path.exists(params["ML"]["GAILRunner"]["tf2rl"][key]):
-            os.makedirs(params["ML"]["GAILRunner"]["tf2rl"][key])
 
 
 class PyGAILRunnerTests(unittest.TestCase):
-    # TODO docstring
+    """Tests the GAILRunner class.
+    It tests the followings:
+        - TF2RLWrapper wraps the BARK runtime correctly.
+        - __init__ method of the GAILRunner
+        - get_trainer method of the GAILRunner
+    """
     
     def setUp(self):
         """
         setup
         """
-        self.params = ParameterServer(filename=os.path.join(os.path.dirname(__file__), "gail_data/params/gail_params_open-ai.json"))
+        self.params = ParameterServer(filename=os.path.join(os.path.dirname(__file__), "gail_data/params/gail_params_bark.json"))
 
         # creating the dirs for logging if they are not present already:
-        dir_check(self.params)
+        for key in ['logdir', 'model_dir', 'expert_path_dir']:
+            self.params["ML"]["GAILRunner"]["tf2rl"][key] = os.path.join(Path.home(), 
+                self.params["ML"]["GAILRunner"]["tf2rl"][key])
+            if not os.path.exists(self.params["ML"]["GAILRunner"]["tf2rl"][key]):
+                os.makedirs(self.params["ML"]["GAILRunner"]["tf2rl"][key])
 
-        if len(os.listdir(self.params["ML"]["GAILRunner"]["tf2rl"]["expert_path_dir"])) == 0:
-            print("No expert trajectories found, plaese generate demonstrations first")
-            print("python tf2rl/examples/run_sac.py --env-name=Pendulum-v0 --save-test-path --test-interval=50000")
-            print("After that, save expert trajectories into bark_ml/tests/gail_data/expert_data/open-ai")
-            exit()
+        # create environment
+        self.bp = ContinuousMergingBlueprint(self.params,
+                                        number_of_senarios=500,
+                                        random_seed=0)
+        self.env = SingleAgentRuntime(blueprint=self.bp,
+                                render=False)
 
-        # creating environment:
-        env_name = "Pendulum-v0"
-        self.env = gym.make(env_name) 
-
-        # getting the expert trajectories from the .pkl file:
-        self.expert_trajs = restore_latest_n_traj(dirname=self.params["ML"]["GAILRunner"]["tf2rl"]["expert_path_dir"],
-                                            max_steps=self.params["ML"]["GAILRunner"]["tf2rl"]["max_steps"])
-
-        units = [400, 300]
-
-        # creating actor and critic networks:
-        self.generator = DDPG(
-            state_shape=self.env.observation_space.shape,
-            action_dim=self.env.action_space.high.size,
-            max_action=self.env.action_space.high[0],
-            gpu=self.params["ML"]["Settings"]["GPUUse", "", 0],
-            actor_units=units,
-            critic_units=units,
-            n_warmup=100,
-            batch_size=16)
-        self.discriminator = GAIL(
-            state_shape=self.env.observation_space.shape,
-            action_dim=self.env.action_space.high.size,
-            units=units,
-            enable_sn=False,
-            batch_size=8,
-            gpu=self.params["ML"]["Settings"]["GPUUse", "", 0]
-            )
-
-        # creating sample agent:
-        self.agent = sample_agent(self.generator, self.discriminator)
+        # wrapped environment for compatibility with tf2rl
+        self.wrapped_env = TF2RLWrapper(self.env)
         
-        # create runner:
+        # Dummy expert trajectories:
+        self.expert_trajs = {
+            'obses': np.zeros((10, 16)),
+            'next_obses': np.ones((10, 16)),
+            'acts': 2 * np.ones((10, 2))
+        }
+
+        # create agent and runner:
+        self.agent = BehaviorGAILAgent(
+            environment=self.wrapped_env,
+            params=self.params
+        )
+        self.env.ml_behavior = self.agent
         self.runner = GAILRunner(
-            environment=self.env,
+            environment=self.wrapped_env,
             agent=self.agent,
             params=self.params,
             expert_trajs=self.expert_trajs)
 
+
+    def test_TF2RLWrapper(self):
+        """tests the wrapper class."""
+        self.assertIsInstance(self.wrapped_env.action_space, Box)
+        self.assertIsInstance(self.wrapped_env.observation_space, Box)
+        self.assertTrue((self.wrapped_env.action_space.high == self.env.action_space.high).all())
+        self.assertTrue((self.wrapped_env.action_space.low == self.env.action_space.low).all())
+
+
+    def test_runner_init(self):
+        """tests the init function of the runner."""
+        self.assertEqual(self.runner._expert_trajs, self.expert_trajs)
+        self.assertEqual(self.runner._agent, self.agent)
+        self.assertEqual(self.runner._environment, self.wrapped_env)
+        self.assertEqual(self.runner._params, self.params)
+
     
     def test_get_trainer(self):
-        """get_trainer
-        """
+        """get_trainer"""
         trainer = self.runner.GetTrainer()
-        self.assertEqual(trainer._policy.actor_units, [400, 300])
+        
+        self.assertIsInstance(trainer, IRLTrainer)
+        self.assertIsInstance(trainer._irl, GAIL)
+        self.assertIsInstance(trainer._policy, DDPG)
+        self.assertEqual(trainer._irl, self.agent.discriminator)
+        self.assertEqual(trainer._policy, self.agent.generator)
+        self.assertEqual(trainer._env, self.wrapped_env)
 
-        self.assertEqual(trainer._expert_obs, self.expert_trajs['obses'])
+        self.assertTrue((trainer._expert_obs == self.expert_trajs["obses"]).all())
+        self.assertTrue((trainer._expert_next_obs == self.expert_trajs["next_obses"]).all())
+        self.assertTrue((trainer._expert_act == self.expert_trajs["acts"]).all())
+        self.assertEqual(trainer._env.observation_space.shape[0], self.expert_trajs["obses"].shape[1])
+        self.assertEqual(trainer._env.observation_space.shape[0], self.expert_trajs["next_obses"].shape[1])
+        self.assertEqual(trainer._env.action_space.shape[0], self.expert_trajs["acts"].shape[1])
+
 
 if __name__ == '__main__':
     unittest.main()
