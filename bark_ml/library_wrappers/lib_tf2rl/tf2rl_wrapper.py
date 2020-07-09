@@ -26,9 +26,9 @@ class TF2RLWrapper():
         - If normalization is not needed: Simply calls the step function of the runtime.
         """
         if self._normalize_features:
-            rescaled_action = self._rescale_action(action.copy())
+            rescaled_action = self._rescale_action(action)
             next_obs, reward, done, _ = self._env.step(rescaled_action)
-            next_obs = self._normalize_observation(next_obs.copy())
+            next_obs = self._normalize_observation(next_obs)
             return next_obs, reward, done, None
         else:
             return self._env.step(action)
@@ -40,7 +40,7 @@ class TF2RLWrapper():
         - If normalization is not needed: Simply calls the reset function of the runtime.
         """
         if self._normalize_features:
-            return self._normalize_observation(self._env.reset().copy())
+            return self._normalize_observation(self._env.reset())
         else:
             return self._env.reset()
 
@@ -52,16 +52,16 @@ class TF2RLWrapper():
 
     def _rescale_action(self, action):
         """rescales a normalized action back to their original range."""
-        action = (action + 1.) / 2.
-        action *= (self._env.action_space.high - self._env.action_space.low)
-        action += self._env.action_space.low
-        return action
+        rescaled_action = (action + 1.) / 2.
+        rescaled_action *= (self._env.action_space.high - self._env.action_space.low)
+        rescaled_action += self._env.action_space.low
+        return rescaled_action
 
 
     def _normalize_observation(self, observation):
         """Normalizes an observation to be within the range -1 and 1"""
-        observation -= self._env.observation_space.low
-        observation /= (self._env.observation_space.high - self._env.observation_space.low)
-        observation = observation * 2. - 1.
-        return observation
+        norm_observation = observation - self._env.observation_space.low
+        norm_observation /= (self._env.observation_space.high - self._env.observation_space.low)
+        norm_observation = norm_observation * 2. - 1.
+        return norm_observation
 

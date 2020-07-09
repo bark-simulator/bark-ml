@@ -23,34 +23,34 @@ class PyTF2RLWrapperTests(unittest.TestCase):
 
         self.env_orig = test_env(observation_space=self.observation_space,
             action_space=self.action_space)
-        self.env_test = test_env(observation_space=self.observation_space,
-            action_space=self.action_space)
-        self.env_normalized = test_env(observation_space=self.observation_space,
-            action_space=self.action_space,)
+        #self.env_test = test_env(observation_space=self.observation_space,
+        #    action_space=self.action_space)
+        #self.env_normalized = test_env(observation_space=self.observation_space,
+        #    action_space=self.action_space,)
         
-        self.wrapped_env = TF2RLWrapper(self.env_test)
-        self.wrapped_env_norm = TF2RLWrapper(self.env_normalized, normalize_features=True)
+        self.wrapped_env = TF2RLWrapper(self.env_orig)
+        self.wrapped_env_norm = TF2RLWrapper(self.env_orig, normalize_features=True)
 
 
     def test_init(self):
         """tests the init method of the TF2RLWrapper."""
         # without normalization:
-        self.assertEqual(self.wrapped_env._env, self.env_test)
+        self.assertEqual(self.wrapped_env._env, self.env_orig)
         self.assertIsInstance(self.wrapped_env.action_space, Box)
         self.assertIsInstance(self.wrapped_env.observation_space, Box)
-        self.assertTrue((self.wrapped_env.action_space.high == self.env_test.action_space.high).all())
-        self.assertTrue((self.wrapped_env.action_space.low == self.env_test.action_space.low).all())
-        self.assertTrue((self.wrapped_env.observation_space.high == self.env_test.observation_space.high).all())
-        self.assertTrue((self.wrapped_env.observation_space.low == self.env_test.observation_space.low).all())
+        self.assertTrue((self.wrapped_env.action_space.high == self.env_orig.action_space.high).all())
+        self.assertTrue((self.wrapped_env.action_space.low == self.env_orig.action_space.low).all())
+        self.assertTrue((self.wrapped_env.observation_space.high == self.env_orig.observation_space.high).all())
+        self.assertTrue((self.wrapped_env.observation_space.low == self.env_orig.observation_space.low).all())
 
         # with normalization:
-        self.assertEqual(self.wrapped_env_norm._env, self.env_normalized)
+        self.assertEqual(self.wrapped_env_norm._env, self.env_orig)
         self.assertIsInstance(self.wrapped_env.action_space, Box)
         self.assertIsInstance(self.wrapped_env.observation_space, Box)
-        self.assertTrue((self.wrapped_env_norm.action_space.high == np.ones_like(self.env_normalized.action_space.high)).all())
-        self.assertTrue((self.wrapped_env_norm.action_space.low == -np.ones_like(self.env_normalized.action_space.low)).all())
-        self.assertTrue((self.wrapped_env_norm.observation_space.high == np.ones_like(self.env_normalized.observation_space.high)).all())
-        self.assertTrue((self.wrapped_env_norm.observation_space.low == -np.ones_like(self.env_normalized.observation_space.low)).all())
+        self.assertTrue((self.wrapped_env_norm.action_space.high == np.ones_like(self.env_orig.action_space.high)).all())
+        self.assertTrue((self.wrapped_env_norm.action_space.low == -np.ones_like(self.env_orig.action_space.low)).all())
+        self.assertTrue((self.wrapped_env_norm.observation_space.high == np.ones_like(self.env_orig.observation_space.high)).all())
+        self.assertTrue((self.wrapped_env_norm.observation_space.low == -np.ones_like(self.env_orig.observation_space.low)).all())
 
 
     def test_rescale_action(self):
@@ -58,14 +58,34 @@ class PyTF2RLWrapperTests(unittest.TestCase):
         rescale_action = self.wrapped_env_norm._rescale_action
         self.assertTrue(np.allclose(self.env_orig.action_space.high, rescale_action(1.)))
         self.assertTrue(np.allclose(self.env_orig.action_space.low, rescale_action(-1.)))
-        mean_actions = (self.env_orig.action_space.high + self.env_orig.action_space.low) / 2.
-        self.assertTrue(np.allclose(mean_actions, rescale_action(0.)))
+        mean_action = (self.env_orig.action_space.high + self.env_orig.action_space.low) / 2.
+        self.assertTrue(np.allclose(mean_action, rescale_action(0.)))
 
 
     def test_normalize_observation(self):
         """tests the _normalize observation method of the TF2RLWrapper"""
-        pass
+        normalize_observation = self.wrapped_env_norm._normalize_observation
+        self.assertTrue(np.allclose(normalize_observation(self.env_orig.observation_space.high), 1.))
+        self.assertTrue(np.allclose(normalize_observation(self.env_orig.observation_space.low), -1.))
+        mean_observation = (self.env_orig.observation_space.high + self.env_orig.observation_space.low) / 2.
+        self.assertTrue(np.allclose(normalize_observation(mean_observation), 0.))
 
+
+    def test_reset(self):
+        """tests the reset function of the TF2RLWrapper"""
+        for _ in range(100):
+            wrapped_obs = self.wrapped_env.reset()
+            self.assertTrue((wrapped_obs == self.env_orig.obs).all())
+
+        for _ in range(100):
+            wrapped_obs = self.wrapped_env_norm.reset()
+            self.assertTrue(((wrapped_obs <= 1.) & (wrapped_obs >= -1.)).all())
+            self.assertTrue((wrapped_obs == self.wrapped_env_norm._normalize_observation(self.env_orig.obs)).all())
+    
+
+    def test_step(self):
+        """tests the step function of the TF2RLWrapper"""
+        
 
 
 class test_env():
