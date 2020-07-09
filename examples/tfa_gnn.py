@@ -39,8 +39,10 @@ def run_configuration(argv):
   #params = ParameterServer(filename="examples/example_params/tfa_params.json")
   params = ParameterServer()
   # NOTE: Modify these paths in order to save the checkpoints and summaries
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/marco.oliva/Development/bark-ml_logs/checkpoints"
-  params["ML"]["TFARunner"]["SummaryPath"] = "/Users/marco.oliva/Development/bark-ml_logs/summaries"
+  from config import checkpoint_path, summary_path
+  #import log_config
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = checkpoint_path
+  params["ML"]["TFARunner"]["SummaryPath"] = summary_path
   params["ML"]["BehaviorSACAgent"]["DebugSummaries"] = True
   params["ML"]["BehaviorTFAAgents"]["NumCheckpointsToKeep"] = None
   #params["ML"]["SACRunner"]["NumberOfCollections"] = 2000
