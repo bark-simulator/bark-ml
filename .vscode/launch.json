@@ -121,12 +121,23 @@
 				}
 			},    
 			{
-				"name": "Python: examples/tfa (--mode=train)",
+				"name": "Python: examples/tfa (SAC / --mode=train)",
 				"type": "python",
 				"request": "launch",
 				"program": "${workspaceFolder}/examples/tfa.py",
 				"console": "integratedTerminal",
 				"args": ["--mode=train", ],
+				"env": {
+					"PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/tfa.runfiles/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/com_github_interaction_dataset_interaction_dataset/python/:"
+				}
+			},
+			{
+				"name": "Python: examples/tfa (PPO / --mode=train)",
+				"type": "python",
+				"request": "launch",
+				"program": "${workspaceFolder}/examples/tfa.py",
+				"console": "integratedTerminal",
+				"args": ["--mode=train", "--agent=ppo"],
 				"env": {
 					"PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/tfa.runfiles/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/com_github_interaction_dataset_interaction_dataset/python/:"
 				}
