@@ -117,7 +117,7 @@ class TFARunner:
         self._environment.render()
 
   
-  def GenerateExpertTrajectories(self, num_trajectories: int = 1000, render: bool = False) -> dict:
+  def GnerateExpertTrajectories(self, num_trajectories: int = 1000, render: bool = False) -> dict:
     """Generates expert trajectories based on a tfa agent.
 
     Args:

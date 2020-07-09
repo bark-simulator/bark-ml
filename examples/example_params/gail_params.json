@@ -7,7 +7,8 @@
     },
     "ML": {
         "Settings": {
-            "GPUUse": 0
+            "GPUUse": 0,
+            "NormalizeFeatures": true
         },
         "BehaviorContinuousML": {
             "ActionsLowerBound": [
@@ -76,8 +77,8 @@
         },
         "BehaviorGAILAgent": {
             "Generator": {
-                "LearningRateActor": 0.001,
-                "LearningRateCritic": 0.001,
+                "LearningRateActor": 0.0003,
+                "LearningRateCritic": 0.0003,
                 "ActorFcLayerParams": [
                 400,
                 300
@@ -95,7 +96,7 @@
                     400,
                     300
                 ],
-                "LearningRate": 0.001,
+                "LearningRate": 0.0001,
                 "BatchSize": 32
             },
             "WarmUp": 1000,
