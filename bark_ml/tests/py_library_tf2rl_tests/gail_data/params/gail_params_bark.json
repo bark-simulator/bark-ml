@@ -34,7 +34,7 @@
                 6.283185307179586
             ],
             "NormalizationEnabled": true,
-            "MaxNumAgents": 2
+            "MaxNumAgents": 3
         },
         "NearestAgentsObserver": {
             "MaxOtherDistance": 100

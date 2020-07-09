@@ -22,7 +22,7 @@ def load_expert_trajectories(dirname: str, normalize_features=False, env=None) -
     expert_trajectories = load_trajectories(joblib_files)
 
     if normalize_features:
-        #assert env not None
+        assert env is not None, "if normalization is used the environment has to be provided."
         for key in ['obses', 'next_obses']:
             expert_trajectories[key] = normalize(features=expert_trajectories[key],
                 high=env.observation_space.high,
