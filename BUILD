@@ -23,8 +23,7 @@ test_suite(
   tests = [
     "//bark_ml/tests/py_library_tf2rl_tests:py_gail_agent_tests",
     "//bark_ml/tests/py_library_tf2rl_tests:py_gail_runner_tests",
-    "//bark_ml/tests/py_library_tf2rl_tests:py_gail_gym_training_tests",
-    "//bark_ml/tests/py_library_tf2rl_tests:py_gail_bark_training_tests",
+    "//bark_ml/tests/py_library_tf2rl_tests:py_gail_training_tests",
   ]
 )
 
