@@ -10,6 +10,15 @@ test_suite(
 )
 
 test_suite(
+  name = "graph_tests",
+  tests = [
+    "//bark_ml/tests:py_graph_observer_tests",
+    "//bark_ml/tests:py_gnn_wrapper_tests",
+    "//supervised_learning:py_learn_actor_tests"
+  ]
+)
+
+test_suite(
   name = "examples_tests",
   tests = [
     "//examples:blueprint_config",
