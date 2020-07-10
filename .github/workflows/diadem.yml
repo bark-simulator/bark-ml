@@ -1,6 +1,6 @@
 name: CI-DIADEM
 
-on: [push]
+on:
 
 jobs:
   build:
