@@ -40,6 +40,8 @@ setup(
         'tf-agents>=0.5.0',
         'tensorflow-probability>=0.10.0',
         'bark-simulator>=0.1.0',
+        'tf2_gnn>=2.4.0',
+        'networkx>=2.4'
     ],
     ext_modules=ext_modules,
     test_suite='nose.collector',
