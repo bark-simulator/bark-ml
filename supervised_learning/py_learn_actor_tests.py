@@ -40,14 +40,13 @@ class PyGNNActorTests(unittest.TestCase):
         self.batch_size = 32
         self.train_split = 0.8
         #self.test_split = 0.2 # results from  (1 - train_split)
-        self.data_path = "/home/silvan/working_bark/supervised_learning/data1/"
+        self.data_path = "/home/silvan/working_bark/supervised_learning/data/"
         ######################
 
         """Setting up the test case"""
         params = ParameterServer()
         self.observer = GraphObserver(params)
 
-        # Generate new data (necessary when changes on observer are made!!!!!!)
         try:
             scenarios = os.listdir(self.data_path)
             logging.info("Data is already generated - just load the data")
@@ -90,7 +89,7 @@ class PyGNNActorTests(unittest.TestCase):
         dataset = tf.data.Dataset.from_tensor_slices((self.X, self.Y))
         dataset_size = self.X.shape[0]
 
-        # Train/Val/Test split
+        # Train/Test split
         train_size = int(self.train_split * dataset_size)
         full_dataset = dataset.shuffle(dataset_size, seed=5)
 
