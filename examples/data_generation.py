@@ -10,6 +10,7 @@ from absl import app
 from absl import flags
 import time, json, pickle
 from abc import ABC
+import logging
 
 # BARK imports
 from bark.runtime.commons.parameters import ParameterServer
@@ -28,7 +29,7 @@ from bark_ml.observers.graph_observer import GraphObserver
 
 class DataGenerator(ABC):
   """Data Generator class"""
-  def __init__(self, num_scenarios=3, dump_dir=None):
+  def __init__(self, num_scenarios=3, dump_dir=None, render=False):
     self.dump_dir = dump_dir
     self.num_scenarios = num_scenarios
 
@@ -39,7 +40,7 @@ class DataGenerator(ABC):
     self.bp = ContinuousHighwayBlueprint(self.params, number_of_senarios=num_scenarios, random_seed=0)
     #self.bp = ContinuousIntersectionBlueprint(self.params, number_of_senarios=num_scenarios, random_seed=0)
     self.observer = GraphObserver(normalize_observations=True, output_supervised_data=True, params=self.params)
-    self.env = SingleAgentRuntime(blueprint=self.bp, observer=self.observer, render=True)
+    self.env = SingleAgentRuntime(blueprint=self.bp, observer=self.observer, render=render)
 
 
   def run_scenario(self, scenario):
@@ -77,6 +78,7 @@ class DataGenerator(ABC):
     for _ in range(0, self.num_scenarios):
       scenario, idx = self.bp._scenario_generation.get_next_scenario()
       print("Scenario", idx)
+      logging.info("Running data_generation on scenario "+ str(idx)+ "/"+str(self.num_scenarios))
       data_scenario = self.run_scenario(scenario)
       time.sleep(1)
       self.save_data(data_scenario)

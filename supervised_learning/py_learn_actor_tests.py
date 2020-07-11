@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import time
 import networkx as nx
 import tensorflow as tf
+import datetime
 
 # BARK imports
 from bark.runtime.commons.parameters import ParameterServer
@@ -39,26 +40,33 @@ class PyGNNActorTests(unittest.TestCase):
         self.batch_size = 32
         self.train_split = 0.8
         #self.test_split = 0.2 # results from  (1 - train_split)
+        self.data_path = "/home/silvan/working_bark/supervised_learning/data1/"
         ######################
 
         """Setting up the test case"""
         params = ParameterServer()
         self.observer = GraphObserver(params)
 
-        # Generate new data (necessary when changes on observer are made)
-        #graph_generator = DataGenerator(num_scenarios=100, dump_dir='/home/silvan/working_bark/supervised_learning/data/')
-        #graph_generator.run_scenarios()
+        # Generate new data (necessary when changes on observer are made!!!!!!)
+        try:
+            scenarios = os.listdir(self.data_path)
+            logging.info("Data is already generated - just load the data")
 
-        # Load raw data
-        data_collection = list()
-        data_path = "/home/silvan/working_bark/supervised_learning/data/"
-        scenarios = os.listdir(data_path)
-        for scenario in scenarios:
-            scenario_path = data_path + "/" + scenario
-            with open(scenario_path, 'rb') as f:
-                data = pickle.load(f)
-            data_collection.append(data)
-        print("Raw data loading completed")
+        except:
+            logging.info("Starting data_generation")
+            graph_generator = DataGenerator(num_scenarios=100, dump_dir=self.data_path, render=False)
+            graph_generator.run_scenarios()
+
+        finally:
+            # Load raw data
+            data_collection = list()
+            scenarios = os.listdir(self.data_path)
+            for scenario in scenarios:
+                scenario_path = self.data_path + "/" + scenario
+                with open(scenario_path, 'rb') as f:
+                    data = pickle.load(f)
+                data_collection.append(data)
+            print("Raw data loading completed")
 
         # Transform raw data to supervised dataset
         Y = list()
@@ -114,7 +122,8 @@ class PyGNNActorTests(unittest.TestCase):
         self.optimizer = tf.keras.optimizers.Adam()
         self.train_loss = tf.keras.metrics.Mean(name='train_loss')
         self.test_loss = tf.keras.metrics.Mean(name='test_loss')
-        self.summary_writer = tf.summary.create_file_writer(self.log_dir)
+        current_time = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        self.summary_writer = tf.summary.create_file_writer(self.log_dir+'/'+ current_time)
 
         for epoch in range(self.epochs):
             # Reset the metrics at the start of the next epoch
