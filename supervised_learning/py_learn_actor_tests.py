@@ -5,7 +5,9 @@
 # https://opensource.org/licenses/MIT
 
 
-import unittest, pickle
+import unittest
+import pickle
+import logging
 import numpy as np
 import os
 import matplotlib
@@ -32,6 +34,7 @@ class PyGNNActorTests(unittest.TestCase):
     def setUp(self):
         ######################
         #    Parameter       #
+        self.log_dir = "/home/silvan/working_bark/supervised_learning/logs/"
         self.epochs = 10
         self.batch_size = 32
         self.train_split = 0.8
@@ -111,11 +114,13 @@ class PyGNNActorTests(unittest.TestCase):
         self.optimizer = tf.keras.optimizers.Adam()
         self.train_loss = tf.keras.metrics.Mean(name='train_loss')
         self.test_loss = tf.keras.metrics.Mean(name='test_loss')
+        self.summary_writer = tf.summary.create_file_writer(self.log_dir)
 
         for epoch in range(self.epochs):
             # Reset the metrics at the start of the next epoch
             self.train_loss.reset_states()
             self.test_loss.reset_states()
+            logging.info('Starting training in epoch '+str(epoch))
 
             for inputs, labels in self.train_dataset:
                 train_step(inputs, labels, model=self.model, loss_object=self.loss_object,
@@ -124,6 +129,20 @@ class PyGNNActorTests(unittest.TestCase):
             for test_inputs, test_labels in self.test_dataset:
                 test_step(test_inputs, test_labels, model=self.model, loss_object=self.loss_object,
                                       test_loss=self.test_loss)
+            # Histogram data
+            logging.info("starting to create histogram data")
+            true_results, preds, abs_losses = create_histogram_data(self.train_dataset, self.model)
+
+            with self.summary_writer.as_default():
+                tf.summary.scalar('loss/train_loss', self.train_loss.result(), step=epoch)
+                tf.summary.scalar('loss/test_loss', self.test_loss.result(), step=epoch)
+                tf.summary.histogram("steering/labels", tf.constant(true_results[:,0]), step=epoch)
+                tf.summary.histogram("steering/predictions", tf.constant(preds[:,0]), step=epoch)
+                tf.summary.histogram("acceleration/labels", tf.constant(true_results[:,1]), step=epoch)
+                tf.summary.histogram("acceleration/predictions", tf.constant(preds[:,1]), step=epoch)
+                tf.summary.histogram("absolute_losses/steering", tf.constant(abs_losses[:,0]), step=epoch)
+                tf.summary.histogram("absolute_losses/acceleration", tf.constant(abs_losses[:,1]), step=epoch)
+
 
             template = 'Epoch {}, Loss: {}, Test Loss: {}'
             print(template.format(epoch + 1,
@@ -202,6 +221,47 @@ def test_step(inputs, labels, model, loss_object, test_loss):
     t_loss = loss_object(labels, predictions)
     test_loss(t_loss)
     #test_accuracy(labels, predictions)
+
+def create_histogram_data(dataset, model):
+    abs_losses = list()
+    preds = list()
+    true_results = list()
+
+    # Create raw data
+    for input_data, y_true in dataset:
+        result = model(input_data, training=False)
+        y_pred = result[0].mean()
+
+        preds.extend(y_pred.numpy())
+        true_results.extend(y_true.numpy())
+        absolute_loss = tf.math.subtract(y_true, y_pred)
+        absolute_loss = y_true.numpy() - y_pred.numpy()
+        abs_losses.extend(absolute_loss)
+
+    abs_losses = np.array(abs_losses)
+    preds = np.array(preds)
+    true_results = np.array(true_results)
+    return true_results, preds, abs_losses    
+
+def create_tf_hist(values, bins):
+    values = np.array(values)
+    counts, bin_edges = np.histogram(values, bins=bins)
+
+    # Fill fields of histogram proto
+    hist = tf.HistogramProto()
+    hist.min = float(np.min(values))
+    hist.max = float(np.max(values))
+    hist.num = int(np.prod(values.shape))
+    hist.sum = float(np.sum(values))
+    hist.sum_squares = float(np.sum(values**2))
+
+    bin_edges = bin_edges[1:]
+    # Add bin edges and counts
+    for edge in bin_edges:
+        hist.bucket_limit.append(edge)
+    for c in counts:
+        hist.bucket.append(c)
+    return hist
 
 if __name__ == '__main__':
     unittest.main()
