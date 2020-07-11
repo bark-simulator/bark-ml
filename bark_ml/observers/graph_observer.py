@@ -20,23 +20,23 @@ class GraphObserver(StateObserver):
   
   def __init__(self,
                normalize_observations=True,
-               use_edge_attributes=True,
                output_supervised_data = False,
                params=ParameterServer()):
     StateObserver.__init__(self, params)
 
     self._normalize_observations = normalize_observations
-    self._use_edge_attributes = use_edge_attributes
     self._output_supervised_data = output_supervised_data
 
     # the number of features of a node in the graph
     self.feature_len = 11 # 13
 
     # the maximum number of agents that can be observed
-    self.agent_limit = 6
+    self._agent_limit = \
+      params["ML"]["GraphObserver"]["AgentLimit", "", 12]
 
      # the radius an agent can 'see' in meters
-    self._visible_distance = 50
+    self._visibility_radius = \
+      params["ML"]["GraphObserver"]["VisibilityRadius", "", 50]
 
   @classmethod
   def attribute_keys(cls):
@@ -54,24 +54,28 @@ class GraphObserver(StateObserver):
       features = self._extract_features(agent)
       graph.add_node(index, **features)
 
-    # Second loop for edges necessary -> otherwise order of graph_nodes is disrupted
+    # Second loop for edges necessary 
+    # -> otherwise order of graph_nodes is disrupted
     for (index, agent) in agents:
-      # create edges to all other agents
-      nearby_agents = self._nearby_agents(agent, agents, self._visible_distance)
+      # create edges to all visible agents
+      nearby_agents = self._nearby_agents(
+        center_agent=agent, 
+        agents=agents, 
+        radius=self._visibility_radius)
+
       for (nearby_agent_index, _) in nearby_agents:
         graph.add_edge(index, nearby_agent_index)
     
     observation = self._observation_from_graph(graph)
-    if self._output_supervised_data == False:
-      return tf.convert_to_tensor(
-        observation, 
-        dtype=tf.float32, 
-        name='observation'
-      )
-    else:
+    
+    if self._output_supervised_data:
       actions = self._generate_actions(features)
       return (graph,actions)
-
+    
+    return tf.convert_to_tensor(
+      observation, 
+      dtype=tf.float32, 
+      name='observation')
 
   def _observation_from_graph(self, graph):
     """ Encodes the given graph into a bounded array with fixed size.
@@ -90,33 +94,30 @@ class GraphObserver(StateObserver):
     :rtype: list
     """
     num_nodes = len(graph.nodes)
-    obs = [self.agent_limit, num_nodes, self.feature_len]
+    obs = [self._agent_limit, num_nodes, self.feature_len]
     
     # append node features
-    for (node_id, attributes) in graph.nodes.data():
+    for _, attributes in graph.nodes.data():
       obs.extend(list(attributes.values()))
 
     # fill empty spots (difference between existing and max agents) with -1
-    obs.extend(np.full((self.agent_limit - num_nodes) * self.feature_len, -1))
+    obs.extend(np.full((self._agent_limit - num_nodes) * self.feature_len, -1))
 
     # build adjacency matrix and convert to list
-    adjacency_matrix = np.zeros((self.agent_limit, self.agent_limit))
+    adjacency_matrix = np.zeros((self._agent_limit, self._agent_limit))
     for source, target in graph.edges:
       adjacency_matrix[source, target] = 1
     
     adjacency_list = adjacency_matrix.reshape(-1)
     obs.extend(adjacency_list)
 
-    # Validity check
     assert len(obs) == self._len_state, f'Observation \
       has invalid length ({len(obs)}, expected: {self._len_state})'
     
-    #return obs
     return tf.convert_to_tensor(
         obs, 
         dtype=tf.float32, 
-        name='observation'
-      )
+        name='observation')
 
   @classmethod
   def graph_from_observation(cls, observation):
@@ -150,15 +151,28 @@ class GraphObserver(StateObserver):
     """ 
     Returns a list of tuples, consisting
     of an index and an agent object element.
+
+    The first element always represents the ego agent.
+    The remaining elements resemble other agents, up
+    to the limit defined by `self._agent_limit`,
+    sorted in ascending order with respect to the agents'
+    distance in the world to the ego agent.
     """
-    # make ego_agent the first element, sort others by id
-    # there should be a more elegant way to do this
     ego_agent = world.ego_agent
     agents = list(world.agents.values())
     agents.remove(ego_agent)
-    agents.sort(key=lambda agent: agent.id)
+    agents = self._agents_sorted_by_distance(ego_agent, agents)
     agents.insert(0, ego_agent)
-    return list(enumerate(agents))[:self.agent_limit]
+    return list(enumerate(agents))[:self._agent_limit]
+
+  def _agents_sorted_by_distance(self, ego_agent, agents):
+    def distance(agent):
+      return Distance(
+        self._position(ego_agent), 
+        self._position(agent))
+    
+    agents.sort(key=distance)
+    return agents
 
   def _nearby_agents(self, center_agent, agents, radius: float):
     """
@@ -314,7 +328,7 @@ class GraphObserver(StateObserver):
     return d
 
   def sample(self):
-    return self.observation_space.sample()
+    raise NotImplementedError
 
   @property
   def observation_space(self):
@@ -324,8 +338,8 @@ class GraphObserver(StateObserver):
     return spaces.Box(
       low=np.concatenate((
         np.zeros(3),
-        np.full(self.agent_limit * self.feature_len, -1),
-        np.zeros(self.agent_limit ** 2))),
+        np.full(self._agent_limit * self.feature_len, -1),
+        np.zeros(self._agent_limit ** 2))),
       high=np.concatenate((
         np.array([100, 100, 100]), 
         np.ones(self._len_state - 3)
@@ -333,4 +347,4 @@ class GraphObserver(StateObserver):
 
   @property
   def _len_state(self):
-    return 3 + (self.agent_limit * self.feature_len) + (self.agent_limit ** 2)
+    return 3 + (self._agent_limit * self.feature_len) + (self._agent_limit ** 2)
