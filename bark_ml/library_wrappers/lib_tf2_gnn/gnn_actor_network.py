@@ -39,6 +39,8 @@ class GNNActorNetwork(network.Network):
                fc_layer_params=None,
                dropout_layer_params=None,
                conv_layer_params=None,
+               gnn_num_layers=4,
+               gnn_num_units=256,
                activation_fn=tf.keras.activations.relu,
                name='ActorNetwork'):
     """Creates an instance of `ActorNetwork`.
@@ -85,10 +87,10 @@ class GNNActorNetwork(network.Network):
       raise ValueError('Only float actions are supported by this network.')
     
     self._output_tensor_spec = output_tensor_spec
-    self._gnn = GNNWrapper(num_layers=3, num_units=256)
+    self._gnn = GNNWrapper(gnn_num_layers, gnn_num_units)
 
     self._encoder = encoding_network.EncodingNetwork(
-      input_tensor_spec=tf.TensorSpec([None, 256]),
+      input_tensor_spec=tf.TensorSpec([None, gnn_num_units]),
       preprocessing_layers=None,
       preprocessing_combiner=None,
       conv_layer_params=conv_layer_params,
@@ -120,8 +122,6 @@ class GNNActorNetwork(network.Network):
     )
 
   def call(self, observations, step_type=(), network_state=(), training=False):
-    # del step_type # unused.
-    
     output = self._gnn.batch_call(observations, training=training)
     output = tf.cast(output, tf.float32)
 
@@ -133,24 +133,24 @@ class GNNActorNetwork(network.Network):
       output = tf.gather(output, 0, axis=1)
       output = tf.expand_dims(output, axis=1)
 
-    state, network_state = self._encoder(
+    output, network_state = self._encoder(
       output,
       step_type=step_type,
       network_state=network_state,
       training=training)
       
-    # outer_rank = nest_utils.get_outer_rank(observations, self.input_tensor_spec)
+    outer_rank = nest_utils.get_outer_rank(observations, self.input_tensor_spec)
 
-    # output_actions, _ = self._projection_net(
-    #   output, 
-    #   outer_rank, 
-    #   training=training)
+    output_actions, _ = self._projection_net(
+      output, 
+      outer_rank, 
+      training=training)
 
-    for layer in self._dense_layers:
-      output = layer(output, training=training)
+    # for layer in self._dense_layers:
+    #   output = layer(output, training=training)
 
-    output = common.scale_to_spec(output, self._single_action_spec)
-    output_actions = tf.nest.pack_sequence_as(self._output_tensor_spec, [output])
-    output_actions = tf.expand_dims(output_actions, axis=0)
-  
+    # output = common.scale_to_spec(output, self._single_action_spec)
+    # output_actions = tf.nest.pack_sequence_as(self._output_tensor_spec, [output])
+    # output_actions = tf.expand_dims(output_actions, axis=0)
+
     return output_actions, network_state

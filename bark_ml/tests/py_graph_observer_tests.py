@@ -134,13 +134,12 @@ class PyGraphObserverTests(unittest.TestCase):
 
   def test_considered_agents_selection(self):
     agent_limit = 10
-    visibility_radius = 10
     params = ParameterServer()
     params["ML"]["GraphObserver"]["AgentLimit"] = agent_limit
     observer = GraphObserver(params=params)
 
     obs, obs_world = self._get_observation(
-      observer=self.observer,
+      observer=observer,
       world=self.world,
       eval_id=self.eval_id)
 
@@ -151,8 +150,6 @@ class PyGraphObserverTests(unittest.TestCase):
     assert num_nodes == expected_num_nodes, \
       f'Expected {expected_num_nodes}, got {num_nodes}'
     
-    ego_position = self._position(obs_world.ego_agent)
-
     ego_node = graph.nodes[0]
     ego_node_pos = Point2d(
       ego_node['x'].numpy(), 
@@ -161,14 +158,14 @@ class PyGraphObserverTests(unittest.TestCase):
     # verify that the nodes are ordered by
     # ascending distance to the ego node
     max_distance_to_ego = 0
-    for node_id, attributes in graph.nodes.data():
+    for _, attributes in graph.nodes.data():
       pos = Point2d(
         attributes['x'].numpy(), 
         attributes['y'].numpy())
       distance_to_ego = Distance(pos, ego_node_pos)
 
       assert distance_to_ego >= max_distance_to_ego, 'Nodes are \
-        not sorted \by distance to the ego node in ascending order.'
+        not sorted by distance to the ego node in ascending order.'
       
       max_distance_to_ego = distance_to_ego
   

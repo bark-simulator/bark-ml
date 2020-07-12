@@ -33,7 +33,7 @@ class GNNWrapper(tf.keras.Model):
     graph = GraphObserver.graph_from_observation(observation)
 
     features = []
-    for (node_id, attributes) in graph.nodes.data():
+    for _, attributes in graph.nodes.data():
       features.append(list(attributes.values()))
 
     gnn_input = GNNInput(

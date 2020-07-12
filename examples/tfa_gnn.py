@@ -36,16 +36,18 @@ flags.DEFINE_enum("mode",
                   "Mode the configuration should be executed in.")
 
 def run_configuration(argv):
-  #params = ParameterServer(filename="examples/example_params/tfa_params.json")
-  params = ParameterServer()
+  params = ParameterServer(filename="examples/example_params/tfa_params.json")
+  #params = ParameterServer()
   # NOTE: Modify these paths in order to save the checkpoints and summaries
   params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/marco.oliva/Development/bark-ml_logs/checkpoints"
   params["ML"]["TFARunner"]["SummaryPath"] = "/Users/marco.oliva/Development/bark-ml_logs/summaries"
   params["ML"]["BehaviorSACAgent"]["DebugSummaries"] = True
   params["ML"]["BehaviorTFAAgents"]["NumCheckpointsToKeep"] = None
-  #params["ML"]["SACRunner"]["NumberOfCollections"] = 2000
-  params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 50
+  params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 40
   params["ML"]["BehaviorSACAgent"]["BatchSize"] = 32
+  params["ML"]["GraphObserver"]["AgentLimit"] = 8
+  params["ML"]["BehaviorGraphSACAgent"]["NumLayersGNN"] = 4
+  params["ML"]["BehaviorGraphSACAgent"]["NumUnitsGNN"] = 256
   params["World"]["remove_agents_out_of_map"] = False
 
     # viewer = MPViewer(
@@ -72,8 +74,6 @@ def run_configuration(argv):
     blueprint=bp,
     observer=observer,
     render=False)
-  #print("env.action_spec():",env.action_spec())
-  print("env.action_space:",env.action_space)
 
   sac_agent = BehaviorGraphSACAgent(environment=env,
                                     params=params)
@@ -92,7 +92,6 @@ def run_configuration(argv):
   
   # store all used params of the training
   # params.Save("/home/hart/Dokumente/2020/bark-ml/examples/example_params/tfa_params.json")
-
 
 if __name__ == '__main__':
   app.run(run_configuration)

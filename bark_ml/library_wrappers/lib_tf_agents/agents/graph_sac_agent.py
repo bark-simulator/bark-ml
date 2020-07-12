@@ -1,9 +1,7 @@
 import tensorflow as tf
 
 # tfa
-from tf_agents.networks import actor_distribution_network
 from tf_agents.networks import normal_projection_network
-from tf_agents.agents.ddpg import critic_network
 from tf_agents.policies import greedy_policy
 
 from tf_agents.agents.sac import sac_agent
@@ -37,14 +35,18 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
     actor_net = GNNActorNetwork(
       input_tensor_spec=env.observation_spec(),
       output_tensor_spec=env.action_spec(),
-      fc_layer_params=[512, 256, 256]
+      fc_layer_params=[512, 256, 256],
+      gnn_num_layers=self._params["ML"]["BehaviorGraphSACAgent"]["NumLayersGNN", "", 4],
+      gnn_num_units=self._params["ML"]["BehaviorGraphSACAgent"]["NumUnitsGNN", "", 256]
     )
 
     # critic network
     critic_net = GNNCriticNetwork(
       input_tensor_spec=(env.observation_spec(), env.action_spec()),
-      action_fc_layer_params=[512, 256, 256],
-      joint_fc_layer_params=[512, 256, 256]
+      action_fc_layer_params=None,
+      joint_fc_layer_params=[512, 256, 256],
+      gnn_num_layers=self._params["ML"]["BehaviorGraphSACAgent"]["NumLayersGNN", "", 4],
+      gnn_num_units=self._params["ML"]["BehaviorGraphSACAgent"]["NumUnitsGNN", "", 256]
     )
     
     # agent
