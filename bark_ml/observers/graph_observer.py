@@ -40,10 +40,8 @@ class GraphObserver(StateObserver):
 
   @classmethod
   def attribute_keys(cls):
-    # return ["x", "y", "theta", "vel", "goal_x", "goal_y", "goal_dx", "goal_dy", "goal_theta", "goal_d",
-    #         "goal_vel"] #, "d_ditch_left", "d_ditch_right"]
-    return ["x", "y", "theta", "vel", "goal_x", "goal_y", 
-            "goal_theta", "goal_vel"]
+    return ["x", "y", "theta", "vel", "goal_x", "goal_y", "goal_dx", "goal_dy", "goal_theta", "goal_d",
+            "goal_vel"] #, "d_ditch_left", "d_ditch_right"]
 
   def Observe(self, world):
     """see base class"""
@@ -214,13 +212,13 @@ class GraphObserver(StateObserver):
     res["goal_x"] = goal_center[0] # goal position in x
     res["goal_y"] = goal_center[1] # goal position in y
     goal_dx = goal_center[0] - res["x"] # distance to goal in x coord
-    #res["goal_dx"] = goal_dx
+    res["goal_dx"] = goal_dx
     goal_dy = goal_center[1] - res["y"] # distance to goal in y coord
-    #res["goal_dy"] = goal_dy
+    res["goal_dy"] = goal_dy
     goal_theta = np.arctan2(goal_dy, goal_dx) # theta for straight line to goal
     res["goal_theta"] = goal_theta
-    #goal_d = np.sqrt(goal_dx**2 + goal_dy**2) # distance to goal
-    #res["goal_d"] = goal_d
+    goal_d = np.sqrt(goal_dx**2 + goal_dy**2) # distance to goal
+    res["goal_d"] = goal_d
     
     goal_velocity = np.mean(agent.goal_definition.velocity_range)
     res["goal_vel"] = goal_velocity
@@ -248,18 +246,20 @@ class GraphObserver(StateObserver):
         res[k] = self._normalize_value(res[k], n[k])
       res["goal_x"] = self._normalize_value(res["goal_x"], n["x"])
       res["goal_y"] = self._normalize_value(res["goal_y"], n["y"])
-      # res["goal_dx"] = self._normalize_value(res["goal_dx"], n["dx"])
-      # res["goal_dy"] = self._normalize_value(res["goal_dy"], n["dy"])
-      # res["goal_d"] = self._normalize_value(res["goal_d"], n["distance"])
+      res["goal_dx"] = self._normalize_value(res["goal_dx"], n["dx"])
+      res["goal_dy"] = self._normalize_value(res["goal_dy"], n["dy"])
+      res["goal_d"] = self._normalize_value(res["goal_d"], n["distance"])
       res["goal_theta"] = self._normalize_value(res["goal_theta"], n["theta"])
       res["goal_vel"] = self._normalize_value(res["goal_vel"], n["vel"])
       #res["d_ditch_left"] = self._normalize_value(res["d_ditch_left"], n["road"])
       #res["d_ditch_right"] = self._normalize_value(res["d_ditch_right"], n["road"])
     
     #####################################################
-    #    If you change the number of features,          #
-    #    please adapt self.feature_len accordingly.     #
+    #   If you change the number/names of features,     #
+    #   please adapt self.attributes_keys accordingly.  #
     #####################################################
+    assert res.keys() == self.attribute_keys
+
     return res
 
   def _generate_actions(self, features: Dict[str, float]) -> Dict[str, float]:
