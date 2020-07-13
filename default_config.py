@@ -1,2 +1,6 @@
-checkpoint_path = "/Users/marco.oliva/Development/bark-ml_logs/checkpoints" 
-summary_path = "/Users/marco.oliva/Development/bark-ml_logs/summaries" 
+checkpoint_path = '/bark/checkpoints' 
+summary_path = '/bark/summaries' 
+supervised_learning_logs_path = '/bark/supervised_learning/logs'
+supervised_learning_data_path = '/bark/supervised_learning/data'
+
+
