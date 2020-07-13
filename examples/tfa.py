@@ -25,7 +25,6 @@ from bark_ml.environments.blueprints import DiscreteHighwayBlueprint, Continuous
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, BehaviorPPOAgent, BehaviorGraphSACAgent
 from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner
-from bark_ml.observers.graph_observer import GraphObserver
 
 
 # for training: bazel run //examples:tfa -- --mode=train
@@ -54,15 +53,12 @@ def run_configuration(argv):
   #   world_step_time=0.2,
   #   fig_path="/Users/marco.oliva/2020/bark-ml/video/")
 
-  observer = GraphObserver(params=params)
-
   # create environment
   bp = ContinuousHighwayBlueprint(params,
                                   number_of_senarios=2500,
                                   random_seed=0)
 
   env = SingleAgentRuntime(blueprint=bp,
-                           observer=observer,
                            render=True)
 
   # SAC-agent
