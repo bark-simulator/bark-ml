@@ -41,6 +41,10 @@ def run_configuration(argv):
   params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/home/silvan/working_bark/training_sac/checkpoints"
   params["ML"]["TFARunner"]["SummaryPath"] = "/home/silvan/working_bark/training_sac/summary"
   params["World"]["remove_agents_out_of_map"] = False
+  params["ML"]["SACRunner"]["NumberOfCollections"] = 20000
+  params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 50
+  params["ML"]["BehaviorSACAgent"]["BatchSize"] = 32
+
 
   # viewer = MPViewer(
   #   params=params,
@@ -59,7 +63,7 @@ def run_configuration(argv):
                                   random_seed=0)
 
   env = SingleAgentRuntime(blueprint=bp,
-                           render=True)
+                           render=False)
 
   # SAC-agent
   sac_agent = BehaviorSACAgent(environment=env,
