@@ -75,7 +75,8 @@ py_test(
 py_test(
     name = "py_gnn_wrapper_tests",
     srcs = ["py_gnn_wrapper_tests.py"],
-    data = ["@bark_project//bark/python_wrapper:core.so"],
+    data = ["@bark_project//bark/python_wrapper:core.so",
+            "//bark_ml:generate_core"],
     imports = ["../external/bark_project/bark/python_wrapper/"],
     deps = [
         "//bark_ml/environments:single_agent_runtime",

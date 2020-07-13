@@ -19,12 +19,13 @@ the nature of the `tanh` function, actions near the spec bounds cannot be
 returned.
 """
 
+import time
 import gin
 import tensorflow as tf  # pylint: disable=g-explicit-tensorflow-version-import
 import numpy as np
 
 from tf_agents.agents.sac import sac_agent
-from tf_agents.networks import network, normal_projection_network, utils
+from tf_agents.networks import network, normal_projection_network, encoding_network, utils
 from tf_agents.utils import common, nest_utils
 
 from bark_ml.library_wrappers.lib_tf2_gnn import GNNWrapper
@@ -39,6 +40,8 @@ class GNNActorNetwork(network.Network):
                fc_layer_params=None,
                dropout_layer_params=None,
                conv_layer_params=None,
+               gnn_num_layers=4,
+               gnn_num_units=256,
                activation_fn=tf.keras.activations.relu,
                name='ActorNetwork'):
     """Creates an instance of `ActorNetwork`.
@@ -71,7 +74,6 @@ class GNNActorNetwork(network.Network):
         input_tensor_spec=input_tensor_spec,
         state_spec=(),
         name=name)
-    self._gnn = GNNWrapper(num_layers=3, num_units=256)
 
     if len(tf.nest.flatten(input_tensor_spec)) > 1:
       raise ValueError('Only a single observation is supported by this network')
@@ -85,33 +87,48 @@ class GNNActorNetwork(network.Network):
     if self._single_action_spec.dtype not in [tf.float32, tf.float64]:
       raise ValueError('Only float actions are supported by this network.')
     
-    self.projection_net = normal_projection_network.NormalProjectionNetwork(
+    self._output_tensor_spec = output_tensor_spec
+    self._gnn = GNNWrapper(gnn_num_layers, gnn_num_units)
+
+    self._encoder = encoding_network.EncodingNetwork(
+      input_tensor_spec=tf.TensorSpec([None, gnn_num_units]),
+      preprocessing_layers=None,
+      preprocessing_combiner=None,
+      conv_layer_params=conv_layer_params,
+      fc_layer_params=fc_layer_params,
+      dropout_layer_params=dropout_layer_params,
+      activation_fn=activation_fn,
+      kernel_initializer=tf.compat.v1.keras.initializers.glorot_uniform(),
+      batch_squash=False,
+      dtype=tf.float32)
+
+    self._projection_net = normal_projection_network.NormalProjectionNetwork(
       output_tensor_spec,
       mean_transform=None,
       state_dependent_std=True,
       init_means_output_factor=0.1,
       std_transform=sac_agent.std_clip_transform,
       scale_distribution=True)
-
+  
     self._dense_layers = utils.mlp_layers(
       fc_layer_params=fc_layer_params
     )
 
     self._dense_layers.append(
-        tf.keras.layers.Dense(
-            flat_action_spec[0].shape.num_elements(),
-            activation=tf.keras.activations.tanh,
-            kernel_initializer=tf.keras.initializers.he_normal(),
-            name='action')
+      tf.keras.layers.Dense(
+          flat_action_spec[0].shape.num_elements(),
+          activation=tf.keras.activations.tanh,
+          kernel_initializer=tf.keras.initializers.he_normal(),
+          name='action')
     )
 
-    self._output_tensor_spec = output_tensor_spec
-
+    self.call_times = []
+    self.gnn_call_times = []
 
   def call(self, observations, step_type=(), network_state=(), training=False):
-    del step_type # unused.
-    
+    t0 = time.time()
     output = self._gnn.batch_call(observations, training=training)
+    self.gnn_call_times.append(time.time() - t0)
     output = tf.cast(output, tf.float32)
     # extract ego state (node 0)
     if len(output.shape) == 2 and output.shape[0] != 0:
@@ -121,13 +138,18 @@ class GNNActorNetwork(network.Network):
       output = tf.gather(output, 0, axis=1)
       output = tf.expand_dims(output, axis=1)
 
-    for layer in self._dense_layers:
-      output = layer(output, training=training)
+    output, network_state = self._encoder(
+      output,
+      step_type=step_type,
+      network_state=network_state,
+      training=training)
+      
+    outer_rank = nest_utils.get_outer_rank(observations, self.input_tensor_spec)
 
-    outer_rank = nest_utils.get_outer_rank(observations, self.input_tensor_spec) #in
-    output, _ = self.projection_net(output, outer_rank, training=training) #in
+    output_actions, _ = self._projection_net(
+      output, 
+      outer_rank, 
+      training=training)
 
-    #output = common.scale_to_spec(output, self._single_action_spec) #in
-    output_actions = tf.nest.pack_sequence_as(self._output_tensor_spec, [output])
-    #output_actions = tf.expand_dims(output_actions, axis=0)
+    self.call_times.append(time.time() - t0)
     return output_actions, network_state
