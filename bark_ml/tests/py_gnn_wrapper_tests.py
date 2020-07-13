@@ -71,7 +71,7 @@ class PyGNNWrapperTests(unittest.TestCase):
     total = np.sum(call_times)
     
     val_str = f'{total:.4f} s ({calls} x {call_duration:.4f} s)'
-    print('{}: {:_>40}'.format(name, val_str))
+    print('{}: {:.^40}'.format(name, val_str))
 
   def test_execution_time(self):
     agent, runner, observer = self._mock_setup()
@@ -106,6 +106,8 @@ class PyGNNWrapperTests(unittest.TestCase):
     print(f'Total execution time per train cycle: {execution_time:.2f} s')
     
     print(f'\n###########\n')
+
+    self.assertLess(execution_time, 2.0)
 
 
 if __name__ == '__main__':

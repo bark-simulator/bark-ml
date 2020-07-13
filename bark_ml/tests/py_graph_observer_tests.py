@@ -147,8 +147,8 @@ class PyGraphObserverTests(unittest.TestCase):
     
     num_nodes = len(graph.nodes)
     expected_num_nodes = min(len(obs_world.agents), agent_limit)
-    assert num_nodes == expected_num_nodes, \
-      f'Expected {expected_num_nodes}, got {num_nodes}'
+    self.assertEqual(num_nodes, expected_num_nodes,
+      msg=f'Expected {expected_num_nodes}, got {num_nodes}')
     
     ego_node = graph.nodes[0]
     ego_node_pos = Point2d(
@@ -164,8 +164,8 @@ class PyGraphObserverTests(unittest.TestCase):
         attributes['y'].numpy())
       distance_to_ego = Distance(pos, ego_node_pos)
 
-      assert distance_to_ego >= max_distance_to_ego, 'Nodes are \
-        not sorted by distance to the ego node in ascending order.'
+      self.assertGreaterEqual(distance_to_ego, max_distance_to_ego, 
+        msg='Nodes are not sorted by distance to the ego node in ascending order.')
       
       max_distance_to_ego = distance_to_ego
 
@@ -188,19 +188,8 @@ class PyGraphObserverTests(unittest.TestCase):
       b = list(map(lambda x: x.numpy(), a))
       graph_features.append(b)
     
-    assert np.array_equal(features, graph_features)
-    assert np.array_equal(edges, graph.edges)
-
-  def test_observation_v2(self):
-    params = ParameterServer()
-    params["ML"]["GraphObserver"]["AgentLimit"] = 5
-    observer = GraphObserver(params=params)
-    observed_world = self.world.Observe([self.eval_id])[0]
-
-    observation_v1 = observer.Observe(observed_world)
-    observation_v2 = observer.Observe_v2(observed_world)
-
-    assert np.array_equal(observation_v1.numpy(), observation_v2.numpy())
+    self.assertTrue(np.array_equal(features, graph_features))
+    self.assertTrue(np.array_equal(edges, graph.edges))
     
     
 if __name__ == '__main__':

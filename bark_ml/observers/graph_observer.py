@@ -324,3 +324,76 @@ class GraphObserver(StateObserver):
   @property
   def _len_state(self):
     return 3 + (self._agent_limit * self.feature_len) + (self._agent_limit ** 2)
+
+  @classmethod
+  def graph_from_observation(cls, observation):
+    graph = nx.OrderedGraph()
+    
+    node_limit = int(observation[0])
+    num_nodes = int(observation[1])
+    num_features = int(observation[2])
+
+    obs = observation[3:]
+
+    for node_id in range(num_nodes):
+      start_idx = node_id * num_features
+      end_idx = start_idx + num_features
+      features = obs[start_idx:end_idx]
+
+      attributes = dict(zip(GraphObserver.attribute_keys(), features))
+      graph.add_node(node_id, **attributes)
+    
+    adj_start_idx = node_limit * num_features
+    adj_list = obs[adj_start_idx:]
+    adj_matrix = np.reshape(adj_list, (node_limit, -1))
+    
+    for (source_id, source_edges) in enumerate(adj_matrix):
+      for target_id in np.flatnonzero(source_edges):
+        graph.add_edge(source_id, target_id)
+
+    return graph
+
+  def _observation_from_graph(self, graph):
+    """ Encodes the given graph into a bounded array with fixed size.
+
+    The returned array 'a' has the following contents:
+    a[0]:                            (int) the maximum number of possibly contained nodes
+    a[1]:                            (int) the actual number of contained nodes
+    a[2]:                            (int) the number of features per node
+    a[3: a[1] * a[2]]:               (floats) the node feature values
+    a[3 + a[1] * a[2]: a[0] * a[2]]: (int) all entries have value -1
+    a[-a[0] ** 2:]:                  (0 or 1) an adjacency matrix in vector form
+
+    :type graph: A nx.Graph object.
+    :param graph:
+    
+    :rtype: list
+    """
+    num_nodes = len(graph.nodes)
+    obs = [self._agent_limit, num_nodes, self.feature_len]
+    
+    # append node features
+    for (node_id, attributes) in graph.nodes.data():
+      obs.extend(list(attributes.values()))
+
+    # fill empty spots (difference between existing and max agents) with -1
+    obs.extend(np.full((self._agent_limit - num_nodes) * self.feature_len, -1))
+
+    # build adjacency matrix and convert to list
+    adjacency_matrix = np.zeros((self._agent_limit, self._agent_limit))
+    for source, target in graph.edges:
+      adjacency_matrix[source, target] = 1
+    
+    adjacency_list = adjacency_matrix.reshape(-1)
+    obs.extend(adjacency_list)
+
+    # Validity check
+    assert len(obs) == self._len_state, f'Observation \
+      has invalid length ({len(obs)}, expected: {self._len_state})'
+    
+    #return obs
+    return tf.convert_to_tensor(
+        obs, 
+        dtype=tf.float32, 
+        name='observation'
+      )
