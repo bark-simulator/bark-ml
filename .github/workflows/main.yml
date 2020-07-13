@@ -18,7 +18,5 @@ jobs:
         run: pip install tf2_gnn networkx 
       - name: Running unit tests..
         run: bazel test :unit_tests
-      - name: Running graph tests..
-        run: bazel test :graph_tests
       - name: Running examples..
         run: bazel test :examples_tests

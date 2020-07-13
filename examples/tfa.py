@@ -39,9 +39,8 @@ def run_configuration(argv):
   #params = ParameterServer(filename="examples/example_params/tfa_params.json")
   params = ParameterServer()
   # NOTE: Modify these paths in order to save the checkpoints and summaries
-  from config import tfa_checkpoint_path, tfa_summary_path
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = tfa_checkpoint_path
-  params["ML"]["TFARunner"]["SummaryPath"] = tfa_summary_path
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/home/silvan/working_bark/training_sac/checkpoints"
+  params["ML"]["TFARunner"]["SummaryPath"] = "/home/silvan/working_bark/training_sac/summary"
   params["World"]["remove_agents_out_of_map"] = False
 
   # viewer = MPViewer(
