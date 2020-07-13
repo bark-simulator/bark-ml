@@ -1,3 +1,4 @@
+import time
 import gin
 import tensorflow as tf  # pylint: disable=g-explicit-tensorflow-version-import
 import numpy as np
@@ -107,7 +108,10 @@ class GNNCriticNetwork(network.Network):
             minval=-0.003, maxval=0.003),
         name='value'))
 
+    self.call_times = []
+
   def call(self, inputs, step_type=(), network_state=(), training=False):
+    t0 = time.time()
     observations, actions = inputs
     batch_size = observations.shape[0]
 
@@ -133,4 +137,6 @@ class GNNCriticNetwork(network.Network):
       joint = layer(joint, training=training)
     
     output = tf.transpose(joint)
+
+    self.call_times.append(time.time() - t0)
     return output, network_state

@@ -19,6 +19,7 @@ the nature of the `tanh` function, actions near the spec bounds cannot be
 returned.
 """
 
+import time
 import gin
 import tensorflow as tf  # pylint: disable=g-explicit-tensorflow-version-import
 import numpy as np
@@ -121,8 +122,13 @@ class GNNActorNetwork(network.Network):
           name='action')
     )
 
+    self.call_times = []
+    self.gnn_call_times = []
+
   def call(self, observations, step_type=(), network_state=(), training=False):
+    t0 = time.time()
     output = self._gnn.batch_call(observations, training=training)
+    self.gnn_call_times.append(time.time() - t0)
     output = tf.cast(output, tf.float32)
 
     # extract ego state (node 0)
@@ -146,11 +152,5 @@ class GNNActorNetwork(network.Network):
       outer_rank, 
       training=training)
 
-    # for layer in self._dense_layers:
-    #   output = layer(output, training=training)
-
-    # output = common.scale_to_spec(output, self._single_action_spec)
-    # output_actions = tf.nest.pack_sequence_as(self._output_tensor_spec, [output])
-    # output_actions = tf.expand_dims(output_actions, axis=0)
-
+    self.call_times.append(time.time() - t0)
     return output_actions, network_state

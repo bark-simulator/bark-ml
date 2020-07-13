@@ -28,25 +28,36 @@ class GNNWrapper(tf.keras.Model):
     params["message_calculation_class"] = "gnn_film"
     self._gnn = GNN(params)
 
+    self.graph_conversion_times = []
+    self.gnn_call_times = []
+
   #@tf.function
   def call(self, observation, training=False):
     """Call function for the GNN"""
-    graph = GraphObserver.graph_from_observation(observation)
+    t0 = time.time()
+    # graph = GraphObserver.graph_from_observation(observation)
 
-    features = []
-    for _, attributes in graph.nodes.data():
-      features.append(list(attributes.values()))
+    # features = []
+    # for _, attributes in graph.nodes.data():
+    #   features.append(list(attributes.values()))
+
+    features, edges = GraphObserver.gnn_input(observation)
+
+    self.graph_conversion_times.append(time.time() - t0)
 
     gnn_input = GNNInput(
       node_features = tf.convert_to_tensor(features),
       adjacency_lists = (
-        tf.constant(list(map(list, graph.edges)), dtype=tf.int32),
+        tf.constant(list(map(list, edges)), dtype=tf.int32),
       ),
-      node_to_graph_map = tf.fill(dims=(len(graph.nodes),), value=0),
+      node_to_graph_map = tf.fill(dims=(len(features),), value=0),
       num_graphs = 1,
     )
 
-    return self._gnn(gnn_input, training=training)
+    t0 = time.time()
+    output = self._gnn(gnn_input, training=training)
+    self.gnn_call_times.append(time.time() - t0)
+    return output
 
   def batch_call(self, graph, training=False):
     """Calls the network multiple times

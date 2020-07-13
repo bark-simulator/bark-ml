@@ -168,6 +168,40 @@ class PyGraphObserverTests(unittest.TestCase):
         not sorted by distance to the ego node in ascending order.'
       
       max_distance_to_ego = distance_to_ego
-  
+
+  def test_features_from_observation(self):
+    params = ParameterServer()
+    params["ML"]["GraphObserver"]["AgentLimit"] = 5
+    observer = GraphObserver(params=params)
+
+    observation, _ = self._get_observation(
+      observer=observer,
+      world=self.world,
+      eval_id=self.eval_id)
+
+    graph = GraphObserver.graph_from_observation(observation)
+    features, edges = GraphObserver.gnn_input(observation)
+
+    graph_features = []
+    for _, attributes in graph.nodes.data():
+      a = list(attributes.values())
+      b = list(map(lambda x: x.numpy(), a))
+      graph_features.append(b)
+    
+    assert np.array_equal(features, graph_features)
+    assert np.array_equal(edges, graph.edges)
+
+  def test_observation_v2(self):
+    params = ParameterServer()
+    params["ML"]["GraphObserver"]["AgentLimit"] = 5
+    observer = GraphObserver(params=params)
+    observed_world = self.world.Observe([self.eval_id])[0]
+
+    observation_v1 = observer.Observe(observed_world)
+    observation_v2 = observer.Observe_v2(observed_world)
+
+    assert np.array_equal(observation_v1.numpy(), observation_v2.numpy())
+    
+    
 if __name__ == '__main__':
   unittest.main()
