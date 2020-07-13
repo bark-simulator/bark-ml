@@ -39,7 +39,7 @@ def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/tfa_params.json")
   #params = ParameterServer()
   # NOTE: Modify these paths in order to save the checkpoints and summaries
-  from config import checkpoint_path, summary_path
+  from config import tfa_gnn_checkpoint_path, tfa_gnn_summary_path
   #import log_config
   params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = checkpoint_path
   params["ML"]["TFARunner"]["SummaryPath"] = summary_path
