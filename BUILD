@@ -24,7 +24,7 @@ test_suite(
     "//examples:blueprint_config",
     "//examples:continuous_env",
     "//examples:discrete_env",
-    "//examples:tfa"
+    "//examples:tfa",
     "//examples:tfa_gnn"
   ]
 )
