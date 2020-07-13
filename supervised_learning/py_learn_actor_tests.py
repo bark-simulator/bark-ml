@@ -112,7 +112,7 @@ class PyGNNActorTests(unittest.TestCase):
         sac_agent = BehaviorGraphSACAgent(environment=env, params=params)
         actor_net = sac_agent._agent._actor_network
         self.actor_net = actor_net
-        loggging.info("Loading of actor net completed")
+        logging.info("Loading of actor net completed")
     
     def test_actor_network(self):
         # Evaluates actor net formalia
