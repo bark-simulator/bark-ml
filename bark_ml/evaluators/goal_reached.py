@@ -49,7 +49,7 @@ class GoalReached(StateEvaluator):
       done = True
     # calculate reward
     if collision == False:
-      no_collision_reward = 0.01
+      no_collision_reward = 0.0
     else:
       no_collision_reward = 0.0
     reward = collision * self._col_penalty + \
