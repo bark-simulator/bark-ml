@@ -29,14 +29,14 @@ from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, BehaviorPPOAgent, BehaviorGraphSACAgent
 from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner
 from bark_ml.observers.graph_observer import GraphObserver
-from examples.data_generation import DataGenerator
+from supervised_learning.data_generation import DataGenerator
 
 class PyGNNActorTests(unittest.TestCase):
     def setUp(self):
         ######################
         #    Parameter       #
         self.log_dir = "/home/silvan/working_bark/supervised_learning/logs/"
-        self.epochs = 10
+        self.epochs = 3
         self.batch_size = 32
         self.train_split = 0.8
         #self.test_split = 0.2 # results from  (1 - train_split)
@@ -65,7 +65,7 @@ class PyGNNActorTests(unittest.TestCase):
                 with open(scenario_path, 'rb') as f:
                     data = pickle.load(f)
                 data_collection.append(data)
-            print("Raw data loading completed")
+            logging.info("Raw data loading completed")
 
         # Transform raw data to supervised dataset
         Y = list()
@@ -82,12 +82,14 @@ class PyGNNActorTests(unittest.TestCase):
                 # Save in training data variables
                 X.append(observation)
                 Y.append(actions)
+        logging.info("Transformation to supervised dataset completed")
 
         # Transform supervised dataset into tf.dataset
         self.X = tf.constant(X)
         self.Y = tf.constant(Y, dtype=tf.float32)
         dataset = tf.data.Dataset.from_tensor_slices((self.X, self.Y))
         dataset_size = self.X.shape[0]
+        logging.info("Transformation to tf.dataset completed")
 
         # Train/Test split
         train_size = int(self.train_split * dataset_size)
@@ -96,6 +98,7 @@ class PyGNNActorTests(unittest.TestCase):
         self.train_dataset = full_dataset.take(train_size).batch(self.batch_size)
         test_dataset = full_dataset.skip(train_size)
         self.test_dataset = test_dataset.take(-1).batch(self.batch_size)
+        logging.info("Train/Test split completed")
 
         # Get actor net
         params = ParameterServer(filename="examples/example_params/tfa_params.json")
@@ -109,6 +112,7 @@ class PyGNNActorTests(unittest.TestCase):
         sac_agent = BehaviorGraphSACAgent(environment=env, params=params)
         actor_net = sac_agent._agent._actor_network
         self.actor_net = actor_net
+        loggging.info("Loading of actor net completed")
     
     def test_actor_network(self):
         # Evaluates actor net formalia
