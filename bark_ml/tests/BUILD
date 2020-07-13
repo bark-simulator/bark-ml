@@ -64,10 +64,8 @@ py_test(
 py_test(
     name = "py_graph_observer_tests",
     srcs = ["py_graph_observer_tests.py"],
-    data = ["@bark_project//bark/python_wrapper:core.so",
-            "//bark_ml:generate_core"],
-    imports = ["../external/bark_project/python/",
-               "../../python/"],
+    data = ["@bark_project//bark/python_wrapper:core.so"],
+    imports = ["../external/bark_project/bark/python_wrapper/"],
     deps = ["//bark_ml/environments:single_agent_runtime",
             "//bark_ml/behaviors:behaviors",
             "//bark_ml/commons:py_spaces"],
@@ -77,10 +75,8 @@ py_test(
 py_test(
     name = "py_gnn_wrapper_tests",
     srcs = ["py_gnn_wrapper_tests.py"],
-    data = ["@bark_project//bark/python_wrapper:core.so",
-            "//python:bark_ml_library.so"],
-    imports = ["../external/bark_project/bark/python_wrapper/",
-               "../../python/"],
+    data = ["@bark_project//bark/python_wrapper:core.so"],
+    imports = ["../external/bark_project/bark/python_wrapper/"],
     deps = [
         "//bark_ml/environments:single_agent_runtime",
         "//bark_ml/environments:blueprints",
