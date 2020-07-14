@@ -120,26 +120,19 @@ class GNNActorNetwork(network.Network):
     output = self._gnn.batch_call(observations, training=training)
     self.gnn_call_times.append(time.time() - t0)
     output = tf.cast(output, tf.float32)
-    shapes = [output.shape]
 
     # extract ego state (node 0)
     if len(output.shape) == 2 and output.shape[0] != 0:
       output = tf.reshape(output, [batch_size, -1, self._gnn_num_units])
-      shapes.append(output.shape)
       output = tf.gather(output, 0, axis=1) # extract ego state
-      shapes.append(output.shape)
     elif len(output.shape) == 3:
       output = tf.gather(output, 0, axis=1)
     
-    tf.print('actor: ' + ' -> '.join(str(s) for s in shapes) + f' | current: {output.shape}')
-
     output, network_state = self._encoder(
       output,
       step_type=step_type,
       network_state=network_state,
       training=training)
-
-    tf.print(f'actor output: {output.shape}')
       
     outer_rank = nest_utils.get_outer_rank(observations, self.input_tensor_spec)
 

@@ -33,28 +33,7 @@ class GNNWrapper(tf.keras.Model):
     self.graph_conversion_times = []
     self.gnn_call_times = []
 
-  #@tf.function
-  def call(self, observation, training=False):
-    """Call function for the GNN"""
-    t0 = time.time()
-    features, edges = GraphObserver.gnn_input(observation)
-
-    gnn_input = GNNInput(
-      node_features = tf.convert_to_tensor(features),
-      adjacency_lists = (
-        tf.constant(list(map(list, edges)), dtype=tf.int32),
-      ),
-      node_to_graph_map = tf.fill(dims=(len(features),), value=0),
-      num_graphs = 1,
-    )
-    self.graph_conversion_times.append(time.time() - t0)
-
-    t0 = time.time()
-    output = self._gnn(gnn_input, training=training)
-    self.gnn_call_times.append(time.time() - t0)
-    return output
-
-  def call_fast(self, observations, training=False):
+  def call(self, observations, training=False):
     t0 = time.time()
     features, edges = [], []
     node_to_graph_map = []
@@ -97,18 +76,10 @@ class GNNWrapper(tf.keras.Model):
     """
     if graph.shape[0] == 0:
       return tf.random.normal(shape=(0, self.num_units))
-    if len(graph.shape) == 1:
-      return self.call(graph, training=training)
-    if len(graph.shape) == 2:
-      if graph.shape[0] == 1:
-        return self.call(tf.reshape(graph, [-1]), training=training)
-      else:
-        return self.call_fast(graph, training=training)
-        #return tf.map_fn(lambda g: self.call(g, training=training), graph)
-    if len(graph.shape) == 3:
-      return tf.map_fn(lambda g: self.call(g, training=training), graph)
-    else:
+    if len(graph.shape) > 3:
       raise ValueError(f'Graph has invalid shape {graph.shape}')
+
+    return self.call(graph, training=training)
       
   def reset(self):
     self._gnn.reset()

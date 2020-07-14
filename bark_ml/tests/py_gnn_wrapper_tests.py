@@ -71,13 +71,13 @@ class PyGNNWrapperTests(unittest.TestCase):
     total = np.sum(call_times)
     
     val_str = f'{total:.4f} s ({calls} x {call_duration:.4f} s)'
-    print('{}: {:.>30}'.format(name, val_str))
+    print('{:.<40} {}'.format(name, val_str))
 
   def test_execution_time(self):
     agent, runner, observer = self._mock_setup()
 
     t = []
-    iterations = 10
+    iterations = 200
     iterator = iter(agent._dataset)
 
     for i in range(iterations):
@@ -93,15 +93,24 @@ class PyGNNWrapperTests(unittest.TestCase):
     print(f'\n###########\n')
 
     self._print_stats(observer.observe_times, iterations, "Observe")
-    self._print_stats(agent._agent._actor_network.call_times, iterations, "Actor call")
-    self._print_stats(agent._agent._actor_network.gnn_call_times, iterations, "  GNNWrapper call")
+    self._print_stats(agent._agent._actor_network.call_times, iterations, "Actor")
+    self._print_stats(agent._agent._actor_network.gnn_call_times, iterations, "  GNN")
     self._print_stats(agent._agent._actor_network._gnn.graph_conversion_times, iterations, "    Graph Conversion")
-    self._print_stats(agent._agent._actor_network._gnn.gnn_call_times, iterations, "    GNN call")
-    self._print_stats(agent._agent._critic_network_1.call_times, iterations, "Critic 1 call")
-    self._print_stats(agent._agent._critic_network_2.call_times, iterations, "Critic 2 call")
-    self._print_stats(agent._agent._target_critic_network_1.call_times, iterations, "Target Critic 1 call")
-    self._print_stats(agent._agent._target_critic_network_2.call_times, iterations, "Target Critic 2 call")
+    self._print_stats(agent._agent._actor_network._gnn.gnn_call_times, iterations, "    tf2_gnn")
     
+    critics = [
+      ("Critic 1", agent._agent._critic_network_1),
+      ("Critic 2", agent._agent._critic_network_2),
+      ("Target Critic 1", agent._agent._target_critic_network_1),
+      ("Target Critic 2", agent._agent._target_critic_network_2),
+    ]
+
+    for name, critic in critics:
+        self._print_stats(critic.call_times, iterations, name)
+        self._print_stats(critic.gnn_call_times, iterations, '  GNN')
+        self._print_stats(critic.encoder_call_times, iterations, '  Encoder')
+        self._print_stats(critic.joint_call_times, iterations, '  Joint')
+
     print(f'----------------------------------------------------------')
     print(f'Total execution time per train cycle: {execution_time:.2f} s')
     

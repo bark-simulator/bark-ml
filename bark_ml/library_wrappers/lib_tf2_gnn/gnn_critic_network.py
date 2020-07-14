@@ -110,43 +110,43 @@ class GNNCriticNetwork(network.Network):
         name='value'))
 
     self.call_times = []
+    self.gnn_call_times = []
+    self.encoder_call_times = []
+    self.joint_call_times = []
 
   def call(self, inputs, step_type=(), network_state=(), training=False):
-    t0 = time.time()
+    t1 = time.time()
     observations, actions = inputs
     batch_size = observations.shape[0]
-    shapes = [observations.shape]
-
+     
+    t0 = time.time()
     node_embeddings = self._gnn.batch_call(observations, training=training)
+    self.gnn_call_times.append(time.time() - t0)
     actions = tf.cast(actions, tf.float32)
     node_embeddings = tf.cast(node_embeddings, tf.float32)
 
-    shapes.append(node_embeddings.shape)
-
     if batch_size > 0:
       node_embeddings = tf.reshape(node_embeddings, [batch_size, -1, self._gnn_num_units])
-      shapes.append(node_embeddings.shape)
-
       node_embeddings = tf.gather(node_embeddings, 0, axis=1) # extract ego state
-      shapes.append(node_embeddings.shape)
-
       actions = tf.reshape(actions, [batch_size, -1])
     else:
       actions = tf.zeros([0, actions.shape[-1]])
 
-    tf.print('critic: ' + ' -> '.join(str(s) for s in shapes) + f' | current: {node_embeddings.shape}')
-
+    t0 = time.time()
     actions, network_state = self._encoder(
       actions,
       step_type=step_type,
       network_state=network_state,
       training=training)
+    self.encoder_call_times.append(time.time() - t0)
 
+    t0 = time.time()
     joint = tf.concat([node_embeddings, actions], 1)
     for layer in self._joint_layers:
       joint = layer(joint, training=training)
+    self.joint_call_times.append(time.time() - t0)
     
     output = tf.transpose(joint)
 
-    self.call_times.append(time.time() - t0)
+    self.call_times.append(time.time() - t1)
     return output, network_state
