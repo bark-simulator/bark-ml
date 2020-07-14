@@ -1,4 +1,15 @@
 py_library(
+  name = "lib_tf2rl",
+  deps = [
+    ":tf2rl_wrapper",
+    ":load_expert_trajectories",
+    "//bark_ml/library_wrappers/lib_tf2rl/agents",
+    "//bark_ml/library_wrappers/lib_tf2rl/runners",
+  ],
+  visibility = ["//visibility:public"],
+)
+
+py_library(
     name = "tf2rl_wrapper",
     srcs = ["tf2rl_wrapper.py"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
