@@ -21,9 +21,9 @@ import os
 os.environ['GLOG_minloglevel'] = '3' 
 
 # BARK imports
-from bark.runtime.commons.parameters import ParameterServer
-from bark.runtime.viewer.matplotlib_viewer import MPViewer
-from bark.runtime.viewer.video_renderer import VideoRenderer
+from bark_project.bark.runtime.commons.parameters import ParameterServer
+from bark_project.bark.runtime.viewer.matplotlib_viewer import MPViewer
+from bark_project.bark.runtime.viewer.video_renderer import VideoRenderer
 
 # BARK-ML imports
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
@@ -42,6 +42,10 @@ flags.DEFINE_enum("mode",
 flags.DEFINE_enum("agent",
                   "sac",
                   ["sac", "ppo"],
+                  "The tfa agent type.")
+flags.DEFINE_enum("blueprint",
+                  "merging",
+                  ["intersection", "highway", "merging"],
                   "The tfa agent type.")
 flags.DEFINE_integer("num_episodes",
                   default=5,
@@ -83,16 +87,29 @@ def run_configuration(argv):
   """
   params = ParameterServer(filename="examples/example_params/tfa_params.json")
   # params = ParameterServer()
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = os.path.join(Path.home(), "checkpoints", FLAGS.agent)
-  params["ML"]["TFARunner"]["SummaryPath"] = os.path.join(Path.home(), "checkpoints", FLAGS.agent)
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = os.path.join(Path.home(), "checkpoints", FLAGS.agent, FLAGS.blueprint)
+  params["ML"]["TFARunner"]["SummaryPath"] = os.path.join(Path.home(), "checkpoints", FLAGS.agent, FLAGS.blueprint)
   params["World"]["remove_agents_out_of_map"] = True
 
+
   # create environment
-  bp = ContinuousMergingBlueprint(params,
-                                  number_of_senarios=2500,
-                                  random_seed=0)
+  if FLAGS.blueprint == 'merging':
+    bp = ContinuousMergingBlueprint(params,
+                                    number_of_senarios=2500,
+                                    random_seed=0)
+  elif FLAGS.blueprint == 'intersection':
+    bp = ContinuousIntersectionBlueprint(params,
+                                    number_of_senarios=2500,
+                                    random_seed=0)
+  elif FLAGS.blueprint == 'highway':
+    bp = ContinuousHighwayBlueprint(params,
+                                    number_of_senarios=2500,
+                                    random_seed=0)
+  else:
+    raise ValueError(f'{FLAGS.blueprint} is no valid blueprint. See help.')
+
   env = SingleAgentRuntime(blueprint=bp,
-                           render=False)
+                          render=False)
 
 
   if FLAGS.agent == 'ppo':
@@ -110,7 +127,7 @@ def run_configuration(argv):
                       environment=env,
                       agent=sac_agent)
   else:
-    raise ValueError(f'{FLAGS.agent} is no valid agent. Use sac or ppo.')
+    raise ValueError(f'{FLAGS.agent} is no valid agent. See help.')
 
 
   if FLAGS.mode == "train":

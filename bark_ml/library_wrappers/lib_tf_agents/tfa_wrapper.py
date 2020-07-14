@@ -7,7 +7,9 @@ from tf_agents.specs import array_spec
 from tf_agents.trajectories import time_step as ts
 
 tf.compat.v1.enable_v2_behavior()
-
+config = tf.compat.v1.ConfigProto()
+config.gpu_options.allow_growth = True
+session = tf.compat.v1.Session(config=config)
 
 class TFAWrapper(py_environment.PyEnvironment):
   """Wrapper for TensorFlow Agents (https://github.com/tensorflow/agents)
