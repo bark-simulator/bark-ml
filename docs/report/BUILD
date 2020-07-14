@@ -14,6 +14,7 @@ py_binary(
         "//bark_ml:generate_core",
         "//examples/example_params:example_params",
         ":notebooks_folder",
+        "//docs/report/data"
         ],
     imports = ["../external/bark_project/bark/python_wrapper/"],
     deps = [

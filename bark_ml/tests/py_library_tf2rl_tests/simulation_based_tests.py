@@ -4,7 +4,7 @@ import numpy as np
 import shutil
 from bark_ml.library_wrappers.lib_tf2rl.generate_expert_trajectories \
     import *
-from base_tests import *
+from base_tests import tracks_folder, map_file, known_key
 from simulation_based_tests import *
 
 class SimulationBasedTests(unittest.TestCase):
@@ -146,6 +146,8 @@ class GenerateExpertTrajectoriesForScenarioTests(SimulationBasedTests):
                 dones[i] == 0
             
             dones[-1] = 1
+        
+        print('end')
 
 
 class GenerateAndStoreExpertTrajectories(SimulationBasedTests):

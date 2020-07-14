@@ -10,6 +10,7 @@ import multiprocessing
 import numpy as np
 from typing import Tuple
 import joblib
+from IPython.display import clear_output
 
 import gym
 from absl import app
@@ -301,6 +302,9 @@ def simulate_scenario(param_server: ParameterServer, sim_time_step: float, rende
         world_state.Step(sim_time_step_seconds)
 
         if viewer:
+            if renderer == 'matplotlib_jupyter':
+                viewer = get_viewer(param_server, renderer)
+            clear_output(wait=True)
             viewer.clear()
             viewer.drawWorld(world_state, scenario.eval_agent_ids)
 

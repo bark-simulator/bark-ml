@@ -51,7 +51,7 @@ py_test(
     size = "small"
 )
 
-# Only run with bazel run //bark_ml/tests/py_library_tf2rl_tests/generate_expert_trajectories_tests:rendered_tests
+# Only run with bazel run //bark_ml/tests/py_library_tf2rl_tests:rendered_tests
 py_test(
     name = "rendered_tests",
     srcs = ["rendered_tests.py"],
