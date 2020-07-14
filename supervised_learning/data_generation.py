@@ -29,13 +29,13 @@ from bark_ml.observers.graph_observer import GraphObserver
 
 class DataGenerator(ABC):
   """Data Generator class"""
-  def __init__(self, num_scenarios=3, dump_dir=None, render=False):
+  def __init__(self, num_scenarios=3, dump_dir=None, render=False, params=ParameterServer(filename=\
+  			"examples/example_params/tfa_params.json")):
     self.dump_dir = dump_dir
     self.num_scenarios = num_scenarios
 
     # Adapt params (start from default_params)
-    self.params = ParameterServer(filename="examples/example_params/tfa_params.json")
-    self.params["World"]["remove_agents_out_of_map"] = False
+    self.params = params
     #self.params["World"]["remove_agents_out_of_map"] = True #seems not to work as intended
     self.bp = ContinuousHighwayBlueprint(self.params, number_of_senarios=num_scenarios, random_seed=0)
     #self.bp = ContinuousIntersectionBlueprint(self.params, number_of_senarios=num_scenarios, random_seed=0)
@@ -60,32 +60,38 @@ class DataGenerator(ABC):
       #action = np.array([agent_actions["acceleration"], agent_actions["steering"]])
       observed_next_state, reward, done, info = self.env.step(action)
       
-      graph =  observed_next_state[0]
+      observation =  observed_next_state[0]
       actions = observed_next_state[1]
 
       # Save datum in data_scenario
       datum = dict()
-      datum["graph"] = nx.node_link_data(graph)
+      datum["graph"] = observation
       datum["actions"] = actions
       data_scenario.append(datum)
     return data_scenario
 
   def run_scenarios(self):
     """Run all scenarios"""
-
+    data_all_scenarios = list()
     for _ in range(0, self.num_scenarios):
       scenario, idx = self.bp._scenario_generation.get_next_scenario()
       #print("Scenario", idx)
-      logging.info("Running data_generation on scenario "+ str(idx)+ "/"+str(self.num_scenarios))
+      part = int(self.num_scenarios/5)
+      if idx%part == 0:
+      	logging.info("Running data_generation on scenario "+ str(idx)+ "/"+str(self.num_scenarios))
       data_scenario = self.run_scenario(scenario)
-      time.sleep(1)
+      #time.sleep(1)
       self.save_data(data_scenario)
       #self.data.append(data_scenario)
+      data_all_scenarios.append(data_scenario)
+      
+    return data_all_scenarios
 
   def save_data(self, data):
       # Save data
       if self.dump_dir == None:
-        logging.info("Data not saved as dump_dir not specified!")
+        pass
+        #logging.debug("Data not saved as dump_dir not specified!")
         #raise Exception("specify dump_dir to tell the system where to store the data")
       else:
         if not os.path.exists(self.dump_dir):
@@ -93,11 +99,11 @@ class DataGenerator(ABC):
         path = self.dump_dir+ '/dataset_' + str(int(time.time())) + '.pickle'
         with open(path, 'wb') as handle:
           pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
-          logging.info('---> Dumped dataset to: ' + path)
+          #logging.debug('---> Dumped dataset to: ' + path)
 
 
 # Main part
 if __name__ == '__main__':
-  graph_generator = DataGenerator(num_scenarios=100, dump_dir='/home/silvan/working_bark/supervised_learning/data/')
+  graph_generator = DataGenerator(num_scenarios=100, dump_dir=None)
 
   graph_generator.run_scenarios()
