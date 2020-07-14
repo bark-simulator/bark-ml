@@ -1,6 +1,8 @@
 import time
+import numpy as np
 import tensorflow as tf
-from tf2_gnn.layers import GNN, GNNInput
+from tf2_gnn.layers import GNN, GNNInput, \
+  NodesToGraphRepresentationInput, WeightedSumGraphRepresentation
 from tf2_gnn.layers.message_passing import GGNN, GNN_FiLM
 from tf_agents.utils import common
 from bark_ml.observers.graph_observer import GraphObserver
@@ -22,10 +24,10 @@ class GNNWrapper(tf.keras.Model):
 
     params = GNN.get_default_hyperparameters()
     params.update(GNN_FiLM.get_default_hyperparameters())
-    #params["global_exchange_mode"] = "mlp"
+    params["global_exchange_mode"] = "mlp"
     params["num_layers"] = num_layers
     params["hidden_dim"] = num_units
-    params["message_calculation_class"] = "gnn_film"
+    params["message_calculation_class"] = "ggnn"
     self._gnn = GNN(params)
 
     self.graph_conversion_times = []
@@ -35,15 +37,7 @@ class GNNWrapper(tf.keras.Model):
   def call(self, observation, training=False):
     """Call function for the GNN"""
     t0 = time.time()
-    # graph = GraphObserver.graph_from_observation(observation)
-
-    # features = []
-    # for _, attributes in graph.nodes.data():
-    #   features.append(list(attributes.values()))
-
     features, edges = GraphObserver.gnn_input(observation)
-
-    self.graph_conversion_times.append(time.time() - t0)
 
     gnn_input = GNNInput(
       node_features = tf.convert_to_tensor(features),
@@ -53,6 +47,39 @@ class GNNWrapper(tf.keras.Model):
       node_to_graph_map = tf.fill(dims=(len(features),), value=0),
       num_graphs = 1,
     )
+    self.graph_conversion_times.append(time.time() - t0)
+
+    t0 = time.time()
+    output = self._gnn(gnn_input, training=training)
+    self.gnn_call_times.append(time.time() - t0)
+    return output
+
+  def call_fast(self, observations, training=False):
+    t0 = time.time()
+    features, edges = [], []
+    node_to_graph_map = []
+    num_graphs = len(observations)
+
+    edge_index_offset = 0
+    for i, sample in enumerate(observations):
+      f, e = GraphObserver.gnn_input(sample)
+      features.extend(f)
+      num_nodes = len(f)
+      e = np.asarray(e) + edge_index_offset
+      edges.extend(e)
+      node_to_graph_map.extend(np.full(num_nodes, i))
+      edge_index_offset += num_nodes
+
+    gnn_input = GNNInput(
+      node_features=tf.convert_to_tensor(features),
+      adjacency_lists=(
+        tf.convert_to_tensor(list(map(list, edges)), dtype=tf.int32),
+      ),
+      node_to_graph_map=tf.convert_to_tensor(node_to_graph_map),
+      num_graphs=num_graphs,
+    )
+
+    self.graph_conversion_times.append(time.time() - t0)
 
     t0 = time.time()
     output = self._gnn(gnn_input, training=training)
@@ -76,11 +103,10 @@ class GNNWrapper(tf.keras.Model):
       if graph.shape[0] == 1:
         return self.call(tf.reshape(graph, [-1]), training=training)
       else:
-        return tf.map_fn(lambda g: self.call(g, training=training), graph)
+        return self.call_fast(graph, training=training)
+        #return tf.map_fn(lambda g: self.call(g, training=training), graph)
     if len(graph.shape) == 3:
       return tf.map_fn(lambda g: self.call(g, training=training), graph)
-    if len(graph.shape) == 4:
-      return tf.map_fn(lambda g: self.batch_call(g, training=training), graph)
     else:
       raise ValueError(f'Graph has invalid shape {graph.shape}')
       

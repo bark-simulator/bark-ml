@@ -71,7 +71,7 @@ class PyGNNWrapperTests(unittest.TestCase):
     total = np.sum(call_times)
     
     val_str = f'{total:.4f} s ({calls} x {call_duration:.4f} s)'
-    print('{}: {:.^40}'.format(name, val_str))
+    print('{}: {:.>30}'.format(name, val_str))
 
   def test_execution_time(self):
     agent, runner, observer = self._mock_setup()

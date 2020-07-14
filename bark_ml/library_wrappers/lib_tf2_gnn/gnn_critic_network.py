@@ -77,6 +77,7 @@ class GNNCriticNetwork(network.Network):
       raise ValueError('Only a single action is supported by this network')
     self._single_action_spec = flat_action_spec[0]
 
+    self._gnn_num_units = gnn_num_units
     self._gnn = GNNWrapper(gnn_num_layers, gnn_num_units)
 
     self._encoder = encoding_network.EncodingNetwork(
@@ -114,17 +115,26 @@ class GNNCriticNetwork(network.Network):
     t0 = time.time()
     observations, actions = inputs
     batch_size = observations.shape[0]
+    shapes = [observations.shape]
 
     node_embeddings = self._gnn.batch_call(observations, training=training)
     actions = tf.cast(actions, tf.float32)
     node_embeddings = tf.cast(node_embeddings, tf.float32)
 
+    shapes.append(node_embeddings.shape)
+
     if batch_size > 0:
+      node_embeddings = tf.reshape(node_embeddings, [batch_size, -1, self._gnn_num_units])
+      shapes.append(node_embeddings.shape)
+
       node_embeddings = tf.gather(node_embeddings, 0, axis=1) # extract ego state
-      node_embeddings = tf.reshape(node_embeddings, [batch_size, -1])
+      shapes.append(node_embeddings.shape)
+
       actions = tf.reshape(actions, [batch_size, -1])
     else:
       actions = tf.zeros([0, actions.shape[-1]])
+
+    tf.print('critic: ' + ' -> '.join(str(s) for s in shapes) + f' | current: {node_embeddings.shape}')
 
     actions, network_state = self._encoder(
       actions,

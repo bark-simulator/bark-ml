@@ -71,9 +71,7 @@ class GraphObserver(StateObserver):
         radius=self._visibility_radius)
 
       for target_index, _ in nearby_agents:
-        if (index, target_index) not in edges and\
-           (target_index, index) not in edges:
-          edges.append((index, target_index))
+        edges.append(set([index, target_index]))
     
     # build adjacency matrix and convert to list
     adjacency_matrix = np.zeros((self._agent_limit, self._agent_limit))

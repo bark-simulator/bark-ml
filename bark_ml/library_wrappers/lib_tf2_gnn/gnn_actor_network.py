@@ -88,6 +88,7 @@ class GNNActorNetwork(network.Network):
       raise ValueError('Only float actions are supported by this network.')
     
     self._output_tensor_spec = output_tensor_spec
+    self._gnn_num_units = gnn_num_units
     self._gnn = GNNWrapper(gnn_num_layers, gnn_num_units)
 
     self._encoder = encoding_network.EncodingNetwork(
@@ -109,41 +110,36 @@ class GNNActorNetwork(network.Network):
       init_means_output_factor=0.1,
       std_transform=sac_agent.std_clip_transform,
       scale_distribution=True)
-  
-    self._dense_layers = utils.mlp_layers(
-      fc_layer_params=fc_layer_params
-    )
-
-    self._dense_layers.append(
-      tf.keras.layers.Dense(
-          flat_action_spec[0].shape.num_elements(),
-          activation=tf.keras.activations.tanh,
-          kernel_initializer=tf.keras.initializers.he_normal(),
-          name='action')
-    )
 
     self.call_times = []
     self.gnn_call_times = []
 
   def call(self, observations, step_type=(), network_state=(), training=False):
+    batch_size, feature_len = observations.shape
     t0 = time.time()
     output = self._gnn.batch_call(observations, training=training)
     self.gnn_call_times.append(time.time() - t0)
     output = tf.cast(output, tf.float32)
+    shapes = [output.shape]
 
     # extract ego state (node 0)
     if len(output.shape) == 2 and output.shape[0] != 0:
-      output = output[0]
-      output = tf.expand_dims(output, axis=0)
-    if len(output.shape) == 3:
+      output = tf.reshape(output, [batch_size, -1, self._gnn_num_units])
+      shapes.append(output.shape)
+      output = tf.gather(output, 0, axis=1) # extract ego state
+      shapes.append(output.shape)
+    elif len(output.shape) == 3:
       output = tf.gather(output, 0, axis=1)
-      output = tf.expand_dims(output, axis=1)
+    
+    tf.print('actor: ' + ' -> '.join(str(s) for s in shapes) + f' | current: {output.shape}')
 
     output, network_state = self._encoder(
       output,
       step_type=step_type,
       network_state=network_state,
       training=training)
+
+    tf.print(f'actor output: {output.shape}')
       
     outer_rank = nest_utils.get_outer_rank(observations, self.input_tensor_spec)
 
