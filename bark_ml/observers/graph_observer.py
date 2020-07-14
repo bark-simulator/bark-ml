@@ -1,4 +1,5 @@
 import os, time, json, pickle
+import logging
 from gym import spaces
 import numpy as np
 import math
@@ -90,7 +91,7 @@ class GraphObserver(StateObserver):
       obs, 
       dtype=tf.float32, 
       name='observation_v2')
-      
+    #logging.debug(obs)
     if self._output_supervised_data == False:
       return obs
     else:
@@ -104,6 +105,7 @@ class GraphObserver(StateObserver):
   @classmethod
   def gnn_input(cls, observation):
     node_limit = int(observation[0])
+    #logging.info("node_limit"+str(node_limit))
     num_nodes = int(observation[1])
     num_features = int(observation[2])
 
@@ -118,7 +120,7 @@ class GraphObserver(StateObserver):
 
     # adjacency list
     adj_start_idx = node_limit * num_features
-    adj_list = obs[adj_start_idx:]
+    adj_list = obs[adj_start_idx:].numpy()
     adj_matrix = np.reshape(adj_list, (node_limit, -1))
     
     edges = []

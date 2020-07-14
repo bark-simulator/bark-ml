@@ -48,11 +48,21 @@ class PyGNNActorTests(unittest.TestCase):
         params["ML"]["BehaviorTFAAgents"]["NumCheckpointsToKeep"] = None
         params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 50
         params["ML"]["BehaviorSACAgent"]["BatchSize"] = 32
-        params["World"]["remove_agents_out_of_map"] = False
         params["ML"]["GraphObserver"]["AgentLimit"] = 8
-        self.observer = GraphObserver(params)
-
+        params["ML"]["BehaviorGraphSACAgent"]["NumLayersGNN"] = 4
+        params["ML"]["BehaviorGraphSACAgent"]["NumUnitsGNN"] = 256
+        params["World"]["remove_agents_out_of_map"] = False
         
+        # Get actor net
+        bp = ContinuousHighwayBlueprint(params, number_of_senarios=2500, random_seed=0)
+        self.observer = GraphObserver(params=params)
+        env = SingleAgentRuntime(blueprint=bp, observer=self.observer, render=False)
+        sac_agent = BehaviorGraphSACAgent(environment=env, params=params)
+        actor_net = sac_agent._agent._actor_network
+        self.actor_net = actor_net
+        logging.info(self.actor_net)
+        logging.info("Loading of actor net completed")
+
         logging.info("Starting data_generation")
         graph_generator = DataGenerator(num_scenarios=100, dump_dir=self.data_path, render=False, params=params)
         data_collection = graph_generator.run_scenarios()
@@ -81,6 +91,7 @@ class PyGNNActorTests(unittest.TestCase):
         dataset = tf.data.Dataset.from_tensor_slices((self.X, self.Y))
         dataset_size = self.X.shape[0]
         logging.info("Transformation to tf.dataset completed")
+        logging.info(self.X.shape)
 
         # Train/Test split
         train_size = int(self.train_split * dataset_size)
@@ -90,14 +101,6 @@ class PyGNNActorTests(unittest.TestCase):
         test_dataset = full_dataset.skip(train_size)
         self.test_dataset = test_dataset.take(-1).batch(self.batch_size)
         logging.info("Train/Test split completed")
-
-        # Get actor net       
-        bp = ContinuousHighwayBlueprint(params, number_of_senarios=2500, random_seed=0)
-        env = SingleAgentRuntime(blueprint=bp, observer=self.observer, render=False)
-        sac_agent = BehaviorGraphSACAgent(environment=env, params=params)
-        actor_net = sac_agent._agent._actor_network
-        self.actor_net = actor_net
-        logging.info("Loading of actor net completed")
     
     def test_actor_network(self):
         # Evaluates actor net formalia

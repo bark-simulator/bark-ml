@@ -107,7 +107,7 @@ class PyGNNWrapperTests(unittest.TestCase):
     
     print(f'\n###########\n')
 
-    self.assertLess(execution_time, 2.0)
+    self.assertLess(execution_time, 3.0)
 
 
 if __name__ == '__main__':
