@@ -23,8 +23,8 @@ class GNNWrapper(tf.keras.Model):
     self.num_units = num_units
 
     params = GNN.get_default_hyperparameters()
-    params.update(GNN_FiLM.get_default_hyperparameters())
-    params["global_exchange_mode"] = "mlp"
+    params.update(GGNN.get_default_hyperparameters())
+    params["global_exchange_mode"] = "mean"
     params["num_layers"] = num_layers
     params["hidden_dim"] = num_units
     params["message_calculation_class"] = "ggnn"
@@ -52,7 +52,7 @@ class GNNWrapper(tf.keras.Model):
     gnn_input = GNNInput(
       node_features=tf.convert_to_tensor(features),
       adjacency_lists=(
-        tf.convert_to_tensor(list(map(list, edges)), dtype=tf.int32),
+        tf.convert_to_tensor(edges, dtype=tf.int32),
       ),
       node_to_graph_map=tf.convert_to_tensor(node_to_graph_map),
       num_graphs=num_graphs,

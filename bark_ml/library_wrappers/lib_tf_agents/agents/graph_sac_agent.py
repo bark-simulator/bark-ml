@@ -35,18 +35,18 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
     actor_net = GNNActorNetwork(
       input_tensor_spec=env.observation_spec(),
       output_tensor_spec=env.action_spec(),
-      fc_layer_params=[512, 256, 256],
+      fc_layer_params=[256, 128, 128],
       gnn_num_layers=self._params["ML"]["BehaviorGraphSACAgent"]["NumLayersGNN", "", 4],
-      gnn_num_units=self._params["ML"]["BehaviorGraphSACAgent"]["NumUnitsGNN", "", 256]
+      gnn_num_units=self._params["ML"]["BehaviorGraphSACAgent"]["NumUnitsGNN", "", 64]
     )
 
     # critic network
     critic_net = GNNCriticNetwork(
       input_tensor_spec=(env.observation_spec(), env.action_spec()),
       action_fc_layer_params=None,
-      joint_fc_layer_params=[512, 256, 256],
+      joint_fc_layer_params=[256, 128, 128],
       gnn_num_layers=self._params["ML"]["BehaviorGraphSACAgent"]["NumLayersGNN", "", 4],
-      gnn_num_units=self._params["ML"]["BehaviorGraphSACAgent"]["NumUnitsGNN", "", 256]
+      gnn_num_units=self._params["ML"]["BehaviorGraphSACAgent"]["NumUnitsGNN", "", 64]
     )
     
     # agent
@@ -56,11 +56,11 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
       actor_network=actor_net,
       critic_network=critic_net,
       actor_optimizer=tf.compat.v1.train.AdamOptimizer(
-          learning_rate=self._params["ML"]["BehaviorSACAgent"]["ActorLearningRate", "", 3e-4]),
+          learning_rate=self._params["ML"]["BehaviorSACAgent"]["ActorLearningRate", "", 3e-3]),
       critic_optimizer=tf.compat.v1.train.AdamOptimizer(
-          learning_rate=self._params["ML"]["BehaviorSACAgent"]["CriticLearningRate", "", 3e-4]),
+          learning_rate=self._params["ML"]["BehaviorSACAgent"]["CriticLearningRate", "", 3e-3]),
       alpha_optimizer=tf.compat.v1.train.AdamOptimizer(
-          learning_rate=self._params["ML"]["BehaviorSACAgent"]["AlphaLearningRate", "", 3e-4]),
+          learning_rate=self._params["ML"]["BehaviorSACAgent"]["AlphaLearningRate", "", 3e-3]),
       target_update_tau=self._params["ML"]["BehaviorSACAgent"]["TargetUpdateTau", "", 0.05],
       target_update_period=self._params["ML"]["BehaviorSACAgent"]["TargetUpdatePeriod", "", 3],
       td_errors_loss_fn=tf.compat.v1.losses.mean_squared_error,

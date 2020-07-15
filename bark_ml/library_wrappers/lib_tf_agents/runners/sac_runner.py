@@ -29,10 +29,17 @@ class SACRunner(TFARunner):
                        environment=environment,
                        agent=agent,
                        params=params)
+    
+    self._number_of_collections =\
+      self._params["ML"]["SACRunner"]["NumberOfCollections", "", 2000]
+    self._evaluation_interval =\
+      self._params["ML"]["SACRunner"]["EvaluateEveryNSteps", "", 100] 
 
   def _train(self):
     iterator = iter(self._agent._dataset)
-    for i in range(0, self._params["ML"]["SACRunner"]["NumberOfCollections", "", 2000]):
+    t = time.time()
+
+    for i in range(0, self._number_of_collections):
       self._agent._training = True
       
       global_iteration = self._agent._agent._train_step_counter.numpy()
@@ -40,6 +47,14 @@ class SACRunner(TFARunner):
       experience, _ = next(iterator)
       self._agent._agent.train(experience)
       
-      if global_iteration % self._params["ML"]["SACRunner"]["EvaluateEveryNSteps", "", 100] == 0:
+      if global_iteration % self._evaluation_interval == 0:
+        iterations = f'{global_iteration-self._evaluation_interval}-{global_iteration}'
+
+        iteration_duration = (time.time() - t) / self._evaluation_interval
+        self._logger.info(f'Training iterations {iterations} took {iteration_duration:.3f} seconds \
+          (avg. {iteration_duration:.3f}s / iteration).')
+        t = time.time()
+
         self.Evaluate()
         self._agent.Save()
+

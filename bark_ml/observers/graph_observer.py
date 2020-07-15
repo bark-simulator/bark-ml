@@ -107,7 +107,12 @@ class GraphObserver(StateObserver):
     t0 = time.time()
     features = np.split(obs[:num_nodes*num_features], num_nodes)
     GraphObserver.feature_times.append(time.time() - t0)
-  
+    
+    # t0 = time.time()
+    # adj_matrix = np.split(obs[node_limit * num_features:], num_nodes)
+    # edges = np.transpose(np.nonzero(adj_matrix))
+    # GraphObserver.edges_times.append(time.time() - t0)
+
     # adjacency list
     t0 = time.time()
     adj_start_idx = node_limit * num_features
@@ -116,11 +121,11 @@ class GraphObserver(StateObserver):
     GraphObserver.adj_times.append(time.time() - t0)
     
     #edges
-    t0 = time.time()
+    
     edges = []
     for source_id, source_edges in enumerate(adj_matrix):
       for target_id in np.flatnonzero(source_edges):
-        edges.append((source_id, target_id))
+        edges.append([source_id, target_id])
     GraphObserver.edges_times.append(time.time() - t0)
     return features, edges
 

@@ -42,12 +42,12 @@ def run_configuration(argv):
   params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/marco.oliva/Development/bark-ml_logs/checkpoints"
   params["ML"]["TFARunner"]["SummaryPath"] = "/Users/marco.oliva/Development/bark-ml_logs/summaries"
   params["ML"]["BehaviorSACAgent"]["DebugSummaries"] = True
-  params["ML"]["BehaviorTFAAgents"]["NumCheckpointsToKeep"] = None
-  params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 40
-  params["ML"]["BehaviorSACAgent"]["BatchSize"] = 32
+  #params["ML"]["BehaviorTFAAgents"]["NumCheckpointsToKeep"] = None
+  params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 50
+  params["ML"]["BehaviorSACAgent"]["BatchSize"] = 64
   params["ML"]["GraphObserver"]["AgentLimit"] = 8
-  params["ML"]["BehaviorGraphSACAgent"]["NumLayersGNN"] = 4
-  params["ML"]["BehaviorGraphSACAgent"]["NumUnitsGNN"] = 256
+  params["ML"]["BehaviorGraphSACAgent"]["NumLayersGNN"] = 2
+  params["ML"]["BehaviorGraphSACAgent"]["NumUnitsGNN"] = 128
   params["World"]["remove_agents_out_of_map"] = False
 
     # viewer = MPViewer(

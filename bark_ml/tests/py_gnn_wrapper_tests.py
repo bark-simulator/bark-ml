@@ -77,7 +77,7 @@ class PyGNNWrapperTests(unittest.TestCase):
     agent, runner, observer = self._mock_setup()
 
     t = []
-    iterations = 200
+    iterations = 10
     iterator = iter(agent._dataset)
 
     for i in range(iterations):
@@ -96,6 +96,9 @@ class PyGNNWrapperTests(unittest.TestCase):
     self._print_stats(agent._agent._actor_network.call_times, iterations, "Actor")
     self._print_stats(agent._agent._actor_network.gnn_call_times, iterations, "  GNN")
     self._print_stats(agent._agent._actor_network._gnn.graph_conversion_times, iterations, "    Graph Conversion")
+    self._print_stats(observer.feature_times, iterations, "      Features")
+    self._print_stats(observer.adj_times, iterations, "      Adjacency List")
+    self._print_stats(observer.edges_times, iterations, "      Edges")
     self._print_stats(agent._agent._actor_network._gnn.gnn_call_times, iterations, "    tf2_gnn")
     
     critics = [
