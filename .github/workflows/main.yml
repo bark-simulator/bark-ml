@@ -26,7 +26,7 @@ jobs:
         run: bazel test :unit_tests
       - name: Running generate and load tests
         run: bazel test :generate_load_tests
-      - name: Running examples
-        run: bazel test :examples_tests
       - name: Running gail tests
         run: bazel test :gail_tests
+      - name: Running examples
+        run: bazel test :examples_tests
