@@ -154,6 +154,14 @@ class GenerateAndStoreExpertTrajectories(SimulationBasedTests):
     """
     Tests: generate_and_store_expert_trajectories
     """
+    def assertListAlmostEqual(self, a: list, b: list):
+        """Asserts that the two given lists are almost equal
+        """
+        self.assertEqual(len(a), len(b))
+        for i in range(len(a)):
+            self.assertAlmostEqual(a[i], b[i])
+
+
     def assert_file_equal(self, expected_path: str, generated_path: str):
         """Asserts that the given files contain the same expert trajectories.
 
@@ -171,8 +179,8 @@ class GenerateAndStoreExpertTrajectories(SimulationBasedTests):
         self.assertEqual(len(loaded_expert_trajectories['obs']), len(generated_expert_trajectories['obs']))
 
         for i in range(len(loaded_expert_trajectories['obs'])):
-            self.assertListEqual(list(loaded_expert_trajectories['obs'][i]), list(generated_expert_trajectories['obs'][i]))
-            self.assertListEqual(list(loaded_expert_trajectories['act'][i]), list(generated_expert_trajectories['act'][i]))
+            self.assertListAlmostEqual(list(loaded_expert_trajectories['obs'][i]), list(generated_expert_trajectories['obs'][i]))
+            self.assertListAlmostEqual(list(loaded_expert_trajectories['act'][i]), list(generated_expert_trajectories['act'][i]))
 
     def test_generate_and_store_expert_trajectories(self):
         """
@@ -197,7 +205,7 @@ class GenerateAndStoreExpertTrajectories(SimulationBasedTests):
         """
         for i in range(len(actual_values)):
             if type(actual_values[i]) == list:
-                self.assertListEqual(actual_values[i], expected_values[i])
+                self.assertListAlmostEqual(actual_values[i], expected_values[i])
             elif type(actual_values[i]) == np.ndarray:
                 assert (actual_values[i] == expected_values[i]).all()
             else:
