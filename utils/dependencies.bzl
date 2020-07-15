@@ -51,6 +51,6 @@ cc_library(
     new_git_repository,
     name = "com_github_keiohta_tf2rl",
     branch = "master",
-    remote = "https://github.com/keiohta/tf2rl",
+    remote = "https://github.com/GAIL-4-BARK/tf2rl",
     build_file="//:utils/tf2rl.BUILD"
   )

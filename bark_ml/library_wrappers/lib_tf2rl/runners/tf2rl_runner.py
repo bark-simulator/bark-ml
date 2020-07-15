@@ -6,7 +6,7 @@ tf.compat.v1.enable_v2_behavior()
 
 # tf2rl imports
 import tf2rl
-
+from pprint import pprint
 
 class TF2RLRunner:
   """Base class for runners based on tf2rl library"""
@@ -41,9 +41,10 @@ class TF2RLRunner:
   def Evaluate(self):
     """Evaluates the agent."""
     total_steps = 0   
-    self._trainer.evaluate_policy(total_steps=total_steps)
-
-    
+    avg_test_return, trajectories, avg_step_count = self._trainer.evaluate_policy(total_steps=total_steps)
+    print('Average test return: ', avg_test_return)
+    print('Average step count: ', avg_step_count)
+    pprint('Trajectories: ', trajectories)
 
   def Visualize(self, num_episodes=1):
     """Visualizes the agent."""
