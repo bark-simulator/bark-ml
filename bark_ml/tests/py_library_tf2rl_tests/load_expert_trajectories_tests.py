@@ -69,16 +69,16 @@ class test_env():
         """init method"""
 
         num_max_vehicles = params["ML"]["StateObserver"]["MaxNumAgents"]
-
-        if params["ML"]["StateObserver"]["NormalizationEnabled"]:
-            self.observation_space = Box(low=np.zeros(((num_max_vehicles + 1) * 4,)),
-                high=np.ones(((num_max_vehicles + 1) * 4,)))
-        else:
-            x_range, y_range = [-10000, 10000], [-10000, 10000]
-            theta_range = params["ML"]["StateObserver"]["ThetaRange"]
-            velocity_range = params["ML"]["StateObserver"]["VelocityRange"]
-            self.observation_space = Box(low=np.array([x_range[0], y_range[0],\
-                theta_range[0], velocity_range[0]] * (num_max_vehicles + 1)))
+        x_range, y_range = [-10000, 10000], [-10000, 10000]
+        theta_range = params["ML"]["StateObserver"]["ThetaRange"]
+        velocity_range = params["ML"]["StateObserver"]["VelocityRange"]
+        
+        self.observation_space = Box(
+            low=np.array([x_range[0], y_range[0],\
+            theta_range[0], velocity_range[0]] * (num_max_vehicles + 1)),\
+            high=np.array([x_range[1], y_range[1],\
+            theta_range[1], velocity_range[1]] * (num_max_vehicles + 1))
+            )
 
         act_low = params["ML"]["BehaviorContinuousML"]["ActionsLowerBound"]
         act_high = params["ML"]["BehaviorContinuousML"]["ActionsUpperBound"]
