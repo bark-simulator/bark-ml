@@ -1,0 +1,1 @@
+/home/brucknem/.cache/bazel/_bazel_brucknem/5babddc60bc977a08450e544bfdcfbae/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/bark_ml/examples/gail.py --mode=train --expert_trajectories=~/Repositories/gail-4-bark/bark-ml/examples/expert_trajectories/sac_20000_observations --train_out=~/Repositories/gail-4-bark/bark-ml/examples/gail
