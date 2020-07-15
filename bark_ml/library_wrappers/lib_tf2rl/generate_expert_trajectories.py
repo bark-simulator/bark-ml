@@ -186,12 +186,13 @@ def calculate_action(observations: list, time_step=0.1, wheel_base=2.7) -> list:
     return action
 
 
-def measure_world(world_state, observer: StateObserver) -> dict:
+def measure_world(world_state, observer: StateObserver, observer_not_normalized: StateObserver) -> dict:
     """Measures the given world state using the observer.
 
     Args:
         world_state (World): The bark world state
-        observer (StateObserver): The observer used to observe the world
+        observer (StateObserver): The observer used to observe the world with normalization of the observations.
+        observer_not_normalized (StateObserver): The observer used to observe the world.
 
     Returns:
         dict: The observation, time and merge measurement
@@ -206,8 +207,10 @@ def measure_world(world_state, observer: StateObserver) -> dict:
     for obs_world in observed_worlds:
         agent_id = obs_world.ego_agent.id
         obs = np.array(observer.Observe(obs_world))
+        obs_not_normalized = np.array(observer_not_normalized.Observe(obs_world))
         observations[agent_id] = {
             "obs": obs,
+            "obs_not_norm": obs_not_normalized,
             "time": world_state.time,
             "merge": None
         }
@@ -288,7 +291,10 @@ def simulate_scenario(param_server: ParameterServer, sim_time_step: float, rende
     sim_time_step_seconds = sim_time_step / 1000
 
     param_server["ML"]["StateObserver"]["MaxNumAgents"] = 3
+
     observer = NearestAgentsObserver(param_server)
+    observer_not_normalized = NearestAgentsObserver(param_server)
+    observer_not_normalized._NormalizationEnabled = False
 
     expert_trajectories = {}
 
@@ -308,12 +314,13 @@ def simulate_scenario(param_server: ParameterServer, sim_time_step: float, rende
             viewer.clear()
             viewer.drawWorld(world_state, scenario.eval_agent_ids)
 
-        observations = measure_world(world_state, observer)
+        observations = measure_world(world_state, observer, observer_not_normalized)
 
         for agent_id, values in observations.items():
             if agent_id not in expert_trajectories:
                 expert_trajectories[agent_id] = defaultdict(list)
             expert_trajectories[agent_id]['obs'].append(values['obs'])
+            expert_trajectories[agent_id]['obs_not_norm'].append(values['obs_not_norm'])
             expert_trajectories[agent_id]['time'].append(values['time'])
             expert_trajectories[agent_id]['merge'].append(values['merge'])
             expert_trajectories[agent_id]['wheelbase'].append(2.7)
@@ -338,7 +345,7 @@ def generate_expert_trajectories_for_scenario(param_server: ParameterServer, sim
         param_server, sim_time_step, renderer)
 
     for agent_id in expert_trajectories:
-        num_observations = len(expert_trajectories[agent_id]['obs'])
+        num_observations = len(expert_trajectories[agent_id]['obs_not_norm'])
         for i in range(0, num_observations - 1):
             agent_trajectory = expert_trajectories[agent_id]
 
@@ -349,9 +356,9 @@ def generate_expert_trajectories_for_scenario(param_server: ParameterServer, sim
 
             current_obs = []
             if i == 0:
-                current_obs = agent_trajectory["obs"][i:i + 2]
+                current_obs = agent_trajectory["obs_not_norm"][i:i + 2]
             else:
-                current_obs = agent_trajectory["obs"][i - 1:i + 2]
+                current_obs = agent_trajectory["obs_not_norm"][i - 1:i + 2]
 
             time_step = next_time - current_time
             action = calculate_action(current_obs, time_step, 2.7)
@@ -365,6 +372,8 @@ def generate_expert_trajectories_for_scenario(param_server: ParameterServer, sim
 
         assert len(expert_trajectories[agent_id]['obs']
                    ) == len(expert_trajectories[agent_id]['act'])
+        assert len(expert_trajectories[agent_id]['obs']
+                   ) == len(expert_trajectories[agent_id]['obs_not_norm'])
         assert len(expert_trajectories[agent_id]['obs']
                    ) == len(expert_trajectories[agent_id]['time'])
         assert len(expert_trajectories[agent_id]['obs']

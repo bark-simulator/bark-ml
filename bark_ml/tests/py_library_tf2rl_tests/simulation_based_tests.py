@@ -78,6 +78,10 @@ class MeasureWorldTests(SimulationBasedTests):
         self.sim_time_step_seconds = self.sim_time_step / 1000
 
         self.observer = NearestAgentsObserver(self.param_server)
+
+        self.observer_not_normalized = NearestAgentsObserver(self.param_server)
+        self.observer_not_normalized._NormalizationEnabled = False
+
         self.world_state = scenario.GetWorldState()
 
     def test_measure_world(self):
@@ -93,7 +97,7 @@ class MeasureWorldTests(SimulationBasedTests):
             self.world_state.Step(self.sim_time_step_seconds)
 
             previous_measurement = current_measurement
-            all_measurements = measure_world(self.world_state, self.observer)
+            all_measurements = measure_world(self.world_state, self.observer, self.observer_not_normalized)
 
             if self.test_agent_id in all_measurements:
                 current_measurement = all_measurements[self.test_agent_id]['obs']
