@@ -67,7 +67,8 @@
             "NumCheckpointsToKeep": 3
         },
         "TFARunner": {
-            "EvaluationSteps": 25,
+            "EvaluateEveryNSteps": 1000,
+            "EvaluationSteps": 100,
             "InitialCollectionEpisodes": 50,
             "CollectionEpisodesPerStep": 1
         }

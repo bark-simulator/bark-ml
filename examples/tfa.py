@@ -57,7 +57,7 @@ flags.DEFINE_boolean("render",
                   default=True,
                   help="Render during generation of expert trajectories.") 
 
-default_output_dir: str = os.path.join(os.path.dirname(__file__), "expert_trajectories")
+default_output_dir: str = os.path.join(os.path.expanduser('~/'), 'checkpoints')
 flags.DEFINE_string("output_dir",
                   default=default_output_dir,
                   help="The output directory. Defaults to " + default_output_dir)  
@@ -69,7 +69,7 @@ def save_expert_trajectories(output_dir: str, expert_trajectories: dict):
       output_dir (str): The output folder.
       expert_trajectories (dict): The expert trajectories.
   """
-  _output_dir = os.path.expanduser(output_dir)
+  _output_dir = os.path.join(os.path.expanduser(output_dir), "expert_trajectories")
   Path(_output_dir).mkdir(parents=True, exist_ok=True)
 
   for scenario_id, expert_trajectories in expert_trajectories.items():
@@ -85,10 +85,14 @@ def run_configuration(argv):
   Raises:
       ValueError: If the given agent is not sac or ppo
   """
+  output_dir = os.path.expanduser(FLAGS.output_dir)
+  if output_dir == default_output_dir:
+    output_dir = os.path.join(os.path.expanduser(FLAGS.output_dir), FLAGS.agent, FLAGS.blueprint)
+
   params = ParameterServer(filename="examples/example_params/tfa_params.json")
   # params = ParameterServer()
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = os.path.join(Path.home(), "checkpoints", FLAGS.agent, FLAGS.blueprint)
-  params["ML"]["TFARunner"]["SummaryPath"] = os.path.join(Path.home(), "checkpoints", FLAGS.agent, FLAGS.blueprint)
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = output_dir
+  params["ML"]["TFARunner"]["SummaryPath"] = output_dir
   params["World"]["remove_agents_out_of_map"] = True
 
 
