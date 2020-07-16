@@ -17,3 +17,4 @@ tf-agents>=0.5.0
 tensorflow-probability>=0.10.0
 joblib==0.16.0
 ipython==7.16.1
+jupyter
