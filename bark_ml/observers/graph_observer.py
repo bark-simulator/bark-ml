@@ -18,7 +18,6 @@ from bark_ml.observers.observer import StateObserver
 
 class GraphObserver(StateObserver):
   feature_times = []
-  adj_times = []
   edges_times = []
   
   def __init__(self,
@@ -105,27 +104,12 @@ class GraphObserver(StateObserver):
 
     # features
     t0 = time.time()
-    features = np.split(obs[:num_nodes*num_features], num_nodes)
+    features = np.split(obs[:num_nodes * num_features], num_nodes)
     GraphObserver.feature_times.append(time.time() - t0)
     
-    # t0 = time.time()
-    # adj_matrix = np.split(obs[node_limit * num_features:], num_nodes)
-    # edges = np.transpose(np.nonzero(adj_matrix))
-    # GraphObserver.edges_times.append(time.time() - t0)
-
-    # adjacency list
     t0 = time.time()
-    adj_start_idx = node_limit * num_features
-    adj_list = obs[adj_start_idx:]
-    adj_matrix = np.reshape(adj_list, (node_limit, -1))
-    GraphObserver.adj_times.append(time.time() - t0)
-    
-    #edges
-    
-    edges = []
-    for source_id, source_edges in enumerate(adj_matrix):
-      for target_id in np.flatnonzero(source_edges):
-        edges.append([source_id, target_id])
+    adj_matrix = np.split(obs[node_limit * num_features:], node_limit)
+    edges = np.transpose(np.nonzero(adj_matrix))
     GraphObserver.edges_times.append(time.time() - t0)
     return features, edges
 

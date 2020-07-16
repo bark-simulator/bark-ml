@@ -23,7 +23,7 @@ class GNNWrapper(tf.keras.Model):
     self.num_units = num_units
 
     params = GNN.get_default_hyperparameters()
-    params.update(GGNN.get_default_hyperparameters())
+    params.update(GNN.get_default_hyperparameters())
     params["global_exchange_mode"] = "mean"
     params["num_layers"] = num_layers
     params["hidden_dim"] = num_units
@@ -37,7 +37,7 @@ class GNNWrapper(tf.keras.Model):
     t0 = time.time()
     features, edges = [], []
     node_to_graph_map = []
-    num_graphs = len(observations)
+    num_graphs = tf.constant(len(observations))
 
     edge_index_offset = 0
     for i, sample in enumerate(observations):
