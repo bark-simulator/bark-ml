@@ -132,7 +132,7 @@ class PyGraphObserverTests(unittest.TestCase):
     assert observer._visibility_radius == expected_visibility_radius
     assert observer._normalize_observations
 
-  def test_considered_agents_selection(self):
+  def test_observed_agents_selection(self):
     agent_limit = 10
     params = ParameterServer()
     params["ML"]["GraphObserver"]["AgentLimit"] = agent_limit
@@ -188,11 +188,54 @@ class PyGraphObserverTests(unittest.TestCase):
       b = list(map(lambda x: x.numpy(), a))
       graph_features.append(b)
     
-    print(edges)
-    
     self.assertTrue(np.array_equal(features, graph_features))
     self.assertTrue(np.array_equal(edges, graph.edges))
+
+  def test_observation_to_graph_conversion(self):
+    node_limit = 5
+    num_features = 5
+    num_nodes = 4
+
+    # 4 agents + 1 fill-up slot (node_limit = 5)
+    agents = [
+      np.full(num_features, 0.1),
+      np.full(num_features, 0.2),
+      np.full(num_features, 0.3),
+      np.full(num_features, 0.4),
+      np.full(num_features, -1)
+    ]
+
+    # the empty slot should not be returned
+    expected_nodes = agents[:-1]
+
+    # links are already bidirectional, so there
+    # are only zeros to the left of the diagonal
+    adjacency_list = [
+      [0, 1, 1, 1, 0], # 1 connects with 2, 3, 4
+      [0, 0, 1, 1, 0], # 2 connects with 3, 4
+      [0, 0, 0, 1, 0], # 3 connects with 4
+      [0, 0, 0, 0, 0], # 4 has no links
+      [0, 0, 0, 0, 0]  # empty slot -> all zeros
+    ]
+
+    # the edges encoded in the adjacency list above
+    expected_edges = [
+      [0, 1], [0, 2], [0, 3],
+      [1, 2], [1, 3],
+      [2, 3]
+    ]
+
+    observation = np.array([node_limit, num_nodes, num_features])
+    observation = np.append(observation, agents)
+    observation = np.append(observation, adjacency_list)
+    observation = observation.reshape(-1)
     
+    self.assertEqual(observation.shape, (53,))
+
+    nodes, edges = GraphObserver.gnn_input(observation)
+    assert np.array_equal(nodes, expected_nodes)
+    assert np.array_equal(edges, expected_edges)
+
     
 if __name__ == '__main__':
   unittest.main()
