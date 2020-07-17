@@ -155,6 +155,10 @@ class GNNActorNetwork(network.Network):
     output_actions = tf.nest.map_structure(
         call_projection_net, self._projection_nets)
 
-    tf.summary.histogram("actor_output_actions", output_actions)
+    try:
+        tf.summary.histogram("actor_output_actions", output_actions)
+    except Exception as e:
+        pass
+
     self.call_times.append(time.time() - t0)
     return output_actions, network_state
