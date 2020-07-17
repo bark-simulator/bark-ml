@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 
-import gym
 from absl import app
 from absl import flags
 

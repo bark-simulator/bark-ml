@@ -1,0 +1,1 @@
+/home/ferenc/.cache/bazel/_bazel_ferenc/d27c94d45ef586b197c709d8101d6384/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/bark_ml/examples/gail.py --expert_trajectories=~/Documents/programming/bark-ml/examples/expert_trajectories/sac_20000_observations --mode=train --train_out=~/Documents/programming/bark-ml
