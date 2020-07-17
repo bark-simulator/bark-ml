@@ -123,7 +123,7 @@
                 "logdir": "data/logs",
                 "logging_level": "INFO",
                 "model_dir": "data/models",
-                "expert_path_dir": "data/expert_trajectories",
+                "expert_path_dir": "data/expert_trajectories/sac_20000_observations",
                 "use_prioritized_rb": false,
                 "use_nstep_rb": false,
                 "n_step": 4,
