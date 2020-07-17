@@ -43,6 +43,8 @@ class SACRunner(TFARunner):
       self._agent._training = True
       
       global_iteration = self._agent._agent._train_step_counter.numpy()
+      tf.summary.experimental.set_step(global_iteration)
+      
       self._collection_driver.run()
       experience, _ = next(iterator)
       self._agent._agent.train(experience)
@@ -51,9 +53,13 @@ class SACRunner(TFARunner):
         iterations = f'{global_iteration-self._evaluation_interval}-{global_iteration}'
 
         iteration_duration = (time.time() - t) / self._evaluation_interval
-        self._logger.info(f'Training iterations {iterations} took {iteration_duration:.3f} seconds \
+        self._logger.info(f'Training iterations {iterations} took {(time.time() - t):.3f} seconds \
           (avg. {iteration_duration:.3f}s / iteration).')
         t = time.time()
+
+        tf.summary.scalar("mean_step_duration",
+                      iteration_duration,
+                      step=global_iteration)
 
         self.Evaluate()
         self._agent.Save()

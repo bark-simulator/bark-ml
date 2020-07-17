@@ -100,7 +100,7 @@ class PyGNNWrapperTests(unittest.TestCase):
     self._print_stats(observer.feature_times, iterations, "      Features")
     self._print_stats(observer.edges_times, iterations, "      Edges")
     self._print_stats(agent._agent._actor_network._gnn.gnn_call_times, iterations, "    tf2_gnn")
-    self._print_stats(agent._agent._actor_network._gnn._gnn.layer_times, iterations, "      Layer call")
+    #self._print_stats(agent._agent._actor_network._gnn._gnn.layer_times, iterations, "      Layer call")
     
     critics = [
       ("Critic 1", agent._agent._critic_network_1),

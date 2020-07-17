@@ -168,8 +168,8 @@ class GraphObserver(StateObserver):
     
     # Update information with real data
     state = agent.state
-    res["x"] = state[int(StateDefinition.X_POSITION)] # maybe not needed
-    res["y"] = state[int(StateDefinition.Y_POSITION)] # maybe not needed
+    res["x"] = state[int(StateDefinition.X_POSITION)]
+    res["y"] = state[int(StateDefinition.Y_POSITION)]
     res["theta"] = state[int(StateDefinition.THETA_POSITION)]
     res["vel"] = state[int(StateDefinition.VEL_POSITION)]
 

@@ -30,6 +30,16 @@ from tf_agents.utils import common, nest_utils
 
 from bark_ml.library_wrappers.lib_tf2_gnn import GNNWrapper
 
+def projection_net(spec):
+  return normal_projection_network.NormalProjectionNetwork(
+    spec,
+    mean_transform=None,
+    state_dependent_std=True,
+    init_means_output_factor=0.1,
+    std_transform=sac_agent.std_clip_transform,
+    scale_distribution=True)
+
+
 @gin.configurable
 class GNNActorNetwork(network.Network):
   """Creates an actor GNN."""
@@ -87,7 +97,6 @@ class GNNActorNetwork(network.Network):
     if self._single_action_spec.dtype not in [tf.float32, tf.float64]:
       raise ValueError('Only float actions are supported by this network.')
     
-    self._output_tensor_spec = output_tensor_spec
     self._gnn_num_units = gnn_num_units
     self._gnn = GNNWrapper(gnn_num_layers, gnn_num_units)
 
@@ -103,16 +112,16 @@ class GNNActorNetwork(network.Network):
       batch_squash=False,
       dtype=tf.float32)
 
-    self._projection_net = normal_projection_network.NormalProjectionNetwork(
-      output_tensor_spec,
-      mean_transform=None,
-      state_dependent_std=True,
-      init_means_output_factor=0.1,
-      std_transform=sac_agent.std_clip_transform,
-      scale_distribution=True)
+    self._projection_nets = tf.nest.map_structure(projection_net, output_tensor_spec)
+    self._output_tensor_spec = tf.nest.map_structure(lambda proj_net: proj_net.output_spec,
+                                        self._projection_nets)
 
     self.call_times = []
     self.gnn_call_times = []
+
+  @property  
+  def output_tensor_spec(self):
+    return self._output_tensor_spec
 
   def call(self, observations, step_type=(), network_state=(), training=False):
     batch_size, feature_len = observations.shape
@@ -127,6 +136,8 @@ class GNNActorNetwork(network.Network):
       output = tf.gather(output, 0, axis=1)
     elif len(output.shape) == 3:
       output = tf.gather(output, 0, axis=1)
+
+    tf.summary.histogram("actor_gnn_output", output)
     
     output, network_state = self._encoder(
       output,
@@ -136,10 +147,14 @@ class GNNActorNetwork(network.Network):
       
     outer_rank = nest_utils.get_outer_rank(observations, self.input_tensor_spec)
 
-    output_actions, _ = self._projection_net(
-      output, 
-      outer_rank, 
-      training=training)
+    def call_projection_net(proj_net):
+      distribution, _ = proj_net(
+          output, outer_rank, training=training)
+      return distribution
 
+    output_actions = tf.nest.map_structure(
+        call_projection_net, self._projection_nets)
+
+    tf.summary.histogram("actor_output_actions", output_actions)
     self.call_times.append(time.time() - t0)
     return output_actions, network_state
