@@ -73,7 +73,6 @@ class TF2RLRunner:
             scenario_idx=self._environment._scenario_idx)
           self._viewer.clear()
         else:
-          clear_output(wait=True)
           self._environment.render()
 
 
