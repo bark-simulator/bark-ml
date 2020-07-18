@@ -1,4 +1,5 @@
 import os, time, json, pickle
+import logging
 from gym import spaces
 import numpy as np
 import math
@@ -90,7 +91,13 @@ class GraphObserver(StateObserver):
       obs, 
       dtype=tf.float32, 
       name='observation_v2')
-
+    if self._output_supervised_data == False:
+      return obs
+    else:
+      features,_ = GraphObserver.gnn_input(obs)
+      actions = self._generate_actions(features)
+      return (obs, actions)
+      
     self.observe_times.append(time.time() - t0)
     return obs
 
@@ -228,22 +235,26 @@ class GraphObserver(StateObserver):
 
     return res
 
-  def _generate_actions(self, features: Dict[str, float]) -> Dict[str, float]:
-    actions = OrderedDict()
-    steering = features["goal_theta"] - features["theta"]
+  def _generate_actions(self, all_features) -> Dict[str, float]:
+    all_actions = list()
+    for features in all_features:
+      actions = OrderedDict()
+      att_keys = GraphObserver.attribute_keys()
+      steering = features[att_keys.index("goal_theta")] - features[att_keys.index("theta")]
     
-    v_0 = features["vel"]
-    dv = features["goal_vel"] - v_0
-    acc = (1./features["goal_d"])*dv*(dv/2+v_0)
+      v_0 = features[att_keys.index("vel")]
+      dv = features[att_keys.index("goal_vel")] - v_0
+      acc = (1./features[att_keys.index("goal_d")])*dv*(dv/2+v_0)
     
-    if self._normalize_observations:
-      range_steering = [-0.1, 0.1]
-      range_acc = [-0.6, 0.6]
-      steering = self._normalize_value(steering, range_steering)
-      acc = self._normalize_value(acc, range_acc)
+      if self._normalize_observations:
+        range_steering = [-0.1, 0.1]
+        range_acc = [-0.6, 0.6]
+        steering = self._normalize_value(steering, range_steering)
+        acc = self._normalize_value(acc, range_acc)
 
-    actions["steering"] = steering
-    actions["acceleration"] = acc
+      actions["steering"] = steering
+      actions["acceleration"] = acc
+      all_actions.append(actions)
 
     return actions
 
