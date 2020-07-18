@@ -1,9 +1,9 @@
+import time
 import gin
 import tensorflow as tf  # pylint: disable=g-explicit-tensorflow-version-import
 import numpy as np
 
-from tf_agents.networks import network
-from tf_agents.networks import utils
+from tf_agents.networks import network, utils, encoding_network
 from bark_ml.library_wrappers.lib_tf2_gnn import GNNWrapper
 
 @gin.configurable
@@ -14,8 +14,12 @@ class GNNCriticNetwork(network.Network):
                input_tensor_spec,
                action_fc_layer_params=None,
                action_dropout_layer_params=None,
+               dropout_layer_params=None,
+               conv_layer_params=None,
                joint_fc_layer_params=None,
                joint_dropout_layer_params=None,
+               gnn_num_layers=4,
+               gnn_num_units=256,
                activation_fn=tf.nn.relu,
                output_activation_fn=None,
                name='CriticNetwork'):
@@ -73,17 +77,19 @@ class GNNCriticNetwork(network.Network):
       raise ValueError('Only a single action is supported by this network')
     self._single_action_spec = flat_action_spec[0]
 
-    self._gnn = GNNWrapper(num_layers=4, num_units=64)
+    self._gnn = GNNWrapper(gnn_num_layers, gnn_num_units)
 
-    # TODO(kbanoop): Replace mlp_layers with encoding networks.
-    self._action_layers = utils.mlp_layers(
-        None,
-        action_fc_layer_params,
-        action_dropout_layer_params,
-        activation_fn=activation_fn,
-        kernel_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
-            scale=1. / 3., mode='fan_in', distribution='uniform'),
-        name='action_encoding')
+    self._encoder = encoding_network.EncodingNetwork(
+      input_tensor_spec=tf.TensorSpec([None, gnn_num_units]),
+      preprocessing_layers=None,
+      preprocessing_combiner=None,
+      conv_layer_params=conv_layer_params,
+      fc_layer_params=action_fc_layer_params,
+      dropout_layer_params=dropout_layer_params,
+      activation_fn=activation_fn,
+      kernel_initializer=tf.compat.v1.keras.initializers.glorot_uniform(),
+      batch_squash=False,
+      dtype=tf.float32)
 
     self._joint_layers = utils.mlp_layers(
         None,
@@ -102,9 +108,10 @@ class GNNCriticNetwork(network.Network):
             minval=-0.003, maxval=0.003),
         name='value'))
 
-  def call(self, inputs, step_type=(), network_state=(), training=False):
-    del step_type # unused.
+    self.call_times = []
 
+  def call(self, inputs, step_type=(), network_state=(), training=False):
+    t0 = time.time()
     observations, actions = inputs
     batch_size = observations.shape[0]
 
@@ -119,12 +126,17 @@ class GNNCriticNetwork(network.Network):
     else:
       actions = tf.zeros([0, actions.shape[-1]])
 
-    for layer in self._action_layers:
-      actions = layer(actions, training=training)
+    actions, network_state = self._encoder(
+      actions,
+      step_type=step_type,
+      network_state=network_state,
+      training=training)
 
     joint = tf.concat([node_embeddings, actions], 1)
     for layer in self._joint_layers:
       joint = layer(joint, training=training)
     
     output = tf.transpose(joint)
+
+    self.call_times.append(time.time() - t0)
     return output, network_state

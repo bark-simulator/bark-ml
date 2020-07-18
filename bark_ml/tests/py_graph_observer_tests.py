@@ -6,7 +6,6 @@
 #import os, time, json, pickle
 import numpy as np
 import unittest
-from tf_agents.environments import tf_py_environment
 import tensorflow as tf
 import networkx as nx
 
@@ -101,12 +100,86 @@ class PyGraphObserverTests(unittest.TestCase):
     observer = GraphObserver()
     range_ = [-10, 10]
     eps = 1*10-6
-
     self.assertTrue(abs(1 - observer._normalize_value(10, range=range_))< eps)
     self.assertTrue(abs(-1 - observer._normalize_value(-10, range=range_)) < eps)
     self.assertTrue(abs(1 - observer._normalize_value(100, range=range_)) < eps)
     self.assertTrue(abs(0.1 - observer._normalize_value(1, range=range_)) < eps)
         
+
+
+  def test_parameter_server_usage(self):
+    expected_agent_limit = 15
+    expected_visibility_radius = 100
+
+    params = ParameterServer()
+    params["ML"]["GraphObserver"]["AgentLimit"] = expected_agent_limit
+    params["ML"]["GraphObserver"]["VisibilityRadius"] = expected_visibility_radius
+    observer = GraphObserver(normalize_observations=True, params=params)
+
+    self.assertEqual(observer._agent_limit, expected_agent_limit)
+    self.assertEqual(observer._visibility_radius, expected_visibility_radius)
+    #assert observer._normalize_observations #unclear statement
+
+  def test_considered_agents_selection(self):
+    agent_limit = 10
+    params = ParameterServer()
+    params["ML"]["GraphObserver"]["AgentLimit"] = agent_limit
+    observer = GraphObserver(params=params)
+
+    obs, obs_world = self._get_observation(
+      observer=observer,
+      world=self.world,
+      eval_id=self.eval_id)
+
+    graph = GraphObserver.graph_from_observation(obs)
+    
+    num_nodes = len(graph.nodes)
+    expected_num_nodes = min(len(obs_world.agents), agent_limit)
+    self.assertEqual(num_nodes, expected_num_nodes,
+      msg=f'Expected {expected_num_nodes}, got {num_nodes}')
+    
+    ego_node = graph.nodes[0]
+    ego_node_pos = Point2d(
+      ego_node['x'].numpy(), 
+      ego_node['y'].numpy())
+
+    # verify that the nodes are ordered by
+    # ascending distance to the ego node
+    max_distance_to_ego = 0
+    for _, attributes in graph.nodes.data():
+      pos = Point2d(
+        attributes['x'].numpy(), 
+        attributes['y'].numpy())
+      distance_to_ego = Distance(pos, ego_node_pos)
+
+      self.assertGreaterEqual(distance_to_ego, max_distance_to_ego, 
+        msg='Nodes are not sorted by distance to the ego node in ascending order.')
+      
+      max_distance_to_ego = distance_to_ego
+
+  def test_features_from_observation(self):
+    params = ParameterServer()
+    params["ML"]["GraphObserver"]["AgentLimit"] = 5
+    observer = GraphObserver(params=params)
+
+    observation, _ = self._get_observation(
+      observer=observer,
+      world=self.world,
+      eval_id=self.eval_id)
+
+    graph = GraphObserver.graph_from_observation(observation)
+    features, edges = GraphObserver.gnn_input(observation)
+
+    graph_features = []
+    for _, attributes in graph.nodes.data():
+      a = list(attributes.values())
+      b = list(map(lambda x: x.numpy(), a))
+      graph_features.append(b)
+    
+    self.assertTrue(np.array_equal(features, graph_features))
+    self.assertTrue(np.array_equal(edges, graph.edges))
+    
+    
 if __name__ == '__main__':
   suite = unittest.TestLoader().loadTestsFromTestCase(PyGraphObserverTests)
   unittest.TextTestRunner(verbosity=2).run(suite)

@@ -1,4 +1,20 @@
-
+py_test(
+  name = "data_generation",
+  srcs = ["data_generation.py"],
+  data = ["@bark_project//bark/python_wrapper:core.so",
+          "//bark_ml:generate_core",
+          "//examples/example_params:example_params"],
+  imports = ['../bark_ml/python_wrapper/'],
+  deps = [
+    "//bark_ml/environments:gym",
+    "//bark_ml/environments:single_agent_runtime",
+    "//bark_ml/environments:blueprints",
+    "//bark_ml/library_wrappers/lib_tf2_gnn:lib_tf2_gnn",
+    "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
+    "//bark_ml/library_wrappers/lib_tf_agents/runners:runners",
+  ],
+  visibility = ["//visibility:public"],
+)
 
 py_test(
   name = "py_learn_actor_tests",
@@ -13,6 +29,6 @@ py_test(
     "//bark_ml/library_wrappers/lib_tf2_gnn:lib_tf2_gnn",
     "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
     "//bark_ml/library_wrappers/lib_tf_agents/runners:runners",
-    "//examples:data_generation"
+    ":data_generation"
   ]
 )

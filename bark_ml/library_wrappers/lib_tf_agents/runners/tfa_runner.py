@@ -2,6 +2,7 @@ import sys
 import logging
 import time
 import tensorflow as tf
+import numpy as np
 tf.compat.v1.enable_v2_behavior()
 
 # BARK imports
@@ -116,5 +117,14 @@ class TFARunner:
       is_terminal = False
       while not is_terminal:
         action_step = self._agent._eval_policy.action(ts.transition(state, reward=0.0, discount=1.0))
-        state, reward, is_terminal, _ = self._environment.step(action_step.action.numpy())
+        action_shape = action_step.action.shape
+        expected_shape = self._agent._eval_policy.action_spec.shape
+        action = action_step.action.numpy()
+        if action_shape != expected_shape:
+          logging.warning("Action shape" + str(action_shape) + \
+            " does not match with expected shape " + str(expected_shape) +\
+            " -> reshaping is tried")
+          action = np.reshape(action, expected_shape)
+          logging.info(action)
+        state, reward, is_terminal, _ = self._environment.step(action)
         self._environment.render()

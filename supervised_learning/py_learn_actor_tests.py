@@ -29,66 +29,69 @@ from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, BehaviorPPOAgent, BehaviorGraphSACAgent
 from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner
 from bark_ml.observers.graph_observer import GraphObserver
-from examples.data_generation import DataGenerator
+from supervised_learning.data_generation import DataGenerator
 
 class PyGNNActorTests(unittest.TestCase):
     def setUp(self):
         ######################
         #    Parameter       #
         self.log_dir = "/home/silvan/working_bark/supervised_learning/logs/"
-        self.epochs = 10
+        self.epochs = 3
         self.batch_size = 32
         self.train_split = 0.8
         #self.test_split = 0.2 # results from  (1 - train_split)
-        self.data_path = "/home/silvan/working_bark/supervised_learning/data1/"
+        self.data_path = None #"/home/silvan/working_bark/supervised_learning/data/"
         ######################
 
         """Setting up the test case"""
-        params = ParameterServer()
-        self.observer = GraphObserver(params)
+        params = ParameterServer(filename="examples/example_params/tfa_params.json")
+        params["ML"]["BehaviorTFAAgents"]["NumCheckpointsToKeep"] = None
+        params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 50
+        params["ML"]["BehaviorSACAgent"]["BatchSize"] = 32
+        params["ML"]["GraphObserver"]["AgentLimit"] = 8
+        params["ML"]["BehaviorGraphSACAgent"]["NumLayersGNN"] = 4
+        params["ML"]["BehaviorGraphSACAgent"]["NumUnitsGNN"] = 256
+        params["World"]["remove_agents_out_of_map"] = False
+        
+        # Get actor net
+        bp = ContinuousHighwayBlueprint(params, number_of_senarios=2500, random_seed=0)
+        self.observer = GraphObserver(params=params)
+        env = SingleAgentRuntime(blueprint=bp, observer=self.observer, render=False)
+        sac_agent = BehaviorGraphSACAgent(environment=env, params=params)
+        actor_net = sac_agent._agent._actor_network
+        self.actor_net = actor_net
+        logging.info(self.actor_net)
+        logging.info("Loading of actor net completed")
 
-        # Generate new data (necessary when changes on observer are made!!!!!!)
-        try:
-            scenarios = os.listdir(self.data_path)
-            logging.info("Data is already generated - just load the data")
-
-        except:
-            logging.info("Starting data_generation")
-            graph_generator = DataGenerator(num_scenarios=100, dump_dir=self.data_path, render=False)
-            graph_generator.run_scenarios()
-
-        finally:
-            # Load raw data
-            data_collection = list()
-            scenarios = os.listdir(self.data_path)
-            for scenario in scenarios:
-                scenario_path = self.data_path + "/" + scenario
-                with open(scenario_path, 'rb') as f:
-                    data = pickle.load(f)
-                data_collection.append(data)
-            print("Raw data loading completed")
+        logging.info("Starting data_generation")
+        graph_generator = DataGenerator(num_scenarios=100, dump_dir=self.data_path, render=False, params=params)
+        data_collection = graph_generator.run_scenarios()
+        logging.info("Raw data loading completed")
 
         # Transform raw data to supervised dataset
         Y = list()
         X = list()
         for data in data_collection:
             for data_point in data:
-                # Transform raw data to nx.Graph
-                graph_data = data_point["graph"]
+                # Get raw data
+                observation = data_point["graph"]
                 actions = data_point["actions"]
-                graph = nx.node_link_graph(graph_data)
-                # Transform graph to observation
-                observation = self.observer._observation_from_graph(graph).numpy()
+                # Transform observation tensor to array
+                observation = observation.numpy()
+                
                 actions = np.array([actions["steering"], actions["acceleration"]])
                 # Save in training data variables
                 X.append(observation)
                 Y.append(actions)
+        logging.info("Transformation to supervised dataset completed")
 
         # Transform supervised dataset into tf.dataset
         self.X = tf.constant(X)
         self.Y = tf.constant(Y, dtype=tf.float32)
         dataset = tf.data.Dataset.from_tensor_slices((self.X, self.Y))
         dataset_size = self.X.shape[0]
+        logging.info("Transformation to tf.dataset completed")
+        logging.info(self.X.shape)
 
         # Train/Val/Test split
         train_size = int(self.train_split * dataset_size)
@@ -97,19 +100,7 @@ class PyGNNActorTests(unittest.TestCase):
         self.train_dataset = full_dataset.take(train_size).batch(self.batch_size)
         test_dataset = full_dataset.skip(train_size)
         self.test_dataset = test_dataset.take(-1).batch(self.batch_size)
-
-        # Get actor net
-        params = ParameterServer(filename="examples/example_params/tfa_params.json")
-        params["ML"]["BehaviorTFAAgents"]["NumCheckpointsToKeep"] = None
-        params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 50
-        params["ML"]["BehaviorSACAgent"]["BatchSize"] = 32
-        params["World"]["remove_agents_out_of_map"] = False
-        
-        bp = ContinuousHighwayBlueprint(params, number_of_senarios=2500, random_seed=0)
-        env = SingleAgentRuntime(blueprint=bp, observer=self.observer, render=False)
-        sac_agent = BehaviorGraphSACAgent(environment=env, params=params)
-        actor_net = sac_agent._agent._actor_network
-        self.actor_net = actor_net
+        logging.info("Train/Test split completed")
     
     def test_actor_network(self):
         # Evaluates actor net formalia

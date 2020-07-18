@@ -43,9 +43,11 @@ def run_configuration(argv):
   params["ML"]["TFARunner"]["SummaryPath"] = "/home/silvan/working_bark/training_gnn/summary"
   params["ML"]["BehaviorSACAgent"]["DebugSummaries"] = True
   params["ML"]["BehaviorTFAAgents"]["NumCheckpointsToKeep"] = None
-  #params["ML"]["SACRunner"]["NumberOfCollections"] = 2000
-  params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 50
+  params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 40
   params["ML"]["BehaviorSACAgent"]["BatchSize"] = 32
+  params["ML"]["GraphObserver"]["AgentLimit"] = 8
+  params["ML"]["BehaviorGraphSACAgent"]["NumLayersGNN"] = 4
+  params["ML"]["BehaviorGraphSACAgent"]["NumUnitsGNN"] = 256
   params["World"]["remove_agents_out_of_map"] = False
 
     # viewer = MPViewer(
@@ -72,8 +74,6 @@ def run_configuration(argv):
     blueprint=bp,
     observer=observer,
     render=False)
-  #print("env.action_spec():",env.action_spec())
-  print("env.action_space:",env.action_space)
 
   sac_agent = BehaviorGraphSACAgent(environment=env,
                                     params=params)
@@ -92,7 +92,6 @@ def run_configuration(argv):
   
   # store all used params of the training
   # params.Save("/home/hart/Dokumente/2020/bark-ml/examples/example_params/tfa_params.json")
-
 
 if __name__ == '__main__':
   app.run(run_configuration)
