@@ -13,9 +13,12 @@ import os
 import matplotlib
 import time
 
+# Bark imports
+from bark.runtime.commons.parameters import ParameterServer
+
+# Bark-ml imports
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteML
-from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, DiscreteHighwayBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
@@ -61,22 +64,6 @@ class PyObserverTests(unittest.TestCase):
     end_time = time.time()
     print(f"It took {end_time-start_time} seconds.")
     print(observed_state, observer.observation_space.shape)
-
-  def test_graph_observer(self):
-      params = ParameterServer()
-      bp = ContinuousHighwayBlueprint(params)
-      env = SingleAgentRuntime(blueprint=bp, render=True)
-      env.reset()
-      world = env._world
-
-      # under test
-      observer = GraphObserver(params)
-
-      eval_id = env._scenario._eval_agent_ids[0]
-      observed_world = world.Observe([eval_id])[0]
-      observed_state = observer.Observe(observed_world)
-      print('Hello')
-      print(observed_state)
 
 if __name__ == '__main__':
   unittest.main()

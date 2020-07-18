@@ -81,10 +81,12 @@ class PyGraphObserverTests(unittest.TestCase):
     predicted_len = self.metadata["predicted_len"]    
 
     # Check if formal parameter of observed_state are correct
-    assert tf.is_tensor(observed_state)
-    assert (observed_state.dtype == tf.float32) \
-      or (observed_state.dtype == tf.float64)
-    assert observed_state.shape == (predicted_len,)
+    self.assertTrue(tf.is_tensor(observed_state))
+    #assert tf.is_tensor(observed_state)
+    self.assertTrue((observed_state.dtype == tf.float32) or (observed_state.dtype == tf.float64))
+    #assert (observed_state.dtype == tf.float32) or (observed_state.dtype == tf.float64)
+    #assert observed_state.shape == (predicted_len,)
+    self.assertEqual(observed_state.shape, (predicted_len,))
 
 
   def test_reconstruction_to_graph(self):
@@ -95,8 +97,10 @@ class PyGraphObserverTests(unittest.TestCase):
     n_nodes = self.metadata["n_nodes"]
 
     # Check if parameter of graph are correct
-    assert reconstructed_graph.__class__ == nx.OrderedGraph
-    assert len(reconstructed_graph.nodes) == n_nodes
+    self.assertEqual(reconstructed_graph.__class__, nx.OrderedGraph)
+    #assert reconstructed_graph.__class__ == nx.OrderedGraph
+    self.assertEqual(len(reconstructed_graph.nodes), n_nodes)
+    #assert len(reconstructed_graph.nodes) == n_nodes
 
   def test_reconstruction_to_observation(self):
     # Get graph at first
@@ -113,11 +117,12 @@ class PyGraphObserverTests(unittest.TestCase):
     observer = GraphObserver()
     range_ = [-10, 10]
     eps = 1*10-6
+    self.assertTrue(abs(1 - observer._normalize_value(10, range=range_))< eps)
+    self.assertTrue(abs(-1 - observer._normalize_value(-10, range=range_)) < eps)
+    self.assertTrue(abs(1 - observer._normalize_value(100, range=range_)) < eps)
+    self.assertTrue(abs(0.1 - observer._normalize_value(1, range=range_)) < eps)
+        
 
-    assert abs(1 - observer._normalize_value(10, range=range_)) < eps
-    assert abs(-1 - observer._normalize_value(-10, range=range_)) < eps
-    assert abs(1 - observer._normalize_value(100, range=range_)) < eps
-    assert abs(0.1 - observer._normalize_value(1, range=range_)) < eps
 
   def test_parameter_server_usage(self):
     expected_agent_limit = 15
@@ -128,9 +133,9 @@ class PyGraphObserverTests(unittest.TestCase):
     params["ML"]["GraphObserver"]["VisibilityRadius"] = expected_visibility_radius
     observer = GraphObserver(normalize_observations=True, params=params)
 
-    assert observer._agent_limit == expected_agent_limit
-    assert observer._visibility_radius == expected_visibility_radius
-    assert observer._normalize_observations
+    self.assertEqual(observer._agent_limit, expected_agent_limit)
+    self.assertEqual(observer._visibility_radius, expected_visibility_radius)
+    #assert observer._normalize_observations #unclear statement
 
   def test_observed_agents_selection(self):
     agent_limit = 10
@@ -238,4 +243,5 @@ class PyGraphObserverTests(unittest.TestCase):
 
     
 if __name__ == '__main__':
-  unittest.main()
+  suite = unittest.TestLoader().loadTestsFromTestCase(PyGraphObserverTests)
+  unittest.TextTestRunner(verbosity=2).run(suite)

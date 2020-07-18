@@ -25,7 +25,7 @@ import tensorflow as tf  # pylint: disable=g-explicit-tensorflow-version-import
 import numpy as np
 
 from tf_agents.agents.sac import sac_agent
-from tf_agents.networks import network, normal_projection_network, encoding_network, utils
+from tf_agents.networks import network, normal_projection_network, utils, encoding_network
 from tf_agents.utils import common, nest_utils
 
 from bark_ml.library_wrappers.lib_tf2_gnn import GNNWrapper
@@ -84,6 +84,7 @@ class GNNActorNetwork(network.Network):
         input_tensor_spec=input_tensor_spec,
         state_spec=(),
         name=name)
+    self._gnn = GNNWrapper(num_layers=3, num_units=256)
 
     if len(tf.nest.flatten(input_tensor_spec)) > 1:
       raise ValueError('Only a single observation is supported by this network')
@@ -129,7 +130,6 @@ class GNNActorNetwork(network.Network):
     output = self._gnn.batch_call(observations, training=training)
     self.gnn_call_times.append(time.time() - t0)
     output = tf.cast(output, tf.float32)
-
     # extract ego state (node 0)
     if len(output.shape) == 2 and output.shape[0] != 0:
       output = tf.reshape(output, [batch_size, -1, self._gnn_num_units])
