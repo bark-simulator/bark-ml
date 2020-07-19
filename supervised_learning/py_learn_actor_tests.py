@@ -49,8 +49,8 @@ class PyGNNActorTests(unittest.TestCase):
         params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 50
         params["ML"]["BehaviorSACAgent"]["BatchSize"] = 32
         params["ML"]["GraphObserver"]["AgentLimit"] = 8
-        params["ML"]["BehaviorGraphSACAgent"]["NumLayersGNN"] = 4
-        params["ML"]["BehaviorGraphSACAgent"]["NumUnitsGNN"] = 256
+        params["ML"]["BehaviorGraphSACAgent"]["GNN"]["num_layers"] = 4
+        params["ML"]["BehaviorGraphSACAgent"]["GNN"]["hidden_dim"] = 256
         params["World"]["remove_agents_out_of_map"] = False
         
         # Get actor net

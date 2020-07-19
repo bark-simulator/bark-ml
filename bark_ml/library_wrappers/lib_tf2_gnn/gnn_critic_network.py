@@ -12,14 +12,13 @@ class GNNCriticNetwork(network.Network):
 
   def __init__(self,
                input_tensor_spec,
+               gnn_params,
                action_fc_layer_params=None,
                action_dropout_layer_params=None,
                dropout_layer_params=None,
                conv_layer_params=None,
                joint_fc_layer_params=None,
                joint_dropout_layer_params=None,
-               gnn_num_layers=4,
-               gnn_num_units=256,
                activation_fn=tf.nn.relu,
                output_activation_fn=None,
                name='CriticNetwork'):
@@ -77,11 +76,10 @@ class GNNCriticNetwork(network.Network):
       raise ValueError('Only a single action is supported by this network')
     self._single_action_spec = flat_action_spec[0]
 
-    self._gnn_num_units = gnn_num_units
-    self._gnn = GNNWrapper(gnn_num_layers, gnn_num_units)
+    self._gnn = GNNWrapper(params=gnn_params)
 
     self._encoder = encoding_network.EncodingNetwork(
-      input_tensor_spec=tf.TensorSpec([None, gnn_num_units]),
+      input_tensor_spec=tf.TensorSpec([None, self._gnn.num_units]),
       preprocessing_layers=None,
       preprocessing_combiner=None,
       conv_layer_params=conv_layer_params,
@@ -126,7 +124,7 @@ class GNNCriticNetwork(network.Network):
     node_embeddings = tf.cast(node_embeddings, tf.float32)
 
     if batch_size > 0:
-      node_embeddings = tf.reshape(node_embeddings, [batch_size, -1, self._gnn_num_units])
+      node_embeddings = tf.reshape(node_embeddings, [batch_size, -1, self._gnn.num_units])
       node_embeddings = tf.gather(node_embeddings, 0, axis=1) # extract ego state
       actions = tf.reshape(actions, [batch_size, -1])
     else:

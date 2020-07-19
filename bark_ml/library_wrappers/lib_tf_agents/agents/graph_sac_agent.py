@@ -35,9 +35,8 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
     actor_net = GNNActorNetwork(
       input_tensor_spec=env.observation_spec(),
       output_tensor_spec=env.action_spec(),
-      fc_layer_params=[256, 128, 128],
-      gnn_num_layers=self._params["ML"]["BehaviorGraphSACAgent"]["NumLayersGNN", "", 4],
-      gnn_num_units=self._params["ML"]["BehaviorGraphSACAgent"]["NumUnitsGNN", "", 64]
+      gnn_params=params["ML"]["BehaviorGraphSACAgent"]["GNN"],
+      fc_layer_params=[256, 128, 128]
     )
 
     # critic network
@@ -45,8 +44,7 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
       input_tensor_spec=(env.observation_spec(), env.action_spec()),
       action_fc_layer_params=None,
       joint_fc_layer_params=[256, 128, 128],
-      gnn_num_layers=self._params["ML"]["BehaviorGraphSACAgent"]["NumLayersGNN", "", 4],
-      gnn_num_units=self._params["ML"]["BehaviorGraphSACAgent"]["NumUnitsGNN", "", 64]
+      gnn_params=params["ML"]["BehaviorGraphSACAgent"]["GNN"]
     )
     
     # agent

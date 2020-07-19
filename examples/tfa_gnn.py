@@ -38,16 +38,17 @@ flags.DEFINE_enum("mode",
 def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/tfa_params.json")
   #params = ParameterServer()
-  # NOTE: Modify these paths in order to save the checkpoints and summaries
   params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/marco.oliva/Development/bark-ml_logs/checkpoints"
   params["ML"]["TFARunner"]["SummaryPath"] = "/Users/marco.oliva/Development/bark-ml_logs/summaries"
   params["ML"]["BehaviorSACAgent"]["DebugSummaries"] = True
-  #params["ML"]["BehaviorTFAAgents"]["NumCheckpointsToKeep"] = None
   params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 50
   params["ML"]["BehaviorSACAgent"]["BatchSize"] = 64
   params["ML"]["GraphObserver"]["AgentLimit"] = 8
-  params["ML"]["BehaviorGraphSACAgent"]["NumLayersGNN"] = 2
-  params["ML"]["BehaviorGraphSACAgent"]["NumUnitsGNN"] = 128
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["num_layers"] = 2
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["hidden_dim"] = 64
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["message_calculation_class"] = "rgat"
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_mode"] = "gru"
+
   params["World"]["remove_agents_out_of_map"] = False
 
     # viewer = MPViewer(

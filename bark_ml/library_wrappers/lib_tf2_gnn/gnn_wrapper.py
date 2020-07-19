@@ -1,35 +1,28 @@
 import time
 import numpy as np
 import tensorflow as tf
-from tf2_gnn.layers import GNN, GNNInput, \
-  NodesToGraphRepresentationInput, WeightedSumGraphRepresentation
-from tf2_gnn.layers.message_passing import GGNN, GNN_FiLM
-from tf_agents.utils import common
+from tf2_gnn.layers import GNN, GNNInput
+from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.observers.graph_observer import GraphObserver
-import networkx as nx
-from typing import OrderedDict
-
 
 class GNNWrapper(tf.keras.Model):
 
   def __init__(self,
-               num_layers=4,
-               num_units=16,
+               params,
                name='GNN',
                **kwargs):
     super(GNNWrapper, self).__init__(name=name)
 
-    self.num_layers = num_layers
-    self.num_units = num_units
-
-    params = GNN.get_default_hyperparameters()
-    params.update(GNN.get_default_hyperparameters())
-    params["global_exchange_mode"] = "mean"
-    params["num_layers"] = num_layers
-    params["hidden_dim"] = num_units
-    params["message_calculation_class"] = "ggnn"
-    self._gnn = GNN(params)
-
+    mp_style = params["message_calculation_class", "", "rgcn"]
+    gnn_params = GNN.get_default_hyperparameters(mp_style)
+    
+    if isinstance(params, ParameterServer):
+      params = params.ConvertToDict()
+    
+    gnn_params.update(params)
+    
+    self._gnn = GNN(gnn_params)
+    self.num_units = gnn_params["hidden_dim"]
     self.graph_conversion_times = []
     self.gnn_call_times = []
 

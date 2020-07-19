@@ -20,7 +20,9 @@ class PyGNNWrapperTests(unittest.TestCase):
     params["ML"]["TFARunner"]["InitialCollectionEpisodesPerStep"] = 8
     params["ML"]["TFARunner"]["CollectionEpisodesPerStep"] = 8
     params["ML"]["BehaviorSACAgent"]["BatchSize"] = 16
-    params["ML"]["BehaviorGraphSACAgent"]["NumLayersGNN"] = 6
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["num_layers"] = 3
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["hidden_dim"] = 64
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_every_num_layers"] = 2
 
     bp = ContinuousHighwayBlueprint(params,
                                     number_of_senarios=1,
@@ -100,7 +102,11 @@ class PyGNNWrapperTests(unittest.TestCase):
     self._print_stats(observer.feature_times, iterations, "      Features")
     self._print_stats(observer.edges_times, iterations, "      Edges")
     self._print_stats(agent._agent._actor_network._gnn.gnn_call_times, iterations, "    tf2_gnn")
-    #self._print_stats(agent._agent._actor_network._gnn._gnn.layer_times, iterations, "      Layer call")
+    self._print_stats(agent._agent._actor_network._gnn._gnn.dropout_times, iterations, "      Dropout")
+    self._print_stats(agent._agent._actor_network._gnn._gnn.mp_times, iterations, "      MP")
+    self._print_stats(agent._agent._actor_network._gnn._gnn.exchange_times, iterations, "      Exchange")
+    self._print_stats(agent._agent._actor_network._gnn._gnn.norm_times, iterations, "      Norm")
+    self._print_stats(agent._agent._actor_network._gnn._gnn.dense_times, iterations, "      Dense")
     
     critics = [
       ("Critic 1", agent._agent._critic_network_1),
