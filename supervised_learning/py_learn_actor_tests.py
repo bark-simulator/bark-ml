@@ -42,11 +42,12 @@ class PyGNNActorTests(unittest.TestCase):
     def setUp(self):
         ######################
         #    Parameter       #
-        self.log_dir = "/home/silvan/working_bark/supervised_learning/logs/"
+        from config import supervised_learning_logs_path, supervised_learning_data_path
+        self.log_dir = supervised_learning_logs_path
         self.epochs = 5
         self.batch_size = 32
         self.train_split = 0.8
-        self.data_path = "/home/silvan/working_bark/supervised_learning/data_new/"
+        self.data_path = supervised_learning_data_path
         self.num_scenarios = 200
         ######################
 
