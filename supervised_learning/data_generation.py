@@ -52,7 +52,6 @@ class DataGenerator(ABC):
     data_scenario = list()
     self.env.reset(scenario = scenario)
     done = False
-
     while done is False:
       #for i in range(10):
       action = np.random.uniform(low=np.array([-0.5, -0.02]), high=np.array([0.5, 0.02]), size=(2, ))
@@ -96,7 +95,7 @@ class DataGenerator(ABC):
       else:
         if not os.path.exists(self.dump_dir):
           os.makedirs(self.dump_dir)
-        path = self.dump_dir+ '/dataset_' + str(int(time.time())) + '.pickle'
+        path = self.dump_dir+ '/dataset_' + str(int(time.time()*10000)) + '.pickle'
         with open(path, 'wb') as handle:
           pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
           #logging.debug('---> Dumped dataset to: ' + path)
@@ -104,6 +103,9 @@ class DataGenerator(ABC):
 
 # Main part
 if __name__ == '__main__':
-  graph_generator = DataGenerator(num_scenarios=100, dump_dir=None)
+  params = ParameterServer(filename="examples/example_params/tfa_params.json")
+  params["World"]["remove_agents_out_of_map"] = False
+
+  graph_generator = DataGenerator(num_scenarios=100, dump_dir=None, params=params)
 
   graph_generator.run_scenarios()
