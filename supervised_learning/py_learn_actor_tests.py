@@ -43,7 +43,7 @@ class PyGNNActorTests(unittest.TestCase):
         ######################
         #    Parameter       #
         self.log_dir = "/home/silvan/working_bark/supervised_learning/logs/"
-        self.epochs = 200
+        self.epochs = 5
         self.batch_size = 32
         self.train_split = 0.8
         self.data_path = "/home/silvan/working_bark/supervised_learning/data_new/"
@@ -84,9 +84,9 @@ class PyGNNActorTests(unittest.TestCase):
         means = (means / num_batches).numpy()
 
         # Get agent
-        #self.actor_net = get_GNN_SAC_actor_net(self.num_scenarios, self.params, self.observer)
+        self.actor_net = get_GNN_SAC_actor_net(self.num_scenarios, self.params, self.observer)
         #self.actor_net = get_SAC_actor_net(self.num_scenarios, self.params, self.observer)
-        self.actor_net = ConstantActorNet(constants=means)
+        #self.actor_net = ConstantActorNet(constants=means)
         #self.actor_net = RandomActorNet()
 
         # Get supervised learner
