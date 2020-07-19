@@ -6,11 +6,14 @@
 #import os, time, json, pickle
 import numpy as np
 import unittest
+from tf_agents.environments import tf_py_environment
 import tensorflow as tf
 import networkx as nx
 
 # BARK imports
 from bark.runtime.commons.parameters import ParameterServer
+from bark.core.geometry import Distance, Point2d
+from bark.core.models.dynamic import StateDefinition
 
 # BARK-ML imports
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
@@ -18,6 +21,18 @@ from bark_ml.observers.graph_observer import GraphObserver
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint
 
 class PyGraphObserverTests(unittest.TestCase):
+
+  def _get_observation(self, observer, world, eval_id):
+    observed_world = world.Observe([eval_id])[0]
+    observation = observer.Observe(observed_world)
+    return observation, observed_world
+
+  def _position(self, agent):
+    return Point2d(
+        agent.state[int(StateDefinition.X_POSITION)],
+        agent.state[int(StateDefinition.Y_POSITION)]
+      )
+
   def setUp(self):
     """Setting up the test-case"""
     params = ParameterServer()
@@ -29,20 +44,23 @@ class PyGraphObserverTests(unittest.TestCase):
     self.eval_id = self.env._scenario._eval_agent_ids[0]
 
     # Get observation from observer
-    observed_world = self.world.Observe([self.eval_id])[0]
-    observed_state = self.observer.Observe(observed_world)
-    self.observed_state = observed_state
+    self.observed_state, _ = self._get_observation(
+      observer=self.observer,
+      world=self.world,
+      eval_id=self.eval_id)
 
     # Reconstruct the graph
-    reconstructed_graph = GraphObserver.graph_from_observation(observed_state)
+    reconstructed_graph = GraphObserver\
+      .graph_from_observation(self.observed_state)
     self.reconstructed_graph = reconstructed_graph
 
     # Convert to numpy array and split into subparts for easier handling
-    observation = observed_state.numpy()
+    observation = self.observed_state.numpy()
     self.observation = observation
     n_nodes_max = int(observation[0])
     n_nodes = int(observation[1])
     n_features = int(observation[2])
+
     # Preprocess metadata and data for later comparison
     metadata = dict()
     metadata["n_nodes_max"] = n_nodes_max
@@ -53,7 +71,8 @@ class PyGraphObserverTests(unittest.TestCase):
     
     data = dict()
     data["node_features"] = observation[3:n_nodes_max*n_features+3]
-    data["adj_matrix"] = observation[3+n_nodes_max*n_features:].reshape((n_nodes_max,-1))
+    data["adj_matrix"] = observation[3+n_nodes_max*n_features:]\
+      .reshape((n_nodes_max,-1))
     self.data = data
   
   def test_observation_formalities(self):
@@ -91,9 +110,7 @@ class PyGraphObserverTests(unittest.TestCase):
 
     # Reconstruct the observation
     rec_obs = self.observer._observation_from_graph(reconstructed_graph)
-    self.assertEqual(observed_state.__class__, rec_obs.__class__)
-    self.assertTrue(tf.reduce_all(tf.equal(observed_state, rec_obs)))
-    #assert observed_state.__class__ == rec_obs.__class__
+    assert observed_state.__class__ == rec_obs.__class__
     #assert tf.reduce_all(tf.equal(observed_state, rec_obs))
 
   def test_norming(self):
@@ -120,7 +137,7 @@ class PyGraphObserverTests(unittest.TestCase):
     self.assertEqual(observer._visibility_radius, expected_visibility_radius)
     #assert observer._normalize_observations #unclear statement
 
-  def test_considered_agents_selection(self):
+  def test_observed_agents_selection(self):
     agent_limit = 10
     params = ParameterServer()
     params["ML"]["GraphObserver"]["AgentLimit"] = agent_limit
@@ -178,7 +195,52 @@ class PyGraphObserverTests(unittest.TestCase):
     
     self.assertTrue(np.array_equal(features, graph_features))
     self.assertTrue(np.array_equal(edges, graph.edges))
+
+  def test_observation_to_graph_conversion(self):
+    node_limit = 5
+    num_features = 5
+    num_nodes = 4
+
+    # 4 agents + 1 fill-up slot (node_limit = 5)
+    agents = [
+      np.full(num_features, 0.1),
+      np.full(num_features, 0.2),
+      np.full(num_features, 0.3),
+      np.full(num_features, 0.4),
+      np.full(num_features, -1)
+    ]
+
+    # the empty slot should not be returned
+    expected_nodes = agents[:-1]
+
+    # links are already bidirectional, so there
+    # are only zeros to the left of the diagonal
+    adjacency_list = [
+      [0, 1, 1, 1, 0], # 1 connects with 2, 3, 4
+      [0, 0, 1, 1, 0], # 2 connects with 3, 4
+      [0, 0, 0, 1, 0], # 3 connects with 4
+      [0, 0, 0, 0, 0], # 4 has no links
+      [0, 0, 0, 0, 0]  # empty slot -> all zeros
+    ]
+
+    # the edges encoded in the adjacency list above
+    expected_edges = [
+      [0, 1], [0, 2], [0, 3],
+      [1, 2], [1, 3],
+      [2, 3]
+    ]
+
+    observation = np.array([node_limit, num_nodes, num_features])
+    observation = np.append(observation, agents)
+    observation = np.append(observation, adjacency_list)
+    observation = observation.reshape(-1)
     
+    self.assertEqual(observation.shape, (53,))
+
+    nodes, edges = GraphObserver.gnn_input(observation)
+    assert np.array_equal(nodes, expected_nodes)
+    assert np.array_equal(edges, expected_edges)
+
     
 if __name__ == '__main__':
   suite = unittest.TestLoader().loadTestsFromTestCase(PyGraphObserverTests)

@@ -18,16 +18,16 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.observers.observer import StateObserver
 
 class GraphObserver(StateObserver):
+  feature_times = []
+  edges_times = []
   
   def __init__(self,
                normalize_observations=True,
-               use_edge_attributes=True,
                output_supervised_data = False,
                params=ParameterServer()):
     StateObserver.__init__(self, params)
 
     self._normalize_observations = normalize_observations
-    self._use_edge_attributes = use_edge_attributes
     self._output_supervised_data = output_supervised_data
 
     # the number of features of a node in the graph
@@ -38,7 +38,7 @@ class GraphObserver(StateObserver):
       params["ML"]["GraphObserver"]["AgentLimit", "", 12]
 
      # the radius an agent can 'see' in meters
-    self._visible_distance = \
+    self._visibility_radius = \
       params["ML"]["GraphObserver"]["VisibilityRadius", "", 50]
 
     self.observe_times = []
@@ -71,12 +71,10 @@ class GraphObserver(StateObserver):
       nearby_agents = self._nearby_agents(
         center_agent=agent, 
         agents=agents, 
-        radius=self._visible_distance)
+        radius=self._visibility_radius)
 
       for target_index, _ in nearby_agents:
-        if (index, target_index) not in edges and\
-           (target_index, index) not in edges:
-          edges.append((index, target_index))
+        edges.append(set([index, target_index]))
     
     # build adjacency matrix and convert to list
     adjacency_matrix = np.zeros((self._agent_limit, self._agent_limit))
@@ -86,7 +84,6 @@ class GraphObserver(StateObserver):
     adjacency_list = adjacency_matrix.reshape(-1)
     obs.extend(adjacency_list)
 
-    # Validity check
     assert len(obs) == self._len_state, f'Observation \
       has invalid length ({len(obs)}, expected: {self._len_state})'
     
@@ -94,7 +91,6 @@ class GraphObserver(StateObserver):
       obs, 
       dtype=tf.float32, 
       name='observation_v2')
-    #logging.debug(obs)
     if self._output_supervised_data == False:
       return obs
     else:
@@ -108,45 +104,40 @@ class GraphObserver(StateObserver):
   @classmethod
   def gnn_input(cls, observation):
     node_limit = int(observation[0])
-    #logging.info("node_limit"+str(node_limit))
     num_nodes = int(observation[1])
     num_features = int(observation[2])
 
     obs = observation[3:]
 
     # features
-    features = []
-    for node_id in range(num_nodes):
-      start_idx = node_id * num_features
-      end_idx = start_idx + num_features
-      features.append(obs[start_idx:end_idx].numpy())
-
-    # adjacency list
-    adj_start_idx = node_limit * num_features
-    adj_list = obs[adj_start_idx:].numpy()
-    adj_matrix = np.reshape(adj_list, (node_limit, -1))
+    t0 = time.time()
+    features = np.split(obs[:num_nodes * num_features], num_nodes)
+    GraphObserver.feature_times.append(time.time() - t0)
     
-    edges = []
-    for (source_id, source_edges) in enumerate(adj_matrix):
-      for target_id in np.flatnonzero(source_edges):
-        edges.append((source_id, target_id))
-
+    t0 = time.time()
+    adj_matrix = np.split(obs[node_limit * num_features:], node_limit)
+    edges = np.transpose(np.nonzero(adj_matrix))
+    GraphObserver.edges_times.append(time.time() - t0)
     return features, edges
 
   def _preprocess_agents(self, world):
     """ 
     Returns a list of tuples, consisting
     of an index and an agent object element.
+
+    The first element always represents the ego agent.
+    The remaining elements resemble other agents, up
+    to the limit defined by `self._agent_limit`,
+    sorted in ascending order with respect to the agents'
+    distance in the world to the ego agent.
     """
-    # make ego_agent the first element, sort others by id
-    # there should be a more elegant way to do this
     ego_agent = world.ego_agent
     agents = list(world.agents.values())
     agents.remove(ego_agent)
     agents = self._agents_sorted_by_distance(ego_agent, agents)
     agents.insert(0, ego_agent)
     return list(enumerate(agents))[:self._agent_limit]
-  
+
   def _agents_sorted_by_distance(self, ego_agent, agents):
     def distance(agent):
       return Distance(
@@ -184,8 +175,8 @@ class GraphObserver(StateObserver):
     
     # Update information with real data
     state = agent.state
-    res["x"] = state[int(StateDefinition.X_POSITION)] # maybe not needed
-    res["y"] = state[int(StateDefinition.Y_POSITION)] # maybe not needed
+    res["x"] = state[int(StateDefinition.X_POSITION)]
+    res["y"] = state[int(StateDefinition.Y_POSITION)]
     res["theta"] = state[int(StateDefinition.THETA_POSITION)]
     res["vel"] = state[int(StateDefinition.VEL_POSITION)]
 
@@ -316,7 +307,7 @@ class GraphObserver(StateObserver):
     return d
 
   def sample(self):
-    return self.observation_space.sample()
+    raise NotImplementedError
 
   @property
   def observation_space(self):

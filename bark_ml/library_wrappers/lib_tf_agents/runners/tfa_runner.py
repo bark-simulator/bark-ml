@@ -102,9 +102,9 @@ class TFARunner:
     tf.summary.scalar("mean_steps",
                       self._eval_metrics[1].result().numpy(),
                       step=global_iteration)
+    
     self._logger.info(
-      "The agent achieved on average {} reward and {} steps in \
-      {} episodes." \
+      "The agent achieved on average {} reward and {} steps in {} episodes." \
       .format(str(self._eval_metrics[0].result().numpy()),
               str(self._eval_metrics[1].result().numpy()),
               str(self._params["ML"]["TFARunner"]["EvaluationSteps", "", 20])))
