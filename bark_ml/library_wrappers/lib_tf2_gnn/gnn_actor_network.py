@@ -125,11 +125,16 @@ class GNNActorNetwork(network.Network):
     return self._output_tensor_spec
 
   def call(self, observations, step_type=(), network_state=(), training=False):
+    if len(observations.shape) == 1:
+      observations = tf.expand_dims(observations, axis=0)
+      
     batch_size, feature_len = observations.shape
+    
     t0 = time.time()
     output = self._gnn.batch_call(observations, training=training)
     self.gnn_call_times.append(time.time() - t0)
     output = tf.cast(output, tf.float32)
+
     # extract ego state (node 0)
     if len(output.shape) == 2 and output.shape[0] != 0:
       output = tf.reshape(output, [batch_size, -1, self._gnn_num_units])
