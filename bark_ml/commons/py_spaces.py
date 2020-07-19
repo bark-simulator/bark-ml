@@ -68,6 +68,10 @@ class BoundedContinuous(Space):
   def high(self):
     return self._high
 
+  @property
+  def n(self):
+    return self._n
+
   def __repr__(self):
       return "BoundedContinuous(%d)" % self._n
 
