@@ -87,7 +87,7 @@ class PyGNNActorTests(unittest.TestCase):
         self.actor_net = get_GNN_SAC_actor_net(self.num_scenarios, self.params, self.observer)
         #self.actor_net = get_SAC_actor_net(self.num_scenarios, self.params, self.observer)
         #self.actor_net = ConstantActorNet(constants=means)
-        #self.actor_net = RandomActorNet()
+        #self.actor_net = RandomActorNet(low=[0, -0.4], high=[0.1, 0.4])
 
         # Get supervised learner
         self.supervised_learner = Learner(self.actor_net, self.train_dataset, self.test_dataset, self.log_dir)

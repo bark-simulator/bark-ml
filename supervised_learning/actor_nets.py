@@ -19,14 +19,14 @@ from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, Beha
 from bark_ml.observers.graph_observer import GraphObserver
 
 class RandomActorNet:
-    def __init__(self):
-        pass
-        #self.shape = labels.shape
-        #print(labels.shape)
+    def __init__(self, low=-0.4, high=0.4):
+        self.low = low
+        self.high = high
+        
     def __call__(self, inputs, **args):
         #logging.info(inputs.shape)
         size = (inputs.shape[0], 2)
-        predictions = np.random.uniform(low=-0.4, high=0.4, size=size)
+        predictions = np.random.uniform(low=self.low, high=self.high, size=size)
         return tf.constant(predictions, dtype=tf.float32)
 
 class ConstantActorNet:
