@@ -43,12 +43,16 @@ def run_configuration(argv):
   params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = tfa_gnn_checkpoint_path
   params["ML"]["TFARunner"]["SummaryPath"] = tfa_gnn_summary_path
   params["ML"]["BehaviorSACAgent"]["DebugSummaries"] = True
-  #params["ML"]["BehaviorTFAAgents"]["NumCheckpointsToKeep"] = None
   params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 50
-  params["ML"]["BehaviorSACAgent"]["BatchSize"] = 64
+  params["ML"]["BehaviorSACAgent"]["BatchSize"] = 128
   params["ML"]["GraphObserver"]["AgentLimit"] = 8
-  params["ML"]["BehaviorGraphSACAgent"]["NumLayersGNN"] = 2
-  params["ML"]["BehaviorGraphSACAgent"]["NumUnitsGNN"] = 128
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["num_layers"] = 2
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["hidden_dim"] = 256
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["message_calculation_class"] = "rgcn"
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_mode"] = "gru"
+  params["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams"] = [512, 256, 256]
+  params["ML"]["BehaviorGraphSACAgent"]["CriticFcLayerParams"] = [512, 256, 256]
+
   params["World"]["remove_agents_out_of_map"] = False
 
     # viewer = MPViewer(

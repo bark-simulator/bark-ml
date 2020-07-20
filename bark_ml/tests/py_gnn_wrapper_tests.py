@@ -20,7 +20,9 @@ class PyGNNWrapperTests(unittest.TestCase):
     params["ML"]["TFARunner"]["InitialCollectionEpisodesPerStep"] = 8
     params["ML"]["TFARunner"]["CollectionEpisodesPerStep"] = 8
     params["ML"]["BehaviorSACAgent"]["BatchSize"] = 16
-    params["ML"]["BehaviorGraphSACAgent"]["NumLayersGNN"] = 6
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["num_layers"] = 3
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["hidden_dim"] = 64
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_every_num_layers"] = 2
 
     bp = ContinuousHighwayBlueprint(params,
                                     number_of_senarios=1,
@@ -65,16 +67,16 @@ class PyGNNWrapperTests(unittest.TestCase):
   #     else:
   #       trained_vars.append(b)
 
-  def _print_stats(self, call_times, iterations, name):
-    call_times = np.array(call_times) / iterations
-    calls = len(call_times)
-    call_duration = np.mean(call_times)
-    total = np.sum(call_times)
-    
-    val_str = f'{total:.4f} s ({calls} x {call_duration:.4f} s)'
-    print('{:.<40} {}'.format(name, val_str))
-
   def test_execution_time(self):
+    def _print_stats(self, call_times, iterations, name):
+      call_times = np.array(call_times) / iterations
+      calls = len(call_times)
+      call_duration = np.mean(call_times)
+      total = np.sum(call_times)
+      
+      val_str = f'{total:.4f} s ({calls} x {call_duration:.4f} s)'
+      print('{:.<40} {}'.format(name, val_str))
+
     agent, runner, observer = self._mock_setup()
 
     t = []
@@ -100,7 +102,11 @@ class PyGNNWrapperTests(unittest.TestCase):
     self._print_stats(observer.feature_times, iterations, "      Features")
     self._print_stats(observer.edges_times, iterations, "      Edges")
     self._print_stats(agent._agent._actor_network._gnn.gnn_call_times, iterations, "    tf2_gnn")
-    #self._print_stats(agent._agent._actor_network._gnn._gnn.layer_times, iterations, "      Layer call")
+    # self._print_stats(agent._agent._actor_network._gnn._gnn.dropout_times, iterations, "      Dropout")
+    # self._print_stats(agent._agent._actor_network._gnn._gnn.mp_times, iterations, "      MP")
+    # self._print_stats(agent._agent._actor_network._gnn._gnn.exchange_times, iterations, "      Exchange")
+    # self._print_stats(agent._agent._actor_network._gnn._gnn.norm_times, iterations, "      Norm")
+    # self._print_stats(agent._agent._actor_network._gnn._gnn.dense_times, iterations, "      Dense")
     
     critics = [
       ("Critic 1", agent._agent._critic_network_1),
