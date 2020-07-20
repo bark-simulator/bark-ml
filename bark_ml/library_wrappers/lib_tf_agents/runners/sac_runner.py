@@ -50,16 +50,18 @@ class SACRunner(TFARunner):
       self._collection_driver.run()
       experience, _ = next(iterator)
       
-      tf.summary.scalar("Episode Collection Duration", 
-                        time.time() - t0, 
-                        global_iteration)
+      with tf.name_scope("Durations"):
+        tf.summary.scalar("Episode Collection Duration", 
+                          time.time() - t0, 
+                          global_iteration)
 
       t0 = time.time()      
       self._agent._agent.train(experience)
       
-      tf.summary.scalar("Training Duration", 
-                        time.time() - t0, 
-                        global_iteration)
+      with tf.name_scope("Durations"):
+        tf.summary.scalar("Training Duration",
+                          time.time() - t0, 
+                          global_iteration)
       
       if global_iteration % self._evaluation_interval == 0:
         iterations = f'{global_iteration-self._evaluation_interval}-{global_iteration}'
@@ -69,9 +71,10 @@ class SACRunner(TFARunner):
           (avg. {iteration_duration:.3f}s / iteration).')
         t = time.time()
 
-        tf.summary.scalar("mean_step_duration",
-                      iteration_duration,
-                      step=global_iteration)
+        with tf.name_scope("Durations"):
+          tf.summary.scalar("mean_step_duration",
+                            iteration_duration,
+                            step=global_iteration)
 
         self.Evaluate()
         self._agent.Save()

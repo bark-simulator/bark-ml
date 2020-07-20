@@ -147,11 +147,12 @@ class GNNActorNetwork(network.Network):
       network_state=network_state,
       training=training)
       
-    outer_rank = nest_utils.get_outer_rank(observations, self.input_tensor_spec)
+    outer_rank = nest_utils.get_outer_rank(
+      observations, 
+      self.input_tensor_spec)
 
-    def call_projection_net(proj_net):
-      distribution, _ = proj_net(
-          output, outer_rank, training=training)
+    def call_projection_net(net):
+      distribution, _ = net(output, outer_rank, training=training)
       return distribution
 
     output_actions = tf.nest.map_structure(
