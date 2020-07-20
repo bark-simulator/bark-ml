@@ -40,14 +40,26 @@ class SACRunner(TFARunner):
     t = time.time()
 
     for i in range(0, self._number_of_collections):
+
       self._agent._training = True
       
       global_iteration = self._agent._agent._train_step_counter.numpy()
       tf.summary.experimental.set_step(global_iteration)
       
+      t0 = time.time()
       self._collection_driver.run()
       experience, _ = next(iterator)
+      
+      tf.summary.scalar("Episode Collection Duration", 
+                        time.time() - t0, 
+                        global_iteration)
+
+      t0 = time.time()      
       self._agent._agent.train(experience)
+      
+      tf.summary.scalar("Training Duration", 
+                        time.time() - t0, 
+                        global_iteration)
       
       if global_iteration % self._evaluation_interval == 0:
         iterations = f'{global_iteration-self._evaluation_interval}-{global_iteration}'
