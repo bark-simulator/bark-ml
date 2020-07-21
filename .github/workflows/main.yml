@@ -16,6 +16,8 @@ jobs:
         run: . ./bark_ml/python_wrapper/venv/bin/activate
       - name: Installing additional Python packages..
         run: pip install tf2_gnn networkx 
+      - name: Link to default config file..
+        run: ln -s default_config.py config.py
       - name: Running unit tests..
         run: bazel test :unit_tests
       - name: Running graph tests..
