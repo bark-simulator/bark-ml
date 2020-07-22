@@ -3,6 +3,9 @@ import os
 import time
 import tensorflow as tf
 import numpy as np
+import spektral
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.layers import Input, Dense
 
 from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint
@@ -66,9 +69,14 @@ class PyGNNWrapperTests(unittest.TestCase):
   #       constant_vars.append(b)
   #     else:
   #       trained_vars.append(b)
+    
+  #   print(f'trainable vars: {len(trained_vars)}')
+  #   for var in trained_vars:
+  #     print(var[0])
+
 
   def test_execution_time(self):
-    def _print_stats(self, call_times, iterations, name):
+    def _print_stats(call_times, iterations, name):
       call_times = np.array(call_times) / iterations
       calls = len(call_times)
       call_duration = np.mean(call_times)
@@ -95,13 +103,13 @@ class PyGNNWrapperTests(unittest.TestCase):
     execution_time = np.mean(t)
     print(f'\n###########\n')
 
-    self._print_stats(observer.observe_times, iterations, "Observe")
-    self._print_stats(agent._agent._actor_network.call_times, iterations, "Actor")
-    self._print_stats(agent._agent._actor_network.gnn_call_times, iterations, "  GNN")
-    self._print_stats(agent._agent._actor_network._gnn.graph_conversion_times, iterations, "    Graph Conversion")
-    self._print_stats(observer.feature_times, iterations, "      Features")
-    self._print_stats(observer.edges_times, iterations, "      Edges")
-    self._print_stats(agent._agent._actor_network._gnn.gnn_call_times, iterations, "    tf2_gnn")
+    _print_stats(observer.observe_times, iterations, "Observe")
+    _print_stats(agent._agent._actor_network.call_times, iterations, "Actor")
+    _print_stats(agent._agent._actor_network.gnn_call_times, iterations, "  GNN")
+    _print_stats(agent._agent._actor_network._gnn.graph_conversion_times, iterations, "    Graph Conversion")
+    _print_stats(observer.feature_times, iterations, "      Features")
+    _print_stats(observer.edges_times, iterations, "      Edges")
+    _print_stats(agent._agent._actor_network._gnn.gnn_call_times, iterations, "    tf2_gnn")
     # self._print_stats(agent._agent._actor_network._gnn._gnn.dropout_times, iterations, "      Dropout")
     # self._print_stats(agent._agent._actor_network._gnn._gnn.mp_times, iterations, "      MP")
     # self._print_stats(agent._agent._actor_network._gnn._gnn.exchange_times, iterations, "      Exchange")
@@ -116,10 +124,10 @@ class PyGNNWrapperTests(unittest.TestCase):
     ]
 
     for name, critic in critics:
-        self._print_stats(critic.call_times, iterations, name)
-        self._print_stats(critic.gnn_call_times, iterations, '  GNN')
-        self._print_stats(critic.encoder_call_times, iterations, '  Encoder')
-        self._print_stats(critic.joint_call_times, iterations, '  Joint')
+        _print_stats(critic.call_times, iterations, name)
+        _print_stats(critic.gnn_call_times, iterations, '  GNN')
+        _print_stats(critic.encoder_call_times, iterations, '  Encoder')
+        _print_stats(critic.joint_call_times, iterations, '  Joint')
 
     print(f'----------------------------------------------------------')
     print(f'Total execution time per train cycle: {execution_time:.2f} s')
@@ -128,6 +136,99 @@ class PyGNNWrapperTests(unittest.TestCase):
 
     self.assertLess(execution_time, 3.0)
 
+  def graph(self):
+    node_limit = 5
+    num_features = 5
+    num_nodes = 5
+
+    # 4 agents + 1 fill-up slot (node_limit = 5)
+    agents = [
+      np.full(num_features, 0.1),
+      np.full(num_features, 0.2),
+      np.full(num_features, 0.3),
+      np.full(num_features, 0.4),
+      np.full(num_features, 0.5)
+    ]
+
+    # the empty slot should not be returned
+    expected_nodes = agents[:-1]
+
+    # links are already bidirectional, so there
+    # are only zeros to the left of the diagonal
+    adjacency_list = [
+      [0, 1, 1, 1, 0], # 1 connects with 2, 3, 4
+      [0, 0, 1, 1, 0], # 2 connects with 3, 4
+      [0, 0, 0, 1, 0], # 3 connects with 4
+      [0, 0, 0, 0, 0], # 4 has no links
+      [0, 0, 0, 0, 0]  # empty slot -> all zeros
+    ]
+
+    # the edges encoded in the adjacency list above
+    expected_edges = [
+      [0, 1], [0, 2], [0, 3],
+      [1, 2], [1, 3],
+      [2, 3]
+    ]
+
+    observation = np.array([node_limit, num_nodes, num_features])
+    observation = np.append(observation, agents)
+    observation = np.append(observation, adjacency_list)
+    observation = observation.reshape(-1)
+    
+    self.assertEqual(observation.shape, (53,))
+
+    nodes, adj = GraphObserver.gnn_input(observation)
+    return nodes, adj
+    
+
+  def test_spektral(self):
+    from spektral.layers import EdgeConditionedConv, GlobalSumPool, GraphSageConv, GraphAttention
+    from spektral.utils import numpy_to_batch
+    from tensorflow.keras.layers import Flatten, Dense
+
+    # Parameters
+    N = 5       # Number of nodes in the graphs
+    F = 5       # Dimension of node features
+    S = 0       # Dimension of edge features
+    n_out = 128   # Dimension of the target
+    
+    nodes, adj = self.graph()
+    X1 = np.array(nodes)
+    A1 = np.array(adj)
+
+    nodes, adj = self.graph()
+    X2 = np.array(nodes)
+    A2 = np.array(adj)
+    
+    E1 = np.random.rand(N, N, S).astype('float32')
+    E2 = np.random.rand(N, N, S).astype('float32')
+
+    X = [X1, X2]
+    A = [A1, A2]
+    E = np.ones(shape=(1, 0, 0, 0))
+
+    X, A, E = numpy_to_batch(X, A, E)
+
+    X = tf.convert_to_tensor(X)
+    A = tf.convert_to_tensor(A)
+    E = tf.convert_to_tensor(E)
+    
+    L1 = EdgeConditionedConv(64, kernel_network=[16, 16], activation='tanh')
+    L2 = EdgeConditionedConv(64, kernel_network=[16, 16], activation='tanh')
+    L3 = EdgeConditionedConv(16, kernel_network=[16, 16], activation='tanh')
+    L4 = Dense(n_out, activation='tanh')
+
+    X = L1([X, A, E])
+    X = L2([X, A, E])
+    X = L3([X, A, E])
+
+    X = tf.reshape(X, [X.shape[0], -1])
+    X = L4(X)
+    
+    #print(X)
+
+
+      
 
 if __name__ == '__main__':
   unittest.main()

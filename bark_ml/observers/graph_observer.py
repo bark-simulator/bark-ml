@@ -116,9 +116,9 @@ class GraphObserver(StateObserver):
     
     t0 = time.time()
     adj_matrix = np.split(obs[node_limit * num_features:], node_limit)
-    edges = np.transpose(np.nonzero(adj_matrix))
-    GraphObserver.edges_times.append(time.time() - t0)
-    return features, edges
+    #edges = np.transpose(np.nonzero(adj_matrix))
+    #GraphObserver.edges_times.append(time.time() - t0)
+    return features, adj_matrix
 
   def _preprocess_agents(self, world):
     """ 
