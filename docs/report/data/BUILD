@@ -1,5 +1,5 @@
 filegroup(
     name = "data",
-    srcs = glob(["*"]),
+    srcs = glob(["*.yaml", "*.json"]),
     visibility = ["//visibility:public"],
 )

@@ -5,11 +5,8 @@
 import os
 import networkx as nx
 import numpy as np
-import matplotlib as mpl
-from absl import app
-from absl import flags
-import time, json, pickle
-from abc import ABC
+import time, pickle
+#from abc import ABC
 import logging
 
 # BARK imports
@@ -22,15 +19,11 @@ from bark.runtime.viewer.video_renderer import VideoRenderer
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
   ContinuousMergingBlueprint, ContinuousIntersectionBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-#from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, BehaviorPPOAgent, BehaviorGraphSACAgent
-#from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner
 from bark_ml.observers.graph_observer import GraphObserver
-#from bark_ml.library_wrappers.lib_tf2_gnn import GNNActorNetwork, GNNCriticNetwork
 
-class DataGenerator(ABC):
+class DataGenerator():
   """Data Generator class"""
-  def __init__(self, num_scenarios=3, dump_dir=None, render=False, params=ParameterServer(filename=\
-  			"examples/example_params/tfa_params.json")):
+  def __init__(self, num_scenarios=3, dump_dir=None, render=False, params=ParameterServer()):
     self.dump_dir = dump_dir
     self.num_scenarios = num_scenarios
 
@@ -75,9 +68,9 @@ class DataGenerator(ABC):
     for _ in range(0, self.num_scenarios):
       scenario, idx = self.bp._scenario_generation.get_next_scenario()
       #print("Scenario", idx)
-      part = int(self.num_scenarios/5)
+      part = max(1, int(self.num_scenarios/5))
       if idx%part == 0:
-      	logging.info("Running data_generation on scenario "+ str(idx)+ "/"+str(self.num_scenarios))
+      	logging.info("Running data_generation on scenario "+ str(idx+1)+ "/"+str(self.num_scenarios))
       data_scenario = self.run_scenario(scenario)
       #time.sleep(1)
       self.save_data(data_scenario)
