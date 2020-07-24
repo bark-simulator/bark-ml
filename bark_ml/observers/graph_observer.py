@@ -69,7 +69,7 @@ class GraphObserver(StateObserver):
     # second loop for edges necessary
     # -> otherwise order of graph_nodes is disrupted
     edges = []
-    edge_features = [] # final shape: (agent_limit, agent_limit, edge_feature_len)
+    edge_features = np.zeros((self._agent_limit, self._agent_limit, self.edge_feature_len))
 
     for index, agent in agents:
       # create edges to all visible agents
@@ -78,13 +78,9 @@ class GraphObserver(StateObserver):
         agents=agents, 
         radius=self._visibility_radius)
 
-      agent_edge_features = np.zeros((self.agent, self.edge_feature_len))
-
       for target_index, nearby_agent in nearby_agents:
         edges.append(set([index, target_index]))
-        agent_edge_features[target_index,:] = self._extract_edge_features(agent, nearby_agent))
-
-      edge_features.append(agent_edge_features)
+        edge_features[index, target_index, :] = self._extract_edge_features(agent, nearby_agent)
     
     # build adjacency matrix and convert to list
     adjacency_matrix = np.zeros((self._agent_limit, self._agent_limit))
@@ -93,7 +89,7 @@ class GraphObserver(StateObserver):
       adjacency_matrix[target, source] = 1
     
     adjacency_list = adjacency_matrix.reshape(-1)
-    edge_features = np.reshape(-1)
+    edge_features = np.reshape(edge_features, -1)
     obs.extend(adjacency_list)
     obs.extend(edge_features)
 
@@ -125,7 +121,7 @@ class GraphObserver(StateObserver):
     return np.array([d_x, d_y, d_vel, d_theta])
 
   @classmethod
-  def graph(cls, observation, sparse_links=False):
+  def graph(cls, observation, sparse_links=False, return_edge_features=False):
     node_limit = int(observation[0])
     num_nodes = int(observation[1])
     num_features = int(observation[2])
@@ -133,11 +129,20 @@ class GraphObserver(StateObserver):
     obs = observation[3:]
 
     features = np.split(obs[:num_nodes * num_features], num_nodes)
-    adjacency = np.split(obs[node_limit * num_features:], node_limit)
+
+    adj_start_idx = node_limit * num_features
+    adj_end_idx = adj_start_idx + node_limit ** 2
+    adjacency = np.split(obs[adj_start_idx: adj_end_idx], node_limit)
 
     if not sparse_links:
       adjacency = np.transpose(np.nonzero(adjacency))
-    
+
+    if return_edge_features:
+      # TODO: remove hard coded edge feature length
+      edge_features = obs[adj_end_idx:]
+      edge_features = np.reshape(edge_features, (node_limit, node_limit, 4))
+      return features, adjacency, edge_features
+
     return features, adjacency
 
   def _preprocess_agents(self, world):
@@ -193,7 +198,6 @@ class GraphObserver(StateObserver):
     for label in self.attribute_keys():
       res[label] = "inf"
     
-    # Update information with real data
     state = agent.state
     res["x"] = state[int(StateDefinition.X_POSITION)]
     res["y"] = state[int(StateDefinition.Y_POSITION)]
@@ -321,8 +325,8 @@ class GraphObserver(StateObserver):
       low=np.concatenate((
         np.zeros(3),
         np.full(self._agent_limit * self.feature_len, -1),
-        np.zeros(self._agent_limit ** 2))),
-        np.full(self._agent_limit * self._agent_limit * self.edge_feature_len, -1),
+        np.zeros(self._agent_limit ** 2),
+        np.zeros((self._agent_limit ** 2) * self.edge_feature_len))),
       high=np.concatenate((
         np.array([100, 100, 100]), 
         np.ones(self._len_state - 3)
@@ -330,9 +334,10 @@ class GraphObserver(StateObserver):
 
   @property
   def _len_state(self):
-    len_nodes = self._agent_limit * self.feature_len
+    len_node_features = self._agent_limit * self.feature_len
     len_adjacency = self._agent_limit ** 2
-    return len_nodes + len_adjacency + self.edge_feature_len
+    len_edge_features = len_adjacency * self.edge_feature_len
+    return 3 + len_node_features + len_adjacency + len_edge_features
 
   @classmethod
   def graph_from_observation(cls, observation):
@@ -386,7 +391,8 @@ class GraphObserver(StateObserver):
       obs.extend(list(attributes.values()))
 
     # fill empty spots (difference between existing and max agents) with -1
-    obs.extend(np.full((self._agent_limit - num_nodes) * self.feature_len, -1))
+    if num_nodes < self._agent_limit:
+      obs.extend(np.full((self._agent_limit - num_nodes) * self.feature_len, -1))
 
     # build adjacency matrix and convert to list
     adjacency_matrix = np.zeros((self._agent_limit, self._agent_limit))
