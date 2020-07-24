@@ -80,6 +80,7 @@ class GraphObserver(StateObserver):
     adjacency_matrix = np.zeros((self._agent_limit, self._agent_limit))
     for source, target in edges:
       adjacency_matrix[source, target] = 1
+      adjacency_matrix[target, source] = 1
     
     adjacency_list = adjacency_matrix.reshape(-1)
     obs.extend(adjacency_list)
@@ -118,6 +119,8 @@ class GraphObserver(StateObserver):
     adj_matrix = np.split(obs[node_limit * num_features:], node_limit)
     edges = np.transpose(np.nonzero(adj_matrix))
     GraphObserver.edges_times.append(time.time() - t0)
+
+    tf.print(f'adj: {adj_matrix}')
     return features, edges
 
   def _preprocess_agents(self, world):
