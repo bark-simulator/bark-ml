@@ -47,7 +47,7 @@ def run_configuration(argv):
   params["ML"]["BehaviorSACAgent"]["BatchSize"] = 128
   params["ML"]["GraphObserver"]["AgentLimit"] = 8
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["num_layers"] = 2
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["hidden_dim"] = 256
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["hidden_dim"] = 11
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["message_calculation_class"] = "ggnn"
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_mode"] = "gru"
   params["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams"] = [256, 256]
