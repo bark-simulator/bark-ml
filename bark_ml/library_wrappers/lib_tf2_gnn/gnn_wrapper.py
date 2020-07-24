@@ -26,7 +26,7 @@ class GNNWrapper(tf.keras.Model):
 
     self.graph_conversion_times = []
     self.gnn_call_times = []
-    self.use_spektral = False
+    self.use_spektral = True
     
     self._gnn = GNN(gnn_params)
     self.num_units = gnn_params["hidden_dim"]

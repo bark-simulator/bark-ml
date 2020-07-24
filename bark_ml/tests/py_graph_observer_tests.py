@@ -185,7 +185,7 @@ class PyGraphObserverTests(unittest.TestCase):
       eval_id=self.eval_id)
 
     graph = GraphObserver.graph_from_observation(observation)
-    features, edges = GraphObserver.gnn_input(observation)
+    features, edges = GraphObserver.graph(observation)
 
     graph_features = []
     for _, attributes in graph.nodes.data():
@@ -237,7 +237,7 @@ class PyGraphObserverTests(unittest.TestCase):
     
     self.assertEqual(observation.shape, (53,))
 
-    nodes, edges = GraphObserver.gnn_input(observation)
+    nodes, edges = GraphObserver.graph(observation)
     assert np.array_equal(nodes, expected_nodes)
     assert np.array_equal(edges, expected_edges)
 

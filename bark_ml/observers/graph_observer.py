@@ -73,8 +73,9 @@ class GraphObserver(StateObserver):
         agents=agents, 
         radius=self._visibility_radius)
 
-      for target_index, _ in nearby_agents:
+      for target_index, nearby_agent in nearby_agents:
         edges.append(set([index, target_index]))
+        self._extract_edge_features(agent, nearby_agent)
     
     # build adjacency matrix and convert to list
     adjacency_matrix = np.zeros((self._agent_limit, self._agent_limit))
@@ -95,12 +96,23 @@ class GraphObserver(StateObserver):
     if self._output_supervised_data == False:
       return obs
     else:
-      features,_ = GraphObserver.gnn_input(obs)
+      features,_ = GraphObserver.graph(obs)
       actions = self._generate_actions(features)
       return (obs, actions)
       
     self.observe_times.append(time.time() - t0)
     return obs
+
+  def _extract_edge_features(self, source_agent, target_agent):
+    source_features = self._extract_features(source_agent)
+    target_features = self._extract_features(target_agent)
+
+    d_x = source_features["x"] - target_features["x"]
+    d_y = source_features["y"] - target_features["y"]
+    d_vel = source_features["vel"] - target_features["vel"]
+    d_theta = source_features["theta"] - target_features["theta"]
+    return [d_x, d_y, d_vel, d_theta]
+
 
   @classmethod
   def graph(cls, observation, sparse_links=False):
@@ -154,7 +166,7 @@ class GraphObserver(StateObserver):
     other_agents = filter(lambda a: a[1].id != center_agent.id, agents)
     nearby_agents = []
 
-    for (index, agent) in other_agents:
+    for index, agent in other_agents:
       agent_pos = self._position(agent)
       distance = Distance(center_agent_pos, agent_pos)
 
@@ -194,22 +206,6 @@ class GraphObserver(StateObserver):
     goal_velocity = np.mean(agent.goal_definition.velocity_range)
     res["goal_vel"] = goal_velocity
 
-    # get information related to road
-    #agent_posi = self._position(agent)   
-    # Get all possible lane corridors
-    #agent_lane = agent.road_corridor.GetCurrentLaneCorridor(agent_posi)
-    #lane_corridors = agent.road_corridor.GetLeftRightLaneCorridor(agent_posi) # corridors left and right of agents' corridor, None if not existent
-    #lanes = [lane_corridors[0], agent_lane, lane_corridors[1]]
-    #lanes = list(filter(None, lanes)) #filter out non existing lanes (right or left of agent)
-
-    # Calculate Distance to left and right road bounds
-    # road_bound_left = lanes[0].left_boundary
-    # d_ditch_left = Distance(road_bound_left, agent_posi)
-    # road_bound_right = lanes[-1].right_boundary
-    # d_ditch_right = Distance(road_bound_right, agent_posi)
-    #res["d_ditch_left"] = d_ditch_left
-    #res["d_ditch_right"] = d_ditch_right
-
     if self._normalize_observations:
       n = self.normalization_data
 
@@ -222,8 +218,6 @@ class GraphObserver(StateObserver):
       res["goal_d"] = self._normalize_value(res["goal_d"], n["distance"])
       res["goal_theta"] = self._normalize_value(res["goal_theta"], n["theta"])
       res["goal_vel"] = self._normalize_value(res["goal_vel"], n["vel"])
-      #res["d_ditch_left"] = self._normalize_value(res["d_ditch_left"], n["road"])
-      #res["d_ditch_right"] = self._normalize_value(res["d_ditch_right"], n["road"])
     
     #####################################################
     #   If you change the number/names of features,     #
@@ -298,7 +292,7 @@ class GraphObserver(StateObserver):
     d['y'] = self._world_y_range
     d['theta'] = self._ThetaRange
     d['vel'] = self._VelocityRange
-    d['distance'] = [0, max_dist]
+    d['distance'] = [-max_dist / 2, max_dist / 2]
     d['dx'] = [-x_range, x_range]
     d['dy'] = [-y_range, y_range]
     d['road'] = [0, 15] # may need adjustment for if 3 lanes are broader than 15 m
