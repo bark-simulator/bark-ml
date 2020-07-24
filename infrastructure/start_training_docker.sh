@@ -18,7 +18,6 @@ then
     prepend_command=$prepend_command"timeout $timeout "
 fi
 
-read 
 docker run -it --gpus all \
 -v /tmp/.X11-unix:/tmp/.X11-unix \
 -v ~/.Xauthority:/home/root/.Xauthority \
