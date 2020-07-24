@@ -1,7 +1,7 @@
 #!/bin/zsh
 env_name=$1
 
-BASE_BRANCH="feature/activate_nitro"
+BASE_BRANCH="develop"
 MARCO_CHECKPOINT_PATH="/Users/marco.oliva/Development/bark-ml_logs/checkpoints"
 MARCO_SUMMARY_PATH="/Users/marco.oliva/Development/bark-ml_logs/summaries"
 DOCKER_CHECKPOINT_PATH="/bark/checkpoints"
@@ -24,6 +24,7 @@ bash utils/install.sh;
 source utils/dev_into.sh;
 pip install networkx tf2-gnn;
 '
+cp default_config.py config.py
 
 #sed "s;$MARCO_CHECKPOINT_PATH;$DOCKER_CHECKPOINT_PATH;g" $FILE_WITH_PATHS_TO_REPLACE > $FILE_WITH_PATHS_TO_REPLACE
 #sed "s;$MARCO_SUMMARY_PATH;$DOCKER_SUMMARY_PATH;g" $FILE_WITH_PATHS_TO_REPLACE > $FILE_WITH_PATHS_TO_REPLACE
