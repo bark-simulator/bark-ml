@@ -120,7 +120,6 @@ class GraphObserver(StateObserver):
     edges = np.transpose(np.nonzero(adj_matrix))
     GraphObserver.edges_times.append(time.time() - t0)
 
-    tf.print(f'adj: {adj_matrix}')
     return features, edges
 
   def _preprocess_agents(self, world):
