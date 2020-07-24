@@ -82,13 +82,13 @@ class GNNWrapper(tf.keras.Model):
     t0 = time.time()
     num_graphs = len(observations)
 
-    X, A = [], []
-    E = np.ones(shape=(num_graphs, 0, 0, 0))
+    X, A, E = [], [], []
     
     for i, sample in enumerate(observations):
-      n, a = GraphObserver.graph(sample, sparse_links=True)
+      n, a, e = GraphObserver.graph(sample, sparse_links=True, return_edge_features=True)
       X.append(np.array(n))
       A.append(np.array(a))
+      E.append(np.array(e))
 
     X, A, E = numpy_to_batch(X, A, E)
     X = tf.convert_to_tensor(X, dtype=tf.float32)

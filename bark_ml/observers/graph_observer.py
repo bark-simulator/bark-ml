@@ -99,7 +99,7 @@ class GraphObserver(StateObserver):
     obs = tf.convert_to_tensor(
       obs, 
       dtype=tf.float32, 
-      name='observation_v2')
+      name='observation')
     if self._output_supervised_data == False:
       return obs
     else:
