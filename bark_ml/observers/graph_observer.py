@@ -102,23 +102,20 @@ class GraphObserver(StateObserver):
     return obs
 
   @classmethod
-  def gnn_input(cls, observation):
+  def graph(cls, observation, sparse_links=False):
     node_limit = int(observation[0])
     num_nodes = int(observation[1])
     num_features = int(observation[2])
 
     obs = observation[3:]
 
-    # features
-    t0 = time.time()
     features = np.split(obs[:num_nodes * num_features], num_nodes)
-    GraphObserver.feature_times.append(time.time() - t0)
+    adjacency = np.split(obs[node_limit * num_features:], node_limit)
+
+    if not sparse_links:
+      adjacency = np.transpose(np.nonzero(adjacency))
     
-    t0 = time.time()
-    adj_matrix = np.split(obs[node_limit * num_features:], node_limit)
-    #edges = np.transpose(np.nonzero(adj_matrix))
-    #GraphObserver.edges_times.append(time.time() - t0)
-    return features, adj_matrix
+    return features, adjacency
 
   def _preprocess_agents(self, world):
     """ 

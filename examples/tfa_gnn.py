@@ -47,11 +47,11 @@ def run_configuration(argv):
   params["ML"]["BehaviorSACAgent"]["BatchSize"] = 128
   params["ML"]["GraphObserver"]["AgentLimit"] = 8
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["num_layers"] = 2
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["hidden_dim"] = 256
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["hidden_dim"] = 128
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["message_calculation_class"] = "rgcn"
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_mode"] = "gru"
-  params["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams"] = [512, 256, 256]
-  params["ML"]["BehaviorGraphSACAgent"]["CriticFcLayerParams"] = [512, 256, 256]
+  params["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams"] = [256, 128]
+  params["ML"]["BehaviorGraphSACAgent"]["CriticFcLayerParams"] = [256, 128]
 
   params["World"]["remove_agents_out_of_map"] = False
 

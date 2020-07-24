@@ -4,9 +4,8 @@ import tensorflow as tf
 from tf2_gnn.layers import GNN, GNNInput
 from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.observers.graph_observer import GraphObserver
-from spektral.layers import GraphSageConv
 from tensorflow.keras.layers import Dense
-from spektral.layers import EdgeConditionedConv, GlobalSumPool, GraphSageConv, GraphAttention
+from spektral.layers import EdgeConditionedConv, GlobalAttnSumPool, GraphAttention
 from spektral.utils import numpy_to_batch
 
 
@@ -23,65 +22,71 @@ class GNNWrapper(tf.keras.Model):
     
     if isinstance(params, ParameterServer):
       params = params.ConvertToDict()
-    
     gnn_params.update(params)
+
+    self.graph_conversion_times = []
+    self.gnn_call_times = []
+    self.use_spektral = False
     
     self._gnn = GNN(gnn_params)
     self.num_units = gnn_params["hidden_dim"]
-    self.graph_conversion_times = []
-    self.gnn_call_times = []
 
-    self._conv_layers = [
-      GraphAttention(channels=16),
-      GraphAttention(channels=16)
-    ]
-
-    self._dense_layers = [
-      Dense(self.num_units, activation='tanh')
-    ]
-
-  # def call(self, observations, training=False):
-  #   t0 = time.time()
-  #   features, edges = [], []
-  #   node_to_graph_map = []
-  #   num_graphs = tf.constant(len(observations))
-
-  #   edge_index_offset = 0
-  #   for i, sample in enumerate(observations):
-  #     f, e = GraphObserver.gnn_input(sample)
-  #     features.extend(f)
-  #     num_nodes = len(f)
-  #     e = np.asarray(e) + edge_index_offset
-  #     edges.extend(e)
-  #     node_to_graph_map.extend(np.full(num_nodes, i))
-  #     edge_index_offset += num_nodes
-
-  #   gnn_input = GNNInput(
-  #     node_features=tf.convert_to_tensor(features),
-  #     adjacency_lists=(
-  #       tf.convert_to_tensor(edges, dtype=tf.int32),
-  #     ),
-  #     node_to_graph_map=tf.convert_to_tensor(node_to_graph_map),
-  #     num_graphs=num_graphs,
-  #   )
-
-  #   self.graph_conversion_times.append(time.time() - t0)
-
-  #   t0 = time.time()
-  #   output = self._gnn(gnn_input, training=training)
-  #   self.gnn_call_times.append(time.time() - t0)
-  #   return output
+    self._conv1 = GraphAttention(128)
+    self._conv2 = GraphAttention(128)
+    self._pool1 = GlobalAttnSumPool()
+    self._dense1 = Dense(self.num_units, activation='tanh')
 
   def call(self, observations, training=False):
     t0 = time.time()
+    
+    if self.use_spektral:
+      return self.call_spektral(observations, training)
+    else:
+      return self.call_tf2_gnn(observations, training)
+    
+    self.gnn_call_times.append(time.time() - t0)
+
+  def call_tf2_gnn(self, observations, training=False):
+    t0 = time.time()
+    features, edges = [], []
+    node_to_graph_map = []
+    num_graphs = tf.constant(len(observations))
+
+    edge_index_offset = 0
+    for i, sample in enumerate(observations):
+      f, e = GraphObserver.graph(sample)
+      features.extend(f)
+      num_nodes = len(f)
+      e = np.asarray(e) + edge_index_offset
+      edges.extend(e)
+      node_to_graph_map.extend(np.full(num_nodes, i))
+      edge_index_offset += num_nodes
+
+    gnn_input = GNNInput(
+      node_features=tf.convert_to_tensor(features),
+      adjacency_lists=(
+        tf.convert_to_tensor(edges, dtype=tf.int32),
+      ),
+      node_to_graph_map=tf.convert_to_tensor(node_to_graph_map),
+      num_graphs=num_graphs,
+    )
+
+    self.graph_conversion_times.append(time.time() - t0)
+
+    t0 = time.time()
+    output = self._gnn(gnn_input, training=training)
+    self.gnn_call_times.append(time.time() - t0)
+    return output
+
+  def call_spektral(self, observations, training=False):
+    t0 = time.time()
     num_graphs = len(observations)
 
-    X = []
-    A = []
+    X, A = [], []
     E = np.ones(shape=(num_graphs, 0, 0, 0))
     
     for i, sample in enumerate(observations):
-      n, a = GraphObserver.gnn_input(sample)
+      n, a = GraphObserver.graph(sample, sparse_links=True)
       X.append(np.array(n))
       A.append(np.array(a))
 
@@ -89,18 +94,17 @@ class GNNWrapper(tf.keras.Model):
     X = tf.convert_to_tensor(X, dtype=tf.float32)
     A = tf.convert_to_tensor(A, dtype=tf.float32)
     E = tf.convert_to_tensor(E, dtype=tf.float32)
+    
     self.graph_conversion_times.append(time.time() - t0)
 
     t0 = time.time()
-    for layer in self._conv_layers:
-      X = layer([X, A])
-    self.gnn_call_times.append(time.time() - t0)
 
-    X = tf.reshape(X, [X.shape[0], -1])
-
-    for layer in self._dense_layers:
-      X = layer(X)
+    X = self._conv1([X, A, E])
+    X = self._conv2([X, A, E])
+    X = self._pool1(X)
+    X = self._dense1(X)
     
+    self.gnn_call_times.append(time.time() - t0)
     return X
 
   def batch_call(self, graph, training=False):

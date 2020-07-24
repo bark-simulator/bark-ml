@@ -83,7 +83,7 @@ class PyGNNWrapperTests(unittest.TestCase):
       total = np.sum(call_times)
       
       val_str = f'{total:.4f} s ({calls} x {call_duration:.4f} s)'
-      print('{:.<40} {}'.format(name, val_str))
+      print('{:.<20} {}'.format(name, val_str))
 
     agent, runner, observer = self._mock_setup()
 
@@ -105,16 +105,9 @@ class PyGNNWrapperTests(unittest.TestCase):
 
     _print_stats(observer.observe_times, iterations, "Observe")
     _print_stats(agent._agent._actor_network.call_times, iterations, "Actor")
-    _print_stats(agent._agent._actor_network.gnn_call_times, iterations, "  GNN")
-    _print_stats(agent._agent._actor_network._gnn.graph_conversion_times, iterations, "    Graph Conversion")
-    _print_stats(observer.feature_times, iterations, "      Features")
-    _print_stats(observer.edges_times, iterations, "      Edges")
-    _print_stats(agent._agent._actor_network._gnn.gnn_call_times, iterations, "    tf2_gnn")
-    # self._print_stats(agent._agent._actor_network._gnn._gnn.dropout_times, iterations, "      Dropout")
-    # self._print_stats(agent._agent._actor_network._gnn._gnn.mp_times, iterations, "      MP")
-    # self._print_stats(agent._agent._actor_network._gnn._gnn.exchange_times, iterations, "      Exchange")
-    # self._print_stats(agent._agent._actor_network._gnn._gnn.norm_times, iterations, "      Norm")
-    # self._print_stats(agent._agent._actor_network._gnn._gnn.dense_times, iterations, "      Dense")
+    _print_stats(agent._agent._actor_network.gnn_call_times, iterations, "  GNNWrapper")
+    _print_stats(agent._agent._actor_network._gnn.graph_conversion_times, iterations, "    Data Prep")
+    _print_stats(agent._agent._actor_network._gnn.gnn_call_times, iterations, "    GNN lib")
     
     critics = [
       ("Critic 1", agent._agent._critic_network_1),
@@ -136,7 +129,7 @@ class PyGNNWrapperTests(unittest.TestCase):
 
     self.assertLess(execution_time, 3.0)
 
-  def graph(self):
+  def graph(self, sparse_links=True):
     node_limit = 5
     num_features = 5
     num_nodes = 5
@@ -177,12 +170,12 @@ class PyGNNWrapperTests(unittest.TestCase):
     
     self.assertEqual(observation.shape, (53,))
 
-    nodes, adj = GraphObserver.gnn_input(observation)
+    nodes, adj = GraphObserver.graph(observation, sparse_links=True)
     return nodes, adj
     
 
   def test_spektral(self):
-    from spektral.layers import EdgeConditionedConv, GlobalSumPool, GraphSageConv, GraphAttention
+    from spektral.layers import EdgeConditionedConv, GlobalAttnSumPool, GraphAttention
     from spektral.utils import numpy_to_batch
     from tensorflow.keras.layers import Flatten, Dense
 
@@ -192,11 +185,11 @@ class PyGNNWrapperTests(unittest.TestCase):
     S = 0       # Dimension of edge features
     n_out = 128   # Dimension of the target
     
-    nodes, adj = self.graph()
+    nodes, adj = self.graph(sparse_links=True)
     X1 = np.array(nodes)
     A1 = np.array(adj)
 
-    nodes, adj = self.graph()
+    nodes, adj = self.graph(sparse_links=True)
     X2 = np.array(nodes)
     A2 = np.array(adj)
     
@@ -213,19 +206,24 @@ class PyGNNWrapperTests(unittest.TestCase):
     A = tf.convert_to_tensor(A)
     E = tf.convert_to_tensor(E)
     
-    L1 = EdgeConditionedConv(64, kernel_network=[16, 16], activation='tanh')
-    L2 = EdgeConditionedConv(64, kernel_network=[16, 16], activation='tanh')
-    L3 = EdgeConditionedConv(16, kernel_network=[16, 16], activation='tanh')
-    L4 = Dense(n_out, activation='tanh')
+    # L1 = EdgeConditionedConv(64, kernel_network=[16, 16], activation='tanh')
+    # L2 = EdgeConditionedConv(64, kernel_network=[16, 16], activation='tanh')
+    # L3 = EdgeConditionedConv(16, kernel_network=[16, 16], activation='tanh')
+    # L4 = GlobalAttnSumPool()
+    # L5 = Dense(n_out, activation='tanh')
 
-    X = L1([X, A, E])
-    X = L2([X, A, E])
-    X = L3([X, A, E])
+    X = GraphAttention(16)([X, A, E])
+    X = GraphAttention(16)([X, A, E])
+    X = GlobalAttnSumPool()(X)
+    X = Dense(128, activation='tanh')(X)
 
-    X = tf.reshape(X, [X.shape[0], -1])
-    X = L4(X)
+    # X = L1([X, A, E])
+    # X = L2([X, A, E])
+    # X = L3([X, A, E])
+    # X = L4(X)
+    # X = L5(X)
     
-    #print(X)
+    print(X.shape)
 
 
       
