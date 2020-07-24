@@ -80,6 +80,7 @@ class GraphObserver(StateObserver):
     adjacency_matrix = np.zeros((self._agent_limit, self._agent_limit))
     for source, target in edges:
       adjacency_matrix[source, target] = 1
+      adjacency_matrix[target, source] = 1
     
     adjacency_list = adjacency_matrix.reshape(-1)
     obs.extend(adjacency_list)
