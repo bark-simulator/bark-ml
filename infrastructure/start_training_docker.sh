@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -x
 
 while [[ "$#" -gt 0 ]]
 do
@@ -31,6 +32,7 @@ source utils/dev_into.sh;
 pip install networkx tf2-gnn;
 while true;
         do
+        echo '"$prepend_command "' bazel run --jobs 12 //examples:tfa_gnn -- --mode=train;
         '"$prepend_command "' bazel run --jobs 12 //examples:tfa_gnn -- --mode=train;
         sleep 0.1;
 done
