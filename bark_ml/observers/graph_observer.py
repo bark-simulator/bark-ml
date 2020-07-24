@@ -33,6 +33,9 @@ class GraphObserver(StateObserver):
     # the number of features of a node in the graph
     self.feature_len = len(GraphObserver.attribute_keys())
 
+    # the number of features of an edge between two nodes
+    self.edge_feature_len = 4
+
     # the maximum number of agents that can be observed
     self._agent_limit = \
       params["ML"]["GraphObserver"]["AgentLimit", "", 12]
@@ -45,8 +48,8 @@ class GraphObserver(StateObserver):
 
   @classmethod
   def attribute_keys(cls):
-    return ["x", "y", "theta", "vel", "goal_x", "goal_y", "goal_dx", "goal_dy", "goal_theta", "goal_d",
-            "goal_vel"] #, "d_ditch_left", "d_ditch_right"]
+    return ["x", "y", "theta", "vel", "goal_x", "goal_y", "goal_dx", 
+            "goal_dy", "goal_theta", "goal_d", "goal_vel"]
 
   def Observe(self, world):
     """see base class"""
@@ -63,9 +66,11 @@ class GraphObserver(StateObserver):
     obs.extend(np.full((self._agent_limit - num_agents) * self.feature_len, -1))
 
     # edges
-    # Second loop for edges necessary
+    # second loop for edges necessary
     # -> otherwise order of graph_nodes is disrupted
     edges = []
+    edge_features = [] # final shape: (agent_limit, agent_limit, edge_feature_len)
+
     for index, agent in agents:
       # create edges to all visible agents
       nearby_agents = self._nearby_agents(
@@ -73,9 +78,13 @@ class GraphObserver(StateObserver):
         agents=agents, 
         radius=self._visibility_radius)
 
+      agent_edge_features = np.zeros((self.agent, self.edge_feature_len))
+
       for target_index, nearby_agent in nearby_agents:
         edges.append(set([index, target_index]))
-        self._extract_edge_features(agent, nearby_agent)
+        agent_edge_features[target_index,:] = self._extract_edge_features(agent, nearby_agent))
+
+      edge_features.append(agent_edge_features)
     
     # build adjacency matrix and convert to list
     adjacency_matrix = np.zeros((self._agent_limit, self._agent_limit))
@@ -84,7 +93,9 @@ class GraphObserver(StateObserver):
       adjacency_matrix[target, source] = 1
     
     adjacency_list = adjacency_matrix.reshape(-1)
+    edge_features = np.reshape(-1)
     obs.extend(adjacency_list)
+    obs.extend(edge_features)
 
     assert len(obs) == self._len_state, f'Observation \
       has invalid length ({len(obs)}, expected: {self._len_state})'
@@ -111,8 +122,7 @@ class GraphObserver(StateObserver):
     d_y = source_features["y"] - target_features["y"]
     d_vel = source_features["vel"] - target_features["vel"]
     d_theta = source_features["theta"] - target_features["theta"]
-    return [d_x, d_y, d_vel, d_theta]
-
+    return np.array([d_x, d_y, d_vel, d_theta])
 
   @classmethod
   def graph(cls, observation, sparse_links=False):
@@ -305,12 +315,14 @@ class GraphObserver(StateObserver):
   def observation_space(self):
     #  0 ... 100 for the indices of num_agents and num_features
     # -1 ... 1   for all agent attributes
-    #  0 ... 1   for 1 for the adjacency vector
+    #  0 ... 1   for the adjacency list
+    # -1 ... 1   for the edge attributes
     return spaces.Box(
       low=np.concatenate((
         np.zeros(3),
         np.full(self._agent_limit * self.feature_len, -1),
         np.zeros(self._agent_limit ** 2))),
+        np.full(self._agent_limit * self._agent_limit * self.edge_feature_len, -1),
       high=np.concatenate((
         np.array([100, 100, 100]), 
         np.ones(self._len_state - 3)
@@ -318,7 +330,9 @@ class GraphObserver(StateObserver):
 
   @property
   def _len_state(self):
-    return 3 + (self._agent_limit * self.feature_len) + (self._agent_limit ** 2)
+    len_nodes = self._agent_limit * self.feature_len
+    len_adjacency = self._agent_limit ** 2
+    return len_nodes + len_adjacency + self.edge_feature_len
 
   @classmethod
   def graph_from_observation(cls, observation):
