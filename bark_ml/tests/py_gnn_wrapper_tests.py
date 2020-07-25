@@ -38,41 +38,60 @@ class PyGNNWrapperTests(unittest.TestCase):
     runner = SACRunner(params=params, environment=env, agent=agent)
     return agent, runner, observer
   
-  # def test_that_all_variables_are_training(self):
-  #   """
-  #   Verifies that all variables change during training.
-  #   Trains two iterations, captures the value of the variables
-  #   after both iterations and compares them to make sure that
-  #   in each layer, at least one value changes.
-  #   """
-  #   agent, runner, observer = self._mock_setup()
+  def test_that_all_variables_are_training(self):
+    """
+    Verifies that all variables change during training.
+    Trains two iterations, captures the value of the variables
+    after both iterations and compares them to make sure that
+    in each layer, at least one value changes.
+    """
+    agent, runner, observer = self._mock_setup()
 
-  #   iterator = iter(agent._dataset)
-  #   trainable_variables = []
+    iterator = iter(agent._dataset)
+    trainable_variables = []
 
-  #   for i in range(4):
-  #     agent._training = True
-  #     runner._collection_driver.run()
-  #     experience, _ = next(iterator)
-  #     agent._agent.train(experience)
+    for i in range(4):
+      agent._training = True
+      runner._collection_driver.run()
+      experience, _ = next(iterator)
+      agent._agent.train(experience)
 
-  #     vals = [(val.name, np.copy(val.numpy())) for val in agent._agent.trainable_variables]
-  #     trainable_variables.append(vals)
+      v = agent._agent.trainable_variables
+      shapes = [np.product(p.shape.as_list()) for p in v]
+      
+      v = agent._agent._actor_network._gnn.trainable_variables
+      gnn_shapes = [np.product(p.shape.as_list()) for p in v]
 
-  #   before = trainable_variables[0]
-  #   after = trainable_variables[-1]
+      v = agent._agent._actor_network.trainable_variables
+      actor_shapes = [np.product(p.shape.as_list()) for p in v]
 
-  #   constant_vars = []
-  #   trained_vars = []
-  #   for b, a in zip(before, after):
-  #     if (b[1] == a[1]).all():
-  #       constant_vars.append(b)
-  #     else:
-  #       trained_vars.append(b)
+      v = agent._agent._critic_network_1.trainable_variables
+      critic_shapes = [np.product(p.shape.as_list()) for p in v]
+      break
+
+      vals = [(val.name, np.copy(val.numpy())) for val in v]
+      trainable_variables.append(vals)
+
+    print(f'critic params: {np.sum(critic_shapes)}')
+    print(f'actor params: {np.sum(actor_shapes)}')
+    print(f'actor gnn params: {np.sum(gnn_shapes)}')
+    print(f'Total parameters: {np.sum(shapes)}')
+    # return  
+
+    # before = trainable_variables[0]
+    # after = trainable_variables[-1]
+
+    # constant_vars = []
+    # trained_vars = []
+    # for b, a in zip(before, after):
+    #   if (b[1] == a[1]).all():
+    #     constant_vars.append(b)
+    #   else:
+    #     trained_vars.append(b)
     
-  #   print(f'trainable vars: {len(trained_vars)}')
-  #   for var in trained_vars:
-  #     print(var[0])
+    # print(f'trainable vars: {len(trained_vars)}')
+    # for var in trained_vars:
+    #   print(var[1].shape)
 
 
   def test_execution_time(self):

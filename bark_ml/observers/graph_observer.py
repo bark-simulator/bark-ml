@@ -48,8 +48,8 @@ class GraphObserver(StateObserver):
 
   @classmethod
   def attribute_keys(cls):
-    return ["x", "y", "theta", "vel", "goal_x", "goal_y", "goal_dx", 
-            "goal_dy", "goal_theta", "goal_d", "goal_vel"]
+    return ["x", "y", "theta", "vel"]
+    #, "goal_x", "goal_y", "goal_dx", "goal_dy", "goal_theta", "goal_d", "goal_vel"]
 
   def Observe(self, world):
     """see base class"""
@@ -63,7 +63,7 @@ class GraphObserver(StateObserver):
       obs.extend(list(self._extract_features(agent).values()))
 
     # fill empty spots (difference between existing and max agents) with -1
-    obs.extend(np.full((self._agent_limit - num_agents) * self.feature_len, -1))
+    obs.extend(np.full((max(0, self._agent_limit - num_agents)) * self.feature_len, -1))
 
     # edges
     # second loop for edges necessary
@@ -204,34 +204,34 @@ class GraphObserver(StateObserver):
     res["theta"] = state[int(StateDefinition.THETA_POSITION)]
     res["vel"] = state[int(StateDefinition.VEL_POSITION)]
 
-    # get information related to goal
-    goal_center = agent.goal_definition.goal_shape.center[0:2]
-    res["goal_x"] = goal_center[0] # goal position in x
-    res["goal_y"] = goal_center[1] # goal position in y
-    goal_dx = goal_center[0] - res["x"] # distance to goal in x coord
-    res["goal_dx"] = goal_dx
-    goal_dy = goal_center[1] - res["y"] # distance to goal in y coord
-    res["goal_dy"] = goal_dy
-    goal_theta = np.arctan2(goal_dy, goal_dx) # theta for straight line to goal
-    res["goal_theta"] = goal_theta
-    goal_d = np.sqrt(goal_dx**2 + goal_dy**2) # distance to goal
-    res["goal_d"] = goal_d
+    # # get information related to goal
+    # goal_center = agent.goal_definition.goal_shape.center[0:2]
+    # res["goal_x"] = goal_center[0] # goal position in x
+    # res["goal_y"] = goal_center[1] # goal position in y
+    # goal_dx = goal_center[0] - res["x"] # distance to goal in x coord
+    # res["goal_dx"] = goal_dx
+    # goal_dy = goal_center[1] - res["y"] # distance to goal in y coord
+    # res["goal_dy"] = goal_dy
+    # goal_theta = np.arctan2(goal_dy, goal_dx) # theta for straight line to goal
+    # res["goal_theta"] = goal_theta
+    # goal_d = np.sqrt(goal_dx**2 + goal_dy**2) # distance to goal
+    # res["goal_d"] = goal_d
     
-    goal_velocity = np.mean(agent.goal_definition.velocity_range)
-    res["goal_vel"] = goal_velocity
+    # goal_velocity = np.mean(agent.goal_definition.velocity_range)
+    # res["goal_vel"] = goal_velocity
 
     if self._normalize_observations:
       n = self.normalization_data
 
       for k in ["x", "y", "theta", "vel"]:
         res[k] = self._normalize_value(res[k], n[k])
-      res["goal_x"] = self._normalize_value(res["goal_x"], n["x"])
-      res["goal_y"] = self._normalize_value(res["goal_y"], n["y"])
-      res["goal_dx"] = self._normalize_value(res["goal_dx"], n["dx"])
-      res["goal_dy"] = self._normalize_value(res["goal_dy"], n["dy"])
-      res["goal_d"] = self._normalize_value(res["goal_d"], n["distance"])
-      res["goal_theta"] = self._normalize_value(res["goal_theta"], n["theta"])
-      res["goal_vel"] = self._normalize_value(res["goal_vel"], n["vel"])
+      # res["goal_x"] = self._normalize_value(res["goal_x"], n["x"])
+      # res["goal_y"] = self._normalize_value(res["goal_y"], n["y"])
+      # res["goal_dx"] = self._normalize_value(res["goal_dx"], n["dx"])
+      # res["goal_dy"] = self._normalize_value(res["goal_dy"], n["dy"])
+      # res["goal_d"] = self._normalize_value(res["goal_d"], n["distance"])
+      # res["goal_theta"] = self._normalize_value(res["goal_theta"], n["theta"])
+      # res["goal_vel"] = self._normalize_value(res["goal_vel"], n["vel"])
     
     #####################################################
     #   If you change the number/names of features,     #

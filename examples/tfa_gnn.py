@@ -39,17 +39,17 @@ def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/tfa_params.json")
   #params = ParameterServer()
   # NOTE: Modify these paths in order to save the checkpoints and summaries
-  from config import tfa_gnn_checkpoint_path, tfa_gnn_summary_path
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = tfa_gnn_checkpoint_path
-  params["ML"]["TFARunner"]["SummaryPath"] = tfa_gnn_summary_path
+  #from config import tfa_gnn_checkpoint_path, tfa_gnn_summary_path
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = '/Users/marco.oliva/Development/bark-ml_logs/summaries/test'
+  params["ML"]["TFARunner"]["SummaryPath"] = '/Users/marco.oliva/Development/bark-ml_logs/summaries/run_2'
   params["ML"]["BehaviorSACAgent"]["DebugSummaries"] = True
   params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 100
   params["ML"]["BehaviorSACAgent"]["BatchSize"] = 128
-  params["ML"]["GraphObserver"]["AgentLimit"] = 8
+  params["ML"]["GraphObserver"]["AgentLimit"] = 4
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["num_layers"] = 2
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["hidden_dim"] = 128
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["message_calculation_class"] = "rgcn"
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_mode"] = "gru"
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["message_calculation_class"] = "gnn_edge_mlp"
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_mode"] = "mean"
   params["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams"] = [256, 128]
   params["ML"]["BehaviorGraphSACAgent"]["CriticFcLayerParams"] = [256, 128]
 
@@ -73,11 +73,11 @@ def run_configuration(argv):
                                   number_of_senarios=2500,
                                   random_seed=0)
 
-  observer = GraphObserver(params=params)
+  #observer = GraphObserver(params=params)
   
   env = SingleAgentRuntime(
     blueprint=bp,
-    observer=observer,
+   # observer=observer,
     render=False)
 
   sac_agent = BehaviorGraphSACAgent(environment=env,
