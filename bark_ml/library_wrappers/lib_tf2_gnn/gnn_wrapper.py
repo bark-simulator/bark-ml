@@ -26,13 +26,13 @@ class GNNWrapper(tf.keras.Model):
 
     self.graph_conversion_times = []
     self.gnn_call_times = []
-    self.use_spektral = False
+    self.use_spektral = True
     
-    self._gnn = GNN(gnn_params)
+    # self._gnn = GNN(gnn_params)
     self.num_units = gnn_params["hidden_dim"]
 
-    self._conv1 = GraphAttention(128)
-    self._conv2 = GraphAttention(128)
+    self._conv1 = GraphAttention(512, activation='relu')
+    self._conv2 = GraphAttention(256, activation='relu')
     self._pool1 = GlobalAttnSumPool()
     self._dense1 = Dense(self.num_units, activation='tanh')
 
