@@ -41,6 +41,8 @@ docker run -it --gpus all \
 bark_ml_image bash -c '
 '"$visible_devices_command"'
 bash utils/install.sh;
+mv /root/.cache /root/cache_old;
+ln -s /bark/cache /root/.cache;
 source utils/dev_into.sh;
 pip install networkx tf2-gnn;
 while true;
