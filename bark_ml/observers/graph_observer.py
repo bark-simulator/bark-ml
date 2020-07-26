@@ -38,7 +38,7 @@ class GraphObserver(StateObserver):
 
     # the maximum number of agents that can be observed
     self._agent_limit = \
-      params["ML"]["GraphObserver"]["AgentLimit", "", 12]
+      params["ML"]["GraphObserver"]["AgentLimit", "", 8]
 
      # the radius an agent can 'see' in meters
     self._visibility_radius = \

@@ -17,24 +17,21 @@ class GNNWrapper(tf.keras.Model):
                **kwargs):
     super(GNNWrapper, self).__init__(name=name)
 
-    mp_style = params["message_calculation_class", "", "rgcn"]
-    gnn_params = GNN.get_default_hyperparameters(mp_style)
-    
-    if isinstance(params, ParameterServer):
-      params = params.ConvertToDict()
+    mp_style = params.get("message_calculation_class", "rgcn")
+    gnn_params = GNN.get_default_hyperparameters(mp_style)    
     gnn_params.update(params)
 
-    self.graph_conversion_times = []
-    self.gnn_call_times = []
-    self.use_spektral = True
-    
-    # self._gnn = GNN(gnn_params)
+    self._gnn = GNN(gnn_params)
     self.num_units = gnn_params["hidden_dim"]
-
+  
     self._conv1 = GraphAttention(512, activation='relu')
     self._conv2 = GraphAttention(256, activation='relu')
     self._pool1 = GlobalAttnSumPool()
     self._dense1 = Dense(self.num_units, activation='tanh')
+
+    self.use_spektral = True
+    self.graph_conversion_times = []
+    self.gnn_call_times = []
 
   def call(self, observations, training=False):
     t0 = time.time()

@@ -53,6 +53,11 @@ def run_configuration(argv):
   params["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams"] = [256, 128]
   params["ML"]["BehaviorGraphSACAgent"]["CriticFcLayerParams"] = [256, 128]
 
+  # these are not working atm, check why!
+  # params["ML"]["GraphObserver"]["AgentLimit"] = 8
+  # params["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams"] = [256, 256]
+  # params["ML"]["BehaviorGraphSACAgent"]["CriticFcLayerParams"] = [256, 128]
+
   params["World"]["remove_agents_out_of_map"] = False
 
     # viewer = MPViewer(
