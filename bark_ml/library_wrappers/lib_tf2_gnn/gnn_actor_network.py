@@ -39,7 +39,6 @@ def projection_net(spec):
     std_transform=sac_agent.std_clip_transform,
     scale_distribution=True)
 
-
 @gin.configurable
 class GNNActorNetwork(network.Network):
   """Creates an actor GNN."""
@@ -126,11 +125,7 @@ class GNNActorNetwork(network.Network):
       observations = tf.expand_dims(observations, axis=0)
 
     batch_size, feature_len = observations.shape
-    
-    t0 = time.time()
-    output = self._gnn.batch_call(observations, training=training)
-    self.gnn_call_times.append(time.time() - t0)
-    output = tf.cast(output, tf.float32)
+    output = self._gnn(observations, training=training)
 
     # extract ego state (node 0)
     if len(output.shape) == 2 and output.shape[0] != 0:
@@ -158,10 +153,4 @@ class GNNActorNetwork(network.Network):
     output_actions = tf.nest.map_structure(
         call_projection_net, self._projection_nets)
 
-    try:
-        tf.summary.histogram("actor_output_actions", output_actions)
-    except Exception as e:
-        pass
-
-    self.call_times.append(time.time() - t0)
     return output_actions, network_state

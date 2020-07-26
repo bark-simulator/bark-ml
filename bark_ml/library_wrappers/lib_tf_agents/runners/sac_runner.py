@@ -31,7 +31,7 @@ class SACRunner(TFARunner):
                        params=params)
     
     self._number_of_collections =\
-      self._params["ML"]["SACRunner"]["NumberOfCollections", "", 2000]
+      self._params["ML"]["SACRunner"]["NumberOfCollections", "", 40000]
     self._evaluation_interval =\
       self._params["ML"]["SACRunner"]["EvaluateEveryNSteps", "", 100] 
 

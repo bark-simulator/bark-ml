@@ -24,8 +24,8 @@ class GNNWrapper(tf.keras.Model):
     self._gnn = GNN(gnn_params)
     self.num_units = gnn_params["hidden_dim"]
   
-    self._conv1 = GraphAttention(512, activation='relu')
-    self._conv2 = GraphAttention(256, activation='relu')
+    self._conv1 = EdgeConditionedConv(128, activation='relu')
+    self._conv2 = EdgeConditionedConv(128, activation='relu')
     self._pool1 = GlobalAttnSumPool()
     self._dense1 = Dense(self.num_units, activation='tanh')
 
@@ -33,15 +33,42 @@ class GNNWrapper(tf.keras.Model):
     self.graph_conversion_times = []
     self.gnn_call_times = []
 
+  @tf.function
   def call(self, observations, training=False):
-    t0 = time.time()
+    if observations.shape[0] == 0:
+      return tf.random.normal(shape=(0, self.num_units))
+    #if len(observations.shape) > 3:
+    #  raise ValueError(f'Graph has invalid shape {observations.shape}')
+    
+    #t0 = time.time()
     
     if self.use_spektral:
       return self.call_spektral(observations, training)
     else:
       return self.call_tf2_gnn(observations, training)
     
-    self.gnn_call_times.append(time.time() - t0)
+    #self.gnn_call_times.append(time.time() - t0)
+
+  @tf.function
+  def call_spektral(self, observations, training=False):
+    batch_size = observations.shape[0]
+    n_nodes = 4
+    n_features = 4
+    n_edge_features = 4
+
+    obs = observations[:, 3:] # removes first three elements of each sample
+    adj_start_idx = 4 * 4
+    adj_end_idx = adj_start_idx + 4 ** 2
+
+    X = tf.reshape(obs[:, :n_nodes * n_nodes], [batch_size, n_nodes, n_features])
+    A = tf.reshape(obs[:, adj_start_idx:adj_end_idx], [batch_size, n_nodes, n_nodes])
+    E = tf.reshape(obs[:, adj_end_idx:], [batch_size, n_nodes, n_nodes, n_edge_features])
+
+    X = self._conv1([X, A, E])
+    X = self._pool1(X)
+    X = self._dense1(X)
+    
+    return X
 
   def call_tf2_gnn(self, observations, training=False):
     t0 = time.time()
@@ -74,51 +101,6 @@ class GNNWrapper(tf.keras.Model):
     output = self._gnn(gnn_input, training=training)
     self.gnn_call_times.append(time.time() - t0)
     return output
-
-  def call_spektral(self, observations, training=False):
-    t0 = time.time()
-    num_graphs = len(observations)
-
-    X, A, E = [], [], []
-    
-    for i, sample in enumerate(observations):
-      n, a, e = GraphObserver.graph(sample, sparse_links=True, return_edge_features=True)
-      X.append(np.array(n))
-      A.append(np.array(a))
-      E.append(np.array(e))
-
-    X, A, E = numpy_to_batch(X, A, E)
-    X = tf.convert_to_tensor(X, dtype=tf.float32)
-    A = tf.convert_to_tensor(A, dtype=tf.float32)
-    E = tf.convert_to_tensor(E, dtype=tf.float32)
-    
-    self.graph_conversion_times.append(time.time() - t0)
-
-    t0 = time.time()
-
-    X = self._conv1([X, A, E])
-    X = self._conv2([X, A, E])
-    X = self._pool1(X)
-    X = self._dense1(X)
-    
-    self.gnn_call_times.append(time.time() - t0)
-    return X
-
-  def batch_call(self, graph, training=False):
-    """Calls the network multiple times
-    
-    Arguments:
-        graph {np.array} -- Graph representation
-    
-    Returns:
-        np.array -- Batch of values
-    """
-    if graph.shape[0] == 0:
-      return tf.random.normal(shape=(0, self.num_units))
-    if len(graph.shape) > 3:
-      raise ValueError(f'Graph has invalid shape {graph.shape}')
-
-    return self.call(graph, training=training)
       
   def reset(self):
     self._gnn.reset()

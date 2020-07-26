@@ -40,8 +40,9 @@ def run_configuration(argv):
   #params = ParameterServer()
   # NOTE: Modify these paths in order to save the checkpoints and summaries
   #from config import tfa_gnn_checkpoint_path, tfa_gnn_summary_path
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = '/Users/marco.oliva/Development/bark-ml_logs/summaries/test'
-  params["ML"]["TFARunner"]["SummaryPath"] = '/Users/marco.oliva/Development/bark-ml_logs/summaries/run_2'
+  params["World"]["remove_agents_out_of_map"] = False
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = '/Users/marco.oliva/Development/bark-ml_logs/checkpoints'
+  params["ML"]["TFARunner"]["SummaryPath"] = '/Users/marco.oliva/Development/bark-ml_logs/summaries/'
   params["ML"]["BehaviorSACAgent"]["DebugSummaries"] = True
   params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 100
   params["ML"]["BehaviorSACAgent"]["BatchSize"] = 128
@@ -58,11 +59,10 @@ def run_configuration(argv):
   # params["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams"] = [256, 256]
   # params["ML"]["BehaviorGraphSACAgent"]["CriticFcLayerParams"] = [256, 128]
 
-  params["World"]["remove_agents_out_of_map"] = False
-
     # viewer = MPViewer(
   #   params=params,
   #   x_range=[-35, 35],
+
   #   y_range=[-35, 35],
   #   follow_agent_id=True)
   
