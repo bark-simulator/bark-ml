@@ -117,11 +117,11 @@ class TFARunner:
         self._environment.render()
 
   
-  def GnerateExpertTrajectories(self, num_trajectories: int = 1000, render: bool = False) -> dict:
+  def GenerateExpertTrajectories(self, num_trajectories: int = 1000, render: bool = False) -> dict:
     """Generates expert trajectories based on a tfa agent.
 
     Args:
-        num_trajectories (int, optional): The minimal number of generated expert trajectories. Defaults to 1000. (Has priority before num_episodes.)
+        num_trajectories (int, optional): The minimal number of generated expert trajectories. Defaults to 1000. 
         render (bool, optional): Render the simulation during simulation. Defaults to False.
 
     Returns:
@@ -130,10 +130,8 @@ class TFARunner:
     self._agent._training = False
     per_scenario_expert_trajectories = {}
 
-    scenario_id = 0
-    total_trajectories = 0
-    while total_trajectories <= num_trajectories:
-      print(f'Generated {total_trajectories}/{num_trajectories} expert trajectories.')
+    for i in range(num_trajectories):    
+      print(f'Generated {i}/{num_trajectories} expert trajectories.')
       expert_trajectories = {'obs': [], 'act': []}
 
       state = self._environment.reset()
@@ -153,8 +151,6 @@ class TFARunner:
       expert_trajectories['act'].append(expert_trajectories['act'][-1])
       assert len(expert_trajectories['obs']) == len(expert_trajectories['act'])
 
-      per_scenario_expert_trajectories[scenario_id] = expert_trajectories
-      scenario_id += 1
-      total_trajectories += len(expert_trajectories['obs'])
+      per_scenario_expert_trajectories[i] = expert_trajectories
 
     return per_scenario_expert_trajectories

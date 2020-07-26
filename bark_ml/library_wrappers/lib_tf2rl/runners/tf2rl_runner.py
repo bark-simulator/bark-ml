@@ -40,13 +40,27 @@ class TF2RLRunner:
     raise NotImplementedError
 
 
-  def Evaluate(self):
+  def Evaluate(self, expert_trajectories: dict = None, avg_trajectory_length: float = None, num_trajectories: int = None):
     """Evaluates the agent."""
     total_steps = 0   
-    avg_test_return, trajectories, avg_step_count = self._trainer.evaluate_policy(total_steps=total_steps)
+    self._trainer._test_episodes = num_trajectories
+    avg_test_return, agent_trajectories, avg_step_count = self._trainer.evaluate_policy(total_steps=total_steps)
     print('Average test return: ', avg_test_return)
     print('Average step count: ', avg_step_count)
-    pprint('Trajectories: ', trajectories)
+
+    if not expert_trajectories or not avg_trajectory_length:
+      return
+
+    agent_actions = {'acts': [],}
+    for trajectory in agent_trajectories:
+      agent_actions['acts'].extend(trajectory['act'])  
+    expert_mean_action = calculate_mean_action(expert_trajectories)
+    agent_mean_action = calculate_mean_action(agent_actions)
+    print('Agent mean action: ', agent_mean_action)
+    print('Expert mean action: ', expert_mean_action)
+
+    difference = expert_mean_action - agent_mean_action
+    print('Differences: ', difference)
 
   def Visualize(self, num_episodes=1, renderer=""):
     """Visualizes the agent."""
