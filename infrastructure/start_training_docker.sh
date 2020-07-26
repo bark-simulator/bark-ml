@@ -41,11 +41,9 @@ docker run -it --gpus all \
 bark_ml_image bash -c '
 '"$visible_devices_command"'
 trap exit INT;
-bash utils/install.sh;
 mv /root/.cache /root/cache_old;
 ln -s /bark/cache /root/.cache;
 source utils/dev_into.sh;
-pip install networkx tf2-gnn;
 while true;
         do
         '"$prepend_command"' bazel run --jobs 12 //examples:'"$agent"' -- --mode=train;
