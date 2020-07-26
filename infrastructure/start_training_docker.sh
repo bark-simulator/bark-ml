@@ -40,6 +40,7 @@ docker run -it --gpus all \
 --env DISPLAY \
 bark_ml_image bash -c '
 '"$visible_devices_command"'
+trap exit INT;
 bash utils/install.sh;
 mv /root/.cache /root/cache_old;
 ln -s /bark/cache /root/.cache;
