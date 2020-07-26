@@ -41,8 +41,8 @@ docker run -it --gpus all \
 bark_ml_image bash -c '
 '"$visible_devices_command"'
 trap exit INT;
-mv /root/.cache /root/cache_old;
-ln -s /bark/cache /root/.cache;
+mv /root/.cache /bark/.cache;
+ln -s /bark/.cache /root/.cache;
 source utils/dev_into.sh;
 while true;
         do
