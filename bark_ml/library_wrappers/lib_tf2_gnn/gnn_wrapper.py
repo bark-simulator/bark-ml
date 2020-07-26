@@ -13,14 +13,10 @@ class GNNWrapper(tf.keras.Model):
                **kwargs):
     super(GNNWrapper, self).__init__(name=name)
 
-    mp_style = params["message_calculation_class", "", "rgcn"]
-    gnn_params = GNN.get_default_hyperparameters(mp_style)
-    
-    if isinstance(params, ParameterServer):
-      params = params.ConvertToDict()
-    
+    mp_style = params.get("message_calculation_class", "rgcn")
+    gnn_params = GNN.get_default_hyperparameters(mp_style)    
     gnn_params.update(params)
-    
+
     self._gnn = GNN(gnn_params)
     self.num_units = gnn_params["hidden_dim"]
     self.graph_conversion_times = []
