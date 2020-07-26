@@ -73,11 +73,11 @@ def run_configuration(argv):
                                   number_of_senarios=2500,
                                   random_seed=0)
 
-  #observer = GraphObserver(params=params)
+  observer = GraphObserver(params=params)
   
   env = SingleAgentRuntime(
     blueprint=bp,
-   # observer=observer,
+    observer=observer,
     render=False)
 
   sac_agent = BehaviorGraphSACAgent(environment=env,
