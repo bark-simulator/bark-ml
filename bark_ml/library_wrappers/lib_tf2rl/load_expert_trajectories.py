@@ -6,7 +6,7 @@ from typing import Tuple
 from bark_ml.library_wrappers.lib_tf2rl.load_save_utils import *
 from tf2rl.experiments.utils import load_trajectories
 
-def load_expert_trajectories(dirname: str, normalize_features=False, env=None) -> (dict, float, int):
+def load_expert_trajectories(dirname: str, normalize_features=False, env=None, subset_size = -1) -> (dict, float, int):
     """Loads all found expert trajectories files in the directory.
 
     Args:
@@ -21,6 +21,11 @@ def load_expert_trajectories(dirname: str, normalize_features=False, env=None) -
         int: The number of loaded trajectories
     """
     joblib_files = list_files_in_dir(os.path.expanduser(dirname), file_ending='.jblb')
+
+    if subset_size > 0 and subset_size < len(joblib_files):
+        indices = np.random.choice(len(joblib_files), subset_size, replace=False)
+        joblib_files = np.array(joblib_files)[indices]
+
     expert_trajectories = load_trajectories(joblib_files)
 
     if normalize_features:
