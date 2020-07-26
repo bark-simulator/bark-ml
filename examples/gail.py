@@ -51,8 +51,8 @@ def run_configuration(argv):
   params["ML"]["GAILRunner"]["tf2rl"]["logdir"] = os.path.expanduser(FLAGS.train_out)
   params["ML"]["GAILRunner"]["tf2rl"]["model_dir"] = os.path.expanduser(FLAGS.train_out)
   if FLAGS.mode == 'train':
-    params["ML"]["GAILRunner"]["tf2rl"]["logdir"] = os.path.join(params["ML"]["GAILRunner"]["tf2rl"]["logdir"], "logs")
-    params["ML"]["GAILRunner"]["tf2rl"]["model_dir"] = os.path.join(params["ML"]["GAILRunner"]["tf2rl"]["model_dir"], "models")  
+    params["ML"]["GAILRunner"]["tf2rl"]["logdir"] = os.path.join(params["ML"]["GAILRunner"]["tf2rl"]["logdir"], "logs", str(FLAGS.subset_size) if FLAGS.subset_size > 0 else 'all')
+    params["ML"]["GAILRunner"]["tf2rl"]["model_dir"] = os.path.join(params["ML"]["GAILRunner"]["tf2rl"]["model_dir"], "models", str(FLAGS.subset_size) if FLAGS.subset_size > 0 else 'all')  
 
   Path(params["ML"]["GAILRunner"]["tf2rl"]["logdir"]).mkdir(exist_ok=True, parents=True)
   Path(params["ML"]["GAILRunner"]["tf2rl"]["model_dir"]).mkdir(exist_ok=True, parents=True)
