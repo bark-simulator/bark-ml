@@ -36,6 +36,11 @@ flags.DEFINE_integer("gpu",
                   default=0
                   )
 
+flags.DEFINE_integer("subset_size",
+                  help="Amount of expert trajectories to sample, < 0 for all",
+                  default=-1
+                  )
+
 flags.DEFINE_string("expert_trajectories",
                     help="The absolute path to the dir where the expert trajectories are safed.",
                     default=None)
@@ -70,7 +75,8 @@ def run_configuration(argv):
 
   expert_trajectories = load_expert_trajectories(FLAGS.expert_trajectories,
     normalize_features=params["ML"]["Settings"]["NormalizeFeatures"],
-    env=env # the unwrapped env has to be used, since that contains the unnormalized spaces.
+    env=env, # the unwrapped env has to be used, since that contains the unnormalized spaces.
+    subset_size=FLAGS.subset_size
     ) 
 
   runner = GAILRunner(params=params,
