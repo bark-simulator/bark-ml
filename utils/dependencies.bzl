@@ -50,7 +50,7 @@ cc_library(
   _maybe(
     new_git_repository,
     name = "com_github_keiohta_tf2rl",
-    branch = "master",
+    commit = "5df9af0db3caa98526ab61e5c0ca89459940f675",
     remote = "https://github.com/GAIL-4-BARK/tf2rl",
     build_file="//:utils/tf2rl.BUILD"
   )

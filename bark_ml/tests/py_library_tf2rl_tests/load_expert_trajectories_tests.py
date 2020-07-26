@@ -22,19 +22,24 @@ class LoadExpertTrajectoriesTest(unittest.TestCase):
         setup
         """
         self.params = ParameterServer(filename=os.path.join(os.path.dirname(__file__), "gail_data/params/gail_params_bark.json"))
-        self.expert_trajectories_directory = os.path.join(os.path.dirname(__file__), 'data', 'expert_trajectories')
+        self.expert_trajectories_directory = os.path.join(os.path.dirname(__file__), 'data', 'expert_trajectories', 'sac')
         
-        self.expert_trajectories = load_expert_trajectories(
-            self.expert_trajectories_directory)
+        self.expert_trajectories, self.avg_trajectory_length, self.num_trajectories = load_expert_trajectories(self.expert_trajectories_directory)
 
         env = test_env(self.params)
-        self.expert_trajectories_norm = load_expert_trajectories(
+        self.expert_trajectories_norm, self.avg_trajectory_length_norm, self.num_trajectories_norm = load_expert_trajectories(
             self.expert_trajectories_directory,
             normalize_features=True,
             env=env)
 
         assert self.expert_trajectories
         assert self.expert_trajectories_norm
+
+        self.assertEqual(self.avg_trajectory_length, 14.4) 
+        self.assertEqual(self.avg_trajectory_length, self.avg_trajectory_length_norm) 
+
+        self.assertEqual(self.num_trajectories, 5)
+        self.assertEqual(self.num_trajectories, self.num_trajectories_norm)
 
     def test_assert_file_exists(self):
         """

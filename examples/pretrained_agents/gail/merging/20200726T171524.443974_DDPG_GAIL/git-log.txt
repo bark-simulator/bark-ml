@@ -1,0 +1,4852 @@
+commit 9c57167ab2745c1e497e5b0a8e8bf8b65da4bef1
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Sun Jul 26 16:01:27 2020 +0200
+
+    Added compare trajectories tests to CI
+
+commit e3bfd0ae3409b37ad7ffd6cf0b6427d04a5609c2
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Sun Jul 26 15:39:12 2020 +0200
+
+    Added compare functions
+
+commit 21af688673ba2825418601dd7f4c7adc06b5074b
+Merge: fc2fd28 ff10a26
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Fri Jul 17 18:42:34 2020 +0200
+
+    Merge pull request #57 from GAIL-4-BARK/ferenc_torok/jupyter_notebook_training_and_visualization
+    
+    Ferenc torok/jupyter notebook training and visualization
+
+commit ff10a26b9c638838bb19430bee805aa029d20277
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Fri Jul 17 18:32:22 2020 +0200
+
+    correct expert path in json file.
+
+commit 5dc6d7464aa0015ff6bd1fb3f14edcd380e9c65e
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Fri Jul 17 18:29:20 2020 +0200
+
+    modified readme with instructions on extracting expert trajectories.
+
+commit bb09ad0893b9fe3879631f78b9bcdae8a477815c
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Fri Jul 17 15:54:20 2020 +0200
+
+    removed show_test_progress from the visualization part as well.
+
+commit 5b91bbcfa43826bb3505d7bc30eb324ad0771b28
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Fri Jul 17 15:52:58 2020 +0200
+
+    removed show_test_progress from notebook
+
+commit 3948b5ec49c408cded8670cf56bbbc9dc9c3bf8c
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Fri Jul 17 15:32:33 2020 +0200
+
+    increased default max_steps in notebook
+
+commit eb066d6ff921274615d681a3110ecd610c6cc128
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Fri Jul 17 15:31:43 2020 +0200
+
+    training with tensorboard also works.
+
+commit 3f4adc441777bcd62ca25fe41f0e1c10a79374d1
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Fri Jul 17 15:11:03 2020 +0200
+
+    pretrained agent loading for visualization works.
+
+commit 97dd7393d98018327da24f062119bf9cb50d7e44
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Fri Jul 17 15:01:01 2020 +0200
+
+    visualization in notebook works.
+
+commit 03527cdc5b16d795e0af9043ee8b5de6d10dd264
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Thu Jul 16 20:59:19 2020 +0200
+
+    training and visualization in notebook runs, but the matplotlib appearence is shit.
+
+commit fc2fd282a09f50b083cb064a98fe984bfce02eea
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Thu Jul 16 18:56:14 2020 +0200
+
+    added jupyter to requirements
+
+commit baa07956febfd3b9274ccb0327c06a30efb17860
+Author: Pedro Vieira <pedrovieira@arrowplan.com>
+Date:   Thu Jul 16 17:37:33 2020 +0200
+
+    Add dependency on specific version of scipy==1.4.1
+
+commit 0d81e31b54025dd53bb0964c6783a3198df42033
+Merge: 15fe8c4 75ed437
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Wed Jul 15 21:42:49 2020 +0200
+
+    Merge pull request #56 from GAIL-4-BARK/marcel_bruckner/compare-trajectories
+    
+    Changed the tf2rl implementation to return trajectories during evaluation and added avg step count
+
+commit 75ed437a22438b2e49e281d88580d766fb49e787
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Wed Jul 15 20:24:32 2020 +0200
+
+    Added list almost equal for CI fix
+
+commit 7f21cd0e4fcf36517688f9ad6688a1fc5ea9a6a4
+Merge: 53e4ca7 15fe8c4
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Wed Jul 15 19:56:19 2020 +0200
+
+    Merge branch 'master' into marcel_bruckner/compare-trajectories
+
+commit 15fe8c4344e1dbea29d35832ec8b232c52c8fcb5
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Wed Jul 15 19:55:43 2020 +0200
+
+    Added IPython to requirements so that CI runs
+
+commit 53e4ca7780b5c89443bfa6163f9268bb2331ad2f
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Wed Jul 15 19:38:30 2020 +0200
+
+    Readded trained agent
+
+commit 16216be2cc9e680ecba20fad1c61cde493fdfc14
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Wed Jul 15 19:12:24 2020 +0200
+
+    Changed the tf2rl implementation to return trajectories during
+    evaluation and added avg step count
+
+commit ad8886d332a4f445cc415ad5ed9952c7a73df5f4
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Wed Jul 15 15:11:53 2020 +0200
+
+    Added evaluation steps to tfa params
+
+commit 7cd6336deb8e8b764d75949927f5b5108f96e24e
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Wed Jul 15 15:02:37 2020 +0200
+
+    Updated tfa params and tfa
+
+commit 18dad33456c9aaa573a3e24dabb94ad4d5b69eb2
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue Jul 14 22:23:08 2020 +0200
+
+    Added generate expert trajectories code
+
+commit 163b7729a5b87782f6a6abe30119b6e811a34f23
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue Jul 14 20:08:34 2020 +0200
+
+    Stripped readme
+
+commit 5cc9fb33bf41de031daff305ea4b05cd501f5e87
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue Jul 14 20:07:33 2020 +0200
+
+    Added readme
+
+commit b5162ee6d853ac2beae54cd0abb4282d0edcea5b
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue Jul 14 20:02:51 2020 +0200
+
+    Added report notebook
+
+commit f28a83140b4ca02621c5c9a15015293d32b0489c
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue Jul 14 18:56:42 2020 +0200
+
+    Flags to train different tfa agents on different blueprints
+
+commit 4278c84ba143957796ed4fc0f0a7de6e69579e84
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jul 9 18:46:23 2020 +0200
+
+    Added launch to train ppo
+
+commit 72bba8841a1cd89822f9a5d6269f7fb5d2dfa349
+Merge: 0f6fc8d c7244e2
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Thu Jul 9 18:29:39 2020 +0200
+
+    Merge pull request #53 from GAIL-4-BARK/ferenc_torok/feature_normalization
+    
+    Ferenc torok/feature normalization
+
+commit c7244e24d7fa3347827685a0636e0e60cdde7c8a
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Thu Jul 9 18:28:04 2020 +0200
+
+    merged in master
+
+commit f593461b7596788b44bf7f4537fe4ef1fcdb0bfb
+Merge: ac4c858 0f6fc8d
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Thu Jul 9 18:26:25 2020 +0200
+
+    Merge branch 'master' into ferenc_torok/feature_normalization
+
+commit 0f6fc8dfe84754f00e382f40251f8c4397181f30
+Merge: b672f72 f0b6ec7
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Thu Jul 9 18:25:32 2020 +0200
+
+    Merge pull request #52 from GAIL-4-BARK/ferenc_torok/test_unifying
+    
+    Ferenc torok/test unifying
+
+commit ac4c858c90962fcc67ce6957f85ad2c23b7112f0
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Thu Jul 9 18:24:58 2020 +0200
+
+    Feature normalization flag is added to parameter json file.
+
+commit 60c005bc6f8913885fec2e7e5e02a6d64d55d16f
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Thu Jul 9 18:20:16 2020 +0200
+
+    trained gail agent is in examples/trained_gail_agents
+
+commit 7f96c28dc847102605cac38747e77763fb5ecbf2
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Thu Jul 9 17:01:33 2020 +0200
+
+    feature normalization is added to examples/gail.py.
+
+commit 9fb3c842ec8b5cbe07d4d3896f1bb2e790652290
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Thu Jul 9 15:07:46 2020 +0200
+
+    normalized trajectory loading is complete. test is written for it.
+
+commit 0755a3b1769ef5dbac6853da3d29dfb59f3c9e62
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Thu Jul 9 14:33:45 2020 +0200
+
+    modified observation space in NearestStateObserver
+
+commit e9c5480db84284566b7440c21b657a0cece68835
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Thu Jul 9 12:34:16 2020 +0200
+
+    added tf2rl wrapper tests to the CI tests.
+
+commit a3a603c6c57194c6ff50e9f146d2f7f6c7060437
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Thu Jul 9 12:31:45 2020 +0200
+
+    step method tests of the TF2RLWrapper are written.
+
+commit c8b20ed00e0cda92b973f9fef00da90986c0870c
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Thu Jul 9 12:16:37 2020 +0200
+
+    test for reset method of the TF2RLWrapper is done.
+
+commit 1106666b30eb0fce23278489c21552476f127722
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Thu Jul 9 11:49:04 2020 +0200
+
+    tests for tf2rl wrapper init and _rescale_action method are written.
+
+commit bc45c7d49eb0568c5f6771640055154302b3b75d
+Merge: 48d3861 f0b6ec7
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Thu Jul 9 11:07:34 2020 +0200
+
+    Merge branch 'ferenc_torok/test_unifying' into ferenc_torok/feature_normalization
+
+commit 48d3861edf1827c4c5375f89a085c42dba8d66bd
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Thu Jul 9 11:07:13 2020 +0200
+
+    touched test file for tf2rl wrapper.
+
+commit fa5da14782e1388882be76ef1263217029ac0960
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Thu Jul 9 10:47:49 2020 +0200
+
+    feature normalization is written in TF2RLWrapper. not tested.
+
+commit f0b6ec7119e8ee8b262bc1f37a6465d5e38d7762
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Wed Jul 8 13:39:32 2020 +0200
+
+    fixed issue in gail agent test due to renamed json file.
+
+commit 450b882a7553199a2bc150cc2d753a5370dafe0b
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Wed Jul 8 13:13:36 2020 +0200
+
+    small refactoring in gail tests and are added to test_suit.
+
+commit bd7b3594dd1c02611e7646461a3636c9d38cae60
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Wed Jul 8 12:39:36 2020 +0200
+
+    training test with dummy environment is done.
+
+commit 8d7bda4c33d9ef3c024b5981ef9e4010c5becd0f
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Wed Jul 8 12:17:24 2020 +0200
+
+    added init tests and space shape tests to runner tests.
+
+commit 08fbcd084c1a6a35fa5392f4990e810fe4f14c64
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Wed Jul 8 11:52:24 2020 +0200
+
+    test with test environment is written.
+
+commit 14a58a795fd783342af350190b260493ce3f27cd
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Wed Jul 8 10:04:49 2020 +0200
+
+    runner test includes wrapper test and with bark environment.
+
+commit 3e2072241c50438e508d8badbb8a767a095a27c5
+Merge: 98d099d b672f72
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Tue Jul 7 19:20:40 2020 +0200
+
+    Merge branch 'master' into ferenc_torok/test_unifying
+
+commit b672f721fd60fee212a93a1a62edb38a158fdb56
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Tue Jul 7 17:34:59 2020 +0200
+
+    fixed action space bug in agent and fixed environment wrapping in examples/gail.py
+
+commit ba7feead7753fdddadc32baeb23916092f9ebd13
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Tue Jul 7 16:51:49 2020 +0200
+
+    fixed action space bug in gail agent.
+
+commit 98d099d167f24346462d0c07345c62512a7f598d
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Tue Jul 7 16:49:41 2020 +0200
+
+    TF2RLWrapper tests are written. Found error in agent regarding action space.
+
+commit 071c174d6ed4b052f2815940192762b645958f41
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Tue Jul 7 15:57:28 2020 +0200
+
+    runner tests are done.
+
+commit 676eb60472c8a3e008f7b4f4b20bd031a6ca932b
+Merge: 203b153 7f4a85a
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Tue Jul 7 14:13:24 2020 +0200
+
+    Merge pull request #50 from GAIL-4-BARK/marcelbrucker_extend_tests_gail_agent
+    
+    Marcelbrucker extend tests gail agent
+
+commit 203b153656bf1f50dc5434896d42d89f90bde973
+Merge: cb7f667 f20f7ef
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Tue Jul 7 14:08:29 2020 +0200
+
+    Merge pull request #51 from GAIL-4-BARK/marcelbrucker_add_learning_parameters
+    
+    Marcelbrucker add learning parameters
+
+commit f20f7effe0cdb1cd85ea84b8ac0cf61598c27b32
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Tue Jul 7 13:26:02 2020 +0200
+
+    Added access to learning parameters in our interface
+
+commit 7f4a85af4cad33c21c3b2535d4c1e81cc40fe3c4
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Tue Jul 7 12:50:08 2020 +0200
+
+    Extended tests of gail agent
+
+commit cb7f667cdf79d87d6fe2443b3fe0a768bbbf14ec
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue Jul 7 12:30:16 2020 +0200
+
+    Expand user for train out on gail
+
+commit ab7695f6136258783300a2e45def94eac70a54f7
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue Jul 7 11:36:43 2020 +0200
+
+    Added cpprb to requirements
+
+commit c7f44fdd8949b22c7de3e072901ce499b12ba62b
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Mon Jul 6 21:09:07 2020 +0200
+
+    Code cleanup in accordance with Teamscale
+
+commit a58746120d2e468e0b886ebc2f9b0f2fdd1c512b
+Merge: d5a6715 fbc3e13
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Sun Jul 5 20:56:08 2020 +0200
+
+    Merge branch 'master' of https://github.com/GAIL-4-BARK/bark-ml
+    merge updated master after bark-ml refactoring
+
+commit fbc3e13d95f102937085519a20275d8cc88449e9
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Fri Jul 3 23:28:57 2020 +0200
+
+    Gail tests as last in CI as failing
+
+commit 19af328b996677682ae6750fe3a832a959706106
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Fri Jul 3 23:26:50 2020 +0200
+
+    Added joblib to requirements
+
+commit 669e8963d817b4de2c14fe0f9c04f6d5521c0bef
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Fri Jul 3 23:03:41 2020 +0200
+
+    Fixed generate tests, adjusted commit for bark
+
+commit cdbabe64b8b204d45044a7033a0332926c925828
+Merge: 22984bf 63148e3
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Fri Jul 3 22:34:51 2020 +0200
+
+    Merge https://github.com/bark-simulator/bark-ml into marcel_bruckner/add_tf2rl_repository
+
+commit 22984bfd71d19a1cdeddf18b5ad03a111e050e25
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Fri Jul 3 22:34:19 2020 +0200
+
+    Added tf2rl repo to gail runners and agents
+
+commit d4994cf2be7daf7ca789be89f909f9fd31658610
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Fri Jul 3 22:06:52 2020 +0200
+
+    Changed generate launch config to include tf2rl
+
+commit f9229181e35192fd50c5df435a9ca18fb9c211b6
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Fri Jul 3 21:58:05 2020 +0200
+
+    Added tf2rl as source code repository instead of python package
+
+commit 301ff4b18f3a8b1ef5bcd7e1c5854790d2bb8b32
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Fri Jul 3 21:37:21 2020 +0200
+
+    Removed unittest from settings
+
+commit 63148e3fa6941d2717d74df938e911c468bad1fa
+Merge: d7e98d5 c6faa49
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri Jul 3 10:00:20 2020 +0200
+
+    Merge pull request #69 from bark-simulator/change_copy
+    
+    Change copyright notice
+
+commit c6faa497d996b21c2cba901ff6500b9151579d8c
+Author: patrickhart <patrickhart.1990@gmail.com>
+Date:   Fri Jul 3 09:06:57 2020 +0200
+
+    Change copyright notice
+
+commit 37391803ebbbd52cbc63994e5159edb44016c44e
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Thu Jul 2 19:52:35 2020 +0200
+
+    fixed number of observed vehicles to 3 in examples/example_params/gail_params.json
+
+commit 64ce19fbc4dfbb0b2e3cb5d85804271acc93837d
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Thu Jul 2 19:19:49 2020 +0200
+
+    parameter parsing in tf2rl_runner back to normal.
+
+commit a7a17d7d146fe5b93cacffc96f684d6d69254d8e
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Thu Jul 2 19:13:03 2020 +0200
+
+    generator and discriminator are no longer private methods.
+
+commit 61f871c56c4412362af767ea5509bbfbb1936e9c
+Merge: d34e780 c15dc6b
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jul 2 18:04:54 2020 +0200
+
+    Merge branch 'master' into marcel_bruckner/move_to_tfa_agent_expert_trajectories
+
+commit d34e780c5bdf5ac1898b7330fd20d3806f166489
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jul 2 18:02:29 2020 +0200
+
+    Removed .jblb files from staging
+
+commit 65822ad6ca83260c07d071472d5614146add1ac9
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jul 2 18:00:24 2020 +0200
+
+    Zipped expert trajectories
+
+commit 747a279812fdafa06103646fcbc29dd5e9389e87
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jul 2 17:58:20 2020 +0200
+
+    Added sac expert trajectories, added german expert trajectories, added chinese expert trajectories, added checkpoints for sac agent
+
+commit 8e0db09505eef246031268c6af7f42df68ff4f4e
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jul 2 17:48:48 2020 +0200
+
+    Warmup down to 1000
+
+commit 3ebdfa5189cdf3336fae545d93057bc9dc869ff3
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jul 2 16:28:44 2020 +0200
+
+    Started gail training script
+
+commit c15dc6b97c60fa6bf53cc58f956496f2c08eb0de
+Merge: 05e1f12 77fb917
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Thu Jul 2 16:24:49 2020 +0200
+
+    Merge pull request #48 from GAIL-4-BARK/ferenc_torok/code_cleanup
+    
+    Ferenc torok/code cleanup
+
+commit 77fb9178e62bcc3561fa6655e9e108cd49540194
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Thu Jul 2 15:39:54 2020 +0200
+
+    init comment added to tf2rl_wrapper.
+
+commit 3ec9524d2f834305dd40e5fe39a7d406fe07fa72
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Thu Jul 2 15:36:22 2020 +0200
+
+    tf2rl_wrapper cleaned.
+
+commit 571508541b1c5431ac95c4046ba5e99419f14f93
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Thu Jul 2 15:22:08 2020 +0200
+
+    gail_runner.py cleaned.
+
+commit 3f090efa26d439fc1b38d6c95ccf71f85645316c
+Author: ferenctorok <ferike.trk@gmail.com>
+Date:   Thu Jul 2 14:45:37 2020 +0200
+
+    tf2rl_runner.py cleaned.
+
+commit ddfb676cfd21fcfc05b39c0471132d32a99de437
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jul 2 12:56:42 2020 +0200
+
+    Fixing findings
+
+commit 6aca1f0f308eec4e23414fd8fa5fcbb4b4d56ae8
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jul 2 12:54:04 2020 +0200
+
+    Fixing findings
+
+commit 1941049f24a33cec14418d511079db751056a249
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jul 2 12:48:00 2020 +0200
+
+    Fixed generate for tfa
+
+commit 44d75c1ced686fdb6943f651bb9461007589513c
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jul 2 12:15:24 2020 +0200
+
+    Added expert trajectories to repo
+
+commit 1122934686dc056398c8f9f5723b3e059ff483aa
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jul 2 12:12:47 2020 +0200
+
+    Moved tests to joblib
+
+commit 626f25abbd8da5f151174c41977792040c467d0b
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jul 2 11:43:49 2020 +0200
+
+    Changed to file per expert trajectory
+
+commit 6b10580d1f4c6df95ee96c760430ad242d994c52
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jul 2 10:25:15 2020 +0200
+
+    Readded vehickle_track_013.pkl
+
+commit ecae82c76837e8d0ad675857251ca7dd800633cb
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jul 2 10:22:20 2020 +0200
+
+    Removed vehickle tracks 008 from gail_data
+
+commit ad8e3a34386bab7a25d80bb17247af7c820a349b
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jul 2 00:57:50 2020 +0200
+
+    Added generate to TFA agent runner
+
+commit 05e1f12266625bc48c8e4bffbbf6daecfbdd90f0
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Wed Jul 1 22:37:43 2020 +0200
+
+    Fixed merge
+
+commit 2e38d14bac8df4070f607f274424af188a1c1aac
+Merge: d4f74ae d7e98d5
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Wed Jul 1 22:01:33 2020 +0200
+
+    Merge https://github.com/bark-simulator/bark-ml
+
+commit d7e98d53a99c75a25af8e8e27099da245e7fd66b
+Author: patrickhart <patrickhart.1990@gmail.com>
+Date:   Wed Jul 1 13:37:00 2020 +0200
+
+    Fix summary writer
+
+commit d4f74aeb09dc4d48044e3fd4cbe9d7674785a232
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue Jun 30 22:48:16 2020 +0200
+
+    Fixed load save utils test
+
+commit cda10fc4096e07cd1512e58cadba3736adfd6347
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue Jun 30 22:46:32 2020 +0200
+
+    Renamed dir to directory in load_save_utils_test to avoid name clash
+
+commit 594987529bfbde258e3b1693f87868a19459a1c0
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue Jun 30 22:43:03 2020 +0200
+
+    Added test for get viewer, renamed track_folder to track_dir
+
+commit 642cd8dc79abf01d6149616a183a8929c334fb9c
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue Jun 30 21:54:36 2020 +0200
+
+    Comment cleanup in load functions
+
+commit f7c43680ed010a434e7377a52a614603840e1f0f
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue Jun 30 21:19:05 2020 +0200
+
+    Added :all_tests to bazel
+
+commit d87162114ae783e5adfb4df7963ea0fb2cbd8e6f
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue Jun 30 21:04:29 2020 +0200
+
+    Fixed findings in generate_expert_trajectories.py
+
+commit 7146e231bbaf26b7eac01e8205587147b8ce6cf7
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue Jun 30 20:41:01 2020 +0200
+
+    Fixed findings in simulation_based_tests.py
+
+commit cd3ab835b886a0a2978e564bd87f89ad84caafe3
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue Jun 30 20:28:19 2020 +0200
+
+    Started removing findings
+
+commit 4175b58efabaeb8f5ca3d27012348533094e6603
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Mon Jun 29 23:04:46 2020 +0200
+
+    Adjusted gail tests paths, Added comment for missing tests
+
+commit 347f70e7192196b4b96354f601c8fa438691d0f5
+Merge: d2a0a7d 314580b
+Author: Marcel Bruckner <mbruckner94@gmail.com>
+Date:   Mon Jun 29 20:27:45 2020 +0200
+
+    Merge pull request #46 from GAIL-4-BARK/test_runner_agent
+    
+    Merge GAIL Side implementations
+
+commit 314580b002424f9f82830e98e87f032ee76b4968
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Mon Jun 29 17:27:48 2020 +0200
+
+    all tests have run successfully, included in unit_tests
+
+commit edcba4c71eb075c386aba5ace4bd55b81d8da114
+Merge: b767ca1 d2a0a7d
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Mon Jun 29 16:09:10 2020 +0200
+
+    commit after mergeing in master
+
+commit d2a0a7dc5b63cf1cde6c465cb85faf3bad0f5015
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Mon Jun 29 15:39:16 2020 +0200
+
+    Changed number of agents observed for the NearestAgentsObserver
+
+commit efdb75ec5da9b112a66480f98d0f25c2c4ce6795
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Fri Jun 26 17:45:53 2020 +0200
+
+    Added comment on what to use as obs
+
+commit f7f959ea6fff96d9cb28327a1b60724cbd0dc865
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Fri Jun 26 17:39:40 2020 +0200
+
+    Updated test data vehicle_tracks_o13.pkl
+
+commit f279d957162d4c66d618ef05dd2e01ddef2c2dd9
+Merge: 6ce148c 0f24d1a
+Author: Pedro Vieira <pedrovieira@arrowplan.com>
+Date:   Fri Jun 26 15:39:30 2020 +0200
+
+    Merge branch 'master' of https://github.com/GAIL-4-BARK/bark-ml
+
+commit 6ce148c1a689644a5559fa3f40e62656b949ecfb
+Author: Pedro Vieira <pedrovieira@arrowplan.com>
+Date:   Fri Jun 26 14:50:56 2020 +0200
+
+    Implement unit tests for action calculation
+
+commit 19c3262118c98ac54110c34eac8d3f546683578b
+Author: Pedro Vieira <pedrovieira@arrowplan.com>
+Date:   Fri Jun 26 14:50:21 2020 +0200
+
+    Add collinearity check in action calculation
+
+commit 0f24d1acd075f06fe46fe9a4261347000845324a
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Fri Jun 26 00:32:31 2020 +0200
+
+    Force added test expert trajectories
+
+commit 0a36f54008b8d675855a0d50d53d48ef9558028a
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Fri Jun 26 00:16:55 2020 +0200
+
+    Map and tracks directly passed, Added launch configs
+
+commit 9676831328465462b78fad6a8526d5091bc9c1fa
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 25 22:55:21 2020 +0200
+
+    I single threaded if rendered
+
+commit b522c02816f6a31b24e53a9ae1072f169aa031c3
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 25 22:43:30 2020 +0200
+
+    Refactoring to run base and simulation based tests in parallel
+
+commit 2347270d271675efdb6a03f04d8459806e29cec6
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 25 21:35:44 2020 +0200
+
+    Store expert trajectories tested
+
+commit 19d7f289a1beaabee91b3ef7911a2cb931f65fb6
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 25 19:19:07 2020 +0200
+
+    Changed run config to use matplotlib renderer
+
+commit 2fc9c959d25e6e02620fa472b024ba8ea43dbd6f
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 25 17:45:00 2020 +0200
+
+    Added skip rendered tests in unit tests
+
+commit ee8383dc7721f7677dfb47d621f5e6053e2fd589
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 25 17:37:20 2020 +0200
+
+    Added tests for measure world
+
+commit 9ba27779d5725b25a612973e538734ee4d03f2bd
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 25 16:47:50 2020 +0200
+
+    Added renderers to simulation, started simulate scenario tests
+
+commit 3477b4859e1b8323a8d8a7f16367bad72a456bf0
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 25 15:33:42 2020 +0200
+
+    Test create scenario
+
+commit 094a15cc183ce7c7fe5ea67bf7a7697436dcb2a9
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 25 15:17:00 2020 +0200
+
+    Added test for generate parameter_server
+
+commit 370282680ce7962cb59802385d20b7bb5372a75d
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 25 14:51:38 2020 +0200
+
+    Test if path is valid interaction dataset path
+
+commit 88ff6cb2fe21e103cc8b5fb03e914d3a485883e0
+Merge: 91ba37b 7368c45
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 25 14:50:24 2020 +0200
+
+    Merge branch 'marcel_bruckner/test_load_save_utils' into marcel_bruckner/test_generate_expert_trajectories
+
+commit 7368c45bd3204e574e31ffef41ec7ba0ce99844d
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 25 14:49:59 2020 +0200
+
+    Added better ValueError to load save if not a dir
+
+commit 91ba37bec48c55329457db420c819e8e5549fda6
+Merge: ca99cd6 1cd6fae
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 25 14:47:21 2020 +0200
+
+    Merge branch 'marcel_bruckner/test_load_save_utils' into marcel_bruckner/test_generate_expert_trajectories
+
+commit 1cd6faeb8c1b943d10309192dcef4e0b336f1c89
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 25 14:46:38 2020 +0200
+
+    Added exclude .git to list dirs in dir
+
+commit ca99cd6bce4d9e1236b20c3b70ee06f1e884bda6
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 25 14:30:05 2020 +0200
+
+    Added tests for get_track_files and get_map_files
+
+commit 739c01132f81eff0eca5afb08e990643fc412774
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 25 13:59:01 2020 +0200
+
+    Added load save utils tests to unittests CI
+
+commit a7088dca0c52ae50972be6cf9a61b6efa6746645
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 25 13:55:18 2020 +0200
+
+    Added tests for list files and directories
+
+commit a15cafc1189038b026ba2c067c0116be10c53043
+Merge: e39ae6e 31e8e68
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 25 13:19:48 2020 +0200
+
+    Merge branch 'master' into test_generate_expert_trajectories
+
+commit 31e8e68ec4dc21a6b1ed532d1eda47d1b23538ef
+Merge: b0bc2b4 4f3ad8e
+Author: Marcel Bruckner <mbruckner94@gmail.com>
+Date:   Thu Jun 25 13:19:10 2020 +0200
+
+    Merge pull request #42 from GAIL-4-BARK/marcel_bruckner/utils_to_load_pkl_file_trajectories
+    
+    Finish up load expert trajectories
+
+commit e39ae6eda084965aad34ac5db4bbd643c76352dc
+Merge: 6f10686 02a6fc8
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 25 12:09:22 2020 +0200
+
+    Merge branch 'marcel_bruckner/generate_expert_trajectories' into test_generate_expert_trajectories
+
+commit 774fd2458d070a08c3088cde8880e0935c211213
+Author: Pedro Vieira <pedrovieira@arrowplan.com>
+Date:   Thu Jun 25 11:42:55 2020 +0200
+
+    Improve action computation by adding the option of computing the derivative from second degree polynomials
+
+commit 893f1f37750a13932a00560aeacb555dfcd73dc2
+Author: patrickhart <patrickhart.1990@gmail.com>
+Date:   Thu Jun 25 11:28:58 2020 +0200
+
+    Update dependencies to master
+
+commit b767ca1120b1c307b8eff22cd4d0e58436a6c31c
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Thu Jun 25 11:23:53 2020 +0200
+
+    all gail tests are added to CI
+
+commit 6f10686326f7fcc8431c7658a0365b685e3a8929
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 25 10:21:08 2020 +0200
+
+    Small initial commit to create pull request
+
+commit 4f3ad8e47712b0c7383c3d05986c2e530009264a
+Merge: 76dc1fd b0bc2b4
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 25 10:02:49 2020 +0200
+
+    Merge branch 'master' into marcel_bruckner/utils_to_load_pkl_file_trajectories
+
+commit 02a6fc88023801a7b189273dea58e28dbea076bc
+Merge: 297c057 b0bc2b4
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 25 10:01:21 2020 +0200
+
+    Merge branch 'master' into marcel_bruckner/generate_expert_trajectories
+
+commit 3b50b98d6a1e3c859060414e4780b2910da8492d
+Merge: ff1b312 b0eacdb
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Wed Jun 24 21:34:08 2020 +0200
+
+    Merge pull request #67 from bark-simulator/update_namespaces
+    
+    Update namespaces and headerguards
+
+commit b0eacdbf76c600dd793c21b3c1b70e1b9efaa7ab
+Author: patrickhart <patrickhart.1990@gmail.com>
+Date:   Wed Jun 24 21:15:32 2020 +0200
+
+    fix namespaces and headerguards
+
+commit b0bc2b402eed2c91d4c71a172c5c4b66dd487e11
+Merge: db43077 c0e343b
+Author: Marcel Bruckner <mbruckner94@gmail.com>
+Date:   Mon Jun 22 18:21:42 2020 +0200
+
+    Merge pull request #43 from GAIL-4-BARK/marcel_bruckner/bazel_research
+    
+    Add interaction dataset scenario generation to generate launch config script
+
+commit c0e343b0dadd188bb5e4cf7e191f463fce127404
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Mon Jun 22 18:19:42 2020 +0200
+
+    Fixed tests on generate launch configuration
+
+commit ff1b31236f8f7cba6411a89fa61ceb90c6f47ceb
+Author: patrickhart <patrickhart.1990@gmail.com>
+Date:   Mon Jun 22 14:20:41 2020 +0200
+
+    use specific commit for now
+
+commit 9bb576999d539e3dfa970605358ab581db0741f6
+Author: patrickhart <patrickhart.1990@gmail.com>
+Date:   Mon Jun 22 14:20:11 2020 +0200
+
+    stage for upcoming changes
+
+commit 297c05788e7e4bc65705b98e612b59c5385ab04d
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Sat Jun 20 17:59:59 2020 +0200
+
+    Added launch config to debug generate expert trajectories tests
+
+commit 76dc1fdc808b099d26e4f2618204355bd55b3e69
+Merge: f1f2219 157e173
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Sat Jun 20 17:46:16 2020 +0200
+
+    Merge branch 'marcel_bruckner/bazel_research' into marcel_bruckner/utils_to_load_pkl_file_trajectories
+
+commit 157e173fb6a9039402e9206867029e826096bf9d
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Sat Jun 20 17:45:34 2020 +0200
+
+    Updated python path generation with interaction dataset utils
+
+commit 5794f656c6213e1dd7f58f3d9b81a227bd118272
+Merge: e0ad6ff d417a12
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Jun 20 12:04:21 2020 +0200
+
+    Merge pull request #65 from bark-simulator/fix_merging_scenario
+    
+    Update PyPI version
+
+commit d417a120a9c23a3f45aab0d02ad55d7535053e9d
+Author: patrickhart <patrickhart.1990@gmail.com>
+Date:   Sat Jun 20 12:03:42 2020 +0200
+
+    update version
+
+commit e0ad6ffcdf4e8a76b09fe21954a3f966984d9f61
+Merge: f01f39b 1c30ff6
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Jun 20 10:07:18 2020 +0200
+
+    Merge pull request #63 from bark-simulator/fix_merging_scenario
+    
+    fixed behavior models of other agents on merging lane
+
+commit 1c30ff6f943ffb2754cb8bcad44d548b15993471
+Author: patrickhart <patrickhart.1990@gmail.com>
+Date:   Sat Jun 20 00:18:37 2020 +0200
+
+    fixed behavior models of other agents on merging lane
+
+commit f01f39b14e62de2c9bed1ce68b5d4cf2e230229c
+Merge: e224601 efab5e0
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Jun 20 00:08:03 2020 +0200
+
+    Merge pull request #62 from bark-simulator/move_examples
+    
+    Move examples folder
+
+commit efab5e0a93ee9eb57d585c124c5e74c52dbc9687
+Author: patrickhart <patrickhart.1990@gmail.com>
+Date:   Fri Jun 19 23:39:58 2020 +0200
+
+    Update Readme.md
+
+commit af493a554218faf05c85a3235a0f85f37d3f8620
+Author: patrickhart <patrickhart.1990@gmail.com>
+Date:   Fri Jun 19 23:37:31 2020 +0200
+
+    Move examples folder
+
+commit e224601cea39482c521c85b4147f113a1b33d0ed
+Merge: 53582ae af72656
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri Jun 19 22:57:49 2020 +0200
+
+    Merge pull request #61 from bark-simulator/pip_package
+    
+    Shorten PyPI example code
+
+commit af7265681cb2a885bb8be228eda67dd93bc1dd7b
+Author: patrickhart <patrickhart.1990@gmail.com>
+Date:   Fri Jun 19 22:56:38 2020 +0200
+
+    shorten example code
+
+commit 53582aeb70be278fcf5d855d896cc1e526174809
+Merge: 697e5d6 5dec396
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri Jun 19 21:49:17 2020 +0200
+
+    Merge pull request #60 from bark-simulator/pip_package
+    
+    PyPI Package
+
+commit 5dec3962a004bbe1749a473a7d9f05c365abe128
+Author: patrickhart <patrickhart.1990@gmail.com>
+Date:   Fri Jun 19 19:38:12 2020 +0200
+
+    Minor changes
+
+commit a20f3f0bc110fbaac95d46478012e5dcaaece9aa
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Fri Jun 19 18:11:12 2020 +0200
+
+    commented param saving line in examples/tfa.py
+
+commit 2f93d99b09cfe7095a0c4b11907b953a9b4e7b08
+Author: patrickhart <patrickhart.1990@gmail.com>
+Date:   Fri Jun 19 17:58:10 2020 +0200
+
+    increase package number
+
+commit cec69865260528a319d61cc0290dc38e2dc4491f
+Author: patrickhart <patrickhart.1990@gmail.com>
+Date:   Fri Jun 19 17:57:51 2020 +0200
+
+    changed requirements and blueprints
+
+commit 51a45a9a7cc6734450a8ab687632bd57b8107167
+Author: patrickhart <patrickhart.1990@gmail.com>
+Date:   Fri Jun 19 16:57:20 2020 +0200
+
+    Add BARK as requirement
+
+commit fff5bdda708cd3b2d8115cb06dc8570c3c013034
+Author: patrickhart <patrickhart.1990@gmail.com>
+Date:   Fri Jun 19 16:52:45 2020 +0200
+
+    change package deps
+
+commit 480d74f18e24c3c40a86a9faab2caf0b9f8ca5ba
+Merge: 7a53f37 db43077
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Fri Jun 19 16:39:00 2020 +0200
+
+    Merge branch 'master' into test_runner_agent
+
+commit 7a53f373822c6b31d4dc6368e35fd9e3ec5f64b7
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Fri Jun 19 16:38:54 2020 +0200
+
+    set tags again in BUILD file, since it was gone after mergeing.
+
+commit dba488d9ad553844f7e2194ccad6eedcb5c67bb1
+Author: patrickhart <patrickhart.1990@gmail.com>
+Date:   Fri Jun 19 16:32:54 2020 +0200
+
+    PyPI specific Readme.md
+
+commit 71c3e36ef75c84b7a2d9526a46580c1812c1018f
+Merge: 26e6fa7 f172a8a
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Fri Jun 19 16:31:55 2020 +0200
+
+    Merge branch 'test_runner_agent' of https://github.com/GAIL-4-BARK/bark-ml into test_runner_agent
+
+commit 26e6fa7c9a38ad91f6b30110a022d03e847041be
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Fri Jun 19 16:30:50 2020 +0200
+
+    dir creation is added to tests. tags=['no-sandbox'] is added to gail tests.
+
+commit acc5df83d1d90321b9e491df12157dd7769fa91d
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri Jun 19 16:10:34 2020 +0200
+
+    Update diadem.yml
+
+commit 0b8c52377aa30dfabedc6859ed0e25ce1fb01444
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri Jun 19 16:10:16 2020 +0200
+
+    Update main.yml
+
+commit 7581566639119198ac43766e6ac650f951bf00fc
+Author: patrickhart <patrickhart.1990@gmail.com>
+Date:   Fri Jun 19 16:07:27 2020 +0200
+
+    Minor changes
+
+commit 416393d19e9b9b110048b894b54312851cd296b3
+Author: patrickhart <patrickhart.1990@gmail.com>
+Date:   Fri Jun 19 15:54:10 2020 +0200
+
+    Smaller changes
+
+commit 18cb8129a269ed7f0ac68ff5966fe5db3f39ebb8
+Author: patrickhart <patrickhart.1990@gmail.com>
+Date:   Fri Jun 19 15:48:36 2020 +0200
+
+    change readme.md
+
+commit 4199d5f69e91fbf5fcc7f94cfb35d6ef3927bd99
+Author: patrickhart <patrickhart.1990@gmail.com>
+Date:   Fri Jun 19 15:46:41 2020 +0200
+
+    smaller changes
+
+commit 2933a1f1631ac34caeced3448fd887f8d997dd64
+Author: patrickhart <patrickhart.1990@gmail.com>
+Date:   Fri Jun 19 15:41:23 2020 +0200
+
+    Initial package setup
+
+commit f40ebeb22591951c644933734480878e39ac4e54
+Author: patrickhart <patrickhart.1990@gmail.com>
+Date:   Fri Jun 19 15:02:33 2020 +0200
+
+    Initial changes
+
+commit 697e5d6e7e6afaf8efa15a213b8f1547c33e9fc9
+Merge: 9ad4836 f702d0d
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Thu Jun 18 22:12:54 2020 +0200
+
+    Merge pull request #59 from bark-simulator/integrate_bark_changes
+    
+    Integrate BARK changes
+
+commit f702d0d8118463f9e723eaf66cc65bb973a409bc
+Author: patrickhart <patrickhart.1990@gmail.com>
+Date:   Thu Jun 18 21:53:57 2020 +0200
+
+    Minor changes
+
+commit f1f22191a112a5754b1e9fa3e15ba2c94d3eacb8
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 18 20:13:48 2020 +0200
+
+    Small look enhancement
+
+commit 4fea3f6c830d71082eef985f4b19b9c3be364198
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 18 20:07:46 2020 +0200
+
+    Extended load expert trajectories with flattening
+
+commit 1fc0d857e7dc73c331e52ad0553b4e4740330783
+Author: patrickhart <patrickhart.1990@gmail.com>
+Date:   Thu Jun 18 18:55:01 2020 +0200
+
+    Initial restructuring and adaptation
+
+commit d5a67150fd21834660cba3f751aa77b5dc6ccb47
+Merge: 0254fc4 db43077
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Thu Jun 18 17:47:09 2020 +0200
+
+    merge new repo master
+
+commit db43077d4b0087ce5cc00da3c84389dc672ac421
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 18 17:45:34 2020 +0200
+
+    Fixed bark commit added to dependencies
+
+commit f172a8a24dcf57c15a985b4b928e8aa7365e81a7
+Merge: 6af9343 5f34853
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Thu Jun 18 17:39:08 2020 +0200
+
+    Merge pull request #41 from GAIL-4-BARK/marcelbrucker_test_gail_agent
+    
+    Marcelbrucker test gail agent
+
+commit 5f34853e10c6fc0917fb5c40e9a438f3cde37e5e
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Thu Jun 18 16:52:08 2020 +0200
+
+    Delete py_library_tf2rl_tests.py
+    
+    Marcel said it was removed
+
+commit 21cf219baa74166d8dac62054684a52d76427e82
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Thu Jun 18 16:48:55 2020 +0200
+
+    Update tfa.py
+    
+    Artefact from debugging
+
+commit 860a474dccc3a44c03810fbfc095de1651b95e0c
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Thu Jun 18 16:34:16 2020 +0200
+
+    changed whole test block because test was removed completely
+
+commit 692a44d965dc07ae795f4fd3ee7e9aee7b1621a8
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Thu Jun 18 16:30:09 2020 +0200
+
+    changed path because file was moved
+
+commit 7af4d98e63a33aacc96555eeff60b5f0ab335c11
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Thu Jun 18 15:49:28 2020 +0200
+
+    updated package versions that did not satisfy requirements
+
+commit 0930e61046e9b1f2e4518e0796509af79d631fb8
+Merge: 336cce6 0254fc4
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Thu Jun 18 15:26:39 2020 +0200
+
+    added gail tests
+
+commit 0254fc41caaddb277b20725f93fd7ea65cdd8a53
+Merge: 80f0a97 3c012e9
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Thu Jun 18 15:20:59 2020 +0200
+
+    resolved merge conflict
+
+commit 3c012e99233cf48f657888345143ab98899f795c
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 18 15:16:14 2020 +0200
+
+    Reverted auto update
+
+commit c03cf8b4dfb613a549ac747939cb7a65f22b16cc
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 18 15:11:32 2020 +0200
+
+    Fixing CI
+
+commit 336cce6a50a1aabdc8eb667df8cdc2c6f421588b
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Thu Jun 18 14:29:03 2020 +0200
+
+    test only one additional script that passed locally
+
+commit aa81bc5670d1ee7615ade04747fb523e7e1a6518
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Thu Jun 18 14:09:00 2020 +0200
+
+    deleted error-prone files
+
+commit 7078f296535246c654071c94ec5fb35a3b1a4a50
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 18 13:11:07 2020 +0200
+
+    Added bark side testing framework
+
+commit 4ff62ed2fc516df582bf545316796db70809902d
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Thu Jun 18 12:52:01 2020 +0200
+
+    commented out unknown test again
+
+commit e14f99c2447c6b4188448ff04ffc2613e93b1c66
+Merge: 3615506 73c9ac6
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 18 12:42:51 2020 +0200
+
+    Merge branch 'master' into marcel_bruckner/utils_to_load_pkl_file_trajectories
+
+commit 2d18d0a46d3417316cbf2fc07fe22f11be57f31a
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Thu Jun 18 12:35:06 2020 +0200
+
+    added gail tests and examples to CI workflow
+
+commit 4f1bc969c93666c1ca3320afeb8262942c5f5666
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Thu Jun 18 12:23:41 2020 +0200
+
+    Deleted license information and waste
+
+commit 70d2eb4134480b3d409733797ff901bee5502a61
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Thu Jun 18 12:21:11 2020 +0200
+
+    Uncommented relevant test class
+
+commit 22ebab4296aeadd6a1e0548ebc9bc68f91b9bc7a
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Thu Jun 18 12:18:32 2020 +0200
+
+    fixed wrong path for expert_data
+
+commit 2fd6bad9de87a82c676b6e63a1ae740b4c033da2
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Thu Jun 18 12:17:11 2020 +0200
+
+    test for gail agent implementation
+
+commit 73c9ac649bd414e0845e7e86cbd92b29b99dafd8
+Author: Pedro Vieira <pedrovieira@arrowplan.com>
+Date:   Thu Jun 18 12:08:44 2020 +0200
+
+    Change the function call of calculate_action to include the wheel base
+
+commit afa9f03a55ba4f13248118c91051afc361ae89e1
+Merge: 0687913 303be8d
+Author: Pedro Vieira <pedrovieira@arrowplan.com>
+Date:   Thu Jun 18 11:44:01 2020 +0200
+
+    Merge branch 'master' of https://github.com/GAIL-4-BARK/bark-ml
+
+commit 068791367db28cedfe76f520ac03571911847913
+Author: Pedro Vieira <pedrovieira@arrowplan.com>
+Date:   Thu Jun 18 11:43:46 2020 +0200
+
+    Correct the calculation of the agent's action by computing the steering angle from the derivative of the vehicle angle
+
+commit 303be8d902070d42ef920dc338db23b5a113148e
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 18 11:34:46 2020 +0200
+
+    Added debug flag, fixed DoPlanning to Step
+
+commit 6af93437b49643ae79828afc91f59fe652dc1993
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Wed Jun 17 19:26:11 2020 +0200
+
+    GAIL agent and runner are tested with bark environment with zeros as expert trajs.
+
+commit a88ad6ff61feb0c85bf5fa0c74a1f7d2f86f6673
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Wed Jun 17 17:59:47 2020 +0200
+
+    expert trajectory loading is moved outside of the runner.
+
+commit 8c9d96fb4c454fb8d73bbc1d43c1c9dbb0a7df11
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Wed Jun 17 15:17:40 2020 +0200
+
+    gail runner and agent is tested with an Open-AI gym environment.
+
+commit 5ddc1a4a2cea0ff66f1883a076140d702946747a
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Wed Jun 17 14:24:28 2020 +0200
+
+    agents BUILD file modified for bark_ml/behavior dependency. Agent initialization tested.
+
+commit e0ea849a0c9880910c39eadfa06109072ef7142d
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Wed Jun 17 10:47:51 2020 +0200
+
+    gail_params.json files contail both agent and runner params.
+
+commit 2d66f75d5222d2d1c63af34b7322bc57a9fe8250
+Merge: cc2b51e b828c82
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Wed Jun 17 10:02:22 2020 +0200
+
+    Merge pull request #40 from GAIL-4-BARK/marcelbrucker_gail_agent
+    
+    Marcelbrucker gail agent
+
+commit b828c82dd6a422eebdb60f6344588f8057bfe4f8
+Merge: 27a96b4 cc2b51e
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Wed Jun 17 09:59:01 2020 +0200
+
+    Merge branch 'test_runner_agent' into marcelbrucker_gail_agent
+    
+    resolved merge conflicts with test_runner_agent before pull request
+
+commit 27a96b45b854eb1d4a908690da43c4b99a20e10d
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Tue Jun 16 16:10:52 2020 +0200
+
+    Added flags for GPU and test environment
+
+commit 99aa077c3a83c49cdcf272452b7c4624d1a095ac
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Tue Jun 16 16:07:18 2020 +0200
+
+    Implemented key functionalities of GAIL agent
+
+commit 9b989c3e9c947f4131cc21f9ac5ac4ef5b877650
+Merge: 282fab2 80f0a97
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Mon Jun 15 15:03:34 2020 +0200
+
+    Merge branch 'master' into marcelbrucker_gail_agent
+    merge with updated master branch
+
+commit 80f0a97cf20068ce1e44c296f937e0f30130f386
+Merge: 66d6a0e bfac9cc
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Mon Jun 15 15:01:03 2020 +0200
+
+    Merge branch 'master' of https://github.com/GAIL-4-BARK/bark-ml
+
+commit 66d6a0e4d49e49266e7d8f04b4e318b50973482d
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Mon Jun 15 15:00:53 2020 +0200
+
+    save before merge
+
+commit bfac9cc66670f8e6625b9450d3e48d9ec3dd4def
+Merge: c8ce716 9b09392
+Author: Marcel Bruckner <mbruckner94@gmail.com>
+Date:   Fri Jun 12 11:27:57 2020 +0200
+
+    Merge pull request #39 from GAIL-4-BARK/marcel_bruckner/generate_expert_trajectories
+    
+    Generate expert trajectories
+
+commit 9b09392f0a7e15fd2eff76e490d75a355fc610fc
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 11 21:17:16 2020 +0200
+
+    Included also chinese
+
+commit aea6ecc9bb4bdada04e341f5517ce9054bbc7e4c
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 11 20:49:59 2020 +0200
+
+    Added check for cpu count
+
+commit 059de4b77bbf3bffbedab823ba55b426f3c574b8
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 11 20:46:53 2020 +0200
+
+    Multithreaded generation
+
+commit 5e1da14d1632be0a8e01bc5fecc8d9ce85f51838
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 11 20:26:10 2020 +0200
+
+    Conversion working
+
+commit cac8538edb71c75c6b0205e443c09566b7df70c6
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 11 20:09:17 2020 +0200
+
+    Alpha version finished
+
+commit 8ac299ad9f28f248227536b1220de3b5dc434e2d
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 11 18:34:41 2020 +0200
+
+    Updated keys for param server dict
+
+commit 9945ca6d286f405e83934d1064b913d86fb13f3d
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 11 18:32:11 2020 +0200
+
+    Added auto load of all scenarios
+
+commit 319b1ac7e3bffff33bd14c006b0970f0d64b565b
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 11 16:48:45 2020 +0200
+
+    Fixed CI and added scenario iteration
+
+commit cc2b51e12d6c365427e3ffe6b8c43b63b01c4b92
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Thu Jun 11 16:46:46 2020 +0200
+
+    runner initialization tests complete. args from argparse.Namespace object.
+
+commit d8fa65a8103cfa650ef350e93e54b3f29bb0185b
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 11 16:33:15 2020 +0200
+
+    Added basic interaction_dataset_loop
+
+commit 3615506f70f426563b468500244f31d6f1a490d2
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 11 14:46:45 2020 +0200
+
+    Reformatting
+
+commit bb56c9ff56c50dbfa5f377f5cf78ec3634b0a101
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 11 11:09:18 2020 +0200
+
+    Added unit tests to ci
+
+commit ea5283532309290fe8ea682f53c935c92ab15cd0
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 11 10:53:01 2020 +0200
+
+    Added check if expert trajectories valid and extended tests
+
+commit 05409ab8025ed09c9c5800f773390c6f976b830e
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 11 10:14:35 2020 +0200
+
+    Added load pkl file and basic test
+
+commit 01734795654a17a17012c890b0aa0cfb4aedd385
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Wed Jun 10 20:15:08 2020 +0200
+
+    files and dirs are added separately to BUILD file.
+
+commit 3e1f69b0e186472d078f74a309cbba6244e1993c
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Wed Jun 10 19:25:27 2020 +0200
+
+    params.json and filegroup in BUILD file is written for gail tests.
+
+commit ed895db159b6f9a05a6f39b2f0464097c23c2442
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Wed Jun 10 15:51:26 2020 +0200
+
+    BUILD file fix for importing ParameterServer
+
+commit 84e262d01a9bb6dbf2c5bb0dda00d16e1e77d8f6
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Wed Jun 10 15:22:08 2020 +0200
+
+    does not import bark_project.
+
+commit c8ce716af59ae5dfa75d7b8556f104367655124f
+Author: Marcel Bruckner <mbruckner94@gmail.com>
+Date:   Thu Jun 4 18:50:09 2020 +0200
+
+    Added GAIL Overview
+
+commit 5b1663a219252a6e7209d5bc5053ab45c1537f3d
+Merge: 8c9f125 24924e0
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu Jun 4 16:54:06 2020 +0200
+
+    Merge branch 'master' into marcel_bruckner/load_pkl_file_trajectories
+
+commit 282fab28e0027a870cfd5aa078febbcee7f31068
+Merge: 60791e6 24924e0
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Thu Jun 4 07:28:06 2020 +0200
+
+    new merge with master
+
+commit 24924e06f82bf7e2075c003ccd390a0f9f81031b
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Wed Jun 3 15:36:43 2020 +0200
+
+    Fixed bazel run examples:gail
+
+commit f5618dac4870115c9ca162fe9184e48c0849f2e8
+Merge: 2ef1859 fb7d7c7
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Wed Jun 3 14:56:56 2020 +0200
+
+    Merge branch 'master' into add_gail_example_file
+
+commit fb7d7c7f22156d20a21c465475a367fd2aa889f5
+Merge: 42a6758 606cb05
+Author: Marcel Bruckner <mbruckner94@gmail.com>
+Date:   Wed Jun 3 14:46:34 2020 +0200
+
+    Merge pull request #32 from GAIL-4-BARK/marcel_bruckner/bazel_research
+    
+    Add script to generate launch configs for VS Code
+
+commit 606cb0508ba831a9875640bf6bdecc920c477d50
+Merge: e9e1070 42a6758
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Wed Jun 3 14:42:14 2020 +0200
+
+    Merge branch 'master' into marcel_bruckner/bazel_research
+
+commit 42a67580091c85489850ea8462055f6834fb28db
+Merge: 61cb963 9ad4836
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Wed Jun 3 14:41:04 2020 +0200
+
+    Merge branch 'master' of https://github.com/bark-simulator/bark-ml
+
+commit 8c9f12509b825e0cf05d479cbb6b312d2766d8e9
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue Jun 2 20:55:58 2020 +0200
+
+    Added test framework for tf2rl utils
+
+commit 2ef18599e14c23a26b043b58f84db4d0683402db
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue Jun 2 20:17:58 2020 +0200
+
+    Fixed python errors down the examples/gail execution
+
+commit 6f6a8d5db870c16a50a40e7c0a365fd596a3615d
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue Jun 2 19:47:06 2020 +0200
+
+    Basic bazel framework for gail implementation
+
+commit 8374ea732438bd3ec2603174a208820402ee2898
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue Jun 2 19:29:35 2020 +0200
+
+    Added base examples/gail.py
+
+commit e9e1070b1f5430f7ff056b8d270471a415131833
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue Jun 2 16:51:38 2020 +0200
+
+    Added size = small to fix warnings on unit tests
+
+commit 20b81eb80aacc395e6b7eeb0dea41847d87c6422
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue Jun 2 16:45:35 2020 +0200
+
+    Added generate launch config tests to :unit_tests
+
+commit 5d5c255283d0d4ab652a37e5184056619e6bef1a
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue Jun 2 16:10:19 2020 +0200
+
+    Extended script for generic version if no path given
+
+commit 5779148dd29ca3ad0143768644bd233ebbf96a0c
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue Jun 2 16:03:01 2020 +0200
+
+    Added tests for the generate launch config script
+
+commit ae28cc102208559bded738461178d45adb976813
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue Jun 2 14:52:13 2020 +0200
+
+    Formatting
+
+commit 2496522c1772d7906a8c28e0cece4f41fe42528c
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue Jun 2 14:47:26 2020 +0200
+
+    Added generate launch config script
+
+commit 60791e645e6f9d82e1a9bb87c25cca2423dcd94a
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Fri May 29 21:53:33 2020 +0200
+
+    Added example script
+
+commit 89c4483c9c708d4ae2db967dacdd64a599c90fe6
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Fri May 29 21:51:50 2020 +0200
+
+    Added parameter file for dynamics of the car etc.
+
+commit 587fb955ccc1a37a825637c2f69542c0ca9c7726
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Fri May 29 21:15:36 2020 +0200
+
+    Added init files in accordance with tf agents
+
+commit 9ad4836ae789fd8ba90138079e776423d655bb60
+Merge: 8af4a2f d5b1ee5
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri May 29 16:21:02 2020 +0200
+
+    Merge pull request #56 from bark-simulator/disable_log_msgs
+    
+    Disable BARK log messages
+
+commit d5b1ee59ec74a6d19fc161c88a7fd43188102da7
+Author: patrickhart <patrickhart.1990@gmail.com>
+Date:   Fri May 29 15:39:16 2020 +0200
+
+    Disable BARK log messages
+
+commit f6263412f6079a3073c4e72fe0603ae28bbb04fb
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Thu May 28 19:23:29 2020 +0200
+
+    runtime wrapper dummy for tf2rl is added.
+
+commit 04d851ec6f1f08e23c940b81c5605d2a95250975
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Thu May 28 18:42:48 2020 +0200
+
+    evaluation with trainer's function including logging and summary
+
+commit de04baa7da77774db06839decba1c9f7eeb6829d
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Thu May 28 18:08:23 2020 +0200
+
+    evaluation and visualization written by hand. No logging and summary writter.
+
+commit 823b9dd04662234aa4a7733ae8195d24698f3fb5
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Thu May 28 11:09:06 2020 +0200
+
+    runner args from params ready. Indentation in SAC agent correct.
+
+commit a7b51c9e3df1f43723c31c90ff7843ed0bfeb728
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Thu May 28 10:36:19 2020 +0200
+
+    indentation is corrected to 2.
+
+commit dfa0281fed7d014649e9bfe4720665b276d24c62
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Wed May 27 18:28:58 2020 +0200
+
+    added some tf2rl imports
+
+commit 8664dc84d17d857eaeeb82c7d5d373ea36c595f9
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Wed May 27 18:15:19 2020 +0200
+
+    modified runner init
+
+commit 5cc9293960f16ef923eb911bd441564fa7e089fd
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Wed May 27 17:56:13 2020 +0200
+
+    corrected BehaviorGAILAgent inheritance
+
+commit 911f6a95177f6ef9d103eac19ede1593d841e5cf
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Wed May 27 17:43:16 2020 +0200
+
+    tf2rl agent and runner base classes and GAIL blueprints added.
+
+commit afbf880008a75b33535dd9f49eb0bc37b333941f
+Merge: 96d88b5 c1fac2b
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Wed May 27 16:46:26 2020 +0200
+
+    Merge branch 'marcelbrucker_add_tf2rl_3' into gail_runner
+
+commit 96d88b5a512d8dfd3cf49e3cdfb28aab6f6e6fde
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Wed May 27 16:11:48 2020 +0200
+
+    started tr2rl_runner.py, before pulled from marcelbruckner
+
+commit c1fac2b60d473de0f38f3f5a6511730d69a7315a
+Merge: de48791 f8ba03b
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Wed May 27 15:45:21 2020 +0200
+
+    Merge branch 'gail_runner' into marcelbrucker_add_tf2rl_3
+    Merging my tf2rl branch with Feri's runner branch
+
+commit de487911f260fca2b9c01f841aa523df6c9355a6
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Wed May 27 15:34:17 2020 +0200
+
+    changed max step
+
+commit 61cb963cd1020f51c4a40d0b8c03bc58186beebf
+Merge: 2118984 b0b5109
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Wed May 27 15:25:08 2020 +0200
+
+    Merge branch 'master' into revert_failed_master_merge
+
+commit 7a1625da4b1507683ae52ac76fe076e63fa3f90e
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Wed May 27 15:16:24 2020 +0200
+
+    added example gail script
+
+commit ad7c96888447dc6f6dfd554aea05efd0470f0a17
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Wed May 27 15:12:36 2020 +0200
+
+    added config to debug example gail script
+
+commit d95ed8be8549301d8ed07f78dd7a5d43dc9c6ce7
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Wed May 27 15:10:53 2020 +0200
+
+    Added tf2rl package and modified package version to meet all requirements
+
+commit f8ba03b3b2b1e338ae0b57483a40939ed9f0478f
+Author: Ferenc Török <ferike.trk@gmail.com>
+Date:   Wed May 27 14:53:20 2020 +0200
+
+    added empty agent and runner base class files
+
+commit b0b51097c735aef1bfc928bfff01b5f9e0d18d98
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Wed May 27 12:54:33 2020 +0200
+
+    Revert "trying again to add tf2rl after pulling new master version"
+    
+    This reverts commit fc8925b42089b305e0d22a75724e87b6a66dbcf6, reversing
+    changes made to f7a418c554007ef713d540565fdd1129d2486947.
+
+commit af1f131b810ceb1f4859ab74d8147a9254f8c3ea
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Wed May 27 12:53:13 2020 +0200
+
+    Revert "Merge pull request #23 from GAIL-4-BARK/marcelbrucker_add_tf2rl"
+    
+    This reverts commit 068371415dc9f0f8264c4aa3b439bb997d03018b, reversing
+    changes made to 2118984e5e7683506ba002096f029e533e4bcbdb.
+
+commit 11e3cd1a5fad87e8480115fd5c555729bf705399
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Wed May 27 12:52:00 2020 +0200
+
+    Revert "Merge pull request #27 from GAIL-4-BARK/revert-23-marcelbrucker_add_tf2rl"
+    
+    This reverts commit 3e94e138b9c87a4e5063f88386b013dc21711870, reversing
+    changes made to 068371415dc9f0f8264c4aa3b439bb997d03018b.
+
+commit 3e94e138b9c87a4e5063f88386b013dc21711870
+Merge: 0683714 cf153b9
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Wed May 27 10:46:58 2020 +0200
+
+    Merge pull request #27 from GAIL-4-BARK/revert-23-marcelbrucker_add_tf2rl
+    
+    Revert "Added tf2rl"
+
+commit cf153b92f3edf681f19618569d2a7d8e0d4de84d
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Wed May 27 10:14:00 2020 +0200
+
+    Revert "Added tf2rl"
+
+commit 068371415dc9f0f8264c4aa3b439bb997d03018b
+Merge: 2118984 fc8925b
+Author: Marcel Brucker <63588974+marcelbrucker@users.noreply.github.com>
+Date:   Wed May 27 10:13:41 2020 +0200
+
+    Merge pull request #23 from GAIL-4-BARK/marcelbrucker_add_tf2rl
+    
+    Added tf2rl
+
+commit fc8925b42089b305e0d22a75724e87b6a66dbcf6
+Merge: f7a418c 2118984
+Author: Marcel Brucker <Marcel@MacBook-Pro-2.local>
+Date:   Wed May 27 10:10:00 2020 +0200
+
+    trying again to add tf2rl after pulling new master version
+
+commit 2118984e5e7683506ba002096f029e533e4bcbdb
+Author: Marcel Bruckner <mbruckner94@gmail.com>
+Date:   Tue May 26 18:41:26 2020 +0200
+
+    Update Readme.md
+
+commit 493ff6b2217c56388bfaea505cecac26d4081adb
+Merge: 6b9f635 e524aaf
+Author: Marcel Bruckner <mbruckner94@gmail.com>
+Date:   Tue May 26 18:30:22 2020 +0200
+
+    Merge pull request #25 from GAIL-4-BARK/integrate_bark_simulator_origin
+    
+    Integrate bark simulator origin
+
+commit e524aafb3e8967a517d68531047bff8e9de2d691
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue May 26 17:45:02 2020 +0200
+
+    Changed to relative home path
+
+commit dc5be45d5cd3860925ddf01c580957f75ee8d05f
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue May 26 15:49:14 2020 +0200
+
+    Fixing CI
+
+commit 2e132a35dedfed3d88176885f83bdf7285fa2d59
+Merge: 6b9f635 8af4a2f
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue May 26 15:43:48 2020 +0200
+
+    Merge branch 'master' of https://github.com/bark-simulator/bark-ml into integrate_bark_simulator_origin
+
+commit 8af4a2f197d848a5ee64ada66f06ddb903aec576
+Merge: 0fdd970 a7d6053
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 25 16:26:59 2020 +0200
+
+    Merge pull request #55 from bark-simulator/cpp_integration
+    
+    Cpp Integration
+
+commit a7d6053efc0e9a80659e2bcd5319f3b76ce5bd7a
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 25 16:12:31 2020 +0200
+
+    change parameters for example
+
+commit 2a4fef2178e843a02a12570da1d81dc222c9b595
+Merge: 0f3d01f 0fdd970
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 25 15:52:23 2020 +0200
+
+    Merge branch 'master' of https://github.com/bark-simulator/bark-ml into cpp_integration
+
+commit 0f3d01fda89cd23c54e79a6334ed4b7a92a9b688
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 25 15:48:56 2020 +0200
+
+    Change diadem dqn back to py_test
+
+commit 02ea6c61356500aa50204dc36fcdfaa2c6f7a792
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 25 15:44:35 2020 +0200
+
+    test suites and ci changes
+
+commit fed8da9e540c69737825797f49aff0d9f5809d1c
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 25 15:39:42 2020 +0200
+
+    Fix typo
+
+commit 8e9d61df502162f197279cd3d3ad05174899b174
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 25 15:25:12 2020 +0200
+
+    Viewer is now optional in the blueprints
+
+commit 941e9174a4ba3715a1105e6f0d2b5a4a3d1d5d89
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 25 15:13:36 2020 +0200
+
+    Evaluators are not included in the BARK world
+
+commit c33e4259dc681a9374f96b985460563361f50959
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 25 15:10:35 2020 +0200
+
+    Include headers
+
+commit cdbcbecc5a48f52c73bb8e8dda9d9e24544d216c
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 25 14:56:10 2020 +0200
+
+    Fix include
+
+commit 3d55fdfb949eb06d5a7037c9021b3300e9d539ff
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 25 14:50:23 2020 +0200
+
+    Fix base class
+
+commit 2c733f97c6f64097b545d11c474ed9a1d0a713dc
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 25 14:46:51 2020 +0200
+
+    Added BaseObserver
+
+commit b16c58ab49f757c68644f19da63b6539b5ef004e
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 25 14:36:23 2020 +0200
+
+    Cpp evaluator
+
+commit 927b73ac2d112700fc3eb33775af161856b925ce
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 25 12:35:18 2020 +0200
+
+    Basic implementation for the cpp evaluator
+
+commit 0fdd97051b775d3ac4a955b736496014990b20d7
+Merge: aa2eb46 bf83947
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 25 12:08:51 2020 +0200
+
+    Merge pull request #54 from bark-simulator/fix_glog
+    
+    Include glog without gflags in bark-ml
+
+commit bf839470fa8f20dbae0e72c8d1092d22d5e446ef
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 25 11:55:52 2020 +0200
+
+    Include glog without gflags in bark-ml
+
+commit aa2eb468954497187378ee5dc1c9eb053f6d927c
+Merge: ffdd071 d3cc2c5
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri May 22 11:30:29 2020 +0200
+
+    Merge pull request #52 from bark-simulator/intersection_env
+    
+    Better Intersection Environment
+
+commit d3cc2c5c32dcdede8e7fa1d0fe35505fee420c05
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri May 22 11:16:15 2020 +0200
+
+    For now remove cpp observer
+
+commit 68ac813d7805edc08ae5fc3bbae5d773ffd124db
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Thu May 21 22:25:57 2020 +0200
+
+    Fix includes
+
+commit e5b93de054daf63301ed884ccab4451c05243e51
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Wed May 20 15:20:35 2020 +0200
+
+    fIx diadem dependency
+
+commit 841b1f735e009a74e891d4cb9d7c8fcd80c02d2e
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed May 20 14:37:56 2020 +0200
+
+    Cleanup WORKSPACE
+
+commit fbed2cc7ffa0df0b56949c2f96050d2018e3df3e
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed May 20 14:30:52 2020 +0200
+
+    Refined dependencies
+
+commit f3ec98e00791178745f2ed74a10caf59766de60d
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed May 20 14:15:26 2020 +0200
+
+    Fix NearestObserver
+
+commit 5097dbb571b923de29fb67c5eb7b02825bd56a2b
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed May 20 13:48:08 2020 +0200
+
+    Clean-up example
+
+commit 1be2fb589f36abaf999e2f99a222c05fb592732f
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed May 20 13:45:50 2020 +0200
+
+    Cleanup example
+
+commit fb1a0989eef52a1f8562eedfa8874d8b8cf1b821
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed May 20 13:41:13 2020 +0200
+
+    Adapted example
+
+commit 75216795c729aca3ecf7a5144e632ce293f4f629
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed May 20 13:34:13 2020 +0200
+
+    Added normalization in the NearestObserver
+
+commit 989cc42a7d1db76578f12304c1ff1c5ee649ac3b
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed May 20 13:18:52 2020 +0200
+
+    Add normalization to the cpp observer
+
+commit 769672235cb09641a0c50aa8a0826c88a355dff8
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed May 20 12:24:00 2020 +0200
+
+    Intersection scenario training and display for diadem
+
+commit c0ecf596219057e268bb5a1b1994661fca21b1c0
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed May 20 11:56:10 2020 +0200
+
+    Changed goal in the intersection scenario
+
+commit b209cac24462491c2583d44b2cbb0639f2165b8e
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed May 20 11:12:32 2020 +0200
+
+    Cleanup the discrete behavior
+
+commit 4cac4c01cbe2954cd89045fae13a1b88e61571b4
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed May 20 11:04:55 2020 +0200
+
+    Small fix
+
+commit f3a1648907ee7ff53b6b5bfd99893489a842d73f
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed May 20 11:04:07 2020 +0200
+
+    Integrating diadem into the CI
+
+commit ffdd071d62acbd4709564c20beb3317e13f86213
+Merge: fe1d5b3 f4c73b3
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue May 19 16:40:15 2020 +0200
+
+    Merge pull request #50 from bark-simulator/minor_improvements
+    
+    Minor improvements and updates
+
+commit f4c73b3299935c4b59f529daf16e1f7c11048715
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue May 19 16:27:04 2020 +0200
+
+    change deps to master
+
+commit 88576cc1b68eb6c1ef77387025df55ae9a30be29
+Merge: 53d6593 a8ad48a
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue May 19 16:17:19 2020 +0200
+
+    Merge branch 'diadem_integration' of https://github.com/bark-simulator/bark-ml into minor_improvements
+
+commit 53d6593ffaf8f61d3dd6d4a94c44ee0a1a2e561a
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue May 19 16:09:19 2020 +0200
+
+    Fix tests
+
+commit f7a418c554007ef713d540565fdd1129d2486947
+Author: Marcel Brucker <Marcel@MacBook-Pro-2.local>
+Date:   Tue May 19 15:49:01 2020 +0200
+
+    Incorporated tf2rl in the installation file and added th relevant example script (with minor modifications)
+
+commit fbc6224d3508622009380a3b3d3600d4a68b1865
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue May 19 15:47:15 2020 +0200
+
+    Update Readme.md
+
+commit 2302cb2d4b6514645e96e86acbd06e46917a53fd
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue May 19 15:44:41 2020 +0200
+
+    Fix discrete model
+
+commit f9525002444b95066a09d52588edf4052cf584c4
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue May 19 15:05:54 2020 +0200
+
+    discrete segfaults
+
+commit fd4b01f8a685100b7798b807c062332f0d0d9b8e
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue May 19 13:14:25 2020 +0200
+
+    Fixing discrete models
+
+commit 1e9142b10e7781cb73a66cecbb52acbb24dc1cdd
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue May 19 12:45:19 2020 +0200
+
+    Minor improvements and updates
+
+commit a8ad48a751896bcb4c3639f032555a113ba5debb
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue May 19 11:02:53 2020 +0200
+
+    Update Readme.md
+
+commit 6751ec7250368873e67485f827e77e35e2c408b5
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue May 19 10:57:21 2020 +0200
+
+    Fix cont. space
+
+commit 9d8d6138099931c2803e36f3ec8246f9a54495ef
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue May 19 10:47:03 2020 +0200
+
+    Move params
+
+commit ac8452c0182df2e4b211ac6b08ad2a7e19fe68cf
+Merge: 1dc327f fe1d5b3
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue May 19 10:46:07 2020 +0200
+
+    Merge branch 'master' of https://github.com/bark-simulator/bark-ml into diadem_integration
+
+commit fe1d5b347baf3702e76895755ebb2beedda1564f
+Merge: eea4acd 8576b6c
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue May 19 10:44:36 2020 +0200
+
+    Merge pull request #48 from bark-simulator/refactoring
+    
+    Refactoring
+
+commit 1dc327fe3c6bb5228cb5cab3f1aa1760ad245b72
+Author: juloberno <juloberno@gmail.com>
+Date:   Tue May 19 10:29:32 2020 +0200
+
+    update workspace diadem deps
+
+commit 89da3766bcf9e660059e03dae49b53502c638e79
+Author: juloberno <juloberno@gmail.com>
+Date:   Tue May 19 10:27:58 2020 +0200
+
+    quantile as default, improved logging of diadem evaluation
+
+commit 8576b6c8a769419d08c576061e7ff4f443f03bf0
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue May 19 09:41:11 2020 +0200
+
+    Refinement of interseciton blueprint
+
+commit 36aed2ed5e817f8f047083f0e9eea9ccd244d5bd
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue May 19 08:58:27 2020 +0200
+
+    Integrated intersection blueprint
+
+commit 277834f71a646cc0034c44b6dc9e2e29ad3b66e0
+Author: juloberno <juloberno@gmail.com>
+Date:   Tue May 19 08:53:02 2020 +0200
+
+    diadem dqn works
+
+commit fa4fd479ed9b36acd694ea0d3b9cb61826e828f4
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue May 19 08:24:42 2020 +0200
+
+    Fixed action space in discrete behavior model
+
+commit 4300b8e92cb8340d59cf93ab093bd73122e1aae2
+Author: juloberno <juloberno@gmail.com>
+Date:   Mon May 18 22:26:11 2020 +0200
+
+    fix num prim getter
+
+commit 13e47de5d6331700bc6b4333a469a548883fb862
+Author: juloberno <juloberno@gmail.com>
+Date:   Mon May 18 22:18:16 2020 +0200
+
+    add diadem dqn example
+
+commit c0e7bb0c2ebfb355fe630af30461e38574c18050
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon May 18 17:11:14 2020 +0200
+
+    Updated Readme.md
+
+commit 233a864ded16f1677c689244a82e3eddf59874bd
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon May 18 15:53:30 2020 +0200
+
+    Fix and changed refactoring.md
+
+commit 5a441fbd40d0df45b92838437cd7ccf86aae662e
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon May 18 15:45:01 2020 +0200
+
+    Modified tfa examples
+
+commit 1693d3793a93956db17675b91cf04cd825ec06c1
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon May 18 14:44:38 2020 +0200
+
+    Fix BehaviorSAC
+
+commit affaf7980f003a2d55e852a469659d090b420d3c
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon May 18 14:30:50 2020 +0200
+
+    Fix tests
+
+commit 8e7571fc6c92d1d0f05677e8502418e900ef6c0d
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon May 18 13:56:35 2020 +0200
+
+    Changed github ci image
+
+commit 4d9b7a55e2bec2a99ee4d98b90ac97eda6e70e26
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon May 18 13:32:55 2020 +0200
+
+    Changed docker image for CI
+
+commit 32ee06d26ffa7ea78873f905d7d4e8f3cd177160
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 18 11:21:33 2020 +0200
+
+    Changed bounds for cont. example
+
+commit 54e152a15f17ae0c343c16942886f0d90a14afdd
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 18 11:11:25 2020 +0200
+
+    Move refactoring.md to docs
+
+commit cb8fec276dc28742e5d69be742e5bcb8b2a09a2a
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 18 11:09:24 2020 +0200
+
+    Restructuring and remove old src
+
+commit 6a112fc047d60b22dd645484a0df0449efe0de88
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 18 11:04:46 2020 +0200
+
+    Updated Readme.md
+
+commit 1bcdfae7106cc78071fdc889c44da4751df67673
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 18 11:02:56 2020 +0200
+
+    Integrate video renderer in blueprint example
+
+commit c431007cb7f21398ccc47a11532fdc3f8ecf5691
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 18 10:05:51 2020 +0200
+
+    Changed merging scenario
+
+commit b5fe3021f80ad8e6bfcd946b3233965d555fc317
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 18 10:02:56 2020 +0200
+
+    Realistic highway scenario
+
+commit 7b55a3675219e0da39b5e08bfcb2dbea847fc322
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 18 09:46:35 2020 +0200
+
+    Smaller changes
+
+commit a88d1bbc098a26982655042e67bb9b3efbea7d05
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 18 09:44:53 2020 +0200
+
+    Restructure Readme.md
+
+commit 5ff049de21ec868d52a8edbc1c3d5c0b906ae9bf
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 18 09:39:06 2020 +0200
+
+    Cleaned-up the examples
+
+commit 217f4f484a40920201f3082853475fe53bacb0a2
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 18 09:31:36 2020 +0200
+
+    Updated Readme.md
+
+commit d20283dbbe8a368f1dae27dbbc0b58b9ac4e72fd
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 18 09:16:40 2020 +0200
+
+    Guiding reward evaluator
+
+commit e216cc228b8270efab4e828aea3051f92a6b304d
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 18 09:07:15 2020 +0200
+
+    Easier import of tf agents and runners
+
+commit a5c1efc390db4267b582ae5fe714726302301e15
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon May 18 08:45:17 2020 +0200
+
+    Refinement of TFA example
+
+commit c38ae93db214422be4ea8e468cd1a00b9d58ab09
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sun May 17 23:15:47 2020 +0200
+
+    Fix GoalReached evaluator
+
+commit cd5e23c0c2e16eb299ccf67173a26c531956c927
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sun May 17 22:58:41 2020 +0200
+
+    Minor improvements
+
+commit 3fdd432f460f8c208bd3107e272c754a42da9f97
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sun May 17 22:48:52 2020 +0200
+
+    PPO training working
+
+commit bea9c808ede9460d682b14611bc5141c6968f895
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sun May 17 22:37:51 2020 +0200
+
+    PPO example works
+
+commit 1440ecdd2a62af9b8369cb187fb66c026e6de67f
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sun May 17 22:27:04 2020 +0200
+
+    Updated parameters
+
+commit 2ae02eb956d5d9a8bab32f2e7b3b619e7b611842
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sun May 17 22:18:15 2020 +0200
+
+    Changed names of parameters
+
+commit 3172eb0e944252a76475b1d649e5769f86c69ae8
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sun May 17 20:28:38 2020 +0200
+
+    TFA-SAC example
+
+commit d60831cbdc4dba138e10a3aac0ebaa26702fcef1
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sun May 17 19:58:16 2020 +0200
+
+    Restructuring and renaming
+
+commit 3a14e4de088d9642329c7ed750f9694ea499da04
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sun May 17 14:28:02 2020 +0200
+
+    Refinement of PPO anf SAC agents
+
+commit bb505a53f0345e2ff475700ebcf673de1e2bafe2
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sun May 17 13:37:07 2020 +0200
+
+    Basic tf_agents runner
+
+commit 68c7816fbe3818c4635679ff769470c77b041e7e
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sun May 17 13:14:59 2020 +0200
+
+    Basic integration of the SAC and PPOAgent
+
+commit a3d5f2bca0d302b0fe2f18322d3e0621c13a1405
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat May 16 15:36:18 2020 +0200
+
+    Added library wrappers
+
+commit fb48632dc0a13b2ed27b1750171ec6d4af472828
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat May 16 15:29:41 2020 +0200
+
+    Add logo
+
+commit 0bcd4305ddfefdf302fa1cd167e24726c87307f0
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat May 16 14:50:45 2020 +0200
+
+    Improved evaluator
+
+commit 95a719d55bf8883d4a037f6de86a8dd4f15add86
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat May 16 14:36:44 2020 +0200
+
+    Fix evalautor
+
+commit bccc1a5965eb62c684885023ba5ed501ffed0069
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat May 16 14:34:58 2020 +0200
+
+    More elaborate blueprint example
+
+commit f7d80a00f2b6f041f661608f67bb5ebd8ed21f6c
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat May 16 14:24:36 2020 +0200
+
+    Add blueprint config to examples
+
+commit bb64fe0866c3475174c5580e2d3b68b67107e0dd
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat May 16 14:15:45 2020 +0200
+
+    Added advanced example
+
+commit 7efed44289dbe77460e102d85e551e52ee97ec78
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat May 16 12:03:48 2020 +0200
+
+    Integrated examples
+
+commit 2d0154b1b1172a146fd7a7521009af57a0a09c52
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat May 16 11:30:27 2020 +0200
+
+    Integrated gym wrapping in tests
+
+commit 80e1da2f40c415fcd109c97641df442d781da42c
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat May 16 11:19:34 2020 +0200
+
+    Now possible to register envs
+
+commit bfdb30877c96ea4bbf6f20db3d8a495557bb1540
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat May 16 11:00:54 2020 +0200
+
+    Proper merging scenario
+
+commit e45b963c7d305fbcaf6c2d0ba5a35e99473dcd66
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat May 16 10:32:21 2020 +0200
+
+    Restructuring
+
+commit bfed38de724e610bfa9033fefcd6c3c505aba5e4
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri May 15 22:26:30 2020 +0200
+
+    Renaming
+
+commit 4de3a9dfe273fb0d2cd6225e3b6e4d4ac115ce41
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri May 15 22:02:00 2020 +0200
+
+    Improved scenario
+
+commit c17a3c2a6f7dacb913d4f6500607b59f14be1a78
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri May 15 21:44:27 2020 +0200
+
+    Simplify c++ observer
+
+commit 7726c4601eadec2f96242335a09cc7b8bbfc4416
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri May 15 21:38:52 2020 +0200
+
+    Integrate c++ observer
+
+commit 77243a72b47c5aed5652eafed2ec7bdcbe9c2b38
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri May 15 21:27:23 2020 +0200
+
+    Added tests; changed docker image
+
+commit 7e8d89fe0d273962f210d35bca0edef802b4202f
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri May 15 20:16:58 2020 +0200
+
+    motion primitives in constructor
+
+commit 3dea824628a8ddef7fd3d115f2596d946720653b
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri May 15 18:14:12 2020 +0200
+
+    Fix tests
+
+commit ea3ccb502529222d9553cca6fa182e0f5418b25d
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri May 15 18:11:14 2020 +0200
+
+    discrete and cont envs work
+
+commit cc9b153fffeaf99bb29cf5ccdfbdf9f1753f2aa3
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri May 15 18:09:18 2020 +0200
+
+    Changed motion primitives
+
+commit 770d8298b83560cdfbb06af484b1c08bd1c387a6
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri May 15 18:03:28 2020 +0200
+
+    Integrate continuous and discrete environment
+
+commit 77d0bafb825ef6a9ac4fe2eaf492e18bb7e20ca4
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri May 15 16:40:56 2020 +0200
+
+    Improvements for blueprint
+
+commit 57d925fd5cf67196a93bcfe29ccedd8cbddad39f
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri May 15 16:36:24 2020 +0200
+
+    Rendering works
+
+commit f769477703ebde7f7d23a875c8b24ff256ae7f8b
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri May 15 16:31:06 2020 +0200
+
+    Blueprints working
+
+commit 02ebf19b8d16b3ee95b956adc83ae0f3b1ff95d4
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri May 15 15:13:35 2020 +0200
+
+    Test integration
+
+commit 8585f4ccb72469af319eac61ffdc4675b62ce2f6
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri May 15 14:38:40 2020 +0200
+
+    Major refactoring
+
+commit c97f3012e5f7e284817f3e258b1ccdbc4b123ab6
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri May 15 11:37:22 2020 +0200
+
+    Initial structure
+
+commit d6694be5e4d87d974d31b1ff1e4667554be2d881
+Author: juloberno <juloberno@gmail.com>
+Date:   Fri May 15 10:30:09 2020 +0200
+
+    add refactoring ideas
+
+commit eea4acde01c5f895d1b223aa8c8e390e4dfe51c2
+Author: juloberno <juloberno@gmail.com>
+Date:   Tue May 12 17:21:17 2020 +0200
+
+    py spaces discrete add low and high
+
+commit b8ffc2d8e52814eae59eae5690cf606f3875fa7a
+Author: juloberno <juloberno@gmail.com>
+Date:   Fri May 8 16:23:07 2020 +0200
+
+    add macro action wrapper fix test
+
+commit 6b9f635e497bc7a20da5e5758e143b1c2b0f6b00
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu May 7 20:43:31 2020 +0200
+
+    Removed ubuntu-latest
+
+commit 16b25540916398684282fd60766275bfbb746d64
+Author: Marcel Bruckner <mbruckner94@gmail.com>
+Date:   Thu May 7 20:18:27 2020 +0200
+
+    ubuntu-latest.yml
+
+commit a8bd84e303e204a9f86fc57c5bca31c6731707de
+Author: Marcel Bruckner <mbruckner94@gmail.com>
+Date:   Thu May 7 20:05:16 2020 +0200
+
+    Update Readme.md
+
+commit 37b510e8b67af63ef0d6e3a081dd79341bd3e30a
+Merge: 71e865d 9716e1a
+Author: Marcel Bruckner <mbruckner94@gmail.com>
+Date:   Thu May 7 19:28:32 2020 +0200
+
+    Merge pull request #18 from GAIL-4-BARK/continuous-integration
+    
+    Bazel tests fixed on CI server. Reinstalling all python packages now.
+
+commit 9716e1a2a9547e2aa9d3605c23b898aa8e805703
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu May 7 19:12:52 2020 +0200
+
+    Reinstall all and correct virtualenv
+
+commit f51528ef55507d3c17a1aecf045cafc131e562ba
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu May 7 19:03:04 2020 +0200
+
+    python3.7-dev
+
+commit 7eead1ae4d9fa313e8e67ff72013e03c0e722177
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu May 7 16:26:42 2020 +0200
+
+    Reinstall python
+
+commit 61d0748e5d1a6b4f358c7df54f5fcd50f54dfe26
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu May 7 16:18:41 2020 +0200
+
+    Removed locate
+
+commit dd324b394b617487ac16e7b644e9195ddfe9e907
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu May 7 16:12:13 2020 +0200
+
+    Removed sudowq
+
+commit 1204306d957549951ec2037c012c01185e25c125
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu May 7 16:05:43 2020 +0200
+
+    Locating python h
+
+commit df2780f2dd2b191e2d5a6af2a103fa8b3a52e3ed
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu May 7 16:02:05 2020 +0200
+
+    Locating python h
+
+commit cb61adb159401bd3e076a9044fa7b81cc6f4b9be
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu May 7 15:53:29 2020 +0200
+
+    Changed pip to use same as in install.sh
+
+commit bb5a6afeded4f30ea22bdfd181bcf17155dc9f61
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Thu May 7 15:47:05 2020 +0200
+
+    Added installation of requirements
+
+commit 71e865dc8b850dbe985697dd39d206bf0a51ae62
+Author: Marcel Bruckner <mbruckner94@gmail.com>
+Date:   Tue May 5 17:17:12 2020 +0200
+
+    Update Readme.md
+
+commit 8b973e414821b4f960e9854a44641dd478a207db
+Author: Marcel Bruckner <mbruckner94@gmail.com>
+Date:   Tue May 5 17:13:25 2020 +0200
+
+    Update Readme.md
+
+commit 4a302ace1dfd0ee2bbac5c6d3abafa6fa94bc011
+Author: Brucknem <mbruckner94@gmail.com>
+Date:   Tue May 5 17:11:24 2020 +0200
+
+    Fixed minor path issue for visualization, setup writer for tf summaries
+
+commit 9cda7641d8880a950e84f909d54c78a57b37d198
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Apr 27 16:12:47 2020 +0200
+
+    Update Readme.md
+
+commit 8f96cce71895ed53c60a0fc145618bdc91e68157
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Apr 27 15:45:23 2020 +0200
+
+    Update Readme.md
+
+commit c8955223114f447a6f24c9b2bc1b993da9785017
+Merge: f29f2fc 0587d52
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Apr 23 21:07:25 2020 +0200
+
+    Merge branch 'master' of https://github.com/bark-simulator/bark-ml
+
+commit f29f2fc4beb021fc7bb8938ac91d6b63703f32bc
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Apr 23 21:05:28 2020 +0200
+
+    change dockerfile
+
+commit 0587d52bc1685cf9bfe8e934d158bdfa01286cfa
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Thu Apr 23 17:36:13 2020 +0200
+
+    Update main.yml
+
+commit 7c41b79e3f5425910936fd0cc9a9812f2e9cec7b
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Thu Apr 23 17:14:54 2020 +0200
+
+    Fix dependencies
+
+commit 3504b0404a40e878c7538ebaab5972c2f3eff7ed
+Merge: 91a3efc f1f392a
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Thu Apr 23 17:10:35 2020 +0200
+
+    Merge branch 'master' of https://github.com/bark-simulator/bark-ml
+
+commit 91a3efcea892ad1a533de4a7d7cb2eec908034bb
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Thu Apr 23 17:10:06 2020 +0200
+
+    Fix tests
+
+commit 99509e60d1933201cc5e48c9c879752987bf0b0c
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Wed Mar 18 17:22:12 2020 +0100
+
+    .
+
+commit f1f392ab46bd1e5ea8db5958113526c173814a0e
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Thu Mar 12 13:23:22 2020 +0100
+
+    remove deps
+
+commit a3241beaa63596339404c0eaa32137693a3acfe4
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Mar 5 13:58:49 2020 +0100
+
+    .
+
+commit df3297c766d4567ed86a12e92f7fd1dc5101b31b
+Merge: e3923be 7e63a92
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri Feb 28 18:11:26 2020 +0100
+
+    Merge pull request #47 from bark-simulator/refactor_evaluators
+    
+    Refactor evaluators
+
+commit 7e63a9241341ba3600e7acaa964bfbbdd321b4af
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Fri Feb 28 18:10:49 2020 +0100
+
+    Change BARK commit
+
+commit 121092e65bbc986e63660a03df3fce6745b184c3
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Fri Feb 28 18:09:41 2020 +0100
+
+    Smaller runtime change
+
+commit 4747ad5366e191bd7f3a6b01938a661a58d654d8
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Fri Feb 28 18:06:13 2020 +0100
+
+    Restructuring of the snapshot function
+
+commit 13c70df1c023180afd81f0ff9473c64fb6164334
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Fri Feb 28 17:58:14 2020 +0100
+
+    Evaluator now uses the ObservedWorld
+
+commit e3923be9d4bbc070193b3fb780f184ca4249dfba
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Feb 27 13:27:54 2020 +0100
+
+    smaller changes
+
+commit 874fadbaf5187e0cf5cb62ca1bae9347e96131fc
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Feb 27 12:49:36 2020 +0100
+
+    .
+
+commit dd7939375c3119d3d39e86cfff77d90e3d51f443
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Feb 26 17:42:52 2020 +0100
+
+    default params
+
+commit 53df820387cb3559468265b31e74e6573fee0c1e
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Feb 26 17:37:03 2020 +0100
+
+    default to 2
+
+commit e230a6505320bbf3a4625ff37477b54ddf2eeb39
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Feb 26 16:01:00 2020 +0100
+
+    config for training
+
+commit 7be6cc2ded33cc2332d793865f790719ce79d097
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Feb 26 14:41:15 2020 +0100
+
+    SAC and some boiler code
+
+commit 496622ee14c7940527904e588572aa093ac0f48c
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Feb 26 12:29:45 2020 +0100
+
+    make agent picklable
+
+commit f0ed51c259dfae79dc82e078a2a31ee9d43192e8
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Feb 26 11:14:55 2020 +0100
+
+    Fixed superclass init
+
+commit 0a5e1c97b9cf0d2086ffd64ca6bfc3223466e67b
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Feb 26 11:06:24 2020 +0100
+
+    fixed deps
+
+commit 60340cff0475d6cb0e0a11927bd33f73f84c4d95
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Feb 26 10:46:38 2020 +0100
+
+    modification for pickle
+
+commit 3ccc27f924a308d3b0a83edd71e5a7db9b45782f
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Feb 20 15:14:45 2020 +0100
+
+    new scenario and seems to be training
+
+commit 7ca292ebf0880d34e600cc3b9a943a72c8907888
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Feb 20 13:49:33 2020 +0100
+
+    ckpt
+
+commit 05d7ad8b4153c9721150277299c5421e38b452d8
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Feb 20 13:16:29 2020 +0100
+
+    Minor fixes
+
+commit 524c2834779cf47aa34f48022015d1857f47bd2a
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Feb 20 13:10:35 2020 +0100
+
+    Change normalization options
+
+commit c02c328890c3371cf3c8f8ee60e74b2eea107a17
+Merge: 2866b2b 942f42d
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Thu Feb 20 09:58:02 2020 +0000
+
+    Merge pull request #46 from bark-simulator/scenario_modification
+    
+    Minor changes
+
+commit 942f42d6b02607627afe3d4e63738330fb77b598
+Merge: 2e3bb0c 2866b2b
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Feb 20 10:57:28 2020 +0100
+
+    Merge branch 'master' of https://github.com/bark-simulator/bark-ml into scenario_modification
+
+commit 2e3bb0c942b672254047114f3a9b14d8126509d5
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Feb 20 10:57:17 2020 +0100
+
+    some changes from three_agents branch
+
+commit 4805ab7004e9b15e9381257584567e34d995831d
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Feb 20 10:52:04 2020 +0100
+
+    change tf agents version
+
+commit a075acfb08e85c8a773567fbbd83df492cbb1e67
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Feb 20 10:46:52 2020 +0100
+
+    save changes
+
+commit 9e2dbe3c81a7aae3788d2f5e07c97f1b211e12c9
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Feb 20 09:59:08 2020 +0100
+
+    integration of baseline config
+
+commit 0d360cc0b917d333246c6b379209f91ab3791c24
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Feb 19 17:39:09 2020 +0100
+
+    Fix evaluator
+
+commit d6d76f295c8a6c55f67b0ae142830e48c76b8d2a
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Feb 19 16:24:15 2020 +0100
+
+    SAC agent
+
+commit 86e84ca45ca07fff61f60c5b98d2b2ef58172ee7
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Feb 19 13:56:16 2020 +0100
+
+    sort observation by distance and introduce max dist.
+
+commit 2866b2b891aed080d3ea482dc0fba9c9f3a94e50
+Merge: 92f1ec2 a612c26
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Wed Feb 19 11:38:40 2020 +0000
+
+    Merge pull request #45 from bark-simulator/scenario_modification
+    
+    Scenario modifications
+
+commit a612c260708da7e646c61c81a6b8186c5746f876
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Feb 19 12:38:08 2020 +0100
+
+    Smaller changes
+
+commit 5bda97e5568c2d9374ef4a37e6d5d6d564f15036
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Feb 19 09:51:56 2020 +0100
+
+    Small improvements for PPOAgent
+
+commit d5bd767cbd851ea6c908694fd0838a891ad2f2ef
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Feb 19 09:42:19 2020 +0100
+
+    Also implementing the DeterministicScenarioGeneration
+
+commit 92f1ec26910540a3328868bcc09037a0a5d85efa
+Merge: 7cb1d1c bfa6185
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue Feb 18 16:43:41 2020 +0000
+
+    Merge pull request #44 from bark-simulator/smaller_refactoring
+    
+    easier config file
+
+commit bfa6185c7e06e158a1b6ccd15ac49aa3b3ca1ca2
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Feb 18 17:41:55 2020 +0100
+
+    easier config file
+
+commit 7cb1d1c191cf7c812afa320bf5fbf095a5c8b8f8
+Merge: 2c6d6ff 2e2b62c
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue Feb 18 13:55:03 2020 +0000
+
+    Merge pull request #43 from bark-simulator/smaller_refactoring
+    
+    Fix compiler
+
+commit 2e2b62c28c51d39502401b7052528a99a3c13016
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Feb 18 14:54:31 2020 +0100
+
+    .
+
+commit cb4973ae476b9cd98a0d13024f67142906c2e7d4
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Feb 18 14:31:26 2020 +0100
+
+    remote deps
+
+commit 2c6d6ff00806bd2fdc056b1778e3d6d468149e6f
+Merge: c319b69 8852ebb
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue Feb 18 13:19:59 2020 +0000
+
+    Merge pull request #42 from bark-simulator/smaller_refactoring
+    
+    Fix tests
+
+commit 8852ebb8eafc3b0d5c3767ab89df0a143d3bdacf
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Feb 18 14:17:16 2020 +0100
+
+    Fix tests
+
+commit 8902c577dcee48ea7a0e12645d70cd3c29eab1ac
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Feb 18 14:14:57 2020 +0100
+
+    Fox logging
+
+commit c319b696fbabb9e3eaf37bab610ce27cdf783d13
+Merge: 4dd2b1a 9949931
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue Feb 18 12:50:10 2020 +0000
+
+    Merge pull request #41 from bark-simulator/smaller_refactoring
+    
+    Refactoring
+
+commit 99499314d71abe5a2f5fab24d1d043a8bd27f7aa
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Feb 18 13:19:49 2020 +0100
+
+    bark agent integration
+
+commit 2006c00e6890155dfa8551d5d409479240a1edec
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Feb 18 12:31:43 2020 +0100
+
+    .
+
+commit 58a720e479a2ced3da4cfadd793ca02d2982c03c
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Feb 18 12:31:23 2020 +0100
+
+    fix import
+
+commit 8c7ae35c0b5be540cc0aa3afebb7839b60917b8f
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Feb 18 10:37:03 2020 +0100
+
+    change parameters
+
+commit 727f92ba0f700fcc8c0a3ed7141ca36a125bdcc8
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Feb 17 18:11:20 2020 +0100
+
+    cluster ready
+
+commit efde9e37139bedf06be38ddf16840db63d775a01
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Feb 17 15:09:39 2020 +0100
+
+    Updated comments
+
+commit 1272cff791087a07db32f4e65ccacb5d36c7f735
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Feb 17 14:54:55 2020 +0100
+
+    Make observer more generic
+
+commit cb78cb61bd1c6400816737c97bfe16fcaa79d7f5
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Feb 17 13:35:50 2020 +0100
+
+    Change evaluator
+
+commit d0a2e471fa7b45c02c6b8d47848a5855f87229a3
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Feb 17 13:23:44 2020 +0100
+
+    Training and visualization of ConfigurableScenario works now
+
+commit a8c364647d0b424d332876d13130357e594b3b1a
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Feb 17 10:14:46 2020 +0100
+
+    Change map
+
+commit 90c5d6b7ec755e7c4ca59e19ec22ebd7dcba1e29
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Feb 15 20:11:45 2020 +0100
+
+    include later offset
+
+commit eebaa13366b53f449ed6b9375b98578b948a2593
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Feb 15 19:45:01 2020 +0100
+
+    FIxed observer and evaluator for highway scenario
+
+commit ecca99e93e0ca2d872f40fe72320832726f30d9e
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Feb 15 13:42:42 2020 +0100
+
+    map seems to be wrong
+
+commit 5849143db51084223b2efd33f85e36a7087b758c
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Feb 15 12:55:46 2020 +0100
+
+    Setup new scenario generation
+
+commit b8a196fd1c18a7778c2bbecc4c88eef8408efe10
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Feb 15 12:50:52 2020 +0100
+
+    .
+
+commit 95ae7a9f8f6dd9e9249f005ffdb3d6244bf18982
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Feb 15 09:45:20 2020 +0100
+
+    .
+
+commit 524163087734096b5b47bc94e71650a96ce692ca
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Feb 15 01:19:24 2020 +0100
+
+    working cpp observer
+
+commit 3a29c77cbb29d9a0d284914cd77437df6325c587
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Feb 15 01:01:13 2020 +0100
+
+    working version
+
+commit 5ef691569930e57f96bcb0627e81de5e64245ffd
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Feb 15 00:16:39 2020 +0100
+
+    Nearest agent observer
+
+commit 658d543d3f5928cb02cefebe6d861004a5a3c6ff
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri Feb 14 22:03:29 2020 +0100
+
+    Added spaces
+
+commit 19863b7879e9fa5c6b7a7761d1eee5bc12f07492
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri Feb 14 21:55:21 2020 +0100
+
+    CC observer test runs
+
+commit 830ae2b8a00d58475469624cc1988224a7d6dcfd
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri Feb 14 21:04:44 2020 +0100
+
+    Setup c++ environment
+
+commit e70899e49a1c2b17864998c57b6bcf484e831500
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri Feb 14 20:55:01 2020 +0100
+
+    Changing RL-Runtime and observers
+
+commit 4dd2b1af0745608a3830eb72c4b263490f896a77
+Merge: 9dc1dd6 7bed181
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Wed Feb 12 16:20:33 2020 +0000
+
+    Merge pull request #40 from bark-simulator/bark_model
+    
+    Fixed test
+
+commit 7bed181bf72d801954fb27c477a4bfc471fbb6f7
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Feb 12 17:19:52 2020 +0100
+
+    Fixed test
+
+commit 9dc1dd6718b33ed575d2b4d7aabd7ae30264576d
+Merge: 17c761d a417202
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Wed Feb 12 15:35:34 2020 +0000
+
+    Merge pull request #39 from bark-simulator/bark_model
+    
+    Fix tests
+
+commit a417202076330c2d3885c05a0813c7b2ec0836cb
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Feb 12 16:34:43 2020 +0100
+
+    fix test
+
+commit 17c761dc3dbd38b2d268d672a89cb0f1739e40ed
+Merge: 29bbde0 65c4dfe
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Wed Feb 12 15:11:07 2020 +0000
+
+    Merge pull request #38 from bark-simulator/bark_model
+    
+    better IF for BARK BehaviotModel
+
+commit 65c4dfe7e479dbe659edc9cdae3886d59a4bb0b6
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Feb 12 15:56:36 2020 +0100
+
+    better IF for BARK BehaviotModel
+
+commit 29bbde00a9937434b930e910c6016be25c266907
+Merge: 068cae4 4b4f979
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Wed Feb 12 14:27:33 2020 +0000
+
+    Merge pull request #37 from bark-simulator/bark_model
+    
+    Python behavior model
+
+commit 4b4f979bd70521397cf984cb4733c74638f3fafa
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Feb 12 14:26:59 2020 +0100
+
+    Add tests
+
+commit f8df51fe75a5b41ea7e294eecf9fdc4f404c6bac
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Feb 12 14:25:00 2020 +0100
+
+    bark agent integration
+
+commit 068cae48a9a32068b77c22f306dd989d6ba0e7bd
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Jan 28 15:33:52 2020 +0100
+
+    Adaptations fo renaming
+
+commit e7c270aaac95740d84b76635fda7d33fd4eeb33d
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Fri Jan 24 16:30:49 2020 +0100
+
+    Adaptations for BARK renaming
+
+commit e240f1baffca5e34e8a4fa852f3bba00399a01f3
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Thu Jan 23 22:28:03 2020 +0100
+
+    fiexed test
+
+commit 9605737d4a3b02b27733c495d2f4af2de34c6fa3
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Thu Jan 23 22:12:21 2020 +0100
+
+    Removed tags for nightly builds in requirements
+
+commit a1a8f10b410b47e4f12dab1579d1cf3d92824400
+Author: juloberno <juloberno@gmail.com>
+Date:   Thu Jan 23 21:40:50 2020 +0100
+
+    fix param file uniform config
+
+commit bb2729c8b69234874c5d4faaa91caf0214550379
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Thu Jan 23 20:34:31 2020 +0100
+
+    changed dependencies
+
+commit 6383d79909219c421f969b7ac300f5d49148ca9a
+Merge: 15c21ad d5ee94e
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Thu Jan 23 20:28:08 2020 +0100
+
+    Merge branch 'master' of https://github.com/bark-simulator/bark-ml
+
+commit d5ee94e3a38626af35addb15b828633eb33abd46
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Jan 23 18:05:15 2020 +0100
+
+    Make debuggable
+
+commit 982ddbf73f96b2031d3dfe7272995a6f55005857
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Jan 23 17:54:21 2020 +0100
+
+    Fix deterministic scenarios
+
+commit 00cf330898a45a8b1bd485f02115d6cd874cb8b7
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Sat Jan 18 15:25:20 2020 +0100
+
+    .
+
+commit 15c21ad2aec7db760ca543bbd3036f47be188697
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Jan 18 10:55:06 2020 +0100
+
+    ...
+
+commit 65f9a58c1cf54e97482c7836ec15f2739c6451f4
+Merge: 5b71a2d b14b5b9
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri Jan 17 23:02:32 2020 +0100
+
+    Merge branch 'master' of https://github.com/bark-simulator/bark-ml
+
+commit 47d5985cfaee4e3c02f153238046be5a1ab2a38a
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Jan 15 17:02:20 2020 +0100
+
+    Minor improvements
+
+commit b14b5b90d6c0fca533497dda47573eb038641032
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Jan 15 09:26:30 2020 +0100
+
+    fix
+
+commit 2a1ca03b4c2113e90cfba75e586e2c4d7e6b946f
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Jan 15 09:19:24 2020 +0100
+
+    fix uniform scenario
+
+commit 5b8cf49f8c0d6a071f131b24a414ee3ef21ccea7
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Jan 14 17:15:52 2020 +0100
+
+    Fixed rewards
+
+commit 2a31e51a10029b51b7b32e2783cc20733454ee51
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Jan 14 17:00:31 2020 +0100
+
+    .
+
+commit e6c2c545837e80dbf4a091da713efdd3d848fb82
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Jan 13 15:48:56 2020 +0100
+
+    .
+
+commit 68975b9b470f772fec446af8d1f48e92e5b65b33
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Sun Jan 12 11:35:48 2020 +0100
+
+    Smaller changes
+
+commit 5b71a2d625a96f0297b32f60160f4cb53ea73009
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Jan 11 17:55:42 2020 +0100
+
+    .
+
+commit a62db4ea45fffdff00acf95337209bddea6a4e18
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Sat Jan 11 11:45:56 2020 +0100
+
+    More interesting map
+
+commit bdc64b868cbab52bfa40952036b10fe60a698716
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Sat Jan 11 11:38:28 2020 +0100
+
+    .
+
+commit 25b97b2460b0ac2cfdbf5bb0da3f0563b685b6c4
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Sat Jan 11 11:35:55 2020 +0100
+
+    Small improvements
+
+commit aed07ba417dc71278920e8ba331a8f94e109fdad
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Sat Jan 11 11:18:54 2020 +0100
+
+    Add visualization flag
+
+commit 25295f34b557a17be0c0508cd61c19590f393572
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Sat Jan 11 11:17:15 2020 +0100
+
+    Bash scripts for cluster usage
+
+commit edfec116f5db1cce9af3c92f04aee36280a469e9
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Sat Jan 11 11:14:26 2020 +0100
+
+    Changed runner so results can be viewed
+
+commit 9cb10fcdcdb56ee1f842dcc29e3c4a2e1d4b4d63
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Sat Jan 11 11:08:55 2020 +0100
+
+    Fix display in docker images
+
+commit 2f278a37080f3a34ff1d5ed40d4eac44456cdd7f
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Sat Jan 11 10:34:15 2020 +0100
+
+    Easier cluster usage
+
+commit 94df0f29093ac77db35106548bdafee62dfecd07
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Jan 11 00:03:20 2020 +0100
+
+    Make folder configurable
+
+commit 8809633a60df0257221028d3359526cf029cba38
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri Jan 10 22:51:24 2020 +0100
+
+    Cluster improvements
+
+commit 2ea7e47764e09c3f585bfe8ed1bdeba2e07b9854
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri Jan 10 21:47:23 2020 +0100
+
+    Fixed tests
+
+commit 9c6ae91c8f9ae8822b9f19a8cd8120e98a1eb99c
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri Jan 10 21:23:55 2020 +0100
+
+    Realistic parameters
+
+commit d716a14a8f9b3f722ce5ac63c4db6440e208498c
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri Jan 10 21:16:38 2020 +0100
+
+    Introduced relative paths
+
+commit d2d27e903eeaa8ea6221e6901e61bfe9ad8e53ae
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri Jan 10 20:44:55 2020 +0100
+
+    Fix bug
+
+commit 251fefbe9ff2c288d4f18928fcabc0d769332dbc
+Merge: 9c7b24d 7a232b0
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Fri Jan 10 17:13:40 2020 +0100
+
+    Merge branch 'master' of https://github.com/bark-simulator/bark-ml
+
+commit 9c7b24dfda81929e5a6133143449e207b093c1f8
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Fri Jan 10 17:13:27 2020 +0100
+
+    Working cluster version
+
+commit d51cd4966d50ac8a8dff55a57d912207747ddbd7
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Fri Jan 10 17:08:47 2020 +0100
+
+    Cluster usage
+
+commit 7a232b0b6ac4ef6a92666d116558bf46fa07a6fd
+Merge: 987c047 1c83ccf
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri Jan 10 12:40:01 2020 +0100
+
+    Merge pull request #36 from bark-simulator/fix_input
+    
+    Fix inputs in DynamicModel
+
+commit 1c83ccf0d25486a1d64a8e1a5a7bb3df910ca4da
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Fri Jan 10 12:39:26 2020 +0100
+
+    fix inputs
+
+commit efb4ccd4616d19a80a6dc30553c8f3a0465ade65
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Fri Jan 10 12:30:07 2020 +0100
+
+    chaneg again
+
+commit 987c0479e4c82f6806050180065337f21e50ae43
+Merge: cfabdec 152b54e
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri Jan 10 11:25:12 2020 +0100
+
+    Merge pull request #35 from bark-simulator/cluster_usage
+    
+    Sbatch for running configuration on the cluster
+
+commit cfabdece8448c95a1ac42c2dc14d158ec0d207be
+Merge: c433a70 a88e1b4
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri Jan 10 11:11:43 2020 +0100
+
+    Merge pull request #34 from bark-simulator/fix_input
+    
+    Use parameter for the action size
+
+commit a88e1b469086c82cd9b5f7d82f593b95c4de472f
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Fri Jan 10 11:11:04 2020 +0100
+
+    use parameter for the action size
+
+commit 152b54ed63cd1557b7810acd8d0a2c870a3db800
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Fri Jan 10 10:45:09 2020 +0100
+
+    Sbatch for running configuration on the cluster
+
+commit c433a7020f768123c9e8e83069bb764b8b2be926
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Thu Jan 9 23:44:53 2020 +0100
+
+    Fixed deploy
+
+commit fb98d6f6a9911873f234fe70946172c33ebbc41e
+Merge: 70f5eeb bffef8c
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Thu Jan 9 23:33:26 2020 +0100
+
+    Merge branch 'master' of https://github.com/bark-simulator/bark-ml
+
+commit 70f5eebc00c22fe01deb4ad9c75c7bb829e6a634
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Thu Jan 9 23:33:14 2020 +0100
+
+    initial bash script for copying configurations to the cluster
+
+commit bffef8ca4aed203c7f6d4dcb13f0a01f5d88dc66
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Jan 9 16:36:10 2020 +0100
+
+    Change python version
+
+commit 642ad9e87608a58a5419d287350cacdc42d931fe
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Jan 9 15:58:17 2020 +0100
+
+    Docker and Singularity image
+
+commit f6e68219e57d02016ee4e8e12dfe54bbb2d39849
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Jan 9 15:04:41 2020 +0100
+
+    Add ci badge
+
+commit 1bc2f5e0fe791799851236fd6d04921016f77443
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Jan 9 14:51:27 2020 +0100
+
+    remote path
+
+commit 09c424e114d910358c1a85f74b1c998699a5aa22
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Jan 9 14:47:50 2020 +0100
+
+    Changed requirements
+
+commit 451d6171850db617bcb206bc90d23e5133aa7213
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Jan 9 09:42:28 2020 +0100
+
+    Second try
+
+commit 954f539fcdc8150205677cef02e257335c83d99c
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Jan 9 09:37:23 2020 +0100
+
+    freeze requirements
+
+commit c9a6794769c120a6c2c3eee2c39bed2bb861f224
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Jan 8 11:15:04 2020 +0100
+
+    paths
+
+commit 08d9d519c986a09d12f8a8179b9769501a8e2398
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue Jan 7 21:56:01 2020 +0100
+
+    Changed distance
+
+commit b39a8f85b5b7db1f8053f177fe1067dc7ed901ef
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue Jan 7 21:18:16 2020 +0100
+
+    Make viewer accesible in the observer and evaluator
+
+commit ed07d72efa4f79f8db4b47c4edce29e8ab26022e
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue Jan 7 21:13:38 2020 +0100
+
+    fix reward
+
+commit 5aa11c00db0cdbfea8b226175f67153c489900be
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue Jan 7 20:35:57 2020 +0100
+
+    fix reward
+
+commit 35efd702d74d1746fea13129c12a0753cf1b9b71
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue Jan 7 20:05:20 2020 +0100
+
+    Include drivable area in reward
+
+commit 855686076d16ba832b3d7796871a4c923293c73a
+Merge: 77c66a1 4dce9ee
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue Jan 7 19:55:48 2020 +0100
+
+    Merge pull request #32 from bark-simulator/baseline_env
+    
+    Drivable area evaluator
+
+commit 4dce9ee97b71b675927ed89bf0efacbe448e73f4
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Jan 7 18:32:49 2020 +0100
+
+    Drivable area evaluator
+
+commit 77c66a1ec2b16b864fdc92b3a16e858c6a72a66d
+Merge: b979f49 61ad8f7
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue Jan 7 17:08:53 2020 +0100
+
+    Merge pull request #31 from bark-simulator/baseline_env
+    
+    Improvements towards multiple agents
+
+commit 61ad8f7ca75ce9128124ef908a1d4b112f7e58dc
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Jan 7 16:46:05 2020 +0100
+
+    Morre general evaluator
+
+commit b2ab489b7a2676736d76b0af601c551d2eb1a24c
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Jan 7 13:41:51 2020 +0100
+
+    last last try
+
+commit 63814d5eac25db5108db9bb6c55ab0253aa7550e
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Jan 7 13:39:24 2020 +0100
+
+    last try
+
+commit ef5bab34f665429292093e5a68584bcf6664e6af
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Jan 7 13:32:28 2020 +0100
+
+    fix
+
+commit 2df99c3abcb66018280583770a85570381cf6722
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Jan 7 13:25:44 2020 +0100
+
+    fix
+
+commit fbe3d50043d4d5536e4c15333e8c0e11b3e3b00a
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Jan 7 13:13:10 2020 +0100
+
+    change tf version
+
+commit 8ddf009d3f45377c6bf0097885000c21e2d0d4cc
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Jan 7 12:59:56 2020 +0100
+
+    Fixed environment
+
+commit 0d2de2ab6d1571e6725ba9afe115a0e9f5fac14d
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Jan 7 11:24:52 2020 +0100
+
+    Fixed example
+
+commit ccfd45f458870e1adafe71cf337623b6c67981d4
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Jan 7 11:22:39 2020 +0100
+
+    Fixed tests
+
+commit 558d91db0cfef3fca128b793fc98f37a995ab126
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Jan 6 23:40:00 2020 +0100
+
+    Improved rendering
+
+commit cb3a42f9cb5eb74795b8e79c8f8f63890677efac
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Jan 6 23:16:55 2020 +0100
+
+    Parameter change
+
+commit 42ea63e3cfd4c39d33386e72d64bce93f8dc4101
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Jan 6 23:08:54 2020 +0100
+
+    Added ColorMap
+
+commit e78b2b27b7c412f068bce4507924b2865ede1576
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Jan 6 22:17:50 2020 +0100
+
+    Changed parameters
+
+commit 02928c7a122a3d767ac393f7afc72a4b00ed9af8
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Jan 6 22:14:06 2020 +0100
+
+    Disabled parallel environments
+
+commit 587614d22b763ae8cb96c3e504ef53a4893750b2
+Merge: e0de12f b979f49
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Jan 6 21:55:03 2020 +0100
+
+    Merge branch 'master' of https://github.com/bark-simulator/bark-ml into baseline_env
+
+commit e0de12fe6ad5d44c01eb202b41070ea0e3242e81
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Jan 6 21:54:47 2020 +0100
+
+    Adapted sac_highway scenario
+
+commit 203e4c4bbd19d0daee73d4546a81452d89442e7c
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Jan 6 20:13:34 2020 +0100
+
+    Updated requirements
+
+commit b979f49b1b26c14fb5767e7027dd113fda154cd7
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Jan 6 20:10:54 2020 +0100
+
+    Enable Github Actions
+
+commit fffa3cb25c03207fa54a146555a9a43a841a589d
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Jan 6 19:56:41 2020 +0100
+
+    Fixed evaluators
+
+commit 15bffed564239b71831873b517df5bfe1280eec1
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Jan 6 19:11:45 2020 +0100
+
+    Cleanup
+
+commit 4e2a98dabcfd776d78cdf85ca19084b0c1e96f4d
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Jan 6 19:11:37 2020 +0100
+
+    Extended runtime
+
+commit f91c73708c33e710703c7b09bdad80cb8e50878e
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Jan 6 19:11:27 2020 +0100
+
+    added action for the evaluator
+
+commit 074a5f2f88d9e00d01e5611e1ce27326fe8e4a88
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Jan 6 18:50:25 2020 +0100
+
+    changed goals
+
+commit e72ef902832568a129a24b5e7b883428ee8e5465
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Jan 6 18:21:18 2020 +0100
+
+    Small parameter fix
+
+commit aff0b2f740cd7e8879003e3a9a0317139fd20126
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Jan 6 18:21:09 2020 +0100
+
+    Change evaluators
+
+commit ef081d64a7262d2071be8f043d622eef400740f0
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Jan 6 18:20:43 2020 +0100
+
+    Multi agent config
+
+commit 0fc3366248385bd1afeb03dab71c61a9fc4f7db0
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Jan 6 17:57:01 2020 +0100
+
+    initial version of controlling two agents
+
+commit 5fbb78cb2c5302b388912cda80853723043eaf27
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Jan 6 16:57:07 2020 +0100
+
+    Cleanup
+
+commit 8e2ea10ae4d8178ef3bfeb1acf50f9b0804d457a
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Jan 6 12:25:01 2020 +0100
+
+    added collisions and start
+
+commit 82bb78e7e938c1ee30861e237b211ee6bfb73f26
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sun Jan 5 17:44:19 2020 +0100
+
+    minor changes
+
+commit 4806dd97330d3fd735c8fefa32bda6e2b05d0e1a
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sun Jan 5 16:08:52 2020 +0100
+
+    mult agents
+
+commit ece180589408aa2880a00e816271966feac0b1ee
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sun Dec 29 15:01:14 2019 +0100
+
+    Integrated test environment
+
+commit 13f3f93e70813d51c3f641cf4cd328af22fde86e
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sun Dec 29 14:05:16 2019 +0100
+
+    Add test environment
+
+commit ef9353bec9e395282b5d305337f8bf7111b189ef
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Dec 28 21:39:02 2019 +0100
+
+    Changed discount factor
+
+commit a659ca77d10dd48bb3cb57609cff573370da5f20
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Dec 28 21:27:49 2019 +0100
+
+    added gym environment to test agents
+
+commit 5bb3c942eec8ca95edf60358df76eaec8915f158
+Merge: 8e9be57 fafd5af
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Nov 18 10:26:30 2019 +0100
+
+    Merge pull request #30 from bark-simulator/fix_dynamic_model
+    
+    Fixed dynamic model
+
+commit fafd5afd534913aba503e23b28eacda8f2cf7132
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Nov 18 10:25:07 2019 +0100
+
+    Fixed dynamic model
+
+commit 8e9be57489aa5cd0f171a2c13b823c0315e3f446
+Merge: 1e0f73d 872208f
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue Oct 22 13:16:22 2019 +0200
+
+    Merge pull request #26 from bark-simulator/dev_drone
+    
+    Small fix
+
+commit 872208f71da16c9856ede38e5ea3f8d9566b2bc9
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Oct 22 13:15:53 2019 +0200
+
+    Small fix
+
+commit 1e0f73d19769d61ba9c3c42cff5450afdef9b076
+Merge: 6dd9304 7dd1968
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue Oct 22 13:14:50 2019 +0200
+
+    Merge pull request #25 from bark-simulator/dev_drone
+    
+    SAC can be trained with an parallel environment now
+
+commit 7dd1968ef41543ed1f02ed375b336b6b1ed12219
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Oct 22 13:12:47 2019 +0200
+
+    SAC can be trained with an parallel environment now
+
+commit 6dd9304cd89d5113092e4c5261681a5fa6b6ae9e
+Merge: 751df48 ac1a6c4
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue Oct 22 12:34:13 2019 +0200
+
+    Merge pull request #24 from bark-simulator/dev_drone
+    
+    Remove log message
+
+commit ac1a6c4422f5b71ca45e9206bf4a3e12c6a337f7
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Oct 22 12:33:39 2019 +0200
+
+    Remove log message
+
+commit 751df48e884c80b5117f0ed9c840a0e7abcb45cf
+Merge: 583c8d6 abe931d
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue Oct 22 12:33:17 2019 +0200
+
+    Merge pull request #23 from bark-simulator/dev_drone
+    
+    Remove log message
+
+commit abe931da8d59877d59bdf75cf14b9d977274c4b9
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Oct 22 12:32:34 2019 +0200
+
+    Remove log message
+
+commit 583c8d6879ed8c53d3958f4b11df0faec4de0f45
+Merge: 5c6ef7b 548d3f5
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue Oct 22 11:30:56 2019 +0200
+
+    Merge pull request #22 from bark-simulator/dev_drone
+    
+    Drone scenario integration into BARK-ML
+
+commit 548d3f53e881167da3725d32fe2f361ced37c55a
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Oct 22 11:28:22 2019 +0200
+
+    Updated Readme
+
+commit 1f57c1e279292c396c1c7219f4bfbb7b231b0081
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Oct 22 11:24:40 2019 +0200
+
+    Fixed observer
+
+commit e3a3c3ac537abb4ae57d2eec286773e79d8b8c0e
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Oct 8 16:00:15 2019 +0200
+
+    snapshot
+
+commit b8979d3a6b27fe1cd1632c106a634f56b908d139
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Oct 7 23:07:35 2019 +0200
+
+    small fix
+
+commit 17cab6bf9807112d345ceeb3512189ca95206b35
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Oct 7 22:18:13 2019 +0200
+
+    Smaller changes
+
+commit 5517e8fa3cf98c53565a3edd10d9ba670c75b7f0
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Oct 7 21:30:54 2019 +0200
+
+    Relative distance to goal in observer
+
+commit e675e05df65081855ce509fc8150ce7fc7eae4bf
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Oct 7 17:21:28 2019 +0200
+
+    Small change
+
+commit b58f7ffc5e8c30c6e47d3273c403bf314ab48725
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Oct 7 17:04:22 2019 +0200
+
+    Refactoring of runners
+
+commit e615d385ad73e2366a375ba16c0fca0f06e7ff51
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Oct 7 16:29:52 2019 +0200
+
+    parallelized
+
+commit 10eb8f01e00638decfd9898ce321206338c1060c
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Oct 7 14:39:34 2019 +0200
+
+    smaller changes
+
+commit 2f86d0dbfccd1d060abafeb81756b163f6574aae
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Oct 7 14:14:45 2019 +0200
+
+    Some drone work
+
+commit 95abd8a76be2933116732b576e25c478063e3f9a
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Oct 2 16:39:07 2019 +0200
+
+    Smaller changes
+
+commit 5c6ef7b9aa76320fb7662e0c77188a937787de4c
+Merge: ab0eb27 98e9d77
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Wed Oct 2 14:16:52 2019 +0200
+
+    Merge pull request #20 from bark-simulator/dev_drone
+    
+    Drone scenarios
+
+commit 98e9d778e50b7024b9ba462ca2b9855ac54a8844
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Oct 2 14:14:37 2019 +0200
+
+    Ready to train drones
+
+commit dbaa9058b6243e7797c68fe736dcc9ab45c213cd
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Oct 2 13:57:30 2019 +0200
+
+    Fixed evaluator
+
+commit c38387330b7c6d4c2c8a09b695ab6f11f89898a6
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Oct 2 13:34:43 2019 +0200
+
+    Added distance to evaluator
+
+commit 974184a4b634b76f1bc323f47dd215485d118ad4
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Oct 2 13:06:35 2019 +0200
+
+    Updated evaluators
+
+commit 0e5fe10b66fe12643fbe2fcf397c626ed98f2018
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Oct 2 12:36:23 2019 +0200
+
+    Drone scenario generation
+
+commit e7da200c8a0eec4f215b70094be7212e3fc59e77
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue Oct 1 22:28:31 2019 +0200
+
+    Enlarge goal reward
+
+commit ac097a32594809f436bfe2d97b4c26b717aa0471
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue Oct 1 22:21:45 2019 +0200
+
+    minor changes
+
+commit ab0eb2770244998524c89fe9343b8be12366f68a
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Oct 1 16:36:44 2019 +0200
+
+    Added notations
+
+commit e04e025e5f6d7595873da0e9632903d5e021cc8f
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Oct 1 16:31:44 2019 +0200
+
+    Minor changes for drone integration
+
+commit 4e5daa94d3d82a2ac8c72fa0e3b8745ceccf5168
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Oct 1 15:50:30 2019 +0200
+
+    Basic drone scenario
+
+commit 0df01879d2d3839ffa69e37c4dc418bce6de22c7
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Oct 1 14:51:09 2019 +0200
+
+    Integration for drones
+
+commit fd7e1bb8567b0bb8c8000bb7af335a0020b2fb43
+Merge: f24f78e f422b3c
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Sep 23 23:36:36 2019 +0200
+
+    Merge pull request #19 from bark-simulator/integration_bark
+    
+    Development of BARK agent
+
+commit f422b3c94839097c2efc1235fece9f34c34f195c
+Merge: 7eb8465 f24f78e
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Sep 23 23:36:23 2019 +0200
+
+    Merge
+
+commit 7eb8465326b76212a998e45ebc73bbc9e6fa7a56
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Sep 23 23:26:44 2019 +0200
+
+    Test refinement
+
+commit 7ddc3bc7c357718122efcaeacae0cc4c14d1f38a
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Sep 23 22:51:11 2019 +0200
+
+    BARKMLBehaviorModel works now
+
+commit 6d60a6cbd8d70ba5e8377d4a47760dac031e97bb
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Sep 23 22:39:48 2019 +0200
+
+    this should work..
+
+commit f24f78e73257139eea342b27078e6b4131ccd708
+Merge: 840e733 021e1f2
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri Sep 20 16:29:59 2019 +0200
+
+    Merge pull request #18 from bark-simulator/scenarios
+    
+    Changed scenarios to be similar to uct planner
+
+commit 021e1f26d7a16640b9439b10edb13dfd649b5983
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Fri Sep 20 16:29:19 2019 +0200
+
+    Changed scenarios to be similar to uct planner
+
+commit 840e7334150f92c46c3c476ab3d5222f34ff0c15
+Merge: 9e17bc0 b1eb998
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Wed Sep 18 17:32:01 2019 +0200
+
+    Merge pull request #17 from bark-simulator/bark_agent
+
+commit b1eb998b455c33cb3e072e1c3a18b77f82593028
+Merge: bbf6761 9e17bc0
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Sep 18 17:31:36 2019 +0200
+
+    Merge branch 'master' of https://github.com/bark-simulator/bark-ml into bark_agent
+
+commit 9e17bc0a44d2ec29048f5683e425358e8a0e09b4
+Merge: a89b111 0a93a1a
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Sep 18 17:30:13 2019 +0200
+
+    Merge branch 'master' of https://github.com/bark-simulator/bark-ml
+
+commit bbf6761d54068f5ec305ce6e605d48e74b2edc15
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Sep 18 17:29:46 2019 +0200
+
+    Added uniform scenario
+
+commit 0a93a1a2c92bde23a2e4c89329c7e4c84f6c82e5
+Merge: 3bbce32 584495c
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue Sep 17 14:23:33 2019 +0200
+
+    Merge pull request #16 from bark-simulator/bark_agent
+    
+    Make trained agent available in BARK
+
+commit 584495cedab834caf462d1362ffe1311bd82790f
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Sep 17 14:05:17 2019 +0200
+
+    Removed todo
+
+commit e4e94a2df2fc8eb54e1d04da3c52f55163b1d816
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Sep 17 13:53:45 2019 +0200
+
+    rename bark agent
+
+commit 98e2f0972662f4e42843542d96f37375eb772753
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Sep 17 13:42:36 2019 +0200
+
+    changed config
+
+commit f4d87aaae5ee6455f95a48f965c3d728c6db96aa
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Sep 17 13:22:53 2019 +0200
+
+    concept change for bark agent
+
+commit df4c864b611f218d26b41c1545f0d3b539bacc67
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Sep 17 13:10:34 2019 +0200
+
+    .
+
+commit f0d342e8d577a3f7d65e155d47f06763119d7074
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Sep 17 13:08:33 2019 +0200
+
+    fix
+
+commit 32153bc6bace02991033ed4eb892ba0bb6de6dc4
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Sep 17 13:03:56 2019 +0200
+
+    bark agent integration
+
+commit 23da20b3c421f7e9d1a13cb54a75a9620a7e356b
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Sep 17 09:03:15 2019 +0200
+
+    Fixed params
+
+commit 3bbce3271fe8b03806c9b1ef61a81027ecb24ba3
+Merge: 2bbd62e 07ac732
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Tue Sep 17 08:49:48 2019 +0200
+
+    Merge pull request #15 from bark-simulator/normalization
+    
+    Normalization in all observers
+
+commit 07ac732daa506b5a1a1e335ec214b4740a1a4e5f
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Sep 17 08:47:46 2019 +0200
+
+    Added normalization in observer
+
+commit 97b6437068f8b9d1e724a13356918922dbabb990
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Sep 16 23:36:02 2019 +0200
+
+    Normalization also in CustomObserver
+
+commit 814e5ac431352c8f19e3cd52a425b3b6f18dc915
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Sep 16 23:11:34 2019 +0200
+
+    added normalization
+
+commit 40713ade233504561afd12da049564740394d625
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Sep 16 22:48:28 2019 +0200
+
+    minor improvements
+
+commit 2bbd62e52e8fd98449a6b2e7c7384f0847aea367
+Merge: 069f14e 5894ff1
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Sep 16 17:45:13 2019 +0200
+
+    Merge pull request #14 from bark-simulator/observer_evaluator_communication
+    
+    Upgraded to newer BARK version
+
+commit 5894ff1bc951b51ef375551bf9bf5c1a4ca8804e
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Sep 16 17:42:37 2019 +0200
+
+    fixed tests after BARK update
+
+commit 3518e3d689b5112ec10674cd8217a54eab59a200
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Sep 16 14:25:40 2019 +0200
+
+    Communication between observer and evaluator works
+
+commit a5bef96bf52b16748930981d1bf36fd62abdb1a8
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Sep 16 14:14:36 2019 +0200
+
+    Added todos and minor changes
+
+commit 2a42bcb59f215e1231b584b65192e970fa3856bc
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Sep 16 13:45:34 2019 +0200
+
+    CustomObserver update and added communication option
+
+commit 069f14e53e69d0ded609c335f9a65d1d1d1100f2
+Merge: 09c3bae e41c727
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Sep 16 11:27:20 2019 +0200
+
+    Merge pull request #13 from bark-simulator/td3_agent
+    
+    Td3 agent
+
+commit e41c7271314fe4cb9e1594f83c70a3b5c0a6cdc9
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Sep 16 10:55:59 2019 +0200
+
+    Minor updates for TD3 agent
+
+commit a89b111323cc3e47904db26ef3c69abc54f30150
+Merge: 9c69a13 09c3bae
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Sep 16 09:33:49 2019 +0200
+
+    Merge branch 'master' of https://github.com/bark-simulator/bark-ml
+
+commit 9c69a132862577e5727c0d468a10ef32144f1a27
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Sep 16 09:29:35 2019 +0200
+
+    Added urban road
+
+commit e98df1107db6ad9f45584b8a9bb3f8fa27a0d8a8
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sun Sep 15 13:22:40 2019 +0200
+
+    Add initial implementation for TD3 agent
+
+commit 09c3bae73957368fc66540388a2996f9dd3e4516
+Merge: 8f83f95 01b998c
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sun Sep 15 11:20:30 2019 +0200
+
+    Merge pull request #12 from bark-simulator/bark_agent
+    
+    Implementation of BARK-Agent
+
+commit 01b998c35a72cfc97b0995322464990394cbaae1
+Merge: 2fa631b 8f83f95
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sun Sep 15 11:19:37 2019 +0200
+
+    Merge branch 'master' of https://github.com/bark-simulator/bark-ml into bark_agent
+
+commit 2fa631b92c4ee6c33c6f5eee911d0c5bc0c4c4f5
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sun Sep 15 11:18:02 2019 +0200
+
+    Integrated BARKAgent
+
+commit 8f83f95a0f3dc45706d2d9d6332abdc2014b6679
+Merge: d6dfa2d e51d752
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Sep 14 22:26:18 2019 +0200
+
+    Merge pull request #11 from bark-simulator/experiments
+    
+    Configurations
+
+commit e51d7526c26738f73903565cf0965aae8618711c
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Sep 14 22:25:02 2019 +0200
+
+    Updated Readme
+
+commit ff3b59ee3d8016b4381a9c25bfabbfc1db2ac83e
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Sep 14 22:13:01 2019 +0200
+
+    Shorten code
+
+commit bec56ab0c96c5b7044e2d26297036798209386bc
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Sep 14 22:10:44 2019 +0200
+
+    Fix typo
+
+commit 53bd74fe63caa3ea13faebf2dc8606212a59fd90
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Sep 14 22:05:50 2019 +0200
+
+    Added docstrings
+
+commit 1f3460f1c5ac600f7f7de1e0bf2b3cabe1ebdad9
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Sep 14 22:03:33 2019 +0200
+
+    example implementation of a configuration
+
+commit 53d11ae82c082815e59435db537572a55a68c383
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Sep 14 19:09:33 2019 +0200
+
+    in this configuration it learns "something"
+
+commit 6a87a2860e7fed2ff9dee8224e26e14d439834d0
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Sep 14 10:48:07 2019 +0200
+
+    minor changes
+
+commit 8ff0f3a1d2a6de40b2464009960c89d000051c0f
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Sep 14 01:15:45 2019 +0200
+
+    changed parameters
+
+commit f90ce955ccdd24c3ce755dbffb204e5bcbd7ac92
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Sep 14 00:52:16 2019 +0200
+
+    working experiment
+
+commit b81fd8a32d0e8a57108e4882e4b78e60b7f9e601
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Sat Sep 14 00:24:49 2019 +0200
+
+    Initial experiments concept
+
+commit d6dfa2daa21df98cc72eb2dbf6ad8904440b94ad
+Merge: 5c15cb0 7ab4ba9
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri Sep 13 14:38:41 2019 +0200
+
+    Merge pull request #10 from bark-simulator/experiment_runner
+    
+    Minor changes
+
+commit 7ab4ba98c02e96e30c5985311f0835b89a74c483
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Fri Sep 13 14:37:51 2019 +0200
+
+    disable visualization on test
+
+commit fe4b440bdb635f70c11a166f26c7122e6aec12b1
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Fri Sep 13 14:37:05 2019 +0200
+
+    minor formatting
+
+commit 7a4f2e365258318189aab25c5877205e214cfb43
+Merge: fb9f3a6 5c15cb0
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Fri Sep 13 14:33:10 2019 +0200
+
+    Merge branch 'master' of https://github.com/bark-simulator/bark-ml into experiment_runner
+
+commit fb9f3a656250a407f43153fc154847d91b10b6a2
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Fri Sep 13 14:32:42 2019 +0200
+
+    Fixed comment
+
+commit b71370ef89c7242e347d0d8c30afb9512877a94d
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Fri Sep 13 14:23:53 2019 +0200
+
+    Updated .bazelrc for compiler optimization
+
+commit 5c15cb08085d146556969406df858895d58b043e
+Merge: 48f6d57 c39be2d
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Fri Sep 13 11:24:27 2019 +0200
+
+    Merge pull request #9 from bark-simulator/experiment_runner
+    
+    Visualization of trained agent in runner
+
+commit c39be2d86c11456ee27a936e0123063c5405acde
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Fri Sep 13 11:18:19 2019 +0200
+
+    Fixed runner test to span whole spectrum
+
+commit 560a65c578de94f4e54e8ca82e6ced63653e0ea9
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Fri Sep 13 11:15:57 2019 +0200
+
+    Trained agent can now be visualized
+
+commit 5f00dedfdc990b892710180f919545822018758b
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Fri Sep 13 10:13:58 2019 +0200
+
+    Implementation of experiment runner structure
+
+commit 48f6d579797a5192bbdc414fc21471e4cc39b375
+Merge: dbfb5e5 4bd4006
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Thu Sep 12 17:21:51 2019 +0200
+
+    Merge pull request #7 from bark-simulator/tests_refinement
+    
+    Changed logo
+
+commit 4bd4006fa27ba41f09c5f2f2e985f83f9ebb601f
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Sep 12 17:21:20 2019 +0200
+
+    small fix
+
+commit 7ae03c9bf577480e69e3493d195c33118122e7aa
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Sep 12 17:20:29 2019 +0200
+
+    Resided logo
+
+commit e70c0f023248f9ef3cb72b445232424297c31152
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Sep 12 17:19:59 2019 +0200
+
+    centered logo
+
+commit 37aaec552f3c057866fde3412dc3bd0fba2504f1
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Sep 12 17:17:52 2019 +0200
+
+    Added logo
+
+commit dbfb5e5256257b23f5c65fdfae665a680375c101
+Merge: 48e4630 2c06e8a
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Thu Sep 12 17:07:25 2019 +0200
+
+    Merge pull request #6 from bark-simulator/tests_refinement
+    
+    Fixed typo
+
+commit 2c06e8a4976303236c4214a4c677fc6cb1cb5bd2
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Sep 12 17:06:27 2019 +0200
+
+    Fixed typo
+
+commit 48e4630b42ef238cdd0065267b01115e03bf8a6f
+Merge: 859c340 87b8c99
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Thu Sep 12 17:04:40 2019 +0200
+
+    Merge pull request #5 from bark-simulator/tests_refinement
+    
+    Test refinement
+
+commit 87b8c99024020d1701b203cf378bb138aed2d63b
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Sep 12 17:03:19 2019 +0200
+
+    Updated Readme
+
+commit 1e1887d27cac6d951fc0606eba4f9bfac75a5953
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Sep 12 16:52:36 2019 +0200
+
+    Added and modified docstrings
+
+commit 7560962fe38dc9e0a0877a64a27612f0a4f16019
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Sep 12 16:34:15 2019 +0200
+
+    Refinement of tests
+
+commit 859c340a0fa0a6e66680e9c290a10249cce24a43
+Merge: e7e96ee 0a51dab
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Thu Sep 12 16:08:23 2019 +0200
+
+    Merge pull request #4 from bark-simulator/refactoring
+    
+    Refactoring of the whole BARK-ML repository
+
+commit 0a51dabc07a2338299f2c67e7d84d26e0b818e09
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Sep 12 16:07:00 2019 +0200
+
+    Cleanup (todos, maps, code)
+
+commit cec6147f89b11daeccf3f792f52881670c06fece
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Sep 12 15:59:34 2019 +0200
+
+    refactored wrappers
+
+commit bef1f7aeacc177a96b23b4bd4318c8c5c738c98c
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Sep 12 15:49:35 2019 +0200
+
+    Added test for evaluators and observers
+
+commit f33a63f8177b73c2c49d56a7fa2ec22ead7ac4ce
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Sep 12 15:39:24 2019 +0200
+
+    Refactored runners
+
+commit c1a2e44b7d45d81c27b229141ad0b9110d31ff6d
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Sep 12 15:13:47 2019 +0200
+
+    Refactored observers
+
+commit 969a238bda668e431cac2c677a5494a513f3ab43
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Sep 12 14:32:07 2019 +0200
+
+    External parameters for evaluators
+
+commit 6fb79b0254f40b7eb18a835df13878ad34ecb3c0
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Sep 12 14:26:13 2019 +0200
+
+    refactoring of evaluators
+
+commit 7e40c23441ddc47501539b33d453cb08481f4f32
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Sep 12 13:41:50 2019 +0200
+
+    Refactoring of agents
+
+commit 0ec607373ef201f9116df5a40a968ef51e68cebb
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Thu Sep 12 13:26:41 2019 +0200
+
+    Extended tests and outsourced parameters
+
+commit 187e4b8bbf8c2294ad6ab2341aa7d2113b087aa9
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Wed Sep 11 22:47:38 2019 +0200
+
+    Added ToDo
+
+commit 3c8fb05f6b5d6ad676e978cca66f8bdbbc534469
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Wed Sep 11 22:46:52 2019 +0200
+
+    Load and save for agent
+
+commit ee5acb55df47d40a9d72f16c5b62aec641787661
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Wed Sep 11 22:41:59 2019 +0200
+
+    Added SummaryWriter and Checkpoint for agents
+
+commit fa3e1d3b456b61bb5b4bd9132105d7e345345f80
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Wed Sep 11 22:14:08 2019 +0200
+
+    Added ToDos and a ParameterServer
+
+commit e7e96ee3ae2188bd04de6c2fa19f7e295f714749
+Merge: 280062c 3db58b7
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Wed Sep 11 18:47:39 2019 +0200
+
+    Merge pull request #3 from bark-simulator/deterministic_rl
+    
+    Implementation and Usage of the DeterministicScenarioGeneration
+
+commit 3db58b78bc3f2f16b89bfd3cbe3d1f18c6dcc06c
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Sep 11 18:43:42 2019 +0200
+
+    Fixed tests
+
+commit a1bf015ce243043be70f457bdf9f5b68b36fd264
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Sep 11 18:28:50 2019 +0200
+
+    Implemented rl_runtime tests
+
+commit f5528fb8eaab5b2a2ed9e9f3f7c5dfd20ec54019
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Sep 11 17:12:47 2019 +0200
+
+    deterministic scenario
+
+commit 280062cfc28b3d2a38e851a6adf80b133e69f6cb
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Sep 11 09:46:53 2019 +0200
+
+    Use logging instead of print
+
+commit 4d7972f05b3cf6d2d0e1a6f269691423d0bcbe0a
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Sep 11 09:26:37 2019 +0200
+
+    Fixed logging string
+
+commit 712fc3dd43e2c12b0d3a12e907dd7cea1353cf89
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Wed Sep 11 09:24:03 2019 +0200
+
+    Added average reward and steps evaluatoin metrics
+
+commit 56d8c7069555d515c18dc0bb92c641f0455b2a3f
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Sep 10 17:34:01 2019 +0200
+
+    Added evaluation metrics
+
+commit d4c497653cf4587940badad0275646d5c248f18f
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Sep 10 15:59:01 2019 +0200
+
+    Implementation of SimpleObserver
+
+commit f9ae82a2016b4e00fca36d173444af1b370840d9
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Sep 10 14:49:00 2019 +0200
+
+    Removed logging message
+
+commit d1324b45f2fa9eec26fef209cece69a522698136
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Tue Sep 10 14:44:56 2019 +0200
+
+    Added base classes for observer and evaluator
+
+commit 9e24b561c5f764c9d449e67df9a2ebdf1991a53f
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Sep 9 17:17:57 2019 +0200
+
+    Added ToDos
+
+commit 91e16b1f0b4ecc087a38fef41239bb32f8eb5d4a
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Sep 9 16:32:57 2019 +0200
+
+    Minor changes
+
+commit 23ca93e5edfd903ea02ab568fd13f415e45f554f
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Sep 9 16:17:01 2019 +0200
+
+    Formatted tests
+
+commit 6478bfafb1877ce06d15269fd704a25f39f203e9
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Sep 9 15:43:52 2019 +0200
+
+    reformatted code
+
+commit cb11bcf1fa60ad5e8ff2cec983237351574140e5
+Merge: 668212d 52b97dc
+Author: Patrick <patrickhart.1990@gmail.com>
+Date:   Mon Sep 9 15:24:32 2019 +0200
+
+    Merge pull request #1 from bark-simulator/devel_rl
+    
+    Basic functionality
+
+commit 52b97dcdb8a7aa1d43a6737f32bed664f8571871
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Sep 9 15:23:31 2019 +0200
+
+    Fixed tests
+
+commit f7f1436300a835a82bb7702fa1bc61f685cccdb3
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Sep 9 15:07:52 2019 +0200
+
+    Currently the gast package seems to have compability issues
+
+commit 8839a30157125ef8283a907df15f1e638f09b76a
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Sep 9 14:22:11 2019 +0200
+
+    Agents work
+
+commit 82b7925c6747b826b77f7c7ac6fa175dbee90640
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Sep 9 14:11:15 2019 +0200
+
+    Fixed requirements
+
+commit c54b07773c6801d683acc0f4d8dccd9c2a56a4c6
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Sep 9 14:00:50 2019 +0200
+
+    Changed BUILD files
+
+commit 2ac296f1a320b5f67ab2d5430589f396bba576ad
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Sep 9 13:51:21 2019 +0200
+
+    rl integration
+
+commit 668212d6a890d091eca5b8c0d5ee8b52a6195709
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Sep 9 13:30:15 2019 +0200
+
+    Added Readme
+
+commit fc3cc241c9b38fbd3132af2de72e29844f1c319e
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Sep 9 13:17:34 2019 +0200
+
+    Example integration
+
+commit 62b781b82ec39767e0f542c022545a410828d656
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Sep 9 13:06:58 2019 +0200
+
+    Integrated python includes
+
+commit 1285cc5024f5ff04562325dc8b5b3ba10b07bc2a
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Sep 9 11:20:18 2019 +0200
+
+    CPP include is working
+
+commit 86fcec1a0d571c872d66780338d85d369294a3d2
+Author: Patrick Hart <patrickhart.1990@gmail.com>
+Date:   Mon Sep 9 10:49:06 2019 +0200
+
+    Initial commit

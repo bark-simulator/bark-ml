@@ -1,0 +1,1 @@
+/home/brucknem/Repositories/gail-4-bark/bark-ml/examples/gail.py --mode=evaluate --expert_trajectories=~/Repositories/gail-4-bark/bark-ml/examples/expert_trajectories/sac_20000_observations --train_out=~/Repositories/gail-4-bark/bark-ml/examples/pretrained_agents/gail/merging

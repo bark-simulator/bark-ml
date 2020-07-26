@@ -1,0 +1,236 @@
+diff --git a/.vscode/launch.json b/.vscode/launch.json
+index 8b43e60..f3568d1 100644
+--- a/.vscode/launch.json
++++ b/.vscode/launch.json
+@@ -127,7 +127,7 @@
+ 				"program": "${workspaceFolder}/examples/gail.py",
+ 				"console": "integratedTerminal",
+ 				"args": ["--mode=evaluate", "--expert_trajectories=~/Repositories/gail-4-bark/bark-ml/examples/expert_trajectories/sac_20000_observations",
+-				"--train_out=~/Repositories/gail-4-bark/bark-ml/examples/gail"],
++				"--train_out=~/Repositories/gail-4-bark/bark-ml/examples/pretrained_agents/gail/merging"],
+ 				"env": {
+ 					"PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/gail.runfiles/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/com_github_interaction_dataset_interaction_dataset/python/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/com_github_keiohta_tf2rl"
+ 				}
+diff --git a/examples/checkpoints/sac/checkpoint b/examples/checkpoints/sac/checkpoint
+deleted file mode 100644
+index c465d66..0000000
+--- a/examples/checkpoints/sac/checkpoint
++++ /dev/null
+@@ -1,8 +0,0 @@
+-model_checkpoint_path: "ckpt-54401"
+-all_model_checkpoint_paths: "ckpt-54201"
+-all_model_checkpoint_paths: "ckpt-54301"
+-all_model_checkpoint_paths: "ckpt-54401"
+-all_model_checkpoint_timestamps: 1593632714.0111783
+-all_model_checkpoint_timestamps: 1593632740.1434085
+-all_model_checkpoint_timestamps: 1593632767.547257
+-last_preserved_timestamp: 1593610611.8975914
+diff --git a/examples/checkpoints/sac/ckpt-54201.data-00000-of-00002 b/examples/checkpoints/sac/ckpt-54201.data-00000-of-00002
+deleted file mode 100644
+index 6d636b8..0000000
+Binary files a/examples/checkpoints/sac/ckpt-54201.data-00000-of-00002 and /dev/null differ
+diff --git a/examples/checkpoints/sac/ckpt-54201.data-00001-of-00002 b/examples/checkpoints/sac/ckpt-54201.data-00001-of-00002
+deleted file mode 100644
+index d1525c2..0000000
+Binary files a/examples/checkpoints/sac/ckpt-54201.data-00001-of-00002 and /dev/null differ
+diff --git a/examples/checkpoints/sac/ckpt-54201.index b/examples/checkpoints/sac/ckpt-54201.index
+deleted file mode 100644
+index 75ff69d..0000000
+Binary files a/examples/checkpoints/sac/ckpt-54201.index and /dev/null differ
+diff --git a/examples/checkpoints/sac/ckpt-54301.data-00000-of-00002 b/examples/checkpoints/sac/ckpt-54301.data-00000-of-00002
+deleted file mode 100644
+index e6f996b..0000000
+Binary files a/examples/checkpoints/sac/ckpt-54301.data-00000-of-00002 and /dev/null differ
+diff --git a/examples/checkpoints/sac/ckpt-54301.data-00001-of-00002 b/examples/checkpoints/sac/ckpt-54301.data-00001-of-00002
+deleted file mode 100644
+index 0f1b85a..0000000
+Binary files a/examples/checkpoints/sac/ckpt-54301.data-00001-of-00002 and /dev/null differ
+diff --git a/examples/checkpoints/sac/ckpt-54301.index b/examples/checkpoints/sac/ckpt-54301.index
+deleted file mode 100644
+index f267192..0000000
+Binary files a/examples/checkpoints/sac/ckpt-54301.index and /dev/null differ
+diff --git a/examples/checkpoints/sac/ckpt-54401.data-00000-of-00002 b/examples/checkpoints/sac/ckpt-54401.data-00000-of-00002
+deleted file mode 100644
+index 8be18d7..0000000
+Binary files a/examples/checkpoints/sac/ckpt-54401.data-00000-of-00002 and /dev/null differ
+diff --git a/examples/checkpoints/sac/ckpt-54401.data-00001-of-00002 b/examples/checkpoints/sac/ckpt-54401.data-00001-of-00002
+deleted file mode 100644
+index 3220dd0..0000000
+Binary files a/examples/checkpoints/sac/ckpt-54401.data-00001-of-00002 and /dev/null differ
+diff --git a/examples/checkpoints/sac/ckpt-54401.index b/examples/checkpoints/sac/ckpt-54401.index
+deleted file mode 100644
+index b827d14..0000000
+Binary files a/examples/checkpoints/sac/ckpt-54401.index and /dev/null differ
+diff --git a/examples/checkpoints/sac/events.out.tfevents.1593636898.workstation.979349.1524.v2 b/examples/checkpoints/sac/events.out.tfevents.1593636898.workstation.979349.1524.v2
+deleted file mode 100644
+index fc18de4..0000000
+Binary files a/examples/checkpoints/sac/events.out.tfevents.1593636898.workstation.979349.1524.v2 and /dev/null differ
+diff --git a/examples/gail.py b/examples/gail.py
+index f67dd91..5086290 100644
+--- a/examples/gail.py
++++ b/examples/gail.py
+@@ -42,10 +42,12 @@ flags.DEFINE_string("expert_trajectories",
+ 
+ def run_configuration(argv):
+   params = ParameterServer(filename="examples/example_params/gail_params.json")
+-  # params = ParameterServer()
+-  # changing the logging directories if not the default is used. (Which would be the same as it is in the json file.)
+-  params["ML"]["GAILRunner"]["tf2rl"]["logdir"] = os.path.join(os.path.expanduser(FLAGS.train_out), "logs", "bark")
+-  params["ML"]["GAILRunner"]["tf2rl"]["model_dir"] = os.path.join(os.path.expanduser(FLAGS.train_out), "models", "bark")
++
++  params["ML"]["GAILRunner"]["tf2rl"]["logdir"] = os.path.expanduser(FLAGS.train_out)
++  params["ML"]["GAILRunner"]["tf2rl"]["model_dir"] = os.path.expanduser(FLAGS.train_out)
++  if FLAGS.mode == 'train':
++    params["ML"]["GAILRunner"]["tf2rl"]["logdir"] = os.path.join(params["ML"]["GAILRunner"]["tf2rl"]["logdir"], "logs")
++    params["ML"]["GAILRunner"]["tf2rl"]["model_dir"] = os.path.join(params["ML"]["GAILRunner"]["tf2rl"]["model_dir"], "models")  
+ 
+   Path(params["ML"]["GAILRunner"]["tf2rl"]["logdir"]).mkdir(exist_ok=True, parents=True)
+   Path(params["ML"]["GAILRunner"]["tf2rl"]["model_dir"]).mkdir(exist_ok=True, parents=True)
+diff --git a/examples/gail/logs/bark/20200707T122958.368624_DDPG_GAIL/args.txt b/examples/gail/logs/bark/20200707T122958.368624_DDPG_GAIL/args.txt
+deleted file mode 100644
+index 82c5ab6..0000000
+--- a/examples/gail/logs/bark/20200707T122958.368624_DDPG_GAIL/args.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-{"max_steps": 1000000, "episode_max_steps": 1000, "n_experiments": 1, "show_progress": false, "save_model_interval": 10000, "save_summary_interval": 1000, "dir_suffix": "GAIL", "normalize_obs": false, "logdir": "/home/brucknem/Repositories/gail-4-bark/bark-ml/examples/gail/logs/bark", "logging_level": "INFO", "model_dir": "/home/brucknem/Repositories/gail-4-bark/bark-ml/examples/gail/models/bark", "expert_path_dir": "examples/gail_data/expert_data", "use_prioritized_rb": false, "use_nstep_rb": false, "n_step": 4, "evaluate": false, "test_interval": 10000, "show_test_progress": false, "test_episodes": 5, "save_test_path": false, "save_test_movie": false, "show_test_images": false, "gpu": 0}
+\ No newline at end of file
+diff --git a/examples/gail/logs/bark/20200707T122958.368624_DDPG_GAIL/command.txt b/examples/gail/logs/bark/20200707T122958.368624_DDPG_GAIL/command.txt
+deleted file mode 100644
+index 18a61b7..0000000
+--- a/examples/gail/logs/bark/20200707T122958.368624_DDPG_GAIL/command.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-/home/brucknem/.cache/bazel/_bazel_brucknem/5babddc60bc977a08450e544bfdcfbae/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/bark_ml/examples/gail.py --mode=train --expert_trajectories=~/Repositories/gail-4-bark/bark-ml/examples/expert_trajectories/sac_20000_observations --train_out=~/Repositories/gail-4-bark/bark-ml/examples/gail
+\ No newline at end of file
+diff --git a/examples/gail/logs/bark/20200707T122958.368624_DDPG_GAIL/environ.txt b/examples/gail/logs/bark/20200707T122958.368624_DDPG_GAIL/environ.txt
+deleted file mode 100644
+index 5998ed9..0000000
+--- a/examples/gail/logs/bark/20200707T122958.368624_DDPG_GAIL/environ.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-{"CONDA_PROMPT_MODIFIER": "(base) ", "USER": "brucknem", "LC_TIME": "de_DE.UTF-8", "RUNFILES_MANIFEST_FILE": "/home/brucknem/.cache/bazel/_bazel_brucknem/5babddc60bc977a08450e544bfdcfbae/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles_manifest", "SSH_AGENT_PID": "2146", "XDG_SESSION_TYPE": "x11", "COMPIZ_CONFIG_PROFILE": "gnome-flashback", "SHLVL": "2", "BUILD_WORKING_DIRECTORY": "/home/brucknem/Repositories/gail-4-bark/bark-ml", "LESS": "-R", "QT4_IM_MODULE": "ibus", "HOME": "/home/brucknem", "CONDA_SHLVL": "1", "OLDPWD": "/home/brucknem/Repositories/gail-4-bark/bark-ml/examples", "DESKTOP_SESSION": "regolith", "LSCOLORS": "Gxfxcxdxbxegedabagacad", "ZSH": "/home/brucknem/.oh-my-zsh", "GTK_MODULES": "gail:atk-bridge", "PAGER": "less", "LC_MONETARY": "de_DE.UTF-8", "P9K_TTY": "old", "DBUS_SESSION_BUS_ADDRESS": "unix:path=/run/user/1000/bus", "COLORTERM": "truecolor", "_CE_M": "", "GTK_IM_MODULE": "ibus", "LOGNAME": "brucknem", "DESKTOP_AUTOSTART_ID": "10e94ca8448467ac9c159411294237822600000020710016", "_": "/home/brucknem/.cache/bazel/_bazel_brucknem/5babddc60bc977a08450e544bfdcfbae/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail", "XDG_SESSION_CLASS": "user", "USERNAME": "brucknem", "TERM": "xterm-256color", "GNOME_DESKTOP_SESSION_ID": "this-is-deprecated", "_CE_CONDA": "", "WINDOWPATH": "2", "PATH": "/home/brucknem/Repositories/gail-4-bark/bark-ml/bark_ml/python_wrapper/venv/bin:/usr/local/cuda/bin:/home/brucknem/anaconda3/bin:/home/brucknem/anaconda3/condabin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin", "SESSION_MANAGER": "local/workstation:@/tmp/.ICE-unix/2071,unix/workstation:/tmp/.ICE-unix/2071", "XDG_MENU_PREFIX": "gnome-flashback-", "LC_ADDRESS": "de_DE.UTF-8", "GNOME_TERMINAL_SCREEN": "/org/gnome/Terminal/screen/532b5fed_4b97_4c4c_bce2_af805f27b68d", "XDG_RUNTIME_DIR": "/run/user/1000", "DISPLAY": ":1", "LANG": "en_US.UTF-8", "XDG_CURRENT_DESKTOP": "Regolith:GNOME-Flashback:GNOME", "LC_TELEPHONE": "de_DE.UTF-8", "XMODIFIERS": "@im=ibus", "XDG_SESSION_DESKTOP": "regolith", "XAUTHORITY": "/run/user/1000/gdm/Xauthority", "LS_COLORS": "rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:", "GNOME_TERMINAL_SERVICE": ":1.82", "SSH_AUTH_SOCK": "/run/user/1000/keyring/ssh", "CONDA_PYTHON_EXE": "/home/brucknem/anaconda3/bin/python", "SHELL": "/usr/bin/zsh", "LC_NAME": "de_DE.UTF-8", "QT_ACCESSIBILITY": "1", "GDMSESSION": "regolith", "CONDA_DEFAULT_ENV": "base", "BUILD_WORKSPACE_DIRECTORY": "/home/brucknem/Repositories/gail-4-bark/bark-ml", "LC_MEASUREMENT": "de_DE.UTF-8", "GPG_AGENT_INFO": "/run/user/1000/gnupg/S.gpg-agent:0:1", "LC_IDENTIFICATION": "de_DE.UTF-8", "P9K_SSH": "0", "VIRTUAL_ENV": "/home/brucknem/Repositories/gail-4-bark/bark-ml/bark_ml/python_wrapper/venv", "QT_IM_MODULE": "ibus", "PWD": "/home/brucknem/.cache/bazel/_bazel_brucknem/5babddc60bc977a08450e544bfdcfbae/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/bark_ml", "XDG_CONFIG_DIRS": "/etc/xdg/xdg-regolith:/etc/xdg", "CONDA_EXE": "/home/brucknem/anaconda3/bin/conda", "VIRTUAL_ENV_DISABLE_PROMPT": "1", "CLUTTER_IM_MODULE": "ibus", "XDG_DATA_DIRS": "/usr/share/regolith:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop", "LC_NUMERIC": "de_DE.UTF-8", "PYTHONPATH": "/home/brucknem/.cache/bazel/_bazel_brucknem/5babddc60bc977a08450e544bfdcfbae/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles:/home/brucknem/.cache/bazel/_bazel_brucknem/5babddc60bc977a08450e544bfdcfbae/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/python:/home/brucknem/.cache/bazel/_bazel_brucknem/5babddc60bc977a08450e544bfdcfbae/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/bark_ml/bark_ml/external/bark_project/bark/python_wrapper:/home/brucknem/.cache/bazel/_bazel_brucknem/5babddc60bc977a08450e544bfdcfbae/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/com_github_interaction_dataset_interaction_dataset/python:/home/brucknem/.cache/bazel/_bazel_brucknem/5babddc60bc977a08450e544bfdcfbae/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/bark_project/bark/runtime/python:/home/brucknem/.cache/bazel/_bazel_brucknem/5babddc60bc977a08450e544bfdcfbae/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/bark_project/bark/python:/home/brucknem/.cache/bazel/_bazel_brucknem/5babddc60bc977a08450e544bfdcfbae/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/bark_ml/bark_ml/python_wrapper:/home/brucknem/.cache/bazel/_bazel_brucknem/5babddc60bc977a08450e544bfdcfbae/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/bark_ml/bark_ml/library_wrappers/external/bark_project/bark/python_wrapper:/home/brucknem/.cache/bazel/_bazel_brucknem/5babddc60bc977a08450e544bfdcfbae/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/bark_ml/bark_ml/library_wrappers/lib_tf2rl/external/bark_project/bark/python_wrapper:/home/brucknem/.cache/bazel/_bazel_brucknem/5babddc60bc977a08450e544bfdcfbae/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/bark_ml/external/bark_project/bark/python_wrapper:/home/brucknem/.cache/bazel/_bazel_brucknem/5babddc60bc977a08450e544bfdcfbae/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/bark_project:/home/brucknem/.cache/bazel/_bazel_brucknem/5babddc60bc977a08450e544bfdcfbae/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/com_github_keiohta_tf2rl:/home/brucknem/.cache/bazel/_bazel_brucknem/5babddc60bc977a08450e544bfdcfbae/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/bazel_tools:/home/brucknem/.cache/bazel/_bazel_brucknem/5babddc60bc977a08450e544bfdcfbae/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/bark_ml:/home/brucknem/.cache/bazel/_bazel_brucknem/5babddc60bc977a08450e544bfdcfbae/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/com_github_interaction_dataset_interaction_dataset", "I3SOCK": "/run/user/1000/i3/ipc-socket.2507", "CONDA_PREFIX": "/home/brucknem/anaconda3", "LC_PAPER": "de_DE.UTF-8", "VTE_VERSION": "6003", "SDL_VIDEO_X11_WMCLASS": "gail.py", "KMP_INIT_AT_FORK": "FALSE"}
+\ No newline at end of file
+diff --git a/examples/gail/logs/bark/20200707T122958.368624_DDPG_GAIL/events.out.tfevents.1594117798.workstation.113854.384.v2 b/examples/gail/logs/bark/20200707T122958.368624_DDPG_GAIL/events.out.tfevents.1594117798.workstation.113854.384.v2
+deleted file mode 100644
+index d93f736..0000000
+Binary files a/examples/gail/logs/bark/20200707T122958.368624_DDPG_GAIL/events.out.tfevents.1594117798.workstation.113854.384.v2 and /dev/null differ
+diff --git a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/args.txt b/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/args.txt
+deleted file mode 100644
+index e2407d5..0000000
+--- a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/args.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-{"max_steps": 1000000, "episode_max_steps": 1000, "n_experiments": 1, "show_progress": false, "save_model_interval": 10000, "save_summary_interval": 1000, "dir_suffix": "GAIL", "normalize_obs": false, "logdir": "/home/ferenc/Documents/programming/bark-ml/logs/bark", "logging_level": "INFO", "model_dir": "/home/ferenc/Documents/programming/bark-ml/models/bark", "expert_path_dir": "examples/gail_data/expert_data", "use_prioritized_rb": false, "use_nstep_rb": false, "n_step": 4, "evaluate": false, "test_interval": 10000, "show_test_progress": true, "test_episodes": 5, "save_test_path": false, "save_test_movie": false, "show_test_images": false, "gpu": 0}
+\ No newline at end of file
+diff --git a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/checkpoint b/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/checkpoint
+deleted file mode 100644
+index b4bf3d9..0000000
+--- a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/checkpoint
++++ /dev/null
+@@ -1,12 +0,0 @@
+-model_checkpoint_path: "ckpt-22"
+-all_model_checkpoint_paths: "ckpt-18"
+-all_model_checkpoint_paths: "ckpt-19"
+-all_model_checkpoint_paths: "ckpt-20"
+-all_model_checkpoint_paths: "ckpt-21"
+-all_model_checkpoint_paths: "ckpt-22"
+-all_model_checkpoint_timestamps: 1594309358.921723
+-all_model_checkpoint_timestamps: 1594309550.2227678
+-all_model_checkpoint_timestamps: 1594309733.3841066
+-all_model_checkpoint_timestamps: 1594309909.520792
+-all_model_checkpoint_timestamps: 1594310094.0509114
+-last_preserved_timestamp: 1594306107.3507981
+diff --git a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-18.data-00000-of-00002 b/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-18.data-00000-of-00002
+deleted file mode 100644
+index 8dcdaed..0000000
+Binary files a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-18.data-00000-of-00002 and /dev/null differ
+diff --git a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-18.data-00001-of-00002 b/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-18.data-00001-of-00002
+deleted file mode 100644
+index f6435fd..0000000
+Binary files a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-18.data-00001-of-00002 and /dev/null differ
+diff --git a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-18.index b/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-18.index
+deleted file mode 100644
+index 6d51e45..0000000
+Binary files a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-18.index and /dev/null differ
+diff --git a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-19.data-00000-of-00002 b/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-19.data-00000-of-00002
+deleted file mode 100644
+index d0285c7..0000000
+Binary files a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-19.data-00000-of-00002 and /dev/null differ
+diff --git a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-19.data-00001-of-00002 b/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-19.data-00001-of-00002
+deleted file mode 100644
+index 5674b49..0000000
+Binary files a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-19.data-00001-of-00002 and /dev/null differ
+diff --git a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-19.index b/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-19.index
+deleted file mode 100644
+index 1e5f61d..0000000
+Binary files a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-19.index and /dev/null differ
+diff --git a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-20.data-00000-of-00002 b/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-20.data-00000-of-00002
+deleted file mode 100644
+index 5dff96f..0000000
+Binary files a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-20.data-00000-of-00002 and /dev/null differ
+diff --git a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-20.data-00001-of-00002 b/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-20.data-00001-of-00002
+deleted file mode 100644
+index 4fd9910..0000000
+Binary files a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-20.data-00001-of-00002 and /dev/null differ
+diff --git a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-20.index b/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-20.index
+deleted file mode 100644
+index ae431c6..0000000
+Binary files a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-20.index and /dev/null differ
+diff --git a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-21.data-00000-of-00002 b/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-21.data-00000-of-00002
+deleted file mode 100644
+index 5c9ff47..0000000
+Binary files a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-21.data-00000-of-00002 and /dev/null differ
+diff --git a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-21.data-00001-of-00002 b/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-21.data-00001-of-00002
+deleted file mode 100644
+index d5a2d1b..0000000
+Binary files a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-21.data-00001-of-00002 and /dev/null differ
+diff --git a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-21.index b/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-21.index
+deleted file mode 100644
+index 3cca2c6..0000000
+Binary files a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-21.index and /dev/null differ
+diff --git a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-22.data-00000-of-00002 b/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-22.data-00000-of-00002
+deleted file mode 100644
+index b642089..0000000
+Binary files a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-22.data-00000-of-00002 and /dev/null differ
+diff --git a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-22.data-00001-of-00002 b/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-22.data-00001-of-00002
+deleted file mode 100644
+index 6074cda..0000000
+Binary files a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-22.data-00001-of-00002 and /dev/null differ
+diff --git a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-22.index b/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-22.index
+deleted file mode 100644
+index 135c5b6..0000000
+Binary files a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-22.index and /dev/null differ
+diff --git a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/command.txt b/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/command.txt
+deleted file mode 100644
+index e5149a3..0000000
+--- a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/command.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-/home/ferenc/.cache/bazel/_bazel_ferenc/d27c94d45ef586b197c709d8101d6384/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/bark_ml/examples/gail.py --expert_trajectories=~/Documents/programming/bark-ml/examples/expert_trajectories/sac_20000_observations --mode=train --train_out=~/Documents/programming/bark-ml
+\ No newline at end of file
+diff --git a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/environ.txt b/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/environ.txt
+deleted file mode 100644
+index c00f745..0000000
+--- a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/environ.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-{"LESSOPEN": "| /usr/bin/lesspipe %s", "CONDA_PROMPT_MODIFIER": "(anaconda3) ", "USER": "ferenc", "LC_TIME": "de_DE.UTF-8", "RUNFILES_MANIFEST_FILE": "/home/ferenc/.cache/bazel/_bazel_ferenc/d27c94d45ef586b197c709d8101d6384/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles_manifest", "TEXTDOMAIN": "im-config", "XDG_SEAT": "seat0", "SSH_AGENT_PID": "2875", "XDG_SESSION_TYPE": "x11", "LD_LIBRARY_PATH": "/usr/local/cuda-10.0/lib64:/usr/local/cuda-10.0/lib64:/usr/local/cuda-10.0/lib64:", "SHLVL": "2", "BUILD_WORKING_DIRECTORY": "/home/ferenc/Documents/programming/bark-ml", "CONDA_SHLVL": "1", "OLDPWD": "/home/ferenc", "QT4_IM_MODULE": "xim", "HOME": "/home/ferenc", "DESKTOP_SESSION": "ubuntu", "GNOME_SHELL_SESSION_MODE": "ubuntu", "GTK_MODULES": "gail:atk-bridge", "LC_MONETARY": "de_DE.UTF-8", "DBUS_SESSION_BUS_ADDRESS": "unix:path=/run/user/1000/bus", "COLORTERM": "truecolor", "_CE_M": "", "MANDATORY_PATH": "/usr/share/gconf/ubuntu.mandatory.path", "IM_CONFIG_PHASE": "2", "LOGNAME": "ferenc", "GTK_IM_MODULE": "ibus", "DESKTOP_AUTOSTART_ID": "1085588d08739940d5159428126551557300000027790007", "_": "/home/ferenc/.cache/bazel/_bazel_ferenc/d27c94d45ef586b197c709d8101d6384/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail", "DEFAULTS_PATH": "/usr/share/gconf/ubuntu.default.path", "USERNAME": "ferenc", "XDG_SESSION_ID": "2", "TERM": "xterm-256color", "_CE_CONDA": "", "GNOME_DESKTOP_SESSION_ID": "this-is-deprecated", "WINDOWPATH": "2", "PATH": "/home/ferenc/Documents/programming/bark-ml/bark_ml/python_wrapper/venv/bin:/usr/local/cuda-10.0/bin:/usr/local/cuda-10.0/bin:/usr/local/cuda-10.0/bin:/home/ferenc/anaconda3/bin:/home/ferenc/anaconda3/condabin:/usr/local/cuda-10.1/bin:/home/ferenc/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin", "SESSION_MANAGER": "local/ferenc-GL552JX:@/tmp/.ICE-unix/2779,unix/ferenc-GL552JX:/tmp/.ICE-unix/2779", "XDG_MENU_PREFIX": "gnome-", "GNOME_TERMINAL_SCREEN": "/org/gnome/Terminal/screen/756a91b1_b7ef_4ee7_a283_a0646f5dcf6d", "LC_ADDRESS": "de_DE.UTF-8", "XDG_RUNTIME_DIR": "/run/user/1000", "DISPLAY": ":1", "LANG": "en_US.UTF-8", "XDG_CURRENT_DESKTOP": "ubuntu:GNOME", "LC_TELEPHONE": "de_DE.UTF-8", "LS_COLORS": "rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:", "XDG_SESSION_DESKTOP": "ubuntu", "XMODIFIERS": "@im=ibus", "GNOME_TERMINAL_SERVICE": ":1.1284", "XAUTHORITY": "/run/user/1000/gdm/Xauthority", "SSH_AUTH_SOCK": "/run/user/1000/keyring/ssh", "CONDA_PYTHON_EXE": "/home/ferenc/anaconda3/bin/python", "GSETTINGS_SCHEMA_DIR": "/home/ferenc/anaconda3/share/glib-2.0/schemas", "LC_NAME": "de_DE.UTF-8", "SHELL": "/bin/bash", "QT_ACCESSIBILITY": "1", "GDMSESSION": "ubuntu", "LESSCLOSE": "/usr/bin/lesspipe %s %s", "CONDA_DEFAULT_ENV": "base", "LC_MEASUREMENT": "de_DE.UTF-8", "BUILD_WORKSPACE_DIRECTORY": "/home/ferenc/Documents/programming/bark-ml", "TEXTDOMAINDIR": "/usr/share/locale/", "GPG_AGENT_INFO": "/run/user/1000/gnupg/S.gpg-agent:0:1", "LC_IDENTIFICATION": "de_DE.UTF-8", "XDG_VTNR": "2", "VIRTUAL_ENV": "/home/ferenc/Documents/programming/bark-ml/bark_ml/python_wrapper/venv", "QT_IM_MODULE": "ibus", "PWD": "/home/ferenc/.cache/bazel/_bazel_ferenc/d27c94d45ef586b197c709d8101d6384/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/bark_ml", "CLUTTER_IM_MODULE": "xim", "CONDA_EXE": "/home/ferenc/anaconda3/bin/conda", "XDG_DATA_DIRS": "/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop", "XDG_CONFIG_DIRS": "/etc/xdg/xdg-ubuntu:/etc/xdg", "LC_NUMERIC": "de_DE.UTF-8", "PYTHONPATH": "/home/ferenc/.cache/bazel/_bazel_ferenc/d27c94d45ef586b197c709d8101d6384/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles:/home/ferenc/.cache/bazel/_bazel_ferenc/d27c94d45ef586b197c709d8101d6384/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/python:/home/ferenc/.cache/bazel/_bazel_ferenc/d27c94d45ef586b197c709d8101d6384/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/bark_ml/bark_ml/external/bark_project/bark/python_wrapper:/home/ferenc/.cache/bazel/_bazel_ferenc/d27c94d45ef586b197c709d8101d6384/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/com_github_interaction_dataset_interaction_dataset/python:/home/ferenc/.cache/bazel/_bazel_ferenc/d27c94d45ef586b197c709d8101d6384/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/bark_project/bark/runtime/python:/home/ferenc/.cache/bazel/_bazel_ferenc/d27c94d45ef586b197c709d8101d6384/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/bark_project/bark/python:/home/ferenc/.cache/bazel/_bazel_ferenc/d27c94d45ef586b197c709d8101d6384/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/bark_ml/bark_ml/python_wrapper:/home/ferenc/.cache/bazel/_bazel_ferenc/d27c94d45ef586b197c709d8101d6384/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/bark_ml/bark_ml/library_wrappers/external/bark_project/bark/python_wrapper:/home/ferenc/.cache/bazel/_bazel_ferenc/d27c94d45ef586b197c709d8101d6384/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/bark_ml/bark_ml/library_wrappers/lib_tf2rl/external/bark_project/bark/python_wrapper:/home/ferenc/.cache/bazel/_bazel_ferenc/d27c94d45ef586b197c709d8101d6384/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/bark_ml/external/bark_project/bark/python_wrapper:/home/ferenc/.cache/bazel/_bazel_ferenc/d27c94d45ef586b197c709d8101d6384/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/com_github_interaction_dataset_interaction_dataset:/home/ferenc/.cache/bazel/_bazel_ferenc/d27c94d45ef586b197c709d8101d6384/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/bark_project:/home/ferenc/.cache/bazel/_bazel_ferenc/d27c94d45ef586b197c709d8101d6384/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/bazel_tools:/home/ferenc/.cache/bazel/_bazel_ferenc/d27c94d45ef586b197c709d8101d6384/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/com_github_keiohta_tf2rl:/home/ferenc/.cache/bazel/_bazel_ferenc/d27c94d45ef586b197c709d8101d6384/execroot/bark_ml/bazel-out/k8-fastbuild/bin/examples/gail.runfiles/bark_ml", "LC_PAPER": "de_DE.UTF-8", "GSETTINGS_SCHEMA_DIR_CONDA_BACKUP": "", "CONDA_PREFIX": "/home/ferenc/anaconda3", "VTE_VERSION": "5202", "SDL_VIDEO_X11_WMCLASS": "gail.py", "KMP_INIT_AT_FORK": "FALSE"}
+\ No newline at end of file
+diff --git a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/events.out.tfevents.1594306108.ferenc-GL552JX.10023.384.v2 b/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/events.out.tfevents.1594306108.ferenc-GL552JX.10023.384.v2
+deleted file mode 100644
+index 9939d26..0000000
+Binary files a/examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/events.out.tfevents.1594306108.ferenc-GL552JX.10023.384.v2 and /dev/null differ
+diff --git a/utils/dependencies.bzl b/utils/dependencies.bzl
+index 5cdec49..872ae3f 100644
+--- a/utils/dependencies.bzl
++++ b/utils/dependencies.bzl
+@@ -50,7 +50,7 @@ cc_library(
+   _maybe(
+     new_git_repository,
+     name = "com_github_keiohta_tf2rl",
+-    branch = "master",
++    commit = "5df9af0db3caa98526ab61e5c0ca89459940f675",
+     remote = "https://github.com/GAIL-4-BARK/tf2rl",
+     build_file="//:utils/tf2rl.BUILD"
+   )
+\ No newline at end of file

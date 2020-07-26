@@ -6,7 +6,7 @@ from typing import Tuple
 from bark_ml.library_wrappers.lib_tf2rl.load_save_utils import *
 from tf2rl.experiments.utils import load_trajectories
 
-def load_expert_trajectories(dirname: str, normalize_features=False, env=None) -> dict:
+def load_expert_trajectories(dirname: str, normalize_features=False, env=None) -> (dict, float, int):
     """Loads all found expert trajectories files in the directory.
 
     Args:
@@ -17,6 +17,8 @@ def load_expert_trajectories(dirname: str, normalize_features=False, env=None) -
 
     Returns:
         dict: The expert trajectories in tf2rl format: {'obs': [], 'next_obs': [], 'act': []}
+        float: The average number of trajectory points per trajectory
+        int: The number of loaded trajectories
     """
     joblib_files = list_files_in_dir(os.path.expanduser(dirname), file_ending='.jblb')
     expert_trajectories = load_trajectories(joblib_files)
@@ -43,8 +45,7 @@ def load_expert_trajectories(dirname: str, normalize_features=False, env=None) -
     assert expert_trajectories['next_obses'].shape[1] == 16
     assert expert_trajectories['acts'].shape[1] == 2
 
-    return expert_trajectories
-
+    return expert_trajectories, len(expert_trajectories['obses']) / len(joblib_files), len(joblib_files)
 
 def normalize(features, high, low):
     """normalizes a feature vector to be between -1 and 1

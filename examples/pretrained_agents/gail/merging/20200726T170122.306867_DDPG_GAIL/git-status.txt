@@ -1,0 +1,48 @@
+On branch marcel_bruckner/add_correct_model_loading_to_evaluate
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   .vscode/launch.json
+	deleted:    examples/checkpoints/sac/checkpoint
+	deleted:    examples/checkpoints/sac/ckpt-54201.data-00000-of-00002
+	deleted:    examples/checkpoints/sac/ckpt-54201.data-00001-of-00002
+	deleted:    examples/checkpoints/sac/ckpt-54201.index
+	deleted:    examples/checkpoints/sac/ckpt-54301.data-00000-of-00002
+	deleted:    examples/checkpoints/sac/ckpt-54301.data-00001-of-00002
+	deleted:    examples/checkpoints/sac/ckpt-54301.index
+	deleted:    examples/checkpoints/sac/ckpt-54401.data-00000-of-00002
+	deleted:    examples/checkpoints/sac/ckpt-54401.data-00001-of-00002
+	deleted:    examples/checkpoints/sac/ckpt-54401.index
+	deleted:    examples/checkpoints/sac/events.out.tfevents.1593636898.workstation.979349.1524.v2
+	modified:   examples/gail.py
+	deleted:    examples/gail/logs/bark/20200707T122958.368624_DDPG_GAIL/args.txt
+	deleted:    examples/gail/logs/bark/20200707T122958.368624_DDPG_GAIL/command.txt
+	deleted:    examples/gail/logs/bark/20200707T122958.368624_DDPG_GAIL/environ.txt
+	deleted:    examples/gail/logs/bark/20200707T122958.368624_DDPG_GAIL/events.out.tfevents.1594117798.workstation.113854.384.v2
+	deleted:    examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/args.txt
+	deleted:    examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/checkpoint
+	deleted:    examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-18.data-00000-of-00002
+	deleted:    examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-18.data-00001-of-00002
+	deleted:    examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-18.index
+	deleted:    examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-19.data-00000-of-00002
+	deleted:    examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-19.data-00001-of-00002
+	deleted:    examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-19.index
+	deleted:    examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-20.data-00000-of-00002
+	deleted:    examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-20.data-00001-of-00002
+	deleted:    examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-20.index
+	deleted:    examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-21.data-00000-of-00002
+	deleted:    examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-21.data-00001-of-00002
+	deleted:    examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-21.index
+	deleted:    examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-22.data-00000-of-00002
+	deleted:    examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-22.data-00001-of-00002
+	deleted:    examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/ckpt-22.index
+	deleted:    examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/command.txt
+	deleted:    examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/environ.txt
+	deleted:    examples/trained_gail_agents/sac_based/20200709T164828.336159_DDPG_GAIL/events.out.tfevents.1594306108.ferenc-GL552JX.10023.384.v2
+	modified:   utils/dependencies.bzl
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	examples/pretrained_agents/
+
+no changes added to commit (use "git add" and/or "git commit -a")

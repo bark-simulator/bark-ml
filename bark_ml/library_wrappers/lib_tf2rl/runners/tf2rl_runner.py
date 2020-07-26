@@ -40,7 +40,7 @@ class TF2RLRunner:
     raise NotImplementedError
 
 
-  def Evaluate(self, expert_trajectories: dict = None, avg_trajectory_length: float = None, num_trajectories: int = None):
+  def Evaluate(self, expert_trajectories: dict, avg_trajectory_length: float, num_trajectories: int):
     """Evaluates the agent."""
     total_steps = 0   
     self._trainer._test_episodes = num_trajectories

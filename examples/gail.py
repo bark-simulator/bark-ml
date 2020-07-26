@@ -42,10 +42,12 @@ flags.DEFINE_string("expert_trajectories",
 
 def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/gail_params.json")
-  # params = ParameterServer()
-  # changing the logging directories if not the default is used. (Which would be the same as it is in the json file.)
-  params["ML"]["GAILRunner"]["tf2rl"]["logdir"] = os.path.join(os.path.expanduser(FLAGS.train_out), "logs", "bark")
-  params["ML"]["GAILRunner"]["tf2rl"]["model_dir"] = os.path.join(os.path.expanduser(FLAGS.train_out), "models", "bark")
+
+  params["ML"]["GAILRunner"]["tf2rl"]["logdir"] = os.path.expanduser(FLAGS.train_out)
+  params["ML"]["GAILRunner"]["tf2rl"]["model_dir"] = os.path.expanduser(FLAGS.train_out)
+  if FLAGS.mode == 'train':
+    params["ML"]["GAILRunner"]["tf2rl"]["logdir"] = os.path.join(params["ML"]["GAILRunner"]["tf2rl"]["logdir"], "logs")
+    params["ML"]["GAILRunner"]["tf2rl"]["model_dir"] = os.path.join(params["ML"]["GAILRunner"]["tf2rl"]["model_dir"], "models")  
 
   Path(params["ML"]["GAILRunner"]["tf2rl"]["logdir"]).mkdir(exist_ok=True, parents=True)
   Path(params["ML"]["GAILRunner"]["tf2rl"]["model_dir"]).mkdir(exist_ok=True, parents=True)
@@ -68,7 +70,7 @@ def run_configuration(argv):
   gail_agent = BehaviorGAILAgent(environment=wrapped_env,
                                params=params)
 
-  expert_trajectories = load_expert_trajectories(FLAGS.expert_trajectories,
+  expert_trajectories, avg_trajectory_length, num_trajectories = load_expert_trajectories(FLAGS.expert_trajectories,
     normalize_features=params["ML"]["Settings"]["NormalizeFeatures"],
     env=env # the unwrapped env has to be used, since that contains the unnormalized spaces.
     ) 
@@ -83,7 +85,7 @@ def run_configuration(argv):
   elif FLAGS.mode == "visualize":
     runner.Visualize(20)
   elif FLAGS.mode == "evaluate":
-    runner.Evaluate()
+    runner.Evaluate(expert_trajectories, avg_trajectory_length, num_trajectories)
   
   # store all used params of the training
   # params.Save(os.path.join(FLAGS.train_out, "examples/example_params/gail_params.json"))
