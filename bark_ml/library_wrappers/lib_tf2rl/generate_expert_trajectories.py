@@ -154,11 +154,13 @@ def calculate_action(observations: list, time_step=0.1, wheel_base=2.7) -> list:
     # Calculate streering angle and acceleration
     d_theta = 0
     acceleration = 0
+    current_velocity = 0
     if len(observations) == 2:
         # Calculate streering angle
         d_theta = (thetas[1] - thetas[0]) / time_step
         # Calculate acceleration
-        acceleration = (velocities[1] - velocities[0]) / time_step
+        current_velocity = velocities[0]
+        acceleration = (velocities[1] - current_velocity) / time_step
     else:
         assert(len(observations) == 3)
 
@@ -172,15 +174,16 @@ def calculate_action(observations: list, time_step=0.1, wheel_base=2.7) -> list:
             d_theta = 2*p[0]*thetas[1] + p[1]
 
         # Check collinearity of velocity values
+        current_velocity = velocities[1]
         if is_collinear(velocities, time_step):
             # Fit fit velocities into a line and get the derivative
-            acceleration = (velocities[2] - velocities[1]) / time_step
+            acceleration = (velocities[2] - current_velocity) / time_step
         else:
             # Fit velocities into a parabola and get the derivative
             p = polyfit([0, time_step, 2*time_step], velocities, 2)
-            acceleration = 2*p[0]*velocities[1] + p[1]
+            acceleration = 2*p[0]*current_velocity + p[1]
 
-    steering_angle = math.atan(wheel_base * d_theta)
+    steering_angle = math.atan(wheel_base * d_theta / current_velocity)
     action = [steering_angle, acceleration]
 
     return action
