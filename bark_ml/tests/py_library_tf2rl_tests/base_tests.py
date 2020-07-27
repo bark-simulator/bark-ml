@@ -1,4 +1,5 @@
 import os
+import math
 import pickle
 import unittest
 import numpy as np
@@ -22,29 +23,71 @@ class CalculateActionTests(unittest.TestCase):
     Tests for the calculate action function.
     """
 
-    def test_calculate_action_simple(self):
+    def test_calculate_action_simple_zero(self):
         """
-        Test: Calculate the action based on two consecutive observations.
+        Test: Calculate the action based on two consecutive observations with an initially stopped car.
         """
-        observations = [[0] * 12, [1000] * 12]
+        observations = [[0] * 4, [1000] * 4]
         time_step = 1000
 
-        expected_action = [1.2160906747839564, 1.0]
+        expected_action = [0.0, 1.0]
 
         self.assertEquals(
             expected_action,
-            calculate_action(observations[0:2], time_step, 2.7))
+            calculate_action(observations, time_step, 2.7))
+
+    def test_calculate_action_simple_zero(self):
+        """
+        Test: Calculate the action based on two consecutive observations with an initially stopped car with noisy data.
+        """
+        observations = [[1e-3] * 4, [1000 + 1e-3] * 4]
+        time_step = 1000
+
+        expected_action = [0.0, 1.0]
+
+        self.assertEquals(
+            expected_action,
+            calculate_action(observations, time_step, 2.7))
+
+    def test_calculate_action_simple_straight(self):
+        """
+        Test: Calculate the action based on two consecutive observations in straight movement.
+        """
+        observations = [[0, 0, 0, 500],[0, 0, 0, 1000]]
+        time_step = 500
+
+        expected_action = [0.0, 1.0]
+
+        self.assertEquals(
+            expected_action,
+            calculate_action(observations, time_step, 2.7))
+
+    def test_calculate_action_simple_curve(self):
+        """
+        Test: Calculate the action based on two consecutive observations with a curve.
+        """
+        observations = [[50] * 4, [100] * 4]
+        time_step = 10
+
+        expected_action = [math.atan(0.27), 5.0]
+        action = calculate_action(observations, time_step, 2.7)
+
+        steering_error = abs(action[0] - expected_action[0])
+        acceleration_error = abs(action[1] - expected_action[1])
+
+        self.assertLessEqual(steering_error, 1e-8)
+        self.assertLessEqual(acceleration_error, 1e-8)
 
     def test_calculate_action_2nd_degree(self):
         """
         Test: Calculate the action based on two consecutive observations.
         """
-        observations = [[0] * 12, [1000] * 12, [0] * 12]
+        observations = [[0] * 4, [1000] * 4, [0] * 4]
         time_step = 1000
 
         expected_action = [0.0, 0.0]
-
         action = calculate_action(observations[0:3], time_step, 2.7)
+        
         steering_error = abs(action[0] - expected_action[0])
         acceleration_error = abs(action[1] - expected_action[1])
 
@@ -55,20 +98,23 @@ class CalculateActionTests(unittest.TestCase):
         """
         Test: Calculate the action based on two consecutive observations.
         """
-        observations = [[0] * 12, [1000] * 12, [2000] * 12]
+        observations = [[0] * 4, [1000] * 4, [2000] * 4]
         time_step = 1000
 
-        expected_action = [1.2160906747839564, 1.0]
+        expected_action = [0.002699993439028698, 1.0]
+        action = calculate_action(observations[0:3], time_step, 2.7)
 
-        self.assertEquals(
-            expected_action,
-            calculate_action(observations[0:3], time_step, 2.7))
+        steering_error = abs(action[0] - expected_action[0])
+        acceleration_error = abs(action[1] - expected_action[1])
 
-    def test_calculate_action_timestamps_are_equal(self):
+        self.assertLessEqual(steering_error, 1e-8)
+        self.assertLessEqual(acceleration_error, 1e-8)
+
+    def test_calculate_action_zero_time_step(self):
         """
         Test: Calculate the action based on two consecutive observations.
         """
-        observations = [[0] * 12, [1000] * 12]
+        observations = [[0] * 4, [1000] * 4]
         time_step = 0
 
         expected_action = [0.0, 0.0]
@@ -76,6 +122,35 @@ class CalculateActionTests(unittest.TestCase):
         self.assertEquals(
             expected_action,
             calculate_action(observations[0:2], time_step))
+
+    def test_calculate_action_sin(self):
+        """
+        Test: Calculate the action based on consecutive observations with sinusoid angle changes.
+        """
+        velocity = 30.0
+        time_step = 1
+        wheel_base = 2.7
+        num_samples = 500
+
+        observations = []
+        for i in range(num_samples):
+            angle = i * math.pi / num_samples
+            entry = [0, 0, math.sin(angle), velocity]
+            observations.append(entry)
+
+        for i in range(1, num_samples-1):
+            action = calculate_action(observations[i-1:i+2], time_step, wheel_base)
+
+            d_theta = math.cos(i * math.pi / num_samples) * math.pi / num_samples
+            steering_angle = math.atan2(wheel_base * d_theta, velocity)
+            expected_action = [steering_angle, 0.0]
+
+            steering_error = abs(action[0] - expected_action[0])
+            acceleration_error = abs(action[1] - expected_action[1])
+
+            # Higher threshold for the steering angle due to the sine derivative approximation
+            self.assertLessEqual(steering_error, 1e-5)
+            self.assertLessEqual(acceleration_error, 1e-8)
 
 
 class GetMapAndTrackFilesTests(unittest.TestCase):
