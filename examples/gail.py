@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 
-import gym
 from absl import app
 from absl import flags
 
@@ -83,9 +82,11 @@ def run_configuration(argv):
     runner.Train()
   elif FLAGS.mode == "visualize":
     runner.Visualize(20)
+  elif FLAGS.mode == "evaluate":
+    runner.Evaluate()
   
   # store all used params of the training
-  params.Save(os.path.join(FLAGS.train_out, "examples/example_params/gail_params.json"))
+  # params.Save(os.path.join(FLAGS.train_out, "examples/example_params/gail_params.json"))
 
 
 if __name__ == '__main__':

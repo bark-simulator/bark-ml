@@ -65,3 +65,12 @@ class TF2RLWrapper():
         norm_observation = norm_observation * 2. - 1.
         return norm_observation
 
+
+    @property
+    def _scenario(self):
+        return self._env._scenario
+
+    @property
+    def _scenario_idx(self):
+        return self._env._scenario_idx
+

@@ -10,9 +10,11 @@ panda3d>=1.10.6.post2
 pandas>=1.0.5
 gym>=0.17.2
 pygame>=1.9.6
+scipy==1.4.1
 tensorflow>=2.2.0
 tensorboard>=2.2.2
 tf-agents>=0.5.0
 tensorflow-probability>=0.10.0
 joblib==0.16.0
 ipython==7.16.1
+jupyter

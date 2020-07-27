@@ -170,6 +170,7 @@ tests/data/database_maps_DR_DEU_Merging_MT_shifted.xodr
 
 **/expert_trajectories/**
 **.jblb
+**/logs/**
 
 # GAIL-TF2RL tests
 bark_ml/tests/py_library_tf2rl_tests/gail_data/logs/*
