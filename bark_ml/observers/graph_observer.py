@@ -168,8 +168,8 @@ class GraphObserver(StateObserver):
       F = tf.reshape(F, [batch_size * n_nodes, n_features])
 
       # find non-zero elements in the adjacency matrix (edges)
-      # and collect there indices
-      A = tf.reshape(tf.where(tf.greater(A, 0))[:,1:], [batch_size, -1])
+      # and collect their  indices
+      A = tf.reshape(tf.where(tf.greater(A, 0))[:,1:], [-1, 2])
       A = tf.cast(A, tf.int32)
 
       if batch_size > 1:
@@ -180,7 +180,8 @@ class GraphObserver(StateObserver):
         # in the graph. E.g. if each graph has 5 nodes, the 
         # node indices are: graph 0: 0-4, graph 1: 5-9, etc.
         mask = tf.range(batch_size * n_nodes, delta=n_nodes)
-        mask = tf.tile(tf.reshape(mask, [-1, 1]), [1, A.shape[1]])
+        mask = tf.tile(tf.reshape(mask, [-1, 1]), [1, A.shape[0]])
+        mask = tf.reshape(mask, A.shape)
 
         # add the graph index to the node indices
         A = tf.add(A, mask)

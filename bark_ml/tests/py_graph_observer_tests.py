@@ -156,7 +156,7 @@ class PyGraphObserverTests(unittest.TestCase):
   #       msg='Nodes are not sorted by distance to the ego node in ascending order.')
       
   #     max_distance_to_ego = distance_to_ego
-  
+
   def test_observation_to_graph_conversion(self):
     num_nodes = 5
     num_features = 5
@@ -193,6 +193,9 @@ class PyGraphObserverTests(unittest.TestCase):
     self.assertTrue(tf.reduce_all(tf.equal(nodes, expected_nodes)))
     self.assertTrue(tf.reduce_all(tf.equal(edge_features, expected_edge_features)))
 
+    # in dense mode, the nodes of all graphs are in a single list
+    expected_nodes = tf.reshape(expected_nodes, [-1, num_features])
+
     # the edges encoded in the adjacency list above
     expected_dense_edges = tf.constant([
       # graph 1
@@ -212,6 +215,7 @@ class PyGraphObserverTests(unittest.TestCase):
     ])
 
     nodes, edges, node_to_graph_map = GraphObserver.graph(observations, graph_dims, dense=True)
+        
     self.assertTrue(tf.reduce_all(tf.equal(nodes, expected_nodes)))
     self.assertTrue(tf.reduce_all(tf.equal(edges, expected_dense_edges)))
     self.assertTrue(tf.reduce_all(tf.equal(node_to_graph_map, expected_node_to_graph_map)))
