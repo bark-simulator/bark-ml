@@ -15,7 +15,7 @@ class GNNWrapper(tf.keras.Model):
                **kwargs):
     super(GNNWrapper, self).__init__(name=name)
 
-    self.num_units = params["DenseUnits", "", 256] 
+    self.num_units = params["FcLayerParams", "", 256] 
     self._graph_dims = params["GraphDimensions", "", (4, 4, 4)] # TODO: properly inject
     self.use_spektral = True
 
@@ -75,20 +75,24 @@ class GNNWrapper(tf.keras.Model):
     return X
 
   def call_tf2_gnn(self, observations, training=False):
-    t0 = time.time()
-    features, edges = [], []
-    node_to_graph_map = []
-    num_graphs = tf.constant(len(observations))
+    batch_size = tf.constant(observations.shape[0])
+    n_nodes = self._graph_dims[0]
 
-    edge_index_offset = 0
-    for i, sample in enumerate(observations):
-      f, e = GraphObserver.graph(sample)
-      features.extend(f)
-      num_nodes = len(f)
-      e = np.asarray(e) + edge_index_offset
-      edges.extend(e)
-      node_to_graph_map.extend(np.full(num_nodes, i))
-      edge_index_offset += num_nodes
+    nodes, edges = GraphObserver.graph(
+      observations, 
+      graph_dims=self._graph_dims, 
+      dense_links=True)
+    
+    nodes = tf.reshape(nodes, [-1])
+    node_to_graph_map = tf.range(batch_size * n_nodes, delta=n_nodes)
+    node_to_graph_map = tf.tile(tf.reshape(node_to_graph_map, [-1, 1]), [1, n_nodes])
+    node_to_graph_map = tf.reshape(node_to_graph_map, [-1])
+
+    
+
+    # increase each edge index by the index
+    # of the graph which it belongs to
+
 
     gnn_input = GNNInput(
       node_features=tf.convert_to_tensor(features),
@@ -96,7 +100,7 @@ class GNNWrapper(tf.keras.Model):
         tf.convert_to_tensor(edges, dtype=tf.int32),
       ),
       node_to_graph_map=tf.convert_to_tensor(node_to_graph_map),
-      num_graphs=num_graphs,
+      num_graphs=batch_size,
     )
 
     self.graph_conversion_times.append(time.time() - t0)

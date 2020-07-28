@@ -119,34 +119,90 @@ class GraphObserver(StateObserver):
     return np.array([d_x, d_y, d_vel, d_theta])
 
   @classmethod
-  def graph(cls, observations, graph_dims, dense_links=False, return_edge_features=False):
-    n_nodes, n_features = graph_dims[0:2]
-    if return_edge_features: n_edge_features = graph_dims[2]
+  def graph(cls, observations, graph_dims, dense=False):
+      """ Maps the given batch of observations into a
+      graph representation.
 
+      Args:
+      observations: The batch of observations of 
+        shape (batch_size, observation_size).
+      graph_dims: A tuple containing the dimensions of the 
+        graph as (num_nodes, num_features, num_edge_features).
+        If `dense` is set to True, num_edge_features is ignored.
+      dense: Specifies the returned graph representation. If 
+        set to True, the edges are returned as a list of nodes 
+        indices (relative to the flattened batch) and an additional
+        mapping of each node to a graph is returned. If set to 
+        False (default), edges are returned as an adjacency matrix
+        and an edge feature matrix is additionally returned.
+
+      Returns:
+        X: Nodes features of shape (batch_size, num_nodes, num_features)
+
+        If `dense` is True:
+        A: Dense representation of edges as a list of node index pairs,
+          shape (num_total_edges, 2).
+        node_to_graph_map: A 1d list, where each element is the mapping
+        of the node (indexed relative to the batch) to a graph.
+
+        If `dense`is False:
+        A: Spare binary adjacency matrix of shape 
+          (batch_size num_nodes, num_nodes).
+        E: Edge features of shape 
+          (batch_size, num_nodes, num_edge_features, num_edge_features).
+      """
+    n_nodes, n_features = graph_dims[0:2]
     batch_size = observations.shape[0]
     
-    # removes first three elements of each sample
+    # remove first three elements of each sample
     # TODO: remove these values from the observation
     obs = observations[:, 3:]
     
+    # extract node features F
+    F = tf.reshape(obs[:, :n_nodes * n_nodes], [batch_size, n_nodes, n_features])
+
+    # extract adjacency matrix A
     adj_start_idx = n_nodes * n_features
     adj_end_idx = adj_start_idx + n_nodes ** 2
-    
-    # extract features F and adjacency matrix A
-    F = tf.reshape(obs[:, :n_nodes * n_nodes], [batch_size, n_nodes, n_features])
     A = tf.reshape(obs[:, adj_start_idx:adj_end_idx], [batch_size, n_nodes, n_nodes])
 
-    if dense_links:
-      A = tf.where(tf.greater(A, 0))[:,1:]
+    if dense:
+      # find non-zero elements in the adjacency matrix (edges)
+      # and collect there indices
+      A = tf.reshape(tf.where(tf.greater(A, 0))[:,1:], [batch_size, -1])
+      A = tf.cast(A, tf.int32)
 
-    if return_edge_features:
-      E = tf.reshape(obs[:, adj_end_idx:], [batch_size, n_nodes, n_nodes, n_edge_features])
-      return F, A, E
+      # we need the indices of the source and target nodes to
+      # be represented as their indices in the whole batch,
+      # in other words: each node index must be the index
+      # of the graph in the batch plus the index of the node
+      # in the graph. Eo, e.g. if each graph has 5 nodes, the 
+      # node indices are: graph 0: 0-4, graph 1: 5-9, etc.
+      index_mask = tf.range(batch_size * n_nodes, delta=n_nodes)
+      mask = tf.tile(tf.reshape(mask, [-1, 1]), [1, n_nodes**2-1])
 
-    return F, A
+      # add the graph index to the node indices
+      A = tf.add(A, mask)
+      A = tf.reshape(A, [-1, 2])
+
+      # construct a list where each element represents the
+      # assignment of a node to a graph via the graph's index
+      node_to_graph_map = tf.range(batch_size * n_nodes, delta=n_nodes)
+      node_to_graph_map = tf.reshape(node_to_graph_map, [-1, 1])
+      node_to_graph_map = tf.tile(node_to_graph_map, [1, n_nodes])
+      node_to_graph_map = tf.reshape(node_to_graph_map, [-1])
+
+      return F, A, node_to_graph_map
+
+    # extract edge features
+    n_edge_features = graph_dims[2]
+    E_shape = [batch_size, n_nodes, n_nodes, n_edge_features]
+    E = tf.reshape(obs[:, adj_end_idx:], E_shape)
+
+    return F, A, E
 
   def _preprocess_agents(self, world):
-    """ 
+    """
     Returns a list of tuples, consisting
     of an index and an agent object element.
 

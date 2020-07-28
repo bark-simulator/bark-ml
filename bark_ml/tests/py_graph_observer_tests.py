@@ -229,15 +229,17 @@ class PyGraphObserverTests(unittest.TestCase):
 
     # the edges encoded in the adjacency list above
     expected_dense_edges = tf.constant([
+      # graph 1
       [0, 1], [0, 2], [0, 3],
       [1, 0], [1, 2], [1, 3],
       [2, 0], [2, 1], [2, 3],
       [3, 0], [3, 1], [3, 2],
-      [0, 1], [0, 2], [0, 3],
-      [1, 0], [1, 2], [1, 3],
-      [2, 0], [2, 1], [2, 3],
-      [3, 0], [3, 1], [3, 2]
-    ], dtype=tf.int64)
+      # graph 2
+      [5, 6], [5, 7], [5, 8],
+      [6, 5], [6, 7], [6, 8],
+      [7, 5], [7, 6], [7, 8],
+      [8, 5], [8, 6], [8, 7]
+    ], dtype=tf.int32)
 
     nodes, edges = GraphObserver.graph(observations, graph_dims, dense_links=True)
     self.assertTrue(tf.reduce_all(tf.equal(nodes, expected_nodes)))
