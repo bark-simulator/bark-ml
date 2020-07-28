@@ -57,7 +57,7 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
       output_tensor_spec=env.action_spec(),
       gnn_params=self._params["ML"]["BehaviorGraphSACAgent"]["GNN"],
       fc_layer_params=self._params\
-        ["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams", "", [512, 256, 256]]
+        ["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams", "", [256, 256]]
     )
     
     # agent

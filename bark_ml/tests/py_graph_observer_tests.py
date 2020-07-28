@@ -75,18 +75,15 @@ class PyGraphObserverTests(unittest.TestCase):
       .reshape((n_nodes_max,-1))
     self.data = data
   
-  # def test_observation_formalities(self):
-  #   # Convert to numpy array and split into subparts for easier handling
-  #   observed_state = self.observed_state
-  #   predicted_len = self.metadata["predicted_len"]    
+  def test_observation_formalities(self):
+    # Convert to numpy array and split into subparts for easier handling
+    observed_state = self.observed_state
+    predicted_len = self.metadata["predicted_len"]    
 
-  #   # Check if formal parameter of observed_state are correct
-  #   self.assertTrue(tf.is_tensor(observed_state))
-  #   #assert tf.is_tensor(observed_state)
-  #   self.assertTrue((observed_state.dtype == tf.float32) or (observed_state.dtype == tf.float64))
-  #   #assert (observed_state.dtype == tf.float32) or (observed_state.dtype == tf.float64)
-  #   #assert observed_state.shape == (predicted_len,)
-  #   self.assertEqual(observed_state.shape, (predicted_len,))
+    # Check if formal parameter of observed_state are correct
+    self.assertTrue(tf.is_tensor(observed_state))
+    self.assertTrue((observed_state.dtype == tf.float32) or (observed_state.dtype == tf.float64))
+    #self.assertEqual(observed_state.shape, (predicted_len,))
 
   # def test_reconstruction_to_graph(self):
   #   # Check reconstruction to an OrderedGraph
@@ -101,38 +98,27 @@ class PyGraphObserverTests(unittest.TestCase):
   #   self.assertEqual(len(reconstructed_graph.nodes), n_nodes)
   #   #assert len(reconstructed_graph.nodes) == n_nodes
 
-  # def test_reconstruction_to_observation(self):
-  #   # Get graph at first
-  #   observed_state = self.observed_state
-  #   observation = self.observation
-  #   reconstructed_graph = self.reconstructed_graph
+  def test_norming(self):
+    observer = GraphObserver()
+    range_ = [-10, 10]
+    eps = 1*10-6
+    self.assertTrue(abs(1 - observer._normalize_value(10, range=range_)) < eps)
+    self.assertTrue(abs(-1 - observer._normalize_value(-10, range=range_)) < eps)
+    self.assertTrue(abs(1 - observer._normalize_value(100, range=range_)) < eps)
+    self.assertTrue(abs(0.1 - observer._normalize_value(1, range=range_)) < eps)
 
-  #   # Reconstruct the observation
-  #   rec_obs = self.observer._observation_from_graph(reconstructed_graph)
-  #   assert observed_state.__class__ == rec_obs.__class__
-  #   #assert tf.reduce_all(tf.equal(observed_state, rec_obs))
+  def test_parameter_server_usage(self):
+    expected_agent_limit = 15
+    expected_visibility_radius = 100
 
-  # def test_norming(self):
-  #   observer = GraphObserver()
-  #   range_ = [-10, 10]
-  #   eps = 1*10-6
-  #   self.assertTrue(abs(1 - observer._normalize_value(10, range=range_)) < eps)
-  #   self.assertTrue(abs(-1 - observer._normalize_value(-10, range=range_)) < eps)
-  #   self.assertTrue(abs(1 - observer._normalize_value(100, range=range_)) < eps)
-  #   self.assertTrue(abs(0.1 - observer._normalize_value(1, range=range_)) < eps)
+    params = ParameterServer()
+    params["ML"]["GraphObserver"]["AgentLimit"] = expected_agent_limit
+    params["ML"]["GraphObserver"]["VisibilityRadius"] = expected_visibility_radius
+    observer = GraphObserver(normalize_observations=True, params=params)
 
-  # def test_parameter_server_usage(self):
-  #   expected_agent_limit = 15
-  #   expected_visibility_radius = 100
-
-  #   params = ParameterServer()
-  #   params["ML"]["GraphObserver"]["AgentLimit"] = expected_agent_limit
-  #   params["ML"]["GraphObserver"]["VisibilityRadius"] = expected_visibility_radius
-  #   observer = GraphObserver(normalize_observations=True, params=params)
-
-  #   self.assertEqual(observer._agent_limit, expected_agent_limit)
-  #   self.assertEqual(observer._visibility_radius, expected_visibility_radius)
-  #   #assert observer._normalize_observations #unclear statement
+    self.assertEqual(observer._agent_limit, expected_agent_limit)
+    self.assertEqual(observer._visibility_radius, expected_visibility_radius)
+    self.assertTrue(observer._normalize_observations)
 
   # def test_observed_agents_selection(self):
   #   agent_limit = 10
@@ -170,29 +156,7 @@ class PyGraphObserverTests(unittest.TestCase):
   #       msg='Nodes are not sorted by distance to the ego node in ascending order.')
       
   #     max_distance_to_ego = distance_to_ego
-
-  # def test_features_from_observation(self):
-  #   params = ParameterServer()
-  #   params["ML"]["GraphObserver"]["AgentLimit"] = 5
-  #   observer = GraphObserver(params=params)
-
-  #   observation, _ = self._get_observation(
-  #     observer=observer,
-  #     world=self.world,
-  #     eval_id=self.eval_id)
-
-  #   graph = GraphObserver.graph_from_observation(observation)
-  #   features, edges = GraphObserver.graph(observation)
-
-  #   graph_features = []
-  #   for _, attributes in graph.nodes.data():
-  #     a = list(attributes.values())
-  #     b = list(map(lambda x: x.numpy(), a))
-  #     graph_features.append(b)
-    
-  #   self.assertTrue(np.array_equal(features, graph_features))
-  #   self.assertTrue(np.array_equal(edges, graph.edges))
-
+  
   def test_observation_to_graph_conversion(self):
     num_nodes = 5
     num_features = 5
@@ -201,6 +165,8 @@ class PyGraphObserverTests(unittest.TestCase):
     agents = np.random.random_sample((num_nodes, num_features))
     edge_features = np.random.random_sample((num_nodes, num_nodes, num_edge_features))
 
+    # note that edges are bidirectional, the
+    # the matrix is symmetric
     adjacency_list = [
       [0, 1, 1, 1, 0], # 1 connects with 2, 3, 4
       [1, 0, 1, 1, 0], # 2 connects with 3, 4
@@ -222,7 +188,7 @@ class PyGraphObserverTests(unittest.TestCase):
     expected_edge_features = tf.constant([edge_features, edge_features])
 
     graph_dims = (num_nodes, num_features, num_edge_features)
-    nodes, edges, edge_features = GraphObserver.graph(observations, graph_dims, return_edge_features=True)
+    nodes, edges, edge_features = GraphObserver.graph(observations, graph_dims)
 
     self.assertTrue(tf.reduce_all(tf.equal(nodes, expected_nodes)))
     self.assertTrue(tf.reduce_all(tf.equal(edge_features, expected_edge_features)))
@@ -241,9 +207,14 @@ class PyGraphObserverTests(unittest.TestCase):
       [8, 5], [8, 6], [8, 7]
     ], dtype=tf.int32)
 
-    nodes, edges = GraphObserver.graph(observations, graph_dims, dense_links=True)
+    expected_node_to_graph_map = tf.constant([
+      0, 0, 0, 0, 0, 1, 1, 1, 1, 1
+    ])
+
+    nodes, edges, node_to_graph_map = GraphObserver.graph(observations, graph_dims, dense=True)
     self.assertTrue(tf.reduce_all(tf.equal(nodes, expected_nodes)))
     self.assertTrue(tf.reduce_all(tf.equal(edges, expected_dense_edges)))
+    self.assertTrue(tf.reduce_all(tf.equal(node_to_graph_map, expected_node_to_graph_map)))
     
 if __name__ == '__main__':
   suite = unittest.TestLoader().loadTestsFromTestCase(PyGraphObserverTests)

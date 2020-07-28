@@ -16,8 +16,10 @@ class GNNWrapper(tf.keras.Model):
     super(GNNWrapper, self).__init__(name=name)
 
     self.num_units = params["FcLayerParams", "", 256] 
-    self._graph_dims = params["GraphDimensions", "", (4, 4, 4)] # TODO: properly inject
-    self.use_spektral = True
+
+    # TODO: properly inject
+    self._graph_dims = params["GraphDimensions", "", (4, 4, 4)] 
+    self.use_spektral = False
     
     if self.use_spektral:
       self._init_spektral_layers(params)
@@ -38,10 +40,12 @@ class GNNWrapper(tf.keras.Model):
   def _init_tf2_gnn_layers(self, params):
     # map bark-ml parameter keys to tf2_gnn parameter keys
     mapped_params = {}
-    mapped_params["hidden_dims"] = self.num_units
-    mapped_params["num_layers"] = params["NumLayers", "", 2]
-    mapped_params["global_exchange_mode"] = params["global_exchange_mode", "", "gnn_edge_mlp"]
-    mapped_params["message_calculation_class"] = params["message_calculation_class", "", "rgcn"]
+    mapped_params["hidden_dim"] = self.num_units
+    mapped_params["num_layers"] = params["NumLayers", "", 1]
+    mapped_params["global_exchange_mode"] =\
+      params["global_exchange_mode", "", "mean"]
+    mapped_params["message_calculation_class"] =\
+      params["message_calculation_class", "", "gnn_edge_mlp"]
 
     mp_style = mapped_params["message_calculation_class"]
     gnn_params = GNN.get_default_hyperparameters(mp_style)    
@@ -49,7 +53,7 @@ class GNNWrapper(tf.keras.Model):
 
     self._gnn = GNN(gnn_params)
 
-  @tf.function
+  #@tf.function
   def call(self, observations, training=False):
     if observations.shape[0] == 0:
       return tf.random.normal(shape=(0, self.num_units))
@@ -72,14 +76,14 @@ class GNNWrapper(tf.keras.Model):
   def call_tf2_gnn(self, observations, training=False):
     batch_size = tf.constant(observations.shape[0])
 
-    nodes, edges, node_to_graph_map = GraphObserver.graph(
+    X, A, node_to_graph_map = GraphObserver.graph(
       observations, 
       graph_dims=self._graph_dims, 
       dense=True)
 
     gnn_input = GNNInput(
-      node_features=nodes,
-      adjacency_lists=(edges,),
+      node_features=X,
+      adjacency_lists=(A,),
       node_to_graph_map=node_to_graph_map,
       num_graphs=batch_size,
     )

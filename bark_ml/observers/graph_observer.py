@@ -53,7 +53,6 @@ class GraphObserver(StateObserver):
 
   def Observe(self, world):
     """see base class"""
-    t0 = time.time()
     agents = self._preprocess_agents(world)
     num_agents = len(agents)
     obs = [self._agent_limit, num_agents, self.feature_len]
@@ -79,7 +78,7 @@ class GraphObserver(StateObserver):
         radius=self._visibility_radius)
 
       for target_index, nearby_agent in nearby_agents:
-        edges.append(set([index, target_index]))
+        edges.append([index, target_index])
         edge_features[index, target_index, :] = self._extract_edge_features(agent, nearby_agent)
     
     # build adjacency matrix and convert to list
@@ -105,7 +104,6 @@ class GraphObserver(StateObserver):
       actions = self._generate_actions(features)
       return obs, actions
       
-    self.observe_times.append(time.time() - t0)
     return obs
 
   def _extract_edge_features(self, source_agent, target_agent):
@@ -120,7 +118,7 @@ class GraphObserver(StateObserver):
 
   @classmethod
   def graph(cls, observations, graph_dims, dense=False):
-      """ Maps the given batch of observations into a
+    """ Maps the given batch of observations into a
       graph representation.
 
       Args:
@@ -150,7 +148,7 @@ class GraphObserver(StateObserver):
           (batch_size num_nodes, num_nodes).
         E: Edge features of shape 
           (batch_size, num_nodes, num_edge_features, num_edge_features).
-      """
+    """
     n_nodes, n_features = graph_dims[0:2]
     batch_size = observations.shape[0]
     
@@ -167,28 +165,31 @@ class GraphObserver(StateObserver):
     A = tf.reshape(obs[:, adj_start_idx:adj_end_idx], [batch_size, n_nodes, n_nodes])
 
     if dense:
+      F = tf.reshape(F, [batch_size * n_nodes, n_features])
+
       # find non-zero elements in the adjacency matrix (edges)
       # and collect there indices
       A = tf.reshape(tf.where(tf.greater(A, 0))[:,1:], [batch_size, -1])
       A = tf.cast(A, tf.int32)
 
-      # we need the indices of the source and target nodes to
-      # be represented as their indices in the whole batch,
-      # in other words: each node index must be the index
-      # of the graph in the batch plus the index of the node
-      # in the graph. Eo, e.g. if each graph has 5 nodes, the 
-      # node indices are: graph 0: 0-4, graph 1: 5-9, etc.
-      index_mask = tf.range(batch_size * n_nodes, delta=n_nodes)
-      mask = tf.tile(tf.reshape(mask, [-1, 1]), [1, n_nodes**2-1])
+      if batch_size > 1:
+        # we need the indices of the source and target nodes to
+        # be represented as their indices in the whole batch,
+        # in other words: each node index must be the index
+        # of the graph in the batch plus the index of the node
+        # in the graph. E.g. if each graph has 5 nodes, the 
+        # node indices are: graph 0: 0-4, graph 1: 5-9, etc.
+        mask = tf.range(batch_size * n_nodes, delta=n_nodes)
+        mask = tf.tile(tf.reshape(mask, [-1, 1]), [1, A.shape[1]])
 
-      # add the graph index to the node indices
-      A = tf.add(A, mask)
+        # add the graph index to the node indices
+        A = tf.add(A, mask)
+        
       A = tf.reshape(A, [-1, 2])
 
       # construct a list where each element represents the
       # assignment of a node to a graph via the graph's index
-      node_to_graph_map = tf.range(batch_size * n_nodes, delta=n_nodes)
-      node_to_graph_map = tf.reshape(node_to_graph_map, [-1, 1])
+      node_to_graph_map = tf.reshape(tf.range(batch_size), [-1, 1])
       node_to_graph_map = tf.tile(node_to_graph_map, [1, n_nodes])
       node_to_graph_map = tf.reshape(node_to_graph_map, [-1])
 
