@@ -186,10 +186,13 @@ def calculate_action(observations: list, time_step=0.1, wheel_base=2.7) -> list:
             acceleration = 2*p[0]*current_velocity + p[1]
 
     # Approximate slow velocities to zero to avoid noisy outputs
-    if current_velocity <= 1e-3:
-        d_theta = 0
+    if current_velocity <= 1e-5:
+        if acceleration <= 1e-5:
+            raise ValueError("Acceleration and velocity are zero, but car turned. Impossible situation! Aborting!")
+        current_velocity = acceleration * 0.01 * time_step 
+        d_theta = 0.01 * d_theta
 
-    steering_angle = math.atan2(wheel_base * d_theta, current_velocity)
+    steering_angle = math.atan((wheel_base * d_theta) / current_velocity)
     action = [steering_angle, acceleration]
 
     return action

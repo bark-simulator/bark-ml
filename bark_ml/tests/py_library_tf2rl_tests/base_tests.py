@@ -123,6 +123,78 @@ class CalculateActionTests(unittest.TestCase):
             expected_action,
             calculate_action(observations[0:2], time_step))
 
+    def compare_calculate_to_expected(self, observations, expected_actions, time_step):
+        """For the given observations calculate all first and second degree actions and compare them to the expected result. Assumes a wheel_base of 1.
+
+        Args:
+            observations (list): The observations
+            expected_actions (list): The action
+            time_step (float): The timestep
+        """
+        for i, observation in enumerate(observations[:-1]):
+            current_observations = [observation, observations[i+1]]
+
+            calculated_action = calculate_action(current_observations, time_step, wheel_base=1)
+            self.assertAlmostEqual(expected_actions[i], calculated_action)
+
+            rotation_change = observations[i + 1][2] - observation[2]
+            self.assertAlmostEqual(rotation_change, math.tan(calculated_action[0]))
+
+        for i, observation in enumerate(observations[1:-1]):
+            current_observations = [observations[i], observation, observations[i+2]]
+
+            calculated_action = calculate_action(current_observations, time_step, wheel_base=1)
+            self.assertAlmostEqual(expected_actions[i - 1], calculated_action)
+
+            rotation_change = observation[2] - observations[i][2] 
+            self.assertAlmostEqual(rotation_change, math.tan(calculated_action[0]))
+
+    def test_calculate_action_circle_zero_acceleration(self):
+        """
+        Test: Calculate the action based on observations around a circle with constant velocity.
+        """
+        number_observations = 10
+        rotation_change = 0.5 * math.pi
+        observations = [[0, 0, i * rotation_change, 1] for i in range(number_observations)]
+        time_step = 1
+        expected_actions = [[math.atan(rotation_change), 0.0]] * number_observations
+        self.compare_calculate_to_expected(observations, expected_actions, time_step)
+    
+    def test_calculate_action_circle_zero_start_velocity(self):
+        """
+        Test: Calculate the action based on observations around a circle with constant acceleration and zero start velocity.
+        """
+        number_observations = 10
+        rotation_change = math.pi
+        observations = [[0, 0, i * rotation_change, i] for i in range(number_observations)]
+        time_step = 1
+        expected_actions = [[math.atan(rotation_change), 1.0]] * number_observations
+        self.compare_calculate_to_expected(observations, expected_actions, time_step)
+
+    def test_calculate_action_half_circle_zero_start_velocity_zero_acceleration(self):
+        """
+        Test: Calculate the action based on two consecutive observations.
+        """
+        observations = [[0, 0, 0, 0], [1, 1, math.pi, 0]]
+        time_step = 1
+
+        with self.assertRaises(ValueError):
+            calculate_action(observations, time_step, wheel_base=1)
+
+    def test_calculate_action_full_circle(self):
+        """
+        Test: Calculate the action based on two consecutive observations.
+        """
+        observations = [[0, 0, 0, 1], [1, 1, math.pi, 1], [1, 1, 2 * math.pi, 1]]
+        time_step = 1
+
+        expected_action = [math.atan(math.pi), 0.0]
+        calculated_action = calculate_action(observations[:2], time_step, wheel_base=1)
+        self.assertAlmostEqual(expected_action, calculated_action)
+
+        calculated_action = calculate_action(observations[1:], time_step, wheel_base=1)
+        self.assertAlmostEqual(expected_action, calculated_action)
+
     def test_calculate_action_sin(self):
         """
         Test: Calculate the action based on consecutive observations with sinusoid angle changes.

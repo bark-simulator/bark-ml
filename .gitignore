@@ -178,3 +178,5 @@ bark_ml/tests/py_library_tf2rl_tests/gail_data/models/*
 
 
 /summaries/**
+start_multiple_**.sh
+examples/pretrained**
