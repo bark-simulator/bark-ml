@@ -363,10 +363,11 @@ def generate_expert_trajectories_for_scenario(param_server: ParameterServer, sim
             expert_trajectories[agent_id]['done'].append(0)
 
             current_obs = []
-            if i == 0:
-                current_obs = agent_trajectory["obs_not_norm"][i:i + 2]
-            else:
-                current_obs = agent_trajectory["obs_not_norm"][i - 1:i + 2]
+            # if i == 0:
+            #     current_obs = agent_trajectory["obs_not_norm"][i:i + 2]
+            # else:
+            #     current_obs = agent_trajectory["obs_not_norm"][i - 1:i + 2]
+            current_obs = agent_trajectory["obs_not_norm"][i:i + 2]
 
             time_step = next_time - current_time
             action = calculate_action(current_obs, time_step, 2.7)
