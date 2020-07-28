@@ -12,6 +12,7 @@ from typing import Tuple
 import joblib
 from IPython.display import clear_output
 
+import math
 import gym
 from absl import app
 from absl import flags
@@ -121,13 +122,6 @@ def create_scenario(param_server: ParameterServer) -> Tuple[Scenario, float, flo
             param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["StartTs"],
             param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EndTs"])
 
-
-def is_collinear(values, threshold=1e-6):
-    y1 = values[1] - values[0]
-    y2 = values[2] - values[0]
-    return abs(y2 - 2 * y1) < threshold
-
-
 def calculate_action(observations: list, time_step=0.1, wheel_base=2.7) -> list:
     """Calculate the action based on some observations.
 
@@ -139,8 +133,6 @@ def calculate_action(observations: list, time_step=0.1, wheel_base=2.7) -> list:
     Returns:
         list: The action vector
     """
-    import math
-    from numpy import polyfit
 
     assert(time_step >= 0)
     if time_step < 1e-6:
@@ -166,24 +158,15 @@ def calculate_action(observations: list, time_step=0.1, wheel_base=2.7) -> list:
     else:
         assert(len(observations) == 3)
 
-        # Check collinearity of theta values
-        if is_collinear(thetas):
-            # Fit thetas into a line and get the derivative
-            d_theta = (thetas[2] - thetas[1]) / time_step
-        else:
-            # Fit thetas into a parabola and get the derivative
-            p = polyfit([0, time_step, 2*time_step], thetas, 2)
-            d_theta = 2*p[0]*thetas[1] + p[1]
+        # Fit thetas into a parabola and get the derivative
+        p = np.polyfit([0, time_step, 2*time_step], thetas, 2)
+        d_theta = 2*p[0]*thetas[1] + p[1]
 
         # Check collinearity of velocity values
         current_velocity = velocities[1]
-        if is_collinear(velocities):
-            # Fit fit velocities into a line and get the derivative
-            acceleration = (velocities[2] - current_velocity) / time_step
-        else:
-            # Fit velocities into a parabola and get the derivative
-            p = polyfit([0, time_step, 2*time_step], velocities, 2)
-            acceleration = 2*p[0]*current_velocity + p[1]
+        # Fit velocities into a parabola and get the derivative
+        p = np.polyfit([0, time_step, 2*time_step], velocities, 2)
+        acceleration = 2*p[0]*current_velocity + p[1]
 
     # Approximate slow velocities to zero to avoid noisy outputs
     if current_velocity <= 1e-5:
