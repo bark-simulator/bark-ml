@@ -167,6 +167,7 @@ class GNNCriticNetwork(network.Network):
 
   def __init__(self,
                input_tensor_spec,
+               gnn_params,
                observation_conv_layer_params=None,
                observation_fc_layer_params=None,
                observation_dropout_layer_params=None,
@@ -245,7 +246,7 @@ class GNNCriticNetwork(network.Network):
       raise ValueError('Only a single action is supported by this network')
     self._single_action_spec = flat_action_spec[0]
 
-    self._gnn = GNNWrapper(params={})
+    self._gnn = GNNWrapper(params=gnn_params)
 
     # TODO(kbanoop): Replace mlp_layers with encoding networks.
     self._observation_layers = utils.mlp_layers(

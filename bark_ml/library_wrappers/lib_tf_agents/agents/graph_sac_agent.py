@@ -42,17 +42,10 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
         std_transform=sac_agent.std_clip_transform,
         scale_distribution=True)
 
-    # # actor network
-    # actor_net = actor_distribution_network.ActorDistributionNetwork(
-    #     env.observation_spec(),
-    #     env.action_spec(),
-    #     fc_layer_params=tuple(
-    #       self._params["ML"]["BehaviorSACAgent"]["ActorFcLayerParams", "", [256]]),
-    #     continuous_projection_net=_normal_projection_net)
-
     # critic network
     critic_net = GNNCriticNetwork(
       (env.observation_spec(), env.action_spec()),
+      gnn_params=self._params["ML"]["BehaviorGraphSACAgent"]["GNN"],
       observation_fc_layer_params=None,
       action_fc_layer_params=None,
       joint_fc_layer_params=tuple(
@@ -62,20 +55,10 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
     actor_net = GNNActorNetwork(
       input_tensor_spec=env.observation_spec(),
       output_tensor_spec=env.action_spec(),
-      gnn_params=self._params["ML"]["BehaviorGraphSACAgent"]["GNN"].ConvertToDict(),
+      gnn_params=self._params["ML"]["BehaviorGraphSACAgent"]["GNN"],
       fc_layer_params=self._params\
-        ["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams", "", [256, 256]]
+        ["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams", "", [512, 256, 256]]
     )
-
-    # # critic network
-    # critic_net = GNNCriticNetwork(
-    #   input_tensor_spec=(env.observation_spec(), env.action_spec()),
-    #   action_fc_layer_params=self._params\
-    #     ["ML"]["BehaviorGraphSACAgent"]["CriticActionFcLayerParams", "", None],
-    #   joint_fc_layer_params=self._params\
-    #     ["ML"]["BehaviorGraphSACAgent"]["CriticJointFcLayerParams", "", [256, 128]],
-    #   gnn_params=self._params["ML"]["BehaviorGraphSACAgent"]["GNN"].ConvertToDict()
-    # )
     
     # agent
     tf_agent = sac_agent.SacAgent(

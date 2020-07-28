@@ -62,7 +62,7 @@ class GraphObserver(StateObserver):
     for _, agent in agents:
       obs.extend(list(self._extract_features(agent).values()))
 
-    # fill empty spots (difference between existing and max agents) with -1
+    # fill empty spots (difference between existing and max agents) with zeros
     obs.extend(np.zeros(max(0, self._agent_limit - num_agents)) * self.feature_len)
 
     # edges

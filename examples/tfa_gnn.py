@@ -45,12 +45,18 @@ def run_configuration(argv):
   params["ML"]["TFARunner"]["SummaryPath"] = '/Users/marco.oliva/Development/bark-ml_logs/summaries/'
   params["ML"]["BehaviorSACAgent"]["DebugSummaries"] = True
   params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 100
-  params["ML"]["BehaviorSACAgent"]["BatchSize"] = 128
+  params["ML"]["BehaviorSACAgent"]["BatchSize"] = 32
   params["ML"]["GraphObserver"]["AgentLimit"] = 4
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["num_layers"] = 2
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["hidden_dim"] = 512
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["NumLayers"] = 2
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["FcLayerParams"] = 256
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["message_calculation_class"] = "gnn_edge_mlp"
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_mode"] = "mean"
+
+  # spektral
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MPChannels"] = 128
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["KernelNetUnits"] = [256, 256]
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MPLayerActivation"] = "relu"
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["DenseActication"] = "tanh"
 
 
   # these are not working atm, check why!

@@ -211,7 +211,10 @@ class PyGNNWrapperTests(unittest.TestCase):
     
     self.assertEqual(observation.shape, [153])
 
-    nodes, edges, edge_features = GNNWrapper.graph(observation, sparse_links=True, return_edge_features=True)
+    nodes, edges, edge_features = GraphObserver.graph(
+      observation, 
+      dense_links=True, 
+      return_edge_features=True)
 
     print(nodes)
     print(edges)
