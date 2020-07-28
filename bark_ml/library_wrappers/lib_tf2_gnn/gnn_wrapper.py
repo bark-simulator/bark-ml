@@ -23,46 +23,37 @@ class GNNWrapper(tf.keras.Model):
 
     self._gnn = GNN(gnn_params)
     self.num_units = gnn_params["hidden_dim"]
+    self._graph_dims = params["GraphDimensions"]
+    self.use_spektral = True
   
-    self._conv1 = EdgeConditionedConv(128, activation='relu')
+    self._conv1 = EdgeConditionedConv(128, kernel_network=[256, 256], activation='relu')
     self._conv2 = EdgeConditionedConv(128, activation='relu')
     self._pool1 = GlobalAttnSumPool()
     self._dense1 = Dense(self.num_units, activation='tanh')
 
-    self.use_spektral = True
-    self.graph_conversion_times = []
-    self.gnn_call_times = []
 
   @tf.function
   def call(self, observations, training=False):
     if observations.shape[0] == 0:
       return tf.random.normal(shape=(0, self.num_units))
-    #if len(observations.shape) > 3:
-    #  raise ValueError(f'Graph has invalid shape {observations.shape}')
-    
-    #t0 = time.time()
-    
+      
     if self.use_spektral:
       return self.call_spektral(observations, training)
     else:
       return self.call_tf2_gnn(observations, training)
-    
-    #self.gnn_call_times.append(time.time() - t0)
 
   @tf.function
   def call_spektral(self, observations, training=False):
-    batch_size = observations.shape[0]
+    # TODO: remove hardcoded values
     n_nodes = 4
     n_features = 4
     n_edge_features = 4
+    graph_dims = (n_nodes, n_features, n_edge_features)
 
-    obs = observations[:, 3:] # removes first three elements of each sample
-    adj_start_idx = 4 * 4
-    adj_end_idx = adj_start_idx + 4 ** 2
-
-    X = tf.reshape(obs[:, :n_nodes * n_nodes], [batch_size, n_nodes, n_features])
-    A = tf.reshape(obs[:, adj_start_idx:adj_end_idx], [batch_size, n_nodes, n_nodes])
-    E = tf.reshape(obs[:, adj_end_idx:], [batch_size, n_nodes, n_nodes, n_edge_features])
+    X, A, E = GraphObserver.graph(
+      observations, 
+      graph_dims, 
+      return_edge_features=True)
 
     X = self._conv1([X, A, E])
     X = self._pool1(X)

@@ -194,55 +194,54 @@ class PyGraphObserverTests(unittest.TestCase):
   #   self.assertTrue(np.array_equal(edges, graph.edges))
 
   def test_observation_to_graph_conversion(self):
-    node_limit = 5
+    num_nodes = 5
     num_features = 5
-    num_nodes = 4
+    num_edge_features = 4
 
-    # 4 agents + 1 fill-up slot (node_limit = 5)
-    agents = [
-      np.full(num_features, 0.1),
-      np.full(num_features, 0.2),
-      np.full(num_features, 0.3),
-      np.full(num_features, 0.4),
-      np.full(num_features, -1)
-    ]
+    agents = np.random.random_sample((num_nodes, num_features))
+    edge_features = np.random.random_sample((num_nodes, num_nodes, num_edge_features))
 
-    # the empty slot should not be returned
-    expected_nodes = agents[:-1]
-
-    # links are already bidirectional, so there
-    # are only zeros to the left of the diagonal
     adjacency_list = [
       [0, 1, 1, 1, 0], # 1 connects with 2, 3, 4
-      [0, 0, 1, 1, 0], # 2 connects with 3, 4
-      [0, 0, 0, 1, 0], # 3 connects with 4
-      [0, 0, 0, 0, 0], # 4 has no links
+      [1, 0, 1, 1, 0], # 2 connects with 3, 4
+      [1, 1, 0, 1, 0], # 3 connects with 4
+      [1, 1, 1, 0, 0], # 4 has no links
       [0, 0, 0, 0, 0]  # empty slot -> all zeros
     ]
 
-    # the edges encoded in the adjacency list above
-    expected_edges = [
-      [0, 1], [0, 2], [0, 3],
-      [1, 2], [1, 3],
-      [2, 3]
-    ]
-
-    expected_edge_features = np.random.random_sample((5, 5, 4))
-
-    observation = np.array([node_limit, num_nodes, num_features])
+    observation = np.array([num_nodes, num_nodes, num_features])
     observation = np.append(observation, agents)
     observation = np.append(observation, adjacency_list)
-    observation = np.append(observation, expected_edge_features)
+    observation = np.append(observation, edge_features)
     observation = observation.reshape(-1)
+    observations = np.array([observation, observation])
     
-    self.assertEqual(observation.shape, (153,))
+    self.assertEqual(observations.shape, (2, 153))
 
-    nodes, edges, edge_features = GraphObserver.graph(observation, return_edge_features=True)
+    expected_nodes = tf.constant([agents, agents])
+    expected_edge_features = tf.constant([edge_features, edge_features])
 
-    assert np.array_equal(nodes, expected_nodes)
-    assert np.array_equal(edges, expected_edges)
-    assert np.array_equal(edge_features, expected_edge_features)
+    graph_dims = (num_nodes, num_features, num_edge_features)
+    nodes, edges, edge_features = GraphObserver.graph(observations, graph_dims, return_edge_features=True)
 
+    self.assertTrue(tf.reduce_all(tf.equal(nodes, expected_nodes)))
+    self.assertTrue(tf.reduce_all(tf.equal(edge_features, expected_edge_features)))
+
+    # the edges encoded in the adjacency list above
+    expected_dense_edges = tf.constant([
+      [0, 1], [0, 2], [0, 3],
+      [1, 0], [1, 2], [1, 3],
+      [2, 0], [2, 1], [2, 3],
+      [3, 0], [3, 1], [3, 2],
+      [0, 1], [0, 2], [0, 3],
+      [1, 0], [1, 2], [1, 3],
+      [2, 0], [2, 1], [2, 3],
+      [3, 0], [3, 1], [3, 2]
+    ], dtype=tf.int64)
+
+    nodes, edges = GraphObserver.graph(observations, graph_dims, dense_links=True)
+    self.assertTrue(tf.reduce_all(tf.equal(nodes, expected_nodes)))
+    self.assertTrue(tf.reduce_all(tf.equal(edges, expected_dense_edges)))
     
 if __name__ == '__main__':
   suite = unittest.TestLoader().loadTestsFromTestCase(PyGraphObserverTests)

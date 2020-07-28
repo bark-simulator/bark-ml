@@ -96,16 +96,14 @@ class GraphObserver(StateObserver):
     assert len(obs) == self._len_state, f'Observation \
       has invalid length ({len(obs)}, expected: {self._len_state})'
     
-    obs = tf.convert_to_tensor(
-      obs, 
-      dtype=tf.float32, 
-      name='observation')
+    obs = tf.convert_to_tensor(obs, dtype=tf.float32, name='observation')
+
     if self._output_supervised_data == False:
       return obs
     else:
-      features,_ = GraphObserver.graph(obs)
+      features, _ = GraphObserver.graph(obs)
       actions = self._generate_actions(features)
-      return (obs, actions)
+      return obs, actions
       
     self.observe_times.append(time.time() - t0)
     return obs
@@ -121,29 +119,31 @@ class GraphObserver(StateObserver):
     return np.array([d_x, d_y, d_vel, d_theta])
 
   @classmethod
-  def graph(cls, observation, sparse_links=False, return_edge_features=False):
-    node_limit = int(observation[0])
-    num_nodes = int(observation[1])
-    num_features = int(observation[2])
+  def graph(cls, observations, graph_dims, dense_links=False, return_edge_features=False):
+    n_nodes, n_features = graph_dims[0:2]
+    if return_edge_features: n_edge_features = graph_dims[2]
 
-    obs = observation[3:]
+    batch_size = observations.shape[0]
+    
+    # removes first three elements of each sample
+    # TODO: remove these values from the observation
+    obs = observations[:, 3:]
+    
+    adj_start_idx = n_nodes * n_features
+    adj_end_idx = adj_start_idx + n_nodes ** 2
+    
+    # extract features F and adjacency matrix A
+    F = tf.reshape(obs[:, :n_nodes * n_nodes], [batch_size, n_nodes, n_features])
+    A = tf.reshape(obs[:, adj_start_idx:adj_end_idx], [batch_size, n_nodes, n_nodes])
 
-    features = np.split(obs[:num_nodes * num_features], num_nodes)
-
-    adj_start_idx = node_limit * num_features
-    adj_end_idx = adj_start_idx + node_limit ** 2
-    adjacency = np.split(obs[adj_start_idx: adj_end_idx], node_limit)
-
-    if not sparse_links:
-      adjacency = np.transpose(np.nonzero(adjacency))
+    if dense_links:
+      A = tf.where(tf.greater(A, 0))[:,1:]
 
     if return_edge_features:
-      # TODO: remove hard coded edge feature length
-      edge_features = obs[adj_end_idx:]
-      edge_features = np.reshape(edge_features, (node_limit, node_limit, 4))
-      return features, adjacency, edge_features
+      E = tf.reshape(obs[:, adj_end_idx:], [batch_size, n_nodes, n_nodes, n_edge_features])
+      return F, A, E
 
-    return features, adjacency
+    return F, A
 
   def _preprocess_agents(self, world):
     """ 

@@ -48,11 +48,10 @@ def run_configuration(argv):
   params["ML"]["BehaviorSACAgent"]["BatchSize"] = 128
   params["ML"]["GraphObserver"]["AgentLimit"] = 4
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["num_layers"] = 2
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["hidden_dim"] = 128
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["hidden_dim"] = 512
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["message_calculation_class"] = "gnn_edge_mlp"
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_mode"] = "mean"
-  params["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams"] = [256, 128]
-  params["ML"]["BehaviorGraphSACAgent"]["CriticFcLayerParams"] = [256, 128]
+
 
   # these are not working atm, check why!
   # params["ML"]["GraphObserver"]["AgentLimit"] = 8
