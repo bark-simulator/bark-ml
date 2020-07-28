@@ -193,7 +193,10 @@ class PyGraphObserverTests(unittest.TestCase):
     self.assertTrue(tf.reduce_all(tf.equal(nodes, expected_nodes)))
     self.assertTrue(tf.reduce_all(tf.equal(edge_features, expected_edge_features)))
 
+    observations = np.array([observation, observation, observation])
+
     # in dense mode, the nodes of all graphs are in a single list
+    expected_nodes = tf.constant([agents, agents, agents])
     expected_nodes = tf.reshape(expected_nodes, [-1, num_features])
 
     # the edges encoded in the adjacency list above
@@ -207,11 +210,18 @@ class PyGraphObserverTests(unittest.TestCase):
       [5, 6], [5, 7], [5, 8],
       [6, 5], [6, 7], [6, 8],
       [7, 5], [7, 6], [7, 8],
-      [8, 5], [8, 6], [8, 7]
+      [8, 5], [8, 6], [8, 7],
+      #graph 3
+      [10, 11], [10, 12], [10, 13],
+      [11, 10], [11, 12], [11, 13],
+      [12, 10], [12, 11], [12, 13],
+      [13, 10], [13, 11], [13, 12]
     ], dtype=tf.int32)
 
     expected_node_to_graph_map = tf.constant([
-      0, 0, 0, 0, 0, 1, 1, 1, 1, 1
+      0, 0, 0, 0, 0,
+      1, 1, 1, 1, 1, 
+      2, 2, 2, 2, 2
     ])
 
     nodes, edges, node_to_graph_map = GraphObserver.graph(observations, graph_dims, dense=True)

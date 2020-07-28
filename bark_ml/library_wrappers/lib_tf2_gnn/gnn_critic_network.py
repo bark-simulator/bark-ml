@@ -293,10 +293,7 @@ class GNNCriticNetwork(network.Network):
 
     if batch_size > 0:
       node_embeddings = tf.reshape(node_embeddings, [batch_size, -1, self._gnn.num_units])
-      node_embeddings1 = node_embeddings[:,0]
-      node_embeddings2 = tf.gather(node_embeddings, 0, axis=1) # extract ego state
-
-      assert tf.reduce_all(tf.equal(node_embeddings1, node_embeddings2))
+      node_embeddings1 = node_embeddings[:,0] # extract ego state
       actions = tf.reshape(actions, [batch_size, -1])
     else:
       actions = tf.zeros([0, actions.shape[-1]])
