@@ -22,17 +22,16 @@ done
 echo timeout: $timeout
 echo devices: $devices
 
+
 prepend_command=""
 if [[ "$move_checkpoints" == true ]]
 then
-    archive_name="checkpoints_archive/archived_$(date +%s)"
-    mkdir -p $archive_name
-    mv checkpoints $archive_name
+    prepend_command=$prepend_command"move_checkpoints_func; "
 fi
 
 if [[ $timeout != "" ]]
 then
-    prepend_command=$prepend_command"timeout $timeout "
+    prepend_command=$prepend_command"timeout --foreground $timeout "
 fi
 
 if [[ -v devices ]]
@@ -47,6 +46,8 @@ fi
 
 [[ -v mode ]] || mode="train"
 
+
+
 docker run -it --gpus all \
 -v /tmp/.X11-unix:/tmp/.X11-unix \
 -v ~/.Xauthority:/home/root/.Xauthority \
@@ -54,6 +55,11 @@ docker run -it --gpus all \
 --network='host' \
 --env DISPLAY \
 bark_ml_image bash -c '
+move_checkpoints_func() {
+    archive_name="checkpoints_archive/archived_$(date +%s)"
+    mkdir -p $archive_name
+    [[ -d checkpoints ]] && mv checkpoints $archive_name
+}
 '"$visible_devices_command"'
 trap exit INT;
 if [[ ! -d '"EXTERNAL_BARK_CACHE_DIR"' ]]
