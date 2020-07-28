@@ -1,5 +1,9 @@
 #!/bin/bash
 
+
+BAZEL_CACHE_DIR="/root/.cache"
+EXTERNAL_BARK_CACHE_DIR="/bark/.cache"
+
 set -x
 
 while [[ "$#" -gt 0 ]]
@@ -44,8 +48,12 @@ docker run -it --gpus all \
 bark_ml_image bash -c '
 '"$visible_devices_command"'
 trap exit INT;
-mv /root/.cache /bark/.cache;
-ln -s /bark/.cache /root/.cache;
+if [[ ! -d '"EXTERNAL_BARK_CACHE_DIR"' ]]
+then
+    cp -r '"$BAZEL_CACHE_DIR"' '"$EXTERNAL_BARK_CACHE_DIR"';
+fi
+rm -r '"$BAZEL_CACHE_DIR"'
+ln -s '"$EXTERNAL_BARK_CACHE_DIR"' '"$BAZEL_CACHE_DIR"';
 source utils/dev_into.sh;
 while true;
         do
