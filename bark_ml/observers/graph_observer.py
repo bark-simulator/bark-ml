@@ -157,7 +157,7 @@ class GraphObserver(StateObserver):
     obs = observations[:, 3:]
     
     # extract node features F
-    F = tf.reshape(obs[:, :n_nodes * n_nodes], [batch_size, n_nodes, n_features])
+    F = tf.reshape(obs[:, :n_nodes * n_features], [batch_size, n_nodes, n_features])
 
     # extract adjacency matrix A
     adj_start_idx = n_nodes * n_features
@@ -274,8 +274,8 @@ class GraphObserver(StateObserver):
     goal_d = np.sqrt(goal_dx**2 + goal_dy**2) # distance to goal
     res["goal_d"] = goal_d
     
-    # goal_velocity = np.mean(agent.goal_definition.velocity_range)
-    # res["goal_vel"] = goal_velocity
+    goal_velocity = np.mean(agent.goal_definition.velocity_range)
+    res["goal_vel"] = goal_velocity
 
     if self._normalize_observations:
       n = self.normalization_data
