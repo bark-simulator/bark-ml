@@ -176,7 +176,7 @@ def calculate_action(observations: list, time_step=0.1, wheel_base=2.7) -> list:
         d_theta = 0.01 * d_theta
 
     steering_angle = math.atan((wheel_base * d_theta) / current_velocity)
-    action = [steering_angle, acceleration]
+    action = [acceleration, steering_angle]
 
     return action
 
@@ -324,6 +324,19 @@ def simulate_scenario(param_server: ParameterServer, sim_time_step: float, rende
         plt.close()
     return expert_trajectories
 
+def normalize_actions(actions, high, low):
+    """Normalizes the actions to the interval of [low, high]
+    """
+    normalized = np.array(actions)
+
+    interval = (high - low)
+    normalized -= low
+    normalized /= interval
+
+    normalized *= 2
+    normalized -= 1
+
+    return normalized 
 
 def generate_expert_trajectories_for_scenario(param_server: ParameterServer, sim_time_step: float, renderer: str = "") -> dict:
     """Simulates a scenario, measures the environment and calculates the actions.
@@ -375,6 +388,19 @@ def generate_expert_trajectories_for_scenario(param_server: ParameterServer, sim
                    ) == len(expert_trajectories[agent_id]['merge'])
         assert len(expert_trajectories[agent_id]['obs']
                    ) == len(expert_trajectories[agent_id]['done'])
+    
+    all_actions = [] 
+    for agent_id in expert_trajectories:
+        all_actions.extend(expert_trajectories[agent_id]['act'])
+    accelerations = np.array([action[0] for action in all_actions])
+    steering_angles = np.array([action[1] for action in all_actions])
+    
+    high = np.array([np.max(accelerations), np.max(steering_angles)])
+    low = np.array([np.min(accelerations), np.min(steering_angles)])
+
+    for agent_id in expert_trajectories:
+        expert_trajectories[agent_id]['act'] = normalize_actions(expert_trajectories[agent_id]['act'], high, low)
+
     return expert_trajectories
 
 def generate_and_store_expert_trajectories(map_file: str, track: str, expert_trajectories_path: str, param_server: ParameterServer, sim_time_step: float, renderer: str = "") -> list:

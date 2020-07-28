@@ -30,7 +30,7 @@ class CalculateActionTests(unittest.TestCase):
         observations = [[0] * 4, [1000] * 4]
         time_step = 1000
 
-        expected_action = [0.0, 1.0]
+        expected_action = [1.0, 0.0]
 
         self.assertEquals(
             expected_action,
@@ -43,7 +43,7 @@ class CalculateActionTests(unittest.TestCase):
         observations = [[1e-3] * 4, [1000 + 1e-3] * 4]
         time_step = 1000
 
-        expected_action = [0.5 * math.pi, 1.0]
+        expected_action = [1.0, 0.5 * math.pi]
         calculated_action = calculate_action(observations, time_step, 2.7)
         self.list_almost_equal(expected_action, calculated_action)
 
@@ -54,7 +54,7 @@ class CalculateActionTests(unittest.TestCase):
         observations = [[0, 0, 0, 500],[0, 0, 0, 1000]]
         time_step = 500
 
-        expected_action = [0.0, 1.0]
+        expected_action = [1.0, 0.0]
 
         self.assertEquals(
             expected_action,
@@ -67,7 +67,7 @@ class CalculateActionTests(unittest.TestCase):
         observations = [[50] * 4, [100] * 4]
         time_step = 10
 
-        expected_action = [math.atan(0.27), 5.0]
+        expected_action = [5.0, math.atan(0.27)]
         action = calculate_action(observations, time_step, 2.7)
 
         self.list_almost_equal(expected_action, action)
@@ -95,7 +95,7 @@ class CalculateActionTests(unittest.TestCase):
         observations = [[0] * 4, [1000] * 4, [2000] * 4]
         time_step = 1000
 
-        expected_action = [0.002699993439028698, 1.0]
+        expected_action = [1.0, 0.002699993439028698]
         action = calculate_action(observations[0:3], time_step, 2.7)
 
         steering_error = abs(action[0] - expected_action[0])
@@ -140,7 +140,7 @@ class CalculateActionTests(unittest.TestCase):
 
             rotation_change = observations[i + 1][2] - observation[2]
             if observation[3] != 0:
-                self.assertAlmostEqual(rotation_change, math.tan(calculated_action[0]) * observation[3])
+                self.assertAlmostEqual(rotation_change, math.tan(calculated_action[1]) * observation[3])
 
         # for i, observation in enumerate(observations[1:-1]):
         #     current_observations = [observations[i], observation, observations[i+2]]
@@ -159,7 +159,7 @@ class CalculateActionTests(unittest.TestCase):
         rotation_change = 0.5 * math.pi
         observations = [[0, 0, i * rotation_change, 1] for i in range(number_observations)]
         time_step = 1
-        expected_actions = [[math.atan(rotation_change), 0.0]] * number_observations
+        expected_actions = [[0.0, math.atan(rotation_change)]] * number_observations
         self.compare_calculate_to_expected(observations, expected_actions, time_step)
 
     def test_calculate_action_non_linear_rotations(self):
@@ -168,7 +168,7 @@ class CalculateActionTests(unittest.TestCase):
         """
         observations = [[0, 0, 0, 1], [0, 0, 0.5 * math.pi, 1], [0, 0, 0, 1]]
         time_step = 1
-        expected_actions = [[math.atan(0.5 * math.pi), 0.0], [-math.atan(0.5 * math.pi), 0.0]]
+        expected_actions = [[0.0, math.atan(0.5 * math.pi)], [0.0, -math.atan(0.5 * math.pi)]]
         self.compare_calculate_to_expected(observations, expected_actions, time_step)
 
     def test_calculate_action_circle_zero_start_velocity(self):
@@ -179,8 +179,8 @@ class CalculateActionTests(unittest.TestCase):
         rotation_change = math.pi
         observations = [[0, 0, i * rotation_change, i] for i in range(number_observations)]
         time_step = 1
-        expected_actions = [[math.atan(rotation_change), 1.0]]
-        expected_actions.extend([[math.atan(rotation_change / i), 1.0] for i in range(1, number_observations - 1)])
+        expected_actions = [[1.0, math.atan(rotation_change)]]
+        expected_actions.extend([[1.0, math.atan(rotation_change / i)] for i in range(1, number_observations - 1)])
         self.compare_calculate_to_expected(observations, expected_actions, time_step)
 
     def test_calculate_action_half_circle_zero_start_velocity_zero_acceleration(self):
@@ -200,7 +200,7 @@ class CalculateActionTests(unittest.TestCase):
         observations = [[0, 0, 0, 1], [1, 1, math.pi, 1], [1, 1, 2 * math.pi, 1]]
         time_step = 1
 
-        expected_action = [math.atan(math.pi), 0.0]
+        expected_action = [0.0, math.atan(math.pi)]
         calculated_action = calculate_action(observations[:2], time_step, wheel_base=1)
         self.assertAlmostEqual(expected_action, calculated_action)
 
@@ -227,10 +227,10 @@ class CalculateActionTests(unittest.TestCase):
 
             d_theta = math.cos(i * math.pi / num_samples) * math.pi / num_samples
             steering_angle = math.atan2(wheel_base * d_theta, velocity)
-            expected_action = [steering_angle, 0.0]
+            expected_action = [0.0, steering_angle]
 
-            steering_error = abs(action[0] - expected_action[0])
-            acceleration_error = abs(action[1] - expected_action[1])
+            steering_error = abs(action[1] - expected_action[1])
+            acceleration_error = abs(action[0] - expected_action[0])
 
             # Higher threshold for the steering angle due to the sine derivative approximation
             self.assertLessEqual(steering_error, 1e-5)

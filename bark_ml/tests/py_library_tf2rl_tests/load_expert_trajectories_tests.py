@@ -22,7 +22,7 @@ class LoadExpertTrajectoriesTest(unittest.TestCase):
         setup
         """
         self.params = ParameterServer(filename=os.path.join(os.path.dirname(__file__), "gail_data/params/gail_params_bark.json"))
-        self.expert_trajectories_directory = os.path.join(os.path.dirname(__file__), 'data', 'expert_trajectories')
+        self.expert_trajectories_directory = os.path.join(os.path.dirname(__file__), 'data', 'expert_trajectories', 'sac')
         
         self.expert_trajectories = load_expert_trajectories(
             self.expert_trajectories_directory)
