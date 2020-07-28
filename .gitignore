@@ -179,3 +179,4 @@ bark_ml/tests/py_library_tf2rl_tests/gail_data/models/*
 
 /summaries/**
 **/pretrained_agents/**
+start_multiple_**.sh
