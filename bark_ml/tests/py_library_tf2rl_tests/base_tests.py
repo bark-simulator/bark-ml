@@ -190,8 +190,9 @@ class CalculateActionTests(unittest.TestCase):
         observations = [[0, 0, 0, 0], [1, 1, math.pi, 0]]
         time_step = 1
 
-        with self.assertRaises(ValueError):
-            calculate_action(observations, time_step, wheel_base=1)
+        expected_action = [0.0, 0.0]
+        actual_action = calculate_action(observations, time_step, wheel_base=1)
+        self.list_almost_equal(expected_action, actual_action)
 
     def test_calculate_action_full_circle(self):
         """

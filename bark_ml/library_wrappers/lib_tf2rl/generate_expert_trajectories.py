@@ -171,7 +171,7 @@ def calculate_action(observations: list, time_step=0.1, wheel_base=2.7) -> list:
     # Approximate slow velocities to zero to avoid noisy outputs
     if current_velocity <= 1e-5:
         if acceleration <= 1e-5:
-            raise ValueError("Acceleration and velocity are zero, but car turned. Impossible situation! Aborting!")
+            return [0.0, 0.0]
         current_velocity = acceleration * 0.01 * time_step 
         d_theta = 0.01 * d_theta
 
