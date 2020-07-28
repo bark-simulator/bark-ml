@@ -22,6 +22,7 @@ from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, Beha
 from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner
 from bark_ml.observers.graph_observer import GraphObserver
 from random import random
+import time
 
 
 
@@ -57,8 +58,8 @@ params["ML"]["BehaviorGraphSACAgent"]["GNN"]["NumLayers"] = layers_gnn
 #units_gnn = 2**(5 + int(random() * 3))
 
 
-summary_path_hyperparameter_run = tfa_gnn_summary_path + f'/layers_ \
-        {layers_gnn}'
+summary_path_hyperparameter_run = tfa_gnn_summary_path + f'/{int(time.time())}__ \
+        layers_{layers_gnn}'
 params["ML"]["TFARunner"]["SummaryPath"] = summary_path_hyperparameter_run
 
 
