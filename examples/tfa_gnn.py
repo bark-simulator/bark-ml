@@ -47,11 +47,13 @@ def run_configuration(argv):
   params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 100
   params["ML"]["BehaviorSACAgent"]["BatchSize"] = 32
   params["ML"]["GraphObserver"]["AgentLimit"] = 4
+  params["ML"]["BehaviorSACAgent"]["CriticJointFcLayerParams"] = [256, 128]
+  params["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams"] = [256, 256]
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["NumLayers"] = 1
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["FcLayerParams"] = 256
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MpLayerNumUnits"] = 256
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["message_calculation_class"] = "gnn_edge_mlp"
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_mode"] = "mean"
-
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["library"] = "tf2_gnn" # "tf2_gnn" or "spektral"
   # spektral
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MPChannels"] = 128
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["KernelNetUnits"] = [256, 256]

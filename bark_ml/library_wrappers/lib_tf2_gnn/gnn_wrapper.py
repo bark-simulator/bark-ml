@@ -15,11 +15,15 @@ class GNNWrapper(tf.keras.Model):
                **kwargs):
     super(GNNWrapper, self).__init__(name=name)
 
-    self.num_units = params["FcLayerParams", "", 256] 
+    self.num_units = params["MpLayerNumUnits", "", 256] 
 
     # TODO: properly inject
-    self._graph_dims = params["GraphDimensions", "", (4, 4, 4)] 
-    self.use_spektral = False
+    self._graph_dims = params["GraphDimensions", "", (4, 11, 4)]
+    
+    library = params["library", "", "spektral"]
+    self.use_spektral = library == "spektral"
+
+    print(f'[GNN] Using library {library}')
     
     if self.use_spektral:
       self._init_spektral_layers(params)
