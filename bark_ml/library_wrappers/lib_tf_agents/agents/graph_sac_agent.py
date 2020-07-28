@@ -33,15 +33,6 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
     self._eval_policy = self.GetEvalPolicy()
 
   def GetAgent(self, env, params):
-    def _normal_projection_net(action_spec, init_means_output_factor=0.1):
-      return normal_projection_network.NormalProjectionNetwork(
-        action_spec,
-        mean_transform=None,
-        state_dependent_std=True,
-        init_means_output_factor=init_means_output_factor,
-        std_transform=sac_agent.std_clip_transform,
-        scale_distribution=True)
-
     # critic network
     critic_net = GNNCriticNetwork(
       (env.observation_spec(), env.action_spec()),

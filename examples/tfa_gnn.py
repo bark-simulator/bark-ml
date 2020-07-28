@@ -54,6 +54,7 @@ def run_configuration(argv):
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["message_calculation_class"] = "gnn_edge_mlp"
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_mode"] = "mean"
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["library"] = "tf2_gnn" # "tf2_gnn" or "spektral"
+  
   # spektral
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MPChannels"] = 128
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["KernelNetUnits"] = [256, 256]

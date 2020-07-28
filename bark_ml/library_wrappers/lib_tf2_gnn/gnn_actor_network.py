@@ -130,7 +130,7 @@ class GNNActorNetwork(network.Network):
     # extract ego state (node 0)
     if len(output.shape) == 2 and output.shape[0] != 0:
       output = tf.reshape(output, [batch_size, -1, self._gnn.num_units])
-      output = tf.gather(output, 0, axis=1)
+      output = output[:,0] # extract ego state
     elif len(output.shape) == 3:
       output = tf.gather(output, 0, axis=1)
 

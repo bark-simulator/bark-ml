@@ -284,8 +284,6 @@ class GNNCriticNetwork(network.Network):
                 minval=-0.003, maxval=0.003),
             name='value'))
 
-    #self.gnn_call = common.function(self._gnn.call)
-
   def call(self, inputs, step_type=(), network_state=(), training=False):
     observations, actions = inputs
     del step_type  # unused.
@@ -295,7 +293,10 @@ class GNNCriticNetwork(network.Network):
 
     if batch_size > 0:
       node_embeddings = tf.reshape(node_embeddings, [batch_size, -1, self._gnn.num_units])
-      node_embeddings = tf.gather(node_embeddings, 0, axis=1) # extract ego state
+      node_embeddings1 = node_embeddings[:,0]
+      node_embeddings2 = tf.gather(node_embeddings, 0, axis=1) # extract ego state
+
+      assert tf.reduce_all(tf.equal(node_embeddings1, node_embeddings2))
       actions = tf.reshape(actions, [batch_size, -1])
     else:
       actions = tf.zeros([0, actions.shape[-1]])
