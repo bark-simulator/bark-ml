@@ -13,6 +13,7 @@ do
         -d|--devices) devices="$2"; shift;;
         -a|--agent) agent="$2"; shift;;
         -m|--mode) mode="$2"; shift;;
+        --move_checkpoints) move_checkpoints=true;;
         *) echo Unknown parameter "$1"; exit 1;; 
     esac
     shift
@@ -22,6 +23,13 @@ echo timeout: $timeout
 echo devices: $devices
 
 prepend_command=""
+if [[ "$move_checkpoints" == true ]]
+then
+    archive_name="checkpoints_archive/archived_$(date +%s)"
+    mkdir -p $archive_name
+    mv checkpoints $archive_name
+fi
+
 if [[ $timeout != "" ]]
 then
     prepend_command=$prepend_command"timeout $timeout "
