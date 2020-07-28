@@ -18,8 +18,6 @@ class GNNWrapper(tf.keras.Model):
     self.num_units = params["FcLayerParams", "", 256] 
     self._graph_dims = params["GraphDimensions", "", (4, 4, 4)] # TODO: properly inject
     self.use_spektral = True
-
-    print(params.ConvertToDict())
     
     if self.use_spektral:
       self._init_spektral_layers(params)
@@ -63,10 +61,7 @@ class GNNWrapper(tf.keras.Model):
 
   @tf.function
   def call_spektral(self, observations, training=False):
-    X, A, E = GraphObserver.graph(
-      observations, 
-      self._graph_dims,
-      return_edge_features=True)
+    X, A, E = GraphObserver.graph(observations, self._graph_dims)
 
     X = self._conv1([X, A, E])
     X = self._pool1(X)
@@ -76,39 +71,20 @@ class GNNWrapper(tf.keras.Model):
 
   def call_tf2_gnn(self, observations, training=False):
     batch_size = tf.constant(observations.shape[0])
-    n_nodes = self._graph_dims[0]
 
-    nodes, edges = GraphObserver.graph(
+    nodes, edges, node_to_graph_map = GraphObserver.graph(
       observations, 
       graph_dims=self._graph_dims, 
-      dense_links=True)
-    
-    nodes = tf.reshape(nodes, [-1])
-    node_to_graph_map = tf.range(batch_size * n_nodes, delta=n_nodes)
-    node_to_graph_map = tf.tile(tf.reshape(node_to_graph_map, [-1, 1]), [1, n_nodes])
-    node_to_graph_map = tf.reshape(node_to_graph_map, [-1])
-
-    
-
-    # increase each edge index by the index
-    # of the graph which it belongs to
-
+      dense=True)
 
     gnn_input = GNNInput(
-      node_features=tf.convert_to_tensor(features),
-      adjacency_lists=(
-        tf.convert_to_tensor(edges, dtype=tf.int32),
-      ),
-      node_to_graph_map=tf.convert_to_tensor(node_to_graph_map),
+      node_features=nodes,
+      adjacency_lists=(edges,),
+      node_to_graph_map=node_to_graph_map,
       num_graphs=batch_size,
     )
 
-    self.graph_conversion_times.append(time.time() - t0)
-
-    t0 = time.time()
-    output = self._gnn(gnn_input, training=training)
-    self.gnn_call_times.append(time.time() - t0)
-    return output
+    return self._gnn(gnn_input, training=training)
       
   def reset(self):
     self._gnn.reset()
