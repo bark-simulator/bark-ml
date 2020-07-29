@@ -54,7 +54,7 @@ flags.DEFINE_integer("num_trajectories",
                   default=1000,
                   help="The minimal number of expert trajectories that have to be generated. Defaults to 1000. (Only used when generating.)") 
 flags.DEFINE_boolean("render",
-                  default=True,
+                  default=False,
                   help="Render during generation of expert trajectories.") 
 
 default_output_dir: str = os.path.join(os.path.expanduser('~/'), 'checkpoints')
