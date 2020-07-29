@@ -64,9 +64,11 @@ move_checkpoints_func() {
 sleep_if_necessary() {
     time_difference=$(( $(date +%s) - $time_last_start ))    
     time_last_start=$(date +%s)
-    if (( $time_difference < 5 ))
+    echo time_difference: $time_difference
+    if (( $time_difference < 20 ))
     then
-        sleep 10
+        echo Sleeping...
+        sleep 20
     fi
 }
 '"$visible_devices_command"'
