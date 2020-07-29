@@ -372,7 +372,7 @@ class GraphObserver(StateObserver):
     d['y'] = self._world_y_range
     d['theta'] = self._ThetaRange
     d['vel'] = self._VelocityRange
-    d['distance'] = [-max_dist / 2, max_dist / 2]
+    d['distance'] = [0, max_dist]
     d['dx'] = [-x_range, x_range]
     d['dy'] = [-y_range, y_range]
     d['road'] = [0, 15] # may need adjustment for if 3 lanes are broader than 15 m
