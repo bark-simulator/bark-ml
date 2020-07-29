@@ -68,7 +68,7 @@ sleep_if_necessary() {
     if (( $time_difference < 20 ))
     then
         echo Sleeping...
-        sleep 20
+        sleep 30
     fi
 }
 '"$visible_devices_command"'
