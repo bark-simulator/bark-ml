@@ -165,27 +165,32 @@ class GraphObserver(StateObserver):
     A = tf.reshape(obs[:, adj_start_idx:adj_end_idx], [batch_size, n_nodes, n_nodes])
 
     if dense:
+      # in dense mode, the nodes of all graphs are 
+      # concatenated in one list of feature vectors and
+      # the assignement to graphs is handled by the
+      # node_to_graph_map.
       F = tf.reshape(F, [batch_size * n_nodes, n_features])
 
       # find non-zero elements in the adjacency matrix (edges)
-      # and collect their  indices
-      A = tf.reshape(tf.where(tf.greater(A, 0))[:,1:], [batch_size, -1])
+      # and collect their indices
+      A = tf.where(tf.greater(A, 0))
+
+      # we need the indices of the source and target nodes to
+      # be represented as their indices in the whole batch,
+      # in other words: each node index must be the index
+      # of the graph in the batch plus the index of the node
+      # in the graph. E.g. if each graph has 5 nodes, the 
+      # node indices are: graph 0: 0-4, graph 1: 5-9, etc.
+
+      # compute a tensor which where each element
+      # is the graph index of the node that is represented
+      # by the same index A
+      graph_indices = tf.reshape(A[:, 0], [1, -1])
+      graph_indices = tf.scalar_mul(n_nodes, graph_indices)
+      graph_indices = tf.transpose(tf.tile(graph_indices, [2, 1]))
+      
+      A = A[:,1:] + graph_indices
       A = tf.cast(A, tf.int32)
-
-      if batch_size > 1:
-        # we need the indices of the source and target nodes to
-        # be represented as their indices in the whole batch,
-        # in other words: each node index must be the index
-        # of the graph in the batch plus the index of the node
-        # in the graph. E.g. if each graph has 5 nodes, the 
-        # node indices are: graph 0: 0-4, graph 1: 5-9, etc.
-        mask = tf.range(batch_size * n_nodes, delta=n_nodes)
-        mask = tf.tile(tf.reshape(mask, [-1, 1]), [1, A.shape[1]])
-
-        # add the graph index to the node indices
-        A = tf.add(A, mask)
-        
-      A = tf.reshape(A, [-1, 2])
 
       # construct a list where each element represents the
       # assignment of a node to a graph via the graph's index

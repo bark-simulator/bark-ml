@@ -15,15 +15,16 @@ class GNNWrapper(tf.keras.Model):
                **kwargs):
     super(GNNWrapper, self).__init__(name=name)
 
-    self.num_units = params["MpLayerNumUnits", "", 256] 
+    params = params.ConvertToDict()
+    self.num_units = params.get("MpLayerNumUnits", 256)
 
     # TODO: properly inject
-    self._graph_dims = params["GraphDimensions", "", (4, 11, 4)]
+    self._graph_dims = params.get("GraphDimensions")
     
-    library = params["library", "", "spektral"]
-    self.use_spektral = library == "spektral"
+    lib = params.get("library", "tf2_gnn")
+    self.use_spektral = lib == "spektral"
 
-    print(f'[GNN] Using library {library}')
+    print(f'[GNN] Using library {lib}')
     
     if self.use_spektral:
       self._init_spektral_layers(params)
@@ -32,24 +33,24 @@ class GNNWrapper(tf.keras.Model):
 
   def _init_spektral_layers(self, params):
     self._conv1 = EdgeConditionedConv(
-      params["MPChannels", "", 128], 
-      kernel_network=params["KernelNetUnits", "", [256, 256]],
-      activation=params["MPLayerActivation", "", "relu"])
+      channels=params.get("MPChannels", 64),
+      kernel_network=params.get("KernelNetUnits", [256]),
+      activation=params.get("MPLayerActivation", "tanh"))
 
     self._pool1 = GlobalAttnSumPool()
     self._dense1 = Dense(
       units=self.num_units,
-      activation=params["DenseActivation", "", "tanh"])
+      activation=params.get("DenseActivation", "tanh"))
 
   def _init_tf2_gnn_layers(self, params):
     # map bark-ml parameter keys to tf2_gnn parameter keys
     mapped_params = {}
     mapped_params["hidden_dim"] = self.num_units
-    mapped_params["num_layers"] = params["NumLayers", "", 1]
+    mapped_params["num_layers"] = params.get("NumLayers", 1)
     mapped_params["global_exchange_mode"] =\
-      params["global_exchange_mode", "", "mean"]
+      params.get("global_exchange_mode", "gru")
     mapped_params["message_calculation_class"] =\
-      params["message_calculation_class", "", "gnn_edge_mlp"]
+      params.get("message_calculation_class", "gnn_edge_mlp")
 
     mp_style = mapped_params["message_calculation_class"]
     gnn_params = GNN.get_default_hyperparameters(mp_style)    
@@ -57,7 +58,7 @@ class GNNWrapper(tf.keras.Model):
 
     self._gnn = GNN(gnn_params)
 
-  #@tf.function
+  @tf.function
   def call(self, observations, training=False):
     if observations.shape[0] == 0:
       return tf.random.normal(shape=(0, self.num_units))
@@ -77,6 +78,7 @@ class GNNWrapper(tf.keras.Model):
     
     return X
 
+  @tf.function 
   def call_tf2_gnn(self, observations, training=False):
     batch_size = tf.constant(observations.shape[0])
 

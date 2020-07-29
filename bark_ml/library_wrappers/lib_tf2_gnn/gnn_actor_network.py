@@ -97,6 +97,8 @@ class GNNActorNetwork(network.Network):
     
     self._gnn = GNNWrapper(params=gnn_params)
 
+    print(fc_layer_params)
+
     self._encoder = encoding_network.EncodingNetwork(
       input_tensor_spec=tf.TensorSpec([None, self._gnn.num_units]),
       preprocessing_layers=None,

@@ -19,13 +19,30 @@ class PyGNNWrapperTests(unittest.TestCase):
 
   def _mock_setup(self):
     params = ParameterServer()
-    params["World"]["remove_agents_out_of_map"] = False
-    params["ML"]["TFARunner"]["InitialCollectionEpisodesPerStep"] = 8
-    params["ML"]["TFARunner"]["CollectionEpisodesPerStep"] = 8
-    params["ML"]["BehaviorSACAgent"]["BatchSize"] = 16
-    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["num_layers"] = 3
-    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["hidden_dim"] = 64
-    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_every_num_layers"] = 2
+    params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = '/Users/marco.oliva/Development/bark-ml_logs/checkpoints/tf2_gnn/'
+    params["ML"]["TFARunner"]["SummaryPath"] = '/Users/marco.oliva/Development/bark-ml_logs/summaries/tf2_gnn/'
+    params["ML"]["GoalReachedEvaluator"]["MaxSteps"] = 30
+    params["ML"]["BehaviorSACAgent"]["DebugSummaries"] = True
+    params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 100
+    params["ML"]["BehaviorSACAgent"]["BatchSize"] = 128
+    params["ML"]["GraphObserver"]["AgentLimit"] = 4
+    params["ML"]["BehaviorGraphSACAgent"]["CriticJointFcLayerParams"] = [256, 128]
+    params["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams"] = [256, 128]
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["NumMpLayers"] = 2
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MpLayerNumUnits"] = 256
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["library"] = "tf2_gnn" # "tf2_gnn" or "spektral"
+    params["ML"]["SACRunner"]["NumberOfCollections"] = int(1e6)
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["GraphDimensions"] = (4, 11, 4) # (n_nodes, n_features, n_edge_features)
+
+    # tf2_gnn
+    # NOTE: when using the ggnn mp class, MPLayerUnits must match n_features!
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["message_calculation_class"] = "gnn_edge_mlp"
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_mode"] = "gru"
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["dense_every_num_layers"] = 1
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_every_num_layers"] = 1
+
+    # only considered when "message_calculation_class" = "gnn_edge_mlp"
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["num_edge_MLP_hidden_layers"] = 2 
 
     bp = ContinuousHighwayBlueprint(params,
                                     number_of_senarios=1,
@@ -94,78 +111,78 @@ class PyGNNWrapperTests(unittest.TestCase):
     #   print(var[1].shape)
 
 
-  def test_gnn_parameters(self):
-    params = ParameterServer()
-    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["NumLayers"] = 2
-    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["FcLayerParams"] = 11
-    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["message_calculation_class"] = "gnn_edge_mlp"
-    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_mode"] = "mean"
+  # def test_gnn_parameters(self):
+  #   params = ParameterServer()
+  #   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["NumLayers"] = 2
+  #   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["FcLayerParams"] = 11
+  #   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["message_calculation_class"] = "gnn_edge_mlp"
+  #   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_mode"] = "mean"
     
-    bp = ContinuousHighwayBlueprint(params, number_of_senarios=2500, random_seed=0)
-    observer = GraphObserver(params=params)
-    env = SingleAgentRuntime(blueprint=bp, observer=observer, render=False)
-    sac_agent = BehaviorGraphSACAgent(environment=env, params=params)
+  #   bp = ContinuousHighwayBlueprint(params, number_of_senarios=2500, random_seed=0)
+  #   observer = GraphObserver(params=params)
+  #   env = SingleAgentRuntime(blueprint=bp, observer=observer, render=False)
+  #   sac_agent = BehaviorGraphSACAgent(environment=env, params=params)
 
-    actor_gnn = sac_agent._agent._actor_network._gnn._gnn
-    critic_gnn = sac_agent._agent._actor_network._gnn._gnn
+  #   actor_gnn = sac_agent._agent._actor_network._gnn._gnn
+  #   critic_gnn = sac_agent._agent._actor_network._gnn._gnn
 
-    for gnn in [actor_gnn, critic_gnn]:
-      self.assertEqual(gnn._params["num_layers"], 2)
-      self.assertEqual(gnn._params["hidden_dim"], 11)
-      self.assertEqual(gnn._params["message_calculation_class"], "gnn_edge_mlp")
-      self.assertEqual(gnn._params["global_exchange_mode"], "mean")
+  #   for gnn in [actor_gnn, critic_gnn]:
+  #     self.assertEqual(gnn._params["num_layers"], 2)
+  #     self.assertEqual(gnn._params["hidden_dim"], 11)
+  #     self.assertEqual(gnn._params["message_calculation_class"], "gnn_edge_mlp")
+  #     self.assertEqual(gnn._params["global_exchange_mode"], "mean")
 
-  def test_execution_time(self):
-    def _print_stats(call_times, iterations, name):
-      call_times = np.array(call_times) / iterations
-      calls = len(call_times)
-      call_duration = np.mean(call_times)
-      total = np.sum(call_times)
+  # def test_execution_time(self):
+  #   def _print_stats(call_times, iterations, name):
+  #     call_times = np.array(call_times) / iterations
+  #     calls = len(call_times)
+  #     call_duration = np.mean(call_times)
+  #     total = np.sum(call_times)
       
-      val_str = f'{total:.4f} s ({calls} x {call_duration:.4f} s)'
-      print('{:.<20} {}'.format(name, val_str))
+  #     val_str = f'{total:.4f} s ({calls} x {call_duration:.4f} s)'
+  #     print('{:.<20} {}'.format(name, val_str))
 
-    agent, runner, observer = self._mock_setup()
+  #   agent, runner, observer = self._mock_setup()
 
-    t = []
-    iterations = 2
-    iterator = iter(agent._dataset)
+  #   t = []
+  #   iterations = 2
+  #   iterator = iter(agent._dataset)
 
-    for i in range(iterations):
-      agent._training = True
-      runner._collection_driver.run()
-      experience, _ = next(iterator)
+  #   for i in range(iterations):
+  #     agent._training = True
+  #     runner._collection_driver.run()
+  #     experience, _ = next(iterator)
       
-      t0 = time.time()
-      agent._agent.train(experience)
-      t.append(time.time() - t0)
+  #     t0 = time.time()
+  #     agent._agent.train(experience)
+  #     t.append(time.time() - t0)
 
-    execution_time = np.mean(t)
-    print(f'\n###########\n')
+  #   execution_time = np.mean(t)
+  #   print(f'\n###########\n')
 
-    _print_stats(observer.observe_times, iterations, "Observe")
-    _print_stats(agent._agent._actor_network.call_times, iterations, "Actor")
-    _print_stats(agent._agent._actor_network.gnn_call_times, iterations, "  GNN")
-    _print_stats(agent._agent._actor_network._gnn.graph_conversion_times, iterations, "    Graph Conversion")
-    _print_stats(agent._agent._actor_network._gnn.gnn_call_times, iterations, "    tf2_gnn")
+  #   _print_stats(observer.observe_times, iterations, "Observe")
+  #   _print_stats(agent._agent._actor_network.call_times, iterations, "Actor")
+  #   _print_stats(agent._agent._actor_network.gnn_call_times, iterations, "  GNN")
+  #   _print_stats(agent._agent._actor_network._gnn.graph_conversion_times, iterations, "    Graph Conversion")
+  #   _print_stats(agent._agent._actor_network._gnn.gnn_call_times, iterations, "    tf2_gnn")
     
-    critics = [
-      ("Critic 1", agent._agent._critic_network_1),
-      ("Critic 2", agent._agent._critic_network_2),
-      ("Target Critic 1", agent._agent._target_critic_network_1),
-      ("Target Critic 2", agent._agent._target_critic_network_2),
-    ]
+  #   critics = [
+  #     ("Critic 1", agent._agent._critic_network_1),
+  #     ("Critic 2", agent._agent._critic_network_2),
+  #     ("Target Critic 1", agent._agent._target_critic_network_1),
+  #     ("Target Critic 2", agent._agent._target_critic_network_2),
+  #   ]
 
-    for name, critic in critics:
-        _print_stats(critic.call_times, iterations, name)
-        _print_stats(critic.gnn_call_times, iterations, '  GNN')
-        _print_stats(critic.encoder_call_times, iterations, '  Encoder')
-        _print_stats(critic.joint_call_times, iterations, '  Joint')
+  #   for name, critic in critics:
+  #       _print_stats(critic.call_times, iterations, name)
+  #       _print_stats(critic.gnn_call_times, iterations, '  GNN')
+  #       _print_stats(critic.encoder_call_times, iterations, '  Encoder')
+  #       _print_stats(critic.joint_call_times, iterations, '  Joint')
 
-    print(f'----------------------------------------------------------')
-    print(f'Total execution time per train cycle: {execution_time:.2f} s')
+  #   print(f'----------------------------------------------------------')
+  #   print(f'Total execution time per train cycle: {execution_time:.2f} s')
     
-    print(f'\n###########\n')
+  #   print(f'\n###########\n')
 
 
 if __name__ == '__main__':
