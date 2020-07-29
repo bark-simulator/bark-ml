@@ -91,7 +91,8 @@ def create_parameter_servers_for_scenarios(map_file: str, tracks_dir: str) -> di
         track_ids = df.track_id.unique()
         start_ts = df.timestamp_ms.min()
         end_ts = df.timestamp_ms.max()
-
+        num_rows = len(df.index)
+        
         param_server = ParameterServer()
         param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["MapFilename"] = map_file
         param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackFilename"] = track

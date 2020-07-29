@@ -45,6 +45,11 @@ flags.DEFINE_string("expert_trajectories",
                     help="The absolute path to the dir where the expert trajectories are safed.",
                     default=None)
 
+flags.DEFINE_enum("blueprint",
+                  "merging",
+                  ["intersection", "highway", "merging"],
+                  "The map blueprint.")
+
 def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/gail_params.json")
 
@@ -61,9 +66,21 @@ def run_configuration(argv):
   params["ML"]["Settings"]["GPUUse"] = FLAGS.gpu
 
   # create environment
-  bp = ContinuousMergingBlueprint(params,
-                                  number_of_senarios=500,
-                                  random_seed=0)
+  if FLAGS.blueprint == 'merging':
+    bp = ContinuousMergingBlueprint(params,
+                                    number_of_senarios=2500,
+                                    random_seed=0)
+  elif FLAGS.blueprint == 'intersection':
+    bp = ContinuousIntersectionBlueprint(params,
+                                    number_of_senarios=2500,
+                                    random_seed=0)
+  elif FLAGS.blueprint == 'highway':
+    bp = ContinuousHighwayBlueprint(params,
+                                    number_of_senarios=2500,
+                                    random_seed=0)
+  else:
+    raise ValueError(f'{FLAGS.blueprint} is no valid blueprint. See help.')
+  
   env = SingleAgentRuntime(blueprint=bp,
                           render=False)
 

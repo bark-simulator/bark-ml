@@ -46,7 +46,7 @@ flags.DEFINE_enum("agent",
 flags.DEFINE_enum("blueprint",
                   "merging",
                   ["intersection", "highway", "merging"],
-                  "The tfa agent type.")
+                  "The map blueprint.")
 flags.DEFINE_integer("num_episodes",
                   default=5,
                   help="The number of episodes to run a simulation. Defaults to 5. (Only used when visualizing.)") 

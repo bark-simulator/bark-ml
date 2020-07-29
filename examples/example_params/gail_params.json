@@ -112,7 +112,7 @@
             "InitialCollectionEpisodes": 50,
             "CollectionEpisodesPerStep": 1,
             "tf2rl": {
-                "max_steps": 1000000,
+                "max_steps": 100000,
                 "episode_max_steps": 100,
                 "n_experiments": 1,
                 "show_progress": false,

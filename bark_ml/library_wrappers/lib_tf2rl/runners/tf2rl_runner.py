@@ -5,6 +5,7 @@ import tensorflow as tf
 tf.compat.v1.enable_v2_behavior()
 from IPython.display import clear_output
 import matplotlib.pyplot as plt
+from bark_ml.library_wrappers.lib_tf2rl.compare_trajectories import *
 
 # tf2rl imports
 import tf2rl
@@ -39,28 +40,43 @@ class TF2RLRunner:
     """agent specific training method."""
     raise NotImplementedError
 
+  def _PrintEvaluationResults(self, message: str, agent, expert = None):
+    print('*' * 80)
+    print(message)
+    print('*' * 80)
+    print('Agent:      \t', agent)
+    if expert is not None:
+      print('Expert:     \t', expert)
 
-  def Evaluate(self, expert_trajectories: dict, avg_trajectory_length: float, num_trajectories: int):
-    """Evaluates the agent."""
-    total_steps = 0   
+      abs_difference = np.abs(agent - expert)
+      abs_difference = np.abs(agent - expert)
+      print('Difference: \t', abs_difference)
+
+      deviation_agent = np.abs(abs_difference / agent)
+      deviation_expert = np.abs(abs_difference / expert)
+      deviation = np.maximum(deviation_agent, deviation_expert) 
+      print('Deviation:  \t', deviation)
+    print('')
+
+  def _EvaluateMeanActions(self, expert_trajectories: dict, avg_trajectory_length: float, num_trajectories: int):
     self._trainer._test_episodes = num_trajectories
-    avg_test_return, agent_trajectories, avg_step_count = self._trainer.evaluate_policy(total_steps=total_steps)
-    print('Average test return: ', avg_test_return)
-    print('Average step count: ', avg_step_count)
+    avg_test_return, agent_trajectories, avg_step_count = self._trainer.evaluate_policy(total_steps=0)
 
-    if not expert_trajectories or not avg_trajectory_length:
-      return
+    self._PrintEvaluationResults('Average test return: ', avg_test_return)
+    self._PrintEvaluationResults('Average step count: ', avg_step_count, avg_trajectory_length)
 
     agent_actions = {'acts': [],}
     for trajectory in agent_trajectories:
       agent_actions['acts'].extend(trajectory['act'])  
+
     expert_mean_action = calculate_mean_action(expert_trajectories)
     agent_mean_action = calculate_mean_action(agent_actions)
-    print('Agent mean action: ', agent_mean_action)
-    print('Expert mean action: ', expert_mean_action)
+    self._PrintEvaluationResults('Mean action: ', agent_mean_action, expert_mean_action)
 
-    difference = expert_mean_action - agent_mean_action
-    print('Differences: ', difference)
+
+  def Evaluate(self, expert_trajectories: dict, avg_trajectory_length: float, num_trajectories: int):
+    """Evaluates the agent."""
+    self._EvaluateMeanActions(expert_trajectories, avg_trajectory_length, num_trajectories)
 
   def Visualize(self, num_episodes=1, renderer=""):
     """Visualizes the agent."""
