@@ -64,7 +64,7 @@ params = ParameterServer(filename="examples/example_params/tfa_params.json")
 params = set_default_values_tfa_gnn(params)
 
 from config import tfa_gnn_checkpoint_path, tfa_gnn_summary_path
-params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = tfa_gnn_checkpoint_path
+params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = '/root/checkpoint'
 
 
 layers_gnn = 1 + int(random() * 4)
