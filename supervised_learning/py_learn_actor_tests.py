@@ -42,23 +42,24 @@ class PyGNNActorTests(unittest.TestCase):
     def setUp(self):
         ######################
         #    Parameter       #
-        self.log_dir = "/home/silvan/working_bark/supervised_learning/logs/"
+        from config import supervised_learning_logs_path, supervised_learning_data_path
+        self.log_dir = supervised_learning_logs_path
         self.epochs = 5
         self.batch_size = 32
         self.train_split = 0.8
-        self.data_path = "/home/silvan/working_bark/supervised_learning/data_new/"
+        self.data_path = supervised_learning_data_path
         self.num_scenarios = 200
         ######################
 
         """Setting up the test case"""
-        self.params = ParameterServer(filename="examples/example_params/tfa_params.json")
-        self.params["ML"]["BehaviorTFAAgents"]["NumCheckpointsToKeep"] = None
-        self.params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 50
-        self.params["ML"]["BehaviorSACAgent"]["BatchSize"] = 32
-        self.params["ML"]["GraphObserver"]["AgentLimit"] = 8
-        self.params["ML"]["BehaviorGraphSACAgent"]["NumLayersGNN"] = 4
-        self.params["ML"]["BehaviorGraphSACAgent"]["NumUnitsGNN"] = 256
-        self.params["World"]["remove_agents_out_of_map"] = False
+        params = ParameterServer(filename="examples/example_params/tfa_params.json")
+        params["ML"]["BehaviorTFAAgents"]["NumCheckpointsToKeep"] = None
+        params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 50
+        params["ML"]["BehaviorSACAgent"]["BatchSize"] = 32
+        params["ML"]["GraphObserver"]["AgentLimit"] = 8
+        params["ML"]["BehaviorGraphSACAgent"]["GNN"]["num_layers"] = 4
+        params["ML"]["BehaviorGraphSACAgent"]["GNN"]["hidden_dim"] = 256
+        params["World"]["remove_agents_out_of_map"] = False
         
         # Get dataset
         self.observer = GraphObserver(params=self.params)

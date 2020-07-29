@@ -1,85 +1,100 @@
 import time
 import numpy as np
 import tensorflow as tf
-from tf2_gnn.layers import GNN, GNNInput, \
-  NodesToGraphRepresentationInput, WeightedSumGraphRepresentation
-from tf2_gnn.layers.message_passing import GGNN, GNN_FiLM
-from tf_agents.utils import common
+from tf2_gnn.layers import GNN, GNNInput
+from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.observers.graph_observer import GraphObserver
-import networkx as nx
-from typing import OrderedDict
-
+from tensorflow.keras.layers import Dense
+from spektral.layers import EdgeConditionedConv, GlobalAttnSumPool, GraphAttention
 
 class GNNWrapper(tf.keras.Model):
 
   def __init__(self,
-               num_layers=4,
-               num_units=16,
+               params,
                name='GNN',
                **kwargs):
     super(GNNWrapper, self).__init__(name=name)
 
-    self.num_layers = num_layers
-    self.num_units = num_units
+    params = params.ConvertToDict()
+    self.num_units = params.get("MpLayerNumUnits", 256)
 
-    params = GNN.get_default_hyperparameters()
-    params.update(GNN.get_default_hyperparameters())
-    params["global_exchange_mode"] = "mean"
-    params["num_layers"] = num_layers
-    params["hidden_dim"] = num_units
-    params["message_calculation_class"] = "ggnn"
-    self._gnn = GNN(params)
+    # TODO: properly inject
+    self._graph_dims = params.get("GraphDimensions")
+    
+    lib = params.get("library", "tf2_gnn")
+    self.use_spektral = lib == "spektral"
 
-    self.graph_conversion_times = []
-    self.gnn_call_times = []
+    print(f'[GNN] Using library {lib}')
+    
+    if self.use_spektral:
+      self._init_spektral_layers(params)
+    else:
+      self._init_tf2_gnn_layers(params)
 
+  def _init_spektral_layers(self, params):
+    self._conv1 = EdgeConditionedConv(
+      channels=params.get("MPChannels", 64),
+      kernel_network=params.get("KernelNetUnits", [256]),
+      activation=params.get("MPLayerActivation", "tanh"))
+
+    self._pool1 = GlobalAttnSumPool()
+    self._dense1 = Dense(
+      units=self.num_units,
+      activation=params.get("DenseActivation", "tanh"))
+
+  def _init_tf2_gnn_layers(self, params):
+    # map bark-ml parameter keys to tf2_gnn parameter keys
+    mapped_params = {}
+    mapped_params["hidden_dim"] = self.num_units
+    mapped_params["num_layers"] = params.get("NumLayers", 1)
+    mapped_params["global_exchange_mode"] =\
+      params.get("global_exchange_mode", "gru")
+    mapped_params["message_calculation_class"] =\
+      params.get("message_calculation_class", "gnn_edge_mlp")
+
+    mp_style = mapped_params["message_calculation_class"]
+    gnn_params = GNN.get_default_hyperparameters(mp_style)    
+    gnn_params.update(mapped_params)
+
+    self._gnn = GNN(gnn_params)
+
+  @tf.function
   def call(self, observations, training=False):
-    t0 = time.time()
-    features, edges = [], []
-    node_to_graph_map = []
-    num_graphs = tf.constant(len(observations))
+    if observations.shape[0] == 0:
+      return tf.random.normal(shape=(0, self.num_units))
 
-    edge_index_offset = 0
-    for i, sample in enumerate(observations):
-      f, e = GraphObserver.gnn_input(sample)
-      features.extend(f)
-      num_nodes = len(f)
-      e = np.asarray(e) + edge_index_offset
-      edges.extend(e)
-      node_to_graph_map.extend(np.full(num_nodes, i))
-      edge_index_offset += num_nodes
+    if self.use_spektral:
+      return self.call_spektral(observations, training)
+    else:
+      return self.call_tf2_gnn(observations, training)
+
+  @tf.function
+  def call_spektral(self, observations, training=False):
+    X, A, E = GraphObserver.graph(observations, self._graph_dims)
+
+    X = self._conv1([X, A, E])
+    X = self._pool1(X)
+    X = self._dense1(X)
+    
+    return X
+
+  @tf.function 
+  def call_tf2_gnn(self, observations, training=False):
+    batch_size = tf.constant(observations.shape[0])
+
+    X, A, node_to_graph_map = GraphObserver.graph(
+      observations, 
+      graph_dims=self._graph_dims, 
+      dense=True)
 
     gnn_input = GNNInput(
-      node_features=tf.convert_to_tensor(features),
-      adjacency_lists=(
-        tf.convert_to_tensor(edges, dtype=tf.int32),
-      ),
-      node_to_graph_map=tf.convert_to_tensor(node_to_graph_map),
-      num_graphs=num_graphs,
+      node_features=X,
+      adjacency_lists=(A,),
+      node_to_graph_map=node_to_graph_map,
+      num_graphs=batch_size,
     )
 
-    self.graph_conversion_times.append(time.time() - t0)
-
-    t0 = time.time()
-    output = self._gnn(gnn_input, training=training)
-    self.gnn_call_times.append(time.time() - t0)
-    return output
-
-  def batch_call(self, graph, training=False):
-    """Calls the network multiple times
-    
-    Arguments:
-        graph {np.array} -- Graph representation
-    
-    Returns:
-        np.array -- Batch of values
-    """
-    if graph.shape[0] == 0:
-      return tf.random.normal(shape=(0, self.num_units))
-    if len(graph.shape) > 3:
-      raise ValueError(f'Graph has invalid shape {graph.shape}')
-
-    return self.call(graph, training=training)
+    return self._gnn(gnn_input, training=training)
       
   def reset(self):
     self._gnn.reset()
