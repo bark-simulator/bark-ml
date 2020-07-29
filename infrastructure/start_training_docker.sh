@@ -13,6 +13,7 @@ do
         -d|--devices) devices="$2"; shift;;
         -a|--agent) agent="$2"; shift;;
         -m|--mode) mode="$2"; shift;;
+        -s|--sleep_time_start) sleep_time_start="$2"; shift;;
         --move_checkpoints) move_checkpoints=true;;
         *) echo Unknown parameter "$1"; exit 1;; 
     esac
@@ -45,6 +46,7 @@ then
 fi
 
 [[ -v mode ]] || mode="train"
+[[ -v sleep_time_start ]] || sleep_time_start=1
 
 
 
@@ -56,6 +58,7 @@ docker run -it --gpus all \
 --env DISPLAY \
 bark_ml_image bash -c '
 time_last_start="-1";
+sleep '"$sleep_time_start"';
 time_to_sleep=1;
 move_checkpoints_func() {
     archive_name="checkpoints_archive/archived_$(date +%s)"
