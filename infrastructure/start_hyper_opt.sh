@@ -7,7 +7,9 @@ HYPER_OPT_START_COMMAND="./start_training_docker.sh --agent hyperparameter_optim
 pids_to_kill=""
 
 launch_hyper_opt_instance() {
-    kitty $HYPER_OPT_START_COMMAND &
+    sleep_time=$1
+    command_to_run="$HYPER_OPT_START_COMMAND --sleep_time_start $sleep_time"
+    kitty $command_to_run &
     pids_to_kill="$pids_to_kill $!"
 }
 
@@ -20,7 +22,8 @@ cleanup() {
 
 for i in {1..8}
 do
-    launch_hyper_opt_instance
+    sleep_time=$(( ($i - 1) * 30 ))
+    launch_hyper_opt_instance $sleep_time
 done
 
 start_time=$(date +%s)
