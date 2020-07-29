@@ -178,10 +178,6 @@ bark_ml/tests/py_library_tf2rl_tests/gail_data/models/*
 
 
 /summaries/**
-<<<<<<< HEAD
 start_multiple_**.sh
-examples/pretrained**
-=======
-**/pretrained_agents/**
-start_multiple_**.sh
->>>>>>> master
+pretrained_agents**
+!pretrained_agents.tar.xz

@@ -17,7 +17,7 @@ from bark_ml.library_wrappers.lib_tf2rl.tf2rl_wrapper import TF2RLWrapper
 from bark_ml.library_wrappers.lib_tf2rl.agents.gail_agent import BehaviorGAILAgent
 from bark_ml.library_wrappers.lib_tf2rl.runners.gail_runner import GAILRunner
 from bark_ml.library_wrappers.lib_tf2rl.load_expert_trajectories import load_expert_trajectories
-
+import numpy as np
 
 FLAGS = flags.FLAGS
 flags.DEFINE_enum("mode",
@@ -75,6 +75,7 @@ def run_configuration(argv):
   gail_agent = BehaviorGAILAgent(environment=wrapped_env,
                                params=params)
 
+  np.random.seed(0)
   expert_trajectories, avg_trajectory_length, num_trajectories = load_expert_trajectories(FLAGS.expert_trajectories,
     normalize_features=params["ML"]["Settings"]["NormalizeFeatures"],
     env=env, # the unwrapped env has to be used, since that contains the unnormalized spaces.
