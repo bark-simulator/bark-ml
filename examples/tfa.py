@@ -141,7 +141,7 @@ def run_configuration(argv):
     runner.Visualize(FLAGS.num_episodes)
   elif FLAGS.mode == "generate":
     expert_trajectories = runner.GenerateExpertTrajectories(num_trajectories=FLAGS.num_trajectories, render=FLAGS.render)
-    save_expert_trajectories(output_dir=os.path.join(FLAGS.output_dir, FLAGS.agent), expert_trajectories=expert_trajectories)
+    save_expert_trajectories(output_dir=output_dir, expert_trajectories=expert_trajectories)
 
   # store all used params of the training
   # params.Save(os.path.join(Path.home(), "examples/example_params/tfa_params.json"))

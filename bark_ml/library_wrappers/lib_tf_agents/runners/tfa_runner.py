@@ -140,7 +140,7 @@ class TFARunner:
       while not is_terminal:
         action_step = self._agent._eval_policy.action(ts.transition(state, reward=0.0, discount=1.0))
 
-        state, reward, is_terminal, _ = self._environment.step(action_step.action.numpy())
+        state, reward, is_terminal, info = self._environment.step(action_step.action.numpy())
         expert_trajectories['obs'].append(state)
         expert_trajectories['act'].append(action_step.action.numpy())
 
@@ -151,7 +151,7 @@ class TFARunner:
         expert_trajectories['act'].append(expert_trajectories['act'][-1])
         assert len(expert_trajectories['obs']) == len(expert_trajectories['act'])
 
-        per_scenario_expert_trajectories[i] = expert_trajectories
+        per_scenario_expert_trajectories[len(per_scenario_expert_trajectories)] = expert_trajectories
         print(f'Generated {len(per_scenario_expert_trajectories)}/{num_trajectories} expert trajectories.')
       else:
         print('Expert trajectory invalid. Skipping.')
