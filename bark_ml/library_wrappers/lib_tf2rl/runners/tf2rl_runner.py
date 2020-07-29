@@ -40,29 +40,25 @@ class TF2RLRunner:
     """agent specific training method."""
     raise NotImplementedError
 
-  def _PrintEvaluationResults(self, message: str, agent, expert = None):
+  def _PrintEvaluationResults(self, message: str, agent, expert):
     print('*' * 80)
     print(message)
     print('*' * 80)
     print('Agent:      \t', agent)
-    if expert is not None:
-      print('Expert:     \t', expert)
+    print('Expert:     \t', expert)
 
-      abs_difference = np.abs(agent - expert)
-      abs_difference = np.abs(agent - expert)
-      print('Difference: \t', abs_difference)
+    abs_difference = np.abs(agent - expert)
+    print('Difference: \t', abs_difference)
 
-      deviation_agent = np.abs(abs_difference / agent)
-      deviation_expert = np.abs(abs_difference / expert)
-      deviation = np.maximum(deviation_agent, deviation_expert) 
-      print('Deviation:  \t', deviation)
+    deviation = np.abs(abs_difference / expert)
+    print('Deviation:  \t', deviation)
     print('')
 
   def _EvaluateMeanActions(self, expert_trajectories: dict, avg_trajectory_length: float, num_trajectories: int):
     self._trainer._test_episodes = num_trajectories
     avg_test_return, agent_trajectories, avg_step_count = self._trainer.evaluate_policy(total_steps=0)
 
-    self._PrintEvaluationResults('Average test return: ', avg_test_return)
+    self._PrintEvaluationResults('Average test return: ', avg_test_return, 1)
     self._PrintEvaluationResults('Average step count: ', avg_step_count, avg_trajectory_length)
 
     agent_actions = {'acts': [],}
