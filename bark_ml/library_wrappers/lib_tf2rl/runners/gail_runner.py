@@ -35,10 +35,7 @@ class GAILRunner(TF2RLRunner):
     TF2RLRunner.__init__(self,
                     environment=environment,
                     agent=agent,
-                    params=params)
-      
-    
-    
+                    params=params)        
 
   def _train(self):
     """Traines the GAIL agent with the IRLTrainer which was

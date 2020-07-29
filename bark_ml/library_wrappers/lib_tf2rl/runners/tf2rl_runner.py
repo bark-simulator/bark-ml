@@ -40,23 +40,25 @@ class TF2RLRunner:
     """agent specific training method."""
     raise NotImplementedError
 
-  def _PrintEvaluationResults(self, message: str, agent, expert):
+  def _PrintEvaluationResults(self, message: str, agent, expert = None):
     print('*' * 80)
     print(message)
     print('*' * 80)
     print('Agent:      \t', agent)
-    print('Expert:     \t', expert)
 
-    abs_difference = np.abs(agent - expert)
-    print('Difference: \t', abs_difference)
+    if expert is not None:
+      print('Expert:     \t', expert)
+      abs_difference = np.abs(agent - expert)
+      print('Difference: \t', abs_difference)
 
-    deviation = np.abs(abs_difference / expert)
-    print('Deviation:  \t', deviation)
+      deviation = np.abs(abs_difference / expert)
+      print('Deviation:  \t', deviation)
     print('')
 
-  def _EvaluateMeanActions(self, expert_trajectories: dict, avg_trajectory_length: float, num_trajectories: int):
+  def Evaluate(self, expert_trajectories: dict, avg_trajectory_length: float, num_trajectories: int):
+    """Evaluates the agent."""
     self._trainer._test_episodes = num_trajectories
-    avg_test_return, agent_trajectories, avg_step_count = self._trainer.evaluate_policy(total_steps=0)
+    avg_test_return, agent_trajectories, avg_step_count, infos = self._trainer.evaluate_policy(total_steps=0)
 
     self._PrintEvaluationResults('Average test return: ', avg_test_return, 1)
     self._PrintEvaluationResults('Average step count: ', avg_step_count, avg_trajectory_length)
@@ -69,10 +71,18 @@ class TF2RLRunner:
     agent_mean_action = calculate_mean_action(agent_actions)
     self._PrintEvaluationResults('Mean action: ', agent_mean_action, expert_mean_action)
 
-
-  def Evaluate(self, expert_trajectories: dict, avg_trajectory_length: float, num_trajectories: int):
-    """Evaluates the agent."""
-    self._EvaluateMeanActions(expert_trajectories, avg_trajectory_length, num_trajectories)
+    evaluators = {
+      'collision': 0,
+      'goal_reached': 0,
+      'drivable_area': 0,
+    }
+    for info in infos:
+      for key in evaluators:
+        if info[key]:
+          evaluators[key] += 1
+    
+    for key, value in evaluators.items():
+      self._PrintEvaluationResults(key, value)
 
   def Visualize(self, num_episodes=1, renderer=""):
     """Visualizes the agent."""

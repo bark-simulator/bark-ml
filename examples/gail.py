@@ -93,11 +93,18 @@ def run_configuration(argv):
                                params=params)
 
   np.random.seed(0)
-  expert_trajectories, avg_trajectory_length, num_trajectories = load_expert_trajectories(FLAGS.expert_trajectories,
-    normalize_features=params["ML"]["Settings"]["NormalizeFeatures"],
-    env=env, # the unwrapped env has to be used, since that contains the unnormalized spaces.
-    subset_size=FLAGS.subset_size
-    ) 
+  if FLAGS.mode != 'visualize':
+    expert_trajectories, avg_trajectory_length, num_trajectories = load_expert_trajectories(FLAGS.expert_trajectories,
+      normalize_features=params["ML"]["Settings"]["NormalizeFeatures"],
+      env=env, # the unwrapped env has to be used, since that contains the unnormalized spaces.
+      subset_size=FLAGS.subset_size
+      ) 
+  else:
+    expert_trajectories = {
+      "obses": np.empty([0, 16]),
+      "next_obses": np.empty([0, 16]),
+      "acts": np.empty([0, 2])
+    }
 
   runner = GAILRunner(params=params,
                      environment=wrapped_env,
