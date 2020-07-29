@@ -56,6 +56,7 @@ docker run -it --gpus all \
 --env DISPLAY \
 bark_ml_image bash -c '
 time_last_start="-1";
+time_to_sleep=1;
 move_checkpoints_func() {
     archive_name="checkpoints_archive/archived_$(date +%s)"
     mkdir -p $archive_name
@@ -65,10 +66,13 @@ sleep_if_necessary() {
     time_difference=$(( $(date +%s) - $time_last_start ))    
     time_last_start=$(date +%s)
     echo time_difference: $time_difference
-    if (( $time_difference < 20 ))
+    if (( $time_difference < 60 ))
     then
         echo Sleeping...
-        sleep 30
+        sleep $time_to_sleep
+        time_to_sleep=$(( $time_to_sleep * 2 ))
+    else
+        time_to_sleep=1;
     fi
 }
 '"$visible_devices_command"'
