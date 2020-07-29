@@ -55,10 +55,19 @@ docker run -it --gpus all \
 --network='host' \
 --env DISPLAY \
 bark_ml_image bash -c '
+time_last_start="-1";
 move_checkpoints_func() {
     archive_name="checkpoints_archive/archived_$(date +%s)"
     mkdir -p $archive_name
     [[ -d checkpoints ]] && mv checkpoints $archive_name
+}
+sleep_if_necessary() {
+    time_difference=$(( $(date +%s) - $time_last_start ))    
+    time_last_start=$(date +%s)
+    if (( $time_difference < 5 ))
+    then
+        sleep 10
+    fi
 }
 '"$visible_devices_command"'
 trap exit INT;
@@ -71,6 +80,7 @@ ln -s '"$EXTERNAL_BARK_CACHE_DIR"' '"$BAZEL_CACHE_DIR"';
 source utils/dev_into.sh;
 while true;
         do
+        sleep_if_necessary
         '"$prepend_command"' bazel run --jobs 12 //examples:'"$agent"' -- --mode='"$mode"';
         sleep 0.1;
 done
