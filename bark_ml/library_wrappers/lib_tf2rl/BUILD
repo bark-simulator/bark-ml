@@ -4,6 +4,7 @@ py_library(
     ":tf2rl_wrapper",
     ":load_expert_trajectories",
     ":generate_expert_trajectories",
+    ":compare_trajectories",
     "//bark_ml/library_wrappers/lib_tf2rl/agents",
     "//bark_ml/library_wrappers/lib_tf2rl/runners",
   ],
@@ -24,8 +25,11 @@ py_library(
     name = "load_expert_trajectories",
     srcs = [
       "load_expert_trajectories.py",
-      "load_save_utils.py"
           ],
+    deps = [
+            "@com_github_keiohta_tf2rl",
+            ":load_save_utils"
+            ],
     visibility = ["//visibility:public"]
 )
 
@@ -34,6 +38,14 @@ py_library(
   srcs = ["load_save_utils.py"],
   visibility = ["//visibility:public"]
 )
+
+py_library(
+    name = "compare_trajectories",
+    srcs = ["compare_trajectories.py"],
+    deps = [":load_expert_trajectories"],
+    visibility = ["//visibility:public"],
+)
+
 
 py_binary(
   name = "generate_expert_trajectories",

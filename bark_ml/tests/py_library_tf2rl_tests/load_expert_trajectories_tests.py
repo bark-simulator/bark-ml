@@ -7,6 +7,7 @@
 import os
 import joblib
 import unittest
+import numpy as np
 from gym.spaces.box import Box
 from bark_ml.library_wrappers.lib_tf2rl.load_expert_trajectories import *
 from bark_ml.library_wrappers.lib_tf2rl.load_save_utils import *
@@ -24,17 +25,22 @@ class LoadExpertTrajectoriesTest(unittest.TestCase):
         self.params = ParameterServer(filename=os.path.join(os.path.dirname(__file__), "gail_data/params/gail_params_bark.json"))
         self.expert_trajectories_directory = os.path.join(os.path.dirname(__file__), 'data', 'expert_trajectories', 'sac')
         
-        self.expert_trajectories = load_expert_trajectories(
-            self.expert_trajectories_directory)
+        self.expert_trajectories, self.avg_trajectory_length, self.num_trajectories = load_expert_trajectories(self.expert_trajectories_directory)
 
         env = test_env(self.params)
-        self.expert_trajectories_norm = load_expert_trajectories(
+        self.expert_trajectories_norm, self.avg_trajectory_length_norm, self.num_trajectories_norm = load_expert_trajectories(
             self.expert_trajectories_directory,
             normalize_features=True,
             env=env)
 
         assert self.expert_trajectories
         assert self.expert_trajectories_norm
+
+        self.assertEqual(self.avg_trajectory_length, 14.4) 
+        self.assertEqual(self.avg_trajectory_length, self.avg_trajectory_length_norm) 
+
+        self.assertEqual(self.num_trajectories, 5)
+        self.assertEqual(self.num_trajectories, self.num_trajectories_norm)
 
     def test_assert_file_exists(self):
         """
@@ -61,6 +67,17 @@ class LoadExpertTrajectoriesTest(unittest.TestCase):
         self.assertTrue(((self.expert_trajectories_norm['acts'] >= -1) &\
             (self.expert_trajectories_norm['acts'] <= 1)).all())
 
+    def test_sample_subset(self):
+        """Test: Correct subset size sampled"""
+        np.random.seed(0)
+        subset, avg_length, num_trajectories = load_expert_trajectories(self.expert_trajectories_directory, subset_size=3)
+
+        self.assertEqual(avg_length, 15)
+        self.assertEqual(num_trajectories, 3)
+
+        self.assertEqual(subset['obses'].shape, (45, 16))
+        self.assertEqual(subset['next_obses'].shape, (45, 16))
+        self.assertEqual(subset['acts'].shape, (45, 2))
 
 class test_env():
     """dummy environment for testing."""
