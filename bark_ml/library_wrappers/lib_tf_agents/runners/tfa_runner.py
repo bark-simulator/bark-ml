@@ -130,8 +130,7 @@ class TFARunner:
     self._agent._training = False
     per_scenario_expert_trajectories = {}
 
-    for i in range(num_trajectories):    
-      print(f'Generated {i}/{num_trajectories} expert trajectories.')
+    while len(per_scenario_expert_trajectories) < num_trajectories:
       expert_trajectories = {'obs': [], 'act': []}
 
       state = self._environment.reset()
@@ -148,9 +147,13 @@ class TFARunner:
         if render:
           self._environment.render()
 
-      expert_trajectories['act'].append(expert_trajectories['act'][-1])
-      assert len(expert_trajectories['obs']) == len(expert_trajectories['act'])
+      if info and (info['goal_reached'] or info['drivable_area']):
+        expert_trajectories['act'].append(expert_trajectories['act'][-1])
+        assert len(expert_trajectories['obs']) == len(expert_trajectories['act'])
 
-      per_scenario_expert_trajectories[i] = expert_trajectories
+        per_scenario_expert_trajectories[i] = expert_trajectories
+        print(f'Generated {len(per_scenario_expert_trajectories)}/{num_trajectories} expert trajectories.')
+      else:
+        print('Expert trajectory invalid. Skipping.')
 
     return per_scenario_expert_trajectories
