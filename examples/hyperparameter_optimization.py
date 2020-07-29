@@ -36,9 +36,6 @@ params["ML"]["BehaviorSACAgent"]["DebugSummaries"] = True
 params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 100
 params["ML"]["BehaviorSACAgent"]["BatchSize"] = 128
 params["ML"]["GraphObserver"]["AgentLimit"] = 4
-params["ML"]["BehaviorSACAgent"]["CriticJointFcLayerParams"] = [256, 128]
-params["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams"] = [256, 256]
-params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MpLayerNumUnits"] = 11
 params["ML"]["BehaviorGraphSACAgent"]["GNN"]["library"] = "tf2_gnn" # "tf2_gnn" or "spektral"
 params["ML"]["SACRunner"]["NumberOfCollections"] = int(1e6)
 # tf2_gnn
@@ -46,8 +43,6 @@ params["ML"]["BehaviorGraphSACAgent"]["GNN"]["message_calculation_class"] = "ggn
 params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_mode"] = "gru"
 
 # spektral
-params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MPChannels"] = 128
-params["ML"]["BehaviorGraphSACAgent"]["GNN"]["KernelNetUnits"] = [256, 256]
 params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MPLayerActivation"] = "relu"
 params["ML"]["BehaviorGraphSACAgent"]["GNN"]["DenseActication"] = "tanh"
 
@@ -57,9 +52,30 @@ layers_gnn = 1 + int(random() * 4)
 params["ML"]["BehaviorGraphSACAgent"]["GNN"]["NumLayers"] = layers_gnn
 #units_gnn = 2**(5 + int(random() * 3))
 
+mp_layers = 5 + int(random() * 10)
+params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MpLayerNumUnits"] = mp_layers
+
+mp_channels = 2**(5 + int(random() * 4))
+params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MPChannels"] = mp_channels
+
+critic_fc_1 = 2**(6 + int(random() * 4)) 
+critic_fc_2 = 2**(5 + int(random() * 4))  
+params["ML"]["BehaviorSACAgent"]["CriticJointFcLayerParams"] = [critic_fc_1, critic_fc_2]
+
+
+actor_fc_1 = 2**(6 + int(random() * 4)) 
+actor_fc_2 = 2**(6 + int(random() * 4))  
+params["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams"] = [actor_fc_1, actor_fc_2]
+
+spek_k_1 = 2**(6 + int(random() * 4)) 
+spek_k_2 = 2**(6 + int(random() * 4))  
+params["ML"]["BehaviorGraphSACAgent"]["GNN"]["KernelNetUnits"] = [spek_k_1, spek_k_2]
 
 summary_path_hyperparameter_run = tfa_gnn_summary_path + f'/{int(time.time())}__ \
-        layers_{layers_gnn}'
+        layers_{layers_gnn}__mp_layers_{mp_layers}__mp_channels_{mp_channels}__ \
+        critic_fc_{critic_fc_1}_{critic_fc_2}__actor_fc_{actor_fc_1}_{actor_fc_2}__ \
+        spek_k_{spek_k_1}_{spek_k_2}'
+
 params["ML"]["TFARunner"]["SummaryPath"] = summary_path_hyperparameter_run
 
 
