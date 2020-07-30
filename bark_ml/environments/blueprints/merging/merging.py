@@ -78,7 +78,7 @@ class MergingBlueprint(Blueprint):
                         follow_agent_id=True)
     dt = 0.2
     evaluator = GoalReached(params)
-    observer = NearestObserver(params)
+    observer = NearestAgentsObserver(params)
     ml_behavior = ml_behavior
 
     super().__init__(
@@ -119,17 +119,3 @@ class DiscreteMergingBlueprint(MergingBlueprint):
                               random_seed=random_seed,
                               ml_behavior=ml_behavior,
                               viewer=True)
-
-
-class GailMergingBlueprint(ContinuousMergingBlueprint):
-  def __init__(self,
-          params=None,
-          number_of_senarios=250,
-          random_seed=0,
-          viewer=True):
-    ContinuousMergingBlueprint.__init__(self,
-                              params=params,
-                              number_of_senarios=number_of_senarios,
-                              random_seed=random_seed,
-                              viewer=True)
-    self._observer = NearestAgentsObserver(params)

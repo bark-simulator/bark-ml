@@ -11,7 +11,7 @@ from bark.runtime.viewer.video_renderer import VideoRenderer
 
 # BARK-ML imports
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
-  ContinuousMergingBlueprint, ContinuousIntersectionBlueprint, GailMergingBlueprint
+  ContinuousMergingBlueprint, ContinuousIntersectionBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.library_wrappers.lib_tf2rl.tf2rl_wrapper import TF2RLWrapper
 from bark_ml.library_wrappers.lib_tf2rl.agents.gail_agent import BehaviorGAILAgent
