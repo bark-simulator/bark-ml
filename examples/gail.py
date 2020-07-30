@@ -92,7 +92,7 @@ def run_configuration(argv):
   gail_agent = BehaviorGAILAgent(environment=wrapped_env,
                                params=params)
 
-  np.random.seed(0)
+  np.random.seed(123456789)
   if FLAGS.mode != 'visualize':
     expert_trajectories, avg_trajectory_length, num_trajectories = load_expert_trajectories(FLAGS.expert_trajectories,
       normalize_features=params["ML"]["Settings"]["NormalizeFeatures"],
