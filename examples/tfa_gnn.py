@@ -49,20 +49,20 @@ def run_configuration(argv):
   params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 100
   params["ML"]["BehaviorSACAgent"]["BatchSize"] = 128
   params["ML"]["GraphObserver"]["AgentLimit"] = 4
-  params["ML"]["BehaviorGraphSACAgent"]["CriticJointFcLayerParams"] = [256, 128]
+  params["ML"]["BehaviorGraphSACAgent"]["CriticJointFcLayerParams"] = [256, 128, 128]
   params["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams"] = [256, 128]
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["NumMpLayers"] = 2
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MpLayerNumUnits"] = 256
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MpLayerNumUnits"] = 128
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["library"] = "tf2_gnn" # "tf2_gnn" or "spektral"
   params["ML"]["SACRunner"]["NumberOfCollections"] = int(1e6)
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["GraphDimensions"] = (4, 11, 4) # (n_nodes, n_features, n_edge_features)
 
   # tf2_gnn
   # NOTE: when using the ggnn mp class, MPLayerUnits must match n_features!
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["message_calculation_class"] = "gnn_edge_mlp"
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["message_calculation_class"] = "rgcn"
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_mode"] = "gru"
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["dense_every_num_layers"] = 1
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_every_num_layers"] = 1
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["dense_every_num_layers"] = 2
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_every_num_layers"] = 2
 
   # only considered when "message_calculation_class" = "gnn_edge_mlp"
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["num_edge_MLP_hidden_layers"] = 2 
@@ -72,6 +72,8 @@ def run_configuration(argv):
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["KernelNetUnits"] = [256]
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MPLayerActivation"] = "relu"
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["DenseActication"] = "tanh"
+
+  print(params.ConvertToDict())
 
 
     # viewer = MPViewer(
@@ -116,7 +118,7 @@ def run_configuration(argv):
     runner.Evaluate()
   
   # store all used params of the training
-  # params.Save("/home/hart/Dokumente/2020/bark-ml/examples/example_params/tfa_params.json")
+  params.Save("/Users/marco.oliva/Development/bark-ml_logs/summaries/example_params/agent_8.json")
 
 if __name__ == '__main__':
   app.run(run_configuration)
