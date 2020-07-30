@@ -30,6 +30,8 @@ def load_expert_trajectories(dirname: str, normalize_features=False, env=None, s
         joblib_files = np.array(joblib_files)[indices]
 
     expert_trajectories = load_trajectories(joblib_files)
+    if not expert_trajectories:
+        raise ValueError(f"Could not find valid expert trajectories in {dirname}.")
 
     if normalize_features:
         assert env is not None, "if normalization is used the environment has to be provided."
@@ -42,9 +44,19 @@ def load_expert_trajectories(dirname: str, normalize_features=False, env=None, s
             high=env.action_space.high,
             low=env.action_space.low
             )
+
+        valid_obs_act_pairs = list(range(len(expert_trajectories['obses'])))
+        for i in range(len(expert_trajectories['obses'])):
+            for key in expert_trajectories:
+                if np.max(np.abs(expert_trajectories[key][i])) > 1:
+                    valid_obs_act_pairs.remove(i)
+                    break
+
+        for key in expert_trajectories:
+            expert_trajectories[key] = expert_trajectories[key][valid_obs_act_pairs]
     
-    if not expert_trajectories:
-        raise ValueError(f"Could not find valid expert trajectories in {dirname}.")
+        if len(expert_trajectories['obses']) == 0:
+            raise ValueError(f"No expert trajectories in the observation/action space.")    
 
     assert len(expert_trajectories['obses']) == len(expert_trajectories['next_obses'])
     assert len(expert_trajectories['obses']) == len(expert_trajectories['acts'])
