@@ -44,8 +44,6 @@ class GraphObserver(StateObserver):
     self._visibility_radius = \
       params["ML"]["GraphObserver"]["VisibilityRadius", "", 50]
 
-    self.observe_times = []
-
   @classmethod
   def attribute_keys(cls):
     return ["x", "y", "theta", "vel", "goal_x", "goal_y", 
@@ -100,7 +98,8 @@ class GraphObserver(StateObserver):
     if self._output_supervised_data == False:
       return obs
     else:
-      features, _ = GraphObserver.graph(obs)
+      features, _ = GraphObserver.graph(obs, graph_dims=\
+        (self._agent_limit, self.feature_len, self.edge_feature_len))
       actions = self._generate_actions(features)
       return obs, actions
       
