@@ -300,9 +300,9 @@ def simulate_scenario(param_server: ParameterServer, sim_time_step: float, rende
 
     # Run the scenario in a loop
     world_state = scenario.GetWorldState()
-    for _ in range(0, sim_steps):
-        world_state.Step(sim_time_step_seconds)
-
+    for i in range(0, sim_steps + 1):
+        if i % 25 == 0:
+            print(f'Simulated {i}/{sim_steps} timesteps.')
         if viewer:
             if renderer == 'matplotlib_jupyter':
                 viewer = get_viewer(param_server, renderer)
@@ -311,7 +311,6 @@ def simulate_scenario(param_server: ParameterServer, sim_time_step: float, rende
             viewer.drawWorld(world_state, scenario.eval_agent_ids)
 
         observations = measure_world(world_state, observer, observer_not_normalized)
-
         for agent_id, values in observations.items():
             if agent_id not in expert_trajectories:
                 expert_trajectories[agent_id] = defaultdict(list)
@@ -320,6 +319,8 @@ def simulate_scenario(param_server: ParameterServer, sim_time_step: float, rende
             expert_trajectories[agent_id]['time'].append(values['time'])
             expert_trajectories[agent_id]['merge'].append(values['merge'])
             expert_trajectories[agent_id]['wheelbase'].append(2.7)
+
+        world_state.Step(sim_time_step_seconds)
 
     if viewer:
         plt.close()
