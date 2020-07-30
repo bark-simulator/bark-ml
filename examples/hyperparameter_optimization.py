@@ -26,26 +26,45 @@ import time
 
 
 
+def set_default_values_tfa_gnn(params):
+    params["World"]["remove_agents_out_of_map"] = False
+    params["ML"]["GoalReachedEvaluator"]["MaxSteps"] = 30
+    params["ML"]["BehaviorSACAgent"]["DebugSummaries"] = True
+    params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 100
+    params["ML"]["BehaviorSACAgent"]["BatchSize"] = 128
+    params["ML"]["GraphObserver"]["AgentLimit"] = 4
+    params["ML"]["BehaviorGraphSACAgent"]["CriticJointFcLayerParams"] = [256, 128]
+    params["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams"] = [256, 128]
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["NumMpLayers"] = 2
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MpLayerNumUnits"] = 256
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["library"] = "tf2_gnn" # "tf2_gnn" or "spektral"
+    params["ML"]["SACRunner"]["NumberOfCollections"] = int(1e6)
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["GraphDimensions"] = (4, 11, 4) # (n_nodes, n_features, n_edge_features)
+
+    # tf2_gnn
+    # NOTE: when using the ggnn mp class, MPLayerUnits must match n_features!
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["message_calculation_class"] = "gnn_edge_mlp"
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_mode"] = "gru"
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["dense_every_num_layers"] = 1
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_every_num_layers"] = 1
+
+    # only considered when "message_calculation_class" = "gnn_edge_mlp"
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["num_edge_MLP_hidden_layers"] = 2 
+
+    # spektral
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MPChannels"] = 64
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["KernelNetUnits"] = [256]
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MPLayerActivation"] = "relu"
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["DenseActication"] = "tanh"
+
+    return params
+
+
 params = ParameterServer(filename="examples/example_params/tfa_params.json")
-#params = ParameterServer()
-# NOTE: Modify these paths in order to save the checkpoints and summaries
+params = set_default_values_tfa_gnn(params)
+
 from config import tfa_gnn_checkpoint_path, tfa_gnn_summary_path
 params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = tfa_gnn_checkpoint_path
-params["World"]["remove_agents_out_of_map"] = False
-params["ML"]["BehaviorSACAgent"]["DebugSummaries"] = True
-params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 100
-params["ML"]["BehaviorSACAgent"]["BatchSize"] = 128
-params["ML"]["GraphObserver"]["AgentLimit"] = 4
-params["ML"]["BehaviorGraphSACAgent"]["GNN"]["library"] = "tf2_gnn" # "tf2_gnn" or "spektral"
-params["ML"]["SACRunner"]["NumberOfCollections"] = int(1e6)
-# tf2_gnn
-params["ML"]["BehaviorGraphSACAgent"]["GNN"]["message_calculation_class"] = "ggnn"
-params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_mode"] = "gru"
-
-# spektral
-params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MPLayerActivation"] = "relu"
-params["ML"]["BehaviorGraphSACAgent"]["GNN"]["DenseActication"] = "tanh"
-
 
 
 layers_gnn = 1 + int(random() * 4)
