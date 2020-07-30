@@ -187,6 +187,17 @@
 				}
 			},	
 			{
+				"name": "Python: examples/tfa (--mode=visualize)",
+				"type": "python",
+				"request": "launch",
+				"program": "${workspaceFolder}/examples/tfa.py",
+				"console": "integratedTerminal",
+				"args": ["--mode=visualize", "--output_dir=~/Repositories/gail-4-bark/bark-ml/examples/pretrained_agents/sac/merging", "--num_episodes=10000" ],
+				"env": {
+					"PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/tfa.runfiles/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/com_github_interaction_dataset_interaction_dataset/python/:"
+				}
+			},	
+			{
 				"name": "Python: examples/tfa (--mode=generate)",
 				"type": "python",
 				"request": "launch",

@@ -334,8 +334,8 @@ def normalize_actions(actions, high, low):
     normalized -= low
     normalized /= interval
 
-    normalized *= 2
-    normalized -= 1
+    # normalized *= 2
+    # normalized -= 1
 
     return normalized 
 
@@ -401,7 +401,7 @@ def generate_expert_trajectories_for_scenario(param_server: ParameterServer, sim
     low = np.array([np.min(accelerations), np.min(steering_angles)])
 
     for agent_id in expert_trajectories:
-        expert_trajectories[agent_id]['act'] = normalize_actions(expert_trajectories[agent_id]['act'], high, low)
+        expert_trajectories[agent_id]['act'] = normalize_actions(expert_trajectories[agent_id]['act'], high=np.array([5, math.pi / 2.0]), low = np.array([-5, -math.pi / 2.0]))
 
     return expert_trajectories
 
