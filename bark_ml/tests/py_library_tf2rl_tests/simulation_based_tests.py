@@ -105,10 +105,14 @@ class MeasureWorldTests(SimulationBasedTests):
                 difference = current_measurement - previous_measurement
                 self.set_min_max_values(difference, min_values, max_values)
 
-        expected_max_values = np.array([0.54980648, 0.55021292, 0.48717329, 0.01684499, 0.5499202,
-                                        0.55034626, 0.49115214, 0.02198388, 0.54953927, 0.5503884, 0.4895606, 0.02255795])
-        expected_min_values = np.array([-1.77621841e-05, -8.94069672e-07, -7.95662403e-04, -7.10122287e-04, -1.01149082e-03,
-                                        -2.86102295e-05, -2.70859301e-02, -8.40493664e-03, -9.69946384e-04, -3.43322754e-05, -2.70856917e-02, -4.82387096e-03])
+        expected_max_values = np.array([ 
+            996.13000488, 1004.25897217, 3.06100011, 1.68449903,
+            998.4039917, 1006.92498779, 3.08599997, 2.19838786,
+            990.78497314, 1007.76800537, 3.07599998, 2.25579476])
+        expected_min_values = np.array([
+            -3.55957031e-01, -1.70288086e-02, -4.99963760e-03, -7.10122585e-02,
+            -2.02299194e+01, -5.71960449e-01, -1.70185804e-01, -8.40493798e-01,
+            -1.93980713e+01, -6.87011719e-01, -1.70184374e-01, -4.82387066e-01])
 
         for i in range(expected_max_values.shape[0]):
             self.assertAlmostEqual(expected_max_values[i], max_values[i])

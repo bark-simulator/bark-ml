@@ -147,7 +147,7 @@ class TFARunner:
         if render:
           self._environment.render()
 
-      if info and (info['goal_reached'] or info['drivable_area']):
+      if info and info['goal_reached']:
         expert_trajectories['act'].append(expert_trajectories['act'][-1])
         assert len(expert_trajectories['obs']) == len(expert_trajectories['act'])
 

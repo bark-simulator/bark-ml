@@ -61,7 +61,7 @@ def get_track_files(tracks_dir: str) -> list:
     Returns:
         list: The track files
     """
-    return list_files_in_dir(tracks_dir, '.csv')
+    return list_files_in_dir(tracks_dir, ".csv")
 
 
 def create_parameter_servers_for_scenarios(map_file: str, tracks_dir: str) -> dict:
@@ -79,7 +79,7 @@ def create_parameter_servers_for_scenarios(map_file: str, tracks_dir: str) -> di
     """
     import pandas as pd
 
-    if not map_file.endswith('.xodr'):
+    if not map_file.endswith(".xodr"):
         raise ValueError(
             f"Map file has to be in Xodr file format. Given: {map_file}")
 
@@ -101,8 +101,8 @@ def create_parameter_servers_for_scenarios(map_file: str, tracks_dir: str) -> di
         param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["StartTs"] = start_ts
         param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EndTs"] = end_ts
         param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EgoTrackId"] = track_ids[0]
-        map_id = map_file.split('/')[-1].replace('.xodr', '')
-        track_id = track.split('/')[-1].replace('.csv', '')
+        map_id = map_file.split("/")[-1].replace(".xodr", "")
+        track_id = track.split("/")[-1].replace(".csv", "")
         param_servers[map_id, track_id] = param_server
 
     return param_servers
@@ -205,15 +205,15 @@ def measure_world(world_state, observer: StateObserver, observer_not_normalized:
         obs = np.array(observer.Observe(obs_world))
         obs_not_normalized = np.array(observer_not_normalized.Observe(obs_world))
         observations[agent_id] = {
-            "obs": obs,
-            "obs_not_norm": obs_not_normalized,
+            "obs_norm": obs,
+            "obs": obs_not_normalized,
             "time": world_state.time,
             "merge": None
         }
 
         if agent_id in agents_valid:
             try:
-                observations[agent_id]['merge'] = obs_world.lane_corridor.center_line.bounding_box[0].x(
+                observations[agent_id]["merge"] = obs_world.lane_corridor.center_line.bounding_box[0].x(
                 ) > 900
             except:
                 pass
@@ -302,9 +302,9 @@ def simulate_scenario(param_server: ParameterServer, sim_time_step: float, rende
     world_state = scenario.GetWorldState()
     for i in range(0, sim_steps + 1):
         if i % 25 == 0:
-            print(f'Simulated {i}/{sim_steps} timesteps.')
+            print(f"Simulated {i}/{sim_steps} timesteps.")
         if viewer:
-            if renderer == 'matplotlib_jupyter':
+            if renderer == "matplotlib_jupyter":
                 viewer = get_viewer(param_server, renderer)
             clear_output(wait=True)
             viewer.clear()
@@ -314,11 +314,11 @@ def simulate_scenario(param_server: ParameterServer, sim_time_step: float, rende
         for agent_id, values in observations.items():
             if agent_id not in expert_trajectories:
                 expert_trajectories[agent_id] = defaultdict(list)
-            expert_trajectories[agent_id]['obs'].append(values['obs'])
-            expert_trajectories[agent_id]['obs_not_norm'].append(values['obs_not_norm'])
-            expert_trajectories[agent_id]['time'].append(values['time'])
-            expert_trajectories[agent_id]['merge'].append(values['merge'])
-            expert_trajectories[agent_id]['wheelbase'].append(2.7)
+            expert_trajectories[agent_id]["obs_norm"].append(values["obs_norm"])
+            expert_trajectories[agent_id]["obs"].append(values["obs"])
+            expert_trajectories[agent_id]["time"].append(values["time"])
+            expert_trajectories[agent_id]["merge"].append(values["merge"])
+            expert_trajectories[agent_id]["wheelbase"].append(2.7)
 
         world_state.Step(sim_time_step_seconds)
 
@@ -355,55 +355,43 @@ def generate_expert_trajectories_for_scenario(param_server: ParameterServer, sim
         param_server, sim_time_step, renderer)
 
     for agent_id in expert_trajectories:
-        num_observations = len(expert_trajectories[agent_id]['obs_not_norm'])
+        num_observations = len(expert_trajectories[agent_id]["obs"])
         for i in range(0, num_observations - 1):
             agent_trajectory = expert_trajectories[agent_id]
 
             current_time = agent_trajectory["time"][i]
             next_time = agent_trajectory["time"][i + 1]
 
-            expert_trajectories[agent_id]['done'].append(0)
+            expert_trajectories[agent_id]["done"].append(0)
 
             current_obs = []
             # if i == 0:
-            #     current_obs = agent_trajectory["obs_not_norm"][i:i + 2]
+            #     current_obs = agent_trajectory["obs"][i:i + 2]
             # else:
-            #     current_obs = agent_trajectory["obs_not_norm"][i - 1:i + 2]
-            current_obs = agent_trajectory["obs_not_norm"][i:i + 2]
+            #     current_obs = agent_trajectory["obs"][i - 1:i + 2]
+            current_obs = agent_trajectory["obs"][i:i + 2]
 
             time_step = next_time - current_time
             action = calculate_action(current_obs, time_step, 2.7)
 
-            expert_trajectories[agent_id]['act'].append(action)
+            expert_trajectories[agent_id]["act"].append(action)
 
         # add zeros depending on the action-state size
-        expert_trajectories[agent_id]['act'].append(
-            [0] * len(expert_trajectories[agent_id]['act'][0]))
-        expert_trajectories[agent_id]['done'].append(1)
+        expert_trajectories[agent_id]["act"].append(
+            [0] * len(expert_trajectories[agent_id]["act"][0]))
+        expert_trajectories[agent_id]["done"].append(1)
 
-        assert len(expert_trajectories[agent_id]['obs']
-                   ) == len(expert_trajectories[agent_id]['act'])
-        assert len(expert_trajectories[agent_id]['obs']
-                   ) == len(expert_trajectories[agent_id]['obs_not_norm'])
-        assert len(expert_trajectories[agent_id]['obs']
-                   ) == len(expert_trajectories[agent_id]['time'])
-        assert len(expert_trajectories[agent_id]['obs']
-                   ) == len(expert_trajectories[agent_id]['merge'])
-        assert len(expert_trajectories[agent_id]['obs']
-                   ) == len(expert_trajectories[agent_id]['done'])
+        assert len(expert_trajectories[agent_id]["obs_norm"]
+                   ) == len(expert_trajectories[agent_id]["act"])
+        assert len(expert_trajectories[agent_id]["obs_norm"]
+                   ) == len(expert_trajectories[agent_id]["obs"])
+        assert len(expert_trajectories[agent_id]["obs_norm"]
+                   ) == len(expert_trajectories[agent_id]["time"])
+        assert len(expert_trajectories[agent_id]["obs_norm"]
+                   ) == len(expert_trajectories[agent_id]["merge"])
+        assert len(expert_trajectories[agent_id]["obs_norm"]
+                   ) == len(expert_trajectories[agent_id]["done"])
     
-    all_actions = [] 
-    for agent_id in expert_trajectories:
-        all_actions.extend(expert_trajectories[agent_id]['act'])
-    accelerations = np.array([action[0] for action in all_actions])
-    steering_angles = np.array([action[1] for action in all_actions])
-    
-    high = np.array([np.max(accelerations), np.max(steering_angles)])
-    low = np.array([np.min(accelerations), np.min(steering_angles)])
-
-    for agent_id in expert_trajectories:
-        expert_trajectories[agent_id]['act'] = normalize_actions(expert_trajectories[agent_id]['act'], high=np.array([5, math.pi / 2.0]), low = np.array([-5, -math.pi / 2.0]))
-
     return expert_trajectories
 
 def generate_and_store_expert_trajectories(map_file: str, track: str, expert_trajectories_path: str, param_server: ParameterServer, sim_time_step: float, renderer: str = "") -> list:
@@ -460,8 +448,8 @@ def main_function(argv: list):
             map_file, track)], sim_time_step, FLAGS.renderer)
 
 
-if __name__ == '__main__':
-    flags.mark_flag_as_required('map_file')
-    flags.mark_flag_as_required('tracks_dir')
-    flags.mark_flag_as_required('expert_trajectories_path')
+if __name__ == "__main__":
+    flags.mark_flag_as_required("map_file")
+    flags.mark_flag_as_required("tracks_dir")
+    flags.mark_flag_as_required("expert_trajectories_path")
     app.run(main_function)
