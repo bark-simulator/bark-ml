@@ -52,6 +52,7 @@ class GoalReached(StateEvaluator):
       no_collision_reward = 0.0
     else:
       no_collision_reward = 0.0
+
     reward = collision * self._col_penalty + \
       success * self._goal_reward + no_collision_reward
     return reward, done, eval_results

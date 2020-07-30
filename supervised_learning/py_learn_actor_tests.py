@@ -52,14 +52,14 @@ class PyGNNActorTests(unittest.TestCase):
         ######################
 
         """Setting up the test case"""
-        self.params = ParameterServer(filename="examples/example_params/tfa_params.json")
-        self.params["ML"]["BehaviorTFAAgents"]["NumCheckpointsToKeep"] = None
-        self.params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 50
-        self.params["ML"]["BehaviorSACAgent"]["BatchSize"] = 32
-        self.params["ML"]["GraphObserver"]["AgentLimit"] = 8
-        self.params["ML"]["BehaviorGraphSACAgent"]["NumLayersGNN"] = 4
-        self.params["ML"]["BehaviorGraphSACAgent"]["NumUnitsGNN"] = 256
-        self.params["World"]["remove_agents_out_of_map"] = False
+        params = ParameterServer(filename="examples/example_params/tfa_params.json")
+        params["ML"]["BehaviorTFAAgents"]["NumCheckpointsToKeep"] = None
+        params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 50
+        params["ML"]["BehaviorSACAgent"]["BatchSize"] = 32
+        params["ML"]["GraphObserver"]["AgentLimit"] = 8
+        params["ML"]["BehaviorGraphSACAgent"]["GNN"]["num_layers"] = 4
+        params["ML"]["BehaviorGraphSACAgent"]["GNN"]["hidden_dim"] = 256
+        params["World"]["remove_agents_out_of_map"] = False
         
         # Get dataset
         self.observer = GraphObserver(params=self.params)

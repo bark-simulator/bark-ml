@@ -39,7 +39,6 @@ def projection_net(spec):
     std_transform=sac_agent.std_clip_transform,
     scale_distribution=True)
 
-
 @gin.configurable
 class GNNActorNetwork(network.Network):
   """Creates an actor GNN."""
@@ -47,11 +46,10 @@ class GNNActorNetwork(network.Network):
   def __init__(self,
                input_tensor_spec,
                output_tensor_spec,
+               gnn_params,
                fc_layer_params=None,
                dropout_layer_params=None,
                conv_layer_params=None,
-               gnn_num_layers=4,
-               gnn_num_units=256,
                activation_fn=tf.keras.activations.relu,
                name='ActorNetwork'):
     """Creates an instance of `ActorNetwork`.
@@ -84,7 +82,6 @@ class GNNActorNetwork(network.Network):
         input_tensor_spec=input_tensor_spec,
         state_spec=(),
         name=name)
-    self._gnn = GNNWrapper(num_layers=3, num_units=256)
 
     if len(tf.nest.flatten(input_tensor_spec)) > 1:
       raise ValueError('Only a single observation is supported by this network')
@@ -98,11 +95,12 @@ class GNNActorNetwork(network.Network):
     if self._single_action_spec.dtype not in [tf.float32, tf.float64]:
       raise ValueError('Only float actions are supported by this network.')
     
-    self._gnn_num_units = gnn_num_units
-    self._gnn = GNNWrapper(gnn_num_layers, gnn_num_units)
+    self._gnn = GNNWrapper(params=gnn_params)
+
+    print(fc_layer_params)
 
     self._encoder = encoding_network.EncodingNetwork(
-      input_tensor_spec=tf.TensorSpec([None, gnn_num_units]),
+      input_tensor_spec=tf.TensorSpec([None, self._gnn.num_units]),
       preprocessing_layers=None,
       preprocessing_combiner=None,
       conv_layer_params=conv_layer_params,
@@ -127,18 +125,14 @@ class GNNActorNetwork(network.Network):
   def call(self, observations, step_type=(), network_state=(), training=False):
     if len(observations.shape) == 1:
       observations = tf.expand_dims(observations, axis=0)
-      
+
     batch_size, feature_len = observations.shape
-    
-    t0 = time.time()
-    output = self._gnn.batch_call(observations, training=training)
-    self.gnn_call_times.append(time.time() - t0)
-    output = tf.cast(output, tf.float32)
+    output = self._gnn(observations, training=training)
 
     # extract ego state (node 0)
     if len(output.shape) == 2 and output.shape[0] != 0:
-      output = tf.reshape(output, [batch_size, -1, self._gnn_num_units])
-      output = tf.gather(output, 0, axis=1)
+      output = tf.reshape(output, [batch_size, -1, self._gnn.num_units])
+      output = output[:,0] # extract ego state
     elif len(output.shape) == 3:
       output = tf.gather(output, 0, axis=1)
 
@@ -150,20 +144,15 @@ class GNNActorNetwork(network.Network):
       network_state=network_state,
       training=training)
       
-    outer_rank = nest_utils.get_outer_rank(observations, self.input_tensor_spec)
+    outer_rank = nest_utils.get_outer_rank(
+      observations, 
+      self.input_tensor_spec)
 
-    def call_projection_net(proj_net):
-      distribution, _ = proj_net(
-          output, outer_rank, training=training)
+    def call_projection_net(net):
+      distribution, _ = net(output, outer_rank, training=training)
       return distribution
 
     output_actions = tf.nest.map_structure(
         call_projection_net, self._projection_nets)
 
-    try:
-        tf.summary.histogram("actor_output_actions", output_actions)
-    except Exception as e:
-        pass
-
-    self.call_times.append(time.time() - t0)
     return output_actions, network_state
