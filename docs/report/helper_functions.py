@@ -9,6 +9,7 @@ import tensorflow as tf
 import datetime
 from collections import OrderedDict
 from matplotlib.patches import Ellipse
+from tf2_gnn.layers import GNN, GNNInput
 
 # Bark-ML imports
 from bark_ml.observers.graph_observer import GraphObserver
@@ -42,3 +43,7 @@ def visualize_graph(data_point, ax, visible_distance, normalization_ref):
     node_colors = ["blue" for i in range(len(graph.nodes))]
     node_colors[0] = "red"
     return nx.draw(graph, pos = pos, with_labels=True, ax=ax, node_color=node_colors)
+
+
+def get_default_gnn_params():
+    return GNN.get_default_hyperparameters()
