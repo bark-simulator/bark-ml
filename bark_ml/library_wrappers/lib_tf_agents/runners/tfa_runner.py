@@ -116,7 +116,18 @@ class TFARunner:
         state, reward, is_terminal, _ = self._environment.step(action_step.action.numpy())
         self._environment.render()
 
+  def _GetBounds(self):
+    return [
+        self._environment._observer._world_x_range,
+        self._environment._observer._world_y_range,
+        self._environment._observer._ThetaRange,
+        self._environment._observer._VelocityRange
+        ]  
   
+  def _DenormalizeState(self, state):
+    bounds = self._GetBounds()
+    return [state[i] * (bounds[i % 4][1] - bounds[i % 4][0]) + bounds[i % 4][0] for i in range(len(state))]
+
   def GenerateExpertTrajectories(self, num_trajectories: int = 1000, render: bool = False) -> dict:
     """Generates expert trajectories based on a tfa agent.
 
@@ -131,17 +142,21 @@ class TFARunner:
     per_scenario_expert_trajectories = {}
 
     while len(per_scenario_expert_trajectories) < num_trajectories:
-      expert_trajectories = {'obs': [], 'act': []}
+      expert_trajectories = {'obs_norm': [], 'obs': [], 'act': []}
 
       state = self._environment.reset()
-      expert_trajectories['obs'].append(state)
+      # denormalized_state = self._DenormalizeState(state)
+      expert_trajectories['obs_norm'].append(state)
+      # expert_trajectories['obs'].append(denormalized_state)
       is_terminal = False
 
       while not is_terminal:
         action_step = self._agent._eval_policy.action(ts.transition(state, reward=0.0, discount=1.0))
 
         state, reward, is_terminal, info = self._environment.step(action_step.action.numpy())
-        expert_trajectories['obs'].append(state)
+        # denormalized_state = self._DenormalizeState(state)
+        expert_trajectories['obs_norm'].append(state)
+        # expert_trajectories['obs'].append(denormalized_state)
         expert_trajectories['act'].append(action_step.action.numpy())
 
         if render:
@@ -149,7 +164,8 @@ class TFARunner:
 
       if info and info['goal_reached']:
         expert_trajectories['act'].append(expert_trajectories['act'][-1])
-        assert len(expert_trajectories['obs']) == len(expert_trajectories['act'])
+        assert len(expert_trajectories['obs_norm']) == len(expert_trajectories['act'])
+        # assert len(expert_trajectories['obs_norm']) == len(expert_trajectories['obs'])
 
         per_scenario_expert_trajectories[len(per_scenario_expert_trajectories)] = expert_trajectories
         print(f'Generated {len(per_scenario_expert_trajectories)}/{num_trajectories} expert trajectories.')

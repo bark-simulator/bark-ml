@@ -115,7 +115,6 @@ def run_configuration(argv):
   env = SingleAgentRuntime(blueprint=bp,
                           render=False)
 
-
   if FLAGS.agent == 'ppo':
     ppo_agent = BehaviorPPOAgent(environment=env,
                                  params=params)

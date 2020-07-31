@@ -50,6 +50,21 @@ py_test(
 )
 
 py_test(
+    name = "calculate_action_tests",
+    srcs = ["calculate_action_tests.py"],
+    imports = ["../../../external/bark_project/bark/python_wrapper/"],
+
+    deps = [
+            "//bark_ml/library_wrappers/lib_tf2rl:lib_tf2rl",
+        ],
+    data = [
+            "//bark_ml/tests/py_library_tf2rl_tests/data:generate_expert_trajectories_tests_data"
+        ],
+    visibility = ["//visibility:public"],
+    size = "small"
+)
+
+py_test(
     name = "simulation_based_tests",
     srcs = ["simulation_based_tests.py"],
     deps = [

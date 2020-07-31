@@ -78,7 +78,9 @@ class MergingBlueprint(Blueprint):
                         follow_agent_id=True)
     dt = 0.2
     evaluator = GoalReached(params)
+    # observer = NearestObserver(params)
     observer = NearestAgentsObserver(params)
+    observer._max_num_vehicles = 3
     ml_behavior = ml_behavior
 
     super().__init__(
