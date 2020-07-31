@@ -37,7 +37,6 @@ def set_default_values_tfa_gnn(params):
     params["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams"] = [256, 128]
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["NumMpLayers"] = 2
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MpLayerNumUnits"] = 256
-    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["library"] = "tf2_gnn" # "tf2_gnn" or "spektral"
     params["ML"]["SACRunner"]["NumberOfCollections"] = int(1e6)
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["GraphDimensions"] = (4, 11, 4) # (n_nodes, n_features, n_edge_features)
 
@@ -64,7 +63,6 @@ params = ParameterServer(filename="examples/example_params/tfa_params.json")
 params = set_default_values_tfa_gnn(params)
 
 from config import tfa_gnn_checkpoint_path, tfa_gnn_summary_path
-params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = tfa_gnn_checkpoint_path
 
 
 layers_gnn = 1 + int(random() * 4)
@@ -90,10 +88,18 @@ spek_k_1 = 2**(6 + int(random() * 4))
 spek_k_2 = 2**(6 + int(random() * 4))  
 params["ML"]["BehaviorGraphSACAgent"]["GNN"]["KernelNetUnits"] = [spek_k_1, spek_k_2]
 
-summary_path_hyperparameter_run = tfa_gnn_summary_path + f'/{int(time.time())}__ \
+gnn_lib = "spektral"
+params["ML"]["BehaviorGraphSACAgent"]["GNN"]["library"] = gnn_lib # "tf2_gnn" or "spektral"
+
+run_name = f'/{int(time.time())}__ \
+        lib_{gnn_lib}__ \
         layers_{layers_gnn}__mp_layers_{mp_layers}__mp_channels_{mp_channels}__ \
         critic_fc_{critic_fc_1}_{critic_fc_2}__actor_fc_{actor_fc_1}_{actor_fc_2}__ \
         spek_k_{spek_k_1}_{spek_k_2}'
+
+params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = '/bark/checkpoints/' + run_name
+
+summary_path_hyperparameter_run = tfa_gnn_summary_path + run_name
 
 params["ML"]["TFARunner"]["SummaryPath"] = summary_path_hyperparameter_run
 
