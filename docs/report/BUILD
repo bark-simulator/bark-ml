@@ -13,13 +13,14 @@ py_binary(
         "//bark_ml:generate_core",
         "//examples/example_params:example_params",
         ":notebooks_folder",
-        "//docs/report/data"
+        "//docs/report/data",
+        "//docs/report/images"
         ],
     imports = ["../external/bark_project/bark/python_wrapper/"],
     deps = [
         "//bark_ml/environments:single_agent_runtime",
         "//bark_ml/environments:blueprints",
-        "//bark_ml/observers:graph_observer",
+        "//bark_ml/observers",
         "//bark_ml/library_wrappers/lib_tf2_gnn:lib_tf2_gnn",
         "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
         "//bark_ml/library_wrappers/lib_tf_agents/runners:runners",

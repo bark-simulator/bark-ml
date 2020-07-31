@@ -47,3 +47,30 @@ def visualize_graph(data_point, ax, visible_distance, normalization_ref):
 
 def get_default_gnn_params():
     return GNN.get_default_hyperparameters()
+
+def get_sample_observations():
+    num_nodes = 5
+    num_features = 5
+    num_edge_features = 4
+
+    agents = np.random.random_sample((num_nodes, num_features))
+    edge_features = np.random.random_sample((num_nodes, num_nodes, num_edge_features))
+
+    # note that edges are bidirectional, the
+    # the matrix is symmetric
+    adjacency_list = [
+      [0, 1, 1, 1, 0], # 1 connects with 2, 3, 4
+      [1, 0, 1, 1, 0], # 2 connects with 3, 4
+      [1, 1, 0, 1, 0], # 3 connects with 4
+      [1, 1, 1, 0, 0], # 4 has no links
+      [0, 0, 0, 0, 0]  # empty slot -> all zeros
+    ]
+
+    observation = np.array([num_nodes, num_nodes, num_features])
+    observation = np.append(observation, agents)
+    observation = np.append(observation, adjacency_list)
+    observation = np.append(observation, edge_features)
+    observation = observation.reshape(-1)
+    
+    return tf.cast(tf.stack([observation, observation]), tf.float32)
+    
