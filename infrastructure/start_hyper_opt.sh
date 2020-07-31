@@ -20,7 +20,7 @@ cleanup() {
     done
 }
 
-for i in {1..10}
+for i in {1..8}
 do
     sleep_time=$(( ($i - 1) * 30 ))
     launch_hyper_opt_instance $sleep_time
