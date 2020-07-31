@@ -32,13 +32,16 @@ class GNNWrapper(tf.keras.Model):
       self._init_tf2_gnn_layers(params)
 
   def _init_spektral_layers(self, params):
-    self._conv1 = EdgeConditionedConv(
-      channels=params.get("MPChannels", 64),
-      kernel_network=params.get("KernelNetUnits", [256]),
-      activation=params.get("MPLayerActivation", "tanh"))
+    self._convolutions = []
+    
+    for i in range(params.get("NumMpLayers", 1)):
+      self._convolutions.append(EdgeConditionedConv(
+        channels=params.get("MPChannels", 64),
+        kernel_network=params.get("KernelNetUnits", [256]),
+        activation=params.get("MPLayerActivation", "relu"))
+      )
 
-    self._pool1 = GlobalAttnSumPool()
-    self._dense1 = Dense(
+    self._dense = Dense(
       units=self.num_units,
       activation=params.get("DenseActivation", "tanh"))
 
@@ -46,7 +49,7 @@ class GNNWrapper(tf.keras.Model):
     # map bark-ml parameter keys to tf2_gnn parameter keys
     mapped_params = {}
     mapped_params["hidden_dim"] = self.num_units
-    mapped_params["num_layers"] = params.get("NumLayers", 1)
+    mapped_params["num_layers"] = params.get("NumMpLayers", 1)
     mapped_params["global_exchange_mode"] =\
       params.get("global_exchange_mode", "gru")
     mapped_params["message_calculation_class"] =\
@@ -72,10 +75,10 @@ class GNNWrapper(tf.keras.Model):
   def call_spektral(self, observations, training=False):
     X, A, E = GraphObserver.graph(observations, self._graph_dims)
 
-    X = self._conv1([X, A, E])
-    X = self._pool1(X)
-    X = self._dense1(X)
-    
+    for conv in self._convolutions: 
+      X = conv([X, A, E])
+
+    X = self._dense(X)
     return X
 
   @tf.function 
