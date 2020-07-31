@@ -94,6 +94,8 @@ def run_configuration(argv):
 
   np.random.seed(123456789)
   if FLAGS.mode != 'visualize':
+    if not FLAGS.expert_trajectories:
+      raise ValueError('Expert trajectories must be given.')
     expert_trajectories, avg_trajectory_length, num_trajectories = load_expert_trajectories(FLAGS.expert_trajectories,
       normalize_features=params["ML"]["Settings"]["NormalizeFeatures"],
       env=env, # the unwrapped env has to be used, since that contains the unnormalized spaces.
@@ -123,5 +125,4 @@ def run_configuration(argv):
 
 
 if __name__ == '__main__':
-  flags.mark_flag_as_required("expert_trajectories")
   app.run(run_configuration)

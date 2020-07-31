@@ -33,11 +33,12 @@ def load_expert_trajectories(dirname: str, normalize_features=False, env=None, s
     if not expert_trajectories:
         raise ValueError(f"Could not find valid expert trajectories in {dirname}.")
 
-    num_agents = int(env.observation_space.shape[0] / 4)
-    low = np.array([env._observer._world_x_range[0], env._observer._world_y_range[0], env._observer._ThetaRange[0], env._observer._VelocityRange[0]] * num_agents)
-    high = np.array([env._observer._world_x_range[1], env._observer._world_y_range[1], env._observer._ThetaRange[1], env._observer._VelocityRange[1]] * num_agents)
+    
     if normalize_features:
         assert env is not None, "if normalization is used the environment has to be provided."
+        num_agents = int(env.observation_space.shape[0] / 4)
+        low = np.array([env._observer._world_x_range[0], env._observer._world_y_range[0], env._observer._ThetaRange[0], env._observer._VelocityRange[0]] * num_agents)
+        high = np.array([env._observer._world_x_range[1], env._observer._world_y_range[1], env._observer._ThetaRange[1], env._observer._VelocityRange[1]] * num_agents)
         for key in ['obses', 'next_obses']:
             expert_trajectories[key] = normalize(features=expert_trajectories[key], high=high, low=low)
 
@@ -74,5 +75,5 @@ def normalize(features, high, low):
     """
     norm_features = features - low
     norm_features /= (high - low)
-    norm_features = norm_features * 2. - 1.
+    # norm_features = norm_features * 2. - 1.
     return norm_features

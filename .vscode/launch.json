@@ -154,6 +154,18 @@
 				}
 			},
 			{
+				"name": "Python: examples/gail (--mode=visualize, --blueprint=highway)",
+				"type": "python",
+				"request": "launch",
+				"program": "${workspaceFolder}/examples/gail.py",
+				"console": "integratedTerminal",
+				"args": ["--mode=visualize", "--blueprint=highway", 
+				"--train_out=~/Repositories/gail-4-bark/bark-ml/examples/gail/highway (another copy)/logs/10000/20200730T155707.204540_DDPG_GAIL"],
+				"env": {
+					"PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/gail.runfiles/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/com_github_interaction_dataset_interaction_dataset/python/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/com_github_keiohta_tf2rl"
+				}
+			},
+			{
 				"name": "Python: examples/gail (--mode=visualize)",
 				"type": "python",
 				"request": "launch",
