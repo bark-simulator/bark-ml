@@ -2,6 +2,8 @@ import tensorflow as tf
 
 # tfa
 from tf_agents.networks import normal_projection_network
+from tf_agents.networks import actor_distribution_network
+from tf_agents.agents.ddpg import critic_network
 from tf_agents.policies import greedy_policy
 
 from tf_agents.agents.sac import sac_agent
@@ -31,22 +33,22 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
     self._eval_policy = self.GetEvalPolicy()
 
   def GetAgent(self, env, params):
+    # critic network
+    critic_net = GNNCriticNetwork(
+      (env.observation_spec(), env.action_spec()),
+      gnn_params=self._params["ML"]["BehaviorGraphSACAgent"]["GNN"],
+      observation_fc_layer_params=None,
+      action_fc_layer_params=None,
+      joint_fc_layer_params=tuple(
+        self._params["ML"]["BehaviorGraphSACAgent"]["CriticJointFcLayerParams", "", [256, 128]]))
+        
     # actor network
     actor_net = GNNActorNetwork(
       input_tensor_spec=env.observation_spec(),
       output_tensor_spec=env.action_spec(),
-      fc_layer_params=[256, 128, 128],
-      gnn_num_layers=self._params["ML"]["BehaviorGraphSACAgent"]["NumLayersGNN", "", 4],
-      gnn_num_units=self._params["ML"]["BehaviorGraphSACAgent"]["NumUnitsGNN", "", 64]
-    )
-
-    # critic network
-    critic_net = GNNCriticNetwork(
-      input_tensor_spec=(env.observation_spec(), env.action_spec()),
-      action_fc_layer_params=None,
-      joint_fc_layer_params=[256, 128, 128],
-      gnn_num_layers=self._params["ML"]["BehaviorGraphSACAgent"]["NumLayersGNN", "", 4],
-      gnn_num_units=self._params["ML"]["BehaviorGraphSACAgent"]["NumUnitsGNN", "", 64]
+      gnn_params=self._params["ML"]["BehaviorGraphSACAgent"]["GNN"],
+      fc_layer_params=self._params\
+        ["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams", "", [256, 128]]
     )
     
     # agent
@@ -56,11 +58,11 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
       actor_network=actor_net,
       critic_network=critic_net,
       actor_optimizer=tf.compat.v1.train.AdamOptimizer(
-          learning_rate=self._params["ML"]["BehaviorSACAgent"]["ActorLearningRate", "", 3e-3]),
+          learning_rate=self._params["ML"]["BehaviorSACAgent"]["ActorLearningRate", "", 3e-4]),
       critic_optimizer=tf.compat.v1.train.AdamOptimizer(
-          learning_rate=self._params["ML"]["BehaviorSACAgent"]["CriticLearningRate", "", 3e-3]),
+          learning_rate=self._params["ML"]["BehaviorSACAgent"]["CriticLearningRate", "", 3e-4]),
       alpha_optimizer=tf.compat.v1.train.AdamOptimizer(
-          learning_rate=self._params["ML"]["BehaviorSACAgent"]["AlphaLearningRate", "", 3e-3]),
+          learning_rate=self._params["ML"]["BehaviorSACAgent"]["AlphaLearningRate", "", 3e-4]),
       target_update_tau=self._params["ML"]["BehaviorSACAgent"]["TargetUpdateTau", "", 0.05],
       target_update_period=self._params["ML"]["BehaviorSACAgent"]["TargetUpdatePeriod", "", 3],
       td_errors_loss_fn=tf.compat.v1.losses.mean_squared_error,
