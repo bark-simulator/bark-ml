@@ -145,27 +145,28 @@ class TFARunner:
       expert_trajectories = {'obs_norm': [], 'obs': [], 'act': []}
 
       state = self._environment.reset()
-      # denormalized_state = self._DenormalizeState(state)
+      denormalized_state = self._DenormalizeState(state)
       expert_trajectories['obs_norm'].append(state)
-      # expert_trajectories['obs'].append(denormalized_state)
+      expert_trajectories['obs'].append(denormalized_state)
       is_terminal = False
 
       while not is_terminal:
         action_step = self._agent._eval_policy.action(ts.transition(state, reward=0.0, discount=1.0))
 
         state, reward, is_terminal, info = self._environment.step(action_step.action.numpy())
-        # denormalized_state = self._DenormalizeState(state)
+        denormalized_state = self._DenormalizeState(state)
         expert_trajectories['obs_norm'].append(state)
-        # expert_trajectories['obs'].append(denormalized_state)
+        expert_trajectories['obs'].append(denormalized_state)
         expert_trajectories['act'].append(action_step.action.numpy())
 
         if render:
           self._environment.render()
 
-      if info and info['goal_reached']:
+      # if info and info['goal_reached']:
+      if True:
         expert_trajectories['act'].append(expert_trajectories['act'][-1])
         assert len(expert_trajectories['obs_norm']) == len(expert_trajectories['act'])
-        # assert len(expert_trajectories['obs_norm']) == len(expert_trajectories['obs'])
+        assert len(expert_trajectories['obs_norm']) == len(expert_trajectories['obs'])
 
         per_scenario_expert_trajectories[len(per_scenario_expert_trajectories)] = expert_trajectories
         print(f'Generated {len(per_scenario_expert_trajectories)}/{num_trajectories} expert trajectories.')

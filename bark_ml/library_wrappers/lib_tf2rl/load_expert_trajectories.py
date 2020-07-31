@@ -6,6 +6,16 @@ from typing import Tuple
 from bark_ml.library_wrappers.lib_tf2rl.load_save_utils import *
 from tf2rl.experiments.utils import load_trajectories
 
+
+def GetBounds(env):
+    env.reset()
+    return list(np.array([
+        env._observer._world_x_range,
+        env._observer._world_y_range,
+        env._observer._ThetaRange,
+        env._observer._VelocityRange
+        ] * (env._observer._max_num_vehicles + 1)).transpose())
+
 def load_expert_trajectories(dirname: str, normalize_features=False, env=None, subset_size = -1) -> (dict, float, int):
     """Loads all found expert trajectories files in the directory.
 
@@ -36,10 +46,11 @@ def load_expert_trajectories(dirname: str, normalize_features=False, env=None, s
     
     if normalize_features:
         assert env is not None, "if normalization is used the environment has to be provided."
+        bounds = GetBounds(env)
         for key in ['obses', 'next_obses']:
             expert_trajectories[key] = normalize(features=expert_trajectories[key],
-            high=env.action_space.high,
-            low=env.action_space.low
+            high=bounds[1],
+            low=bounds[0]
             )
 
         expert_trajectories['acts'] = normalize(features=expert_trajectories['acts'],
@@ -75,5 +86,5 @@ def normalize(features, high, low):
     """
     norm_features = features - low
     norm_features /= (high - low)
-    # norm_features = norm_features * 2. - 1.
+    norm_features = norm_features * 2. - 1.
     return norm_features
