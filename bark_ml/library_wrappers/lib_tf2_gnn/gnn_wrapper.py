@@ -24,7 +24,7 @@ class GNNWrapper(tf.keras.Model):
     lib = params.get("library", "tf2_gnn")
     self.use_spektral = lib == "spektral"
 
-    print(f'[GNN] Using library {lib}')
+    print(f"Initializing {name} with '{lib}'...")
     
     if self.use_spektral:
       self._init_spektral_layers(params)

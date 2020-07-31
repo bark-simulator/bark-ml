@@ -77,7 +77,7 @@ class LegGNNCriticNetwork(network.Network):
       raise ValueError('Only a single action is supported by this network')
     self._single_action_spec = flat_action_spec[0]
 
-    self._gnn = GNNWrapper(params=gnn_params)
+    self._gnn = GNNWrapper(params=gnn_params, name=name + '_GNN')
 
     self._encoder = encoding_network.EncodingNetwork(
       input_tensor_spec=tf.TensorSpec([None, self._gnn.num_units]),
@@ -107,11 +107,6 @@ class LegGNNCriticNetwork(network.Network):
         kernel_initializer=tf.keras.initializers.RandomUniform(
             minval=-0.003, maxval=0.003),
         name='value'))
-
-    self.call_times = []
-    self.gnn_call_times = []
-    self.encoder_call_times = []
-    self.joint_call_times = []
 
   def call(self, inputs, step_type=(), network_state=(), training=False):
     t1 = time.time()
@@ -246,7 +241,7 @@ class GNNCriticNetwork(network.Network):
       raise ValueError('Only a single action is supported by this network')
     self._single_action_spec = flat_action_spec[0]
 
-    self._gnn = GNNWrapper(params=gnn_params)
+    self._gnn = GNNWrapper(params=gnn_params, name=name + '_GNN')
 
     # TODO(kbanoop): Replace mlp_layers with encoding networks.
     self._observation_layers = utils.mlp_layers(

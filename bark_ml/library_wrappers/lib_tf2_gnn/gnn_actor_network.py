@@ -95,7 +95,7 @@ class GNNActorNetwork(network.Network):
     if self._single_action_spec.dtype not in [tf.float32, tf.float64]:
       raise ValueError('Only float actions are supported by this network.')
     
-    self._gnn = GNNWrapper(params=gnn_params)
+    self._gnn = GNNWrapper(params=gnn_params, name=name + '_GNN')
 
     print(fc_layer_params)
 

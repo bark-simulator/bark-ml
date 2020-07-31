@@ -13,6 +13,7 @@ from tf2_gnn.layers import GNN, GNNInput
 
 # Bark-ML imports
 from bark_ml.observers.graph_observer import GraphObserver
+from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner
 
 # Supervised learning imports
 from supervised_learning.actor_nets import ConstantActorNet, RandomActorNet, \
@@ -75,4 +76,130 @@ def get_sample_observations():
     observation = observation.reshape(-1)
     
     return tf.cast(tf.stack([observation, observation]), tf.float32)
+
+def prepare_agent(agent, params, env):
+    env.ml_behavior = agent
+    runner = SACRunner(params=params, environment=env, agent=agent)
+    
+    iterator = iter(agent._dataset)
+    agent._training = True
+    runner._collection_driver.run()
+    experience, _ = next(iterator)
+    agent._agent.train(experience)
+
+def summarize_agent(agent):
+    networks = [
+        agent._agent._actor_network,
+        agent._agent._critic_network_1,
+        agent._agent._critic_network_2,
+        agent._agent._target_critic_network_1,
+        agent._agent._target_critic_network_2,
+    ]
+     
+    print('{:<30} {}'.format("Network", "Parameters"))
+    print("==========================================")
+    total_params = 0
+    for net in networks:
+        n = np.sum([np.prod(v.get_shape().as_list()) for v in net.trainable_variables])
+        total_params += n
+        print('{:.<34} {:,}'.format(net.name, n).replace(',','.'))
+    
+    print("------------------------------------------")
+    print('{:<32} {:,}'.format("Total parameters", total_params).replace(',','.'))
+
+def print_parameter_overview():
+    shared_params = []
+    tf2_gnn_params = []
+    spektral_params = []
+
+    p = '["ML"]["GraphObserver"]["AgentLimit"] (int)'
+    d = "Specifies the maximum number of agents that are included in an observation."
+    v = 4
+    shared_params.append((p, d, v))
+    
+    d = "specifies the fully connected layers (number and sizes) of the critic joint network ([int])"
+    p = "['ML']['BehaviorGraphSACAgent']['CriticJointFcLayerParams']"
+    v = [256, 128]
+    shared_params.append((p, d, v))
+    
+    d = "specifies the fully connected layers (number and sizes) of the actor encoding network ([int])"
+    p = "['ML']['BehaviorGraphSACAgent']['ActorFcLayerParams']"
+    v = [256, 128]
+    shared_params.append((p, d, v))
+    
+    d = "specifies the number of message passing layers in the GNN (int)"
+    p = "['ML']['BehaviorGraphSACAgent']['GNN']['NumMpLayers']"
+    v = 2
+    shared_params.append((p, d, v))
+    
+    d = "the number of units in the message passing layers in the GNN (int)"
+    p = "['ML']['BehaviorGraphSACAgent']['GNN']['MpLayerNumUnits']"
+    v = 128
+    shared_params.append((p, d, v))
+    
+    d = 'which library to use as the GNN implementation, either "tf2_gnn" or "spektral"'
+    p = "['ML']['BehaviorGraphSACAgent']['GNN']['library']"
+    v = "tf2_gnn"
+    shared_params.append((p, d, v))
+
+    # tf2_gnn specific parameters: these only apply when using tf2_gnn
+    
+    d = "the identifier of the message passing class to be used, here: a recurrent gated convolution network (str)\n# NOTE: when using the 'ggnn' message passing layer, 'MPLayerUnits' must match n_features!"
+    p = "['ML']['BehaviorGraphSACAgent']['GNN.message_calculation_class']"
+    v = "rgcn"
+    tf2_gnn_params.append((p, d, v))
+    
+    d = "the identifier of the message passing class to be used, here: a gated recurrent unit (str)"
+    p = "['ML']['BehaviorGraphSACAgent']['GNN']['global_exchange_mode']"
+    v = "gru"
+    tf2_gnn_params.append((p, d, v))
+
+    d = "specifies after how many message passing layers a dense layer is inserted (int)"
+    p = "['ML']['BehaviorGraphSACAgent']['GNN']['dense_every_num_layers']"
+    v = 2
+    tf2_gnn_params.append((p, d, v))
+    
+    d = "specifies after how many message passing layers a global exchange layer is inserted (int)"
+    p = "['ML']['BehaviorGraphSACAgent']['GNN.global_exchange_every_num_layers']"
+    v = 2
+    tf2_gnn_params.append((p, d, v))
+
+    # spektral specific parameters: these only apply when using spektral
+    
+    d = "the number of channels in the edge conditioned convolution layer (int)"
+    p = "['ML']['BehaviorGraphSACAgent']['GNN']['MPChannels']"
+    v = 64
+    spektral_params.append((p, d, v))
+    
+    d = "specifies the fully connected layers (number and sizes) in the edge network ([int])"
+    p = "['ML']['BehaviorGraphSACAgent']['GNN']['KernelNetUnits']"
+    v = [256]
+    spektral_params.append((p, d, v))
+    
+    d = "the activation function of the message passing layer (str)"
+    p = "['ML']['BehaviorGraphSACAgent']['GNN']['MPLayerActivation']"
+    v = "relu"
+    spektral_params.append((p, d, v))
+    
+    d = "the activation function of the final dense layer (str)"
+    p = "['ML']['BehaviorGraphSACAgent']['GNN.DenseActication']"
+    v = "tanh"
+    spektral_params.append((p, d, v))
+    
+    for p, d, v in shared_params:
+        print(f"Path: {p}")
+        print(f"Description: {d}")
+        print(f"Default value: {v}\n")
+    
+    print("The following paramater only apply when using tf2_gnn.")
+    for p, d, v in tf2_gnn_params:
+        print(f"Path: {p}")
+        print(f"Description: {d}")
+        print(f"Default value: {v}\n")
+    
+    print("The following paramater only apply when using Spektral.")
+    for p, d, v in spektral_params:
+        print(f"Path: {p}")
+        print(f"Description: {d}")
+        print(f"Default value: {v}\n")
     

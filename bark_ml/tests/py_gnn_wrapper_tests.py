@@ -19,7 +19,6 @@ class PyGNNWrapperTests(unittest.TestCase):
 
   def _mock_setup(self):
     params = ParameterServer()
-    params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = '/Users/marco.oliva/Development/bark-ml_logs/checkpoints/tf2_gnn/'
     params["ML"]["TFARunner"]["SummaryPath"] = '/Users/marco.oliva/Development/bark-ml_logs/summaries/tf2_gnn/'
     params["ML"]["GoalReachedEvaluator"]["MaxSteps"] = 30
     params["ML"]["BehaviorSACAgent"]["DebugSummaries"] = True
@@ -67,33 +66,44 @@ class PyGNNWrapperTests(unittest.TestCase):
     iterator = iter(agent._dataset)
     trainable_variables = []
 
-    for i in range(4):
-      agent._training = True
-      runner._collection_driver.run()
-      experience, _ = next(iterator)
-      agent._agent.train(experience)
+    agent._training = True
+    runner._collection_driver.run()
+    experience, _ = next(iterator)
+    agent._agent.train(experience)
 
-      v = agent._agent.trainable_variables
-      shapes = [np.product(p.shape.as_list()) for p in v]
-      
-      v = agent._agent._actor_network._gnn.trainable_variables
-      gnn_shapes = [np.product(p.shape.as_list()) for p in v]
+    v = agent._agent.trainable_variables
+    shapes = [np.product(p.shape.as_list()) for p in v]
+    
+    v = agent._agent._actor_network._gnn.trainable_variables
+    gnn_shapes = [np.product(p.shape.as_list()) for p in v]
+    v = agent._agent._actor_network.trainable_variables
+    actor_shapes = [np.product(p.shape.as_list()) for p in v]
+    v = agent._agent._critic_network_1.trainable_variables
+    critic_shapes = [np.product(p.shape.as_list()) for p in v]
 
-      v = agent._agent._actor_network.trainable_variables
-      actor_shapes = [np.product(p.shape.as_list()) for p in v]
+    vals = [(val.name, np.copy(val.numpy())) for val in v]
+    trainable_variables.append(vals)
 
-      v = agent._agent._critic_network_1.trainable_variables
-      critic_shapes = [np.product(p.shape.as_list()) for p in v]
-      break
+    networks = [
+        agent._agent._actor_network,
+        agent._agent._critic_network_1,
+        agent._agent._critic_network_2,
+        agent._agent._target_critic_network_1,
+        agent._agent._target_critic_network_2,
+    ]
 
-      vals = [(val.name, np.copy(val.numpy())) for val in v]
-      trainable_variables.append(vals)
+    for net in networks:
+        n = np.sum([np.prod(v.get_shape().as_list()) for v in net.trainable_variables])
+        print(f"{net.name}:")
+        print(f'Parameters: {n}')
+        
+#analyse_agent(agent)
 
     print(f'critic params: {np.sum(critic_shapes)}')
     print(f'actor params: {np.sum(actor_shapes)}')
     print(f'actor gnn params: {np.sum(gnn_shapes)}')
     print(f'Total parameters: {np.sum(shapes)}')
-    # return  
+    # # return  
 
     # before = trainable_variables[0]
     # after = trainable_variables[-1]
