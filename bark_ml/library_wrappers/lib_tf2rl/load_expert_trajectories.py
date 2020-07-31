@@ -36,11 +36,11 @@ def load_expert_trajectories(dirname: str, normalize_features=False, env=None, s
     
     if normalize_features:
         assert env is not None, "if normalization is used the environment has to be provided."
-        num_agents = int(env.observation_space.shape[0] / 4)
-        low = np.array([env._observer._world_x_range[0], env._observer._world_y_range[0], env._observer._ThetaRange[0], env._observer._VelocityRange[0]] * num_agents)
-        high = np.array([env._observer._world_x_range[1], env._observer._world_y_range[1], env._observer._ThetaRange[1], env._observer._VelocityRange[1]] * num_agents)
         for key in ['obses', 'next_obses']:
-            expert_trajectories[key] = normalize(features=expert_trajectories[key], high=high, low=low)
+            expert_trajectories[key] = normalize(features=expert_trajectories[key],
+            high=env.action_space.high,
+            low=env.action_space.low
+            )
 
         expert_trajectories['acts'] = normalize(features=expert_trajectories['acts'],
             high=env.action_space.high,
