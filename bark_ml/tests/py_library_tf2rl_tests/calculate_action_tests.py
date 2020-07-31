@@ -15,6 +15,10 @@ class CalculateActionTests(unittest.TestCase):
     """
 
     def test_sanity_check_on_sac(self):
+        """Test: confirms that the actions are calculated correctly.
+        Loads some sac generated expert trajectories, takes the not normalized states,
+        calculates the action and compares to the actual action from the expert.
+        """
         expert_trajectories_directory = os.path.join(os.path.dirname(__file__), 'data', 'expert_trajectories', 'sac')
         expert_trajectories, avg_trajectory_length, num_trajectories = load_expert_trajectories(expert_trajectories_directory)
 
@@ -24,9 +28,13 @@ class CalculateActionTests(unittest.TestCase):
             next_obs = expert_trajectories['next_obses'][i]
             expected_act = expert_trajectories['acts'][i]
 
-            calculated_act = calculate_action([obs, next_obs], time_step=0.2, wheel_base=2.7)
-            print(calculated_act)
+            calculated_action = calculate_action([obs, next_obs], time_step=0.2, wheel_base=2.7)
 
+            print('Expected:   ', expected_act)
+            print('Calculated: ', calculated_action)
+
+            for i, value in enumerate(expected_act):
+                self.assertAlmostEqual(value, calculated_action[i], 2)
 
         assert expert_trajectories
 

@@ -37,8 +37,7 @@ class LoadExpertTrajectoriesTest(unittest.TestCase):
         assert self.expert_trajectories
         assert self.expert_trajectories_norm
 
-        self.assertEqual(self.avg_trajectory_length, 14.4) 
-        self.assertEqual(self.avg_trajectory_length, self.avg_trajectory_length_norm) 
+        self.assertEqual(self.avg_trajectory_length, 4.4) 
 
         self.assertEqual(self.num_trajectories, 5)
         self.assertEqual(self.num_trajectories, self.num_trajectories_norm)
@@ -73,12 +72,12 @@ class LoadExpertTrajectoriesTest(unittest.TestCase):
         np.random.seed(0)
         subset, avg_length, num_trajectories = load_expert_trajectories(self.expert_trajectories_directory, subset_size=3)
 
-        self.assertEqual(avg_length, 15)
+        self.assertEqual(avg_length, 3.0)
         self.assertEqual(num_trajectories, 3)
 
-        self.assertEqual(subset['obses'].shape, (45, 16))
-        self.assertEqual(subset['next_obses'].shape, (45, 16))
-        self.assertEqual(subset['acts'].shape, (45, 2))
+        self.assertEqual(subset['obses'].shape, (9, 16))
+        self.assertEqual(subset['next_obses'].shape, (9, 16))
+        self.assertEqual(subset['acts'].shape, (9, 2))
 
 class test_env():
     """dummy environment for testing."""
@@ -92,12 +91,6 @@ class test_env():
         velocity_range = params["ML"]["StateObserver"]["VelocityRange"]
         
         self._observer = NearestAgentsObserver(params)
-        # #  = {
-        # '_world_x_range': x_range,
-        # '_world_y_range': y_range,
-        # '_ThetaRange': theta_range,
-        # '_VelocityRange': velocity_range
-        # }
         self.observation_space = Box(
             low=np.array([x_range[0], y_range[0],\
             theta_range[0], velocity_range[0]] * (num_max_vehicles + 1)),\
