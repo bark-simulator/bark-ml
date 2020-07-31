@@ -187,19 +187,19 @@ def print_parameter_overview():
     spektral_params.append((p, d, v))
     
     for p, d, v in shared_params:
-        print(f"Path: {p}")
-        print(f"Description: {d}")
-        print(f"Default value: {v}\n")
+        print(f"\033[1mPath:\033[0m {p}")
+        print(f"\033[1mDescription:\033[0m {d}")
+        print(f"\033[1mDefault value:\033[0m {v}\n")
     
     print("The following paramater only apply when using tf2_gnn.")
     for p, d, v in tf2_gnn_params:
-        print(f"Path: {p}")
-        print(f"Description: {d}")
-        print(f"Default value: {v}\n")
+        print(f"\033[1mPath:\033[0m {p}")
+        print(f"\033[1mDescription:\033[0m {d}")
+        print(f"\033[1mDefault value:\033[0m {v}\n")
     
     print("The following paramater only apply when using Spektral.")
     for p, d, v in spektral_params:
-        print(f"Path: {p}")
-        print(f"Description: {d}")
-        print(f"Default value: {v}\n")
+        print(f"\033[1mPath:\033[0m {p}")
+        print(f"\033[1mDescription:\033[0m {d}")
+        print(f"\033[1mDefault value:\033[0m {v}\n")
     
