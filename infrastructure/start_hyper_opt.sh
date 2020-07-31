@@ -2,7 +2,7 @@
 
 trap cleanup EXIT
 
-HYPER_OPT_START_COMMAND="./start_training_docker.sh --agent hyperparameter_optimization --move_checkpoints --timeout 12h"
+HYPER_OPT_START_COMMAND="./start_training_docker.sh --devices 1 --agent hyperparameter_optimization --move_checkpoints --timeout 12h"
 
 pids_to_kill=""
 
@@ -20,7 +20,7 @@ cleanup() {
     done
 }
 
-for i in {1..10}
+for i in {1..4}
 do
     sleep_time=$(( ($i - 1) * 30 ))
     launch_hyper_opt_instance $sleep_time
