@@ -48,6 +48,8 @@ def visualize_graph(data_point, ax, visible_distance, normalization_ref):
 def get_default_gnn_params():
     return GNN.get_default_hyperparameters()
 
+graph_dims = (5, 5, 4)
+
 def get_sample_observations():
     num_nodes = 5
     num_features = 5
