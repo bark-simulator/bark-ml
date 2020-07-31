@@ -42,7 +42,6 @@ def load_expert_trajectories(dirname: str, normalize_features=False, env=None, s
     expert_trajectories = load_trajectories(joblib_files)
     if not expert_trajectories:
         raise ValueError(f"Could not find valid expert trajectories in {dirname}.")
-
     
     if normalize_features:
         assert env is not None, "if normalization is used the environment has to be provided."
