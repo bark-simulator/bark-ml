@@ -28,10 +28,12 @@ class CalculateActionTests(unittest.TestCase):
             next_obs = expert_trajectories['next_obses'][i]
             expected_act = expert_trajectories['acts'][i]
 
-            calculated_action = calculate_action([obs, next_obs], time_step=0.2, wheel_base=2.7)
+            calculated_action = np.array(calculate_action([obs, next_obs], time_step=0.2, wheel_base=2.7))
 
-            print('Expected:   ', expected_act)
-            print('Calculated: ', calculated_action)
+            with np.printoptions(precision=2, suppress=True):
+               print('Expected:   ', expected_act)
+               print('Calculated: ', calculated_action)
+               print('')
 
             for i, value in enumerate(expected_act):
                 self.assertAlmostEqual(value, calculated_action[i], 2)
