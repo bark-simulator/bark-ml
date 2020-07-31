@@ -6,6 +6,7 @@ py_test(
         "//bark_ml/tests/py_library_tf2rl_tests/data:generate_expert_trajectories_tests_data",
         "@bark_project//bark/python_wrapper:core.so",
         "//bark_ml/tests/py_library_tf2rl_tests/gail_data",
+        "//bark_ml/observers",
         ],
     imports = ["../../external/bark_project/bark/python_wrapper/"],
     deps = [

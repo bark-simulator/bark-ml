@@ -12,6 +12,7 @@ from gym.spaces.box import Box
 from bark_ml.library_wrappers.lib_tf2rl.load_expert_trajectories import *
 from bark_ml.library_wrappers.lib_tf2rl.load_save_utils import *
 from bark_project.bark.runtime.commons.parameters import ParameterServer
+from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 
 class LoadExpertTrajectoriesTest(unittest.TestCase):
     """
@@ -90,6 +91,13 @@ class test_env():
         theta_range = params["ML"]["StateObserver"]["ThetaRange"]
         velocity_range = params["ML"]["StateObserver"]["VelocityRange"]
         
+        self._observer = NearestAgentsObserver(params)
+        # #  = {
+        # '_world_x_range': x_range,
+        # '_world_y_range': y_range,
+        # '_ThetaRange': theta_range,
+        # '_VelocityRange': velocity_range
+        # }
         self.observation_space = Box(
             low=np.array([x_range[0], y_range[0],\
             theta_range[0], velocity_range[0]] * (num_max_vehicles + 1)),\
@@ -100,7 +108,9 @@ class test_env():
         act_low = params["ML"]["BehaviorContinuousML"]["ActionsLowerBound"]
         act_high = params["ML"]["BehaviorContinuousML"]["ActionsUpperBound"]
         self.action_space = Box(low=np.array(act_low), high=np.array(act_high))
-
+    
+    def reset(self):
+        pass
 
 if __name__ == '__main__':
     unittest.main()
