@@ -23,27 +23,13 @@ class QRDQN(BaseModel):
         self.dqn_net = DQNBase(num_channels=num_channels, embedding_dim= self.embedding_dim,
                                hidden=params["ML"]["QRDQN"]["HiddenDims", "", 512])
         # Quantile network.
-        #if not dueling_net:
         self.q_net = nn.Sequential(
             linear(self.embedding_dim, 512),
             nn.ReLU(),
             linear(512, num_actions * N),
         )
-        # else:
-        #     self.advantage_net = nn.Sequential(
-        #         linear(self.embedding_dim, 512),
-        #         nn.ReLU(),
-        #         linear(512, num_actions * N),
-        #     )
-        #     self.baseline_net = nn.Sequential(
-        #         linear(self.embedding_dim, 512),
-        #         nn.ReLU(),
-        #         linear(512, N),
-        #     )
 
-        
-
-    def forward(self, states=None, state_embeddings=None):
+    def calculate_quantiles(self, states=None, state_embeddings=None):
         assert states is not None or state_embeddings is not None
         batch_size = states.shape[0] if states is not None\
             else state_embeddings.shape[0]
@@ -52,16 +38,7 @@ class QRDQN(BaseModel):
             state_embeddings = self.dqn_net(states)
 
         #if not self.dueling_net:
-        quantiles = self.q_net(
-            state_embeddings).view(batch_size, self.N, self.num_actions)
-        # else:
-        #     advantages = self.advantage_net(
-        #         state_embeddings).view(batch_size, self.N, self.num_actions)
-        #     baselines = self.baseline_net(
-        #         state_embeddings).view(batch_size, self.N, 1)
-        #     quantiles = baselines + advantages\
-        #         - advantages.mean(dim=2, keepdim=True)
-
+        quantiles = self.q_net(state_embeddings).view(batch_size, self.N, self.num_actions)
         assert quantiles.shape == (batch_size, self.N, self.num_actions)
 
         return quantiles
@@ -72,10 +49,11 @@ class QRDQN(BaseModel):
             else state_embeddings.shape[0]
 
         # Calculate quantiles.
-        quantiles = self(states=states, state_embeddings=state_embeddings)
+        quantiles = self.calculate_quantiles(states=states, state_embeddings=state_embeddings)
 
         # Calculate expectations of value distributions.
         q = quantiles.mean(dim=1)
         assert q.shape == (batch_size, self.num_actions)
 
         return q
+        

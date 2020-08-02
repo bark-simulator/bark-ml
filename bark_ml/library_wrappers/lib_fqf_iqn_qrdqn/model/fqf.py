@@ -87,3 +87,25 @@ class FQF(BaseModel):
         assert q.shape == (batch_size, self.num_actions)
 
         return q
+
+    # Only used by torch script from c++
+    # similar to above method calculate_q
+    # but for inference only
+    def forward(self, states):
+        state_embeddings = self.dqn_net(states)
+        batch_size = state_embeddings.shape[0]
+
+        # Calculate fractions.
+        taus, tau_hats, _ = self.calculate_fractions(state_embeddings=state_embeddings)
+
+        # Calculate quantiles.
+        tau_embeddings = self.cosine_net(tau_hats)
+        quantile_hats = self.quantile_net(state_embeddings, tau_embeddings)
+        assert quantile_hats.shape == (batch_size, self.N, self.num_actions)
+
+        # Calculate expectations of value distribution.
+        q = ((taus[:, 1:, None] - taus[:, :-1, None]) * quantile_hats)\
+            .sum(dim=1)
+        assert q.shape == (batch_size, self.num_actions)
+
+        return q
