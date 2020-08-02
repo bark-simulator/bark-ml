@@ -32,19 +32,34 @@ cc_library(
 )
     """)
     
+#   _maybe(
+#     http_archive,
+#     name = "torch_api",
+#     urls = ["https://download.pytorch.org/libtorch/nightly/cpu/libtorch-shared-with-deps-latest.zip"],
+#     build_file_content = """
+# cc_library(
+#     name = "lib",
+#     srcs = glob(["libtorch/lib/*.*"]),
+#     hdrs = glob(["libtorch/include/**/*.h", "libtorch/include/*.h"]),
+#     visibility = ["//visibility:public"],
+# )
+#     """)
+
   _maybe(
-    http_archive,
-    name = "torch_api",
-    urls = ["https://download.pytorch.org/libtorch/nightly/cpu/libtorch-shared-with-deps-latest.zip"],
+    native.new_local_repository,
+    name = "torchcpp",
+    path = "./bark_ml/python_wrapper/venv/lib/python3.7/site-packages/",
     build_file_content = """
 cc_library(
     name = "lib",
-    srcs = glob(["libtorch/lib/*.*"]),
-    hdrs = glob(["libtorch/include/**/*.h", "libtorch/include/*.h"]),
+    srcs = ["torch/lib/libc10.so",
+            "torch/lib/libtorch.so",
+            "torch/lib/libtorch_cpu.so",
+            "torch/lib/libtorch_cuda.so"],
+    hdrs = glob(["torch/include/**/*.h", "torch/include/*.h"]),
     visibility = ["//visibility:public"],
 )
     """)
-
   _maybe(
     git_repository,
     name = "diadem_project",

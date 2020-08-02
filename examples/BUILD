@@ -68,12 +68,12 @@ py_test(
   ]
 )
 
-cc_binary(
-  name = "torch_script",
-  srcs = ["torch_script.cc"],
-  deps = ["@torch_api//:lib",],
-  copts = ["-Iexternal/torch_api/libtorch/include",
-           "-Lexternal/torch_api/libtorch/lib",
+cc_test(
+  name = "pytorch_model_cpp",
+  srcs = ["pytorch_model_cpp.cc"],
+  deps = ["@torchcpp//:lib",],
+  copts = ["-Iexternal/torchcpp/torch/include",
+           #"-Lexternal/torchcpp/libtorch/lib",
            "-D_GLIBCXX_USE_CXX11_ABI=0"],
 
   linkopts = ["-ltorch","-lc10"],
