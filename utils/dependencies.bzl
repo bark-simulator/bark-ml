@@ -1,4 +1,6 @@
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository", "new_git_repository")
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
 
 def _maybe(repo_rule, name, **kwargs):
   # if name not in native.existing_rules():
@@ -26,6 +28,19 @@ cc_library(
     srcs = glob(["lib/libpython3.*", "libs/python3.lib", "libs/python36.lib"]),
     hdrs = glob(["include/**/*.h", "include/*.h"]),
     includes = ["include/python3.6m", "include", "include/python3.7m", "include/python3.5m"], 
+    visibility = ["//visibility:public"],
+)
+    """)
+    
+  _maybe(
+    http_archive,
+    name = "torch_api",
+    urls = ["https://download.pytorch.org/libtorch/nightly/cpu/libtorch-shared-with-deps-latest.zip"],
+    build_file_content = """
+cc_library(
+    name = "lib",
+    srcs = glob(["libtorch/lib/*.*"]),
+    hdrs = glob(["libtorch/include/**/*.h", "libtorch/include/*.h"]),
     visibility = ["//visibility:public"],
 )
     """)

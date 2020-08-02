@@ -64,3 +64,25 @@ class IQN(BaseModel):
         assert q.shape == (batch_size, self.num_actions)
 
         return q
+
+    def forward(self, states):
+        assert states is not None 
+        batch_size = states.shape[0]
+
+        state_embeddings = self.dqn_net(states)
+
+        # Sample fractions.
+        taus = torch.rand(
+            batch_size, self.K, dtype=state_embeddings.dtype,
+            device=state_embeddings.device)
+
+        # Calculate quantiles.
+        tau_embeddings = self.cosine_net(taus)
+        quantiles = self.quantile_net(state_embeddings, tau_embeddings)
+        assert quantiles.shape == (batch_size, self.K, self.num_actions)
+
+        # Calculate expectations of value distributions.
+        q = quantiles.mean(dim=1)
+        assert q.shape == (batch_size, self.num_actions)
+
+        return q

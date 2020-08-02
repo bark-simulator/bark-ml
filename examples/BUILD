@@ -68,6 +68,18 @@ py_test(
   ]
 )
 
+cc_binary(
+  name = "torch_script",
+  srcs = ["torch_script.cc"],
+  deps = ["@torch_api//:lib",],
+  copts = ["-Iexternal/torch_api/libtorch/include",
+           "-Lexternal/torch_api/libtorch/lib",
+           "-D_GLIBCXX_USE_CXX11_ABI=0"],
+
+  linkopts = ["-ltorch","-lc10"],
+  linkstatic=False,
+)
+
 py_test(
   name = "iqn",
   srcs = ["iqn.py"],

@@ -129,23 +129,23 @@ class QuantileNetwork(nn.Module):
         super(QuantileNetwork, self).__init__()
         linear = NoisyLinear if noisy_net else nn.Linear
 
-        if not dueling_net:
-            self.net = nn.Sequential(
-                linear(embedding_dim, 512),
-                nn.ReLU(),
-                linear(512, num_actions),
-            )
-        else:
-            self.advantage_net = nn.Sequential(
-                linear(embedding_dim, 512),
-                nn.ReLU(),
-                linear(512, num_actions),
-            )
-            self.baseline_net = nn.Sequential(
-                linear(embedding_dim, 512),
-                nn.ReLU(),
-                linear(512, 1),
-            )
+        #if not dueling_net:
+        self.net = nn.Sequential(
+            linear(embedding_dim, 512),
+            nn.ReLU(),
+            linear(512, num_actions),
+        )
+        # else:
+        #     self.advantage_net = nn.Sequential(
+        #         linear(embedding_dim, 512),
+        #         nn.ReLU(),
+        #         linear(512, num_actions),
+        #     )
+        #     self.baseline_net = nn.Sequential(
+        #         linear(embedding_dim, 512),
+        #         nn.ReLU(),
+        #         linear(512, 1),
+        #     )
 
         self.num_actions = num_actions
         self.embedding_dim = embedding_dim
@@ -170,13 +170,13 @@ class QuantileNetwork(nn.Module):
             batch_size * N, self.embedding_dim)
 
         # Calculate quantile values.
-        if not self.dueling_net:
-            quantiles = self.net(embeddings)
-        else:
-            advantages = self.advantage_net(embeddings)
-            baselines = self.baseline_net(embeddings)
-            quantiles =\
-                baselines + advantages - advantages.mean(1, keepdim=True)
+        #if not self.dueling_net:
+        quantiles = self.net(embeddings)
+        # else:
+        #     advantages = self.advantage_net(embeddings)
+        #     baselines = self.baseline_net(embeddings)
+        #     quantiles =\
+        #         baselines + advantages - advantages.mean(1, keepdim=True)
 
         return quantiles.view(batch_size, N, self.num_actions)
 

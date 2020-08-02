@@ -27,12 +27,12 @@ flags.DEFINE_enum("env",
                   ["highway-v1", "merging-v1", "intersection-v1"],
                   "Environment the agent should interact in.")
 
-flags.DEFINE_bool("load", False, "Load weights from checkpoint path.")
+flags.DEFINE_bool("load", True, "Load weights from checkpoint path.")
 
 def run_configuration(argv):
 
   params = ParameterServer(filename="examples/example_params/iqn_params.json")
-  params["ML"]["BaseAgent"]["SummaryPath"] = "/home/mansoor/Study/Werkstudent/fortiss/code/bark-ml/logs/summaries"
+  params["ML"]["BaseAgent"]["SummaryPath"] = "/home/mansoor/Study/Werkstudent/fortiss/code/bark-ml/summaries"
   params["ML"]["BaseAgent"]["CheckpointPath"] = "/home/mansoor/Study/Werkstudent/fortiss/code/bark-ml/checkpoints"
   
   env = gym.make(FLAGS.env)

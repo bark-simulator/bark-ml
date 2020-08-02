@@ -23,23 +23,23 @@ class QRDQN(BaseModel):
         self.dqn_net = DQNBase(num_channels=num_channels, embedding_dim= self.embedding_dim,
                                hidden=params["ML"]["QRDQN"]["HiddenDims", "", 512])
         # Quantile network.
-        if not dueling_net:
-            self.q_net = nn.Sequential(
-                linear(self.embedding_dim, 512),
-                nn.ReLU(),
-                linear(512, num_actions * N),
-            )
-        else:
-            self.advantage_net = nn.Sequential(
-                linear(self.embedding_dim, 512),
-                nn.ReLU(),
-                linear(512, num_actions * N),
-            )
-            self.baseline_net = nn.Sequential(
-                linear(self.embedding_dim, 512),
-                nn.ReLU(),
-                linear(512, N),
-            )
+        #if not dueling_net:
+        self.q_net = nn.Sequential(
+            linear(self.embedding_dim, 512),
+            nn.ReLU(),
+            linear(512, num_actions * N),
+        )
+        # else:
+        #     self.advantage_net = nn.Sequential(
+        #         linear(self.embedding_dim, 512),
+        #         nn.ReLU(),
+        #         linear(512, num_actions * N),
+        #     )
+        #     self.baseline_net = nn.Sequential(
+        #         linear(self.embedding_dim, 512),
+        #         nn.ReLU(),
+        #         linear(512, N),
+        #     )
 
         
 
@@ -51,16 +51,16 @@ class QRDQN(BaseModel):
         if state_embeddings is None:
             state_embeddings = self.dqn_net(states)
 
-        if not self.dueling_net:
-            quantiles = self.q_net(
-                state_embeddings).view(batch_size, self.N, self.num_actions)
-        else:
-            advantages = self.advantage_net(
-                state_embeddings).view(batch_size, self.N, self.num_actions)
-            baselines = self.baseline_net(
-                state_embeddings).view(batch_size, self.N, 1)
-            quantiles = baselines + advantages\
-                - advantages.mean(dim=2, keepdim=True)
+        #if not self.dueling_net:
+        quantiles = self.q_net(
+            state_embeddings).view(batch_size, self.N, self.num_actions)
+        # else:
+        #     advantages = self.advantage_net(
+        #         state_embeddings).view(batch_size, self.N, self.num_actions)
+        #     baselines = self.baseline_net(
+        #         state_embeddings).view(batch_size, self.N, 1)
+        #     quantiles = baselines + advantages\
+        #         - advantages.mean(dim=2, keepdim=True)
 
         assert quantiles.shape == (batch_size, self.N, self.num_actions)
 

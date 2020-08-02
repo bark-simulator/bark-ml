@@ -113,8 +113,7 @@ class BaseAgent(ABC):
 
     def exploit(self, state):
         # Act without randomness.
-        state = torch.ByteTensor(
-            state).unsqueeze(0).to(self.device).float() / 255.
+        state = torch.Tensor(state).unsqueeze(0).to(self.device).float()
         with torch.no_grad():
             action = self.online_net.calculate_q(states=state).argmax().item()
         return action
@@ -132,6 +131,8 @@ class BaseAgent(ABC):
         torch.save(
             self.target_net.state_dict(),
             os.path.join(save_dir, 'target_net.pth'))
+        online_net_script = torch.jit.script(self.online_net)
+        online_net_script.save(os.path.join(save_dir, 'online_net_script.pt'))
 
     def load_models(self, save_dir):
         self.online_net.load_state_dict(torch.load(

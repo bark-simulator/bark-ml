@@ -9,6 +9,7 @@ cc_binary(
     "//bark_ml/commons:spaces",
     # external
     "@python_linux//:python-lib",
+    #"@pytorch_api//:pytorch-lib",
     "@pybind11//:pybind11",
     "@com_github_eigen_eigen//:eigen",
   ],
