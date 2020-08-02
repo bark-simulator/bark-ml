@@ -39,41 +39,6 @@
         "NearestAgentsObserver": {
             "MaxOtherDistance": 100
         },
-        "BehaviorSACAgent": {
-            "ActorFcLayerParams": [
-                512,
-                256,
-                256
-            ],
-            "CriticJointFcLayerParams": [
-                512,
-                256,
-                256
-            ],
-            "ActorLearningRate": 0.0003,
-            "CriticLearningRate": 0.0003,
-            "AlphaLearningRate": 0.0003,
-            "TargetUpdateTau": 0.05,
-            "TargetUpdatePeriod": 3,
-            "Gamma": 0.995,
-            "RewardScaleFactor": 1.0,
-            "AgentName": "sac_agent",
-            "DebugSummaries": false,
-            "ReplayBufferCapacity": 10000,
-            "ParallelBufferCalls": 1,
-            "BatchSize": 512,
-            "BufferNumSteps": 2,
-            "BufferPrefetch": 3
-        },
-        "BehaviorTFAAgents": {
-            "CheckpointPath": "",
-            "NumCheckpointsToKeep": 3
-        },
-        "TFARunner": {
-            "EvaluationSteps": 25,
-            "InitialCollectionEpisodes": 50,
-            "CollectionEpisodesPerStep": 1
-        },
         "BehaviorGAILAgent": {
             "Generator": {
                 "LearningRateActor": 0.001,
@@ -101,10 +66,6 @@
             "WarmUp": 1000,
             "EnableSN": false,           
             "AgentName": "gail_agent"
-        },
-        "BehaviorT2RLAgents": {
-            "CheckpointPath": "",
-            "NumCheckpointsToKeep": 3
         },
         "GAILRunner": {
             "EvaluationSteps": 25,
