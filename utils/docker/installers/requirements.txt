@@ -15,3 +15,4 @@ tf-agents>=0.5.0
 tensorflow-probability==0.10.0
 tf2_gnn>=2.4.0
 networkx>=2.4
+spektral
