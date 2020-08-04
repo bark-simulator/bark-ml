@@ -70,7 +70,7 @@ layers_gnn = 1 + int(random() * 4)
 params["ML"]["BehaviorGraphSACAgent"]["GNN"]["NumLayers"] = layers_gnn
 #units_gnn = 2**(5 + int(random() * 3))
 
-mp_layers = 5 + int(random() * 10)
+mp_layers = 2**(5 + int(random() * 5))
 params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MpLayerNumUnits"] = mp_layers
 
 mp_channels = 2**(5 + int(random() * 4))
