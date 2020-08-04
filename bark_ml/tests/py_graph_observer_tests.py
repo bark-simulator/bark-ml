@@ -37,71 +37,17 @@ class PyGraphObserverTests(unittest.TestCase):
     """Setting up the test-case"""
     params = ParameterServer()
     bp = ContinuousHighwayBlueprint(params, random_seed=0)
-    self.env = SingleAgentRuntime(blueprint=bp, render=True)
+    self.env = SingleAgentRuntime(blueprint=bp, render=False)
     self.env.reset()
     self.world = self.env._world
     self.observer = GraphObserver(params)
     self.eval_id = self.env._scenario._eval_agent_ids[0]
 
-    # Get observation from observer
-    self.observed_state, _ = self._get_observation(
-      observer=self.observer,
-      world=self.world,
-      eval_id=self.eval_id)
-
-    # Reconstruct the graph
-    reconstructed_graph = GraphObserver\
-      .graph_from_observation(self.observed_state)
-    self.reconstructed_graph = reconstructed_graph
-
-    # Convert to numpy array and split into subparts for easier handling
-    observation = self.observed_state.numpy()
-    self.observation = observation
-    n_nodes_max = int(observation[0])
-    n_nodes = int(observation[1])
-    n_features = int(observation[2])
-
-    # Preprocess metadata and data for later comparison
-    metadata = dict()
-    metadata["n_nodes_max"] = n_nodes_max
-    metadata["n_nodes"] = n_nodes
-    metadata["n_features"] = n_features
-    metadata["predicted_len"] = 3 + n_nodes_max*n_features + n_nodes_max**2
-    self.metadata = metadata
-    
-    data = dict()
-    data["node_features"] = observation[3:n_nodes_max*n_features+3]
-    data["adj_matrix"] = observation[3+n_nodes_max*n_features:]\
-      .reshape((n_nodes_max,-1))
-    self.data = data
-  
-  def test_observation_formalities(self):
-    # Convert to numpy array and split into subparts for easier handling
-    observed_state = self.observed_state
-    predicted_len = self.metadata["predicted_len"]    
-
-    # Check if formal parameter of observed_state are correct
-    self.assertTrue(tf.is_tensor(observed_state))
-    self.assertTrue((observed_state.dtype == tf.float32) or (observed_state.dtype == tf.float64))
-    #self.assertEqual(observed_state.shape, (predicted_len,))
-
-  # def test_reconstruction_to_graph(self):
-  #   # Check reconstruction to an OrderedGraph
-  #   observed_state = self.observed_state
-  #   observation = self.observation
-  #   reconstructed_graph = self.reconstructed_graph
-  #   n_nodes = self.metadata["n_nodes"]
-
-  #   # Check if parameter of graph are correct
-  #   self.assertEqual(reconstructed_graph.__class__, nx.OrderedGraph)
-  #   #assert reconstructed_graph.__class__ == nx.OrderedGraph
-  #   self.assertEqual(len(reconstructed_graph.nodes), n_nodes)
-  #   #assert len(reconstructed_graph.nodes) == n_nodes
-
   def test_norming(self):
     observer = GraphObserver()
     range_ = [-10, 10]
     eps = 1*10-6
+
     self.assertTrue(abs(1 - observer._normalize_value(10, range=range_)) < eps)
     self.assertTrue(abs(-1 - observer._normalize_value(-10, range=range_)) < eps)
     self.assertTrue(abs(1 - observer._normalize_value(100, range=range_)) < eps)
@@ -120,42 +66,60 @@ class PyGraphObserverTests(unittest.TestCase):
     self.assertEqual(observer._visibility_radius, expected_visibility_radius)
     self.assertTrue(observer._normalize_observations)
 
-  # def test_observed_agents_selection(self):
-  #   agent_limit = 10
-  #   params = ParameterServer()
-  #   params["ML"]["GraphObserver"]["AgentLimit"] = agent_limit
-  #   observer = GraphObserver(params=params)
+  def test_observation_conforms_to_spec(self):
+    num_agents = 4
+    params = ParameterServer()
+    params["ML"]["GraphObserver"]["AgentLimit"] = num_agents
+    observer = GraphObserver(params=params)
+    obs, _ = self._get_observation(observer, self.world, self.eval_id)
 
-  #   obs, obs_world = self._get_observation(
-  #     observer=observer,
-  #     world=self.world,
-  #     eval_id=self.eval_id)
+    self.assertTrue(observer.observation_space.contains(obs))
 
-  #   graph = GraphObserver.graph_from_observation(obs)
+    # additionally check that the adjacency list is binary, since
+    # this can't be enforced by the observation space currently
+    adj_start_idx = num_agents * observer.feature_len
+    adj_end_idx = adj_start_idx + num_agents ** 2
+    adj_list = obs[adj_start_idx : adj_end_idx]
+
+    for element in adj_list: self.assertIn(element, [0, 1])
+
+  def test_observed_agents_selection(self):
+    agent_limit = 10
+    params = ParameterServer()
+    params["ML"]["GraphObserver"]["AgentLimit"] = agent_limit
+    observer = GraphObserver(params=params)
+
+    obs, obs_world = self._get_observation(
+      observer=observer,
+      world=self.world,
+      eval_id=self.eval_id)
+
+    graph_dims = (agent_limit, observer.feature_len, observer.edge_feature_len)
+    obs = tf.expand_dims(obs, 0) # add a batch dimension
+
+    nodes, _, _ = GraphObserver.graph(obs, graph_dims=graph_dims)
+    nodes = nodes[0] # remove batch dim    
+    num_nodes = nodes.shape[0]
     
-  #   num_nodes = len(graph.nodes)
-  #   expected_num_nodes = min(len(obs_world.agents), agent_limit)
-  #   self.assertEqual(num_nodes, expected_num_nodes,
-  #     msg=f'Expected {expected_num_nodes}, got {num_nodes}')
-    
-  #   ego_node = graph.nodes[0]
-  #   ego_node_pos = Point2d(
-  #     ego_node['x'].numpy(), 
-  #     ego_node['y'].numpy())
+    ego_node = nodes[0]
+    ego_node_pos = Point2d(
+      ego_node[0].numpy(), # x coordinate
+      ego_node[1].numpy()) # y coordinate
 
-  #   # verify that the nodes are ordered by
-  #   # ascending distance to the ego node
-  #   max_distance_to_ego = 0
-  #   for _, attributes in graph.nodes.data():
-  #     pos = Point2d(
-  #       attributes['x'].numpy(), 
-  #       attributes['y'].numpy())
-  #     distance_to_ego = Distance(pos, ego_node_pos)
+    # verify that the nodes are ordered by
+    # ascending distance to the ego node
+    max_distance_to_ego = 0
+    for node in nodes:
+      pos = Point2d(
+        node[0].numpy(), # x coordinate
+        node[1].numpy()) # y coordinate
+      distance_to_ego = Distance(pos, ego_node_pos)
 
-  #     self.assertGreaterEqual(distance_to_ego, max_distance_to_ego, 
-  #       msg='Nodes are not sorted by distance to the ego node in ascending order.')
+      self.assertGreaterEqual(distance_to_ego, max_distance_to_ego, 
+        msg='Nodes are not sorted by distance relative to '\
+          + 'the ego node in ascending order.')
       
-  #     max_distance_to_ego = distance_to_ego
+      max_distance_to_ego = distance_to_ego
 
   def test_observation_to_graph_conversion(self):
     num_nodes = 5
@@ -175,14 +139,13 @@ class PyGraphObserverTests(unittest.TestCase):
       [0, 0, 0, 0, 0]  # empty slot -> all zeros
     ]
 
-    observation = np.array([num_nodes, num_nodes, num_features])
-    observation = np.append(observation, agents)
+    observation = np.array(agents)
     observation = np.append(observation, adjacency_list)
     observation = np.append(observation, edge_features)
     observation = observation.reshape(-1)
     observations = np.array([observation, observation])
     
-    self.assertEqual(observations.shape, (2, 153))
+    self.assertEqual(observations.shape, (2, 150))
 
     expected_nodes = tf.constant([agents, agents])
     expected_edge_features = tf.constant([edge_features, edge_features])
@@ -211,7 +174,7 @@ class PyGraphObserverTests(unittest.TestCase):
       [6, 5], [6, 7], [6, 8],
       [7, 5], [7, 6], [7, 8],
       [8, 5], [8, 6], [8, 7],
-      #graph 3
+      # graph 3
       [10, 11], [10, 12], [10, 13],
       [11, 10], [11, 12], [11, 13],
       [12, 10], [12, 11], [12, 13],
@@ -229,6 +192,31 @@ class PyGraphObserverTests(unittest.TestCase):
     self.assertTrue(tf.reduce_all(tf.equal(nodes, expected_nodes)))
     self.assertTrue(tf.reduce_all(tf.equal(edges, expected_dense_edges)))
     self.assertTrue(tf.reduce_all(tf.equal(node_to_graph_map, expected_node_to_graph_map)))
+
+  def test_agent_pruning(self):
+    num_agents = 25
+    params = ParameterServer()
+    params["ML"]["GraphObserver"]["AgentLimit"] = num_agents
+    observer = GraphObserver(params=params)
+    obs, world = self._get_observation(observer, self.world, self.eval_id)
+    obs = tf.expand_dims(obs, 0) # add a batch dimension
+
+    graph_dims = (num_agents, observer.feature_len, observer.edge_feature_len)
+    nodes, _, _ = GraphObserver.graph(obs, graph_dims=graph_dims)
+    
+    self.assertEqual(nodes.shape, [1, num_agents, observer.feature_len])
+
+    expected_num_agents = len(world.agents)
+
+    # nodes that do not represent agents, but are contained
+    # to fill up the required observation space.
+    expected_n_fill_up_nodes = num_agents - expected_num_agents
+    fill_up_nodes = nodes[0, expected_num_agents:]
+    self.assertEqual(fill_up_nodes.shape, [expected_n_fill_up_nodes, observer.feature_len])
+
+    # verify that entries for non-existing agents are all zeros
+    self.assertEqual(tf.reduce_sum(fill_up_nodes), 0)
+
     
 if __name__ == '__main__':
   suite = unittest.TestLoader().loadTestsFromTestCase(PyGraphObserverTests)
