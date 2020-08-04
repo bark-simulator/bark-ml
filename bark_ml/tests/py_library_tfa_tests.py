@@ -23,8 +23,10 @@ from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 import bark_ml.environments.gym
 from bark_ml.library_wrappers.lib_tf_agents.agents.ppo_agent import BehaviorPPOAgent
 from bark_ml.library_wrappers.lib_tf_agents.agents.sac_agent import BehaviorSACAgent
+from bark_ml.library_wrappers.lib_tf_agents.agents.sac_agent import BehaviorCDQNAgent
 from bark_ml.library_wrappers.lib_tf_agents.runners.ppo_runner import PPORunner
 from bark_ml.library_wrappers.lib_tf_agents.runners.sac_runner import SACRunner
+from bark_ml.library_wrappers.lib_tf_agents.runners.sac_runner import CDQNRunner
 
 
 class PyLibraryWrappersTFAgentTests(unittest.TestCase):

@@ -22,10 +22,10 @@ from bark.runtime.viewer.video_renderer import VideoRenderer
 
 # BARK-ML imports
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
-  ContinuousMergingBlueprint, ContinuousIntersectionBlueprint
+  ContinuousMergingBlueprint, ContinuousIntersectionBlueprint, DiscreteHighwayBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, BehaviorPPOAgent
-from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner
+from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, BehaviorPPOAgent, BehaviorCDQNAgent
+from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner, CDQNRunner
 
 
 # for training: bazel run //examples:tfa -- --mode=train
@@ -42,9 +42,16 @@ def run_configuration(argv):
   # NOTE: Modify these paths in order to save the checkpoints and summaries
   params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/checkpoints/"
   params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/summaries/"
+  params["ML"]["TFARunner"]["ModelPath"] = "/Users/hart/Development/bark-ml/model/"
   params["World"]["remove_agents_out_of_map"] = True
 
   # create environment
+  # discrete environment (to use with CDQN)
+  # bp = DiscreteMergingBlueprint(bark_params,
+  #                              number_of_senarios=2500,
+  #                              random_seed=0)
+
+  # continuous environment
   bp = ContinuousMergingBlueprint(params,
                                   number_of_senarios=2500,
                                   random_seed=0)
@@ -56,6 +63,14 @@ def run_configuration(argv):
   #                              params=params)
   # env.ml_behavior = ppo_agent
   # runner = PPORunner(params=params,
+  #                    environment=env,
+  #                    agent=ppo_agent)
+
+  # CDQN-agent
+  # cdqn_agent = BehaviorCDQNAgent(environment=env,
+  #                              params=params)
+  # env.ml_behavior = cdqn_agent
+  # runner = CDQNRunner(params=params,
   #                    environment=env,
   #                    agent=ppo_agent)
 

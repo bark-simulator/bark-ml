@@ -62,6 +62,29 @@
             "BufferNumSteps": 2,
             "BufferPrefetch": 3
         },
+        "BehaviorCDQNAgent": {
+            "ActorFcLayerParams": [
+                512,
+                256,
+                256
+            ],
+            "LearningRate": 5e-5,
+            "NumAtoms":51,
+            "TargetUpdateTau": 0.01,
+            "TargetUpdatePeriod": 1,
+            "MinQValue": -10,
+            "MaxQValue": 10,
+            "EpsilonGreedy":0.3,
+            "Gamma": 0.995,
+            "RewardScaleFactor": 3.0,
+            "AgentName": "cdqn_agent",
+            "DebugSummaries": false,
+            "ReplayBufferCapacity": 10000,
+            "ParallelBufferCalls": 3,
+            "BatchSize": 512,
+            "BufferNumSteps": 2,
+            "BufferPrefetch": 3
+        },
         "BehaviorTFAAgents": {
             "CheckpointPath": "",
             "NumCheckpointsToKeep": 3

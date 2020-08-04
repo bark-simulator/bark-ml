@@ -3,6 +3,7 @@ py_library(
     srcs = ["__init__.py",
             "sac_agent.py",
             "ppo_agent.py",
+            "cdqn_agent.py",
             "tfa_agent.py"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
     imports = ["../external/bark_project/bark/python_wrapper/"],
