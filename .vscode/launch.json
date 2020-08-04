@@ -160,7 +160,7 @@
 				"program": "${workspaceFolder}/examples/gail.py",
 				"console": "integratedTerminal",
 				"args": ["--mode=visualize", "--expert_trajectories=~/Repositories/gail-4-bark/bark-ml/examples/expert_trajectories/sac/merging",
-				"--train_out=~/Repositories/gail-4-bark/bark-ml/examples/pretrained_agents/gail/merging", "--subset_size=1000"],
+				"--train_out=~/Repositories/gail-4-bark/bark-ml/examples/pretrained_agents/gail/highway", "--blueprint=highway", "--subset_size=1000"],
 				"env": {
 					"PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/gail.runfiles/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/com_github_interaction_dataset_interaction_dataset/python/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/com_github_keiohta_tf2rl"
 				}
@@ -204,7 +204,7 @@
 				"request": "launch",
 				"program": "${workspaceFolder}/examples/tfa.py",
 				"console": "integratedTerminal",
-				"args": ["--mode=visualize", "--output_dir=~/Repositories/gail-4-bark/bark-ml/examples/pretrained_agents/sac/merging", "--num_episodes=10000" ],
+				"args": ["--mode=visualize", "--output_dir=~/Repositories/gail-4-bark/bark-ml/examples/pretrained_agents/sac/highway", "--num_episodes=10000", "--blueprint=highway" ],
 				"env": {
 					"PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/tfa.runfiles/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/com_github_interaction_dataset_interaction_dataset/python/:"
 				}

@@ -182,3 +182,4 @@ start_multiple_**.sh
 pretrained_agents**
 !pretrained_agents.tar.xz
 *.txt
+examples/marvin/**
