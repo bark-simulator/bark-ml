@@ -70,14 +70,14 @@ class LoadExpertTrajectoriesTest(unittest.TestCase):
     def test_sample_subset(self):
         """Test: Correct subset size sampled"""
         np.random.seed(0)
-        subset, avg_length, num_trajectories = load_expert_trajectories(self.expert_trajectories_directory, subset_size=3)
+        subset, avg_length, num_trajectories = load_expert_trajectories(self.expert_trajectories_directory, subset_size=2)
 
-        self.assertEqual(avg_length, 15)
-        self.assertEqual(num_trajectories, 3)
+        self.assertEqual(avg_length, 14.5)
+        self.assertEqual(num_trajectories, 2)
 
-        self.assertEqual(subset['obses'].shape, (45, 16))
-        self.assertEqual(subset['next_obses'].shape, (45, 16))
-        self.assertEqual(subset['acts'].shape, (45, 2))
+        self.assertEqual(subset['obses'].shape, (29, 16))
+        self.assertEqual(subset['next_obses'].shape, (29, 16))
+        self.assertEqual(subset['acts'].shape, (29, 2))
 
 class test_env():
     """dummy environment for testing."""
