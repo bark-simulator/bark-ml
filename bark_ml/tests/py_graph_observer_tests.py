@@ -27,12 +27,6 @@ class PyGraphObserverTests(unittest.TestCase):
     observation = observer.Observe(observed_world)
     return observation, observed_world
 
-  def _position(self, agent):
-    return Point2d(
-        agent.state[int(StateDefinition.X_POSITION)],
-        agent.state[int(StateDefinition.Y_POSITION)]
-      )
-
   def setUp(self):
     """Setting up the test-case"""
     params = ParameterServer()
