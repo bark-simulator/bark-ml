@@ -60,11 +60,45 @@ class PyGraphObserverTests(unittest.TestCase):
     params = ParameterServer()
     params["ML"]["GraphObserver"]["AgentLimit"] = expected_agent_limit
     params["ML"]["GraphObserver"]["VisibilityRadius"] = expected_visibility_radius
+    params["ML"]["GraphObserver"]["SelfLoops"] = True
     observer = GraphObserver(normalize_observations=True, params=params)
 
     self.assertEqual(observer._agent_limit, expected_agent_limit)
     self.assertEqual(observer._visibility_radius, expected_visibility_radius)
+    self.assertTrue(observer._add_self_loops)
     self.assertTrue(observer._normalize_observations)
+
+  def test_observe_with_self_loops(self):
+    num_agents = 4
+    params = ParameterServer()
+    params["ML"]["GraphObserver"]["AgentLimit"] = num_agents
+    params["ML"]["GraphObserver"]["SelfLoops"] = True
+    observer = GraphObserver(params=params)
+    obs, _ = self._get_observation(observer, self.world, self.eval_id)
+    obs = tf.expand_dims(obs, 0) # add a batch dimension
+
+    graph_dims = (num_agents, observer.feature_len, observer.edge_feature_len)
+    nodes, adjacency, _ = GraphObserver.graph(obs, graph_dims=graph_dims)
+    adjacency_list_diagonal = (tf.linalg.tensor_diag_part(adjacency[0]))
+
+    # assert ones on the diagonal of the adjacency matrix
+    tf.assert_equal(adjacency_list_diagonal, tf.ones(num_agents))
+
+  def test_observe_without_self_loops(self):
+    num_agents = 4
+    params = ParameterServer()
+    params["ML"]["GraphObserver"]["AgentLimit"] = num_agents
+    params["ML"]["GraphObserver"]["SelfLoops"] = False
+    observer = GraphObserver(params=params)
+    obs, _ = self._get_observation(observer, self.world, self.eval_id)
+    obs = tf.expand_dims(obs, 0) # add a batch dimension
+
+    graph_dims = (num_agents, observer.feature_len, observer.edge_feature_len)
+    nodes, adjacency, _ = GraphObserver.graph(obs, graph_dims=graph_dims)
+    adjacency_list_diagonal = (tf.linalg.tensor_diag_part(adjacency[0]))
+
+    # assert zeros on the diagonal of the adjacency matrix
+    tf.assert_equal(adjacency_list_diagonal, tf.zeros(num_agents))
 
   def test_observation_conforms_to_spec(self):
     num_agents = 4

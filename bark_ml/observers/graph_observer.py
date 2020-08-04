@@ -79,23 +79,19 @@ class GraphObserver(StateObserver):
         agents=agents, 
         radius=self._visibility_radius)
 
+      if self._add_self_loops:
+        adjacency_matrix[index, index] = 1
+
       for target_index, nearby_agent in nearby_agents:
         edge_features[index, target_index, :] = self._extract_edge_features(agent, nearby_agent)
 
         adjacency_matrix[index, target_index] = 1
         adjacency_matrix[target_index, index] = 1
-    
-    # if self._add_self_loops:
-    #   adjacency_matrix += np.eye(self._agent_limit ** 2)
 
     adjacency_list = adjacency_matrix.reshape(-1)
     edge_features = edge_features.reshape(-1)
     obs.extend(adjacency_list)
     obs.extend(edge_features)
-
-    # validate the shape of te constructed observation
-    assert len(obs) == self._len_state, f'Observation \
-      has invalid length ({len(obs)}, expected: {self._len_state})'
     
     return tf.convert_to_tensor(obs, dtype=tf.float32, name='observation')
 
@@ -191,7 +187,7 @@ class GraphObserver(StateObserver):
 
       # compute a tensor which where each element
       # is the graph index of the node that is represented
-      # by the same index A
+      # by the same index in A
       graph_indices = tf.reshape(A[:, 0], [1, -1])
       graph_indices = tf.scalar_mul(n_nodes, graph_indices)
       graph_indices = tf.transpose(tf.tile(graph_indices, [2, 1]))
