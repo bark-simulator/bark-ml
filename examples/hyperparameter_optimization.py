@@ -39,6 +39,7 @@ def set_default_values_tfa_gnn(params):
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MpLayerNumUnits"] = 256
     params["ML"]["SACRunner"]["NumberOfCollections"] = int(1e6)
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["GraphDimensions"] = (4, 11, 4) # (n_nodes, n_features, n_edge_features)
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["library"] = 'tf2_gnn' # "tf2_gnn" or "spektral"
 
     # tf2_gnn
     # NOTE: when using the ggnn mp class, MPLayerUnits must match n_features!
