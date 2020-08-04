@@ -63,3 +63,14 @@ py_test(
             "//bark_ml/commons:py_spaces"],
     visibility = ["//visibility:public"],
 )
+
+cc_test(
+    name="model_loader_test",
+    srcs=["model_loader_test.cc"],
+    copts = ["-Iexternal/gtest/include"],
+    deps=[
+        "//bark_ml/model_loader:ModelLoader",
+        "@libtensorflow-RL-MCTS//libtensorflow:tensorflowlib",
+        "@gtest//:main",
+    ],
+)

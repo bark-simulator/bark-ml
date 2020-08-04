@@ -11,6 +11,7 @@ cc_binary(
     "@python_linux//:python-lib",
     "@pybind11//:pybind11",
     "@com_github_eigen_eigen//:eigen",
+    "@libtensorflow-RL-MCTS//libtensorflow:tensorflowlib",
   ],
   linkshared = 1,
   linkstatic = 1

@@ -41,7 +41,7 @@ class CDQNRunner(TFARunner):
 
     self.q_model = self._agent._agent._q_network
     num_state_dims = np.shape(self._wrapped_env._observation_spec)[1]
-    inference = self._inference.get_concrete_function(input=tf.TensorSpec([1, 1, num_state_dims], tf.float32))
+    inference = self._inference.get_concrete_function(input=tf.TensorSpec([1, num_state_dims], tf.float32))
 
     iterator = iter(self._agent._dataset)
     for _ in range(0, self._params["ML"]["CDQNRunner"]["NumberOfCollections", "", 10000]):

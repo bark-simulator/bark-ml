@@ -37,6 +37,13 @@ cc_library(
     remote = "https://github.com/juloberno/diadem"
   )
 
+  _maybe(
+    git_repository,
+    name = "libtensorflow-RL-MCTS",
+    commit = "31adfc2112ce41b81574b6f44192ec47f0853fbc",
+    remote = "https://github.com/steven-guo94/libtensorflow_so"
+  )
+
   # if we include glog twice, gflags are defined mult. times
   _maybe(
     new_git_repository,
