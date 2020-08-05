@@ -260,9 +260,6 @@ class GraphObserver(StateObserver):
     center_agent_pos = self._position(center_agent)
     other_agents = filter(lambda a: a[1].id != center_agent.id, agents)
 
-    return other_agents
-
-    # TODO: Add this back!
     nearby_agents = []
 
     for index, agent in other_agents:

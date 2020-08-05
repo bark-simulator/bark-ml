@@ -114,13 +114,10 @@ class LegGNNCriticNetwork(network.Network):
     self.joint_call_times = []
 
   def call(self, inputs, step_type=(), network_state=(), training=False):
-    t1 = time.time()
     observations, actions = inputs
     batch_size = observations.shape[0]
      
-    t0 = time.time()
     node_embeddings = self._gnn.batch_call(observations, training=training)
-    self.gnn_call_times.append(time.time() - t0)
     actions = tf.cast(actions, tf.float32)
     node_embeddings = tf.cast(node_embeddings, tf.float32)
 
@@ -131,23 +128,18 @@ class LegGNNCriticNetwork(network.Network):
     else:
       actions = tf.zeros([0, actions.shape[-1]])
 
-    t0 = time.time()
     actions, network_state = self._encoder(
       actions,
       step_type=step_type,
       network_state=network_state,
       training=training)
-    self.encoder_call_times.append(time.time() - t0)
 
-    t0 = time.time()
     joint = tf.concat([observations, actions], 1)
     for layer in self._joint_layers:
       joint = layer(joint, training=training)
-    self.joint_call_times.append(time.time() - t0)
     
     output = tf.transpose(joint)
 
-    self.call_times.append(time.time() - t1)
     return output, network_state
 
 
