@@ -16,11 +16,15 @@ class GNNCriticNetwork(network.Network):
                gnn_params,
                action_fc_layer_params=None,
                action_dropout_layer_params=None,
-               dropout_layer_params=None,
-               conv_layer_params=None,
+               action_conv_layer_params=None,
+               action_activation_fn=tf.nn.relu,
+               observation_fc_layer_params=None,
+               observation_dropout_layer_params=None,
+               observation_conv_layer_params=None,
+               observation_activation_fn=tf.nn.relu,
                joint_fc_layer_params=None,
                joint_dropout_layer_params=None,
-               activation_fn=tf.nn.relu,
+               joint_activation_fn=None,
                output_activation_fn=None,
                name='CriticNetwork'):
     """Creates an instance of `CriticNetwork`.
@@ -79,14 +83,26 @@ class GNNCriticNetwork(network.Network):
 
     self._gnn = GNNWrapper(params=gnn_params)
 
-    self._encoder = encoding_network.EncodingNetwork(
+    self._action_encoder = encoding_network.EncodingNetwork(
       input_tensor_spec=tf.TensorSpec([None, self._gnn.num_units]),
       preprocessing_layers=None,
       preprocessing_combiner=None,
-      conv_layer_params=conv_layer_params,
+      conv_layer_params=action_conv_layer_params,
       fc_layer_params=action_fc_layer_params,
-      dropout_layer_params=dropout_layer_params,
-      activation_fn=activation_fn,
+      dropout_layer_params=action_dropout_layer_params,
+      activation_fn=action_activation_fn,
+      kernel_initializer=tf.compat.v1.keras.initializers.glorot_uniform(),
+      batch_squash=False,
+      dtype=tf.float32)
+
+    self._observation_encoder = encoding_network.EncodingNetwork(
+      input_tensor_spec=tf.TensorSpec([None, action_spec.shape[0]]),
+      preprocessing_layers=None,
+      preprocessing_combiner=None,
+      conv_layer_params=observation_conv_layer_params,
+      fc_layer_params=observation_fc_layer_params,
+      dropout_layer_params=observation_dropout_layer_params,
+      activation_fn=observation_activation_fn,
       kernel_initializer=tf.compat.v1.keras.initializers.glorot_uniform(),
       batch_squash=False,
       dtype=tf.float32)
@@ -95,7 +111,7 @@ class GNNCriticNetwork(network.Network):
         None,
         joint_fc_layer_params,
         joint_dropout_layer_params,
-        activation_fn=activation_fn,
+        activation_fn=joint_activation_fn,
         kernel_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
             scale=1./3., mode='fan_in', distribution='uniform'),
         name='joint_mlp')
@@ -122,13 +138,19 @@ class GNNCriticNetwork(network.Network):
     else:
       actions = tf.zeros([0, actions.shape[-1]])
 
-    actions, network_state = self._encoder(
+    actions, network_state = self._action_encoder(
       actions,
       step_type=step_type,
       network_state=network_state,
       training=training)
 
-    joint = tf.concat([observations, actions], 1)
+    node_embeddings, network_state = self._observation_encoder(
+      node_embeddings,
+      step_type=step_type,
+      network_state=network_state,
+      training=training)
+
+    joint = tf.concat([node_embeddings, actions], 1)
     for layer in self._joint_layers:
       joint = layer(joint, training=training)
     

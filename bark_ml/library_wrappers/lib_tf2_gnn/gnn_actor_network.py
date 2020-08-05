@@ -13,12 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Sample Actor network to use with DDPG agents.
-Note: This network scales actions to fit the given spec by using `tanh`. Due to
-the nature of the `tanh` function, actions near the spec bounds cannot be
-returned.
-"""
-
 import time
 import gin
 import tensorflow as tf  # pylint: disable=g-explicit-tensorflow-version-import
@@ -121,7 +115,7 @@ class GNNActorNetwork(network.Network):
     if len(observations.shape) == 1:
       observations = tf.expand_dims(observations, axis=0)
 
-    batch_size, feature_len = observations.shape
+    batch_size = observations.shape[0]
     output = self._gnn(observations, training=training)
 
     # extract ego state (node 0)

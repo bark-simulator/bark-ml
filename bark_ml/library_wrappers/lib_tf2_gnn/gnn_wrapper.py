@@ -1,29 +1,31 @@
-import time
-import numpy as np
+import logging
 import tensorflow as tf
 from tf2_gnn.layers import GNN, GNNInput
 from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.observers.graph_observer import GraphObserver
 from tensorflow.keras.layers import Dense
-from spektral.layers import EdgeConditionedConv, GlobalAttnSumPool, GraphAttention
+from spektral.layers import EdgeConditionedConv
 
 class GNNWrapper(tf.keras.Model):
 
   def __init__(self,
                params,
                name='GNN',
+               output_dtype=tf.float32,
                **kwargs):
     super(GNNWrapper, self).__init__(name=name)
 
     params = params.ConvertToDict()
     self.num_units = params.get("MpLayerNumUnits", 256)
+    self.output_dtype = output_dtype
+    self._logger = logging.getLogger()
 
     self._graph_dims = params.get("GraphDimensions")
     
     lib = params.get("library", "tf2_gnn")
     self.use_spektral = lib == "spektral"
 
-    print(f'[GNN] Using library {lib}')
+    self._logger.info(f'Initializing GNN with library: {lib}')
     
     if self.use_spektral:
       self._init_spektral_layers(params)
@@ -66,9 +68,11 @@ class GNNWrapper(tf.keras.Model):
       return tf.random.normal(shape=(0, self.num_units))
 
     if self.use_spektral:
-      return self.call_spektral(observations, training)
+      output = self.call_spektral(observations, training)
     else:
-      return self.call_tf2_gnn(observations, training)
+      output = self.call_tf2_gnn(observations, training)
+
+    return tf.cast(output, self.output_dtype)
 
   @tf.function
   def call_spektral(self, observations, training=False):
