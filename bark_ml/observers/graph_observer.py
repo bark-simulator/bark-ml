@@ -61,44 +61,6 @@ class GraphObserver(StateObserver):
   def Observe(self, world):
     """see base class"""
     agents = self._preprocess_agents(world)
-    num_agents = len(agents)
-    obs = []
-
-    # append node features
-    [obs.extend(self._extract_features(agent)) for i, agent in agents]
-
-    # fill empty spots with zeros (difference between present and max number of agents)
-    obs.extend(np.zeros(max(0, self._agent_limit - num_agents) * self.feature_len))
-
-    edge_features = np.zeros((self._agent_limit, self._agent_limit, self.edge_feature_len))
-    adjacency_matrix = np.zeros((self._agent_limit, self._agent_limit))
-
-    # add edges to all visible agents
-    for index, agent in agents:
-      nearby_agents = self._nearby_agents(
-        center_agent=agent, 
-        agents=agents, 
-        radius=self._visibility_radius)
-
-      if self._add_self_loops:
-        adjacency_matrix[index, index] = 1
-
-      for target_index, nearby_agent in nearby_agents:
-        edge_features[index, target_index, :] = self._extract_edge_features(agent, nearby_agent)
-
-        adjacency_matrix[index, target_index] = 1
-        adjacency_matrix[target_index, index] = 1
-
-    adjacency_list = adjacency_matrix.reshape(-1)
-    edge_features = edge_features.reshape(-1)
-    obs.extend(adjacency_list)
-    obs.extend(edge_features)
-    
-    return tf.convert_to_tensor(obs, dtype=tf.float32, name='observation')
-
-  def Observe2(self, world):
-    """see base class"""
-    agents = self._preprocess_agents(world)
 
     # placeholder for the output observation
     obs = np.zeros(self._len_state)
@@ -131,14 +93,13 @@ class GraphObserver(StateObserver):
     # insert adjacency list
     adj_start_index = self._agent_limit * self.feature_len
     adj_end_index = adj_start_index + self._agent_limit ** 2
-
     obs[adj_start_index:adj_end_index] = adjacency_matrix.reshape(-1)
 
     # insert edge features
     obs[adj_end_index:] = edge_features.reshape(-1)
     
     return tf.convert_to_tensor(obs, dtype=tf.float32, name='observation')
-    
+
   @classmethod
   def graph(cls, observations, graph_dims, dense=False):
     """

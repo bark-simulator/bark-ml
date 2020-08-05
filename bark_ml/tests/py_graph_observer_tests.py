@@ -95,6 +95,10 @@ class PyGraphObserverTests(unittest.TestCase):
     tf.assert_equal(adjacency_list_diagonal, tf.zeros(num_agents))
 
   def test_observation_conforms_to_spec(self):
+    """
+    Verify that the observation returned by the observer
+    is valid with respect to its defined observation space.
+    """
     num_agents = 4
     params = ParameterServer()
     params["ML"]["GraphObserver"]["AgentLimit"] = num_agents
@@ -154,7 +158,7 @@ class PyGraphObserverTests(unittest.TestCase):
     num_features = 5
     num_edge_features = 4
 
-    agents = np.random.random_sample((num_nodes, num_features))
+    node_features = np.random.random_sample((num_nodes, num_features))
     edge_features = np.random.random_sample((num_nodes, num_nodes, num_edge_features))
 
     # note that edges are bidirectional, the
@@ -167,7 +171,7 @@ class PyGraphObserverTests(unittest.TestCase):
       [0, 0, 0, 0, 0]  # empty slot -> all zeros
     ]
 
-    observation = np.array(agents)
+    observation = np.array(node_features)
     observation = np.append(observation, adjacency_list)
     observation = np.append(observation, edge_features)
     observation = observation.reshape(-1)
@@ -175,7 +179,7 @@ class PyGraphObserverTests(unittest.TestCase):
     
     self.assertEqual(observations.shape, (2, 150))
 
-    expected_nodes = tf.constant([agents, agents])
+    expected_nodes = tf.constant([node_features, node_features])
     expected_edge_features = tf.constant([edge_features, edge_features])
 
     graph_dims = (num_nodes, num_features, num_edge_features)
@@ -187,7 +191,7 @@ class PyGraphObserverTests(unittest.TestCase):
     observations = np.array([observation, observation, observation])
 
     # in dense mode, the nodes of all graphs are in a single list
-    expected_nodes = tf.constant([agents, agents, agents])
+    expected_nodes = tf.constant([node_features, node_features, node_features])
     expected_nodes = tf.reshape(expected_nodes, [-1, num_features])
 
     # the edges encoded in the adjacency list above
@@ -215,11 +219,13 @@ class PyGraphObserverTests(unittest.TestCase):
       2, 2, 2, 2, 2
     ])
 
-    nodes, edges, node_to_graph_map = GraphObserver.graph(observations, graph_dims, dense=True)
+    nodes, edges, node_to_graph_map =\
+      GraphObserver.graph(observations, graph_dims, dense=True)
         
     self.assertTrue(tf.reduce_all(tf.equal(nodes, expected_nodes)))
     self.assertTrue(tf.reduce_all(tf.equal(edges, expected_dense_edges)))
-    self.assertTrue(tf.reduce_all(tf.equal(node_to_graph_map, expected_node_to_graph_map)))
+    self.assertTrue(tf.reduce_all(
+      tf.equal(node_to_graph_map, expected_node_to_graph_map)))
 
   def test_agent_pruning(self):
     num_agents = 25
@@ -230,7 +236,7 @@ class PyGraphObserverTests(unittest.TestCase):
     obs = tf.expand_dims(obs, 0) # add a batch dimension
 
     graph_dims = (num_agents, observer.feature_len, observer.edge_feature_len)
-    nodes, _, _ = GraphObserver.graph(obs, graph_dims=graph_dims)
+    nodes, _, edge_features = GraphObserver.graph(obs, graph_dims=graph_dims)
     
     self.assertEqual(nodes.shape, [1, num_agents, observer.feature_len])
 
@@ -240,10 +246,15 @@ class PyGraphObserverTests(unittest.TestCase):
     # to fill up the required observation space.
     expected_n_fill_up_nodes = num_agents - expected_num_agents
     fill_up_nodes = nodes[0, expected_num_agents:]
-    self.assertEqual(fill_up_nodes.shape, [expected_n_fill_up_nodes, observer.feature_len])
+    
+    self.assertEqual(
+      fill_up_nodes.shape,
+      [expected_n_fill_up_nodes, observer.feature_len])
 
     # verify that entries for non-existing agents are all zeros
     self.assertEqual(tf.reduce_sum(fill_up_nodes), 0)
+
+
 
     
 if __name__ == '__main__':
