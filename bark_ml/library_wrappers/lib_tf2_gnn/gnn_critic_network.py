@@ -132,6 +132,6 @@ class GNNCriticNetwork(network.Network):
     for layer in self._joint_layers:
       joint = layer(joint, training=training)
     
-    #output = tf.transpose(joint)
+    output = tf.transpose(joint)
 
-    return joint, network_state
+    return output, network_state
