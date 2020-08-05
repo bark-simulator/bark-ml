@@ -20,7 +20,7 @@ class PyGNNWrapperTests(unittest.TestCase):
   def _mock_setup(self):
     params = ParameterServer()
     params["ML"]["GraphObserver"]["AgentLimit"] = 4
-    params["ML"]["SACRunner"]["NumberOfCollections", "", 1]
+    params["ML"]["SACRunner"]["NumberOfCollections"] = 200
     params["ML"]["BehaviorGraphSACAgent"]["CriticJointFcLayerParams"] = [256, 128]
     params["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams"] = [256, 128]
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["NumMpLayers"] = 2
@@ -49,6 +49,10 @@ class PyGNNWrapperTests(unittest.TestCase):
     env.ml_behavior = agent
     runner = SACRunner(params=params, environment=env, agent=agent)
     return agent, runner, observer
+
+  def test_gnn_actor(self):
+    agent, runner, _ = self._mock_setup()
+    runner.Train()
 
   def test_gnn_parameters(self):
     params = ParameterServer()

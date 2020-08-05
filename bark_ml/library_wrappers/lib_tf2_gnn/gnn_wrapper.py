@@ -72,8 +72,8 @@ class GNNWrapper(tf.keras.Model):
 
   @tf.function
   def call_spektral(self, observations, training=False):
-    node_features, adjacency_matrix, edge_features =\
-      GraphObserver.graph(observations, self._graph_dims)
+    node_features, adjacency_matrix, edge_features = GraphObserver.graph(
+      observations, self._graph_dims)
 
     for conv in self._convolutions: 
       node_features = conv([node_features, adjacency_matrix, edge_features])

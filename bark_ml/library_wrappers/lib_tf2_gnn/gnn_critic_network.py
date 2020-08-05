@@ -97,7 +97,7 @@ class GNNCriticNetwork(network.Network):
         joint_dropout_layer_params,
         activation_fn=activation_fn,
         kernel_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
-            scale=1. / 3., mode='fan_in', distribution='uniform'),
+            scale=1./3., mode='fan_in', distribution='uniform'),
         name='joint_mlp')
 
     self._joint_layers.append(
@@ -133,5 +133,4 @@ class GNNCriticNetwork(network.Network):
       joint = layer(joint, training=training)
     
     output = tf.transpose(joint)
-
     return output, network_state
