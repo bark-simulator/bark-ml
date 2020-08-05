@@ -97,8 +97,6 @@ class GNNActorNetwork(network.Network):
     
     self._gnn = GNNWrapper(params=gnn_params)
 
-    print(fc_layer_params)
-
     self._encoder = encoding_network.EncodingNetwork(
       input_tensor_spec=tf.TensorSpec([None, self._gnn.num_units]),
       preprocessing_layers=None,
@@ -115,9 +113,6 @@ class GNNActorNetwork(network.Network):
     self._output_tensor_spec = tf.nest.map_structure(lambda proj_net: proj_net.output_spec,
                                         self._projection_nets)
 
-    self.call_times = []
-    self.gnn_call_times = []
-
   @property  
   def output_tensor_spec(self):
     return self._output_tensor_spec
@@ -131,10 +126,7 @@ class GNNActorNetwork(network.Network):
 
     # extract ego state (node 0)
     if len(output.shape) == 2 and output.shape[0] != 0:
-      output = tf.reshape(output, [batch_size, -1, self._gnn.num_units])
       output = output[:,0] # extract ego state
-    elif len(output.shape) == 3:
-      output = tf.gather(output, 0, axis=1)
 
     tf.summary.histogram("actor_gnn_output", output)
     

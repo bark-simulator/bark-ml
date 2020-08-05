@@ -18,7 +18,6 @@ class GNNWrapper(tf.keras.Model):
     params = params.ConvertToDict()
     self.num_units = params.get("MpLayerNumUnits", 256)
 
-    # TODO: properly inject
     self._graph_dims = params.get("GraphDimensions")
     
     lib = params.get("library", "tf2_gnn")
@@ -43,7 +42,7 @@ class GNNWrapper(tf.keras.Model):
 
     self._dense = Dense(
       units=self.num_units,
-      activation=params.get("DenseActivation", "tanh"))
+      activation=params.get("DenseActivation", "relu"))
 
   def _init_tf2_gnn_layers(self, params):
     # map bark-ml parameter keys to tf2_gnn parameter keys
@@ -73,31 +72,36 @@ class GNNWrapper(tf.keras.Model):
 
   @tf.function
   def call_spektral(self, observations, training=False):
-    X, A, E = GraphObserver.graph(observations, self._graph_dims)
+    node_features, adjacency_matrix, edge_features =\
+      GraphObserver.graph(observations, self._graph_dims)
 
     for conv in self._convolutions: 
-      X = conv([X, A, E])
+      node_features = conv([node_features, adjacency_matrix, edge_features])
 
-    X = self._dense(X)
-    return X
+    node_features = self._dense(node_features)
+    return node_features
 
   @tf.function 
   def call_tf2_gnn(self, observations, training=False):
     batch_size = tf.constant(observations.shape[0])
 
-    X, A, node_to_graph_map = GraphObserver.graph(
+    node_features, adjacency_list, node_to_graph_map = GraphObserver.graph(
       observations, 
       graph_dims=self._graph_dims, 
       dense=True)
 
     gnn_input = GNNInput(
-      node_features=X,
-      adjacency_lists=(A,),
+      node_features=node_features,
+      adjacency_lists=(adjacency_list,),
       node_to_graph_map=node_to_graph_map,
       num_graphs=batch_size,
     )
 
-    return self._gnn(gnn_input, training=training)
+    # tf2_gnn outputs a flattened node embeddings vector, so we 
+    # reshape it to have the embeddings of each node seperately.
+    flat_output = self._gnn(gnn_input, training=training)
+    output = tf.reshape(flat_output, [batch_size, -1, self.num_units])
+    return output
       
   def reset(self):
     self._gnn.reset()
