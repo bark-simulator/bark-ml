@@ -125,7 +125,7 @@ class GNNActorNetwork(network.Network):
     output = self._gnn(observations, training=training)
 
     # extract ego state (node 0)
-    if len(output.shape) == 2 and output.shape[0] != 0:
+    if batch_size > 0:
       output = output[:,0] # extract ego state
 
     tf.summary.histogram("actor_gnn_output", output)
