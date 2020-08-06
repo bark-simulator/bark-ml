@@ -1,5 +1,13 @@
 import os
 
+def prepend_project_root(filename: str):
+    if os.path.expanduser(filename).startswith('/'):
+        return filename
+    project_root: str = os.path.abspath(__file__)
+    project_root: str = project_root.rsplit('bark_ml', 1)[0]
+
+    return os.path.join(project_root, filename)
+
 def list_files_in_dir(dir_path: str, file_ending: str = '') -> list:
     """Lists all files in the given directory ending with the given ending.
 

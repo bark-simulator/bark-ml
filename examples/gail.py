@@ -25,56 +25,20 @@ flags.DEFINE_enum("mode",
                   ["train", "visualize", "evaluate"],
                   "Mode the configuration should be executed in.")
 
-flags.DEFINE_string("train_out",
-                  help="The absolute path to where the checkpoints and summaries are saved during training.",
-                  # default=os.path.join(Path.home(), ".bark-ml/gail")
-                  default=os.path.join(Path.home(), "")
-                  )
-
-flags.DEFINE_integer("gpu",
-                  help="-1 for CPU, 0 for GPU",
-                  default=0
-                  )
-
-flags.DEFINE_integer("subset_size",
-                  help="Amount of expert trajectories to sample, < 0 for all",
-                  default=-1
-                  )
-
-flags.DEFINE_string("expert_trajectories",
-                    help="The absolute path to the dir where the expert trajectories are safed.",
-                    default=None)
-
-flags.DEFINE_enum("blueprint",
-                  "merging",
-                  ["intersection", "highway", "merging"],
-                  "The map blueprint.")
-
 def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/gail_params.json")
 
-  params["ML"]["GAILRunner"]["tf2rl"]["logdir"] = os.path.expanduser(FLAGS.train_out)
-  params["ML"]["GAILRunner"]["tf2rl"]["model_dir"] = os.path.expanduser(FLAGS.train_out)
-  if FLAGS.mode == 'train':
-    params["ML"]["GAILRunner"]["tf2rl"]["logdir"] = os.path.join(params["ML"]["GAILRunner"]["tf2rl"]["logdir"], "logs", str(FLAGS.subset_size) if FLAGS.subset_size > 0 else 'all')
-    params["ML"]["GAILRunner"]["tf2rl"]["model_dir"] = os.path.join(params["ML"]["GAILRunner"]["tf2rl"]["model_dir"], "models", str(FLAGS.subset_size) if FLAGS.subset_size > 0 else 'all')  
-
-  Path(params["ML"]["GAILRunner"]["tf2rl"]["logdir"]).mkdir(exist_ok=True, parents=True)
-  Path(params["ML"]["GAILRunner"]["tf2rl"]["model_dir"]).mkdir(exist_ok=True, parents=True)
-
-  params["World"]["remove_agents_out_of_map"] = True
-  params["ML"]["Settings"]["GPUUse"] = FLAGS.gpu
-
   # create environment
-  if FLAGS.blueprint == 'merging':
+  blueprint = params['World']['blueprint']
+  if blueprint == 'merging':
     bp = ContinuousMergingBlueprint(params,
                                     number_of_senarios=2500,
                                     random_seed=0)
-  elif FLAGS.blueprint == 'intersection':
+  elif blueprint == 'intersection':
     bp = ContinuousIntersectionBlueprint(params,
                                     number_of_senarios=2500,
                                     random_seed=0)
-  elif FLAGS.blueprint == 'highway':
+  elif blueprint == 'highway':
     bp = ContinuousHighwayBlueprint(params,
                                     number_of_senarios=2500,
                                     random_seed=0)
@@ -94,10 +58,10 @@ def run_configuration(argv):
 
   np.random.seed(123456789)
   if FLAGS.mode != 'visualize':
-    expert_trajectories, avg_trajectory_length, num_trajectories = load_expert_trajectories(FLAGS.expert_trajectories,
+    expert_trajectories, avg_trajectory_length, num_trajectories = load_expert_trajectories(params['ML']['ExpertTrajectories']['expert_path_dir'],
       normalize_features=params["ML"]["Settings"]["NormalizeFeatures"],
       env=env, # the unwrapped env has to be used, since that contains the unnormalized spaces.
-      subset_size=FLAGS.subset_size
+      subset_size=params['ML']['ExpertTrajectories']['subset_size']
       ) 
   else:
     expert_trajectories = {
@@ -118,10 +82,6 @@ def run_configuration(argv):
   elif FLAGS.mode == "evaluate":
     runner.Evaluate(expert_trajectories, avg_trajectory_length, num_trajectories)
   
-  # store all used params of the training
-  # params.Save(os.path.join(FLAGS.train_out, "examples/example_params/gail_params.json"))
-
 
 if __name__ == '__main__':
-  flags.mark_flag_as_required("expert_trajectories")
   app.run(run_configuration)
