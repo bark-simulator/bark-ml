@@ -1,7 +1,7 @@
 from gym.spaces.box import Box
 
 #BARK-ML imports
-from bark_ml.library_wrappers.lib_tf2rl.normalization_utils import rescale_action, normalize_observation
+from bark_ml.library_wrappers.lib_tf2rl.normalization_utils import rescale, normalize
 
 
 class TF2RLWrapper():
@@ -29,9 +29,9 @@ class TF2RLWrapper():
         - If normalization is not needed: Simply calls the step function of the runtime.
         """
         if self._normalize_features:
-            rescaled_action = rescale_action(action, self._env.action_space)
+            rescaled_action = rescale(action, self._env.action_space)
             next_obs, reward, done, info = self._env.step(rescaled_action)
-            next_obs = normalize_observation(next_obs, self._env.observation_space)
+            next_obs = normalize(next_obs, self._env.observation_space)
             return next_obs, reward, done, info
         else:
             return self._env.step(action)
@@ -43,7 +43,7 @@ class TF2RLWrapper():
         - If normalization is not needed: Simply calls the reset function of the runtime.
         """
         if self._normalize_features:
-            return normalize_observation(self._env.reset(), self._env.observation_space)
+            return normalize(self._env.reset(), self._env.observation_space)
         else:
             return self._env.reset()
 

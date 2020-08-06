@@ -3,7 +3,12 @@ import pickle
 import numpy as np
 from collections import defaultdict
 from typing import Tuple
+
+# BARK-ML imports
 from bark_ml.library_wrappers.lib_tf2rl.load_save_utils import *
+from bark_ml.library_wrappers.lib_tf2rl.normalization_utils import normalize
+
+# TF2RL imports
 from tf2rl.experiments.utils import load_trajectories
 
 def load_expert_trajectories(dirname: str, normalize_features=False, env=None, subset_size = -1) -> (dict, float, int):
@@ -36,13 +41,13 @@ def load_expert_trajectories(dirname: str, normalize_features=False, env=None, s
     if normalize_features:
         assert env is not None, "if normalization is used the environment has to be provided."
         for key in ['obses', 'next_obses']:
-            expert_trajectories[key] = normalize(features=expert_trajectories[key],
-                high=env.observation_space.high,
-                low=env.observation_space.low
+            expert_trajectories[key] = normalize(
+                feature=expert_trajectories[key],
+                feature_space=env.observation_space
                 )
-        expert_trajectories['acts'] = normalize(features=expert_trajectories['acts'],
-            high=env.action_space.high,
-            low=env.action_space.low
+        expert_trajectories['acts'] = normalize(
+            feature=expert_trajectories['acts'],
+            feature_space=env.action_space
             )
 
         valid_obs_act_pairs = list(range(len(expert_trajectories['obses'])))
@@ -66,12 +71,3 @@ def load_expert_trajectories(dirname: str, normalize_features=False, env=None, s
     assert expert_trajectories['acts'].shape[1] == 2
 
     return expert_trajectories, len(expert_trajectories['obses']) / len(joblib_files), len(joblib_files)
-
-def normalize(features, high, low):
-    """normalizes a feature vector to be between -1 and 1
-    low and high are the original bounds of the feature.
-    """
-    norm_features = features - low
-    norm_features /= (high - low)
-    norm_features = norm_features * 2. - 1.
-    return norm_features
