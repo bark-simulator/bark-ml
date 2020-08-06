@@ -59,6 +59,7 @@ class SACRunner(TFARunner):
         self._log_evaluation_interval_duration(
           start_time=iteration_start_time, 
           iteration=global_iteration)
+        iteration_start_time = time.time()
 
         self.Evaluate()
         self._agent.Save()
@@ -80,12 +81,11 @@ class SACRunner(TFARunner):
 
     total_duration = time.time() - start_time
     mean_step_duration = total_duration / self._evaluation_interval
-      self._logger.info(
-        f'Training iterations {iterations} took {total_duration:.3f} seconds' +
-        ' (avg. {mean_step_duration:.3f}s / iteration).')
-      t = time.time()
+    self._logger.info(
+      f'Training iterations {iterations} took {total_duration:.3f} seconds' +
+      f' (avg. {mean_step_duration:.3f}s / iteration).')
 
-      with tf.name_scope("Durations"):
-        tf.summary.scalar("mean_step_duration",
-                          mean_step_duration,
-                          step=iteration)
+    with tf.name_scope("Durations"):
+      tf.summary.scalar("mean_step_duration",
+                        mean_step_duration,
+                        step=iteration)
