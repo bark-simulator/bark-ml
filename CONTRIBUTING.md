@@ -25,7 +25,7 @@ All submissions, including submissions by project members, require review. After
 a pull request is approved, we merge it.
 ## Style
 
-See the [BARK-ML](STYLE_GUIDE.md).
+See the [style guide](STYLE_GUIDE.md).
 
 ## Unit tests
 
