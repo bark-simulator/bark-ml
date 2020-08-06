@@ -1,6 +1,8 @@
 {
     "World": {
-        "remove_agents_out_of_map": true
+        "remove_agents_out_of_map": true,
+        "Blueprint": "merging",
+        "render": false
     },
     "BehaviorDynamicModel": {
         "IntegrationTimeDelta": 0.05000000074505806
@@ -63,13 +65,14 @@
             "BufferPrefetch": 3
         },
         "BehaviorTFAAgents": {
-            "CheckpointPath": "",
+            "CheckpointPath": "../com_github_gail_4_bark_large_data_store/pretrained_agents/sac/merging",
             "NumCheckpointsToKeep": 3
         },
         "TFARunner": {
             "EvaluationSteps": 100,
             "InitialCollectionEpisodes": 50,
-            "CollectionEpisodesPerStep": 1
+            "CollectionEpisodesPerStep": 1,
+            "SummaryPath": "../com_github_gail_4_bark_large_data_store/pretrained_agents/sac/merging"
         },
         "SACRunner": {
             "EvaluateEveryNSteps": 1000,
@@ -102,9 +105,11 @@
         "lon_acceleration_min": -8.0
     },
     "agent": {
-        "MaxHistoryLength": 50
+        "MaxHistoryLength": 50,
+        "Type": "sac"
     },
     "Visualization": {
+        "NumberOfEpisodes": 20,
         "Agents": {
             "Color": {
                 "Other": {
@@ -174,5 +179,9 @@
                 "Alpha": 1.0
             }
         }
+    },
+    "GenerateExpertTrajectories": {
+        "NumberOfTrajectories": 5,
+        "OutputDirectory": "examples/expert_trajectories"
     }
 }

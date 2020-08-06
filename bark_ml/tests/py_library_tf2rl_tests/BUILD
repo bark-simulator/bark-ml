@@ -59,7 +59,7 @@ py_test(
     size = "small",
 )
 
-# Only run with bazel run //bark_ml/tests/py_library_tf2rl_tests:rendered_tests
+# Only run with 
 py_binary(
     name = "rendered_tests",
     srcs = ["rendered_tests.py"],

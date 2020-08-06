@@ -128,94 +128,16 @@
 				"PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/gail.runfiles/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/com_github_interaction_dataset_interaction_dataset/python/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/com_github_keiohta_tf2rl"
 			}
 		}, 
-			{
-				"name": "Python: examples/tfa (SAC / --mode=train)",
-				"type": "python",
-				"request": "launch",
-				"program": "${workspaceFolder}/examples/tfa.py",
-				"console": "integratedTerminal",
-				"args": ["--mode=train", ],
-				"env": {
-					"PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/tfa.runfiles/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/com_github_interaction_dataset_interaction_dataset/python/:"
-				}
-			},
-			{
-				"name": "Python: examples/tfa (PPO / --mode=train)",
-				"type": "python",
-				"request": "launch",
-				"program": "${workspaceFolder}/examples/tfa.py",
-				"console": "integratedTerminal",
-				"args": ["--mode=train", "--agent=ppo"],
-				"env": {
-					"PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/tfa.runfiles/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/com_github_interaction_dataset_interaction_dataset/python/:"
-				}
-			},
-			{
-				"name": "Python: examples/tfa (--mode=visualize, --blueprint=intersection)",
-				"type": "python",
-				"request": "launch",
-				"program": "${workspaceFolder}/examples/tfa.py",
-				"console": "integratedTerminal",
-				"args": ["--mode=visualize", "--output_dir=~/Repositories/gail-4-bark/bark-ml/examples/pretrained_agents/sac/intersection/d", "--blueprint=intersection" ],
-				"env": {
-					"PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/tfa.runfiles/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/com_github_interaction_dataset_interaction_dataset/python/:"
-				}
-			},	
-			{
-				"name": "Python: examples/tfa (--mode=visualize)",
-				"type": "python",
-				"request": "launch",
-				"program": "${workspaceFolder}/examples/tfa.py",
-				"console": "integratedTerminal",
-				"args": ["--mode=visualize", "--output_dir=~/Repositories/gail-4-bark/bark-ml/examples/pretrained_agents/sac/highway", "--num_episodes=10000", "--blueprint=highway" ],
-				"env": {
-					"PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/tfa.runfiles/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/com_github_interaction_dataset_interaction_dataset/python/:"
-				}
-			},	
-			{
-				"name": "Python: examples/tfa (--mode=generate)",
-				"type": "python",
-				"request": "launch",
-				"program": "${workspaceFolder}/examples/tfa.py",
-				"console": "integratedTerminal",
-				"args": ["--mode=generate", "--num_trajectories=100"],
-				"env": {
-					"PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/tfa.runfiles/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/com_github_interaction_dataset_interaction_dataset/python/:"
-				}
-			},
-			{
-				"name": "Python: examples/tfa (--mode=generate / --blueprint=highway)",
-				"type": "python",
-				"request": "launch",
-				"program": "${workspaceFolder}/examples/tfa.py",
-				"console": "integratedTerminal",
-				"args": ["--mode=generate", "--num_trajectories=10000", "--blueprint=highway", "--render=False", "--output_dir=~/Repositories/gail-4-bark/bark-ml/examples/pretrained_agents/sac/highway"],
-				"env": {
-					"PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/tfa.runfiles/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/com_github_interaction_dataset_interaction_dataset/python/:"
-				}
-			},	
-			{
-				"name": "Python: Current File TF2RL",
-				"type": "python",
-				"request": "launch",
-				"program": "${file}",
-				"console": "integratedTerminal",
-				"env": {
-					"PYTHONPATH": "${workspaceFolder}/bazel-bin/tests/py_bark_agent_tests.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/tests/py_bark_agent_tests.runfiles/bark_project:${workspaceFolder}/bazel-bin/tests/py_bark_agent_tests.runfiles/bark_ml"
-				},
-				"justMyCode": false,
-				"args": [
-					//"--help",
-					"--gpu",
-					"-1",
-					"--expert-path-dir",
-					"${workspaceFolder}/results/20200514T120031.302066_SAC_",
-					"--max-steps",
-					"20000",
-					//"--show-test-images",
-					//"--save-test-movie"
-				] 
-			},
+		{
+			"name": "Python: examples/tfa_generate",
+			"type": "python",
+			"request": "launch",
+			"program": "${workspaceFolder}/examples/tfa_generate.py",
+			"console": "integratedTerminal",
+			"env": {
+				"PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/tfa_generate.runfiles/:${workspaceFolder}/bazel-bin/examples/tfa_generate.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/tfa_generate.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/tfa_generate.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/tfa_generate.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/examples/tfa_generate.runfiles/com_github_interaction_dataset_interaction_dataset/python/:${workspaceFolder}/bazel-bin/examples/tfa_generate.runfiles/com_github_keiohta_tf2rl"
+			}
+		},
 		{
 			"name": "Python: utils/tests/test_generate_launch_configuration",
 			"type": "python",
