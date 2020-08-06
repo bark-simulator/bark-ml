@@ -33,15 +33,6 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
     self._eval_policy = self.GetEvalPolicy()
 
   def GetAgent(self, env, params):
-    # critic network
-    critic_net = GNNCriticNetwork(
-      (env.observation_spec(), env.action_spec()),
-      gnn_params=self._params["ML"]["BehaviorGraphSACAgent"]["GNN"],
-      observation_fc_layer_params=None,
-      action_fc_layer_params=None,
-      joint_fc_layer_params=tuple(
-        self._params["ML"]["BehaviorGraphSACAgent"]["CriticJointFcLayerParams", "", [256, 128]]))
-        
     # actor network
     actor_net = GNNActorNetwork(
       input_tensor_spec=env.observation_spec(),
@@ -50,6 +41,15 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
       fc_layer_params=self._params\
         ["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams", "", [256, 128]]
     )
+
+    # critic network
+    critic_net = GNNCriticNetwork(
+      (env.observation_spec(), env.action_spec()),
+      gnn_params=self._params["ML"]["BehaviorGraphSACAgent"]["GNN"],
+      observation_fc_layer_params=None,
+      action_fc_layer_params=None,
+      joint_fc_layer_params=tuple(
+        self._params["ML"]["BehaviorGraphSACAgent"]["CriticJointFcLayerParams", "", [256, 128]]))
     
     # agent
     tf_agent = sac_agent.SacAgent(
