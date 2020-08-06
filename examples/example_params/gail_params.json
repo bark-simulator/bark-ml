@@ -70,7 +70,7 @@
             "AgentName": "gail_agent"
         },
         "ExpertTrajectories": {
-            "expert_path_dir": "examples/expert_trajectories/sac/merging",
+            "expert_path_dir": "../com_github_gail_4_bark_large_data_store/expert_trajectories/sac/merging",
             "subset_size": 10
         },
         "GAILRunner": {

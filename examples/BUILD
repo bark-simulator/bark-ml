@@ -57,7 +57,7 @@ py_binary(
   data = ["@bark_project//bark/python_wrapper:core.so",
           "//bark_ml:generate_core",
           "//examples/example_params",
-          "//examples/expert_trajectories",
+          "@com_github_gail_4_bark_large_data_store"
           ],
     imports = ["../external/bark_project/bark/python_wrapper/"],
   deps = [
