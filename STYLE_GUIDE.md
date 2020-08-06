@@ -1,4 +1,4 @@
-# TF Agents Style Guide
+# BARK-ML Style Guide
 
 This page contains style decisions that both developers and users of BARK-ML
 should follow to increase the readability of their code, reduce the
