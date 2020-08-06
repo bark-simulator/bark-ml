@@ -95,7 +95,8 @@ def summarize_agent(agent):
         agent._agent._target_critic_network_1,
         agent._agent._target_critic_network_2,
     ]
-     
+    
+    print(f"\n\033[1mAGENT SUMMARY:\033[0m\n")
     print('{:<30} {}'.format("Network", "Parameters"))
     print("==========================================")
     total_params = 0
@@ -144,7 +145,7 @@ def print_parameter_overview():
 
     # tf2_gnn specific parameters: these only apply when using tf2_gnn
     
-    d = "the identifier of the message passing class to be used, here: a recurrent gated convolution network (str)\n# NOTE: when using the 'ggnn' message passing layer, 'MPLayerUnits' must match n_features!"
+    d = "the identifier of the message passing class to be used, here: a relational gated convolution network (str)\nNOTE: when using the 'ggnn' message passing layer, 'MPLayerUnits' must match n_features!"
     p = "['ML']['BehaviorGraphSACAgent']['GNN.message_calculation_class']"
     v = "rgcn"
     tf2_gnn_params.append((p, d, v))
@@ -191,13 +192,13 @@ def print_parameter_overview():
         print(f"\033[1mDescription:\033[0m {d}")
         print(f"\033[1mDefault value:\033[0m {v}\n")
     
-    print("The following paramater only apply when using tf2_gnn.")
+    print("The following paramaters only apply when using tf2_gnn.\n")
     for p, d, v in tf2_gnn_params:
         print(f"\033[1mPath:\033[0m {p}")
         print(f"\033[1mDescription:\033[0m {d}")
         print(f"\033[1mDefault value:\033[0m {v}\n")
     
-    print("The following paramater only apply when using Spektral.")
+    print("The following paramaters only apply when using Spektral.\n")
     for p, d, v in spektral_params:
         print(f"\033[1mPath:\033[0m {p}")
         print(f"\033[1mDescription:\033[0m {d}")
