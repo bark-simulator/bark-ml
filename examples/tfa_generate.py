@@ -35,8 +35,8 @@ from bark_ml.library_wrappers.lib_tf2rl.load_save_utils import prepend_project_r
 
 FLAGS = flags.FLAGS
 flags.DEFINE_enum("mode",
-                  "visualize",
-                  ["train", "visualize", "evaluate", "generate"],
+                  "generate",
+                  ["train", "visualize", "generate"],
                   "Mode the configuration should be executed in.")
 
 def save_expert_trajectories(output_dir: str, expert_trajectories: dict):
@@ -46,11 +46,10 @@ def save_expert_trajectories(output_dir: str, expert_trajectories: dict):
       output_dir (str): The output folder.
       expert_trajectories (dict): The expert trajectories.
   """
-  _output_dir = os.path.join(os.path.expanduser(output_dir), "expert_trajectories")
-  Path(_output_dir).mkdir(parents=True, exist_ok=True)
+  Path(output_dir).mkdir(parents=True, exist_ok=True)
 
   for scenario_id, expert_trajectories in expert_trajectories.items():
-    filename = os.path.join(_output_dir, f'{scenario_id}.jblb')
+    filename = os.path.join(output_dir, f'{scenario_id}.jblb')
     joblib.dump(expert_trajectories, filename)
 
 def run_configuration(argv):

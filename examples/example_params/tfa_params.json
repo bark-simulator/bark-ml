@@ -109,7 +109,7 @@
         "Type": "sac"
     },
     "Visualization": {
-        "NumberOfEpisodes": 20,
+        "NumberOfEpisodes": 5,
         "Agents": {
             "Color": {
                 "Other": {
