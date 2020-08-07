@@ -109,11 +109,7 @@ class GNNActorNetwork(network.Network):
 
     tf.summary.histogram("actor_gnn_output", output)
     
-    output, network_state = self._encoder(
-      output,
-      step_type=step_type,
-      network_state=network_state,
-      training=training)
+    output, network_state = self._encoder(output, training=training)
       
     outer_rank = nest_utils.get_outer_rank(
       observations, 

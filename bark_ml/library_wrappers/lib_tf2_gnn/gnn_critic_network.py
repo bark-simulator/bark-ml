@@ -11,22 +11,22 @@ from tf_agents.networks import utils
 class GNNCriticNetwork(network.Network):
   """Creates a critic network."""
 
-def __init__(self,
-             input_tensor_spec,
-             gnn_params,
-             observation_fc_layer_params=None,
-             observation_dropout_layer_params=None,
-             observation_conv_layer_params=None,
-             observation_activation_fn=tf.nn.relu,
-             action_fc_layer_params=None,
-             action_dropout_layer_params=None,
-             action_conv_layer_params=None,
-             action_activation_fn=tf.nn.relu,
-             joint_fc_layer_params=None,
-             joint_dropout_layer_params=None,
-             joint_activation_fn=tf.nn.relu,
-             output_activation_fn=None,
-             name='CriticNetwork'):
+  def __init__(self,
+               input_tensor_spec,
+               gnn_params,
+               observation_fc_layer_params=None,
+               observation_dropout_layer_params=None,
+               observation_conv_layer_params=None,
+               observation_activation_fn=tf.nn.relu,
+               action_fc_layer_params=None,
+               action_dropout_layer_params=None,
+               action_conv_layer_params=None,
+               action_activation_fn=tf.nn.relu,
+               joint_fc_layer_params=None,
+               joint_dropout_layer_params=None,
+               joint_activation_fn=tf.nn.relu,
+               output_activation_fn=None,
+               name='CriticNetwork'):
     """Creates an instance of `GNNCriticNetwork`.
 
     Args:
@@ -91,9 +91,9 @@ def __init__(self,
         observation.
     """
     super(GNNCriticNetwork, self).__init__(
-        input_tensor_spec=input_tensor_spec,
-        state_spec=(),
-        name=name)
+      input_tensor_spec=input_tensor_spec,
+      state_spec=(),
+      name=name)
 
     observation_spec, action_spec = input_tensor_spec
 
@@ -106,22 +106,22 @@ def __init__(self,
     self._gnn = GNNWrapper(params=gnn_params)
 
     self._observation_layers = utils.mlp_layers(
-        observation_conv_layer_params,
-        observation_fc_layer_params,
-        observation_dropout_layer_params,
-        activation_fn=observation_activation_fn,
-        kernel_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
-            scale=1./3., mode='fan_in', distribution='uniform'),
-        name='observation_encoding')
+      observation_conv_layer_params,
+      observation_fc_layer_params,
+      observation_dropout_layer_params,
+      activation_fn=observation_activation_fn,
+      kernel_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
+        scale=1./3., mode='fan_in', distribution='uniform'),
+      name='observation_encoding')
 
     self._action_layers = utils.mlp_layers(
-        action_conv_layer_params,
-        action_fc_layer_params,
-        action_dropout_layer_params,
-        activation_fn=action_activation_fn,
-        kernel_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
-            scale=1./3., mode='fan_in', distribution='uniform'),
-        name='action_encoding')
+      action_conv_layer_params,
+      action_fc_layer_params,
+      action_dropout_layer_params,
+      activation_fn=action_activation_fn,
+      kernel_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
+        scale=1./3., mode='fan_in', distribution='uniform'),
+      name='action_encoding')
 
     self._joint_layers = utils.mlp_layers(
         None,
@@ -133,12 +133,12 @@ def __init__(self,
         name='joint_mlp')
 
     self._joint_layers.append(
-        tf.keras.layers.Dense(
-            units=1,
-            activation=output_activation_fn,
-            kernel_initializer=tf.keras.initializers.RandomUniform(
-                minval=-0.003, maxval=0.003),
-            name='value'))
+      tf.keras.layers.Dense(
+        units=1,
+        activation=output_activation_fn,
+        kernel_initializer=tf.keras.initializers.RandomUniform(
+          minval=-0.003, maxval=0.003),
+        name='value'))
 
   def call(self, inputs, step_type=(), network_state=(), training=False):
     observations, actions = inputs
