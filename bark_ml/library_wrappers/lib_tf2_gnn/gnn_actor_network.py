@@ -97,8 +97,6 @@ class GNNActorNetwork(network.Network):
     
     self._gnn = GNNWrapper(params=gnn_params)
 
-    print(fc_layer_params)
-
     self._encoder = encoding_network.EncodingNetwork(
       input_tensor_spec=tf.TensorSpec([None, self._gnn.num_units]),
       preprocessing_layers=None,
@@ -114,9 +112,6 @@ class GNNActorNetwork(network.Network):
     self._projection_nets = tf.nest.map_structure(projection_net, output_tensor_spec)
     self._output_tensor_spec = tf.nest.map_structure(lambda proj_net: proj_net.output_spec,
                                         self._projection_nets)
-
-    self.call_times = []
-    self.gnn_call_times = []
 
   @property  
   def output_tensor_spec(self):

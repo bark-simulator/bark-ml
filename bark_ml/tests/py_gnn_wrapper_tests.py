@@ -20,11 +20,12 @@ class PyGNNWrapperTests(unittest.TestCase):
   def _mock_setup(self):
     params = ParameterServer()
     params["ML"]["GraphObserver"]["AgentLimit"] = 4
+    params["ML"]["SACRunner"]["NumberOfCollections", "", 1]
     params["ML"]["BehaviorGraphSACAgent"]["CriticJointFcLayerParams"] = [256, 128]
     params["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams"] = [256, 128]
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["NumMpLayers"] = 2
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MpLayerNumUnits"] = 256
-    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["library"] = "tf2_gnn" # "tf2_gnn" or "spektral"
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["library"] = "spektral" # "tf2_gnn" or "spektral"
     params["ML"]["SACRunner"]["NumberOfCollections"] = int(1e6)
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["GraphDimensions"] = (4, 11, 4) # (n_nodes, n_features, n_edge_features)
 
@@ -65,8 +66,8 @@ class PyGNNWrapperTests(unittest.TestCase):
     critic_gnn = sac_agent._agent._actor_network._gnn._gnn
 
     for gnn in [actor_gnn, critic_gnn]:
-      self.assertEqual(gnn._params["num_layers"], 2)
-      self.assertEqual(gnn._params["hidden_dim"], 11)
+      self.assertEqual(gnn._params["num_layers"], 4)
+      self.assertEqual(gnn._params["hidden_dim"], 64)
       self.assertEqual(gnn._params["message_calculation_class"], "gnn_edge_mlp")
       self.assertEqual(gnn._params["global_exchange_mode"], "mean")
 
