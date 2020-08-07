@@ -33,6 +33,17 @@ def run_configuration(argv):
   # params["ML"]["GAILRunner"]["tf2rl"]["logdir"] = "../com_github_gail_4_bark_large_data_store/pretrained_agents/gail/merging"
   # params["ML"]["GAILRunner"]["tf2rl"]["model_dir"] = "../com_github_gail_4_bark_large_data_store/pretrained_agents/gail/merging"
 
+  # When training a gail agent we add a suffix to the specified model and log dir to distinguish between training runs.
+  # If you want to visualize or evaluate using your locally trained gail agent, you have to specify the run to use.
+  # Therefore look into the directory specified in params["ML"]["GAILRunner"]["tf2rl"]["logdir"] and 
+  # pick one of your runs with the naming scheme '<timestamp>_DDPG_GAIL'
+  # Add the name of the folder with the run to your:
+  # params["ML"]["GAILRunner"]["tf2rl"]["logdir"] and params["ML"]["GAILRunner"]["tf2rl"]["model_dir"]
+  # So if your model_dir and logdir were 'examples/gail_training' it becomes 'examples/gail_training/20200807T121018.454776_DDPG_GAIL' in the gail_params.json
+  # Alternatively append it as in the following lines:
+  params["ML"]["GAILRunner"]["tf2rl"]["logdir"] = os.path.join(params["ML"]["GAILRunner"]["tf2rl"]["logdir"], "20200807T121018.454776_DDPG_GAIL")
+  params["ML"]["GAILRunner"]["tf2rl"]["model_dir"] = os.path.join(params["ML"]["GAILRunner"]["tf2rl"]["model_dir"], "20200807T121018.454776_DDPG_GAIL")
+
   # create environment
   blueprint = params['World']['blueprint']
   if blueprint == 'merging':
