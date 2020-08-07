@@ -20,8 +20,10 @@ class BehaviorGAILAgent(BehaviorTF2RLAgent, BehaviorContinuousML):
         """constructor
 
         Args:
-            environment (Runtime, optional): A environment with a gym environment interface. Defaults to None.
-            params (ParameterServer, optional): The parameter server holding the settings. Defaults to None.
+            environment (Runtime, optional): A environment with a gym
+            environment interface. Defaults to None.
+            params (ParameterServer, optional): The parameter server holding
+            the settings. Defaults to None.
         """
         BehaviorTF2RLAgent.__init__(self,
                                     environment=environment,
@@ -35,20 +37,22 @@ class BehaviorGAILAgent(BehaviorTF2RLAgent, BehaviorContinuousML):
         """Returns instantiated policy -
         parameters from ./examples/example_params/gail_params.json
         """
+        local_params = self._params["ML"]["BehaviorGAILAgent"]
+
         policy = DDPG(
             state_shape=self._environment.observation_space.shape,
             action_dim=self._environment.action_space.high.size,
             max_action=self._environment.action_space.high,
-            lr_actor=self._params["ML"]["BehaviorGAILAgent"]["Generator"]["LearningRateActor", "", 0.001],
-            lr_critic=self._params["ML"]["BehaviorGAILAgent"]["Generator"]["LearningRateCritic", "", 0.001],
-            actor_units=self._params["ML"]["BehaviorGAILAgent"]["Generator"]["ActorFcLayerParams", "", [
+            lr_actor=local_params["Generator"]["LearningRateActor", "", 0.001],
+            lr_critic=local_params["Generator"]["LearningRateCritic", "", 0.001],
+            actor_units=local_params["Generator"]["ActorFcLayerParams", "", [
                 400, 300]],
-            critic_units=self._params["ML"]["BehaviorGAILAgent"]["Generator"]["CriticJointFcLayerParams", "", [
+            critic_units=local_params["Generator"]["CriticJointFcLayerParams", "", [
                 400, 300]],
-            sigma=self._params["ML"]["BehaviorGAILAgent"]["Generator"]["Sigma", "", 0.1],
-            tau=self._params["ML"]["BehaviorGAILAgent"]["Generator"]["Tau", "", 0.005],
-            n_warmup=self._params["ML"]["BehaviorGAILAgent"]["WarmUp", "", 1000],
-            batch_size=self._params["ML"]["BehaviorGAILAgent"]["Generator"]["BatchSize", "", 100],
+            sigma=local_params["Generator"]["Sigma", "", 0.1],
+            tau=local_params["Generator"]["Tau", "", 0.005],
+            n_warmup=local_params["WarmUp", "", 1000],
+            batch_size=local_params["Generator"]["BatchSize", "", 100],
             gpu=self._params["ML"]["Settings"]["GPUUse", "", 0])
         return policy
 
@@ -56,14 +60,16 @@ class BehaviorGAILAgent(BehaviorTF2RLAgent, BehaviorContinuousML):
         """Returns instantiated discriminator network -
         parameters from ./examples/example_params/gail_params.json
         """
+        local_params = self._params["ML"]["BehaviorGAILAgent"]
+
         irl = GAIL(
             state_shape=self._environment.observation_space.shape,
             action_dim=self._environment.action_space.high.size,
-            units=self._params["ML"]["BehaviorGAILAgent"]["Discriminator"]["FcLayerParams", "", [
+            units=local_params["Discriminator"]["FcLayerParams", "", [
                 400, 300]],
-            lr=self._params["ML"]["BehaviorGAILAgent"]["Discriminator"]["LearningRate", "", 0.001],
-            enable_sn=self._params["ML"]["BehaviorGAILAgent"]["EnableSN", "", False],
-            batch_size=self._params["ML"]["BehaviorGAILAgent"]["Discriminator"]["BatchSize", "", 32],
+            lr=local_params["Discriminator"]["LearningRate", "", 0.001],
+            enable_sn=local_params["EnableSN", "", False],
+            batch_size=local_params["Discriminator"]["BatchSize", "", 32],
             gpu=self._params["ML"]["Settings"]["GPUUse", "", 0])
         return irl
 

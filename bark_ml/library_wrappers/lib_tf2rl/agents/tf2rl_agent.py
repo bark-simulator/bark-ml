@@ -11,7 +11,6 @@ from bark.core.models.behavior import BehaviorModel
 import tf2rl
 
 # BARK-ML imports
-from bark_ml.library_wrappers.lib_tf2rl.tf2rl_wrapper import TF2RLWrapper # needed?
 
 
 class BehaviorTF2RLAgent:
@@ -23,8 +22,10 @@ class BehaviorTF2RLAgent:
     """constructor
 
     Args:
-        environment (Runtime, optional): A environment with a gym environment interface. Defaults to None.
-        params (ParameterServer, optional): The parameter server holding the settings. Defaults to None.
+        environment (Runtime, optional): A environment with a gym
+        environment interface. Defaults to None.
+        params (ParameterServer, optional): The parameter server holding
+        the settings. Defaults to None.
     """
     self._params = params
     self._environment = environment
