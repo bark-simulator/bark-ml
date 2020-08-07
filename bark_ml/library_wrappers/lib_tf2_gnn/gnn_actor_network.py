@@ -1,22 +1,5 @@
-# coding=utf-8
-# Copyright 2018 The TF-Agents Authors.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-import time
 import gin
 import tensorflow as tf  # pylint: disable=g-explicit-tensorflow-version-import
-import numpy as np
 
 from tf_agents.agents.sac import sac_agent
 from tf_agents.networks import network, normal_projection_network, utils, encoding_network
@@ -44,7 +27,7 @@ class GNNActorNetwork(network.Network):
                fc_layer_params=None,
                dropout_layer_params=None,
                conv_layer_params=None,
-               activation_fn=tf.keras.activations.relu,
+               activation_fn=tf.nn.relu,
                name='ActorNetwork'):
     """Creates an instance of `ActorNetwork`.
     Args:
@@ -52,6 +35,8 @@ class GNNActorNetwork(network.Network):
         inputs.
       output_tensor_spec: A nest of `tensor_spec.BoundedTensorSpec` representing
         the outputs.
+      gnn_params: A `ParameterServer` instance containing the paramaters with
+        which the GNN is configured.
       fc_layer_params: Optional list of fully_connected parameters, where each
         item is the number of units in the layer.
       dropout_layer_params: Optional list of dropout layer parameters, each item
@@ -71,7 +56,6 @@ class GNNActorNetwork(network.Network):
       ValueError: If `input_tensor_spec` or `action_spec` contains more than one
         item, or if the action data type is not `float`.
     """
-
     super(GNNActorNetwork, self).__init__(
         input_tensor_spec=input_tensor_spec,
         state_spec=(),
@@ -85,8 +69,7 @@ class GNNActorNetwork(network.Network):
     if len(flat_action_spec) > 1:
       raise ValueError('Only a single action is supported by this network')
     
-    self._single_action_spec = flat_action_spec[0]
-    if self._single_action_spec.dtype not in [tf.float32, tf.float64]:
+    if flat_action_spec[0].dtype not in [tf.float32, tf.float64]:
       raise ValueError('Only float actions are supported by this network.')
     
     self._gnn = GNNWrapper(params=gnn_params)
@@ -112,6 +95,8 @@ class GNNActorNetwork(network.Network):
     return self._output_tensor_spec
 
   def call(self, observations, step_type=(), network_state=(), training=False):
+    del step_type # unused.
+
     if len(observations.shape) == 1:
       observations = tf.expand_dims(observations, axis=0)
 
@@ -119,8 +104,8 @@ class GNNActorNetwork(network.Network):
     output = self._gnn(observations, training=training)
 
     # extract ego state (node 0)
-    if batch_size > 0:
-      output = output[:,0] # extract ego state
+    if batch_size > 0: 
+      output = output[:, 0]
 
     tf.summary.histogram("actor_gnn_output", output)
     

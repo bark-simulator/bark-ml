@@ -42,8 +42,8 @@ def run_configuration(argv):
   # NOTE: Modify these paths in order to save the checkpoints and summaries
   #from config import tfa_gnn_checkpoint_path, tfa_gnn_summary_path
   params["World"]["remove_agents_out_of_map"] = False
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = '/Users/marco.oliva/Development/bark-ml_logs/checkpoints/'
-  params["ML"]["TFARunner"]["SummaryPath"] = '/Users/marco.oliva/Development/bark-ml_logs/summaries/'
+  #params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = '/Users/marco.oliva/Development/bark-ml_logs/checkpoints/'
+  params["ML"]["TFARunner"]["SummaryPath"] = '/Users/marco.oliva/Development/bark-ml_logs/summaries/current'
   params["ML"]["GoalReachedEvaluator"]["MaxSteps"] = 30
   params["ML"]["BehaviorSACAgent"]["DebugSummaries"] = False
   params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 100

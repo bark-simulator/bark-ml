@@ -11,27 +11,29 @@ from tf_agents.networks import utils
 class GNNCriticNetwork(network.Network):
   """Creates a critic network."""
 
-  def __init__(self,
-               input_tensor_spec,
-               gnn_params,
-               observation_conv_layer_params=None,
-               observation_fc_layer_params=None,
-               observation_dropout_layer_params=None,
-               action_fc_layer_params=None,
-               action_dropout_layer_params=None,
-               joint_fc_layer_params=None,
-               joint_dropout_layer_params=None,
-               activation_fn=tf.nn.relu,
-               output_activation_fn=None,
-               name='CriticNetwork'):
-    """Creates an instance of `CriticNetwork`.
+def __init__(self,
+             input_tensor_spec,
+             gnn_params,
+             observation_fc_layer_params=None,
+             observation_dropout_layer_params=None,
+             observation_conv_layer_params=None,
+             observation_activation_fn=tf.nn.relu,
+             action_fc_layer_params=None,
+             action_dropout_layer_params=None,
+             action_conv_layer_params=None,
+             action_activation_fn=tf.nn.relu,
+             joint_fc_layer_params=None,
+             joint_dropout_layer_params=None,
+             joint_activation_fn=tf.nn.relu,
+             output_activation_fn=None,
+             name='CriticNetwork'):
+    """Creates an instance of `GNNCriticNetwork`.
 
     Args:
       input_tensor_spec: A tuple of (observation, action) each a nest of
         `tensor_spec.TensorSpec` representing the inputs.
-      observation_conv_layer_params: Optional list of convolution layer
-        parameters for observations, where each item is a length-three tuple
-        indicating (num_units, kernel_size, stride).
+      gnn_params: A `ParameterServer` instance containing the paramaters with
+        which the GNN is configured.
       observation_fc_layer_params: Optional list of fully connected parameters
         for observations, where each item is the number of units in the layer.
       observation_dropout_layer_params: Optional list of dropout layer
@@ -43,6 +45,11 @@ class GNNCriticNetwork(network.Network):
         dropout layer after each fully connected layer, except if the entry in
         the list is None. This list must have the same length of
         observation_fc_layer_params, or be None.
+      observation_conv_layer_params: Optional list of convolution layer
+        parameters for observations, where each item is a length-three tuple
+        indicating (num_units, kernel_size, stride).
+      observation_activation_fn: Activation function applied to the observation 
+        layers, e.g. tf.nn.relu, slim.leaky_relu, ...
       action_fc_layer_params: Optional list of fully connected parameters for
         actions, where each item is the number of units in the layer.
       action_dropout_layer_params: Optional list of dropout layer parameters,
@@ -54,6 +61,11 @@ class GNNCriticNetwork(network.Network):
         after each fully connected layer, except if the entry in the list is
         None. This list must have the same length of action_fc_layer_params, or
         be None.
+      action_conv_layer_params: Optional list of convolution layer
+        parameters for actions, where each item is a length-three tuple
+        indicating (num_units, kernel_size, stride).
+      action_activation_fn: Activation function applied to the action layers,
+        e.g. tf.nn.relu, slim.leaky_relu, ...
       joint_fc_layer_params: Optional list of fully connected parameters after
         merging observations and actions, where each item is the number of units
         in the layer.
@@ -66,7 +78,8 @@ class GNNCriticNetwork(network.Network):
         after each fully connected layer, except if the entry in the list is
         None. This list must have the same length of joint_fc_layer_params, or
         be None.
-      activation_fn: Activation function, e.g. tf.nn.relu, slim.leaky_relu, ...
+      joint_activation_fn: Activation function applied to the joint layers,
+        e.g. tf.nn.relu, slim.leaky_relu, ...
       output_activation_fn: Activation function for the last layer. This can be
         used to restrict the range of the output. For example, one can pass
         tf.keras.activations.sigmoid here to restrict the output to be bounded
@@ -87,10 +100,8 @@ class GNNCriticNetwork(network.Network):
     if len(tf.nest.flatten(observation_spec)) > 1:
       raise ValueError('Only a single observation is supported by this network')
 
-    flat_action_spec = tf.nest.flatten(action_spec)
-    if len(flat_action_spec) > 1:
+    if len(tf.nest.flatten(action_spec)) > 1:
       raise ValueError('Only a single action is supported by this network')
-    self._single_action_spec = flat_action_spec[0]
 
     self._gnn = GNNWrapper(params=gnn_params)
 
@@ -98,32 +109,32 @@ class GNNCriticNetwork(network.Network):
         observation_conv_layer_params,
         observation_fc_layer_params,
         observation_dropout_layer_params,
-        activation_fn=activation_fn,
+        activation_fn=observation_activation_fn,
         kernel_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
-            scale=1. / 3., mode='fan_in', distribution='uniform'),
+            scale=1./3., mode='fan_in', distribution='uniform'),
         name='observation_encoding')
 
     self._action_layers = utils.mlp_layers(
-        None,
+        action_conv_layer_params,
         action_fc_layer_params,
         action_dropout_layer_params,
-        activation_fn=activation_fn,
+        activation_fn=action_activation_fn,
         kernel_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
-            scale=1. / 3., mode='fan_in', distribution='uniform'),
+            scale=1./3., mode='fan_in', distribution='uniform'),
         name='action_encoding')
 
     self._joint_layers = utils.mlp_layers(
         None,
         joint_fc_layer_params,
         joint_dropout_layer_params,
-        activation_fn=activation_fn,
+        activation_fn=joint_activation_fn,
         kernel_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
-            scale=1. / 3., mode='fan_in', distribution='uniform'),
+            scale=1./3., mode='fan_in', distribution='uniform'),
         name='joint_mlp')
 
     self._joint_layers.append(
         tf.keras.layers.Dense(
-            1,
+            units=1,
             activation=output_activation_fn,
             kernel_initializer=tf.keras.initializers.RandomUniform(
                 minval=-0.003, maxval=0.003),

@@ -57,7 +57,7 @@ class GNNWrapper(tf.keras.Model):
       params.get("message_calculation_class", "gnn_edge_mlp")
 
     mp_style = mapped_params["message_calculation_class"]
-    gnn_params = GNN.get_default_hyperparameters(mp_style)    
+    gnn_params = GNN.get_default_hyperparameters(mp_style)
     gnn_params.update(mapped_params)
 
     self._gnn = GNN(gnn_params)
