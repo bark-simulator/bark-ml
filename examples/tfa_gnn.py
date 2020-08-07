@@ -49,9 +49,10 @@ def run_configuration(argv):
   params["ML"]["SACRunner"]["EvaluateEveryNSteps"] = 100
   params["ML"]["BehaviorSACAgent"]["BatchSize"] = 128
   params["ML"]["GraphObserver"]["AgentLimit"] = 4
-  params["ML"]["BehaviorGraphSACAgent"]["CriticJointFcLayerParams"] = [256, 128]
-  params["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams"] = [256, 128]
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["NumMpLayers"] = 2
+  params["ML"]["BehaviorGraphSACAgent"]["CriticJointFcLayerParams"] = [128]
+  params["ML"]["BehaviorGraphSACAgent"]["CriticObservationFcLayerParams"] = [128]
+  params["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams"] = [256, 256]
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["NumMpLayers"] = 1
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MpLayerNumUnits"] = 256
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["library"] = "spektral" # "tf2_gnn" or "spektral"
   params["ML"]["SACRunner"]["NumberOfCollections"] = int(1e6)
@@ -61,7 +62,7 @@ def run_configuration(argv):
 
   # tf2_gnn
   # NOTE: when using the ggnn mp class, MPLayerUnits must match n_features!
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["message_calculation_class"] = "gnn_edge_mlp"
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["message_calculation_class"] = "rgcn"
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_mode"] = "gru"
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["dense_every_num_layers"] = 1
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_every_num_layers"] = 1
@@ -71,7 +72,7 @@ def run_configuration(argv):
   
   # spektral
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MPChannels"] = 64
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["KernelNetUnits"] = [256]
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["KernelNetUnits"] = [128]
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MPLayerActivation"] = "relu"
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["DenseActication"] = "tanh"
 
