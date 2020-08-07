@@ -257,7 +257,7 @@ class GetMapAndTrackFilesTests(unittest.TestCase):
         """
         Test: The given path is not an interaction dataset path
         """
-        with self.assertRaises(ValueError):
+        with self.assertRaises(NotADirectoryError):
             track_files = get_track_files(__file__)
 
 

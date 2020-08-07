@@ -31,7 +31,6 @@ from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, BehaviorPPOAgent
 from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner
-from bark_ml.library_wrappers.lib_tf2rl.load_save_utils import prepend_project_root
 
 FLAGS = flags.FLAGS
 flags.DEFINE_enum("mode",
@@ -63,10 +62,10 @@ def run_configuration(argv):
   """
   params = ParameterServer(filename="examples/example_params/tfa_params.json")
   # params = ParameterServer()
-  output_dir = prepend_project_root(params["GenerateExpertTrajectories"]["OutputDirectory"])
+  output_dir = params["GenerateExpertTrajectories"]["OutputDirectory"]
 
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = prepend_project_root(params["ML"]["BehaviorTFAAgents"]["CheckpointPath"])
-  params["ML"]["TFARunner"]["SummaryPath"] = prepend_project_root(params["ML"]["TFARunner"]["SummaryPath"])
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = (params["ML"]["BehaviorTFAAgents"]["CheckpointPath"])
+  params["ML"]["TFARunner"]["SummaryPath"] = (params["ML"]["TFARunner"]["SummaryPath"])
 
   # create environment
   if params["World"]["Blueprint"] == 'merging':

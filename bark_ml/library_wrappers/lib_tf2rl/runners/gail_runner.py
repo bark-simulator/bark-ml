@@ -13,8 +13,6 @@ from tf2rl.experiments.utils import restore_latest_n_traj
 
 # BARK-ML imports
 from bark_ml.library_wrappers.lib_tf2rl.runners.tf2rl_runner import TF2RLRunner
-from bark_ml.library_wrappers.lib_tf2rl.load_save_utils import prepend_project_root
-
 
 class GAILRunner(TF2RLRunner):
   """GAIL runner implementation based on tf2rl library."""
@@ -33,6 +31,12 @@ class GAILRunner(TF2RLRunner):
     """
     
     self._expert_trajs = expert_trajs
+    if not self._expert_trajs:
+      import numpy as np
+      self._expert_trajs = {
+          'obses': np.empty([0,0]),
+          'next_obses': np.empty([0,0]),
+          'acts': np.empty([0,0])}
     
     TF2RLRunner.__init__(self,
                     environment=environment,
@@ -129,8 +133,6 @@ class GAILRunner(TF2RLRunner):
     # other:
     args['gpu'] = self._params["ML"]["Settings"]["GPUUse", "", 0]
 
-    args['model_dir'] = prepend_project_root(args['model_dir'])
-    args['logdir'] = prepend_project_root(args['logdir'])
     Path(args['model_dir']).mkdir(parents=True, exist_ok=True)
     Path(args['logdir']).mkdir(parents=True, exist_ok=True)
 

@@ -28,6 +28,11 @@ flags.DEFINE_enum("mode",
 def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/gail_params.json")
 
+  # Uncomment these to use the pretrained agents from https://github.com/GAIL-4-BARK/large_data_store
+  # The agents are automatically integrated using bazel together with the expert trajectories
+  # params["ML"]["GAILRunner"]["tf2rl"]["logdir"] = "../com_github_gail_4_bark_large_data_store/pretrained_agents/gail/merging"
+  # params["ML"]["GAILRunner"]["tf2rl"]["model_dir"] = "../com_github_gail_4_bark_large_data_store/pretrained_agents/gail/merging"
+
   # create environment
   blueprint = params['World']['blueprint']
   if blueprint == 'merging':
@@ -53,8 +58,7 @@ def run_configuration(argv):
     normalize_features=params["ML"]["Settings"]["NormalizeFeatures"])
 
   # GAIL-agent
-  gail_agent = BehaviorGAILAgent(environment=wrapped_env,
-                               params=params)
+  gail_agent = BehaviorGAILAgent(environment=wrapped_env, params=params)
 
   np.random.seed(123456789)
   if FLAGS.mode != 'visualize':
@@ -64,11 +68,7 @@ def run_configuration(argv):
       subset_size=params['ML']['ExpertTrajectories']['subset_size']
       ) 
   else:
-    expert_trajectories = {
-      "obses": np.empty([0, 16]),
-      "next_obses": np.empty([0, 16]),
-      "acts": np.empty([0, 2])
-    }
+    expert_trajectories = None
 
   runner = GAILRunner(params=params,
                      environment=wrapped_env,
