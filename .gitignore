@@ -183,5 +183,6 @@ start_multiple_**.sh
 pretrained_agents**
 *.txt
 examples/marvin/**
+examples/gail_training/**
 **large_data_store**
 
