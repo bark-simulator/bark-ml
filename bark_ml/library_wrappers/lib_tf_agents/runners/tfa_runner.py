@@ -18,7 +18,7 @@ from tf_agents.trajectories import time_step as ts
 
 # BARK-ML imports
 from bark_ml.library_wrappers.lib_tf_agents.tfa_wrapper import TFAWrapper
-from collections import defaultdict
+
 
 class TFARunner:
   def __init__(self,
@@ -80,7 +80,7 @@ class TFARunner:
     """Agent specific
     """
     pass
-    
+
   def Evaluate(self):
     self._agent._training = False
     global_iteration = self._agent._agent._train_step_counter.numpy()
@@ -115,45 +115,3 @@ class TFARunner:
         action_step = self._agent._eval_policy.action(ts.transition(state, reward=0.0, discount=1.0))
         state, reward, is_terminal, _ = self._environment.step(action_step.action.numpy())
         self._environment.render()
-
-  
-  def GenerateExpertTrajectories(self, num_trajectories: int = 1000, render: bool = False) -> dict:
-    """Generates expert trajectories based on a tfa agent.
-
-    Args:
-        num_trajectories (int, optional): The minimal number of generated expert trajectories. Defaults to 1000. 
-        render (bool, optional): Render the simulation during simulation. Defaults to False.
-
-    Returns:
-        dict: The expert trajectories.
-    """
-    self._agent._training = False
-    per_scenario_expert_trajectories = {}
-
-    while len(per_scenario_expert_trajectories) < num_trajectories:
-      expert_trajectories = {'obs': [], 'act': []}
-
-      state = self._environment.reset()
-      expert_trajectories['obs'].append(state)
-      is_terminal = False
-
-      while not is_terminal:
-        action_step = self._agent._eval_policy.action(ts.transition(state, reward=0.0, discount=1.0))
-
-        state, reward, is_terminal, info = self._environment.step(action_step.action.numpy())
-        expert_trajectories['obs'].append(state)
-        expert_trajectories['act'].append(action_step.action.numpy())
-
-        if render:
-          self._environment.render()
-
-      if info and info['goal_reached']:
-        expert_trajectories['act'].append(expert_trajectories['act'][-1])
-        assert len(expert_trajectories['obs']) == len(expert_trajectories['act'])
-
-        per_scenario_expert_trajectories[len(per_scenario_expert_trajectories)] = expert_trajectories
-        print(f'Generated {len(per_scenario_expert_trajectories)}/{num_trajectories} expert trajectories.')
-      else:
-        print('Expert trajectory invalid. Skipping.')
-
-    return per_scenario_expert_trajectories

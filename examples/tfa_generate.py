@@ -30,7 +30,7 @@ from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
   ContinuousMergingBlueprint, ContinuousIntersectionBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, BehaviorPPOAgent
-from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner
+from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunnerGenerator
 
 FLAGS = flags.FLAGS
 flags.DEFINE_enum("mode",
@@ -87,23 +87,12 @@ def run_configuration(argv):
                           render=False)
 
 
-  if params["agent"]["Type"] == 'ppo':
-    ppo_agent = BehaviorPPOAgent(environment=env,
-                                 params=params)
-    env.ml_behavior = ppo_agent
-    runner = PPORunner(params=params,
-                       environment=env,
-                       agent=ppo_agent)
-  elif params["agent"]["Type"] == 'sac':
-    sac_agent = BehaviorSACAgent(environment=env,
-                                params=params)
-    env.ml_behavior = sac_agent
-    runner = SACRunner(params=params,
-                      environment=env,
-                      agent=sac_agent)
-  else:
-    raise ValueError(f'{params["agent"]["Type"]} is no valid agent. See help.')
-
+  sac_agent = BehaviorSACAgent(environment=env,
+                              params=params)
+  env.ml_behavior = sac_agent
+  runner = SACRunnerGenerator(params=params,
+                    environment=env,
+                    agent=sac_agent)
 
   if FLAGS.mode == "train":
     runner.SetupSummaryWriter()
