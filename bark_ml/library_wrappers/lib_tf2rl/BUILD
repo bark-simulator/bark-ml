@@ -16,8 +16,11 @@ py_library(
     srcs = ["tf2rl_wrapper.py"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
     imports = ["../external/bark_project/bark/python_wrapper/"],
-    deps = ["@bark_project//bark/runtime:runtime",
-    "@com_github_keiohta_tf2rl"],
+    deps = [
+      "@bark_project//bark/runtime:runtime",
+      "@com_github_keiohta_tf2rl",
+      ":normalization_utils"
+      ],
     visibility = ["//visibility:public"],
 )
 
@@ -28,7 +31,8 @@ py_library(
           ],
     deps = [
             "@com_github_keiohta_tf2rl",
-            ":load_save_utils"
+            ":load_save_utils",
+            ":normalization_utils"
             ],
     visibility = ["//visibility:public"]
 )
@@ -36,6 +40,12 @@ py_library(
 py_library(
   name = "load_save_utils",
   srcs = ["load_save_utils.py"],
+  visibility = ["//visibility:public"]
+)
+
+py_library(
+  name = "normalization_utils",
+  srcs = ["normalization_utils.py"],
   visibility = ["//visibility:public"]
 )
 

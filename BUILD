@@ -21,6 +21,7 @@ test_suite(
 test_suite(
   name = "gail_tests",
   tests = [
+    "//bark_ml/tests/py_library_tf2rl_tests:normalization_utils_tests",
     "//bark_ml/tests/py_library_tf2rl_tests:py_gail_agent_tests",
     "//bark_ml/tests/py_library_tf2rl_tests:py_tf2rl_wrapper_tests",
     "//bark_ml/tests/py_library_tf2rl_tests:py_gail_runner_tests",
