@@ -72,7 +72,7 @@ class GNNActorNetwork(network.Network):
     if flat_action_spec[0].dtype not in [tf.float32, tf.float64]:
       raise ValueError('Only float actions are supported by this network.')
     
-    self._gnn = GNNWrapper(params=gnn_params)
+    self._gnn = GNNWrapper(params=gnn_params, name=name + "_GNN")
 
     self._encoder = encoding_network.EncodingNetwork(
       input_tensor_spec=tf.TensorSpec([None, self._gnn.num_units]),
@@ -102,12 +102,13 @@ class GNNActorNetwork(network.Network):
 
     batch_size = observations.shape[0]
     output = self._gnn(observations, training=training)
-
+    
     # extract ego state (node 0)
     if batch_size > 0: 
       output = output[:, 0]
 
-    tf.summary.histogram("actor_gnn_output", output)
+    with tf.name_scope("GNNActorNetwork"):
+      tf.summary.histogram("actor_gnn_output", output)
     
     output, network_state = self._encoder(output, training=training)
       

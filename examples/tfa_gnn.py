@@ -25,6 +25,7 @@ from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorGraphSACAgent
 from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner
 from bark_ml.observers.graph_observer import GraphObserver
+from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_wrapper import GNNWrapper
 
 
 # for training: bazel run //examples:tfa -- --mode=train
@@ -36,42 +37,38 @@ flags.DEFINE_enum("mode",
 
 def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/tfa_sac_gnn_example_params.json")
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = '/Users/marco.oliva/Development/bark-ml_logs/checkpoints/2'
-  params["ML"]["TFARunner"]["SummaryPath"] = '/Users/marco.oliva/Development/bark-ml_logs/summaries/1'
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = '/Users/marco.oliva/Development/bark-ml_logs/checkpoints/3'
+  params["ML"]["TFARunner"]["SummaryPath"] = '/Users/marco.oliva/Development/bark-ml_logs/summaries/3'
   params["ML"]["SACRunner"]["NumberOfCollections"] = int(1e6)
   params["ML"]["GraphObserver"]["AgentLimit"] = 4
   params["ML"]["BehaviorGraphSACAgent"]["DebugSummaries"] = False
-  params["ML"]["BehaviorGraphSACAgent"]["BatchSize"] = 256
+  params["ML"]["BehaviorGraphSACAgent"]["BatchSize"] = 128
   params["ML"]["BehaviorGraphSACAgent"]["CriticJointFcLayerParams"] = [128, 128]
-  params["ML"]["BehaviorGraphSACAgent"]["CriticObservationFcLayerParams"] = [128]
+  params["ML"]["BehaviorGraphSACAgent"]["CriticObservationFcLayerParams"] = [128, 128]
   params["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams"] = [128, 64]
 
   # GNN parameters
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["NumMpLayers"] = 1
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MpLayerNumUnits"] = 128
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MpLayersHiddenDim"] = 128
 
-  gnn_library = "spektral" # "tf2_gnn" or "spektral"
+  gnn_library = GNNWrapper.SupportedLibrary.spektral # "tf2_gnn" or "spektral"
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["library"] = gnn_library 
 
   # (n_nodes, n_features, n_edge_features)
-    # NOTE: when using the ggnn mp class, MPLayerUnits must match n_features!
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["GraphDimensions"] = (4, 11, 4)
 
-  if gnn_library == "spektral":
-    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MPChannels"] = 128
+  if gnn_library == GNNWrapper.SupportedLibrary.spektral:
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["KernelNetUnits"] = [512, 256]
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MPLayerActivation"] = "relu"
     params["ML"]["GraphObserver"]["SelfLoops"] = True # add self-targeted edges to graph nodes
-  elif gnn_library == "tf2_gnn":
+  elif gnn_library == GNNWrapper.SupportedLibrary.tf2_gnn:
+    # NOTE: when using the ggnn mp class, MPLayerUnits must match n_features!
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["message_calculation_class"] = "rgcn"
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_mode"] = "gru"
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["dense_every_num_layers"] = -1 # no dense layers between mp layers
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_every_num_layers"] = 1
     params["ML"]["GraphObserver"]["SelfLoops"] = False
-
     # see gnn.py in tf2_gnn for more possible parameters.
-  else:
-    raise ValueError(gnn_library, "Invalid GNN library specified.")
 
   # viewer = MPViewer(
   #   params=params,

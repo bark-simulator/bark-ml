@@ -103,7 +103,7 @@ class GNNCriticNetwork(network.Network):
     if len(tf.nest.flatten(action_spec)) > 1:
       raise ValueError('Only a single action is supported by this network')
 
-    self._gnn = GNNWrapper(params=gnn_params)
+    self._gnn = GNNWrapper(params=gnn_params, name=name + "_GNN")
 
     self._observation_layers = utils.mlp_layers(
       observation_conv_layer_params,
@@ -141,9 +141,9 @@ class GNNCriticNetwork(network.Network):
         name='value'))
 
   def call(self, inputs, step_type=(), network_state=(), training=False):
+    del step_type # unused.
+
     observations, actions = inputs
-    del step_type  # unused.
-  
     batch_size = observations.shape[0]
     embeddings = self._gnn(observations, training=training)
     
@@ -164,5 +164,8 @@ class GNNCriticNetwork(network.Network):
     joint = tf.concat([embeddings, actions], 1)
     for layer in self._joint_layers:
       joint = layer(joint, training=training)
+
+    with tf.name_scope("GNNCriticNetwork"):
+      tf.summary.histogram("critic_output_value", joint)
 
     return tf.reshape(joint, [-1]), network_state
