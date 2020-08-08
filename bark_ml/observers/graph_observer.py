@@ -1,14 +1,11 @@
-import os, time, json, pickle
-import logging
 from gym import spaces
 import numpy as np
 import math
 import operator
-import networkx as nx
 import tensorflow as tf
 from typing import Dict
-from collections import OrderedDict
 from itertools import islice
+from collections import OrderedDict
 
 from bark.core.models.dynamic import StateDefinition
 from bark.core.world import ObservedWorld
@@ -18,123 +15,112 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.observers.observer import StateObserver
 
 class GraphObserver(StateObserver):
-  feature_times = []
-  edges_times = []
-  
+  """
+  This observer converts an `ObservsedWorld` instance into 
+  a graph-structured observation, consisting of nodes (with 
+  features), an adjacency matrix expressing the (directed) 
+  connections between nodes in the graph, and edges (with 
+  features), expressing the relative information between 
+  the agents that constitute these connections.
+  """
+
   def __init__(self,
                normalize_observations=True,
-               output_supervised_data = False,
                params=ParameterServer()):
-    StateObserver.__init__(self, params)
+    """
+    Creates an instance of `GraphObserver`.
 
+    Args:
+      normalize_observations: A boolean value indicating whether
+        the observations returned by the `Observe` function
+        should be normalized into the range of [-1, 1].
+      params: A `ParameterServer` instance that enables further
+        configuration of the observer. Defaults to a new instance.
+    """
+    StateObserver.__init__(self, params)
     self._normalize_observations = normalize_observations
-    self._output_supervised_data = output_supervised_data
 
     # the number of features of a node in the graph
-    self.feature_len = len(GraphObserver.attribute_keys())
+    self.feature_len = len(GraphObserver.node_attribute_keys())
 
     # the number of features of an edge between two nodes
-    self.edge_feature_len = 4
+    self.edge_feature_len = len(GraphObserver.edge_attribute_keys())
 
     # the maximum number of agents that can be observed
     self._agent_limit = \
       params["ML"]["GraphObserver"]["AgentLimit", "", 4]
 
-     # the radius an agent can 'see' in meters
+    # the radius an agent can 'see' in meters
     self._visibility_radius = \
       params["ML"]["GraphObserver"]["VisibilityRadius", "", 50]
 
-  @classmethod
-  def attribute_keys(cls):
-    return ["x", "y", "theta", "vel", "goal_x", "goal_y", 
-    "goal_dx", "goal_dy", "goal_theta", "goal_d", "goal_vel"]
+    # whether each node has an edge pointing to itself 
+    self._add_self_loops = \
+      params["ML"]["GraphObserver"]["SelfLoops", "", True]
 
   def Observe(self, world):
     """see base class"""
     agents = self._preprocess_agents(world)
-    num_agents = len(agents)
-    obs = [self._agent_limit, num_agents, self.feature_len]
 
-    # features
-    for _, agent in agents:
-      obs.extend(list(self._extract_features(agent).values()))
+    # placeholder for the output observation
+    obs = np.zeros(self._len_state)
 
-    # fill empty spots (difference between existing and max agents) with zeros
-    obs.extend(np.zeros(max(0, self._agent_limit - num_agents)) * self.feature_len)
+    # insert node features for each agent
+    for i, agent in agents:
+      start_index = i * self.feature_len
+      end_index = start_index + self.feature_len
+      obs[start_index:end_index] = self._extract_features(agent)
 
-    # edges
-    # second loop for edges necessary
-    # -> otherwise order of graph_nodes is disrupted
-    edges = []
     edge_features = np.zeros((self._agent_limit, self._agent_limit, self.edge_feature_len))
+    adjacency_matrix = np.zeros((self._agent_limit, self._agent_limit))
 
+    # add edges to all visible agents
     for index, agent in agents:
-      # create edges to all visible agents
       nearby_agents = self._nearby_agents(
         center_agent=agent, 
         agents=agents, 
         radius=self._visibility_radius)
 
+      if self._add_self_loops:
+        adjacency_matrix[index, index] = 1
+
       for target_index, nearby_agent in nearby_agents:
-        edges.append([index, target_index])
         edge_features[index, target_index, :] = self._extract_edge_features(agent, nearby_agent)
+
+        adjacency_matrix[index, target_index] = 1
+        adjacency_matrix[target_index, index] = 1
     
-    # build adjacency matrix and convert to list
-    adjacency_matrix = np.zeros((self._agent_limit, self._agent_limit))
-    for source, target in edges:
-      adjacency_matrix[source, target] = 1
-      adjacency_matrix[target, source] = 1
+    # insert adjacency list
+    adj_start_index = self._agent_limit * self.feature_len
+    adj_end_index = adj_start_index + self._agent_limit ** 2
+    obs[adj_start_index:adj_end_index] = adjacency_matrix.reshape(-1)
+
+    # insert edge features
+    obs[adj_end_index:] = edge_features.reshape(-1)
     
-    adjacency_list = adjacency_matrix.reshape(-1)
-    edge_features = np.reshape(edge_features, -1)
-    obs.extend(adjacency_list)
-    obs.extend(edge_features)
-
-    assert len(obs) == self._len_state, f'Observation \
-      has invalid length ({len(obs)}, expected: {self._len_state})'
-    
-    obs = tf.convert_to_tensor(obs, dtype=tf.float32, name='observation')
-
-    if self._output_supervised_data == False:
-      return obs
-    else:
-      features, _ = GraphObserver.graph(obs, graph_dims=\
-        (self._agent_limit, self.feature_len, self.edge_feature_len))
-      actions = self._generate_actions(features)
-      return obs, actions
-      
-    return obs
-
-  def _extract_edge_features(self, source_agent, target_agent):
-    source_features = self._extract_features(source_agent)
-    target_features = self._extract_features(target_agent)
-
-    d_x = source_features["x"] - target_features["x"]
-    d_y = source_features["y"] - target_features["y"]
-    d_vel = source_features["vel"] - target_features["vel"]
-    d_theta = source_features["theta"] - target_features["theta"]
-    return np.array([d_x, d_y, d_vel, d_theta])
+    return tf.convert_to_tensor(obs, dtype=tf.float32, name='observation')
 
   @classmethod
   def graph(cls, observations, graph_dims, dense=False):
-    """ Maps the given batch of observations into a
-      graph representation.
+    """
+    Maps the given batch of observations into a
+    graph representation.
 
       Args:
-      observations: The batch of observations of 
-        shape (batch_size, observation_size).
+      observations: The batch of observations as a tf.Tensor
+        of shape (batch_size, observation_size).
       graph_dims: A tuple containing the dimensions of the 
         graph as (num_nodes, num_features, num_edge_features).
         If `dense` is set to True, num_edge_features is ignored.
-      dense: Specifies the returned graph representation. If 
-        set to True, the edges are returned as a list of nodes 
-        indices (relative to the flattened batch) and an additional
+      dense: Specifies the format of the returned graph representation. 
+        If set to `True`, the edges are returned as a list of pairs 
+        of nodes indices (relative to the flattened batch) and an additional
         mapping of each node to a graph is returned. If set to 
-        False (default), edges are returned as an adjacency matrix
-        and an edge feature matrix is additionally returned.
+        False (default), edges are returned as sparse adjacency 
+        matrix and an edge feature matrix is additionally returned.
 
       Returns:
-        X: Nodes features of shape (batch_size, num_nodes, num_features)
+        X: Node features of (batch_size, num_nodes, num_features)
 
         If `dense` is True:
         A: Dense representation of edges as a list of node index pairs,
@@ -148,13 +134,14 @@ class GraphObserver(StateObserver):
         E: Edge features of shape 
           (batch_size, num_nodes, num_edge_features, num_edge_features).
     """
+    obs = observations # for brevity
+
+    if not tf.is_tensor(obs):
+      obs = tf.convert_to_tensor(obs)
+    
     n_nodes, n_features = graph_dims[0:2]
     batch_size = observations.shape[0]
-    
-    # remove first three elements of each sample
-    # TODO: remove these values from the observation
-    obs = observations[:, 3:]
-    
+        
     # extract node features F
     F = tf.reshape(obs[:, :n_nodes * n_features], [batch_size, n_nodes, n_features])
 
@@ -181,9 +168,9 @@ class GraphObserver(StateObserver):
       # in the graph. E.g. if each graph has 5 nodes, the 
       # node indices are: graph 0: 0-4, graph 1: 5-9, etc.
 
-      # compute a tensor which where each element
+      # compute a tensor where each element
       # is the graph index of the node that is represented
-      # by the same index A
+      # by the same index in A
       graph_indices = tf.reshape(A[:, 0], [1, -1])
       graph_indices = tf.scalar_mul(n_nodes, graph_indices)
       graph_indices = tf.transpose(tf.tile(graph_indices, [2, 1]))
@@ -208,14 +195,22 @@ class GraphObserver(StateObserver):
 
   def _preprocess_agents(self, world):
     """
-    Returns a list of tuples, consisting
-    of an index and an agent object element.
+    Preproccesses the agents for constructing an
+    observation by resorting and pruning the 
+    original list of agents.
 
-    The first element always represents the ego agent.
-    The remaining elements resemble other agents, up
-    to the limit defined by `self._agent_limit`,
-    sorted in ascending order with respect to the agents'
-    distance in the world to the ego agent.
+    Args:
+      world: A `bark.core.World` instance.
+
+    Returns:
+      A list of tuples, consisting of an index and an 
+      agent object element.
+
+      The first element always represents the ego agent.
+      The remaining elements resemble other agents, up 
+      to the limit defined by `self._agent_limit`, sorted 
+      in ascending order with respect to the agents'
+      distance in the world to the ego agent.
     """
     ego_agent = world.ego_agent
     agents = list(world.agents.values())
@@ -225,25 +220,29 @@ class GraphObserver(StateObserver):
     return list(enumerate(agents))[:self._agent_limit]
 
   def _agents_sorted_by_distance(self, ego_agent, agents):
+    """
+    Returns the given list of `agents`, sorted in ascending
+    order by their relative distance to the `ego_agent`.
+    """
     def distance(agent):
       return Distance(
         self._position(ego_agent), 
         self._position(agent))
     
-    agents.sort(key=distance)
+    if len(agents) > 2:
+      agents.sort(key=distance)
+
     return agents
 
   def _nearby_agents(self, center_agent, agents, radius: float):
     """
-    Returns all elements from 'agents' within the specified 
-    radius of the 'center_agent's position.
+    Returns all elements from 'agents' whose position, defined 
+    in x and y coordinates is within the specified `radius` of 
+    the 'center_agent's position.
     """
     center_agent_pos = self._position(center_agent)
     other_agents = filter(lambda a: a[1].id != center_agent.id, agents)
 
-    return other_agents
-
-    # TODO: Add this back!
     nearby_agents = []
 
     for index, agent in other_agents:
@@ -255,12 +254,12 @@ class GraphObserver(StateObserver):
 
     return nearby_agents
 
-  def _extract_features(self, agent) -> Dict[str, float]:
+  def _extract_features(self, agent, with_keys=False):
     """Returns dict containing all features of the agent"""
     res = OrderedDict()
 
-    # Init data (to keep ordering always equal for reading and writing!!)
-    for label in self.attribute_keys():
+    # Init data (to keep ordering always equal for reading and writing)
+    for label in self.node_attribute_keys():
       res[label] = "inf"
     
     state = agent.state
@@ -300,39 +299,54 @@ class GraphObserver(StateObserver):
     
     #####################################################
     #   If you change the number/names of features,     #
-    #   please adapt self.attributes_keys accordingly.  #
+    #   please adapt GraphObserver.node_attribute_keys  #
+    #   accordingly.                                    #
     #####################################################
-    assert list(res.keys()) == self.attribute_keys()
+    assert list(res.keys()) == self.node_attribute_keys()
+
+    if not with_keys:
+      res = list(res.values())
 
     return res
 
-  def _generate_actions(self, all_features) -> Dict[str, float]:
-    all_actions = list()
-    for features in all_features:
-      actions = OrderedDict()
-      att_keys = GraphObserver.attribute_keys()
-      steering = features[att_keys.index("goal_theta")] - features[att_keys.index("theta")]
-    
-      v_0 = features[att_keys.index("vel")]
-      dv = features[att_keys.index("goal_vel")] - v_0
-      acc = (1./features[att_keys.index("goal_d")])*dv*(dv/2+v_0)
-    
-      if self._normalize_observations:
-        range_steering = [-0.1, 0.1]
-        range_acc = [-0.6, 0.6]
-        steering = self._normalize_value(steering, range_steering)
-        acc = self._normalize_value(acc, range_acc)
+  def _extract_edge_features(self, source_agent, target_agent):
+    """
+    Encodes the relation between the given agents as the
+    features of a directed edge in the graph.
 
-      actions["steering"] = steering
-      actions["acceleration"] = acc
-      all_actions.append(actions)
+    Args:
+      source_agent: the agent that defines the source of the edge.
+      target_agent: the agent that defines the target of the edge.
 
-    return actions
+    Returns:
+      An np.array containing the differences in the agents' 
+      x and y position, velocities and orientations.
+    """
+    source_features = self._extract_features(source_agent, with_keys=True)
+    target_features = self._extract_features(target_agent, with_keys=True)
+
+    d_x = source_features["x"] - target_features["x"]
+    d_y = source_features["y"] - target_features["y"]
+    d_vel = source_features["vel"] - target_features["vel"]
+    d_theta = source_features["theta"] - target_features["theta"]
+    features = np.array([d_x, d_y, d_vel, d_theta])
+
+    #####################################################
+    #   If you change the number/types of features,     #
+    #   please adapt GraphObserver.edge_attribute_keys  #
+    #   accordingly.                                    #
+    #####################################################
+    assert len(features) == len(self.edge_attribute_keys())
+
+    return features
 
   def _normalize_value(self, value, range):
-    """norms to [-1, 1] with
-    value <= range[0] -> returns -1
-    value >= range[1] -> returns 1"""
+    """
+    Normalizes the `value` with can take on values in
+    into the range of [-1, 1].
+    If the `value` is outside the given range, it's clamped 
+    to the bound of [-1, 1]
+    """
     normed = 2 * (value - range[0]) / (range[1] - range[0]) - 1
     normed = max(-1, normed) # values lower -1 clipped
     normed = min(1, normed) # values bigger 1 clipped
@@ -380,100 +394,38 @@ class GraphObserver(StateObserver):
   def sample(self):
     raise NotImplementedError
 
+  @classmethod
+  def node_attribute_keys(cls):
+    """
+    The keys corresponding to the value of the feature
+    vector for each node at the corresponding index.
+    """
+    return ["x", "y", "theta", "vel", "goal_x", "goal_y", 
+    "goal_dx", "goal_dy", "goal_theta", "goal_d", "goal_vel"]
+
+  @classmethod
+  def edge_attribute_keys(cls):
+    """
+    The keys corresponding to the value of the feature
+    vector for each edge at the corresponding index.
+    """
+    return ["x", "y", "dx", "dv"]
+
   @property
-  def observation_space(self):
-    #  0 ... 100 for the indices of num_agents and num_features
-    # -1 ... 1   for all agent attributes
+  def observation_space(self):    
+    # -1 ... 1   for all node attributes
     #  0 ... 1   for the adjacency list
     # -1 ... 1   for the edge attributes
     return spaces.Box(
       low=np.concatenate((
-        np.zeros(3),
         np.full(self._agent_limit * self.feature_len, -1),
         np.zeros(self._agent_limit ** 2),
-        np.zeros((self._agent_limit ** 2) * self.edge_feature_len))),
-      high=np.concatenate((
-        np.array([100, 100, 100]), 
-        np.ones(self._len_state - 3)
-      )))
+        np.full((self._agent_limit ** 2) * self.edge_feature_len, -1))),
+      high=np.ones(self._len_state))
 
   @property
   def _len_state(self):
     len_node_features = self._agent_limit * self.feature_len
     len_adjacency = self._agent_limit ** 2
     len_edge_features = len_adjacency * self.edge_feature_len
-    return 3 + len_node_features + len_adjacency + len_edge_features
-
-  @classmethod
-  def graph_from_observation(cls, observation):
-    graph = nx.OrderedGraph()
-    
-    node_limit = int(observation[0])
-    num_nodes = int(observation[1])
-    num_features = int(observation[2])
-
-    obs = observation[3:]
-
-    for node_id in range(num_nodes):
-      start_idx = node_id * num_features
-      end_idx = start_idx + num_features
-      features = obs[start_idx:end_idx]
-
-      attributes = dict(zip(GraphObserver.attribute_keys(), features))
-      graph.add_node(node_id, **attributes)
-    
-    adj_start_idx = node_limit * num_features
-    adj_list = obs[adj_start_idx:]
-    adj_matrix = np.reshape(adj_list, (node_limit, -1))
-    
-    for (source_id, source_edges) in enumerate(adj_matrix):
-      for target_id in np.flatnonzero(source_edges):
-        graph.add_edge(source_id, target_id)
-
-    return graph
-
-  def _observation_from_graph(self, graph):
-    """ Encodes the given graph into a bounded array with fixed size.
-
-    The returned array 'a' has the following contents:
-    a[0]:                            (int) the maximum number of possibly contained nodes
-    a[1]:                            (int) the actual number of contained nodes
-    a[2]:                            (int) the number of features per node
-    a[3: a[1] * a[2]]:               (floats) the node feature values
-    a[3 + a[1] * a[2]: a[0] * a[2]]: (int) all entries have value -1
-    a[-a[0] ** 2:]:                  (0 or 1) an adjacency matrix in vector form
-
-    :type graph: A nx.Graph object.
-    :param graph:
-    
-    :rtype: list
-    """
-    num_nodes = len(graph.nodes)
-    obs = [self._agent_limit, num_nodes, self.feature_len]
-    
-    # append node features
-    for (node_id, attributes) in graph.nodes.data():
-      obs.extend(list(attributes.values()))
-
-    # fill empty spots (difference between existing and max agents) with -1
-    if num_nodes < self._agent_limit:
-      obs.extend(np.full((self._agent_limit - num_nodes) * self.feature_len, -1))
-
-    # build adjacency matrix and convert to list
-    adjacency_matrix = np.zeros((self._agent_limit, self._agent_limit))
-    for source, target in graph.edges:
-      adjacency_matrix[source, target] = 1
-    
-    adjacency_list = adjacency_matrix.reshape(-1)
-    obs.extend(adjacency_list)
-
-    # Validity check
-    assert len(obs) == self._len_state, f'Observation \
-      has invalid length ({len(obs)}, expected: {self._len_state})'
-    
-    #return obs
-    return tf.convert_to_tensor(
-        obs, 
-        dtype=tf.float32, 
-        name='observation'
-      )
+    return len_node_features + len_adjacency + len_edge_features

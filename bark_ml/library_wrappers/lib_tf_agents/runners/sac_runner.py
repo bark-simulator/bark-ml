@@ -37,45 +37,55 @@ class SACRunner(TFARunner):
 
   def _train(self):
     iterator = iter(self._agent._dataset)
-    t = time.time()
+    iteration_start_time = time.time()
 
     for i in range(0, self._number_of_collections):
+      global_iteration = self._agent._agent._train_step_counter.numpy()
+      tf.summary.experimental.set_step(global_iteration)
 
       self._agent._training = True
       
-      global_iteration = self._agent._agent._train_step_counter.numpy()
-      tf.summary.experimental.set_step(global_iteration)
-      
       t0 = time.time()
       self._collection_driver.run()
+      self._log_collection_duration(start_time=t0, iteration=global_iteration)
+ 
       experience, _ = next(iterator)
-      
-      with tf.name_scope("Durations"):
-        tf.summary.scalar("Episode Collection Duration", 
-                          time.time() - t0, 
-                          global_iteration)
 
       t0 = time.time()      
       self._agent._agent.train(experience)
-      
-      with tf.name_scope("Durations"):
-        tf.summary.scalar("Training Duration",
-                          time.time() - t0, 
-                          global_iteration)
-      
+      self._log_training_duration(start_time=t0, iteration=global_iteration)
+            
       if global_iteration % self._evaluation_interval == 0:
-        iterations = f'{global_iteration-self._evaluation_interval}-{global_iteration}'
-
-        iteration_duration = (time.time() - t) / self._evaluation_interval
-        self._logger.info(f'Training iterations {iterations} took {(time.time() - t):.3f} seconds \
-          (avg. {iteration_duration:.3f}s / iteration).')
-        t = time.time()
-
-        with tf.name_scope("Durations"):
-          tf.summary.scalar("mean_step_duration",
-                            iteration_duration,
-                            step=global_iteration)
+        self._log_evaluation_interval_duration(
+          start_time=iteration_start_time, 
+          iteration=global_iteration)
+        iteration_start_time = time.time()
 
         self.Evaluate()
         self._agent.Save()
 
+  def _log_collection_duration(self, start_time, iteration):
+    with tf.name_scope("Durations"):
+      tf.summary.scalar(
+        "episode_collection_duration", time.time() - start_time, iteration)
+
+  def _log_training_duration(self, start_time, iteration):
+    with tf.name_scope("Durations"):
+      tf.summary.scalar("training_turation", time.time() - start_time, iteration)
+
+  def _log_evaluation_interval_duration(self, start_time, iteration):
+    if iteration == 0: 
+      return
+
+    iterations = f'{iteration-self._evaluation_interval}-{iteration}'
+
+    total_duration = time.time() - start_time
+    mean_step_duration = total_duration / self._evaluation_interval
+    self._logger.info(
+      f'Training iterations {iterations} took {total_duration:.3f} seconds' +
+      f' (avg. {mean_step_duration:.3f}s / iteration).')
+
+    with tf.name_scope("Durations"):
+      tf.summary.scalar("mean_step_duration",
+                        mean_step_duration,
+                        step=iteration)
