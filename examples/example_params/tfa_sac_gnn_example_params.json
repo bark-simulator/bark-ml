@@ -33,9 +33,6 @@
             "NormalizationEnabled": true,
             "MaxNumAgents": 2
         },
-        "NearestAgentsObserver": {
-            "MaxOtherDistance": 100
-        },
         "BehaviorSACAgent": {
             "CriticJointFcLayerParams": [
                 128,

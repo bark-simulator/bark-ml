@@ -37,17 +37,17 @@ flags.DEFINE_enum("mode",
 
 def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/tfa_sac_gnn_example_params.json")
-  #params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = '/Users/marco.oliva/Development/bark-ml_logs/checkpoints/'
-  params["ML"]["TFARunner"]["SummaryPath"] = '/Users/marco.oliva/Development/bark-ml_logs/summaries/really_current'
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = '/Users/marco.oliva/Development/bark-ml_logs/checkpoints/2'
+  params["ML"]["TFARunner"]["SummaryPath"] = '/Users/marco.oliva/Development/bark-ml_logs/summaries/1'
   params["ML"]["SACRunner"]["NumberOfCollections"] = int(1e6)
   params["ML"]["GraphObserver"]["AgentLimit"] = 4
   params["ML"]["BehaviorGraphSACAgent"]["DebugSummaries"] = False
-  params["ML"]["BehaviorGraphSACAgent"]["BatchSize"] = 128
-  params["ML"]["BehaviorGraphSACAgent"]["CriticJointFcLayerParams"] = [128]
+  params["ML"]["BehaviorGraphSACAgent"]["BatchSize"] = 256
+  params["ML"]["BehaviorGraphSACAgent"]["CriticJointFcLayerParams"] = [128, 128]
   params["ML"]["BehaviorGraphSACAgent"]["CriticObservationFcLayerParams"] = [128]
-  params["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams"] = [256, 256]
+  params["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams"] = [128, 64]
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["NumMpLayers"] = 1
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MpLayerNumUnits"] = 256
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MpLayerNumUnits"] = 128
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["library"] = "spektral" # "tf2_gnn" or "spektral"
 
   # (n_nodes, n_features, n_edge_features)
@@ -61,10 +61,10 @@ def run_configuration(argv):
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_every_num_layers"] = 1
   
   # spektral
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MPChannels"] = 64
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["KernelNetUnits"] = [128]
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MPChannels"] = 128
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["KernelNetUnits"] = [512, 256]
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MPLayerActivation"] = "relu"
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["DenseActication"] = "tanh"
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["DenseActication"] = "relu"
 
 
     # viewer = MPViewer(
