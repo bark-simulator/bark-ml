@@ -52,36 +52,27 @@ def save_expert_trajectories(output_dir: str, expert_trajectories: dict):
     joblib.dump(expert_trajectories, filename)
 
 def run_configuration(argv):
-  """Main
-
-  Args:
-      argv: The commandline argumends
-
-  Raises:
-      ValueError: If the given agent is not sac or ppo
-  """
+  """ Main """
   params = ParameterServer(filename="examples/example_params/tfa_params.json")
   # params = ParameterServer()
   output_dir = params["GenerateExpertTrajectories"]["OutputDirectory"]
 
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = (params["ML"]["BehaviorTFAAgents"]["CheckpointPath"])
-  params["ML"]["TFARunner"]["SummaryPath"] = (params["ML"]["TFARunner"]["SummaryPath"])
-
   # create environment
-  if params["World"]["Blueprint"] == 'merging':
+  blueprint = params["World"]["Blueprint"]
+  if blueprint == 'merging':
     bp = ContinuousMergingBlueprint(params,
                                     number_of_senarios=2500,
                                     random_seed=0)
-  elif params["World"]["Blueprint"] == 'intersection':
+  elif blueprint == 'intersection':
     bp = ContinuousIntersectionBlueprint(params,
                                     number_of_senarios=2500,
                                     random_seed=0)
-  elif params["World"]["Blueprint"] == 'highway':
+  elif blueprint == 'highway':
     bp = ContinuousHighwayBlueprint(params,
                                     number_of_senarios=2500,
                                     random_seed=0)
   else:
-    raise ValueError(f'{params["World"]["Blueprint"]} is no valid blueprint. See help.')
+    raise ValueError(f'{blueprint} is no valid blueprint. See help.')
 
   env = SingleAgentRuntime(blueprint=bp,
                           render=False)
