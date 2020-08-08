@@ -97,7 +97,7 @@ def run_configuration(argv):
     if not FLAGS.expert_trajectories:
       raise ValueError('Expert trajectories must be given.')
     expert_trajectories, avg_trajectory_length, num_trajectories = load_expert_trajectories(FLAGS.expert_trajectories,
-      normalize_features=params["ML"]["Settings"]["NormalizeFeatures"],
+      normalize_features=params["ML"]["Settings"]["NormalizeFeatures"],sac=params["ML"]["Settings"]["SAC"],
       env=env, # the unwrapped env has to be used, since that contains the unnormalized spaces.
       subset_size=FLAGS.subset_size
       ) 

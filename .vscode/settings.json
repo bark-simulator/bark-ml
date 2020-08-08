@@ -91,7 +91,6 @@
     "__functional_03": "cpp",
     "*.ipp": "cpp"
   },
-  "python.pythonPath": "bark_ml/python_wrapper/venv/bin/python",
   "workbench.colorCustomizations": {
     "activityBar.background": "#581036",
     "titleBar.activeBackground": "#7B164C",

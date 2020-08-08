@@ -5,6 +5,16 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
+			"name": "Python: examples/unnomalization_check",
+			"type": "python",
+			"request": "launch",
+			"program": "${workspaceFolder}/examples/unnormalization_check.py",
+			"console": "integratedTerminal",
+			"env": {
+				"PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/unnormalization_check.runfiles/:${workspaceFolder}/bazel-bin/examples/unnormalization_check.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/unnormalization_check.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/unnormalization_check.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/unnormalization_check.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/examples/unnormalization_check.runfiles/com_github_interaction_dataset_interaction_dataset/python/:${workspaceFolder}/bazel-bin/examples/unnormalization_check.runfiles/com_github_keiohta_tf2rl"
+			}
+		},
+		{
 			"name": "Python: bark_ml/tests/py_library_tf2rl_tests/py_gail_gym_training_tests",
 			"type": "python",
 			"request": "launch",
@@ -134,7 +144,7 @@
 			"program": "${workspaceFolder}/examples/gail.py",
 			"console": "integratedTerminal",
 			"args": ["--mode=train", "--expert_trajectories=~/Repositories/gail-4-bark/bark-ml/examples/expert_trajectories/sac/merging",
-			"--train_out=~/Repositories/gail-4-bark/bark-ml/examples/gail", "--subset_size=10"],
+			"--train_out=~/Repositories/gail-4-bark/bark-ml/examples/gail", "--subset_size=1000"],
 			"env": {
 				"PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/gail.runfiles/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/com_github_interaction_dataset_interaction_dataset/python/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/com_github_keiohta_tf2rl"
 			}
@@ -145,8 +155,8 @@
 			"request": "launch",
 			"program": "${workspaceFolder}/examples/gail.py",
 			"console": "integratedTerminal",
-			"args": ["--mode=train", "--expert_trajectories=~/Repositories/gail-4-bark/bark-ml/examples/expert_trajectories/sac/merging_not_normalized",
-			"--train_out=~/Repositories/gail-4-bark/bark-ml/examples/gail/merging_not_normalized", "--subset_size=10"],
+			"args": ["--mode=train", "--expert_trajectories=~/Repositories/bark-ml/large_data_store/expert_trajectories/sac/merging_normalized",
+			"--train_out=~/Repositories/bark-ml/examples/gail/merging_normalized", "--subset_size=1000"],
 			"env": {
 				"PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/gail.runfiles/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/com_github_interaction_dataset_interaction_dataset/python/:${workspaceFolder}/bazel-bin/examples/gail.runfiles/com_github_keiohta_tf2rl"
 			}
@@ -217,7 +227,7 @@
 				"request": "launch",
 				"program": "${workspaceFolder}/examples/tfa.py",
 				"console": "integratedTerminal",
-				"args": ["--mode=train", ],
+				"args": ["--mode=train", "--output_dir=/home/marvin/Repositories/bark-ml/large_data_store/expert_trajectories/sac/model"],
 				"env": {
 					"PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/tfa.runfiles/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/com_github_interaction_dataset_interaction_dataset/python/:"
 				}
@@ -250,7 +260,7 @@
 				"request": "launch",
 				"program": "${workspaceFolder}/examples/tfa.py",
 				"console": "integratedTerminal",
-				"args": ["--mode=visualize", "--output_dir=~/Repositories/gail-4-bark/bark-ml/examples/pretrained_agents/sac/merging", "--num_episodes=10000" ],
+				"args": ["--mode=visualize", "--output_dir=~/Repositories/bark-ml/large_data_store/expert_trajectories/sac/merging", "--num_episodes=10000" ],
 				"env": {
 					"PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/tfa.runfiles/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/com_github_interaction_dataset_interaction_dataset/python/:"
 				}
@@ -261,7 +271,7 @@
 				"request": "launch",
 				"program": "${workspaceFolder}/examples/tfa.py",
 				"console": "integratedTerminal",
-				"args": ["--mode=generate", "--num_trajectories=100", "--render=True", "--output_dir=~/Repositories/gail-4-bark/bark-ml/examples/pretrained_agents/sac/merging"],
+				"args": ["--mode=generate", "--num_trajectories=100", "--render=True", "--output_dir=~/Repositories/bark-ml/examples/pretrained_agents/sac/merging"],
 				"env": {
 					"PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/tfa.runfiles/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/examples/tfa.runfiles/com_github_interaction_dataset_interaction_dataset/python/:"
 				}

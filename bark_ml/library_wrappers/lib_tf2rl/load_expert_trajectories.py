@@ -16,7 +16,7 @@ def GetBounds(env):
         env._observer._VelocityRange
         ] * (env._observer._max_num_vehicles + 1)).transpose())
 
-def load_expert_trajectories(dirname: str, normalize_features=False, env=None, subset_size = -1) -> (dict, float, int):
+def load_expert_trajectories(dirname: str, normalize_features=False, sac=False, env=None, subset_size = -1) -> (dict, float, int):
     """Loads all found expert trajectories files in the directory.
 
     Args:
@@ -44,31 +44,57 @@ def load_expert_trajectories(dirname: str, normalize_features=False, env=None, s
         raise ValueError(f"Could not find valid expert trajectories in {dirname}.")
     
     if normalize_features:
-        assert env is not None, "if normalization is used the environment has to be provided."
-        bounds = GetBounds(env)
-        for key in ['obses', 'next_obses']:
-            expert_trajectories[key] = normalize(features=expert_trajectories[key],
-            high=bounds[1],
-            low=bounds[0]
-            )
+        if sac:
+            assert env is not None, "if normalization is used the environment has to be provided."
+            
+            for key in ['obses', 'next_obses']:
+                expert_trajectories[key] = normalize_util(
+                    feature=expert_trajectories[key],
+                    feature_space=env.observation_space
+                    )
+            expert_trajectories['acts'] = normalize(features=expert_trajectories['acts'],
+                high=env.action_space.high,
+                low=env.action_space.low
+                )
 
-        expert_trajectories['acts'] = normalize(features=expert_trajectories['acts'],
-            high=env.action_space.high,
-            low=env.action_space.low
-            )
+            valid_obs_act_pairs = list(range(len(expert_trajectories['obses'])))
+            for i in range(len(expert_trajectories['obses'])):
+                for key in expert_trajectories:
+                    if np.max(np.abs(expert_trajectories[key][i])) > 1:
+                        valid_obs_act_pairs.remove(i)
+                        break
 
-        valid_obs_act_pairs = list(range(len(expert_trajectories['obses'])))
-        for i in range(len(expert_trajectories['obses'])):
             for key in expert_trajectories:
-                if np.max(np.abs(expert_trajectories[key][i])) > 1:
-                    valid_obs_act_pairs.remove(i)
-                    break
+                expert_trajectories[key] = expert_trajectories[key][valid_obs_act_pairs]
+        
+            if len(expert_trajectories['obses']) == 0:
+                raise ValueError(f"No expert trajectories in the observation/action space.")    
+        else: 
+            assert env is not None, "if normalization is used the environment has to be provided."
+            bounds = GetBounds(env)
+            for key in ['obses', 'next_obses']:
+                expert_trajectories[key] = normalize(features=expert_trajectories[key],
+                high=bounds[1],
+                low=bounds[0]
+                )
 
-        for key in expert_trajectories:
-            expert_trajectories[key] = expert_trajectories[key][valid_obs_act_pairs]
-    
-        if len(expert_trajectories['obses']) == 0:
-            raise ValueError(f"No expert trajectories in the observation/action space.")    
+            expert_trajectories['acts'] = normalize(features=expert_trajectories['acts'],
+                high=env.action_space.high,
+                low=env.action_space.low
+                )
+
+            valid_obs_act_pairs = list(range(len(expert_trajectories['obses'])))
+            for i in range(len(expert_trajectories['obses'])):
+                for key in expert_trajectories:
+                    if np.max(np.abs(expert_trajectories[key][i])) > 1:
+                        valid_obs_act_pairs.remove(i)
+                        break
+
+            for key in expert_trajectories:
+                expert_trajectories[key] = expert_trajectories[key][valid_obs_act_pairs]
+        
+            if len(expert_trajectories['obses']) == 0:
+                raise ValueError(f"No expert trajectories in the observation/action space.")    
 
     assert len(expert_trajectories['obses']) == len(expert_trajectories['next_obses'])
     assert len(expert_trajectories['obses']) == len(expert_trajectories['acts'])
@@ -87,3 +113,10 @@ def normalize(features, high, low):
     norm_features /= (high - low)
     norm_features = norm_features * 2. - 1.
     return norm_features
+
+def normalize_util(feature, feature_space):
+    """Normalizes a feature to be within the range -1 and 1"""
+    norm_feature = feature - feature_space.low
+    norm_feature /= (feature_space.high - feature_space.low)
+    norm_feature = norm_feature * 2. - 1.
+    return norm_feature
