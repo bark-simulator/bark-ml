@@ -1,5 +1,7 @@
-# Copyright (c) 2020 Patrick Hart, Julian Bernhard,
-# Klemens Esterle, Tobias Kessler
+# Copyright (c) 2020 fortiss GmbH
+#
+# Authors: Patrick Hart, Julian Bernhard, Klemens Esterle, and
+# Tobias Kessler
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
@@ -10,8 +12,8 @@ import bark_ml.environments.gym
 
 # cont. highway env
 # env = gym.make("highway-v0")
-# env = gym.make("merging-v0")
-env = gym.make("intersection-v0")
+env = gym.make("merging-v0")
+# env = gym.make("intersection-v0")
 
 
 env.reset()

@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 # BARK imports
-from bark.models.behavior import BehaviorModel, BehaviorDynamicModel
+from bark.core.models.behavior import BehaviorModel, BehaviorDynamicModel
 
 # tfa
 from tf_agents.networks import actor_distribution_network

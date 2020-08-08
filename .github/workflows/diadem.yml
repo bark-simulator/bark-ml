@@ -1,4 +1,4 @@
-name: CI
+name: CI-DIADEM
 
 on: [push]
 
@@ -7,14 +7,12 @@ jobs:
 
     runs-on: ubuntu-latest
     container:
-      image: docker://barksim/bark-ml:latest
+      image: docker://barksim/bark-ml-diadem:latest
     steps:
       - uses: actions/checkout@v1
       - name: Setting up virtual environment
         run: virtualenv -p python3 ./bark_ml/python_wrapper/venv  --system-site-packages
       - name: Entering the virtual python environment..
         run: . ./bark_ml/python_wrapper/venv/bin/activate
-      - name: Running unit tests..
-        run: bazel test :unit_tests
-      - name: Running examples..
-        run: bazel test :examples_tests
+      - name: Running bazel tests..
+        run: bazel test :diadem_tests

@@ -3,19 +3,20 @@ py_library(
     srcs = ["nearest_state_observer.py",
             "simple_observer.py",
             "observer.py"],
-    data = ["@bark_project//python:bark.so"],
-    imports = ["../external/bark_project/python/"],
-    deps = ["@bark_project//modules/runtime:runtime"],
+    data = ["@bark_project//bark/python_wrapper:core.so"],
+    imports = ["../external/bark_project/bark/python_wrapper/"],
+    deps = ["@bark_project//bark/runtime:runtime"],
     visibility = ["//visibility:public"],
 )
 
 cc_library(
-  name = "nearest_observer",
+  name = "cpp_observers",
   hdrs = [
-    "nearest_observer.hpp",
+    "base_observer.hpp",
+    "nearest_observer.hpp"
   ],
   deps = [
-    "@bark_project//modules/world:world",
+    "@bark_project//bark/world:world",
     "//bark_ml/commons:spaces",
     "//bark_ml/commons:commons"
   ],
