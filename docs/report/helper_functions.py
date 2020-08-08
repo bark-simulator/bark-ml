@@ -69,7 +69,7 @@ def get_sample_observations():
       [0, 0, 0, 0, 0]  # empty slot -> all zeros
     ]
 
-    observation = np.array([num_nodes, num_nodes, num_features])
+    observation = np.array([])
     observation = np.append(observation, agents)
     observation = np.append(observation, adjacency_list)
     observation = np.append(observation, edge_features)
@@ -96,7 +96,7 @@ def summarize_agent(agent):
         agent._agent._target_critic_network_2,
     ]
     
-    print(f"\n\033[1mAGENT SUMMARY:\033[0m\n")
+    print(f"\n\033[1mAGENT SUMMARY\033[0m\n")
     print('{:<30} {}'.format("Network", "Parameters"))
     print("==========================================")
     total_params = 0

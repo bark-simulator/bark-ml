@@ -1,6 +1,6 @@
 {
     "World": {
-        "remove_agents_out_of_map": true
+        "remove_agents_out_of_map": false
     },
     "BehaviorDynamicModel": {
         "IntegrationTimeDelta": 0.05000000074505806
@@ -19,7 +19,7 @@
         "GoalReachedEvaluator": {
             "GoalReward": 1.0,
             "CollisionPenalty": -1.0,
-            "MaxSteps": 60
+            "MaxSteps": 30
         },
         "StateObserver": {
             "VelocityRange": [
@@ -33,20 +33,37 @@
             "NormalizationEnabled": true,
             "MaxNumAgents": 2
         },
-        "NearestAgentsObserver": {
-            "MaxOtherDistance": 100
-        },
         "BehaviorSACAgent": {
-            "ActorFcLayerParams": [
-                512,
-                256,
-                256
-            ],
             "CriticJointFcLayerParams": [
-                512,
-                256,
-                256
+                128,
+                128
             ],
+            "ActorFcLayerParams": [
+                128,
+                64
+            ],
+            "GNN": {
+                "NumMpLayers": 1,
+                "MpLayerNumUnits": 128,
+                "library": "spektral",
+                "GraphDimensions": [
+                    4,
+                    11,
+                    4
+                ],
+                "message_calculation_class": "rgcn",
+                "global_exchange_mode": "gru",
+                "dense_every_num_layers": 2,
+                "global_exchange_every_num_layers": 2,
+                "num_edge_MLP_hidden_layers": 2,
+                "MPChannels": 128,
+                "KernelNetUnits": [
+                    512,
+                    256
+                ],
+                "MPLayerActivation": "relu",
+                "DenseActication": "tanh"
+            },
             "ActorLearningRate": 0.0003,
             "CriticLearningRate": 0.0003,
             "AlphaLearningRate": 0.0003,
@@ -54,11 +71,11 @@
             "TargetUpdatePeriod": 3,
             "Gamma": 0.995,
             "RewardScaleFactor": 1.0,
-            "AgentName": "sac_agent",
-            "DebugSummaries": false,
+            "AgentName": "gnn_sac_agent",
+            "DebugSummaries": true,
             "ReplayBufferCapacity": 10000,
             "ParallelBufferCalls": 1,
-            "BatchSize": 512,
+            "BatchSize": 128,
             "BufferNumSteps": 2,
             "BufferPrefetch": 3
         },
@@ -69,7 +86,16 @@
         "TFARunner": {
             "EvaluationSteps": 25,
             "InitialCollectionEpisodes": 50,
-            "CollectionEpisodesPerStep": 1
+            "CollectionEpisodesPerStep": 1,
+            "SummaryPath": ""
+        },
+        "SACRunner": {
+            "EvaluateEveryNSteps": 100,
+            "NumberOfCollections": 40000
+        },
+        "GraphObserver": {
+            "AgentLimit": 4,
+            "VisibilityRadius": 50
         }
     },
     "BehaviorIDMClassic": {
@@ -78,7 +104,7 @@
         "MaxAcceleration": 1.7000000476837158,
         "AccelerationLowerBound": -5.0,
         "AccelerationUpperBound": 8.0,
-        "DesiredVelocity": 15.0,
+        "DesiredVelocity": 30.0,
         "ComfortableBrakingAcceleration": 1.6699999570846558,
         "MinVelocity": 0.0,
         "MaxVelocity": 50.0,
@@ -86,7 +112,8 @@
         "BrakeForLaneEnd": false,
         "BrakeForLaneEndEnabledDistance": 60.0,
         "BrakeForLaneEndDistanceOffset": 15.0,
-        "NumTrajectoryTimePoints": 11
+        "NumTrajectoryTimePoints": 11,
+        "CoolnessFactor": 0.0
     },
     "DynamicModel": {
         "wheel_base": 2.700000047683716,
@@ -125,7 +152,8 @@
                         0.83
                     ]
                 },
-                "UseColormapForOtherAgents": false
+                "UseColormapForOtherAgents": false,
+                "IfColormapUseLineColorOthers": true
             },
             "Alpha": {
                 "Controlled": 1.0,
@@ -144,7 +172,8 @@
                 0.63,
                 0.83
             ],
-            "DrawHistory": false
+            "DrawHistory": false,
+            "DrawHistoryDrawFace": true
         },
         "Map": {
             "XodrLanes": {
