@@ -35,7 +35,7 @@ flags.DEFINE_enum("mode",
                   "Mode the configuration should be executed in.")
 
 def run_configuration(argv):
-  #params = ParameterServer(filename="examples/example_params/tfa_params.json")
+  # params = ParameterServer(filename="examples/example_params/tfa_params.json")
   params = ParameterServer()
   # NOTE: Modify these paths in order to save the checkpoints and summaries
   #from config import tfa_checkpoint_path, tfa_summary_path
