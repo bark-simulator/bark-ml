@@ -3,12 +3,14 @@
 # 
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
-
+import numpy as np
+# BARK
 from bark.core.world.evaluation import \
   EvaluatorGoalReached, EvaluatorCollisionEgoAgent, \
   EvaluatorStepCount, EvaluatorDrivableArea
 from bark.runtime.commons.parameters import ParameterServer
-
+from bark.core.geometry import *
+# BARK-ML
 from bark_ml.evaluators.evaluator import StateEvaluator
 
 
@@ -32,23 +34,35 @@ class GoalReachedGuiding(StateEvaluator):
     self._eval_agent = eval_agent
 
   def _add_evaluators(self):
-    self._evaluators["goal_reached"] = EvaluatorGoalReached()
-    self._evaluators["collision"] = EvaluatorCollisionEgoAgent()
-    self._evaluators["step_count"] = EvaluatorStepCount()
-    self._evaluators["drivable_area"] = EvaluatorDrivableArea()
+    evaluators = {}
+    evaluators["goal_reached"] = EvaluatorGoalReached()
+    evaluators["collision"] = EvaluatorCollisionEgoAgent()
+    evaluators["step_count"] = EvaluatorStepCount()
+    evaluators["drivable_area"] = EvaluatorDrivableArea()
+    return evaluators
 
   def CalculateGuidingReward(self, observed_world, action):
     ego_agent = observed_world.ego_agent
     goal_def = ego_agent.goal_definition
-    goal_center_line = goal_def.center_line
+    goal_shape = goal_def.goal_shape
+    rc = observed_world.ego_agent.road_corridor
+    lane_corr = None
+    for lc in rc.lane_corridors:
+      if Collide(lc.polygon, goal_shape):
+        lane_corr = lc
+    
+    total_reward =  0.
+    goal_center_line = lane_corr.center_line
     ego_agent_state = ego_agent.state
     lateral_offset = Distance(goal_center_line,
                               Point2d(ego_agent_state[1], ego_agent_state[2]))
+    total_reward -= 0.01*lateral_offset
 
-    actions = np.reshape(action, (-1, 2))
-    accs = actions[:, 0]
-    delta = actions[:, 1]
-    return 0.001*lateral_offset**2 + 0.001*inpt_reward
+    if action is not None:
+      accs = action[0]
+      delta = action[1]
+      total_reward -= 0.01*(accs**2 + delta*+2)
+    return total_reward
 
   def _evaluate(self, observed_world, eval_results, action):
     """Returns information about the current world state
@@ -60,11 +74,11 @@ class GoalReachedGuiding(StateEvaluator):
     # determine whether the simulation should terminate
     if success or collision or step_count > self._max_steps:
       done = True
-    guiding_reward = CalculateGuidingReward(observed_world, action)
+    guiding_reward = self.CalculateGuidingReward(observed_world, action)
     # calculate reward
     reward = collision * self._col_penalty + \
       success * self._goal_reward + guiding_reward
     return reward, done, eval_results
     
   def Reset(self, world):
-    return super(GoalReached, self).Reset(world)
+    return super(GoalReachedGuiding, self).Reset(world)
