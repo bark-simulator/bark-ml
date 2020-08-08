@@ -1,4 +1,4 @@
-py_test(
+py_library(
   name = "data_generation",
   srcs = ["data_generation.py"],
   data = ["@bark_project//bark/python_wrapper:core.so",
@@ -16,7 +16,7 @@ py_test(
   visibility = ["//visibility:public"],
 )
 
-py_test(
+py_library(
   name = "actor_nets",
   srcs = ["actor_nets.py"],
   data = ["@bark_project//bark/python_wrapper:core.so",
@@ -33,7 +33,7 @@ py_test(
   visibility = ["//visibility:public"],
 )
 
-py_test(
+py_library(
   name = "learner",
   srcs = ["learner.py"],
   data = ["@bark_project//bark/python_wrapper:core.so",
@@ -46,7 +46,7 @@ py_test(
   visibility = ["//visibility:public"],
 )
 
-py_test(
+py_library(
   name = "data_handler",
   srcs = ["data_handler.py"],
   data = ["@bark_project//bark/python_wrapper:core.so",

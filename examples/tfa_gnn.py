@@ -109,7 +109,7 @@ def run_configuration(argv):
     runner.Evaluate()
   
   # store all used params of the training
-  # params.Save("/home/hart/Dokumente/2020/bark-ml/examples/example_params/tfa_params.json")
+  params.Save("/Users/marco.oliva/Development/bark-ml_logs/summaries/example_params/agent_8.json")
 
 if __name__ == '__main__':
   app.run(run_configuration)
