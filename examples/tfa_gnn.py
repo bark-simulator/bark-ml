@@ -20,11 +20,10 @@ from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.viewer.video_renderer import VideoRenderer
 
 # BARK-ML imports
-from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
-  ContinuousMergingBlueprint, ContinuousIntersectionBlueprint
+from bark_ml.environments.blueprints import ContinuousHighwayBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, BehaviorPPOAgent, BehaviorGraphSACAgent
-from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner
+from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorGraphSACAgent
+from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner
 from bark_ml.observers.graph_observer import GraphObserver
 
 
@@ -46,31 +45,37 @@ def run_configuration(argv):
   params["ML"]["BehaviorGraphSACAgent"]["CriticJointFcLayerParams"] = [128, 128]
   params["ML"]["BehaviorGraphSACAgent"]["CriticObservationFcLayerParams"] = [128]
   params["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams"] = [128, 64]
+
+  # GNN parameters
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["NumMpLayers"] = 1
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MpLayerNumUnits"] = 128
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["library"] = "spektral" # "tf2_gnn" or "spektral"
+
+  gnn_library = "spektral" # "tf2_gnn" or "spektral"
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["library"] = gnn_library 
 
   # (n_nodes, n_features, n_edge_features)
+    # NOTE: when using the ggnn mp class, MPLayerUnits must match n_features!
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["GraphDimensions"] = (4, 11, 4)
 
-  # tf2_gnn
-  # NOTE: when using the ggnn mp class, MPLayerUnits must match n_features!
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["message_calculation_class"] = "rgcn"
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_mode"] = "gru"
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["dense_every_num_layers"] = 1
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_every_num_layers"] = 1
-  
-  # spektral
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MPChannels"] = 128
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["KernelNetUnits"] = [512, 256]
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MPLayerActivation"] = "relu"
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["DenseActication"] = "relu"
+  if gnn_library == "spektral":
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MPChannels"] = 128
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["KernelNetUnits"] = [512, 256]
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MPLayerActivation"] = "relu"
+    params["ML"]["GraphObserver"]["SelfLoops"] = True # add self-targeted edges to graph nodes
+  elif gnn_library == "tf2_gnn":
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["message_calculation_class"] = "rgcn"
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_mode"] = "gru"
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["dense_every_num_layers"] = -1 # no dense layers between mp layers
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_every_num_layers"] = 1
+    params["ML"]["GraphObserver"]["SelfLoops"] = False
 
+    # see gnn.py in tf2_gnn for more possible parameters.
+  else:
+    raise ValueError(gnn_library, "Invalid GNN library specified.")
 
-    # viewer = MPViewer(
+  # viewer = MPViewer(
   #   params=params,
   #   x_range=[-35, 35],
-
   #   y_range=[-35, 35],
   #   follow_agent_id=True)
   
@@ -78,8 +83,6 @@ def run_configuration(argv):
   #   renderer=viewer,
   #   world_step_time=0.2,
   #   fig_path="/Users/marco.oliva/2020/bark-ml/video/")
-
-  #tf.summary.trace_on(graph=True, profiler=True)
 
   # create environment
   bp = ContinuousHighwayBlueprint(params,
