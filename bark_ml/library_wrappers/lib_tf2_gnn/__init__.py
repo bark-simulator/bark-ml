@@ -1,3 +1,0 @@
-from bark_ml.library_wrappers.lib_tf2_gnn.gnn_wrapper import GNNWrapper
-from bark_ml.library_wrappers.lib_tf2_gnn.gnn_actor_network import GNNActorNetwork
-from bark_ml.library_wrappers.lib_tf2_gnn.gnn_critic_network import GNNCriticNetwork

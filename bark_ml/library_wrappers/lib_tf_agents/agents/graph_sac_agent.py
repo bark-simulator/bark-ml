@@ -1,17 +1,12 @@
 import tensorflow as tf
 
-# tfa
-from tf_agents.networks import normal_projection_network
-from tf_agents.networks import actor_distribution_network
-from tf_agents.agents.ddpg import critic_network
 from tf_agents.policies import greedy_policy
-
 from tf_agents.agents.sac import sac_agent
 from tf_agents.replay_buffers import tf_uniform_replay_buffer
 from tf_agents.utils.common import Checkpointer
 from tf_agents.trajectories import time_step as ts
 
-from bark_ml.library_wrappers.lib_tf2_gnn import GNNActorNetwork, GNNCriticNetwork
+from bark_ml.library_wrappers.lib_tf_agents.networks import GNNActorNetwork, GNNCriticNetwork
 from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAAgent
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 
@@ -40,16 +35,16 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
       input_tensor_spec=env.observation_spec(),
       output_tensor_spec=env.action_spec(),
       gnn_params=gnn_sac_params["GNN"],
-      fc_layer_params=gnn_sac_params["ActorFcLayerParams", "", [256, 128]]
+      fc_layer_params=gnn_sac_params["ActorFcLayerParams", "", [128, 64]]
     )
 
     # critic network
     critic_net = GNNCriticNetwork(
       (env.observation_spec(), env.action_spec()),
       gnn_params=gnn_sac_params["GNN"],
-      observation_fc_layer_params=gnn_sac_params["CriticObservationFcLayerParams", "", [256, 128]],
-      action_fc_layer_params=gnn_sac_params["CriticActionFcLayerParams", "", [256, 128]],
-      joint_fc_layer_params=gnn_sac_params["CriticJointFcLayerParams", "", [256, 128]]
+      observation_fc_layer_params=gnn_sac_params["CriticObservationFcLayerParams", "", [128]],
+      action_fc_layer_params=gnn_sac_params["CriticActionFcLayerParams", "", None],
+      joint_fc_layer_params=gnn_sac_params["CriticJointFcLayerParams", "", [128, 128]]
     )
     
     # agent

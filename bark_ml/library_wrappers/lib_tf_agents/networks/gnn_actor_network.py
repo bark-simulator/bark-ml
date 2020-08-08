@@ -5,7 +5,7 @@ from tf_agents.agents.sac import sac_agent
 from tf_agents.networks import network, normal_projection_network, utils, encoding_network
 from tf_agents.utils import common, nest_utils
 
-from bark_ml.library_wrappers.lib_tf2_gnn import GNNWrapper
+from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_wrapper import GNNWrapper
 
 def projection_net(spec):
   return normal_projection_network.NormalProjectionNetwork(

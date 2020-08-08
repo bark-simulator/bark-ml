@@ -9,6 +9,6 @@ py_library(
     imports = ["../external/bark_project/bark/python_wrapper/"],
     deps = ["//bark_ml/library_wrappers/lib_tf_agents:tfa_wrapper",
             "//bark_ml/commons:py_spaces",
-            "//bark_ml/library_wrappers/lib_tf2_gnn"],
+            "//bark_ml/library_wrappers/lib_tf_agents/networks"],
     visibility = ["//visibility:public"],
 )

@@ -1,8 +1,8 @@
 import gin
 import tensorflow as tf  # pylint: disable=g-explicit-tensorflow-version-import
 
-from tf_agents.networks import network, utils, encoding_network
-from bark_ml.library_wrappers.lib_tf2_gnn import GNNWrapper
+from tf_agents.networks import network, utils
+from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_wrapper import GNNWrapper
 
 from tf_agents.networks import network
 from tf_agents.networks import utils
