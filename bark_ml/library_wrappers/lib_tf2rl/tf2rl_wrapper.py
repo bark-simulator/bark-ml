@@ -1,5 +1,8 @@
 from gym.spaces.box import Box
 
+#BARK-ML imports
+from bark_ml.library_wrappers.lib_tf2rl.normalization_utils import rescale, normalize
+
 
 class TF2RLWrapper():
     """class for wrapping a BARK runtime for use as an environment by 
@@ -26,9 +29,9 @@ class TF2RLWrapper():
         - If normalization is not needed: Simply calls the step function of the runtime.
         """
         if self._normalize_features:
-            rescaled_action = self._rescale_action(action)
+            rescaled_action = rescale(action, self._env.action_space)
             next_obs, reward, done, info = self._env.step(rescaled_action)
-            next_obs = self._normalize_observation(next_obs)
+            next_obs = normalize(next_obs, self._env.observation_space)
             return next_obs, reward, done, info
         else:
             return self._env.step(action)
@@ -40,7 +43,7 @@ class TF2RLWrapper():
         - If normalization is not needed: Simply calls the reset function of the runtime.
         """
         if self._normalize_features:
-            return self._normalize_observation(self._env.reset())
+            return normalize(self._env.reset(), self._env.observation_space)
         else:
             return self._env.reset()
 
@@ -48,23 +51,7 @@ class TF2RLWrapper():
     def render(self, mode=None):
         """for now just return the same rendering independent from mode."""
         return self._env.render()
-
-
-    def _rescale_action(self, action):
-        """rescales a normalized action back to their original range."""
-        rescaled_action = (action + 1.) / 2.
-        rescaled_action *= (self._env.action_space.high - self._env.action_space.low)
-        rescaled_action += self._env.action_space.low
-        return rescaled_action
-
-
-    def _normalize_observation(self, observation):
-        """Normalizes an observation to be within the range -1 and 1"""
-        norm_observation = observation - self._env.observation_space.low
-        norm_observation /= (self._env.observation_space.high - self._env.observation_space.low)
-        norm_observation = norm_observation * 2. - 1.
-        return norm_observation
-
+        
 
     @property
     def _scenario(self):

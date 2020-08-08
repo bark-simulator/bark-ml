@@ -26,6 +26,14 @@ py_test(
 )
 
 py_test(
+    name = "normalization_utils_tests",
+    srcs = ["normalization_utils_tests.py"],
+    deps = ["//bark_ml/library_wrappers/lib_tf2rl:normalization_utils"],
+    visibility = ["//visibility:public"],
+    size = "small"
+)
+
+py_test(
     name = "compare_trajectories_tests",
     srcs = ["compare_trajectories_tests.py"],
     deps = [
