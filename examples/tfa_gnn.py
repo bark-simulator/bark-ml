@@ -37,8 +37,8 @@ flags.DEFINE_enum("mode",
 
 def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/tfa_sac_gnn_example_params.json")
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = '/Users/marco.oliva/Development/bark-ml_logs/checkpoints/3'
-  params["ML"]["TFARunner"]["SummaryPath"] = '/Users/marco.oliva/Development/bark-ml_logs/summaries/3'
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = '/Users/marco.oliva/Development/bark-ml_logs/checkpoints/4'
+  params["ML"]["TFARunner"]["SummaryPath"] = '/Users/marco.oliva/Development/bark-ml_logs/summaries/4'
   params["ML"]["SACRunner"]["NumberOfCollections"] = int(1e6)
   params["ML"]["GraphObserver"]["AgentLimit"] = 4
   params["ML"]["BehaviorGraphSACAgent"]["DebugSummaries"] = False
@@ -109,7 +109,7 @@ def run_configuration(argv):
     runner.Evaluate()
   
   # store all used params of the training
-  params.Save("/Users/marco.oliva/Development/bark-ml_logs/summaries/example_params/agent_8.json")
+  # params.Save("/examples/example_params/tfa_params.json")
 
 if __name__ == '__main__':
   app.run(run_configuration)
