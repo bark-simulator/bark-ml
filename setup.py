@@ -41,7 +41,6 @@ setup(
         'tensorflow-probability>=0.10.0',
         'bark-simulator>=0.1.0',
         'tf2_gnn>=2.4.0',
-        'networkx>=2.4',
         'spektral>0.6.0'
     ],
     ext_modules=ext_modules,
