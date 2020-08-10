@@ -42,7 +42,7 @@ py_test(
   data = ["@bark_project//bark/python_wrapper:core.so",
           "//bark_ml:generate_core",
           "//examples/example_params:example_params"],
-    imports = ["../external/bark_project/bark/python_wrapper/"],
+  imports = ["../bark_ml/python_wrapper/"],
   deps = [
     "//bark_ml/environments:single_agent_runtime",
     "//bark_ml/environments:blueprints",
@@ -52,25 +52,31 @@ py_test(
 )
 
 py_binary(
-  name = "gail",
-  srcs = ["gail.py"],
+  name = "tfa_generate",
+  srcs = ["tfa_generate.py"],
   data = ["@bark_project//bark/python_wrapper:core.so",
           "//bark_ml:generate_core",
-          "//examples/example_params:example_params"],
+          "//examples/example_params:example_params",
+          "@com_github_gail_4_bark_large_data_store"
+          ],
     imports = ["../external/bark_project/bark/python_wrapper/"],
   deps = [
     "//bark_ml/environments:single_agent_runtime",
     "//bark_ml/environments:blueprints",
-    "//bark_ml/library_wrappers/lib_tf2rl",
+    "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
+    "//bark_ml/library_wrappers/lib_tf_agents/runners:runners",
+    "//bark_ml/library_wrappers/lib_tf2rl:load_save_utils"
   ]
 )
 
 py_binary(
-  name = "presentation",
-  srcs = ["presentation.py"],
+  name = "gail",
+  srcs = ["gail.py"],
   data = ["@bark_project//bark/python_wrapper:core.so",
           "//bark_ml:generate_core",
-          "//examples/example_params:example_params"],
+          "//examples/example_params",
+          "@com_github_gail_4_bark_large_data_store"
+          ],
     imports = ["../external/bark_project/bark/python_wrapper/"],
   deps = [
     "//bark_ml/environments:single_agent_runtime",

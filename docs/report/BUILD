@@ -14,7 +14,8 @@ py_binary(
         "//bark_ml:generate_core",
         ":notebooks_folder",
         "//docs/report/data",
-        "//docs/report/data:data_dirs"
+        "//docs/report/data:data_dirs",
+        "@com_github_gail_4_bark_large_data_store"
         ],
     imports = ["../external/bark_project/bark/python_wrapper/"],
     deps = [

@@ -67,18 +67,6 @@ class LoadExpertTrajectoriesTest(unittest.TestCase):
         self.assertTrue(((self.expert_trajectories_norm['acts'] >= -1) &\
             (self.expert_trajectories_norm['acts'] <= 1)).all())
 
-    def test_sample_subset(self):
-        """Test: Correct subset size sampled"""
-        np.random.seed(0)
-        subset, avg_length, num_trajectories = load_expert_trajectories(self.expert_trajectories_directory, subset_size=3)
-
-        self.assertEqual(avg_length, 3.0)
-        self.assertEqual(num_trajectories, 3)
-
-        self.assertEqual(subset['obses'].shape, (9, 16))
-        self.assertEqual(subset['next_obses'].shape, (9, 16))
-        self.assertEqual(subset['acts'].shape, (9, 2))
-
 class test_env():
     """dummy environment for testing."""
 

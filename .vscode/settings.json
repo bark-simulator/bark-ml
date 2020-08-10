@@ -96,4 +96,5 @@
     "titleBar.activeBackground": "#7B164C",
     "titleBar.activeForeground": "#FEFCFD"
   },
+  "python.pythonPath": "bark_ml/python_wrapper/venv/bin/python",
 }
