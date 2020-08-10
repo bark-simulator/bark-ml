@@ -52,7 +52,8 @@ py_library(
 py_library(
     name = "compare_trajectories",
     srcs = ["compare_trajectories.py"],
-    deps = [":load_expert_trajectories"],
+    deps = [":load_expert_trajectories",
+    "//bark_ml/observers"],
     visibility = ["//visibility:public"],
 )
 

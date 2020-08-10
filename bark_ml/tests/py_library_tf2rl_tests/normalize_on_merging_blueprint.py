@@ -34,7 +34,7 @@ from bark_ml.library_wrappers.lib_tf2rl.runners.gail_runner import GAILRunner
 
 class NormalizeOnMergingBlueprintTest(unittest.TestCase):
 
-    def setUp(self):
+    def test_normalization_of_sac_expert_trajectories_on_merging_blueprint(self):
         params = ParameterServer(filename="bark_ml/tests/py_library_tf2rl_tests/data/gail_params.json")
         bp = ContinuousMergingBlueprint(params,
                                         number_of_senarios=10,
@@ -47,32 +47,33 @@ class NormalizeOnMergingBlueprintTest(unittest.TestCase):
         wrapped_env = TF2RLWrapper(env, 
         normalize_features=True)
 
-        # GAIL-agent
-        gail_agent = BehaviorGAILAgent(environment=wrapped_env, params=params)
-        expert_path_dir = "../com_github_gail_4_bark_large_data_store/expert_trajectories/sac/merging"
-        subset_size=1
+        expert_path_dir = "bark_ml/tests/py_library_tf2rl_tests/data/expert_trajectories/sac"
         
-        np.random.seed(0)
+        seed = 0
+        np.random.seed(seed=seed)
         joblib_files = list_files_in_dir(expert_path_dir, file_ending='.jblb')
-        indices = np.random.choice(len(joblib_files), subset_size, replace=False)
-        joblib_files = np.array(joblib_files)[indices]
-
+        
         raw_trajectories = joblib.load(joblib_files[0])
+        for i in range(len(raw_trajectories['obs_norm'])):
+            raw_trajectories['obs_norm'][i] = raw_trajectories['obs_norm'][i] * 2. - 1.
 
-        np.random.seed(0)
+        np.random.seed(seed=seed)
         expert_trajectories, avg_trajectory_length, num_trajectories = load_expert_trajectories(expert_path_dir,
             normalize_features=True,
             env=env, # the unwrapped env has to be used, since that contains the unnormalized spaces.
-            subset_size=subset_size
             ) 
 
-        runner = GAILRunner(params=params,
-                            environment=wrapped_env,
-                            agent=gail_agent,
-                            expert_trajs=expert_trajectories)
+        values = ['X', 'Y', 'Theta', 'Vel']
+        for i, raw in enumerate(raw_trajectories['obs_norm']):
+            if i >= len(expert_trajectories['obses']):
+                break
+            for j, value in enumerate(raw):
+                print(values[j % 4], ':')
+                print(value)
+                print(expert_trajectories['obses'][i][j])
+                print('*' * 80)
+                self.assertAlmostEqual(value, expert_trajectories['obses'][i][j], places=2)
 
-    def test_test(self):
-        print('lol')
 
 if __name__ == '__main__':
     unittest.main()

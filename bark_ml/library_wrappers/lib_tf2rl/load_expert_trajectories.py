@@ -7,19 +7,30 @@ from typing import Tuple
 # BARK-ML imports
 from bark_ml.library_wrappers.lib_tf2rl.load_save_utils import *
 from bark_ml.library_wrappers.lib_tf2rl.normalization_utils import normalize
+from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 
 # TF2RL imports
 from tf2rl.experiments.utils import load_trajectories
 
 
-def GetBounds(env):
+def GetFeatureSpace(env):
     env.reset()
-    return list(np.array([
-        env._observer._world_x_range,
-        env._observer._world_y_range,
-        env._observer._ThetaRange,
-        env._observer._VelocityRange
-        ] * (env._observer._max_num_vehicles + 1)).transpose())
+    observer = NearestAgentsObserver()
+    observer._max_num_vehicles = 3
+    observer.Reset(env._world)
+    observer._VelocityRange = [0., 50.]
+    space = list(np.array([
+        observer._world_x_range,
+        observer._world_y_range,
+        observer._ThetaRange,
+        observer._VelocityRange
+        ] * (observer._max_num_vehicles + 1)).transpose())
+
+    class FeatureSpace:
+        def __init__(self, low, high):
+            self.high = high
+            self.low = low
+    return FeatureSpace(space[0], space[1])
 
 def load_expert_trajectories(dirname: str, normalize_features=False, env=None, subset_size = -1) -> (dict, float, int):
     """Loads all found expert trajectories files in the directory.
@@ -50,16 +61,16 @@ def load_expert_trajectories(dirname: str, normalize_features=False, env=None, s
     
     if normalize_features:
         assert env is not None, "if normalization is used the environment has to be provided."
-        bounds = GetBounds(env)
+        bounds = GetFeatureSpace(env)
         for key in ['obses', 'next_obses']:
-            expert_trajectories[key] = normalize(features=expert_trajectories[key],
-            high=bounds[1],
-            low=bounds[0]
-            )
+            expert_trajectories[key] = normalize(
+                feature=expert_trajectories[key],
+                feature_space=bounds
+                )
 
-        expert_trajectories['acts'] = normalize(features=expert_trajectories['acts'],
-            high=env.action_space.high,
-            low=env.action_space.low
+        expert_trajectories['acts'] = normalize(
+            feature=expert_trajectories['acts'],
+            feature_space=env.action_space
             )
 
         valid_obs_act_pairs = list(range(len(expert_trajectories['obses'])))
@@ -74,6 +85,10 @@ def load_expert_trajectories(dirname: str, normalize_features=False, env=None, s
     
         if len(expert_trajectories['obses']) == 0:
             raise ValueError(f"No expert trajectories in the observation/action space.")    
+
+    for key in ['obses', 'next_obses', 'acts']:
+        if str(type(np.array(expert_trajectories[key]))) != 'numpy.ndarray':
+            expert_trajectories[key] = np.array(expert_trajectories[key])
 
     assert len(expert_trajectories['obses']) == len(expert_trajectories['next_obses'])
     assert len(expert_trajectories['obses']) == len(expert_trajectories['acts'])

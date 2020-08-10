@@ -2,7 +2,7 @@
     "World": {
         "remove_agents_out_of_map": true,
         "Blueprint": "merging",
-        "render": false
+        "render": true
     },
     "BehaviorDynamicModel": {
         "IntegrationTimeDelta": 0.05000000074505806
