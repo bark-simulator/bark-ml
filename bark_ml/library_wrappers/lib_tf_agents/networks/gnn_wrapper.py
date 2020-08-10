@@ -70,7 +70,7 @@ class GNNWrapper(tf.keras.Model):
       GNNWrapper.SupportedLibrary.spektral]
 
     logging.info(
-      f'Initializing GNN with `{lib}``, expecting {graph_dims[0]} ' +
+      f'Initializing GNN with `{lib}` for graph with {graph_dims[0]} ' +
       f'nodes, {graph_dims[1]} node features, and {graph_dims[1]} ' +
       f'edge features.'
     )
