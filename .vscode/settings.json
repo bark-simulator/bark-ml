@@ -89,7 +89,16 @@
     "memory_resource": "cpp",
     "dense": "cpp",
     "__functional_03": "cpp",
-    "*.ipp": "cpp"
+    "*.ipp": "cpp",
+    "csetjmp": "cpp",
+    "any": "cpp",
+    "hash_map": "cpp",
+    "hash_set": "cpp",
+    "regex": "cpp",
+    "rope": "cpp",
+    "slist": "cpp",
+    "scoped_allocator": "cpp",
+    "shared_mutex": "cpp"
   },
   "workbench.colorCustomizations": {
     "activityBar.background": "#581036",

@@ -2,7 +2,7 @@
     "World": {
         "remove_agents_out_of_map": true,
         "Blueprint": "merging",
-        "render": true
+        "render": false
     },
     "BehaviorDynamicModel": {
         "IntegrationTimeDelta": 0.05000000074505806
@@ -181,7 +181,7 @@
         }
     },
     "GenerateExpertTrajectories": {
-        "NumberOfTrajectories": 5,
+        "NumberOfTrajectories": 5000,
         "OutputDirectory": "examples/expert_trajectories"
     }
 }

@@ -79,10 +79,10 @@ class NearestObserver : public BaseObserver {
     const float normalized_angle = Norm0To2PI(state(THETA_POSITION));
 
     if(normalization_enabled_){
-      std::cout << "X: " << min_x_ << "/" << max_x_ << std::endl;
-      std::cout << "Y: " << min_y_ << "/" << max_y_ << std::endl;
-      std::cout << "Theta: " << min_theta_ << "/" << max_theta_ << std::endl;
-      std::cout << "Velo: " << min_vel_ << "/" << max_vel_ << std::endl;
+      // std::cout << "X: " << min_x_ << "/" << max_x_ << std::endl;
+      // std::cout << "Y: " << min_y_ << "/" << max_y_ << std::endl;
+      // std::cout << "Theta: " << min_theta_ << "/" << max_theta_ << std::endl;
+      // std::cout << "Velo: " << min_vel_ << "/" << max_vel_ << std::endl;
       ret_state << Norm(state(X_POSITION), min_x_, max_x_),
                  Norm(state(Y_POSITION), min_y_, max_y_),
                  Norm(normalized_angle, min_theta_, max_theta_),
@@ -150,7 +150,7 @@ class NearestObserver : public BaseObserver {
     Matrix_t<float> high(1, observation_len_);
     high.setOnes();
     std::tuple<int> shape{observation_len_};
-    std::cout << "Observation Space requested" << std::endl;
+    // std::cout << "Observation Space requested" << std::endl;
     return Box<float>(low, high, shape);
   }
 

@@ -41,8 +41,8 @@ def run_configuration(argv):
   # params["ML"]["GAILRunner"]["tf2rl"]["logdir"] and params["ML"]["GAILRunner"]["tf2rl"]["model_dir"]
   # So if your model_dir and logdir were 'examples/gail_training' it becomes 'examples/gail_training/20200807T121018.454776_DDPG_GAIL' in the gail_params.json
   # Alternatively append it as in the following lines:
-  params["ML"]["GAILRunner"]["tf2rl"]["logdir"] = os.path.join(params["ML"]["GAILRunner"]["tf2rl"]["logdir"], "20200807T121018.454776_DDPG_GAIL")
-  params["ML"]["GAILRunner"]["tf2rl"]["model_dir"] = os.path.join(params["ML"]["GAILRunner"]["tf2rl"]["model_dir"], "20200807T121018.454776_DDPG_GAIL")
+  # params["ML"]["GAILRunner"]["tf2rl"]["logdir"] = os.path.join(params["ML"]["GAILRunner"]["tf2rl"]["logdir"], "20200807T121018.454776_DDPG_GAIL")
+  # params["ML"]["GAILRunner"]["tf2rl"]["model_dir"] = os.path.join(params["ML"]["GAILRunner"]["tf2rl"]["model_dir"], "20200807T121018.454776_DDPG_GAIL")
 
   # create environment
   blueprint = params['World']['blueprint']
@@ -71,7 +71,7 @@ def run_configuration(argv):
   # GAIL-agent
   gail_agent = BehaviorGAILAgent(environment=wrapped_env, params=params)
 
-  np.random.seed(123456789)
+  # np.random.seed(123456789)
   expert_trajectories = None
   if FLAGS.mode != 'visualize':
     expert_trajectories, avg_trajectory_length, num_trajectories = load_expert_trajectories(params['ML']['ExpertTrajectories']['expert_path_dir'],

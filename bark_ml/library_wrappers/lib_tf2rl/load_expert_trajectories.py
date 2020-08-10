@@ -14,9 +14,9 @@ from tf2rl.experiments.utils import load_trajectories
 
 
 def GetFeatureSpace(env):
-    env.reset()
+    observation = env.reset()
     observer = NearestAgentsObserver()
-    observer._max_num_vehicles = 3
+    observer._max_num_vehicles = int(len(observation) / 4) - 1
     observer.Reset(env._world)
     observer._VelocityRange = [0., 50.]
     space = list(np.array([

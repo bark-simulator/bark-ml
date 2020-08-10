@@ -18,7 +18,7 @@ class StateObserver(ABC):
     self._VelocityRange = \
       self._params["ML"]["StateObserver"]["VelocityRange",
       "Boundaries for min and max velocity for normalization",
-      [0, 100]]
+      [0, 50]]
     self._ThetaRange = \
       self._params["ML"]["StateObserver"]["ThetaRange",
       "Boundaries for min and max theta for normalization",
