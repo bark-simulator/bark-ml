@@ -46,17 +46,20 @@ class GraphObserver(StateObserver):
     # the number of features of an edge between two nodes
     self.edge_feature_len = len(GraphObserver.edge_attribute_keys())
 
-    # the maximum number of agents that can be observed
-    self._agent_limit = \
-      params["ML"]["GraphObserver"]["AgentLimit", "", 4]
+    self._agent_limit =\
+      params["ML"]["GraphObserver"]["AgentLimit", 
+      "The maximum number of agents that can be observed.",
+      4]
 
-    # the radius an agent can 'see' in meters
-    self._visibility_radius = \
-      params["ML"]["GraphObserver"]["VisibilityRadius", "", 50]
+    self._visibility_radius =\
+      params["ML"]["GraphObserver"]["VisibilityRadius",
+      "The radius in which agent can 'see', i.e. detect other agents.", 
+      50]
 
-    # whether each node has an edge pointing to itself 
-    self._add_self_loops = \
-      params["ML"]["GraphObserver"]["SelfLoops", "", True]
+    self._add_self_loops =\
+      params["ML"]["GraphObserver"]["SelfLoops", 
+      "Whether each node has an edge pointing to itself.", 
+      False]
 
   def Observe(self, world):
     """see base class"""
@@ -281,8 +284,8 @@ class GraphObserver(StateObserver):
     goal_d = np.sqrt(goal_dx**2 + goal_dy**2) # distance to goal
     res["goal_d"] = goal_d
     
-    goal_velocity = np.mean(agent.goal_definition.velocity_range)
-    res["goal_vel"] = goal_velocity
+    # goal_velocity = np.mean(agent.goal_definition.velocity_range)
+    # res["goal_vel"] = goal_velocity
 
     if self._normalize_observations:
       n = self.normalization_data
@@ -295,7 +298,7 @@ class GraphObserver(StateObserver):
       res["goal_dy"] = self._normalize_value(res["goal_dy"], n["dy"])
       res["goal_d"] = self._normalize_value(res["goal_d"], n["distance"])
       res["goal_theta"] = self._normalize_value(res["goal_theta"], n["theta"])
-      res["goal_vel"] = self._normalize_value(res["goal_vel"], n["vel"])
+      # res["goal_vel"] = self._normalize_value(res["goal_vel"], n["vel"])
     
     #####################################################
     #   If you change the number/names of features,     #
@@ -401,7 +404,7 @@ class GraphObserver(StateObserver):
     vector for each node at the corresponding index.
     """
     return ["x", "y", "theta", "vel", "goal_x", "goal_y", 
-    "goal_dx", "goal_dy", "goal_theta", "goal_d", "goal_vel"]
+            "goal_dx", "goal_dy", "goal_theta", "goal_d"] #"goal_vel"]
 
   @classmethod
   def edge_attribute_keys(cls):
@@ -429,3 +432,11 @@ class GraphObserver(StateObserver):
     len_adjacency = self._agent_limit ** 2
     len_edge_features = len_adjacency * self.edge_feature_len
     return len_node_features + len_adjacency + len_edge_features
+
+  @property
+  def graph_dimensions(self):
+    return (
+      self._agent_limit,
+      self.feature_len,
+      self.edge_feature_len
+    )
