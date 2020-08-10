@@ -20,7 +20,7 @@ from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.viewer.video_renderer import VideoRenderer
 
 # BARK-ML imports
-from bark_ml.environments.blueprints import ContinuousHighwayBlueprint
+from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, ContinuousMergingBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorGraphSACAgent
 from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner
@@ -37,25 +37,25 @@ flags.DEFINE_enum("mode",
 
 def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/tfa_sac_gnn_example_params.json")
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = '/Users/marco.oliva/Development/bark-ml_logs/checkpoints/4'
-  params["ML"]["TFARunner"]["SummaryPath"] = '/Users/marco.oliva/Development/bark-ml_logs/summaries/4'
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = '/Users/marco.oliva/Development/bark-ml_logs/checkpoints/merging2'
+  params["ML"]["TFARunner"]["SummaryPath"] = '/Users/marco.oliva/Development/bark-ml_logs/summaries/merging2'
   params["ML"]["SACRunner"]["NumberOfCollections"] = int(1e6)
   params["ML"]["GraphObserver"]["AgentLimit"] = 4
   params["ML"]["BehaviorGraphSACAgent"]["DebugSummaries"] = False
   params["ML"]["BehaviorGraphSACAgent"]["BatchSize"] = 128
   params["ML"]["BehaviorGraphSACAgent"]["CriticJointFcLayerParams"] = [128, 128]
   params["ML"]["BehaviorGraphSACAgent"]["CriticObservationFcLayerParams"] = [128, 128]
-  params["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams"] = [128, 64]
+  params["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams"] = [256, 128]
 
   # GNN parameters
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["NumMpLayers"] = 1
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MpLayersHiddenDim"] = 128
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["NumMpLayers"] = 2
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MpLayersHiddenDim"] = 80
 
   gnn_library = GNNWrapper.SupportedLibrary.spektral # "tf2_gnn" or "spektral"
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["library"] = gnn_library 
 
   if gnn_library == GNNWrapper.SupportedLibrary.spektral:
-    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["KernelNetUnits"] = [512, 256]
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["KernelNetUnits"] = [128, 64]
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MPLayerActivation"] = "relu"
     params["ML"]["GraphObserver"]["SelfLoops"] = True # add self-targeted edges to graph nodes
   elif gnn_library == GNNWrapper.SupportedLibrary.tf2_gnn:
@@ -67,19 +67,19 @@ def run_configuration(argv):
     params["ML"]["GraphObserver"]["SelfLoops"] = False
     # see gnn.py in tf2_gnn for more possible parameters.
 
-  # viewer = MPViewer(
-  #   params=params,
-  #   x_range=[-35, 35],
-  #   y_range=[-35, 35],
-  #   follow_agent_id=True)
+  viewer = MPViewer(
+    params=params,
+    x_range=[-35, 35],
+    y_range=[-35, 35],
+    follow_agent_id=True)
   
-  # viewer = VideoRenderer(
-  #   renderer=viewer,
-  #   world_step_time=0.2,
-  #   fig_path="/Users/marco.oliva/2020/bark-ml/video/")
+  viewer = VideoRenderer(
+    renderer=viewer,
+    world_step_time=0.2,
+    fig_path="/Users/marco.oliva/2020/bark-ml/video/")
 
   # create environment
-  bp = ContinuousHighwayBlueprint(params,
+  bp = ContinuousMergingBlueprint(params,
                                   number_of_senarios=2500,
                                   random_seed=0)
 
@@ -107,7 +107,7 @@ def run_configuration(argv):
     runner.Evaluate()
   
   # store all used params of the training
-  # params.Save("/examples/example_params/tfa_params.json")
+  params.Save("/Users/marco.oliva/Development/bark-ml_logs/parameters/merging_tfa_params.json")
 
 if __name__ == '__main__':
   app.run(run_configuration)
