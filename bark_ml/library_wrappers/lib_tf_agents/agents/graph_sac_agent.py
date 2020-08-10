@@ -34,15 +34,18 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
     params: A `ParameterServer` instance containing parameters to configure
       the agent.
     """
+    # the super init calls 'GetAgent', so assign graph_dims before
+    self._graph_dims = self._validated_graph_dims(graph_dims)
+
     BehaviorTFAAgent.__init__(self,
                               environment=environment,
                               params=params)
     BehaviorContinuousML.__init__(self, params)
+
     self._replay_buffer = self.GetReplayBuffer()
     self._dataset = self.GetDataset()
     self._collect_policy = self.GetCollectionPolicy()
     self._eval_policy = self.GetEvalPolicy()
-    self._graph_dims = self._validated_graph_dims(graph_dims)
 
   def _validated_graph_dims(self, graph_dims):
     assert graph_dims is not None, 'Graph dimensions must not be `None`.'

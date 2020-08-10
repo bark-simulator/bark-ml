@@ -72,7 +72,7 @@ class GraphObserver(StateObserver):
     for i, agent in agents:
       start_index = i * self.feature_len
       end_index = start_index + self.feature_len
-      obs[start_index:end_index] = self._extract_features(agent)
+      obs[start_index:end_index] = self._extract_node_features(agent)
 
     edge_features = np.zeros((self._agent_limit, self._agent_limit, self.edge_feature_len))
     adjacency_matrix = np.zeros((self._agent_limit, self._agent_limit))
@@ -257,7 +257,7 @@ class GraphObserver(StateObserver):
 
     return nearby_agents
 
-  def _extract_features(self, agent, with_keys=False):
+  def _extract_node_features(self, agent, with_keys=False):
     """Returns dict containing all features of the agent"""
     res = OrderedDict()
 
@@ -325,8 +325,8 @@ class GraphObserver(StateObserver):
       An np.array containing the differences in the agents' 
       x and y position, velocities and orientations.
     """
-    source_features = self._extract_features(source_agent, with_keys=True)
-    target_features = self._extract_features(target_agent, with_keys=True)
+    source_features = self._extract_node_features(source_agent, with_keys=True)
+    target_features = self._extract_node_features(target_agent, with_keys=True)
 
     d_x = source_features["x"] - target_features["x"]
     d_y = source_features["y"] - target_features["y"]
