@@ -22,8 +22,22 @@ class GNNWrapper(tf.keras.Model):
 
   def __init__(self,
                params,
+               graph_dims,
                name='GNN',
                output_dtype=tf.float32):
+    """
+    Initializes a GNNWrapper instance.
+
+    Args:
+    params: A `ParameterServer` instance containing the parameters
+      to configure the GNN.
+    graph_dims: A tuple containing the three elements
+      (num_nodes, len_node_features, len_edge_features) of the input graph.
+      Needed to properly convert observations back into a graph structure 
+      that can be processed by the GNN.
+    name: Name of the instance.
+    output_dtype: The dtype to which the GNN output is casted.
+    """
     super(GNNWrapper, self).__init__(name=name)
 
     self.output_dtype = output_dtype
@@ -53,9 +67,13 @@ class GNNWrapper(tf.keras.Model):
       "Either 'spektral' or 'tf2_gnn'. Specifies with which of the two\
        libraries the GNN is initialized. Note that depending on the\
        library, a different set of params may apply.", 
-      "unspecified"]
+      GNNWrapper.SupportedLibrary.spektral]
 
-    logging.info(f'Initializing GNN with: {lib}')
+    logging.info(
+      f'Initializing GNN with `{lib}``, expecting {graph_dims[0]} ' +
+      f'nodes, {graph_dims[1]} node features, and {graph_dims[1]} ' +
+      f'edge features.'
+    )
     
     if lib in [GNNWrapper.SupportedLibrary.spektral, "spektral"]:
       self._init_spektral_layers(params.ConvertToDict())

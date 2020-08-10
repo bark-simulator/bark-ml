@@ -54,9 +54,6 @@ def run_configuration(argv):
   gnn_library = GNNWrapper.SupportedLibrary.spektral # "tf2_gnn" or "spektral"
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["library"] = gnn_library 
 
-  # (n_nodes, n_features, n_edge_features)
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["GraphDimensions"] = (4, 11, 4)
-
   if gnn_library == GNNWrapper.SupportedLibrary.spektral:
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["KernelNetUnits"] = [512, 256]
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MPLayerActivation"] = "relu"
@@ -94,6 +91,7 @@ def run_configuration(argv):
     render=False)
 
   sac_agent = BehaviorGraphSACAgent(environment=env,
+                                    graph_dims=observer.graph_dimensions,
                                     params=params)
   env.ml_behavior = sac_agent
   runner = SACRunner(params=params,
