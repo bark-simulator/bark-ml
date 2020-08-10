@@ -10,7 +10,7 @@ from tf_agents.trajectories import time_step as ts
 from tf_agents.utils import common
 
 from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAAgent
-from bark_ml.behaviors.cont_behavior import BehaviorDiscreteML
+from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteML
 
 
 class BehaviorCDQNAgent(BehaviorTFAAgent, BehaviorDiscreteML):
@@ -35,8 +35,6 @@ class BehaviorCDQNAgent(BehaviorTFAAgent, BehaviorDiscreteML):
       env.observation_spec(),
       env.action_spec(),
       num_atoms=self._params["ML"]["BehaviorCDQNAgent"]["NumAtoms", "", 51],
-      observation_fc_layer_params=None,
-      action_fc_layer_params=None,
       fc_layer_params=tuple(
         self._params["ML"]["BehaviorCDQNAgent"]["CategoricalFcLayerParams", "", [300, 300, 300]]))
     

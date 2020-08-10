@@ -63,10 +63,10 @@
             "BufferPrefetch": 3
         },
         "BehaviorCDQNAgent": {
-            "ActorFcLayerParams": [
-                512,
-                256,
-                256
+            "CategoricalFcLayerParams": [
+                300,
+                300,
+                300
             ],
             "LearningRate": 5e-5,
             "NumAtoms":51,
