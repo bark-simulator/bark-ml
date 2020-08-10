@@ -64,18 +64,18 @@ py_test(
             "//bark_ml/tests/py_library_tf2rl_tests:base_tests",
         ],
     visibility = ["//visibility:public"],
-    size = "small"
+    size = "small",
 )
 
-# Only run with bazel run //bark_ml/tests/py_library_tf2rl_tests:rendered_tests
-py_test(
+# Only run with 
+py_binary(
     name = "rendered_tests",
     srcs = ["rendered_tests.py"],
     deps = [
             "//bark_ml/tests/py_library_tf2rl_tests:simulation_based_tests",
         ],
     visibility = ["//visibility:public"],
-    size = "small"
+    testonly = True
 )
 
 py_test(

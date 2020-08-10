@@ -1,6 +1,7 @@
 {
     "World": {
-        "remove_agents_out_of_map": true
+        "remove_agents_out_of_map": true,
+        "blueprint": "merging"
     },
     "BehaviorDynamicModel": {
         "IntegrationTimeDelta": 0.05000000074505806
@@ -68,6 +69,10 @@
             "EnableSN": false,           
             "AgentName": "gail_agent"
         },
+        "ExpertTrajectories": {
+            "expert_path_dir": "../com_github_gail_4_bark_large_data_store/expert_trajectories/sac/merging",
+            "subset_size": -1
+        },
         "GAILRunner": {
             "EvaluationSteps": 25,
             "InitialCollectionEpisodes": 50,
@@ -81,10 +86,9 @@
                 "save_summary_interval": 100,
                 "dir_suffix": "",
                 "normalize_obs": false,
-                "logdir": "examples/gail_logdir",
                 "logging_level": "INFO",
-                "model_dir": "examples/gail_data/models",
-                "expert_path_dir": "examples/gail_data/expert_data",
+                "logdir": "examples/gail_training",
+                "model_dir": "examples/gail_training",
                 "use_prioritized_rb": false,
                 "use_nstep_rb": false,
                 "n_step": 4,

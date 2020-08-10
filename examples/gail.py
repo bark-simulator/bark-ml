@@ -25,56 +25,36 @@ flags.DEFINE_enum("mode",
                   ["train", "visualize", "evaluate"],
                   "Mode the configuration should be executed in.")
 
-flags.DEFINE_string("train_out",
-                  help="The absolute path to where the checkpoints and summaries are saved during training.",
-                  # default=os.path.join(Path.home(), ".bark-ml/gail")
-                  default=os.path.join(Path.home(), "")
-                  )
-
-flags.DEFINE_integer("gpu",
-                  help="-1 for CPU, 0 for GPU",
-                  default=0
-                  )
-
-flags.DEFINE_integer("subset_size",
-                  help="Amount of expert trajectories to sample, < 0 for all",
-                  default=-1
-                  )
-
-flags.DEFINE_string("expert_trajectories",
-                    help="The absolute path to the dir where the expert trajectories are safed.",
-                    default=None)
-
-flags.DEFINE_enum("blueprint",
-                  "merging",
-                  ["intersection", "highway", "merging"],
-                  "The map blueprint.")
-
 def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/gail_params.json")
 
-  params["ML"]["GAILRunner"]["tf2rl"]["logdir"] = os.path.expanduser(FLAGS.train_out)
-  params["ML"]["GAILRunner"]["tf2rl"]["model_dir"] = os.path.expanduser(FLAGS.train_out)
-  if FLAGS.mode == 'train':
-    params["ML"]["GAILRunner"]["tf2rl"]["logdir"] = os.path.join(params["ML"]["GAILRunner"]["tf2rl"]["logdir"], "logs", str(FLAGS.subset_size) if FLAGS.subset_size > 0 else 'all')
-    params["ML"]["GAILRunner"]["tf2rl"]["model_dir"] = os.path.join(params["ML"]["GAILRunner"]["tf2rl"]["model_dir"], "models", str(FLAGS.subset_size) if FLAGS.subset_size > 0 else 'all')  
+  # Uncomment these to use the pretrained agents from https://github.com/GAIL-4-BARK/large_data_store
+  # The agents are automatically integrated using bazel together with the expert trajectories
+  # params["ML"]["GAILRunner"]["tf2rl"]["logdir"] = "../com_github_gail_4_bark_large_data_store/pretrained_agents/gail/merging"
+  # params["ML"]["GAILRunner"]["tf2rl"]["model_dir"] = "../com_github_gail_4_bark_large_data_store/pretrained_agents/gail/merging"
 
-  Path(params["ML"]["GAILRunner"]["tf2rl"]["logdir"]).mkdir(exist_ok=True, parents=True)
-  Path(params["ML"]["GAILRunner"]["tf2rl"]["model_dir"]).mkdir(exist_ok=True, parents=True)
-
-  params["World"]["remove_agents_out_of_map"] = True
-  params["ML"]["Settings"]["GPUUse"] = FLAGS.gpu
+  # When training a gail agent we add a suffix to the specified model and log dir to distinguish between training runs.
+  # If you want to visualize or evaluate using your locally trained gail agent, you have to specify the run to use.
+  # Therefore look into the directory specified in params["ML"]["GAILRunner"]["tf2rl"]["logdir"] and 
+  # pick one of your runs with the naming scheme '<timestamp>_DDPG_GAIL'
+  # Add the name of the folder with the run to your:
+  # params["ML"]["GAILRunner"]["tf2rl"]["logdir"] and params["ML"]["GAILRunner"]["tf2rl"]["model_dir"]
+  # So if your model_dir and logdir were 'examples/gail_training' it becomes 'examples/gail_training/20200807T121018.454776_DDPG_GAIL' in the gail_params.json
+  # Alternatively append it as in the following lines:
+  params["ML"]["GAILRunner"]["tf2rl"]["logdir"] = os.path.join(params["ML"]["GAILRunner"]["tf2rl"]["logdir"], "20200807T121018.454776_DDPG_GAIL")
+  params["ML"]["GAILRunner"]["tf2rl"]["model_dir"] = os.path.join(params["ML"]["GAILRunner"]["tf2rl"]["model_dir"], "20200807T121018.454776_DDPG_GAIL")
 
   # create environment
-  if FLAGS.blueprint == 'merging':
+  blueprint = params['World']['blueprint']
+  if blueprint == 'merging':
     bp = ContinuousMergingBlueprint(params,
                                     number_of_senarios=2500,
                                     random_seed=0)
-  elif FLAGS.blueprint == 'intersection':
+  elif blueprint == 'intersection':
     bp = ContinuousIntersectionBlueprint(params,
                                     number_of_senarios=2500,
                                     random_seed=0)
-  elif FLAGS.blueprint == 'highway':
+  elif blueprint == 'highway':
     bp = ContinuousHighwayBlueprint(params,
                                     number_of_senarios=2500,
                                     random_seed=0)
@@ -89,22 +69,17 @@ def run_configuration(argv):
     normalize_features=params["ML"]["Settings"]["NormalizeFeatures"])
 
   # GAIL-agent
-  gail_agent = BehaviorGAILAgent(environment=wrapped_env,
-                               params=params)
+  gail_agent = BehaviorGAILAgent(environment=wrapped_env, params=params)
 
   np.random.seed(123456789)
   if FLAGS.mode != 'visualize':
-    expert_trajectories, avg_trajectory_length, num_trajectories = load_expert_trajectories(FLAGS.expert_trajectories,
+    expert_trajectories, avg_trajectory_length, num_trajectories = load_expert_trajectories(params['ML']['ExpertTrajectories']['expert_path_dir'],
       normalize_features=params["ML"]["Settings"]["NormalizeFeatures"],
       env=env, # the unwrapped env has to be used, since that contains the unnormalized spaces.
-      subset_size=FLAGS.subset_size
+      subset_size=params['ML']['ExpertTrajectories']['subset_size']
       ) 
   else:
-    expert_trajectories = {
-      "obses": np.empty([0, 16]),
-      "next_obses": np.empty([0, 16]),
-      "acts": np.empty([0, 2])
-    }
+    expert_trajectories = None
 
   runner = GAILRunner(params=params,
                      environment=wrapped_env,
@@ -118,10 +93,6 @@ def run_configuration(argv):
   elif FLAGS.mode == "evaluate":
     runner.Evaluate(expert_trajectories, avg_trajectory_length, num_trajectories)
   
-  # store all used params of the training
-  # params.Save(os.path.join(FLAGS.train_out, "examples/example_params/gail_params.json"))
-
 
 if __name__ == '__main__':
-  flags.mark_flag_as_required("expert_trajectories")
   app.run(run_configuration)

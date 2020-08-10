@@ -25,7 +25,7 @@ def load_expert_trajectories(dirname: str, normalize_features=False, env=None, s
         float: The average number of trajectory points per trajectory
         int: The number of loaded trajectories
     """
-    joblib_files = list_files_in_dir(os.path.expanduser(dirname), file_ending='.jblb')
+    joblib_files = list_files_in_dir(dirname, file_ending='.jblb')
 
     if subset_size > len(joblib_files):
         raise ValueError(f'Found {len(joblib_files)} expert trajectories. {subset_size} requested. Aborting!')

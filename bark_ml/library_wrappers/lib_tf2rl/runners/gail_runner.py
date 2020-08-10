@@ -2,6 +2,7 @@ import sys
 import logging
 import time
 import argparse
+from pathlib import Path
 import tensorflow as tf
 tf.compat.v1.enable_v2_behavior()
 
@@ -12,7 +13,6 @@ from tf2rl.experiments.utils import restore_latest_n_traj
 
 # BARK-ML imports
 from bark_ml.library_wrappers.lib_tf2rl.runners.tf2rl_runner import TF2RLRunner
-
 
 class GAILRunner(TF2RLRunner):
   """GAIL runner implementation based on tf2rl library."""
@@ -31,6 +31,12 @@ class GAILRunner(TF2RLRunner):
     """
     
     self._expert_trajs = expert_trajs
+    if not self._expert_trajs:
+      import numpy as np
+      self._expert_trajs = {
+          'obses': np.empty([0,0]),
+          'next_obses': np.empty([0,0]),
+          'acts': np.empty([0,0])}
     
     TF2RLRunner.__init__(self,
                     environment=environment,
@@ -111,7 +117,6 @@ class GAILRunner(TF2RLRunner):
     args['model_dir'] = self._params['ML']['GAILRunner']['tf2rl']['model_dir']
 
     # replay buffer
-    args['expert_path_dir'] = self._params['ML']['GAILRunner']['tf2rl']['expert_path_dir']
     args['use_prioritized_rb'] = self._params['ML']['GAILRunner']['tf2rl']['use_prioritized_rb']
     args['use_nstep_rb'] = self._params['ML']['GAILRunner']['tf2rl']['use_nstep_rb']
     args['n_step'] = self._params['ML']['GAILRunner']['tf2rl']['n_step']
@@ -127,5 +132,8 @@ class GAILRunner(TF2RLRunner):
 
     # other:
     args['gpu'] = self._params["ML"]["Settings"]["GPUUse", "", 0]
+
+    Path(args['model_dir']).mkdir(parents=True, exist_ok=True)
+    Path(args['logdir']).mkdir(parents=True, exist_ok=True)
 
     return argparse.Namespace(**args)
