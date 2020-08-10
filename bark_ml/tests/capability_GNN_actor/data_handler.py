@@ -1,5 +1,5 @@
-# Copyright (c) 2020 Patrick Hart, Julian Bernhard,
-# Klemens Esterle, Tobias Kessler
+# Copyright (c) 2020 Silvan Wimmer, Marco Oliva
+# 
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
@@ -14,46 +14,57 @@ import time
 import networkx as nx
 import tensorflow as tf
 
-# Supervised learning imports
-from supervised_learning.data_generation import DataGenerator
+# Supervised learning specific imports
+from bark_ml.tests.capability_GNN_actor.data_generation import DataGenerator
 
 class Dataset:
-  def __init__(self, data_path, observer, params, batch_size=32, train_split=0.8, num_scenarios=100):
-    self.observer = observer
-    self.data_path = data_path
-    self.params = params
+  """Dataset class
+  """
+  def __init__(self,
+               data_path,
+               observer,
+               params,
+               batch_size=32,
+               train_split=0.8,
+               num_scenarios=100):
+    self._observer = observer
+    self._data_path = data_path
+    self._params = params
 
-    self.batch_size = batch_size
-    self.train_split = train_split
-    self.num_scenarios = num_scenarios
+    self._batch_size = batch_size
+    self._train_split = train_split
+    self._num_scenarios = num_scenarios
         
   def get_datasets(self):
     try:
-      scenarios = os.listdir(self.data_path)
+      scenarios = os.listdir(self._data_path)
       logging.debug("Data is already generated")
     except FileNotFoundError:
       logging.debug("Starting data_generation")
-      self.generate_data(data_path=self.data_path, num_scenarios=self.num_scenarios)
+      self._generate_data(data_path=self._data_path,
+                          num_scenarios=self._num_scenarios)
     finally:
-      #logging.debug("Starting to load the data")
-      data_collection = self.load(self.data_path)
-      X, Y = self.transform_into_supervised_dataset(data_collection, observer=self.observer)
+      logging.debug("Starting to load the data")
+      data_collection = self._load(self._data_path)
+      X, Y = self._transform_into_supervised_dataset(data_collection, observer=self._observer)
       logging.info("len(X):"+str(len(X))+"len(x[0]):"+str(len(X[0])))
       #logging.info("Transformation to supervised dataset completed")
-      self.transform_to_tensorflow_datasets(X, Y, train_split=self.train_split,
-                                              batch_size=self.batch_size)
+      self._transform_to_tensorflow_datasets(X, Y, train_split=self._train_split,
+                                              batch_size=self._batch_size)
 
-  def load(self, data_path):
+  def _load(self, data_path):
+    """ Bugfix data_path vs self._data_path !!!!!!!
+    """
     data_collection = list()
-    scenarios = os.listdir(self.data_path)
+    scenarios = os.listdir(data_path)
     for scenario in scenarios:
-      scenario_path = self.data_path + "/" + scenario
+      scenario_path = data_path + "/" + scenario
       with open(scenario_path, 'rb') as f:
         data = pickle.load(f)
       data_collection.append(data)
     return data_collection
 
-  def transform_to_tensorflow_datasets(self, X, Y, train_split=0.8, batch_size=32):
+  def _transform_to_tensorflow_datasets(self, X, Y, train_split=0.8, batch_size=32):
     # Transform supervised dataset into tf.dataset
     X = tf.constant(X)
     Y = tf.constant(Y, dtype=tf.float32)
@@ -68,31 +79,27 @@ class Dataset:
     self.test_dataset = test_dataset.take(-1).batch(batch_size)
     return self.train_dataset, self.test_dataset
 
-  def generate_data(self, data_path, num_scenarios):
+  def _generate_data(self, data_path, num_scenarios):
     logging.info("Starting data_generation")
-    graph_generator = DataGenerator(num_scenarios=num_scenarios, dump_dir=data_path, render=False, params=self.params)
+    graph_generator = DataGenerator(num_scenarios=num_scenarios,
+                                    dump_dir=data_path, render=False,
+                                    params=self._params)
     graph_generator.run_scenarios()
 
-  def transform_into_supervised_dataset(self, data_collection, observer):
+  def _transform_into_supervised_dataset(self, data_collection, observer):
     # Transform raw data to supervised dataset
     Y = list()
     X = list()
     for data in data_collection:
       for data_point in data:
         # Get raw data
-        observation = data_point["graph"]
-        actions = data_point["actions"]
-        # Transform observation tensor to array
-        try:
-          observation = observation.numpy()
-        except AttributeError:
-          graph_data = data_point["graph"]
-          actions = data_point["actions"]
-          graph = nx.node_link_graph(graph_data)
-          # Transform graph to observation
-          observation = observer._observation_from_graph(graph).numpy()
-      
+        observation = data_point["observation"]
+        actions = data_point["label"]
+
+        # Transform data to arrays
+        observation = observation.numpy()  
         actions = np.array([actions["steering"], actions["acceleration"]])
+
         # Save in training data variables
         X.append(observation)
         Y.append(actions)

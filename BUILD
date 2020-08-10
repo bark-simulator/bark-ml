@@ -14,7 +14,7 @@ test_suite(
   tests = [
     "//bark_ml/tests:py_graph_observer_tests",
     "//bark_ml/tests:py_gnn_wrapper_tests",
-    "//supervised_learning:py_learn_actor_tests"
+    "//bark_ml/tests/capability_GNN_actor:py_learn_actor_tests",
   ]
 )
 

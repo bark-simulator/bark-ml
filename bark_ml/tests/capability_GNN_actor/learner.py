@@ -16,77 +16,76 @@ import tensorflow as tf
 import datetime
 
 # Supervised learning imports
-from supervised_learning.actor_nets import ConstantActorNet, RandomActorNet, \
-    get_GNN_SAC_actor_net, get_SAC_actor_net
+from bark_ml.tests.capability_GNN_actor.actor_nets import ConstantActorNet,\
+  RandomActorNet, get_GNN_SAC_actor_net, get_SAC_actor_net
 
 class Learner:
-	def __init__(self, model, train_dataset, test_dataset, log_dir):
-		"""Function to set up the Learner"""
-		self.model = model
-		self.train_dataset = train_dataset
-		self.test_dataset = test_dataset
-		self.log_dir = log_dir
+  def __init__(self, model, train_dataset, test_dataset, log_dir):
+    """Function to set up the Learner"""
+    self._model = model
+    self._train_dataset = train_dataset
+    self._test_dataset = test_dataset
+    self._log_dir = log_dir
 
-	def train(self, epochs=10, only_test=False, mode="Distribution"):
-		"""Function to train the model
-				
-				optional parameters:
-						epochs      :   int     #number of epochs 
-						only_test   :   bool    #if false: no real training, just tests
-						mode        :   str     #"Distribution" or sth else"""
-
-		self.loss_object = tf.keras.losses.MeanSquaredError()
-		self.optimizer = tf.keras.optimizers.Adam()
-		self.train_loss = tf.keras.metrics.Mean(name='train_loss')
-		self.test_loss = tf.keras.metrics.Mean(name='test_loss')
-		current_time = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-		self.summary_writer = tf.summary.create_file_writer(self.log_dir+'/'+ current_time)
-
-		for epoch in range(epochs):
-      # Reset the metrics at the start of the next epoch
-      self.train_loss.reset_states()
-      self.test_loss.reset_states()
+  def train(self, epochs=10, only_test=False, mode="Distribution"):
+    """Function to train the model
+        
+    optional parameters:
+      epochs      :   int     #number of epochs 
+      only_test   :   bool    #if false: no real training, just tests
+      mode        :   str     #"Distribution" or sth else
+    """
+    self._loss_object = tf.keras.losses.MeanSquaredError()
+    self._optimizer = tf.keras.optimizers.Adam()
+    self._train_loss = tf.keras.metrics.Mean(name='train_loss')
+    self._test_loss = tf.keras.metrics.Mean(name='test_loss')
+    current_time = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    self._summary_writer = tf.summary.create_file_writer(self._log_dir+'/'+ current_time)
+    
+    for epoch in range(epochs):
+      self._train_loss.reset_states()
+      self._test_loss.reset_states()
       logging.info('Starting training in epoch '+str(epoch))
       # Start real training with gradients or only evaluate
       if only_test==False:
-        for inputs, labels in self.train_dataset:
-          self.train_step(inputs, labels, model=self.model, loss_object=self.loss_object,
-                          optimizer=self.optimizer, train_loss=self.train_loss, mode=mode)
+        for inputs, labels in self._train_dataset:
+          self._train_step(inputs, labels, model=self._model, loss_object=self._loss_object,
+                          optimizer=self._optimizer, train_loss=self._train_loss, mode=mode)
       elif only_test==True:
-        for test_inputs, test_labels in self.train_dataset:
-          self.test_step(test_inputs, test_labels, model=self.model, loss_object=self.loss_object,
-                         test_loss=self.train_loss, mode=mode)
+        for test_inputs, test_labels in self._train_dataset:
+          self._test_step(test_inputs, test_labels, model=self._model, loss_object=self._loss_object,
+                         test_loss=self._train_loss, mode=mode)
       # Evaluate on test_dataset
-      for test_inputs, test_labels in self.test_dataset:
-        self.test_step(test_inputs, test_labels, model=self.model, loss_object=self.loss_object,
-                       test_loss=self.test_loss, mode=mode)
+      for test_inputs, test_labels in self._test_dataset:
+        self._test_step(test_inputs, test_labels, model=self._model, loss_object=self._loss_object,
+                       test_loss=self._test_loss, mode=mode)
       # Histogram data
       logging.info("starting to create histogram data")
-      true_results, preds, abs_losses = self.create_histogram_data(self.train_dataset, self.model,
+      true_results, preds, abs_losses = self._create_histogram_data(self._train_dataset, self._model,
                                                                     mode=mode)
 
-      with self.summary_writer.as_default():
-          tf.summary.scalar('loss/train_loss', self.train_loss.result(), step=epoch)
-          tf.summary.scalar('loss/test_loss', self.test_loss.result(), step=epoch)
-          tf.summary.histogram("steering/labels", tf.constant(true_results[:,0]), step=epoch)
-          tf.summary.histogram("steering/predictions", tf.constant(preds[:,0]), step=epoch)
-          tf.summary.histogram("acceleration/labels", tf.constant(true_results[:,1]), step=epoch)
-          tf.summary.histogram("acceleration/predictions", tf.constant(preds[:,1]), step=epoch)
-          tf.summary.histogram("absolute_losses/steering", tf.constant(abs_losses[:,0]), step=epoch)
-          tf.summary.histogram("absolute_losses/acceleration", tf.constant(abs_losses[:,1]), step=epoch)
+      with self._summary_writer.as_default():
+        tf.summary.scalar('loss/train_loss', self._train_loss.result(), step=epoch)
+        tf.summary.scalar('loss/test_loss', self._test_loss.result(), step=epoch)
+        tf.summary.histogram("steering/labels", tf.constant(true_results[:,0]), step=epoch)
+        tf.summary.histogram("steering/predictions", tf.constant(preds[:,0]), step=epoch)
+        tf.summary.histogram("acceleration/labels", tf.constant(true_results[:,1]), step=epoch)
+        tf.summary.histogram("acceleration/predictions", tf.constant(preds[:,1]), step=epoch)
+        tf.summary.histogram("absolute_losses/steering", tf.constant(abs_losses[:,0]), step=epoch)
+        tf.summary.histogram("absolute_losses/acceleration", tf.constant(abs_losses[:,1]), step=epoch)
 
       template = 'Epoch {}, Loss: {}, Test Loss: {}'
       print(template.format(epoch + 1,
-                              self.train_loss.result(),
-                              self.test_loss.result()))
+                              self._train_loss.result(),
+                              self._test_loss.result()))
 
-	def visualize_predictions(self, dataset, title=None, mode="Distribution"):
+  def visualize_predictions(self, dataset, title=None, mode="Distribution"):
     # Show exemplary predictions of model
     abs_losses = list()
     predictions = list()
     true_results = list()
     for input_data, y_true in dataset:
-      y_pred = self.model(input_data, training=False, step_type=None, network_state=())
+      y_pred = self._model(input_data, training=False, step_type=None, network_state=())
       if mode=="Distribution":
         y_pred = y_pred[0].mean()
 
@@ -99,11 +98,11 @@ class Learner:
     abs_losses = np.array(abs_losses)
     predictions = np.array(predictions)
     true_results = np.array(true_results)
-    fig = self.create_figure(abs_losses, predictions, true_results, title)
+    fig = self._create_figure(abs_losses, predictions, true_results, title)
     plt.show()
 
-	@staticmethod
-	def create_figure(abs_losses, predictions, true_results, title=None):
+  @staticmethod
+  def _create_figure(abs_losses, predictions, true_results, title=None):
     colors = ['b','r'] 
     fig, axes = plt.subplots(nrows=4)
     fig.suptitle(title, fontsize=16)
@@ -140,8 +139,8 @@ class Learner:
     fig.tight_layout() 
     return fig
 
-	@staticmethod
-	def train_step(inputs, labels, model, loss_object, optimizer, train_loss, mode="Distribution"):
+  @staticmethod
+  def _train_step(inputs, labels, model, loss_object, optimizer, train_loss, mode="Distribution"):
     with tf.GradientTape() as tape:
       predictions = model(inputs, training=True, step_type=None, network_state=())
       if mode=="Distribution":
@@ -151,8 +150,8 @@ class Learner:
     optimizer.apply_gradients(zip(gradients, model.trainable_variables))
     train_loss(loss)
 
-	@staticmethod 
-	def test_step(inputs, labels, model, loss_object, test_loss, mode="Distribution"):
+  @staticmethod 
+  def _test_step(inputs, labels, model, loss_object, test_loss, mode="Distribution"):
     # training=False is only needed if there are layers with different
     # behavior during training versus inference (e.g. Dropout).
     predictions = model(inputs, training=False, step_type=None, network_state=())
@@ -162,8 +161,8 @@ class Learner:
     test_loss(t_loss)
     #test_accuracy(labels, predictions)
 
-	@staticmethod
-	def create_histogram_data(dataset, model, mode="Distribution"):
+  @staticmethod
+  def _create_histogram_data(dataset, model, mode="Distribution"):
     abs_losses = list()
     preds = list()
     true_results = list()
