@@ -62,6 +62,41 @@ class PyGraphObserverTests(unittest.TestCase):
     self.assertTrue(observer._add_self_loops)
     self.assertTrue(observer._normalize_observations)
 
+  def test_empty_requested_node_features(self):
+    params = ParameterServer()
+    params["ML"]["GraphObserver"]["EnabledNodeFeatures"] = []
+    observer = GraphObserver(params)
+
+    self.assertEqual(
+      observer.enabled_node_attribute_keys, 
+      GraphObserver.available_node_attribute_keys())
+
+  def test_request_subset_of_available_node_features(self):
+    params = ParameterServer()
+
+    requested_features = GraphObserver.available_node_attribute_keys()[0:5]
+    params["ML"]["GraphObserver"]["EnabledNodeFeatures"] = requested_features
+    observer = GraphObserver(params=params)
+
+    self.assertEqual(
+      observer.enabled_node_attribute_keys, 
+      requested_features)
+
+  def test_request_partially_invalid_node_features(self):
+    params = ParameterServer()
+
+    requested_features =\
+      GraphObserver.available_node_attribute_keys()[0:5] + ['invalid']
+    params["ML"]["GraphObserver"]["EnabledNodeFeatures"] = requested_features
+    observer = GraphObserver(params=params)
+
+    # remove invalid feature from expected list
+    requested_features.pop(-1)
+    
+    self.assertEqual(
+      observer.enabled_node_attribute_keys, 
+      requested_features)
+
   def test_observe_with_self_loops(self):
     num_agents = 4
     params = ParameterServer()
