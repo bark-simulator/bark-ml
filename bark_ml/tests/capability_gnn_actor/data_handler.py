@@ -25,10 +25,10 @@ class SupervisedData:
               or with which the data was originally loaded).
     params: bark ParameterServer instance (specifys parameters for data
             generation).
-    *batch_size: int, specifys batch size of tf.data.Datasets.
-    *train_split: float, specifys ratio of training data [should be between 0
+    batch_size: int, specifys batch size of tf.data.Datasets.
+    train_split: float, specifys ratio of training data [should be between 0
                  and 1].
-    *num_scenarios: int, number of scenario runs for data generation.
+    num_scenarios: int, number of scenario runs for data generation.
   """
   def __init__(self,
                observer,
@@ -105,9 +105,9 @@ class SupervisedData:
     Args:
       X: numpy array of features (shape: Nxobservation_size).
       Y: numpy array of labels (shape: Nx2).
-      *train_split: float between 0 and 1, specifys the ratio of data
+      train_split: float between 0 and 1, specifys the ratio of data
                    for training (1-train_split -> ratio of test data).
-      *batch_size: int, defining batch size of datasets.
+      batch_size: int, defining batch size of datasets.
 
     Returns:
       train_dataset: tf.data.Dataset for training.

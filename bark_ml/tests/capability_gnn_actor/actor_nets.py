@@ -9,48 +9,78 @@ import numpy as np
 import time
 import tensorflow as tf
 
-# BARK imports
-from bark.runtime.commons.parameters import ParameterServer
-
-# BARK-ML imports
-from bark_ml.environments.blueprints import ContinuousHighwayBlueprint
-from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, BehaviorGraphSACAgent
-from bark_ml.observers.graph_observer import GraphObserver
-
 class RandomActorNet:
+  """RandomActor which returns uniformely sampled random action when called.
+ 
+  Args:
+    low: int, float, double or array, lower bound of random actions.
+    high: int, float, double or array, upper bound of random actions.
+  """
   def __init__(self, low=-0.4, high=0.4):
     self.low = low
     self.high = high
-      
+          
   def __call__(self, inputs, **args):
-    #logging.info(inputs.shape)
+    """Depending on input shape (batch vs. single call) returning random
+    actions.
+    
+    Args:
+      inputs: observation or batch of observations.
+      args: (not used, just to be compatible with other classes call methods).
+    
+    Returns:
+      predictions: tf.Tensor of predictions or batch of predictions (same outer
+                   shape as inputs).
+    """
+    del args
     size = (inputs.shape[0], 2)
     predictions = np.random.uniform(low=self.low, high=self.high, size=size)
-    return tf.constant(predictions, dtype=tf.float32)
+    predictions = tf.constant(predictions, dtype=tf.float32)
+    return predictions
 
 class ConstantActorNet:
-  def __init__(self, constants=np.array([0.025, -0.066])):
-    self.constants = constants
+  """ConstantActor which returns always two constants.
+  
+  These constants can either be the means of a dataset, then a dataset should
+  be given during initialization. Or manually set constants, then these should
+  be given. If None or both are given, an Exception is raised.
+  
+  Args:
+    dataset: a tf.data.Dataset for which the mean should be returned.
+    constants: a numpy array of size 2 which should be returned
+  """
+  def __init__(self, dataset=None, constants=None):
+    """Initializes ConstantActorNet"""   
+    if dataset is None and constants is not None:
+      self.constants = constants
+    
+    elif dataset is not None and constants is None:
+      # Calculate mean of dataset
+      num_batches = len(list(dataset.as_numpy_iterator()))
+      first = True
+      for inputs, labels in dataset:
+        if first:
+          means = tf.math.reduce_mean(labels, axis=0)
+          first = False
+        else:
+          means += tf.math.reduce_mean(labels, axis=0)
+      means = (means / num_batches).numpy()
+      self.constants = means
 
   def __call__(self, inputs, **args):
-    #logging.info(inputs.shape)
+    """Depending on input shape (batch vs. single call) returning random
+    actions.
+    
+    Args:
+      inputs: observation or batch of observations.
+      args: (not used, just to be compatible with other classes call methods).
+    
+    Returns:
+      predictions: tf.Tensor of predictions or batch of predictions (same outer
+                   shape as inputs).
+    """
+    del args
     size = (inputs.shape[0], 2)
     predictions = np.resize(self.constants, size)
-    return tf.constant(predictions, dtype=tf.float32)
-
-def get_GNN_SAC_actor_net(num_scenarios, params, observer):
-  """Function that returns GNN SAC agent's actor net"""
-  bp = ContinuousHighwayBlueprint(params, number_of_senarios=num_scenarios, random_seed=0)
-  env = SingleAgentRuntime(blueprint=bp, observer=observer, render=False)
-  sac_agent = BehaviorGraphSACAgent(environment=env, params=params)
-  actor_net = sac_agent._agent._actor_network
-  return actor_net
-    
-def get_SAC_actor_net(num_scenarios, params, observer):
-  """Function that returns normal SAC agent's actor net """
-  bp = ContinuousHighwayBlueprint(params, number_of_senarios=num_scenarios, random_seed=0)
-  env = SingleAgentRuntime(blueprint=bp, observer=observer, render=False)
-  sac_agent = BehaviorSACAgent(environment=env, params=params)
-  actor_net = sac_agent._agent._actor_network
-  return actor_net
+    predictions = tf.constant(predictions, dtype=tf.float32)
+    return predictions
