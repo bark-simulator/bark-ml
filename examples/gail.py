@@ -88,7 +88,7 @@ def run_configuration(argv):
   if FLAGS.mode == "train":
     runner.Train()
   elif FLAGS.mode == "visualize": 
-    runner.Visualize(2000)
+    runner.Visualize(params["ML"]["Visualization"]["NumberOfScenarios"])
   elif FLAGS.mode == "evaluate":
     runner.Evaluate(expert_trajectories, avg_trajectory_length, num_trajectories)
   

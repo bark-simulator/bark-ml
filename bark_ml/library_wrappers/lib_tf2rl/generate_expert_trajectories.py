@@ -208,15 +208,7 @@ def measure_world(world_state, observer: StateObserver, observer_not_normalized:
             "obs_norm": obs,
             "obs": obs_not_normalized,
             "time": world_state.time,
-            "merge": None
         }
-
-        if agent_id in agents_valid:
-            try:
-                observations[agent_id]["merge"] = obs_world.lane_corridor.center_line.bounding_box[0].x(
-                ) > 900
-            except:
-                pass
 
     return observations
 
@@ -317,7 +309,6 @@ def simulate_scenario(param_server: ParameterServer, sim_time_step: float, rende
             expert_trajectories[agent_id]["obs_norm"].append(values["obs_norm"])
             expert_trajectories[agent_id]["obs"].append(values["obs"])
             expert_trajectories[agent_id]["time"].append(values["time"])
-            expert_trajectories[agent_id]["merge"].append(values["merge"])
             expert_trajectories[agent_id]["wheelbase"].append(2.7)
 
         world_state.Step(sim_time_step_seconds)
@@ -326,19 +317,6 @@ def simulate_scenario(param_server: ParameterServer, sim_time_step: float, rende
         plt.close()
     return expert_trajectories
 
-def normalize_actions(actions, high, low):
-    """Normalizes the actions to the interval of [low, high]
-    """
-    normalized = np.array(actions)
-
-    interval = (high - low)
-    normalized -= low
-    normalized /= interval
-
-    # normalized *= 2
-    # normalized -= 1
-
-    return normalized 
 
 def generate_expert_trajectories_for_scenario(param_server: ParameterServer, sim_time_step: float, renderer: str = "") -> dict:
     """Simulates a scenario, measures the environment and calculates the actions.
@@ -387,8 +365,6 @@ def generate_expert_trajectories_for_scenario(param_server: ParameterServer, sim
                    ) == len(expert_trajectories[agent_id]["obs"])
         assert len(expert_trajectories[agent_id]["obs_norm"]
                    ) == len(expert_trajectories[agent_id]["time"])
-        assert len(expert_trajectories[agent_id]["obs_norm"]
-                   ) == len(expert_trajectories[agent_id]["merge"])
         assert len(expert_trajectories[agent_id]["obs_norm"]
                    ) == len(expert_trajectories[agent_id]["done"])
     
@@ -442,7 +418,7 @@ def main_function(argv: list):
     param_servers = create_parameter_servers_for_scenarios(
         map_file, tracks_dir)
 
-    sim_time_step = 100
+    sim_time_step = 200
     for map_file, track in param_servers.keys():
         generate_and_store_expert_trajectories(map_file, track, expert_trajectories_path, param_servers[(
             map_file, track)], sim_time_step, FLAGS.renderer)

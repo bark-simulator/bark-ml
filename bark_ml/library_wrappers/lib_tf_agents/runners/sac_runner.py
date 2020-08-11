@@ -99,6 +99,9 @@ class SACRunnerGenerator(SACRunner):
         action_step = self._agent._eval_policy.action(ts.transition(state, reward=0.0, discount=1.0))
 
         state, reward, is_terminal, info = self._environment.step(action_step.action.numpy())
+        if not info:
+          break
+        
         state_not_norm = self.GetStateNotNormalized()
         expert_trajectories['obs_norm'].append(state)
         expert_trajectories['obs'].append(state_not_norm)
