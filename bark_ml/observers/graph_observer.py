@@ -61,47 +61,61 @@ class GraphObserver(StateObserver):
       params["ML"]["GraphObserver"]["EnabledNodeFeatures",
       "The list of available node features, given by their string key that \
        the observer should extract from the world and insert into the \
-       observation. For a list of avaliable features, refer to the list \
-       returned by `available_node_attribute_keys`.",
-      GraphObserver.available_node_attribute_keys()
+       observation. For a list of available features, refer to the list \
+       returned by `GraphObserver.available_node_attribute_keys`.",
+      self.available_node_attribute_keys()
     ]
 
-    self.enabled_node_attribute_keys =\
-      self._filter_requested_node_attributes(requested_node_attribute_keys)
+    self.enabled_node_attribute_keys = self._filter_requested_attributes(
+      requested_keys=requested_node_attribute_keys,
+      available_keys=self.available_node_attribute_keys(),
+      context="node")
+
+    requested_edge_attribute_keys =\
+      params["ML"]["GraphObserver"]["EnabledEdgeFeatures",
+      "The list of available edge features, given by their string key that \
+       the observer should extract from the world and insert into the \
+       observation. For a list of available features, refer to the list \
+       returned by `GraphObserver.available_edge_attribute_keys`.",
+      self.available_edge_attribute_keys()
+    ]
+
+    self.enabled_edge_attribute_keys = self._filter_requested_attributes(
+      requested_keys=requested_edge_attribute_keys,
+      available_keys=self.available_edge_attribute_keys(),
+      context="edge")
 
     # the number of features of a node in the graph
     self.feature_len = len(self.enabled_node_attribute_keys)
 
     # the number of features of an edge between two nodes
-    self.edge_feature_len = len(GraphObserver.edge_attribute_keys())
+    self.edge_feature_len = len(self.enabled_edge_attribute_keys)
 
-  def _filter_requested_node_attributes(self, keys):
-    if not isinstance(keys, list):
+  def _filter_requested_attributes(self, requested_keys, available_keys, context):
+    if not isinstance(requested_keys, list):
       raise ValueError(
-        f"`EnabledNodeFeatures` must be a list of strings, not {keys}.")
+        f"Requested {context} feature list must be a list of " +
+        f"strings, not {type(requested_keys)}.")
 
-    if len(keys) == 0:
+    if len(requested_keys) == 0:
       self._logger.warning(
-        """
-        The GraphObserver received an empty list of requested
-        node attributes and defaults to using all available ones.
-        """)
-      return GraphObserver.available_node_attribute_keys()
+        f"The `GraphObserver` received an empty list of requested " +
+        f"{context} attributes.")
+      return []
 
     valid_keys = []
     invalid_keys = []
 
-    for key in keys:
-      if key in GraphObserver.available_node_attribute_keys():
+    for key in requested_keys:
+      if key in available_keys:
         valid_keys.append(key)
       else:
         invalid_keys.append(key)
     
     if len(invalid_keys) > 0:
       self._logger.warning(
-        'The following requested attributes passed ' +
-        'into the GraphObserver are not supported ' +
-        f'and will be ignored:\n {invalid_keys}')
+        f"The following {context} attributes requested from the GraphObserver " +
+        f"are not supported and will be ignored:\n {invalid_keys}")
 
     return valid_keys
 
@@ -372,21 +386,21 @@ class GraphObserver(StateObserver):
       An np.array containing the differences in the agents' 
       x and y position, velocities and orientations.
     """
-    source_features = self._extract_node_features(source_agent, with_keys=True)
-    target_features = self._extract_node_features(target_agent, with_keys=True)
+    source_features =\
+      self._extract_node_features(source_agent, with_keys=True)
+    target_features =\
+      self._extract_node_features(target_agent, with_keys=True)
 
-    d_x = source_features["x"] - target_features["x"]
-    d_y = source_features["y"] - target_features["y"]
-    d_vel = source_features["vel"] - target_features["vel"]
-    d_theta = source_features["theta"] - target_features["theta"]
-    features = np.array([d_x, d_y, d_vel, d_theta])
+    features = {
+      "dx": source_features["x"] - target_features["x"],
+      "dy": source_features["y"] - target_features["y"],
+      "dvel": source_features["vel"] - target_features["vel"],
+      "dtheta": source_features["theta"] - target_features["theta"]
+    }
 
-    #####################################################
-    #   If you change the number/types of features,     #
-    #   please adapt GraphObserver.edge_attribute_keys  #
-    #   accordingly.                                    #
-    #####################################################
-    assert len(features) == len(self.edge_attribute_keys())
+    features = {key: features[key] for key in self.enabled_edge_attribute_keys}
+    features = list(features.values())
+    assert len(features) == len(self.enabled_edge_attribute_keys)
 
     return features
 
@@ -451,15 +465,15 @@ class GraphObserver(StateObserver):
     vector for each node at the corresponding index.
     """
     return ["x", "y", "theta", "vel", "goal_x", "goal_y", 
-            "goal_dx", "goal_dy", "goal_theta", "goal_d"] #"goal_vel"]
+            "goal_dx", "goal_dy", "goal_theta", "goal_d", "goal_vel"]
 
   @classmethod
-  def edge_attribute_keys(cls):
+  def available_edge_attribute_keys(cls):
     """
     The keys corresponding to the value of the feature
     vector for each edge at the corresponding index.
     """
-    return ["x", "y", "dx", "dv"]
+    return ["dx", "dy", "dvel", "dtheta"]
 
   @property
   def observation_space(self):    
