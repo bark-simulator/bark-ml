@@ -1,9 +1,12 @@
 import logging
 import tensorflow as tf
-from tf2_gnn.layers import GNN, GNNInput
-from bark_ml.observers.graph_observer import GraphObserver
-from spektral.layers import EdgeConditionedConv
+
 from enum import Enum
+from tf2_gnn.layers import GNN, GNNInput
+from spektral.layers import EdgeConditionedConv
+
+from bark.runtime.commons.parameters import ParameterServer
+from bark_ml.observers.graph_observer import GraphObserver
 
 class GNNWrapper(tf.keras.Model):
   """
@@ -21,13 +24,28 @@ class GNNWrapper(tf.keras.Model):
     tf2_gnn  = "tf2_gnn"
 
   def __init__(self,
-               params,
+               params=ParameterServer(),
+               graph_dims=None,
                name='GNN',
                output_dtype=tf.float32):
+    """
+    Initializes a GNNWrapper instance.
+
+    Args:
+    params: A `ParameterServer` instance containing the parameters
+      to configure the GNN.
+    graph_dims: A tuple containing the three elements
+      (num_nodes, len_node_features, len_edge_features) of the input graph.
+      Needed to properly convert observations back into a graph structure 
+      that can be processed by the GNN.
+    name: Name of the instance.
+    output_dtype: The dtype to which the GNN output is casted.
+    """
     super(GNNWrapper, self).__init__(name=name)
 
     self.output_dtype = output_dtype
     self._params = params
+    self._graph_dims = self._validated_graph_dims(graph_dims)
 
     self.num_units = params[
       "MpLayersHiddenDim", 
@@ -35,13 +53,6 @@ class GNNWrapper(tf.keras.Model):
        size of the output node embeddings. If using spektral, this\
        specifies the number of channels in the convolution layer.", 
       256]
-
-    self._graph_dims = params[
-      "GraphDimensions",
-      "Tuple consisting of (num_nodes, len_node_features, len_edge_features)\
-       of the input graph. Needed to properly convert observations back into\
-       a graph structure that can be processed by the GNN.", 
-      "Invalid default since this is required"] 
     
     self._num_message_passing_layers = params[
       "NumMpLayers",
@@ -49,13 +60,16 @@ class GNNWrapper(tf.keras.Model):
       1]
     
     lib = params[
-      "library", 
+      "Library", 
       "Either 'spektral' or 'tf2_gnn'. Specifies with which of the two\
        libraries the GNN is initialized. Note that depending on the\
        library, a different set of params may apply.", 
-      "unspecified"]
+      GNNWrapper.SupportedLibrary.spektral]
 
-    logging.info(f'Initializing GNN with: {lib}')
+    logging.info(
+      f'Initializing GNN with `{lib}` for input graphs with ' +
+      f'{graph_dims[0]} nodes, {graph_dims[1]} node features, ' + 
+      f'and {graph_dims[1]} edge features.')
     
     if lib in [GNNWrapper.SupportedLibrary.spektral, "spektral"]:
       self._init_spektral_layers(params.ConvertToDict())
@@ -64,8 +78,21 @@ class GNNWrapper(tf.keras.Model):
       self._init_tf2_gnn_layers(params.ConvertToDict())
       self._call_func = self._call_tf2_gnn
     else:
-      raise ValueError(lib, 
+      raise ValueError(
         f"Invalid GNN library '{lib}'. Use 'spektral' or 'tf2_gnn'")
+
+  def _validated_graph_dims(self, graph_dims):
+    if graph_dims is None:
+      raise ValueError('Graph dimensions must not be `None`.')
+    if len(graph_dims) != 3:
+      raise ValueError('Graph dimensions must be of length 3.')
+
+    int_dims = list(map(int, graph_dims))
+    
+    if min(int_dims) < 0:
+      raise ValueError('Graph dimensions must be positive.')
+
+    return int_dims
 
   def _init_spektral_layers(self, params):
     self._convolutions = []
@@ -73,7 +100,7 @@ class GNNWrapper(tf.keras.Model):
     for _ in range(self._num_message_passing_layers):
       self._convolutions.append(EdgeConditionedConv(
         channels=self.num_units,
-        kernel_network=params.get("KernelNetUnits", [256]),
+        kernel_network=params.get("EdgeFcLayerParams", [256]),
         activation=params.get("MPLayerActivation", "relu"))
       )
 

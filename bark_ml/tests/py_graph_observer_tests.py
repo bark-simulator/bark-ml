@@ -71,8 +71,7 @@ class PyGraphObserverTests(unittest.TestCase):
     obs, _ = self._get_observation(observer, self.world, self.eval_id)
     obs = tf.expand_dims(obs, 0) # add a batch dimension
 
-    graph_dims = (num_agents, observer.feature_len, observer.edge_feature_len)
-    nodes, adjacency, _ = GraphObserver.graph(obs, graph_dims=graph_dims)
+    nodes, adjacency, _ = GraphObserver.graph(obs, graph_dims=observer.graph_dimensions)
     adjacency_list_diagonal = (tf.linalg.tensor_diag_part(adjacency[0]))
 
     # assert ones on the diagonal of the adjacency matrix
@@ -87,8 +86,7 @@ class PyGraphObserverTests(unittest.TestCase):
     obs, _ = self._get_observation(observer, self.world, self.eval_id)
     obs = tf.expand_dims(obs, 0) # add a batch dimension
 
-    graph_dims = (num_agents, observer.feature_len, observer.edge_feature_len)
-    nodes, adjacency, _ = GraphObserver.graph(obs, graph_dims=graph_dims)
+    nodes, adjacency, _ = GraphObserver.graph(obs, graph_dims=observer.graph_dimensions)
     adjacency_list_diagonal = (tf.linalg.tensor_diag_part(adjacency[0]))
 
     # assert zeros on the diagonal of the adjacency matrix
@@ -126,10 +124,9 @@ class PyGraphObserverTests(unittest.TestCase):
       world=self.world,
       eval_id=self.eval_id)
 
-    graph_dims = (agent_limit, observer.feature_len, observer.edge_feature_len)
     obs = tf.expand_dims(obs, 0) # add a batch dimension
 
-    nodes, _, _ = GraphObserver.graph(obs, graph_dims=graph_dims)
+    nodes, _, _ = GraphObserver.graph(obs, graph_dims=observer.graph_dimensions)
     nodes = nodes[0] # remove batch dim    
     num_nodes = nodes.shape[0]
     
@@ -235,8 +232,7 @@ class PyGraphObserverTests(unittest.TestCase):
     obs, world = self._get_observation(observer, self.world, self.eval_id)
     obs = tf.expand_dims(obs, 0) # add a batch dimension
 
-    graph_dims = (num_agents, observer.feature_len, observer.edge_feature_len)
-    nodes, _, edge_features = GraphObserver.graph(obs, graph_dims=graph_dims)
+    nodes, _, edge_features = GraphObserver.graph(obs, graph_dims=observer.graph_dimensions)
     
     self.assertEqual(nodes.shape, [1, num_agents, observer.feature_len])
 

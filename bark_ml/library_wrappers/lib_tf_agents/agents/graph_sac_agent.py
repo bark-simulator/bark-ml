@@ -9,19 +9,36 @@ from tf_agents.trajectories import time_step as ts
 from bark_ml.library_wrappers.lib_tf_agents.networks import GNNActorNetwork, GNNCriticNetwork
 from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAAgent
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
+from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_wrapper import GNNWrapper
 
 
 class BehaviorGraphSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
-  """SAC-Agent
-     This agent is based on the tf-agents library.
   """
+  SAC-Agent with graph neural networks.
+  This agent is based on the tf-agents library.
+  """
+  
   def __init__(self,
                environment=None,
+               observer=None,
                params=None):
+    """
+    Initializes a `BehaviorGraphSACAgent` instance.
+
+    Args:
+    environment:
+    observer: The `GraphObserver` instance that generates the observations.
+    params: A `ParameterServer` instance containing parameters to configure
+      the agent.
+    """
+    # the super init calls 'GetAgent', so assign the observer before
+    self._observer = observer
+
     BehaviorTFAAgent.__init__(self,
                               environment=environment,
                               params=params)
     BehaviorContinuousML.__init__(self, params)
+
     self._replay_buffer = self.GetReplayBuffer()
     self._dataset = self.GetDataset()
     self._collect_policy = self.GetCollectionPolicy()
@@ -34,14 +51,18 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
     actor_net = GNNActorNetwork(
       input_tensor_spec=env.observation_spec(),
       output_tensor_spec=env.action_spec(),
-      gnn_params=gnn_sac_params["GNN"],
+      gnn=GNNWrapper(
+        params=gnn_sac_params["GNN"], 
+        graph_dims=self._observer.graph_dimensions),
       fc_layer_params=gnn_sac_params["ActorFcLayerParams", "", [128, 64]]
     )
 
     # critic network
     critic_net = GNNCriticNetwork(
       (env.observation_spec(), env.action_spec()),
-      gnn_params=gnn_sac_params["GNN"],
+      gnn=GNNWrapper(
+        params=gnn_sac_params["GNN"], 
+        graph_dims=self._observer.graph_dimensions),
       observation_fc_layer_params=gnn_sac_params["CriticObservationFcLayerParams", "", [128]],
       action_fc_layer_params=gnn_sac_params["CriticActionFcLayerParams", "", None],
       joint_fc_layer_params=gnn_sac_params["CriticJointFcLayerParams", "", [128, 128]]

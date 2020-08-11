@@ -2,7 +2,6 @@ import gin
 import tensorflow as tf  # pylint: disable=g-explicit-tensorflow-version-import
 
 from tf_agents.networks import network, utils
-from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_wrapper import GNNWrapper
 
 from tf_agents.networks import network
 from tf_agents.networks import utils
@@ -13,7 +12,7 @@ class GNNCriticNetwork(network.Network):
 
   def __init__(self,
                input_tensor_spec,
-               gnn_params,
+               gnn,
                observation_fc_layer_params=None,
                observation_dropout_layer_params=None,
                observation_conv_layer_params=None,
@@ -32,8 +31,8 @@ class GNNCriticNetwork(network.Network):
     Args:
       input_tensor_spec: A tuple of (observation, action) each a nest of
         `tensor_spec.TensorSpec` representing the inputs.
-      gnn_params: A `ParameterServer` instance containing the paramaters with
-        which the GNN is configured.
+      gnn: The graph neural network that accepts the input observations and 
+        computes node embeddings.
       observation_fc_layer_params: Optional list of fully connected parameters
         for observations, where each item is the number of units in the layer.
       observation_dropout_layer_params: Optional list of dropout layer
@@ -102,8 +101,11 @@ class GNNCriticNetwork(network.Network):
 
     if len(tf.nest.flatten(action_spec)) > 1:
       raise ValueError('Only a single action is supported by this network')
+    
+    if gnn is None:
+      raise ValueError('`gnn` must not be `None`.')
 
-    self._gnn = GNNWrapper(params=gnn_params, name=name + "_GNN")
+    self._gnn = gnn
 
     self._observation_layers = utils.mlp_layers(
       observation_conv_layer_params,

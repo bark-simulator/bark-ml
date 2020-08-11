@@ -5,8 +5,6 @@ from tf_agents.agents.sac import sac_agent
 from tf_agents.networks import network, normal_projection_network, utils, encoding_network
 from tf_agents.utils import common, nest_utils
 
-from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_wrapper import GNNWrapper
-
 def projection_net(spec):
   return normal_projection_network.NormalProjectionNetwork(
     spec,
@@ -23,7 +21,7 @@ class GNNActorNetwork(network.Network):
   def __init__(self,
                input_tensor_spec,
                output_tensor_spec,
-               gnn_params,
+               gnn,
                fc_layer_params=None,
                dropout_layer_params=None,
                conv_layer_params=None,
@@ -35,8 +33,8 @@ class GNNActorNetwork(network.Network):
         inputs.
       output_tensor_spec: A nest of `tensor_spec.BoundedTensorSpec` representing
         the outputs.
-      gnn_params: A `ParameterServer` instance containing the paramaters with
-        which the GNN is configured.
+      gnn: The graph neural network that accepts the input observations and 
+        computes node embeddings.
       fc_layer_params: Optional list of fully_connected parameters, where each
         item is the number of units in the layer.
       dropout_layer_params: Optional list of dropout layer parameters, each item
@@ -72,8 +70,11 @@ class GNNActorNetwork(network.Network):
     if flat_action_spec[0].dtype not in [tf.float32, tf.float64]:
       raise ValueError('Only float actions are supported by this network.')
     
-    self._gnn = GNNWrapper(params=gnn_params, name=name + "_GNN")
+    if gnn is None:
+      raise ValueError('`gnn` must not be `None`.')
 
+    self._gnn = gnn
+    
     self._encoder = encoding_network.EncodingNetwork(
       input_tensor_spec=tf.TensorSpec([None, self._gnn.num_units]),
       preprocessing_layers=None,
