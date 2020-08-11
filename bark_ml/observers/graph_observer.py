@@ -70,6 +70,9 @@ class GraphObserver(StateObserver):
       requested_keys=requested_node_attribute_keys,
       available_keys=self.available_node_attribute_keys(),
       context="node")
+    self._logger.info(
+      f"GraphObserver configured with node attributes: " +
+      f"{self.enabled_node_attribute_keys}")
 
     requested_edge_attribute_keys =\
       params["ML"]["GraphObserver"]["EnabledEdgeFeatures",
@@ -84,6 +87,9 @@ class GraphObserver(StateObserver):
       requested_keys=requested_edge_attribute_keys,
       available_keys=self.available_edge_attribute_keys(),
       context="edge")
+    self._logger.info(
+      f"GraphObserver configured with edge attributes: " +
+      f"{self.enabled_edge_attribute_keys}")
 
     # the number of features of a node in the graph
     self.feature_len = len(self.enabled_node_attribute_keys)
@@ -115,7 +121,7 @@ class GraphObserver(StateObserver):
     if len(invalid_keys) > 0:
       self._logger.warning(
         f"The following {context} attributes requested from the GraphObserver " +
-        f"are not supported and will be ignored:\n {invalid_keys}")
+        f"are not supported and will be ignored: {invalid_keys}")
 
     return valid_keys
 
@@ -348,7 +354,7 @@ class GraphObserver(StateObserver):
       raise AttributeError(
         "A problem occured during node feature extraction. Possibly " +
         "a node feature that's specifed in the 'EnabledNodeFeatures' " +
-        "parameter is supported by the current BARK-ML environment.")
+        "parameter is not supported by the current BARK-ML environment.")
 
     if self._normalize_observations:
       n = self.normalization_data

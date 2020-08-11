@@ -78,7 +78,7 @@ def run_configuration(argv):
     fig_path="/Users/marco.oliva/2020/bark-ml/video/")
 
   # create environment
-  bp = ContinuousMergingBlueprint(params,
+  bp = ContinuousHighwayBlueprint(params,
                                   number_of_senarios=2500,
                                   random_seed=0)
 
