@@ -1,4 +1,4 @@
-#Copyright (c) 2020 fortiss GmbH, Silvan Wimmer
+#Copyright (c) 2020 Silvan Wimmer, Marco Oliva
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
@@ -25,14 +25,14 @@ class DataGenerator():
   """DataGenerator generates a dataset for a supervised learning setting.
 
   Args:
-      num_scenarios: An integer specifing the number of scenarios to
+      *num_scenarios: An integer specifing the number of scenarios to
                      generate data for.
-      dump_dir: A path specifing the location where to save the data
+      *dump_dir: A path specifing the location where to save the data
                 [default: None -> data will not be saved].
-      render: A boolean value indicating whether the scenario runs
+      *render: A boolean value indicating whether the scenario runs
               should be rendered while generating data (rendering
               slows the data generation process down a lot).
-      params: A `ParameterServer` instance that enables further configuration
+      *params: A `ParameterServer` instance that enables further configuration
               of the observer. Defaults to a new instance.
   """
 

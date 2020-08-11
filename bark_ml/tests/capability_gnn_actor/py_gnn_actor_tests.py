@@ -33,12 +33,12 @@ from bark_ml.observers.graph_observer import GraphObserver
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_wrapper import GNNWrapper 
 
 # Supervised specific imports
-from bark_ml.tests.capability_GNN_actor.data_generation import DataGenerator
-from bark_ml.tests.capability_GNN_actor.actor_nets import ConstantActorNet,\
+from bark_ml.tests.capability_gnn_actor.data_generation import DataGenerator
+from bark_ml.tests.capability_gnn_actor.actor_nets import ConstantActorNet,\
   RandomActorNet, get_GNN_SAC_actor_net, get_SAC_actor_net
-from bark_ml.tests.capability_GNN_actor.data_generation import DataGenerator
-from bark_ml.tests.capability_GNN_actor.data_handler import Dataset
-from bark_ml.tests.capability_GNN_actor.learner import Learner
+from bark_ml.tests.capability_gnn_actor.data_generation import DataGenerator
+from bark_ml.tests.capability_gnn_actor.data_handler import SupervisedData
+from bark_ml.tests.capability_gnn_actor.learner import Learner
 
 class PyGNNActorTests(unittest.TestCase):
   def setUp(self):
@@ -87,11 +87,11 @@ class PyGNNActorTests(unittest.TestCase):
     self.params = params
     # Get dataset
     self.observer = GraphObserver(params=self.params)
-    dataset = Dataset(self.data_path, self.observer, self.params, batch_size=self.batch_size,
+    dataset = SupervisedData(self.observer, self.params, data_path=self.data_path,
+                             batch_size=self.batch_size,
                       train_split=self.train_split, num_scenarios=self.num_scenarios)
-    dataset.get_datasets()
-    self.train_dataset = dataset.train_dataset
-    self.test_dataset = dataset.test_dataset
+    self.train_dataset = dataset._train_dataset
+    self.test_dataset = dataset._test_dataset
 
     # Calculate some values about dataset
     num_batches = len(list(self.train_dataset.as_numpy_iterator()))

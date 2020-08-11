@@ -61,8 +61,8 @@ py_library(
 )
 
 py_test(
-  name = "py_GNN_actor_tests",
-  srcs = ["py_GNN_actor_tests.py"],
+  name = "py_gnn_actor_tests",
+  srcs = ["py_gnn_actor_tests.py"],
   data = ["@bark_project//bark/python_wrapper:core.so",
           "//bark_ml:generate_core",
           "//examples/example_params:example_params"],

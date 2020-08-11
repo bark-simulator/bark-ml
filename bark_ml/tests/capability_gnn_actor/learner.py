@@ -16,7 +16,7 @@ import tensorflow as tf
 import datetime
 
 # Supervised learning imports
-from bark_ml.tests.capability_GNN_actor.actor_nets import ConstantActorNet,\
+from bark_ml.tests.capability_gnn_actor.actor_nets import ConstantActorNet,\
   RandomActorNet, get_GNN_SAC_actor_net, get_SAC_actor_net
 
 class Learner:
