@@ -157,8 +157,6 @@ web/node_modules
 /configurations/**/checkpoints_old/
 /configurations/**/summaries/
 /configurations/**/summaries_old/
-/configurations/**/model/
-/configurations/**/model_old/
 
 **.mp4
 *.img
