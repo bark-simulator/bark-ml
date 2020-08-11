@@ -50,7 +50,7 @@ class SimulateScenarioTests(SimulationBasedTests):
         for agent_id in range(63, 69):
             self.assertIn(agent_id, self.expert_trajectories)
             agent_expert_trajectories = self.expert_trajectories[agent_id]
-            for key in ['obs', 'time', 'merge', 'wheelbase']:
+            for key in ['obs', 'time', 'wheelbase']:
                 self.assertIn(key, agent_expert_trajectories)
                 assert len(agent_expert_trajectories[key]) == 269
 
