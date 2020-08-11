@@ -75,7 +75,7 @@ std::vector<float> ModelLoader::Evaluator(std::vector<float> neural_network_inpu
         TF_Tensor* input_tensor = TF_NewTensor(TF_FLOAT, dims.data(), ndims, data, data_size, &NoOpDeallocator, 0);
         
         if (input_tensor != NULL) {
-            //std::cout << "TF_NewTensor is OK\n" << std::endl;
+            std::cout << "TF_NewTensor is OK\n" << std::endl;
         }
         else{
             std::cout << "ERROR: Failed TF_NewTensor\n" << std::endl;
@@ -86,7 +86,7 @@ std::vector<float> ModelLoader::Evaluator(std::vector<float> neural_network_inpu
         TF_SessionRun(Session, NULL, Input, InputValues, NumInputs, Output, OutputValues, NumOutputs, NULL, 0, NULL , Status);
         
         if (TF_GetCode(Status) == TF_OK) {
-            //std::cout << "Session is OK\n" << std::endl;
+            std::cout << "Session is OK\n" << std::endl;
         }
         else {
             std::cout << "%s" << TF_Message(Status) << std::endl;

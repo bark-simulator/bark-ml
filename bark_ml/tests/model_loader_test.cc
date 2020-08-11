@@ -11,7 +11,8 @@
 
 int main()
 {
-    ModelLoader model("/home/model/");
+    // NOTE: Modify this path in order to get the saves model
+    ModelLoader model("/Users/hart/Development/bark-ml/model/");
 
     std::random_device rd;
     std::default_random_engine generator(rd());
