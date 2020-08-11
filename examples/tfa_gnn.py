@@ -37,8 +37,8 @@ flags.DEFINE_enum("mode",
 
 def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/tfa_sac_gnn_example_params.json")
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = '/Users/marco.oliva/Development/bark-ml_logs/checkpoints/merging2'
-  params["ML"]["TFARunner"]["SummaryPath"] = '/Users/marco.oliva/Development/bark-ml_logs/summaries/merging2'
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = '/Users/marco.oliva/Development/bark-ml_logs/checkpoints/test'
+  params["ML"]["TFARunner"]["SummaryPath"] = '/Users/marco.oliva/Development/bark-ml_logs/summaries/test'
   params["ML"]["SACRunner"]["NumberOfCollections"] = int(1e6)
   params["ML"]["GraphObserver"]["AgentLimit"] = 4
   params["ML"]["BehaviorGraphSACAgent"]["DebugSummaries"] = False
@@ -52,11 +52,10 @@ def run_configuration(argv):
   params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MpLayersHiddenDim"] = 80
 
   gnn_library = GNNWrapper.SupportedLibrary.spektral # "tf2_gnn" or "spektral"
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["library"] = gnn_library 
+  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["Library"] = gnn_library 
 
   if gnn_library == GNNWrapper.SupportedLibrary.spektral:
-    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["KernelNetUnits"] = [128, 64]
-    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MPLayerActivation"] = "relu"
+    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["EdgeFcLayerParams"] = [128, 64]
     params["ML"]["GraphObserver"]["SelfLoops"] = True # add self-targeted edges to graph nodes
   elif gnn_library == GNNWrapper.SupportedLibrary.tf2_gnn:
     # NOTE: when using the ggnn mp class, MPLayerUnits must match n_features!
@@ -91,7 +90,7 @@ def run_configuration(argv):
     render=False)
 
   sac_agent = BehaviorGraphSACAgent(environment=env,
-                                    graph_dims=observer.graph_dimensions,
+                                    observer=observer,
                                     params=params)
   env.ml_behavior = sac_agent
   runner = SACRunner(params=params,
