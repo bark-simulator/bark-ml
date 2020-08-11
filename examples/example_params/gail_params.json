@@ -88,8 +88,8 @@
                 "dir_suffix": "",
                 "normalize_obs": false,
                 "logging_level": "INFO",
-                "logdir": "examples/gail_training/second_run",
-                "model_dir": "examples/gail_training/second_run",
+                "logdir": "examples/gail_training",
+                "model_dir": "examples/gail_training",
                 "use_prioritized_rb": false,
                 "use_nstep_rb": false,
                 "n_step": 4,
@@ -130,6 +130,7 @@
         "MaxHistoryLength": 50
     },
     "Visualization": {
+        "NumberOfScenarios": 50,
         "Agents": {
             "Color": {
                 "Other": {
