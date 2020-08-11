@@ -101,6 +101,22 @@
                 "save_test_movie": false,
                 "show_test_images": false
             }
+        },
+        "BehaviorTFAAgents": {
+            "CheckpointPath": "../com_github_gail_4_bark_large_data_store/pretrained_agents/sac/merging",
+            "NumCheckpointsToKeep": 3
+        },
+        "TFARunner": {
+            "EvaluationSteps": 100,
+            "InitialCollectionEpisodes": 50,
+            "CollectionEpisodesPerStep": 1,
+            "SummaryPath": "../com_github_gail_4_bark_large_data_store/pretrained_agents/sac/merging"
+        },
+        "SACRunner": {
+            "EvaluateEveryNSteps": 1000,
+            "EvaluationSteps": 100,
+            "InitialCollectionEpisodes": 50,
+            "CollectionEpisodesPerStep": 1
         }
     },
     "BehaviorIDMClassic": {

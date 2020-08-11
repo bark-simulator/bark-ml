@@ -169,13 +169,13 @@
 			}
 		},   
 		{
-			"name": "Python: bark_ml/tests/py_library_tf2rl_tests/normalize_on_merging_blueprint",
+			"name": "Python: bark_ml/tests/py_library_tf2rl_tests/normalize_on_merging_blueprint_tests",
 			"type": "python",
 			"request": "launch",
-			"program": "${workspaceFolder}/bark_ml/tests/py_library_tf2rl_tests/normalize_on_merging_blueprint.py",
+			"program": "${workspaceFolder}/bark_ml/tests/py_library_tf2rl_tests/normalize_on_merging_blueprint_tests.py",
 			"console": "integratedTerminal",
 			"env": {
-				"PYTHONPATH": "${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/normalize_on_merging_blueprint.runfiles/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/normalize_on_merging_blueprint.runfiles/bark_project/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/normalize_on_merging_blueprint.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/normalize_on_merging_blueprint.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/normalize_on_merging_blueprint.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/normalize_on_merging_blueprint.runfiles/com_github_interaction_dataset_interaction_dataset/python/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/normalize_on_merging_blueprint.runfiles/com_github_keiohta_tf2rl"
+				"PYTHONPATH": "${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/normalize_on_merging_blueprint_tests.runfiles/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/normalize_on_merging_blueprint_tests.runfiles/bark_project/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/normalize_on_merging_blueprint_tests.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/normalize_on_merging_blueprint_tests.runfiles/bark_ml/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/normalize_on_merging_blueprint_tests.runfiles/bark_ml/python/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/normalize_on_merging_blueprint_tests.runfiles/com_github_interaction_dataset_interaction_dataset/python/:${workspaceFolder}/bazel-bin/bark_ml/tests/py_library_tf2rl_tests/normalize_on_merging_blueprint_tests.runfiles/com_github_keiohta_tf2rl"
 			}
 		},
 	]

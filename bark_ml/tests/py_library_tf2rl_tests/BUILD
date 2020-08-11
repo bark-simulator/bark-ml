@@ -19,8 +19,8 @@ py_test(
 )
 
 py_test(
-    name = "normalize_on_merging_blueprint",
-    srcs = [ "normalize_on_merging_blueprint.py"],
+    name = "normalize_on_merging_blueprint_tests",
+    srcs = [ "normalize_on_merging_blueprint_tests.py"],
     data = [ 
         "//bark_ml/tests/py_library_tf2rl_tests/data:generate_expert_trajectories_tests_data",
         "@bark_project//bark/python_wrapper:core.so",
@@ -36,6 +36,9 @@ py_test(
             "//bark_ml/environments:single_agent_runtime",
             "//bark_ml/environments:blueprints",
             "//bark_ml/library_wrappers/lib_tf2rl",
+            "//bark_ml/library_wrappers/lib_tf_agents/runners",
+            "//bark_ml/library_wrappers/lib_tf_agents/agents",
+            "//bark_ml/library_wrappers/lib_tf_agents:tfa_wrapper",
             ],
     visibility = ["//visibility:public"],
     size = "small"
