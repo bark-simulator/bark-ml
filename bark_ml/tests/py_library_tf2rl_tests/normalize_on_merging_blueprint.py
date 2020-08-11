@@ -45,7 +45,7 @@ class NormalizeOnMergingBlueprintTest(unittest.TestCase):
 
         # wrapped environment for compatibility with tf2rl
         wrapped_env = TF2RLWrapper(env, 
-        normalize_features=True)
+                        normalize_features=True)
 
         expert_path_dir = "bark_ml/tests/py_library_tf2rl_tests/data/expert_trajectories/sac"
         
