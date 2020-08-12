@@ -146,7 +146,7 @@ class GNNCriticNetwork(network.Network):
           minval=-0.003, maxval=0.003),
         name='value'))
 
-  def call(self, inputs, step_type=(), network_state=(), training=False):x
+  def call(self, inputs, step_type=(), network_state=(), training=False):
     del step_type # unused.
 
     observations, actions = inputs
