@@ -168,21 +168,9 @@ tests/data/database_maps_DR_DEU_Merging_MT_shifted.xodr
 *.png
 *.p
 
-**/expert_trajectories/**
-**/expert_trajectories.bak/**
-**.jblb
-**/logs/**
+/checkpoints**
+/summaries**
 
 # GAIL-TF2RL tests
 bark_ml/tests/py_library_tf2rl_tests/gail_data/logs/*
 bark_ml/tests/py_library_tf2rl_tests/gail_data/models/*
-
-
-/summaries/**
-start_multiple_**.sh
-pretrained_agents**
-*.txt
-examples/marvin/**
-examples/gail_training/**
-**large_data_store**
-
