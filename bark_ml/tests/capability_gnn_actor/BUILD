@@ -65,7 +65,8 @@ py_test(
   srcs = ["py_gnn_actor_tests.py"],
   data = ["@bark_project//bark/python_wrapper:core.so",
           "//bark_ml:generate_core",
-          "//examples/example_params:example_params"],
+          "//examples/example_params:example_params",
+          "//bark_ml/tests/capability_gnn_actor/data:data"],
   imports = ['../python/'],
   deps =   [
     "//bark_ml/environments:single_agent_runtime",

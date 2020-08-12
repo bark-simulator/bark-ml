@@ -36,8 +36,8 @@ class Learner:
             for all models outputing a distribution).
     
     Returns:
-      history_train_loss: list of train losses (one loss per epoch).
-      history_test_loss: list of test losses (one loss per epoch).
+      losses: dict with keys "train" and "test" corresponding each to a list
+              of losses (one loss per epoch)
     """
     self._loss_object = tf.keras.losses.MeanSquaredError()
     self._optimizer = tf.keras.optimizers.Adam()
@@ -105,8 +105,10 @@ class Learner:
       # Save losses in history_lists
       history_train_loss.append(self._train_loss.result().numpy())
       history_test_loss.append(self._test_loss.result().numpy())
-
-    return history_train_loss, history_test_loss
+    losses = dict()
+    losses["train"] = history_train_loss
+    losses["test"] = history_test_loss
+    return losses
 
   def visualize_predictions(self, dataset, title=None, mode="Distribution"):
     """Show output of model as an figure with 4 subplots.

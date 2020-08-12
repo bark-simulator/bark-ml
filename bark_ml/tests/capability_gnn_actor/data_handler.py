@@ -55,7 +55,11 @@ class SupervisedData:
       # Check if data_path is specified, and data is already generated
       assert self._data_path is not None
       scenarios = os.listdir(self._data_path)
-      assert len(scenarios)!=0
+
+      # Get number of scenario files (exclude e.g. BUILD file)
+      n_scenarios = sum(1 for file_ in scenarios if file_.find(".pickle")>0)
+      assert n_scenarios==self._num_scenarios
+      
       logging.debug("Data is already generated")
       # Load data
       data_collection = self._load(self._data_path)
