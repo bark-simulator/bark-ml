@@ -36,46 +36,24 @@ flags.DEFINE_enum("mode",
                   "Mode the configuration should be executed in.")
 
 def run_configuration(argv):
-  params = ParameterServer(filename="examples/example_params/tfa_sac_gnn_example_params.json")
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = '/Users/marco.oliva/Development/bark-ml_logs/checkpoints/test'
-  params["ML"]["TFARunner"]["SummaryPath"] = '/Users/marco.oliva/Development/bark-ml_logs/summaries/test'
-  params["ML"]["SACRunner"]["NumberOfCollections"] = int(1e6)
-  params["ML"]["GraphObserver"]["AgentLimit"] = 4
-  params["ML"]["BehaviorGraphSACAgent"]["DebugSummaries"] = False
-  params["ML"]["BehaviorGraphSACAgent"]["BatchSize"] = 128
-  params["ML"]["BehaviorGraphSACAgent"]["CriticJointFcLayerParams"] = [128, 128]
-  params["ML"]["BehaviorGraphSACAgent"]["CriticObservationFcLayerParams"] = [128, 128]
-  params["ML"]["BehaviorGraphSACAgent"]["ActorFcLayerParams"] = [256, 128]
+  # File with standard parameters for spektral use:
+  #filename = "examples/example_params/tfa_sac_gnn_spektral_default.json"
 
-  # GNN parameters
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["NumMpLayers"] = 2
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MpLayersHiddenDim"] = 80
-
-  gnn_library = GNNWrapper.SupportedLibrary.spektral # "tf2_gnn" or "spektral"
-  params["ML"]["BehaviorGraphSACAgent"]["GNN"]["Library"] = gnn_library 
-
-  if gnn_library == GNNWrapper.SupportedLibrary.spektral:
-    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["EdgeFcLayerParams"] = [128, 64]
-    params["ML"]["GraphObserver"]["SelfLoops"] = True # add self-targeted edges to graph nodes
-  elif gnn_library == GNNWrapper.SupportedLibrary.tf2_gnn:
-    # NOTE: when using the ggnn mp class, MPLayerUnits must match n_features!
-    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["message_calculation_class"] = "rgcn"
-    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_mode"] = "gru"
-    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["dense_every_num_layers"] = -1 # no dense layers between mp layers
-    params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_every_num_layers"] = 1
-    params["ML"]["GraphObserver"]["SelfLoops"] = False
-    # see gnn.py in tf2_gnn for more possible parameters.
-
-  viewer = MPViewer(
-    params=params,
-    x_range=[-35, 35],
-    y_range=[-35, 35],
-    follow_agent_id=True)
+  # File with standard parameters for tf2_gnn use:
+  filename = "examples/example_params/tfa_sac_gnn_tf2_gnn_default.json"
   
-  viewer = VideoRenderer(
-    renderer=viewer,
-    world_step_time=0.2,
-    fig_path="/Users/marco.oliva/2020/bark-ml/video/")
+  params = ParameterServer(filename=filename)
+
+  #viewer = MPViewer(
+  #  params=params,
+  #  x_range=[-35, 35],
+  #  y_range=[-35, 35],
+  #  follow_agent_id=True)
+  
+  #viewer = VideoRenderer(
+  #  renderer=viewer,
+  #  world_step_time=0.2,
+  #  fig_path="/home/silvan/working_bark/training/video/")
 
   # create environment
   bp = ContinuousHighwayBlueprint(params,
@@ -106,7 +84,7 @@ def run_configuration(argv):
     runner.Evaluate()
   
   # store all used params of the training
-  params.Save("/Users/marco.oliva/Development/bark-ml_logs/parameters/merging_tfa_params.json")
+  #params.Save("/home/silvan/working_bark/examples/example_params/tfa_sac_gnn_spektral_default.json")
 
 if __name__ == '__main__':
   app.run(run_configuration)

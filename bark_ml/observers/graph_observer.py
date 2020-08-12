@@ -345,7 +345,6 @@ class GraphObserver(StateObserver):
         "parameter is not supported by the current BARK-ML environment.")
     
     # remove disabled attributes
-    # TODO: find an elegant way to not compute those in the first place.
     res = {key: res[key] for key in self.enabled_node_attribute_keys}
     assert list(res.keys()) == self.enabled_node_attribute_keys
 
@@ -499,7 +498,7 @@ class GraphObserver(StateObserver):
   def available_edge_attributes(cls, with_descriptions=False):
     attributes = {
       "dx": "The difference in the x-position of the two agents.", 
-      "dy": "The difference in the x-position of the two agents.", 
+      "dy": "The difference in the y-position of the two agents.", 
       "dvel": "The difference in the velocity of the two agents.", 
       "dtheta": "The difference in the heading angle of the two agents."
     }

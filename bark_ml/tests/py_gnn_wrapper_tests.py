@@ -13,15 +13,16 @@ from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorGraphSACAgent
 from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner
 
 class PyGNNWrapperTests(unittest.TestCase):
-
   def test_gnn_parameters(self):
     params = ParameterServer()
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["NumMpLayers"] = 4
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["MpLayerNumUnits"] = 64
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["message_calculation_class"] = "gnn_edge_mlp"
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_mode"] = "mean"
+    
     gnn_library = GNNWrapper.SupportedLibrary.spektral
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["Library"] = gnn_library
+
     
     bp = ContinuousHighwayBlueprint(params, number_of_senarios=2500, random_seed=0)
     observer = GraphObserver(params=params)
@@ -37,6 +38,7 @@ class PyGNNWrapperTests(unittest.TestCase):
       self.assertEqual(gnn._params["message_calculation_class"], "gnn_edge_mlp")
       self.assertEqual(gnn._params["global_exchange_mode"], "mean")
       self.assertEqual(gnn._params["Library"], gnn_library)
+
 
   def _test_graph_dim_validation_accepts_observer_dims(self):
     observer = GraphObserver()
