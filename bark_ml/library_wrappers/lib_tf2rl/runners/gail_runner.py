@@ -102,35 +102,35 @@ class GAILRunner(TF2RLRunner):
         - gpu:                    int, name of gpu device
 
     """
-    local_params = self._params['ML']['GAILRunner']
+    tf2rl_params = self._params['ML']['GAILRunner']['tf2rl']
     args = {}
 
     # experiment settings
-    args['max_steps'] = local_params['tf2rl']['max_steps']
-    args['episode_max_steps'] = local_params['tf2rl']['episode_max_steps']
-    args['n_experiments'] = local_params['tf2rl']['n_experiments']
-    args['show_progress'] = local_params['tf2rl']['show_progress']
-    args['save_model_interval'] = local_params['tf2rl']['save_model_interval']
-    args['save_summary_interval'] = local_params['tf2rl']['save_summary_interval']
-    args['dir_suffix'] = local_params['tf2rl']['dir_suffix']
-    args['normalize_obs'] = local_params['tf2rl']['normalize_obs']
-    args['logdir'] = local_params['tf2rl']['logdir']
-    args['logging_level'] = local_params['tf2rl']['logging_level']
-    args['model_dir'] = local_params['tf2rl']['model_dir']
+    args['max_steps'] = tf2rl_params['max_steps']
+    args['episode_max_steps'] = tf2rl_params['episode_max_steps']
+    args['n_experiments'] = tf2rl_params['n_experiments']
+    args['show_progress'] = tf2rl_params['show_progress']
+    args['save_model_interval'] = tf2rl_params['save_model_interval']
+    args['save_summary_interval'] = tf2rl_params['save_summary_interval']
+    args['dir_suffix'] = tf2rl_params['dir_suffix']
+    args['normalize_obs'] = tf2rl_params['normalize_obs']
+    args['logdir'] = tf2rl_params['logdir']
+    args['logging_level'] = tf2rl_params['logging_level']
+    args['model_dir'] = tf2rl_params['model_dir']
 
     # replay buffer
-    args['use_prioritized_rb'] = local_params['tf2rl']['use_prioritized_rb']
-    args['use_nstep_rb'] = local_params['tf2rl']['use_nstep_rb']
-    args['n_step'] = local_params['tf2rl']['n_step']
+    args['use_prioritized_rb'] = tf2rl_params['use_prioritized_rb']
+    args['use_nstep_rb'] = tf2rl_params['use_nstep_rb']
+    args['n_step'] = tf2rl_params['n_step']
 
     # test settings
-    args['evaluate'] = local_params['tf2rl']['evaluate']
-    args['test_interval'] = local_params['tf2rl']['test_interval']
-    args['show_test_progress'] = local_params['tf2rl']['show_test_progress']
-    args['test_episodes'] = local_params['tf2rl']['test_episodes']
-    args['save_test_path'] = local_params['tf2rl']['save_test_path']
-    args['save_test_movie'] = local_params['tf2rl']['save_test_movie']
-    args['show_test_images'] = local_params['tf2rl']['show_test_images']
+    args['evaluate'] = tf2rl_params['evaluate']
+    args['test_interval'] = tf2rl_params['test_interval']
+    args['show_test_progress'] = tf2rl_params['show_test_progress']
+    args['test_episodes'] = tf2rl_params['test_episodes']
+    args['save_test_path'] = tf2rl_params['save_test_path']
+    args['save_test_movie'] = tf2rl_params['save_test_movie']
+    args['show_test_images'] = tf2rl_params['show_test_images']
 
     # other:
     args['gpu'] = self._params["ML"]["Settings"]["GPUUse", "", 0]

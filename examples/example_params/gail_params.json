@@ -55,7 +55,8 @@
                 ],
                 "Sigma": 0.1,
                 "Tau": 0.005,
-                "BatchSize": 100
+                "BatchSize": 100,
+                "WarmUp": 1000
             },
             "Discriminator": {
                 "FcLayerParams": [
@@ -65,7 +66,6 @@
                 "LearningRate": 0.0001,
                 "BatchSize": 32
             },
-            "WarmUp": 1000,
             "EnableSN": false,           
             "AgentName": "gail_agent"
         },
