@@ -26,8 +26,6 @@ from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorGraphSACAgent
 from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner
 from bark_ml.observers.graph_observer import GraphObserver
-from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_wrapper import GNNWrapper
-
 
 # for training: bazel run //examples:tfa -- --mode=train
 FLAGS = flags.FLAGS
@@ -37,13 +35,19 @@ flags.DEFINE_enum("mode",
                   "Mode the configuration should be executed in.")
 
 def run_configuration(argv):
-  # File with standard parameters for spektral use:
-  #filename = "examples/example_params/tfa_sac_gnn_spektral_default.json"
+  # Uncomment one of the following default parameter filename definitions,
+  # depending on which GNN library you'd like to use.
 
   # File with standard parameters for tf2_gnn use:
-  filename = "examples/example_params/tfa_sac_gnn_tf2_gnn_default.json"
+  # param_filename = "examples/example_params/tfa_sac_gnn_tf2_gnn_default.json"
   
-  params = ParameterServer(filename=filename)
+  # File with standard parameters for spektral use:
+  param_filename = "examples/example_params/tfa_sac_gnn_spektral_default.json"
+  params = ParameterServer(filename=param_filename)
+
+  # NOTE: Modify these paths in order to save the checkpoints and summaries
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/your_path_here/bark-ml/checkpoints/"
+  params["ML"]["TFARunner"]["SummaryPath"] = "/your_path_here/bark-ml/summaries/"
 
   #viewer = MPViewer(
   #  params=params,
@@ -75,9 +79,9 @@ def run_configuration(argv):
   runner = SACRunner(params=params,
                      environment=env,
                      agent=sac_agent)
-  runner.SetupSummaryWriter()
 
   if FLAGS.mode == "train":
+    runner.SetupSummaryWriter()
     runner.Train()
   elif FLAGS.mode == "visualize":
     runner.Visualize(5)
@@ -85,7 +89,7 @@ def run_configuration(argv):
     runner.Evaluate()
   
   # store all used params of the training
-  #params.Save("/home/silvan/working_bark/examples/example_params/tfa_sac_gnn_spektral_default.json")
+  #params.Save("your_path_here/tfa_sac_gnn_params.json")
 
 if __name__ == '__main__':
   app.run(run_configuration)
