@@ -4,17 +4,13 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#include "gtest/gtest.h"
+//#include "gtest/gtest.h"
 #include "bark/commons/params/params.hpp"
 #include "bark/geometry/geometry.hpp"
-//#include "bark/commons/params/default_params.hpp"
 #include "bark/commons/params/setter_params.hpp"
-//#include "src/observers/nearest_observer.hpp"
 #include "bark-ml/observers/alt_nearest_observer.hpp"
-//#include "src/observers/nn_observer.hpp"
 #include "bark/world/tests/make_test_world.hpp"
 
-#include "bark/geometry/commons.hpp"
 #include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
 #include "bark/models/behavior/idm/idm_classic.hpp"
 #include "bark/models/dynamic/single_track.hpp"
@@ -68,7 +64,7 @@ TEST(observers, test_state_vector_length){
   
   //create instance of Observer and pass observed world
   NearestObserver TestObserver1(params);
-  ObservedState res = TestObserver1.observe(obs_world_ptr1);
+  ObservedState res = TestObserver1.Observe(obs_world_ptr1);
   //std::cout << res << std::endl;
   
   res_rows = res.rows();
@@ -77,7 +73,7 @@ TEST(observers, test_state_vector_length){
   EXPECT_EQ(res_rows, 1);
   EXPECT_EQ(res_length, nearest_agent_num_ * state_size_);
   //std::vector<int> agent_ids1{0};
-  //TestObserver1.Reset(world, agent_ids1);  
+  //TestObserver1.Reset(world);  
 }
 
 TEST(observers, test_state_vector_length2){
@@ -127,7 +123,7 @@ TEST(observers, test_state_vector_length2){
   
   //create instance of Observer and pass observed world
   NearestObserver TestObserver2(params);
-  ObservedState res = TestObserver2.observe(obs_world_ptr);
+  ObservedState res = TestObserver2.Observe(obs_world_ptr);
   //std::cout << res << std::endl;
   
   res_rows = res.rows();
@@ -136,7 +132,7 @@ TEST(observers, test_state_vector_length2){
   EXPECT_EQ(res_rows, 1);
   EXPECT_EQ(res_length, nearest_agent_num_ * state_size_);
   //std::vector<int> agent_ids1{0};
-  //TestObserver2.Reset(world, agent_ids1);
+  //TestObserver2.Reset(world);
 }
 
 TEST(observers, test_max_distance){
@@ -187,7 +183,7 @@ TEST(observers, test_max_distance){
   
   //create instance of Observer and pass observed world
   NearestObserver TestObserver3(params);
-  ObservedState res = TestObserver3.observe(obs_world_ptr);
+  ObservedState res = TestObserver3.Observe(obs_world_ptr);
   //std::cout << res << std::endl;
   
   float obs_X_pos_agent3 = res.coeff(0,4);
@@ -202,7 +198,7 @@ TEST(observers, test_max_distance){
     EXPECT_EQ(pos, 0);
   };
   //std::vector<int> agent_ids1{0};
-  //TestObserver3.Reset(world, agent_ids1);
+  //TestObserver3.Reset(world);
 }
 
 TEST(observers, test_state_vector_order){
@@ -249,7 +245,7 @@ TEST(observers, test_state_vector_order){
   
   //create instance of Observer and pass observed world
   NearestObserver TestObserver4(params);
-  ObservedState res = TestObserver4.observe(obs_world_ptr);
+  ObservedState res = TestObserver4.Observe(obs_world_ptr);
   //std::cout << res << std::endl;
 
   //select here psoitions in the order how it should be according the state definition
@@ -274,7 +270,7 @@ TEST(observers, test_state_vector_order){
   EXPECT_NEAR(obs_Y_pos_agent3, init_state3(StateDefinition::Y_POSITION), max_devation);
      
   //std::vector<int> agent_ids1{0};
-  //TestObserver4.Reset(world, agent_ids1);
+  //TestObserver4.Reset(world);
 }
 
 TEST(observers, test_normalization){
@@ -336,7 +332,7 @@ TEST(observers, test_normalization){
 
   //create instance of Observer and pass observed world
   NearestObserver TestObserver1(params);
-  ObservedState res = TestObserver1.observe(obs_world_ptr1);
+  ObservedState res = TestObserver1.Observe(obs_world_ptr1);
   //std::cout << res << std::endl;
 
   float obs_X_pos_agent0 = res.coeff(0,0);
@@ -361,5 +357,5 @@ TEST(observers, test_normalization){
 
   // Reset
   //std::vector<int> agent_ids1{0};
-  //TestObserver1.Reset(world, agent_ids1);
+  //TestObserver1.Reset(world);
 }

@@ -74,3 +74,14 @@ cc_test(
         "@gtest//:main",
     ],
 )
+
+cc_test(
+    name="observer_test",
+    srcs=["observer_test.cc"],
+    copts = ["-Iexternal/gtest/include"],
+    deps=[
+        "//bark_ml/observers:cpp_observers",
+        "@bark_project//bark/world/tests:make_test_world",
+        "@gtest//:main",
+    ],
+)

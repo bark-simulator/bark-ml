@@ -4,8 +4,8 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef SRC_OBSERVERS_NEAREST_OBSERVER_HPP_
-#define SRC_OBSERVERS_NEAREST_OBSERVER_HPP_
+#ifndef BARK_ML_OBSERVERS_NEAREST_OBSERVER_HPP_
+#define BARK_ML_OBSERVERS_NEAREST_OBSERVER_HPP_
 
 #include <memory>
 #include <vector>
@@ -20,9 +20,10 @@
 #include "bark/world/observed_world.hpp"
 #include "bark/world/goal_definition/goal_definition_state_limits_frenet.hpp"
 #include "bark/models/dynamic/dynamic_model.hpp"
-#include "src/commons/spaces.hpp"
-#include "src/commons/commons.hpp"
+#include "bark_ml/commons/spaces.hpp"
+#include "bark_ml/commons/commons.hpp"
 
+namespace bark_ml {
 namespace observers {
 using bark::commons::ParamsPtr;
 using bark::world::Agent;
@@ -38,7 +39,7 @@ using bark::geometry::Point2d;
 using bark::geometry::Line;
 using bark::geometry::Distance;
 using bark::models::dynamic::StateDefinition;
-using ObservedState = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>;
+using ObservedState = Eigen::Matrix<float, 1, Eigen::Dynamic>;
 using bark::commons::transformation::FrenetPosition;
 using State = Eigen::Matrix<float, Eigen::Dynamic, 1>;
 
@@ -84,7 +85,7 @@ class NearestObserver {
     }   
   }
 
-  ObservedState observe(const ObservedWorldPtr& world) const {
+  ObservedState Observe(const ObservedWorldPtr& world) const {
     ObservedState state(1, observation_len_);
     state.setZero();
     
@@ -152,7 +153,7 @@ class NearestObserver {
     return (abs(dx) + abs(dy));
   }
 
-  WorldPtr Reset(const WorldPtr& world, const std::vector<int>& agent_ids) {
+  WorldPtr Reset(const WorldPtr& world) {
     const auto& x_y = world->BoundingBox();
     Point2d bb0 = x_y.first;
     Point2d bb1 = x_y.second;
@@ -168,7 +169,7 @@ class NearestObserver {
     low.setZero();
     Matrix_t<float> high(1, observation_len_);
     high.setOnes();
-    std::vector<int> shape{1, observation_len_};
+    std::tuple<int> shape{observation_len_};
     return Box<float>(low, high, shape);
   }
   
@@ -184,6 +185,7 @@ class NearestObserver {
 };
 
 }  // namespace observers
+}  // namespace bark_ml
 
 #undef terminal_output_enabled
 #endif  // SRC_OBSERVERS_NEAREST_OBSERVER_HPP_
