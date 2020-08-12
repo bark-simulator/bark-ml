@@ -22,15 +22,9 @@ class BehaviorGAILAgent(BehaviorTF2RLAgent, BehaviorContinuousML):
 
         Args:
             environment (Runtime, optional): A environment with a gym
-<<<<<<< HEAD
-            environment interface. Defaults to None.
-            params (ParameterServer, optional): The parameter server holding
-            the settings. Defaults to None.
-=======
                 environment interface. Defaults to None. 
             params (ParameterServer, optional): The parameter server
                  holding the settings. Defaults to None.
->>>>>>> master
         """
         BehaviorTF2RLAgent.__init__(self,
                                     environment=environment,
@@ -74,16 +68,9 @@ class BehaviorGAILAgent(BehaviorTF2RLAgent, BehaviorContinuousML):
             action_dim=self._environment.action_space.high.size,
             units=local_params["Discriminator"]["FcLayerParams", "", [
                 400, 300]],
-<<<<<<< HEAD
             lr=local_params["Discriminator"]["LearningRate", "", 0.001],
             enable_sn=local_params["EnableSN", "", False],
             batch_size=local_params["Discriminator"]["BatchSize", "", 32],
-=======
-            lr=self._params["ML"]["BehaviorGAILAgent"]["Discriminator"]["LearningRate", "", 0.001],
-            enable_sn=self._params["ML"]["BehaviorGAILAgent"]["EnableSN", "", False],
-            batch_size=self._params["ML"]["BehaviorGAILAgent"]["Discriminator"]\
-                ["BatchSize", "", 32],
->>>>>>> master
             gpu=self._params["ML"]["Settings"]["GPUUse", "", 0])
         return irl
 
