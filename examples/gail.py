@@ -59,7 +59,7 @@ def run_configuration(argv):
                                     number_of_senarios=2500,
                                     random_seed=0)
   else:
-    raise ValueError(f'{FLAGS.blueprint} is no valid blueprint. See help.')
+    raise ValueError(f'{FLAGS.blueprint} is no valid blueprint.')
   
   env = SingleAgentRuntime(blueprint=bp,
                           render=False)

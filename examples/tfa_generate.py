@@ -63,16 +63,12 @@ def run_configuration(argv):
     bp = ContinuousMergingBlueprint(params,
                                     number_of_senarios=2500,
                                     random_seed=0)
-  elif blueprint == 'intersection':
-    bp = ContinuousIntersectionBlueprint(params,
-                                    number_of_senarios=2500,
-                                    random_seed=0)
   elif blueprint == 'highway':
     bp = ContinuousHighwayBlueprint(params,
                                     number_of_senarios=2500,
                                     random_seed=0)
   else:
-    raise ValueError(f'{blueprint} is no valid blueprint. See help.')
+    raise ValueError(f'{blueprint} is no valid blueprint.')
 
   env = SingleAgentRuntime(blueprint=bp,
                           render=False)

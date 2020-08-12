@@ -129,7 +129,7 @@
         "MaxHistoryLength": 50
     },
     "Visualization": {
-        "NumberOfScenarios": 50,
+        "NumberOfScenarios": 5,
         "Agents": {
             "Color": {
                 "Other": {

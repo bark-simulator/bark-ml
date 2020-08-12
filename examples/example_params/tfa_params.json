@@ -181,7 +181,7 @@
         }
     },
     "GenerateExpertTrajectories": {
-        "NumberOfTrajectories": 5000,
+        "NumberOfTrajectories": 5,
         "OutputDirectory": "examples/expert_trajectories"
     }
 }
