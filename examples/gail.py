@@ -25,6 +25,7 @@ flags.DEFINE_enum("mode",
                   ["train", "visualize", "evaluate"],
                   "Mode the configuration should be executed in.")
 
+
 def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/gail_params.json")
 
@@ -35,7 +36,7 @@ def run_configuration(argv):
 
   # When training a gail agent we add a suffix to the specified model and log dir to distinguish between training runs.
   # If you want to visualize or evaluate using your locally trained gail agent, you have to specify the run to use.
-  # Therefore look into the directory specified in params["ML"]["GAILRunner"]["tf2rl"]["logdir"] and 
+  # Therefore look into the directory specified in params["ML"]["GAILRunner"]["tf2rl"]["logdir"] and
   # pick one of your runs with the naming scheme '<timestamp>_DDPG_GAIL'
   # Add the name of the folder with the run to your:
   # params["ML"]["GAILRunner"]["tf2rl"]["logdir"] and params["ML"]["GAILRunner"]["tf2rl"]["model_dir"]
@@ -52,21 +53,21 @@ def run_configuration(argv):
                                     random_seed=0)
   elif blueprint == 'intersection':
     bp = ContinuousIntersectionBlueprint(params,
-                                    number_of_senarios=2500,
-                                    random_seed=0)
+                                         number_of_senarios=2500,
+                                         random_seed=0)
   elif blueprint == 'highway':
     bp = ContinuousHighwayBlueprint(params,
                                     number_of_senarios=2500,
                                     random_seed=0)
   else:
     raise ValueError(f'{FLAGS.blueprint} is no valid blueprint.')
-  
+
   env = SingleAgentRuntime(blueprint=bp,
-                          render=False)
+                           render=False)
 
   # wrapped environment for compatibility with tf2rl
-  wrapped_env = TF2RLWrapper(env, 
-    normalize_features=params["ML"]["Settings"]["NormalizeFeatures"])
+  wrapped_env = TF2RLWrapper(
+    env, normalize_features=params["ML"]["Settings"]["NormalizeFeatures"])
 
   # GAIL-agent
   gail_agent = BehaviorGAILAgent(environment=wrapped_env, params=params)
@@ -75,23 +76,26 @@ def run_configuration(argv):
   expert_trajectories = None
   if FLAGS.mode != 'visualize':
     expert_trajectories, avg_trajectory_length, num_trajectories = load_expert_trajectories(params['ML']['ExpertTrajectories']['expert_path_dir'],
-      normalize_features=params["ML"]["Settings"]["NormalizeFeatures"],
-      env=env, # the unwrapped env has to be used, since that contains the unnormalized spaces.
-      subset_size=params['ML']['ExpertTrajectories']['subset_size']
-      ) 
+                                                                                            normalize_features=params["ML"][
+        "Settings"]["NormalizeFeatures"],
+        # the unwrapped env has to be used, since that contains the unnormalized spaces.
+        env=env,
+        subset_size=params['ML']['ExpertTrajectories']['subset_size']
+    )
 
   runner = GAILRunner(params=params,
-                     environment=wrapped_env,
-                     agent=gail_agent,
-                     expert_trajs=expert_trajectories)
+                      environment=wrapped_env,
+                      agent=gail_agent,
+                      expert_trajs=expert_trajectories)
 
   if FLAGS.mode == "train":
     runner.Train()
-  elif FLAGS.mode == "visualize": 
+  elif FLAGS.mode == "visualize":
     runner.Visualize(params["Visualization"]["NumberOfScenarios"])
   elif FLAGS.mode == "evaluate":
-    runner.Evaluate(expert_trajectories, avg_trajectory_length, num_trajectories)
-  
+    runner.Evaluate(expert_trajectories,
+                    avg_trajectory_length, num_trajectories)
+
 
 if __name__ == '__main__':
   app.run(run_configuration)
