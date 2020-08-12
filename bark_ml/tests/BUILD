@@ -71,7 +71,7 @@ cc_test(
     deps=[
         "//bark_ml/model_loader:ModelLoader",
         "@libtensorflow-RL-MCTS//libtensorflow:tensorflowlib",
-        "@gtest//:main",
+        "@gtest//:gtest_main",
     ],
 )
 
@@ -82,6 +82,6 @@ cc_test(
     deps=[
         "//bark_ml/observers:cpp_observers",
         "@bark_project//bark/world/tests:make_test_world",
-        "@gtest//:main",
+        "@gtest//:gtest_main",
     ],
 )
