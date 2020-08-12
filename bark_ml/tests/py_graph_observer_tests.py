@@ -180,7 +180,6 @@ class PyGraphObserverTests(unittest.TestCase):
 
     nodes, _, _ = GraphObserver.graph(obs, graph_dims=observer.graph_dimensions)
     nodes = nodes[0] # remove batch dim    
-    num_nodes = nodes.shape[0]
     
     ego_node = nodes[0]
     ego_node_pos = Point2d(
@@ -277,6 +276,13 @@ class PyGraphObserverTests(unittest.TestCase):
       tf.equal(node_to_graph_map, expected_node_to_graph_map)))
 
   def test_agent_pruning(self):
+    """
+    Verify that the observer correctly handles the case where
+    there are less agents in the world than set as the limit.
+    tl;dr: check that all entries of the node features, 
+    adjacency matrix, and edge features not corresponding to 
+    actually existing agents are zeros.
+    """
     num_agents = 25
     params = ParameterServer()
     params["ML"]["GraphObserver"]["AgentLimit"] = num_agents
@@ -284,7 +290,9 @@ class PyGraphObserverTests(unittest.TestCase):
     obs, world = self._get_observation(observer, self.world, self.eval_id)
     obs = tf.expand_dims(obs, 0) # add a batch dimension
 
-    nodes, _, edge_features = GraphObserver.graph(obs, graph_dims=observer.graph_dimensions)
+    nodes, adjacency_matrix, edge_features = GraphObserver.graph(
+      observations=obs, 
+      graph_dims=observer.graph_dimensions)
     
     self.assertEqual(nodes.shape, [1, num_agents, observer.feature_len])
 
@@ -302,6 +310,18 @@ class PyGraphObserverTests(unittest.TestCase):
     # verify that entries for non-existing agents are all zeros
     self.assertEqual(tf.reduce_sum(fill_up_nodes), 0)
 
+    # the equivalent for edges: verify that for each zero entry
+    # in the adjacency matrix, the corresponding edge feature
+    # vector is a zero vector of correct length.
+    zero_indices = tf.where(tf.equal(adjacency_matrix, 0))
+    fill_up_edge_features = tf.gather_nd(edge_features, zero_indices)
+    edge_feature_len = observer.graph_dimensions[2]
+    zero_edge_feature_vectors = tf.zeros(
+      [zero_indices.shape[0], edge_feature_len])
+    
+    self.assertTrue(tf.reduce_all(tf.equal(
+      fill_up_edge_features, 
+      zero_edge_feature_vectors)))
 
 
     

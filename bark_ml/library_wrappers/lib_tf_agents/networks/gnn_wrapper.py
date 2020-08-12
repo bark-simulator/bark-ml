@@ -161,6 +161,3 @@ class GNNWrapper(tf.keras.Model):
     output = tf.reshape(flat_output, [batch_size, -1, self.num_units])
 
     return output
-      
-  def reset(self):
-    self._gnn.reset()
