@@ -44,7 +44,7 @@ class PyLibraryWrappersGAILAgentTests(unittest.TestCase):
     """
     tests some passed parameters of __init__() method of BehaviorGAILAgent class
     """
-    self.assertIsInstance(self.env.observation_space.shape, tuple)
+    self.assertIsInstance(self.env.observation_space.shape, tuple) 
     self.assertGreater(self.env.observation_space.shape[0], 0)
     self.assertIsInstance(self.env.action_space.high.size, int)
     self.assertGreater(self.env.action_space.high.size, 0)
