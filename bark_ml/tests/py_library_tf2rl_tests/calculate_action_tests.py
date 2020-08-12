@@ -8,8 +8,9 @@ from bark_ml.library_wrappers.lib_tf2rl.generate_expert_trajectories \
     import calculate_action
 from bark_ml.library_wrappers.lib_tf2rl.load_expert_trajectories \
     import *
+from bark_ml.tests.py_library_tf2rl_tests.generate_sac_trajectory_tests_base import GenerateSACTrajectoryTestsBase
 
-class CalculateActionTests(unittest.TestCase):
+class CalculateActionTests(GenerateSACTrajectoryTestsBase):
     """
     Tests for the calculate action function.
     """
@@ -19,8 +20,10 @@ class CalculateActionTests(unittest.TestCase):
         Loads some sac generated expert trajectories, takes the not normalized states,
         calculates the action and compares to the actual action from the expert.
         """
-        expert_trajectories_directory = os.path.join(os.path.dirname(__file__), 'data', 'expert_trajectories', 'sac')
-        expert_trajectories, avg_trajectory_length, num_trajectories = load_expert_trajectories(expert_trajectories_directory)
+
+        dirname = self.generate_test_trajectory()
+        expert_trajectories, avg_trajectory_length, num_trajectories = load_expert_trajectories(dirname)
+        assert expert_trajectories
 
         num_state_action_pairs = len(expert_trajectories['obses'])
         for i in range(num_state_action_pairs):
@@ -42,7 +45,7 @@ class CalculateActionTests(unittest.TestCase):
                 except AssertionError:
                     error_counter += 1
             self.assertLessEqual(error_counter, 1)
-        assert expert_trajectories
+        self.remove(dirname)
 
     def test_calculate_action_simple_zero(self):
         """
