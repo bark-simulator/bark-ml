@@ -69,7 +69,7 @@ class GNNWrapper(tf.keras.Model):
     logging.info(
       f'GNN configured with `{lib}` for input graphs with ' +
       f'{graph_dims[0]} nodes, {graph_dims[1]} node features, ' + 
-      f'and {graph_dims[1]} edge features.')
+      f'and {graph_dims[2]} edge features.')
     
     if lib in [GNNWrapper.SupportedLibrary.spektral, "spektral"]:
       self._init_spektral_layers(params.ConvertToDict())

@@ -62,13 +62,13 @@ class GraphObserver(StateObserver):
       "The list of available node features, given by their string key that \
        the observer should extract from the world and insert into the \
        observation. For a list of available features, refer to the list \
-       returned by `GraphObserver.available_node_attribute_keys`.",
-      self.available_node_attribute_keys()
+       returned by `GraphObserver.available_node_attributes`.",
+      self.available_node_attributes()
     ]
 
     self.enabled_node_attribute_keys = self._filter_requested_attributes(
       requested_keys=requested_node_attribute_keys,
-      available_keys=self.available_node_attribute_keys(),
+      available_keys=self.available_node_attributes(),
       context="node")
     self._logger.info(
       f"GraphObserver configured with node attributes: " +
@@ -79,13 +79,13 @@ class GraphObserver(StateObserver):
       "The list of available edge features, given by their string key that \
        the observer should extract from the world and insert into the \
        observation. For a list of available features, refer to the list \
-       returned by `GraphObserver.available_edge_attribute_keys`.",
-      self.available_edge_attribute_keys()
+       returned by `GraphObserver.available_edge_attributes`.",
+      self.available_edge_attributes()
     ]
 
     self.enabled_edge_attribute_keys = self._filter_requested_attributes(
       requested_keys=requested_edge_attribute_keys,
-      available_keys=self.available_edge_attribute_keys(),
+      available_keys=self.available_edge_attributes(),
       context="edge")
     self._logger.info(
       f"GraphObserver configured with edge attributes: " +
@@ -475,21 +475,39 @@ class GraphObserver(StateObserver):
     raise NotImplementedError
 
   @classmethod
-  def available_node_attribute_keys(cls):
-    """
-    The keys corresponding to the value of the feature
-    vector for each node at the corresponding index.
-    """
-    return ["x", "y", "theta", "vel", "goal_x", "goal_y", 
-            "goal_dx", "goal_dy", "goal_theta", "goal_d", "goal_vel"]
+  def available_node_attributes(cls, with_descriptions=False):
+    attributes = {
+      "x": "The x-components of the agent's position.",
+      "y": "The y-components of the agent's position.", 
+      "theta": "The current heading angle of tha agent.",
+      "vel": "The current velocity of the agent.", 
+      "goal_x": "The x-component of the goal's position.", 
+      "goal_y": "The y-component of the goal's position.",
+      "goal_dx": "The difference in the x-component of the agent's and the goal's position.", 
+      "goal_dy": "The difference in the y-component of the agent's and the goal's position.", 
+      "goal_theta": "The goal heading angle.", 
+      "goal_d": "The euclidian distance of the agent to the goal.", 
+      "goal_vel": "The goal velocity."
+    }
+
+    if not with_descriptions:
+      attributes = list(attributes.keys())
+
+    return attributes
 
   @classmethod
-  def available_edge_attribute_keys(cls):
-    """
-    The keys corresponding to the value of the feature
-    vector for each edge at the corresponding index.
-    """
-    return ["dx", "dy", "dvel", "dtheta"]
+  def available_edge_attributes(cls, with_descriptions=False):
+    attributes = {
+      "dx": "The difference in the x-position of the two agents.", 
+      "dy": "The difference in the x-position of the two agents.", 
+      "dvel": "The difference in the velocity of the two agents.", 
+      "dtheta": "The difference in the heading angle of the two agents."
+    }
+
+    if not with_descriptions:
+      attributes = list(attributes.keys())
+
+    return attributes
 
   @property
   def observation_space(self):    

@@ -88,7 +88,7 @@ class PyGraphObserverTests(unittest.TestCase):
     params = ParameterServer()
 
     requested_features =\
-      GraphObserver.available_node_attribute_keys()[0:5] + ['invalid']
+      GraphObserver.available_node_attributes()[0:5] + ['invalid']
     params["ML"]["GraphObserver"]["EnabledNodeFeatures"] = requested_features
     observer = GraphObserver(params=params)
 
@@ -103,7 +103,7 @@ class PyGraphObserverTests(unittest.TestCase):
     params = ParameterServer()
 
     requested_features =\
-      GraphObserver.available_edge_attribute_keys()[0:2] + ['invalid']
+      GraphObserver.available_edge_attributes()[0:2] + ['invalid']
     params["ML"]["GraphObserver"]["EnabledEdgeFeatures"] = requested_features
     observer = GraphObserver(params=params)
 
