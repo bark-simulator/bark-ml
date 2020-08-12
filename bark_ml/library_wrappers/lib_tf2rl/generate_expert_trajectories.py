@@ -125,11 +125,13 @@ def create_scenario(param_server: ParameterServer) -> Tuple[Scenario, float, flo
   Returns:
       Tuple[Scenario, float, float]: The bark scenario, the start timestamp, the end timestamp
   """
+  scenario_params = param_server["Scenario"]["Generation"][
+      "InteractionDatasetScenarioGeneration"]
+
   scenario_generation = InteractionDatasetScenarioGeneration(
       num_scenarios=1, random_seed=0, params=param_server)
-  return (scenario_generation.get_scenario(0),
-          param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["StartTs"],
-          param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EndTs"])
+  return (scenario_generation.get_scenario(0), scenario_params["StartTs"],
+          scenario_params["EndTs"])
 
 
 def calculate_action(
