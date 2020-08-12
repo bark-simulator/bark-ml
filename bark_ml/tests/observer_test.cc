@@ -4,14 +4,14 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-//#include "gtest/gtest.h"
+#include "gtest/gtest.h"
 #include "bark/commons/params/params.hpp"
 #include "bark/geometry/geometry.hpp"
 #include "bark/commons/params/setter_params.hpp"
-#include "bark-ml/observers/alt_nearest_observer.hpp"
+#include "bark_ml/observers/alt_nearest_observer.hpp"
 #include "bark/world/tests/make_test_world.hpp"
 
-#include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
+#include "bark/models/behavior/constant_acceleration/constant_acceleration.hpp"
 #include "bark/models/behavior/idm/idm_classic.hpp"
 #include "bark/models/dynamic/single_track.hpp"
 #include "bark/models/execution/interpolation/interpolate.hpp"
@@ -26,10 +26,9 @@ using namespace bark::geometry;
 using namespace bark::world::tests;
 
 // observer
-using observers::NearestObserver;
-//using observers::NearestStateObserver;
-using observers::ObservedState;
-using commons::Norm;
+using bark_ml::observers::NearestObserver;
+using bark_ml::observers::ObservedState;
+using bark_ml::commons::Norm;
 
 //function: returns pointer to default params
 
@@ -45,7 +44,7 @@ TEST(observers, test_state_vector_length){
   
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
-  BehaviorModelPtr beh_model_const(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model_const(new BehaviorConstantAcceleration(params));
   BehaviorModelPtr beh_model_idm(new BehaviorIDMClassic(params));
   Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
 
@@ -86,7 +85,7 @@ TEST(observers, test_state_vector_length2){
 
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
-  BehaviorModelPtr beh_model_const(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model_const(new BehaviorConstantAcceleration(params));
   BehaviorModelPtr beh_model_idm(new BehaviorIDMClassic(params));
   Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
 
@@ -150,7 +149,7 @@ TEST(observers, test_max_distance){
 
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
-  BehaviorModelPtr beh_model_const(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model_const(new BehaviorConstantAcceleration(params));
   BehaviorModelPtr beh_model_idm(new BehaviorIDMClassic(params));
   Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
 
@@ -212,7 +211,7 @@ TEST(observers, test_state_vector_order){
   
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
-  BehaviorModelPtr beh_model_const(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model_const(new BehaviorConstantAcceleration(params));
   BehaviorModelPtr beh_model_idm(new BehaviorIDMClassic(params));
   Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
 
@@ -223,7 +222,7 @@ TEST(observers, test_state_vector_order){
   State init_state3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));  
 
   init_state0 << 0.0, 0, 0, 0, 5.0;       //ego
-  init_state1 << 0.0, -15, -15, 0, 5.0;   //3rd clostest
+  init_state1 << 0.0, -15, -15, 0, 5.0;   //3rd closest
   init_state2 << 0.0, 10, 0, 0.0, 5.0;    //1st closest
   init_state3 << 0.0, 15, -5, 0.0, 10.0;  //2nd closest
   
@@ -295,7 +294,7 @@ TEST(observers, test_normalization){
 
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
-  BehaviorModelPtr beh_model_const(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model_const(new BehaviorConstantAcceleration(params));
   BehaviorModelPtr beh_model_idm(new BehaviorIDMClassic(params));
   Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
 
