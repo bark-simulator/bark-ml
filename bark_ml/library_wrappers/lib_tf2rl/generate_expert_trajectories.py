@@ -306,7 +306,7 @@ def simulate_scenario(param_server: ParameterServer, sim_time_step: float,
 
   # Run the scenario in a loop
   world_state = scenario.GetWorldState()
-  for i in range(0, sim_steps + 1):
+  for i in range(0, sim_steps):
     if i % 25 == 0:
       print(f"Simulated {i}/{sim_steps} timesteps.")
     if viewer:
