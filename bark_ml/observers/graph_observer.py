@@ -284,8 +284,8 @@ class GraphObserver(StateObserver):
     goal_d = np.sqrt(goal_dx**2 + goal_dy**2) # distance to goal
     res["goal_d"] = goal_d
     
-    # goal_velocity = np.mean(agent.goal_definition.velocity_range)
-    # res["goal_vel"] = goal_velocity
+    goal_velocity = np.mean(agent.goal_definition.velocity_range)
+    res["goal_vel"] = goal_velocity
 
     if self._normalize_observations:
       n = self.normalization_data
@@ -298,7 +298,7 @@ class GraphObserver(StateObserver):
       res["goal_dy"] = self._normalize_value(res["goal_dy"], n["dy"])
       res["goal_d"] = self._normalize_value(res["goal_d"], n["distance"])
       res["goal_theta"] = self._normalize_value(res["goal_theta"], n["theta"])
-      # res["goal_vel"] = self._normalize_value(res["goal_vel"], n["vel"])
+      res["goal_vel"] = self._normalize_value(res["goal_vel"], n["vel"])
     
     #####################################################
     #   If you change the number/names of features,     #
@@ -404,7 +404,7 @@ class GraphObserver(StateObserver):
     vector for each node at the corresponding index.
     """
     return ["x", "y", "theta", "vel", "goal_x", "goal_y", 
-            "goal_dx", "goal_dy", "goal_theta", "goal_d"] #"goal_vel"]
+            "goal_dx", "goal_dy", "goal_theta", "goal_d", "goal_vel"]
 
   @classmethod
   def edge_attribute_keys(cls):
