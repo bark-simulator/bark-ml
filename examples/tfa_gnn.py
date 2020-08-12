@@ -38,8 +38,10 @@ flags.DEFINE_enum("mode",
 def run_configuration(argv):
   # File with standard parameters for spektral use:
   #filename = "examples/example_params/tfa_sac_gnn_spektral_default.json"
+
   # File with standard parameters for tf2_gnn use:
   filename = "examples/example_params/tfa_sac_gnn_tf2_gnn_default.json"
+  
   params = ParameterServer(filename=filename)
 
   #viewer = MPViewer(

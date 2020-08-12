@@ -131,7 +131,7 @@ class DataGenerator():
                 observation
     """
     # Get relvant meta data from the observer
-    attribute_keys = self._observer.node_attribute_keys()
+    attribute_keys = self._observer.enabled_node_attribute_keys
     norm_data = self._observer.normalization_data
     normalize = self._observer._normalize_observations
     feature_len = self._observer.feature_len
