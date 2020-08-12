@@ -1,3 +1,10 @@
+# Copyright (c) 2020 fortiss GmbH
+#
+# Authors: Marco Oliva, Silvan Wimmer
+#
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
+
 import numpy as np
 import logging
 import tensorflow as tf
@@ -187,8 +194,9 @@ class GraphObserver(StateObserver):
 
     if dense:
       # in dense mode, the nodes of all graphs are 
-      # concatenated in one list of feature vectors and
-      # the assignement to graphs is handled by the
+      # concatenated into one list that contains all 
+      # feature vectors of the whole batch.
+      # the assignment to graphs is handled by the
       # node_to_graph_map.
       F = tf.reshape(F, [batch_size * n_nodes, n_features])
 
@@ -210,11 +218,17 @@ class GraphObserver(StateObserver):
       graph_indices = tf.scalar_mul(n_nodes, graph_indices)
       graph_indices = tf.transpose(tf.tile(graph_indices, [2, 1]))
       
-      A = A[:,1:] + graph_indices
+      A = A[:, 1:] + graph_indices
       A = tf.cast(A, tf.int32)
 
-      # construct a list where each element represents the
-      # assignment of a node to a graph via the graph's index
+      # since the node feature vectors are all stored in a 2D array,
+      # we need to map them to the graphs that they belong to.
+
+      # construct a mapping from the node feature vectors in F
+      # to the graphs in the batch, i.e a list where each element 
+      # contains the index of the graph that the feature vector at
+      # the same index in F belongs to, e.g. if each graph contains
+      # two nodes, then the node_to_graph_map is [0, 0, 1, 1, 2, 2, ...]
       node_to_graph_map = tf.reshape(tf.range(batch_size), [-1, 1])
       node_to_graph_map = tf.tile(node_to_graph_map, [1, n_nodes])
       node_to_graph_map = tf.reshape(node_to_graph_map, [-1])

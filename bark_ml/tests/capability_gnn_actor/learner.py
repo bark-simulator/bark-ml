@@ -1,8 +1,9 @@
-# Copyright (c) 2020 Silvan Wimmer, Marco Oliva
+# Copyright (c) 2020 fortiss GmbH
 #
-# This software is released under the MIT License.
-# https://opensource.org/licenses/MIT
-
+# Authors: Silvan Wimmer
+#
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
 
 import logging
 import numpy as np

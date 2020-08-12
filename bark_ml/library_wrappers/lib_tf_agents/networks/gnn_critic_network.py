@@ -1,3 +1,10 @@
+# Copyright (c) 2020 fortiss GmbH
+#
+# Authors: Marco Oliva
+#
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
+
 import gin
 import tensorflow as tf  # pylint: disable=g-explicit-tensorflow-version-import
 
@@ -139,7 +146,7 @@ class GNNCriticNetwork(network.Network):
           minval=-0.003, maxval=0.003),
         name='value'))
 
-  def call(self, inputs, step_type=(), network_state=(), training=False):
+  def call(self, inputs, step_type=(), network_state=(), training=False):x
     del step_type # unused.
 
     observations, actions = inputs

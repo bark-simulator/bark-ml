@@ -1,8 +1,9 @@
-# Copyright (c) 2020 Patrick Hart, Julian Bernhard,
-# Klemens Esterle, Tobias Kessler
+# Copyright (c) 2020 fortiss GmbH
 #
-# This software is released under the MIT License.
-# https://opensource.org/licenses/MIT
+# Authors: Marco Oliva, Silvan Wimmer
+#
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
 
 # TensorFlow Agents (https://github.com/tensorflow/agents) example
 import gym

@@ -1,42 +1,25 @@
-# Copyright (c) 2020 Patrick Hart, Julian Bernhard,
-# Klemens Esterle, Tobias Kessler
+# Copyright (c) 2020 fortiss GmbH
 #
-# This software is released under the MIT License.
-# https://opensource.org/licenses/MIT
-
+# Authors: Silvan Wimmer
+#
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
 
 import unittest
-import pickle
-import logging
 import numpy as np
-import os
-import matplotlib
-import matplotlib.pyplot as plt
-import time
-import networkx as nx
-import tensorflow as tf
-import datetime
 
 # BARK imports
 from bark.runtime.commons.parameters import ParameterServer
-from bark.runtime.viewer.matplotlib_viewer import MPViewer
-from bark.runtime.viewer.video_renderer import VideoRenderer
 
 # BARK-ML imports
-from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
-  ContinuousMergingBlueprint, ContinuousIntersectionBlueprint
+from bark_ml.environments.blueprints import ContinuousHighwayBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent,\
-  BehaviorPPOAgent, BehaviorGraphSACAgent
-from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner
+from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorGraphSACAgent
 from bark_ml.observers.graph_observer import GraphObserver
-from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_wrapper import GNNWrapper 
 
 # Supervised specific imports
-from bark_ml.tests.capability_gnn_actor.data_generation import DataGenerator
 from bark_ml.tests.capability_gnn_actor.actor_nets import ConstantActorNet,\
   RandomActorNet
-from bark_ml.tests.capability_gnn_actor.data_generation import DataGenerator
 from bark_ml.tests.capability_gnn_actor.data_handler import SupervisedData
 from bark_ml.tests.capability_gnn_actor.learner import Learner
 
