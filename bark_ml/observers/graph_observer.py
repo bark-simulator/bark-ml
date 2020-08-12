@@ -2,6 +2,7 @@ from gym import spaces
 import numpy as np
 import math
 import operator
+import logging
 import tensorflow as tf
 from typing import Dict
 from itertools import islice
@@ -39,12 +40,7 @@ class GraphObserver(StateObserver):
     """
     StateObserver.__init__(self, params)
     self._normalize_observations = normalize_observations
-
-    # the number of features of a node in the graph
-    self.feature_len = len(GraphObserver.node_attribute_keys())
-
-    # the number of features of an edge between two nodes
-    self.edge_feature_len = len(GraphObserver.edge_attribute_keys())
+    self._logger = logging.getLogger()
 
     self._agent_limit =\
       params["ML"]["GraphObserver"]["AgentLimit", 
@@ -60,6 +56,46 @@ class GraphObserver(StateObserver):
       params["ML"]["GraphObserver"]["SelfLoops", 
       "Whether each node has an edge pointing to itself.", 
       False]
+
+    requested_node_attribute_keys =\
+      params["ML"]["GraphObserver"]["EnabledNodeFeatures",
+      "The list of available node features, given by their string key that \
+       the observer should extract from the world and insert into the \
+       observation. For a list of available features, refer to the list \
+       returned by `GraphObserver.available_node_attribute_keys`.",
+      self.available_node_attribute_keys()
+    ]
+
+    self.enabled_node_attribute_keys = self._filter_requested_attributes(
+      requested_keys=requested_node_attribute_keys,
+      available_keys=self.available_node_attribute_keys(),
+      context="node")
+    self._logger.info(
+      f"GraphObserver configured with node attributes: " +
+      f"{self.enabled_node_attribute_keys}")
+
+    requested_edge_attribute_keys =\
+      params["ML"]["GraphObserver"]["EnabledEdgeFeatures",
+      "The list of available edge features, given by their string key that \
+       the observer should extract from the world and insert into the \
+       observation. For a list of available features, refer to the list \
+       returned by `GraphObserver.available_edge_attribute_keys`.",
+      self.available_edge_attribute_keys()
+    ]
+
+    self.enabled_edge_attribute_keys = self._filter_requested_attributes(
+      requested_keys=requested_edge_attribute_keys,
+      available_keys=self.available_edge_attribute_keys(),
+      context="edge")
+    self._logger.info(
+      f"GraphObserver configured with edge attributes: " +
+      f"{self.enabled_edge_attribute_keys}")
+
+    # the number of features of a node in the graph
+    self.feature_len = len(self.enabled_node_attribute_keys)
+
+    # the number of features of an edge between two nodes
+    self.edge_feature_len = len(self.enabled_edge_attribute_keys)
 
   def Observe(self, world):
     """see base class"""
@@ -257,57 +293,63 @@ class GraphObserver(StateObserver):
 
     return nearby_agents
 
-  def _extract_node_features(self, agent, with_keys=False):
+  def _extract_node_features(self, agent, as_dict=False):
     """Returns dict containing all features of the agent"""
     res = OrderedDict()
 
     # Init data (to keep ordering always equal for reading and writing)
-    for label in self.node_attribute_keys():
+    for label in self.enabled_node_attribute_keys:
       res[label] = "inf"
     
-    state = agent.state
-    res["x"] = state[int(StateDefinition.X_POSITION)]
-    res["y"] = state[int(StateDefinition.Y_POSITION)]
-    res["theta"] = state[int(StateDefinition.THETA_POSITION)]
-    res["vel"] = state[int(StateDefinition.VEL_POSITION)]
+    n = self.normalization_data
+    def add_feature(key, value, norm_range):
+      if self._normalize_observations:
+        value = self._normalize_value(value, norm_range)
+      res[key] = value
 
-    # get information related to goal
-    goal_center = agent.goal_definition.goal_shape.center[0:2]
-    res["goal_x"] = goal_center[0] # goal position in x
-    res["goal_y"] = goal_center[1] # goal position in y
-    goal_dx = goal_center[0] - res["x"] # distance to goal in x coord
-    res["goal_dx"] = goal_dx
-    goal_dy = goal_center[1] - res["y"] # distance to goal in y coord
-    res["goal_dy"] = goal_dy
-    goal_theta = np.arctan2(goal_dy, goal_dx) # theta for straight line to goal
-    res["goal_theta"] = goal_theta
-    goal_d = np.sqrt(goal_dx**2 + goal_dy**2) # distance to goal
-    res["goal_d"] = goal_d
+    try:
+      state = agent.state
+      if "x" in res:
+        add_feature("x", state[int(StateDefinition.X_POSITION)], n["x"])
+      if "y" in res:
+        add_feature("y", state[int(StateDefinition.Y_POSITION)], n["y"])
+      if "theta" in res:
+        add_feature("theta", state[int(StateDefinition.THETA_POSITION)], n["theta"])
+      if "vel" in res:
+        add_feature("vel", state[int(StateDefinition.VEL_POSITION)], n["vel"])
+
+      # get information related to goal
+      goal_center = agent.goal_definition.goal_shape.center[0:2]
+      goal_dx = goal_center[0] - state[int(StateDefinition.X_POSITION)]
+      goal_dy = goal_center[1] - state[int(StateDefinition.Y_POSITION)]
+
+      if "goal_x" in res:
+        add_feature("goal_x", goal_center[0], n["x"])
+      if "goal_y" in res:
+        add_feature("goal_y", goal_center[1], n["y"])
+      if "goal_dx" in res:
+        add_feature("goal_dx", goal_dx, n["dx"])
+      if "goal_dy" in res:
+        add_feature("goal_dy", goal_dy, n["dy"])
+      if "goal_theta" in res:
+        add_feature("goal_theta", np.arctan2(goal_dy, goal_dx), n["theta"])
+      if "goal_d" in res:
+        add_feature("goal_d", np.sqrt(goal_dx**2 + goal_dy**2), n["distance"])
+      if "goal_vel" in res:
+        goal_velocity = np.mean(agent.goal_definition.velocity_range)
+        add_feature("goal_vel", goal_velocity, n["vel"])
+    except:
+      raise AttributeError(
+        "A problem occured during node feature extraction. Possibly " +
+        "a node feature that's specifed in the 'EnabledNodeFeatures' " +
+        "parameter is not supported by the current BARK-ML environment.")
     
-    # goal_velocity = np.mean(agent.goal_definition.velocity_range)
-    # res["goal_vel"] = goal_velocity
+    # remove disabled attributes
+    # TODO: find an elegant way to not compute those in the first place.
+    res = {key: res[key] for key in self.enabled_node_attribute_keys}
+    assert list(res.keys()) == self.enabled_node_attribute_keys
 
-    if self._normalize_observations:
-      n = self.normalization_data
-
-      for k in ["x", "y", "theta", "vel"]:
-        res[k] = self._normalize_value(res[k], n[k])
-      res["goal_x"] = self._normalize_value(res["goal_x"], n["x"])
-      res["goal_y"] = self._normalize_value(res["goal_y"], n["y"])
-      res["goal_dx"] = self._normalize_value(res["goal_dx"], n["dx"])
-      res["goal_dy"] = self._normalize_value(res["goal_dy"], n["dy"])
-      res["goal_d"] = self._normalize_value(res["goal_d"], n["distance"])
-      res["goal_theta"] = self._normalize_value(res["goal_theta"], n["theta"])
-      # res["goal_vel"] = self._normalize_value(res["goal_vel"], n["vel"])
-    
-    #####################################################
-    #   If you change the number/names of features,     #
-    #   please adapt GraphObserver.node_attribute_keys  #
-    #   accordingly.                                    #
-    #####################################################
-    assert list(res.keys()) == self.node_attribute_keys()
-
-    if not with_keys:
+    if not as_dict:
       res = list(res.values())
 
     return res
@@ -325,23 +367,59 @@ class GraphObserver(StateObserver):
       An np.array containing the differences in the agents' 
       x and y position, velocities and orientations.
     """
-    source_features = self._extract_node_features(source_agent, with_keys=True)
-    target_features = self._extract_node_features(target_agent, with_keys=True)
+    source_features =\
+      self._extract_node_features(source_agent, as_dict=True)
+    target_features =\
+      self._extract_node_features(target_agent, as_dict=True)
 
-    d_x = source_features["x"] - target_features["x"]
-    d_y = source_features["y"] - target_features["y"]
-    d_vel = source_features["vel"] - target_features["vel"]
-    d_theta = source_features["theta"] - target_features["theta"]
-    features = np.array([d_x, d_y, d_vel, d_theta])
+    features = {
+      "dx": source_features["x"] - target_features["x"],
+      "dy": source_features["y"] - target_features["y"],
+      "dvel": source_features["vel"] - target_features["vel"],
+      "dtheta": source_features["theta"] - target_features["theta"]
+    }
 
-    #####################################################
-    #   If you change the number/types of features,     #
-    #   please adapt GraphObserver.edge_attribute_keys  #
-    #   accordingly.                                    #
-    #####################################################
-    assert len(features) == len(self.edge_attribute_keys())
+    features = {key: features[key] for key in self.enabled_edge_attribute_keys}
+    features = list(features.values())
+    assert len(features) == len(self.enabled_edge_attribute_keys)
 
     return features
+
+  def _filter_requested_attributes(self, 
+                                   requested_keys, 
+                                   available_keys, 
+                                   context=""):
+    """
+    Filters the requested node/edge attributes by the available 
+    attributes and returns the intersection of the requested
+    and available attributes.
+    """
+    if not isinstance(requested_keys, list):
+      raise ValueError(
+        f"Requested {context} feature list must be a list of " +
+        f"strings, not {type(requested_keys)}.")
+
+    if len(requested_keys) == 0:
+      self._logger.warning(
+        f"The `GraphObserver` received an empty list of requested " +
+        f"{context} attributes.")
+      return []
+
+    valid_keys = []
+    invalid_keys = []
+
+    for key in requested_keys:
+      if key in available_keys:
+        valid_keys.append(key)
+      else:
+        invalid_keys.append(key)
+    
+    if len(invalid_keys) > 0:
+      self._logger.warning(
+        f"The following {context} attributes requested from the GraphObserver " +
+        f"are not supported and will be ignored: {invalid_keys}")
+
+    return valid_keys
 
   def _normalize_value(self, value, range):
     """
@@ -391,28 +469,27 @@ class GraphObserver(StateObserver):
     d['distance'] = [0, max_dist]
     d['dx'] = [-x_range, x_range]
     d['dy'] = [-y_range, y_range]
-    d['road'] = [0, 15] # may need adjustment for if 3 lanes are broader than 15 m
     return d
 
   def sample(self):
     raise NotImplementedError
 
   @classmethod
-  def node_attribute_keys(cls):
+  def available_node_attribute_keys(cls):
     """
     The keys corresponding to the value of the feature
     vector for each node at the corresponding index.
     """
     return ["x", "y", "theta", "vel", "goal_x", "goal_y", 
-            "goal_dx", "goal_dy", "goal_theta", "goal_d"] #"goal_vel"]
+            "goal_dx", "goal_dy", "goal_theta", "goal_d", "goal_vel"]
 
   @classmethod
-  def edge_attribute_keys(cls):
+  def available_edge_attribute_keys(cls):
     """
     The keys corresponding to the value of the feature
     vector for each edge at the corresponding index.
     """
-    return ["x", "y", "dx", "dv"]
+    return ["dx", "dy", "dvel", "dtheta"]
 
   @property
   def observation_space(self):    
