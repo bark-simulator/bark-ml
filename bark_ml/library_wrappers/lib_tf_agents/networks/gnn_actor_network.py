@@ -1,9 +1,9 @@
 import gin
-import tensorflow as tf  # pylint: disable=g-explicit-tensorflow-version-import
+import tensorflow as tf # pylint: disable=g-explicit-tensorflow-version-import
 
 from tf_agents.agents.sac import sac_agent
-from tf_agents.networks import network, normal_projection_network, utils, encoding_network
-from tf_agents.utils import common, nest_utils
+from tf_agents.networks import network, normal_projection_network, encoding_network
+from tf_agents.utils import nest_utils
 
 def projection_net(spec):
   return normal_projection_network.NormalProjectionNetwork(

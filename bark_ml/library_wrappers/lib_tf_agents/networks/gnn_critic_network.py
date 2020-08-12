@@ -3,9 +3,6 @@ import tensorflow as tf  # pylint: disable=g-explicit-tensorflow-version-import
 
 from tf_agents.networks import network, utils
 
-from tf_agents.networks import network
-from tf_agents.networks import utils
-
 @gin.configurable
 class GNNCriticNetwork(network.Network):
   """Creates a critic network."""
@@ -150,7 +147,7 @@ class GNNCriticNetwork(network.Network):
     embeddings = self._gnn(observations, training=training)
     
     if batch_size > 0:
-      embeddings = embeddings[:,0] # extract ego state
+      embeddings = embeddings[:, 0] # extract ego state
       actions = tf.reshape(actions, [batch_size, -1])
     else:
       actions = tf.zeros([0, actions.shape[-1]])

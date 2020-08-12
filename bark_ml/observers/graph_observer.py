@@ -1,15 +1,11 @@
-from gym import spaces
 import numpy as np
-import math
-import operator
 import logging
 import tensorflow as tf
+from gym import spaces
 from typing import Dict
-from itertools import islice
 from collections import OrderedDict
 
 from bark.core.models.dynamic import StateDefinition
-from bark.core.world import ObservedWorld
 from bark.core.geometry import Distance, Point2d
 from bark.runtime.commons.parameters import ParameterServer
 
@@ -17,11 +13,11 @@ from bark_ml.observers.observer import StateObserver
 
 class GraphObserver(StateObserver):
   """
-  This observer converts an `ObservsedWorld` instance into 
-  a graph-structured observation, consisting of nodes (with 
-  features), an adjacency matrix expressing the (directed) 
-  connections between nodes in the graph, and edges (with 
-  features), expressing the relative information between 
+  This observer converts an `ObservsedWorld` instance into
+  a graph-structured observation, consisting of nodes (with
+  features), an adjacency matrix expressing the (directed)
+  connections between nodes in the graph, and edges (with
+  features), expressing the relative information between
   the agents that constitute these connections.
   """
 
@@ -71,7 +67,7 @@ class GraphObserver(StateObserver):
       available_keys=self.available_node_attributes(),
       context="node")
     self._logger.info(
-      f"GraphObserver configured with node attributes: " +
+      "GraphObserver configured with node attributes: " +
       f"{self.enabled_node_attribute_keys}")
 
     requested_edge_attribute_keys =\
@@ -88,7 +84,7 @@ class GraphObserver(StateObserver):
       available_keys=self.available_edge_attributes(),
       context="edge")
     self._logger.info(
-      f"GraphObserver configured with edge attributes: " +
+      "GraphObserver configured with edge attributes: " +
       f"{self.enabled_edge_attribute_keys}")
 
     # the number of features of a node in the graph
@@ -145,33 +141,33 @@ class GraphObserver(StateObserver):
     Maps the given batch of observations into a
     graph representation.
 
-      Args:
-      observations: The batch of observations as a tf.Tensor
-        of shape (batch_size, observation_size).
-      graph_dims: A tuple containing the dimensions of the 
-        graph as (num_nodes, num_features, num_edge_features).
-        If `dense` is set to True, num_edge_features is ignored.
-      dense: Specifies the format of the returned graph representation. 
-        If set to `True`, the edges are returned as a list of pairs 
-        of nodes indices (relative to the flattened batch) and an additional
-        mapping of each node to a graph is returned. If set to 
-        False (default), edges are returned as sparse adjacency 
-        matrix and an edge feature matrix is additionally returned.
+    Args:
+    observations: The batch of observations as a tf.Tensor
+      of shape (batch_size, observation_size).
+    graph_dims: A tuple containing the dimensions of the 
+      graph as (num_nodes, num_features, num_edge_features).
+      If `dense` is set to True, num_edge_features is ignored.
+    dense: Specifies the format of the returned graph representation. 
+      If set to `True`, the edges are returned as a list of pairs 
+      of nodes indices (relative to the flattened batch) and an additional
+      mapping of each node to a graph is returned. If set to 
+      False (default), edges are returned as sparse adjacency 
+      matrix and an edge feature matrix is additionally returned.
 
-      Returns:
-        X: Node features of (batch_size, num_nodes, num_features)
+    Returns:
+      X: Node features of (batch_size, num_nodes, num_features)
 
-        If `dense` is True:
-        A: Dense representation of edges as a list of node index pairs,
-          shape (num_total_edges, 2).
-        node_to_graph_map: A 1d list, where each element is the mapping
-        of the node (indexed relative to the batch) to a graph.
-
-        If `dense`is False:
-        A: Spare binary adjacency matrix of shape 
-          (batch_size num_nodes, num_nodes).
-        E: Edge features of shape 
-          (batch_size, num_nodes, num_edge_features, num_edge_features).
+      If `dense` is True:
+      A: Dense representation of edges as a list of node index pairs,
+        shape (num_total_edges, 2).
+      node_to_graph_map: A 1d list, where each element is the mapping
+      of the node (indexed relative to the batch) to a graph.
+      
+      If `dense`is False:
+      A: Spare binary adjacency matrix of shape 
+        (batch_size num_nodes, num_nodes).
+      E: Edge features of shape 
+        (batch_size, num_nodes, num_edge_features, num_edge_features).
     """
     obs = observations # for brevity
 
@@ -400,7 +396,7 @@ class GraphObserver(StateObserver):
 
     if len(requested_keys) == 0:
       self._logger.warning(
-        f"The `GraphObserver` received an empty list of requested " +
+        "The `GraphObserver` received an empty list of requested " +
         f"{context} attributes.")
       return []
 
@@ -529,6 +525,14 @@ class GraphObserver(StateObserver):
 
   @property
   def graph_dimensions(self):
+    """
+    Returns a three-element tuple that defines the
+    dimensions of the graph as returned by the
+    `Observe` method, consisting of
+    - the number of nodes
+    - the number of node features
+    - the number of edge features
+    """
     return (
       self._agent_limit,
       self.feature_len,
