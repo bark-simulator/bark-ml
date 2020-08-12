@@ -10,8 +10,6 @@
 #include "bark/commons/params/setter_params.hpp"
 #include "bark_ml/observers/alt_nearest_observer.hpp"
 #include "bark/world/tests/make_test_world.hpp"
-
-
 #include "bark/models/behavior/constant_acceleration/constant_acceleration.hpp"
 #include "bark/models/behavior/idm/idm_classic.hpp"
 #include "bark/models/dynamic/single_track.hpp"
