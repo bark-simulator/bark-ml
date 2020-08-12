@@ -14,7 +14,8 @@ py_binary(
         "//examples/example_params:example_params",
         ":notebooks_folder",
         "//docs/report/data",
-        "//docs/report/images"
+        "//docs/report/images",
+        "//bark_ml/tests/capability_gnn_actor/data:data"
         ],
     imports = ["../external/bark_project/bark/python_wrapper/"],
     deps = [
@@ -24,10 +25,10 @@ py_binary(
         "//bark_ml/library_wrappers/lib_tf_agents/networks:networks",
         "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
         "//bark_ml/library_wrappers/lib_tf_agents/runners:runners",
-        "//supervised_learning:data_generation",
-        "//supervised_learning:data_handler",
-        "//supervised_learning:actor_nets",
-        "//supervised_learning:learner",
+        "//bark_ml/tests/capability_gnn_actor:data_generation",
+        "//bark_ml/tests/capability_gnn_actor:data_handler",
+        "//bark_ml/tests/capability_gnn_actor:actor_nets",
+        "//bark_ml/tests/capability_gnn_actor:learner",
         ":helper_functions"
     ]
 )

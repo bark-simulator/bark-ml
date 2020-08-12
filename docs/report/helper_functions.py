@@ -12,13 +12,111 @@ from collections import OrderedDict
 from matplotlib.patches import Ellipse
 from tf2_gnn.layers import GNN, GNNInput
 
-# Bark-ML imports
-from bark_ml.observers.graph_observer import GraphObserver
-from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner
+# BARK imports
+from bark.runtime.commons.parameters import ParameterServer
+from bark.runtime.viewer.matplotlib_viewer import MPViewer
+from bark.runtime.viewer.video_renderer import VideoRenderer
 
-# Supervised learning imports
-from supervised_learning.actor_nets import ConstantActorNet, RandomActorNet, \
-  get_GNN_SAC_actor_net, get_SAC_actor_net
+# BARK-ML imports
+from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
+  ContinuousMergingBlueprint, ContinuousIntersectionBlueprint
+from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
+from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent,\
+  BehaviorPPOAgent, BehaviorGraphSACAgent
+from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner
+from bark_ml.observers.graph_observer import GraphObserver
+from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_wrapper import GNNWrapper 
+
+# Supervised specific imports
+from bark_ml.tests.capability_gnn_actor.data_generation import DataGenerator
+from bark_ml.tests.capability_gnn_actor.actor_nets import ConstantActorNet,\
+  RandomActorNet
+from bark_ml.tests.capability_gnn_actor.data_generation import DataGenerator
+from bark_ml.tests.capability_gnn_actor.data_handler import SupervisedData
+from bark_ml.tests.capability_gnn_actor.learner import Learner
+
+def explain_observation(observation, graph_dims):
+    observation = observation.numpy()
+    nodes, n_feats, e_feats = graph_dims
+    # node attributes
+    end_1 = nodes*n_feats
+    node_attributes = observation[:end_1]
+    print("Node_attributes(flattened matrix of original shape "+str(nodes)+"x"+str(n_feats)+\
+          ") (nodes x node attributes):\n",node_attributes)
+    # Adjacency matrix
+    end_2 = end_1 + nodes**2
+    adjacency_matrix = observation[end_1:end_2]
+    print("Adjacency matrix(flattened matrix of original shape "+str(nodes)+"x"+str(nodes)+\
+          ") (nodes x nodes):\n",adjacency_matrix)
+    # edge features
+    edge_attributes = observation[end_2:]
+    print("Edge_attributes(flattened matrix of original shape "+str(nodes**2)+"x"+str(e_feats)+\
+          ") (number of edges x edge attributes):\n",edge_attributes)
+  
+
+def explain_node_attributes():
+  text = "     'x': x-coordinate in world\n \
+    'y': y-coordinate in world\n \
+    'theta': orientation of agent\n \
+    'vel': velocity of agent in direction of orientation\n \
+    'goal_x': x-coordinate of goal\n \
+    'goal_y': y-coordinate of goal\n \
+    'goal_dx': distance in x-coordinate from agent to goal\n \
+    'goal_dy': distance in y-coordinate from agent to goal\n \
+    'goal_theta': difference between goal orientation and agent orientation\n \
+    'goal_d': distance to goal (straight line)\n \
+    'goal_vel': velocity, the agent should have when reaching goal"
+  return text
+
+def explain_edge_attributes():
+  text = "     'dx': difference in x-coordinate between two agents\n \
+    'dy': difference in y-coordinate between two agents\n \
+    'dvel': difference in velocity between two agents\n \
+    'dtheta': difference in orientation between two agents"
+  return text
+
+def configurable_setup(params, num_scenarios, graph_sac=True):
+  """Configurable GNN setup depending on a given filename
+
+  Args:
+    params: ParameterServer instance
+
+  Returns: 
+    observer: GraphObserver instance
+    actor: ActorNetwork of BehaviorGraphSACAgent
+  """
+  observer = GraphObserver(params=params)
+  bp = ContinuousHighwayBlueprint(params,
+                                  number_of_senarios=num_scenarios,
+                                  random_seed=0)
+  env = SingleAgentRuntime(blueprint=bp, observer=observer,
+                            render=False)
+  if graph_sac:
+    # Get GNN SAC actor net
+    sac_agent = BehaviorGraphSACAgent(environment=env, observer=observer,
+                                      params=params)
+  else:
+    sac_agent = BehaviorSACAgent(environment=env, params=params)
+
+  actor = sac_agent._agent._actor_network
+  return observer, actor
+
+def benchmark_actor(actor, dataset, epochs, log_dir=None):
+  """Benchmarks an actor on a dataset"""
+  train_dataset = dataset._train_dataset
+  test_dataset = dataset._test_dataset
+  learner = Learner(actor, train_dataset, test_dataset,
+                    log_dir=log_dir)
+  if (actor.__class__==ConstantActorNet) or \
+        (actor.__class__==RandomActorNet):
+    mode = "Number"
+    only_test = True
+  else:
+    mode = "Distribution"
+    only_test = False
+
+  loss = learner.train(epochs=epochs, only_test=only_test, mode=mode)
+  return loss
 
 def set_notebook_log_level(level):
   for name in logging.root.manager.loggerDict:
@@ -40,15 +138,18 @@ def visualize_graph(data_point, ax, visible_distance, normalization_ref):
   # Draw ellipse for visibility range of ego agent
   width = 4*visible_distance/normalization_ref["dx"][1]
   height = 4*visible_distance/normalization_ref["dy"][1]
-  ellipse = Ellipse(pos[0], width=width,height=height, facecolor='yellow', zorder=-1)#,**kwargs)
+  ellipse = Ellipse(pos[0], width=width,height=height, facecolor='yellow',
+                    zorder=-1)#,**kwargs)
   ax.add_patch(ellipse)
-  goal_ellipse = Ellipse(goal[0], width= 0.2, height=0.2, facecolor="green", zorder=-2)
+  goal_ellipse = Ellipse(goal[0], width= 0.2, height=0.2, facecolor="green",
+                         zorder=-2)
   ax.add_patch(goal_ellipse)
 
   # Change color for ego agent
   node_colors = ["blue" for i in range(len(graph.nodes))]
   node_colors[0] = "red"
-  return nx.draw(graph, pos = pos, with_labels=True, ax=ax, node_color=node_colors)
+  return nx.draw(graph, pos = pos, with_labels=True, ax=ax,
+                 node_color=node_colors)
 
 def get_default_gnn_params():
   return GNN.get_default_hyperparameters()
