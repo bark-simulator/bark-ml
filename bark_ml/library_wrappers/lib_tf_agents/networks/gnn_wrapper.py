@@ -16,7 +16,7 @@ class GNNWrapper(tf.keras.Model):
   of the configured GNN library.
   """
 
-  class SupportedLibrary(Enum):
+  class SupportedLibrary(str, Enum):
     """
     Enumeration of the currently supported GNN libraries.
     """
