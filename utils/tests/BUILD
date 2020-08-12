@@ -1,6 +1,6 @@
 py_test(
-  name = "test_generate_launch_configuration",
-  srcs = ["test_generate_launch_configuration.py"],
+  name = "generate_launch_configuration_test",
+  srcs = ["generate_launch_configuration_test.py"],
   deps = ["//utils/python:generate_launch_configuration"],
   imports = ["../python/"],
   visibility = ["//visibility:public"],

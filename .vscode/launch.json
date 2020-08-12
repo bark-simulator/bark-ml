@@ -159,13 +159,13 @@
 			}
 		},
 		{
-			"name": "Python: utils/tests/test_generate_launch_configuration",
+			"name": "Python: utils/tests/generate_launch_configuration_test",
 			"type": "python",
 			"request": "launch",
-			"program": "${workspaceFolder}/utils/tests/test_generate_launch_configuration.py",
+			"program": "${workspaceFolder}/utils/tests/generate_launch_configuration_test.py",
 			"console": "integratedTerminal",
 			"env": {
-				"PYTHONPATH": "${workspaceFolder}/bazel-bin/utils/tests/test_generate_launch_configuration.runfiles/bark_ml/utils/python:"
+				"PYTHONPATH": "${workspaceFolder}/bazel-bin/utils/tests/generate_launch_configuration_test.runfiles/bark_ml/utils/python:"
 			}
 		},   
 		{
