@@ -16,6 +16,7 @@
 #include <map>
 #include <functional>
 #include <Eigen/Dense>
+#include <iostream>
 
 #include "bark/commons/params/params.hpp"
 #include "bark/world/world.hpp"
@@ -66,6 +67,7 @@ class NearestObserver : public BaseObserver {
       max_dist_ = params->GetReal("ML::NearestObserver::MaxDist", "", 75.0);
       state_size_ = params->GetInt("ML::NearestObserver::StateSize", "", 4);
       observation_len_ = nearest_agent_num_ * state_size_;
+      normalization_enabled_ = params->GetBool("ML::NearestObserver::NormalizationEnabled", "", true);
   }
 
   float Norm(const float val, const float mi, const float ma) const {
@@ -75,10 +77,22 @@ class NearestObserver : public BaseObserver {
   ObservedState FilterState(const State& state) const {
     ObservedState ret_state(1, state_size_);
     const float normalized_angle = Norm0To2PI(state(THETA_POSITION));
-    ret_state << Norm(state(X_POSITION), min_x_, max_x_),
+
+    if(normalization_enabled_){
+      // std::cout << "X: " << min_x_ << "/" << max_x_ << std::endl;
+      // std::cout << "Y: " << min_y_ << "/" << max_y_ << std::endl;
+      // std::cout << "Theta: " << min_theta_ << "/" << max_theta_ << std::endl;
+      // std::cout << "Velo: " << min_vel_ << "/" << max_vel_ << std::endl;
+      ret_state << Norm(state(X_POSITION), min_x_, max_x_),
                  Norm(state(Y_POSITION), min_y_, max_y_),
                  Norm(normalized_angle, min_theta_, max_theta_),
                  Norm(state(VEL_POSITION), min_vel_, max_vel_);
+    } else {
+      ret_state << state(X_POSITION),
+                  state(Y_POSITION),
+                  normalized_angle,
+                  state(VEL_POSITION);
+    }
     return ret_state;
   }
 
@@ -136,10 +150,12 @@ class NearestObserver : public BaseObserver {
     Matrix_t<float> high(1, observation_len_);
     high.setOnes();
     std::tuple<int> shape{observation_len_};
+    // std::cout << "Observation Space requested" << std::endl;
     return Box<float>(low, high, shape);
   }
 
  private:
+  bool normalization_enabled_;
   int state_size_, nearest_agent_num_, observation_len_;
   float min_theta_, max_theta_, min_vel_, max_vel_, max_dist_,
          min_x_, max_x_, min_y_, max_y_;

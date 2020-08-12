@@ -54,3 +54,10 @@ cc_library(
     remote = "https://github.com/GAIL-4-BARK/tf2rl",
     build_file="//:utils/tf2rl.BUILD"
   )
+
+  _maybe(
+    git_repository,
+    name = "com_github_gail_4_bark_large_data_store",
+    branch = "master",
+    remote = "https://github.com/GAIL-4-BARK/large_data_store",
+  )

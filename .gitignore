@@ -169,6 +169,7 @@ tests/data/database_maps_DR_DEU_Merging_MT_shifted.xodr
 *.p
 
 **/expert_trajectories/**
+**/expert_trajectories.bak/**
 **.jblb
 **/logs/**
 
@@ -180,6 +181,8 @@ bark_ml/tests/py_library_tf2rl_tests/gail_data/models/*
 /summaries/**
 start_multiple_**.sh
 pretrained_agents**
-!pretrained_agents.tar.xz
 *.txt
 examples/marvin/**
+examples/gail_training/**
+**large_data_store**
+

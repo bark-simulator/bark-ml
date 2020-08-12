@@ -6,6 +6,7 @@ py_test(
         "//bark_ml/tests/py_library_tf2rl_tests/data:generate_expert_trajectories_tests_data",
         "@bark_project//bark/python_wrapper:core.so",
         "//bark_ml/tests/py_library_tf2rl_tests/gail_data",
+        "//bark_ml/observers",
         ],
     imports = ["../../external/bark_project/bark/python_wrapper/"],
     deps = [
@@ -15,6 +16,43 @@ py_test(
             ],
     visibility = ["//visibility:public"],
     size = "small"
+)
+
+py_test(
+    name = "normalize_on_merging_blueprint_tests",
+    srcs = [ "normalize_on_merging_blueprint_tests.py"],
+    data = [ 
+        "//bark_ml/tests/py_library_tf2rl_tests/gail_data",
+        ],
+    imports = ["../../external/bark_project/bark/python_wrapper/"],
+    deps = [
+            "generate_sac_trajectory_tests_base",
+            "@com_github_keiohta_tf2rl",
+            "//bark_ml/library_wrappers/lib_tf2rl",
+            ],
+    visibility = ["//visibility:public"],
+    size = "small"
+)
+
+py_library(
+    name = "generate_sac_trajectory_tests_base",
+    srcs = [ "generate_sac_trajectory_tests_base.py"],
+    data = [ 
+        "//bark_ml/tests/py_library_tf2rl_tests/data:generate_expert_trajectories_tests_data",
+        "@bark_project//bark/python_wrapper:core.so",
+        "@com_github_gail_4_bark_large_data_store",
+        ],
+    imports = ["../../external/bark_project/bark/python_wrapper/"],
+    deps = [
+            "//bark_ml/library_wrappers/lib_tf2rl:load_expert_trajectories",
+            "@bark_project//bark/runtime:runtime",
+            "//bark_ml/environments:single_agent_runtime",
+            "//bark_ml/environments:blueprints",
+            "//bark_ml/library_wrappers/lib_tf_agents/runners",
+            "//bark_ml/library_wrappers/lib_tf_agents/agents",
+            "//bark_ml/library_wrappers/lib_tf_agents:tfa_wrapper",
+            ],
+    visibility = ["//visibility:public"],
 )
 
 py_test(
@@ -58,24 +96,39 @@ py_test(
 )
 
 py_test(
+    name = "calculate_action_tests",
+    srcs = ["calculate_action_tests.py"],
+    imports = ["../../../external/bark_project/bark/python_wrapper/"],
+    deps = [
+            "generate_sac_trajectory_tests_base",
+            "//bark_ml/library_wrappers/lib_tf2rl:lib_tf2rl",
+        ],
+    data = [
+            "//bark_ml/tests/py_library_tf2rl_tests/data:generate_expert_trajectories_tests_data"
+        ],
+    visibility = ["//visibility:public"],
+    size = "small"
+)
+
+py_test(
     name = "simulation_based_tests",
     srcs = ["simulation_based_tests.py"],
     deps = [
             "//bark_ml/tests/py_library_tf2rl_tests:base_tests",
         ],
     visibility = ["//visibility:public"],
-    size = "small"
+    size = "small",
 )
 
-# Only run with bazel run //bark_ml/tests/py_library_tf2rl_tests:rendered_tests
-py_test(
+# Only run with 
+py_binary(
     name = "rendered_tests",
     srcs = ["rendered_tests.py"],
     deps = [
             "//bark_ml/tests/py_library_tf2rl_tests:simulation_based_tests",
         ],
     visibility = ["//visibility:public"],
-    size = "small"
+    testonly = True
 )
 
 py_test(

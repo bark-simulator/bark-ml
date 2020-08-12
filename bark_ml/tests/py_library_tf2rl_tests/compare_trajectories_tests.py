@@ -94,7 +94,7 @@ class CompareTrajectoriesTest(unittest.TestCase):
         self.assertAlmostEqual(distances['acts'], math.sqrt(32))
 
 
-class CalculateMeanactionTests(unittest.TestCase):
+class CalculateMeanActionTests(unittest.TestCase):
     """Tests for the calculate_mean_action function
     """
 
