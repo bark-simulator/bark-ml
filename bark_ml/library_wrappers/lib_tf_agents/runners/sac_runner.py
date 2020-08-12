@@ -33,19 +33,24 @@ class SACRunner(TFARunner):
 
   def _train(self):
     iterator = iter(self._agent._dataset)
-    for _ in range(0, self._params["ML"]["SACRunner"]["NumberOfCollections", "", 1000000]):
+    for _ in range(
+            0, self._params["ML"]["SACRunner"]
+            ["NumberOfCollections", "", 1000000]):
       self._agent._training = True
       global_iteration = self._agent._agent._train_step_counter.numpy()
       self._collection_driver.run()
       experience, _ = next(iterator)
       self._agent._agent.train(experience)
-      if global_iteration % self._params["ML"]["SACRunner"]["EvaluateEveryNSteps", "", 100] == 0:
+      if global_iteration % self._params["ML"]["SACRunner"][
+              "EvaluateEveryNSteps", "", 100] == 0:
         self.Evaluate()
         self._agent.Save()
+
 
 class SACRunnerGenerator(SACRunner):
   """SAC Runner extension to generate expert trajectories
   """
+
   def __init__(self,
                environment=None,
                agent=None,
@@ -55,7 +60,7 @@ class SACRunnerGenerator(SACRunner):
                        environment=environment,
                        agent=agent,
                        params=params)
-    
+
     local_params = self._params
     local_params["ML"]["NearestObserver"]["NormalizationEnabled"] = False
     self.observer_not_normalized = NearestObserver(local_params)
@@ -67,7 +72,8 @@ class SACRunnerGenerator(SACRunner):
     observed_world = self._environment._world.Observe([eval_id])[0]
     return self.observer_not_normalized.Observe(observed_world)
 
-  def GenerateExpertTrajectories(self, num_trajectories: int = 1000, render: bool = False) -> dict:
+  def GenerateExpertTrajectories(
+          self, num_trajectories: int = 1000, render: bool = False) -> dict:
     """Generates expert trajectories based on a tfa agent.
 
     Args:
@@ -96,12 +102,14 @@ class SACRunnerGenerator(SACRunner):
       is_terminal = False
 
       while not is_terminal:
-        action_step = self._agent._eval_policy.action(ts.transition(state, reward=0.0, discount=1.0))
+        action_step = self._agent._eval_policy.action(
+          ts.transition(state, reward=0.0, discount=1.0))
 
-        state, reward, is_terminal, info = self._environment.step(action_step.action.numpy())
+        state, reward, is_terminal, info = self._environment.step(
+            action_step.action.numpy())
         if not info:
           break
-        
+
         state_not_norm = self.GetStateNotNormalized()
         expert_trajectories['obs_norm'].append(state)
         expert_trajectories['obs'].append(state_not_norm)
@@ -112,11 +120,17 @@ class SACRunnerGenerator(SACRunner):
 
       if info and info['goal_reached']:
         expert_trajectories['act'].append(expert_trajectories['act'][-1])
-        assert len(expert_trajectories['obs_norm']) == len(expert_trajectories['act'])
-        assert len(expert_trajectories['obs']) == len(expert_trajectories['act'])
+        assert len(
+            expert_trajectories['obs_norm']) == len(
+            expert_trajectories['act'])
+        assert len(
+            expert_trajectories['obs']) == len(
+            expert_trajectories['act'])
 
-        per_scenario_expert_trajectories[len(per_scenario_expert_trajectories)] = expert_trajectories
-        print(f'Generated {len(per_scenario_expert_trajectories)}/{num_trajectories} expert trajectories.')
+        per_scenario_expert_trajectories[len(
+          per_scenario_expert_trajectories)] = expert_trajectories
+        print(
+          f'Generated {len(per_scenario_expert_trajectories)}/{num_trajectories} expert trajectories.')
       else:
         print('Expert trajectory invalid. Skipping.')
 
