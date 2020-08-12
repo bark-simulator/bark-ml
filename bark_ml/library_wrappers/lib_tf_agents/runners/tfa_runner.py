@@ -2,7 +2,6 @@ import sys
 import logging
 import time
 import tensorflow as tf
-import numpy as np
 tf.compat.v1.enable_v2_behavior()
 
 # BARK imports
@@ -113,6 +112,6 @@ class TFARunner:
       state = self._environment.reset()
       is_terminal = False
       while not is_terminal:
-        action_step = self._agent._eval_policy.action(ts.transition(np.array([state]), reward=0.0, discount=1.0))
+        action_step = self._agent._eval_policy.action(ts.transition(state, reward=0.0, discount=1.0))
         state, reward, is_terminal, _ = self._environment.step(action_step.action.numpy())
         self._environment.render()

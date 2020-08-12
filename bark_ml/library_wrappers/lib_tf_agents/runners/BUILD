@@ -3,7 +3,7 @@ py_library(
     srcs = ["__init__.py",
             "tfa_runner.py",
             "ppo_runner.py",
-            "cdqn_runner.py"
+            "cdqn_runner.py",
             "sac_runner.py"],
     visibility = ["//visibility:public"],
 )

@@ -38,9 +38,8 @@ class CDQNRunner(TFARunner):
     return q_values
 
   def _train(self):
-
     self.q_model = self._agent._agent._q_network
-    num_state_dims = np.shape(self._wrapped_env._observation_spec)[1]
+    num_state_dims = np.shape(self._wrapped_env._observation_spec)[0]
     inference = self._inference.get_concrete_function(input=tf.TensorSpec([1, num_state_dims], tf.float32))
 
     iterator = iter(self._agent._dataset)
@@ -52,5 +51,5 @@ class CDQNRunner(TFARunner):
       self._agent._agent.train(experience)
       if global_iteration % self._params["ML"]["CDQNRunner"]["EvaluateEveryNSteps", "", 100] == 0:
         self.Evaluate()
-        self.q_model.save(self._params["ML"]["TFARunner"]["ModelPath"], save_format='tf', include_optimizer=False, signatures=inference)
+        tf.saved_model.save(self.q_model, self._params["ML"]["TFARunner"]["ModelPath"], signatures=inference)
         self._agent.Save()
