@@ -1,25 +1,19 @@
+from bark_ml.library_wrappers.lib_tf2rl.tf2rl_wrapper import TF2RLWrapper  # needed?
+import tf2rl
+from bark.core.models.behavior import BehaviorModel
 import sys
 import logging
 import time
 import tensorflow as tf
 tf.compat.v1.enable_v2_behavior()
 
-# BARK imports
-from bark.core.models.behavior import BehaviorModel
-
-# tf2rl imports
-import tf2rl
-
-# BARK-ML imports
-from bark_ml.library_wrappers.lib_tf2rl.tf2rl_wrapper import TF2RLWrapper # needed?
-
 
 class BehaviorTF2RLAgent:
   """Base class for agents based on the tf2rl library."""
 
   def __init__(self,
-                environment=None,
-                params=None):
+               environment=None,
+               params=None):
     """constructor
 
     Args:
@@ -31,33 +25,24 @@ class BehaviorTF2RLAgent:
     self._training = False
     pass
 
-
   def Reset(self):
     """agent specific implemetation"""
     pass
-
 
   def Act(self, state):
     """agent specific implemetation"""
     pass
 
-
   def Plan(self, observed_world, dt):
     """agent specific implemetation"""
     pass
-
 
   def Save(self):
     """Placeholder
     """
     pass
 
-
   def Load(self):
     """Placeholder
     """
     pass
-
-
-
-

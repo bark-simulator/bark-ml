@@ -100,10 +100,8 @@
     "scoped_allocator": "cpp",
     "shared_mutex": "cpp"
   },
-  "workbench.colorCustomizations": {
-    "activityBar.background": "#581036",
-    "titleBar.activeBackground": "#7B164C",
-    "titleBar.activeForeground": "#FEFCFD"
-  },
   "python.pythonPath": "bark_ml/python_wrapper/venv/bin/python",
+  "python.linting.pylintEnabled": true,
+  "python.linting.enabled": true,
+  "python.formatting.autopep8Args": ["--experimental", "--ignore", "E121", "--indent-size", "2"],
 }
