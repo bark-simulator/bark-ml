@@ -22,7 +22,7 @@ from bark.runtime.viewer.video_renderer import VideoRenderer
 
 # BARK-ML imports
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
-  ContinuousMergingBlueprint, ContinuousIntersectionBlueprint, DiscreteHighwayBlueprint
+  ContinuousMergingBlueprint, ContinuousIntersectionBlueprint, DiscreteMergingBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, BehaviorPPOAgent, BehaviorCDQNAgent
 from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner, CDQNRunner
@@ -47,7 +47,7 @@ def run_configuration(argv):
 
   # create environment
   # discrete environment (to use with CDQN)
-  # bp = DiscreteHighwayBlueprint(params,
+  # bp = DiscreteMergingBlueprint(params,
   #                              number_of_senarios=2500,
   #                              random_seed=0)
 

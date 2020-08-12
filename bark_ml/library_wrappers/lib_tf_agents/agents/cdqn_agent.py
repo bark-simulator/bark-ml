@@ -36,7 +36,7 @@ class BehaviorCDQNAgent(BehaviorTFAAgent, BehaviorDiscreteML):
       env.action_spec(),
       num_atoms=self._params["ML"]["BehaviorCDQNAgent"]["NumAtoms", "", 51],
       fc_layer_params=tuple(
-        self._params["ML"]["BehaviorCDQNAgent"]["CategoricalFcLayerParams", "", [300, 300, 300]]))
+        self._params["ML"]["BehaviorCDQNAgent"]["CategoricalFcLayerParams", "", [512, 256, 256]]))
     
     # agent
     tf_agent = categorical_dqn_agent.CategoricalDqnAgent(
@@ -45,12 +45,12 @@ class BehaviorCDQNAgent(BehaviorTFAAgent, BehaviorDiscreteML):
       categorical_q_network=categorical_q_net,
       optimizer=tf.compat.v1.train.AdamOptimizer(
           learning_rate=self._params["ML"]["BehaviorCDQNAgent"]["LearningRate", "", 5e-5]),
-      min_q_value=self._params["ML"]["BehaviorCDQNAgent"]["MinQValue", "", -10],
-      max_q_value=self._params["ML"]["BehaviorCDQNAgent"]["MaxQValue", "", 10],
+      min_q_value=self._params["ML"]["BehaviorCDQNAgent"]["MinQValue", "", -5],
+      max_q_value=self._params["ML"]["BehaviorCDQNAgent"]["MaxQValue", "", 5],
       epsilon_greedy=self._params["ML"]["BehaviorCDQNAgent"]["EpsilonGreedy", "", 0.3],
       n_step_update=self._params["ML"]["BehaviorCDQNAgent"]["nStepUpdate", "", 2],
-      target_update_tau=self._params["ML"]["BehaviorCDQNAgent"]["TargetUpdateTau", "", 0.01],
-      target_update_period=self._params["ML"]["BehaviorCDQNAgent"]["TargetUpdatePeriod", "", 1],
+      target_update_tau=self._params["ML"]["BehaviorCDQNAgent"]["TargetUpdateTau", "", 0.05],
+      target_update_period=self._params["ML"]["BehaviorCDQNAgent"]["TargetUpdatePeriod", "", 3],
       td_errors_loss_fn=common.element_wise_squared_loss,
       gamma=self._params["ML"]["BehaviorCDQNAgent"]["Gamma", "", 0.995],
       reward_scale_factor=self._params["ML"]["BehaviorCDQNAgent"]["RewardScaleFactor", "", 1.],
