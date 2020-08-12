@@ -5,13 +5,12 @@
 # https://opensource.org/licenses/MIT
 
 import os
+import shutil
 import joblib
 import unittest
-import numpy as np
-from bark_ml.library_wrappers.lib_tf2rl.load_expert_trajectories import *
-from bark_ml.library_wrappers.lib_tf2rl.load_save_utils import *
 from pathlib import Path
-import shutil
+from bark_ml.library_wrappers.lib_tf2rl.load_expert_trajectories import load_expert_trajectories
+from bark_ml.library_wrappers.lib_tf2rl.load_save_utils import list_files_in_dir
 
 # BARK imports
 from bark_project.bark.runtime.commons.parameters import ParameterServer

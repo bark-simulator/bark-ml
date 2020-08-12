@@ -4,10 +4,8 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-import os
 import joblib
 import unittest
-from pathlib import Path
 
 # BARK imports
 from bark_project.bark.runtime.commons.parameters import ParameterServer
