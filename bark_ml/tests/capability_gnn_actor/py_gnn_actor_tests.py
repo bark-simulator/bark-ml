@@ -124,41 +124,6 @@ class PyGNNActorTests(unittest.TestCase):
 
     self.assertLess(avg_train_loss_gnn, avg_train_loss_random)
     self.assertLess(avg_train_loss_gnn, avg_train_loss_constant)
-
-
-  """def test_benchmark_with_normal_SAC(self):
-    dataset = SupervisedData(self._observer, self._params,
-                             data_path=self._data_path,
-                             batch_size=self._batch_size,
-                             train_split=self._train_split,
-                             num_scenarios=self._num_scenarios)
-    self._train_dataset = dataset._train_dataset
-    self._test_dataset = dataset._test_dataset
-
-    gnn_actor = self.gnn_actor
-    sac_actor = self.sac_actor
-    random_actor = RandomActorNet(low=[0, -0.4], high=[0.1, 0.4])
-    constant_actor = ConstantActorNet(dataset=self._train_dataset)
-
-    actor_nets = [gnn_actor, sac_actor, random_actor, constant_actor]
-    for actor_net in actor_nets:
-      time.sleep(1)
-      learner = Learner(actor_net, self._train_dataset, self._test_dataset,
-                        log_dir=self._log_dir)
-      if (actor_net.__class__ == ConstantActorNet) or \
-            (actor_net.__class__==RandomActorNet):
-        mode = "Number"
-        only_test = True
-      else:
-        mode = "Distribution"
-        only_test = False
-
-      learner.train(epochs=self._epochs, only_test=only_test, mode=mode)
-      #title1 = str(self.actor_net.__class__) + " TRAIN DATASET"
-      #learner.visualize_predictions(self._train_dataset, title=title1, mode=mode)
-      #title2 = str(self.actor_net.__class__) + " TEST DATASET"
-      #learner.visualize_predictions(self._test_dataset, title=title2, mode=mode)"""
-
     
   def _configurable_setup(self, params_filename):
     """Configurable GNN setup depending on a given filename

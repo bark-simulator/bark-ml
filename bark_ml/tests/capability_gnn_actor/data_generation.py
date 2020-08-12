@@ -135,10 +135,7 @@ class DataGenerator():
     norm_data = self._observer.normalization_data
     normalize = self._observer._normalize_observations
     feature_len = self._observer.feature_len
-    #agent_limit = self._observer._agent_limit
-
-    # action_labels = list()
-    #for node_id in range(agent_limit):
+    
     # Extract features of ego node
     node_features = observation[:feature_len]
       

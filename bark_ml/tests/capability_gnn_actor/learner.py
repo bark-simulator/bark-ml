@@ -57,7 +57,7 @@ class Learner:
       self._train_loss.reset_states()
       self._test_loss.reset_states()
 
-      if only_test==False:
+      if not only_test:
         # Start real training cycle
         for inputs, labels in self._train_dataset:
           self._train_step(inputs, labels, model=self._model,
@@ -65,7 +65,7 @@ class Learner:
                            optimizer=self._optimizer,
                            train_loss=self._train_loss, mode=mode)
 
-      elif only_test==True:
+      elif only_test:
         # Only evaluate actor on training set (for constant and random actor)
         for test_inputs, test_labels in self._train_dataset:
           self._test_step(test_inputs, test_labels, model=self._model,
