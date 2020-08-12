@@ -13,26 +13,26 @@ tf.compat.v1.enable_v2_behavior()
 
 
 class BehaviorGAILAgent(BehaviorTF2RLAgent, BehaviorContinuousML):
-    """GAIL agent based on the tf2rl library."""
+  """GAIL agent based on the tf2rl library."""
 
-    def __init__(self,
-                 environment=None,
-                 params=None):
-        """constructor
+  def __init__(self,
+               environment=None,
+               params=None):
+    """constructor
 
-        Args:
-            environment (Runtime, optional): A environment with a gym
-                environment interface. Defaults to None. 
-            params (ParameterServer, optional): The parameter server
-                 holding the settings. Defaults to None.
-        """
-        BehaviorTF2RLAgent.__init__(self,
-                                    environment=environment,
-                                    params=params)
-        BehaviorContinuousML.__init__(self, params)
+    Args:
+        environment (Runtime, optional): A environment with a gym
+            environment interface. Defaults to None. 
+        params (ParameterServer, optional): The parameter server
+             holding the settings. Defaults to None.
+    """
+    BehaviorTF2RLAgent.__init__(self,
+                                environment=environment,
+                                params=params)
+    BehaviorContinuousML.__init__(self, params)
 
-        self.generator = self._get_generator()
-        self.discriminator = self._get_discriminator()
+    self.generator = self._get_generator()
+    self.discriminator = self._get_discriminator()
 
     def _get_generator(self):
         """Returns instantiated policy -
@@ -75,23 +75,23 @@ class BehaviorGAILAgent(BehaviorTF2RLAgent, BehaviorContinuousML):
             gpu=self._params["ML"]["Settings"]["GPUUse", "", 0])
         return irl
 
-    def Reset(self):
-        """Currently ommited due to missing example in SAC
-        """
-        pass
+  def Reset(self):
+    """Currently ommited due to missing example in SAC
+    """
+    pass
 
-    def Act(self, state):
-        """Returns action corresponding to state
-        """
-        return self.generator.get_action(state)
+  def Act(self, state):
+    """Returns action corresponding to state
+    """
+    return self.generator.get_action(state)
 
-    def Plan(self, observed_world, dt):
-        """Currently ommited due to missing example in SAC
-        """
-        pass
+  def Plan(self, observed_world, dt):
+    """Currently ommited due to missing example in SAC
+    """
+    pass
 
-    @property
-    def action_space(self):
-        """Attribute additionally needed
-        """
-        return self._environment.action_space
+  @property
+  def action_space(self):
+    """Attribute additionally needed
+    """
+    return self._environment.action_space

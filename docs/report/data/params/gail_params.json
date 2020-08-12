@@ -91,7 +91,7 @@
                 "use_prioritized_rb": false,
                 "use_nstep_rb": false,
                 "n_step": 4,
-                "evaluate": false,
+                "evaluate": true,
                 "test_interval": 100,
                 "show_test_progress": false,
                 "test_episodes": 20,
