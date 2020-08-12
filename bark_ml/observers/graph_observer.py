@@ -345,7 +345,6 @@ class GraphObserver(StateObserver):
         "parameter is not supported by the current BARK-ML environment.")
     
     # remove disabled attributes
-    # TODO: find an elegant way to not compute those in the first place.
     res = {key: res[key] for key in self.enabled_node_attribute_keys}
     assert list(res.keys()) == self.enabled_node_attribute_keys
 
