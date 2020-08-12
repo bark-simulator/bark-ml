@@ -37,7 +37,7 @@ class PyGNNWrapperTests(unittest.TestCase):
       self.assertEqual(gnn._params["MpLayerNumUnits"], 64)
       self.assertEqual(gnn._params["message_calculation_class"], "gnn_edge_mlp")
       self.assertEqual(gnn._params["global_exchange_mode"], "mean")
-      self.assertEqual(gnn._params["library"], gnn_library)
+      self.assertEqual(gnn._params["Library"], gnn_library)
 
 
   def _test_graph_dim_validation_accepts_observer_dims(self):
