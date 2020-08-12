@@ -67,9 +67,9 @@ class GNNWrapper(tf.keras.Model):
       GNNWrapper.SupportedLibrary.spektral]
 
     logging.info(
-      f'Initializing GNN with `{lib}` for input graphs with ' +
+      f'GNN configured with `{lib}` for input graphs with ' +
       f'{graph_dims[0]} nodes, {graph_dims[1]} node features, ' + 
-      f'and {graph_dims[1]} edge features.')
+      f'and {graph_dims[2]} edge features.')
     
     if lib in [GNNWrapper.SupportedLibrary.spektral, "spektral"]:
       self._init_spektral_layers(params.ConvertToDict())
@@ -161,6 +161,3 @@ class GNNWrapper(tf.keras.Model):
     output = tf.reshape(flat_output, [batch_size, -1, self.num_units])
 
     return output
-      
-  def reset(self):
-    self._gnn.reset()

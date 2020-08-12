@@ -54,7 +54,7 @@ def run_configuration(argv):
   #  fig_path="/home/silvan/working_bark/training/video/")
 
   # create environment
-  bp = ContinuousMergingBlueprint(params,
+  bp = ContinuousHighwayBlueprint(params,
                                   number_of_senarios=2500,
                                   random_seed=0)
 
