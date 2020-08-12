@@ -58,7 +58,7 @@ def run_configuration(argv):
   #viewer = VideoRenderer(
   #  renderer=viewer,
   #  world_step_time=0.2,
-  #  fig_path="/home/silvan/working_bark/training/video/")
+  #  fig_path="/your_path_here/training/video/")
 
   # create environment
   bp = ContinuousHighwayBlueprint(params,
