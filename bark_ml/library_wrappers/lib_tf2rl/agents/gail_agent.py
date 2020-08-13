@@ -34,46 +34,46 @@ class BehaviorGAILAgent(BehaviorTF2RLAgent, BehaviorContinuousML):
     self.generator = self._get_generator()
     self.discriminator = self._get_discriminator()
 
-    def _get_generator(self):
-        """Returns instantiated policy -
-        parameters from ./examples/example_params/gail_params.json
-        """
-        generator_params = self._params["ML"]["BehaviorGAILAgent"]["Generator"]
+  def _get_generator(self):
+    """Returns instantiated policy -
+    parameters from ./examples/example_params/gail_params.json
+    """
+    generator_params = self._params["ML"]["BehaviorGAILAgent"]["Generator"]
 
-        policy = DDPG(
-            state_shape=self._environment.observation_space.shape,
-            action_dim=self._environment.action_space.high.size,
-            max_action=self._environment.action_space.high,
-            lr_actor=generator_params["LearningRateActor", "", 0.001],
-            lr_critic=generator_params["LearningRateCritic", "", 0.001],
-            actor_units=generator_params["ActorFcLayerParams", "", [
-                400, 300]],
-            critic_units=generator_params["CriticJointFcLayerParams", "", [
-                400, 300]],
-            sigma=generator_params["Sigma", "", 0.1],
-            tau=generator_params["Tau", "", 0.005],
-            n_warmup=generator_params["WarmUp", "", 1000],
-            batch_size=generator_params["BatchSize", "", 100],
-            gpu=self._params["ML"]["Settings"]["GPUUse", "", 0])
-        return policy
+    policy = DDPG(
+        state_shape=self._environment.observation_space.shape,
+        action_dim=self._environment.action_space.high.size,
+        max_action=self._environment.action_space.high,
+        lr_actor=generator_params["LearningRateActor", "", 0.001],
+        lr_critic=generator_params["LearningRateCritic", "", 0.001],
+        actor_units=generator_params["ActorFcLayerParams", "", [
+            400, 300]],
+        critic_units=generator_params["CriticJointFcLayerParams", "", [
+            400, 300]],
+        sigma=generator_params["Sigma", "", 0.1],
+        tau=generator_params["Tau", "", 0.005],
+        n_warmup=generator_params["WarmUp", "", 1000],
+        batch_size=generator_params["BatchSize", "", 100],
+        gpu=self._params["ML"]["Settings"]["GPUUse", "", 0])
+    return policy
 
-    def _get_discriminator(self):
-        """Returns instantiated discriminator network -
-        parameters from ./examples/example_params/gail_params.json
-        """
-        local_params = self._params["ML"]["BehaviorGAILAgent"]
-        discriminator_params = local_params["Discriminator"]
+  def _get_discriminator(self):
+    """Returns instantiated discriminator network -
+    parameters from ./examples/example_params/gail_params.json
+    """
+    local_params = self._params["ML"]["BehaviorGAILAgent"]
+    discriminator_params = local_params["Discriminator"]
 
-        irl = GAIL(
-            state_shape=self._environment.observation_space.shape,
-            action_dim=self._environment.action_space.high.size,
-            units=discriminator_params["FcLayerParams", "", [
-                400, 300]],
-            lr=discriminator_params["LearningRate", "", 0.001],
-            enable_sn=local_params["EnableSN", "", False],
-            batch_size=discriminator_params["BatchSize", "", 32],
-            gpu=self._params["ML"]["Settings"]["GPUUse", "", 0])
-        return irl
+    irl = GAIL(
+        state_shape=self._environment.observation_space.shape,
+        action_dim=self._environment.action_space.high.size,
+        units=discriminator_params["FcLayerParams", "", [
+            400, 300]],
+        lr=discriminator_params["LearningRate", "", 0.001],
+        enable_sn=local_params["EnableSN", "", False],
+        batch_size=discriminator_params["BatchSize", "", 32],
+        gpu=self._params["ML"]["Settings"]["GPUUse", "", 0])
+    return irl
 
   def Reset(self):
     """Currently ommited due to missing example in SAC
