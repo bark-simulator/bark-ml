@@ -8,6 +8,7 @@ import networkx as nx
 import tensorflow as tf
 import datetime
 import logging
+import shutil
 from collections import OrderedDict
 from matplotlib.patches import Ellipse
 from tf2_gnn.layers import GNN, GNNInput
@@ -35,6 +36,11 @@ from bark_ml.tests.capability_gnn_actor.data_generation import DataGenerator
 from bark_ml.tests.capability_gnn_actor.data_handler import SupervisedData
 from bark_ml.tests.capability_gnn_actor.learner import Learner
 
+def clean_log_dir(log_dir):
+  if os.path.exists(log_dir):
+    [shutil.rmtree(os.path.join(log_dir,log)) for log in os.listdir(log_dir)]
+  logging.info("Log dir is clean!")
+
 def explain_observation(observation, graph_dims):
     observation = observation.numpy()
     nodes, n_feats, e_feats = graph_dims
@@ -52,28 +58,6 @@ def explain_observation(observation, graph_dims):
     edge_attributes = observation[end_2:]
     print("Edge_attributes(flattened matrix of original shape "+str(nodes**2)+"x"+str(e_feats)+\
           ") (number of edges x edge attributes):\n",edge_attributes)
-  
-
-def explain_node_attributes():
-  text = "     'x': x-coordinate in world\n \
-    'y': y-coordinate in world\n \
-    'theta': orientation of agent\n \
-    'vel': velocity of agent in direction of orientation\n \
-    'goal_x': x-coordinate of goal\n \
-    'goal_y': y-coordinate of goal\n \
-    'goal_dx': distance in x-coordinate from agent to goal\n \
-    'goal_dy': distance in y-coordinate from agent to goal\n \
-    'goal_theta': difference between goal orientation and agent orientation\n \
-    'goal_d': distance to goal (straight line)\n \
-    'goal_vel': velocity, the agent should have when reaching goal"
-  return text
-
-def explain_edge_attributes():
-  text = "     'dx': difference in x-coordinate between two agents\n \
-    'dy': difference in y-coordinate between two agents\n \
-    'dvel': difference in velocity between two agents\n \
-    'dtheta': difference in orientation between two agents"
-  return text
 
 def configurable_setup(params, num_scenarios, graph_sac=True):
   """Configurable GNN setup depending on a given filename
@@ -117,10 +101,6 @@ def benchmark_actor(actor, dataset, epochs, log_dir=None):
 
   loss = learner.train(epochs=epochs, only_test=only_test, mode=mode)
   return loss
-
-def set_notebook_log_level(level):
-  for name in logging.root.manager.loggerDict:
-    logging.getLogger(name).setLevel(level)
 
 def visualize_graph(data_point, ax, visible_distance, normalization_ref):
   # Transform to nx.Graph
@@ -212,3 +192,18 @@ def summarize_agent(agent):
   
   print("------------------------------------------")
   print('{:<32} {:,}'.format("Total parameters", total_params).replace(',','.'))
+
+
+def run_rl_example(env, agent, params, mode="visualize"):
+  env.ml_behavior = agent
+  runner = SACRunner(params=params,
+                     environment=env,
+                     agent=agent)
+
+  if mode == "train":
+    runner.SetupSummaryWriter()
+    runner.Train()
+  elif mode == "visualize":
+    runner.Visualize(5)
+  elif mode == "evaluate":
+    runner.Evaluate()

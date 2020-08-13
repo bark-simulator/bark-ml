@@ -34,14 +34,14 @@
             "MaxNumAgents": 2
         },
         "BehaviorTFAAgents": {
-            "CheckpointPath": "/home/silvan/working_bark/training/checkpoint",
+            "CheckpointPath": "training/sac_gnn_spektral/checkpoints",
             "NumCheckpointsToKeep": 3
         },
         "TFARunner": {
             "EvaluationSteps": 25,
             "InitialCollectionEpisodes": 50,
             "CollectionEpisodesPerStep": 1,
-            "SummaryPath": "/home/silvan/working_bark/training/summary"
+            "SummaryPath": "training/sac_gnn_spektral/summaries"
         },
         "SACRunner": {
             "EvaluateEveryNSteps": 100,

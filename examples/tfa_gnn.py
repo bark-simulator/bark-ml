@@ -45,9 +45,9 @@ def run_configuration(argv):
   param_filename = "examples/example_params/tfa_sac_gnn_spektral_default.json"
   params = ParameterServer(filename=param_filename)
 
-  # NOTE: Modify these paths in order to save the checkpoints and summaries
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/your_path_here/bark-ml/checkpoints/"
-  params["ML"]["TFARunner"]["SummaryPath"] = "/your_path_here/bark-ml/summaries/"
+  # NOTE: Modify these paths to specify your preferred path for checkpoints and summaries
+  # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "YOUR_PATH"
+  # params["ML"]["TFARunner"]["SummaryPath"] = "YOUR_PATH"
 
   #viewer = MPViewer(
   #  params=params,

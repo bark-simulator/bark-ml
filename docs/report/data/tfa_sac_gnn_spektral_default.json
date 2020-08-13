@@ -33,37 +33,50 @@
             "NormalizationEnabled": true,
             "MaxNumAgents": 2
         },
-        "BehaviorSACAgent": {
+        "BehaviorTFAAgents": {
+            "CheckpointPath": "training/sac_gnn_spektral/checkpoints",
+            "NumCheckpointsToKeep": 3
+        },
+        "TFARunner": {
+            "EvaluationSteps": 25,
+            "InitialCollectionEpisodes": 50,
+            "CollectionEpisodesPerStep": 1,
+            "SummaryPath": "training/sac_gnn_spektral/summaries"
+        },
+        "SACRunner": {
+            "EvaluateEveryNSteps": 100,
+            "NumberOfCollections": 1000000
+        },
+        "GraphObserver": {
+            "AgentLimit": 4,
+            "VisibilityRadius": 50,
+            "SelfLoops": true
+        },
+        "BehaviorGraphSACAgent": {
+            "DebugSummaries": false,
+            "BatchSize": 128,
             "CriticJointFcLayerParams": [
                 128,
                 128
             ],
-            "ActorFcLayerParams": [
+            "CriticObservationFcLayerParams": [
                 128,
-                64
+                128
+            ],
+            "ActorFcLayerParams": [
+                256,
+                128
             ],
             "GNN": {
-                "NumMpLayers": 1,
-                "MpLayerNumUnits": 128,
-                "library": "spektral",
-                "GraphDimensions": [
-                    4,
-                    11,
-                    4
-                ],
-                "message_calculation_class": "rgcn",
-                "global_exchange_mode": "gru",
-                "dense_every_num_layers": 2,
-                "global_exchange_every_num_layers": 2,
-                "num_edge_MLP_hidden_layers": 2,
-                "MPChannels": 128,
-                "KernelNetUnits": [
-                    512,
-                    256
-                ],
-                "MPLayerActivation": "relu",
-                "DenseActication": "tanh"
+                "NumMpLayers": 2,
+                "MpLayersHiddenDim": 80,
+                "Library": "spektral",
+                "EdgeFcLayerParams": [
+                    128,
+                    64
+                ]
             },
+            "CriticActionFcLayerParams": null,
             "ActorLearningRate": 0.0003,
             "CriticLearningRate": 0.0003,
             "AlphaLearningRate": 0.0003,
@@ -72,30 +85,16 @@
             "Gamma": 0.995,
             "RewardScaleFactor": 1.0,
             "AgentName": "gnn_sac_agent",
-            "DebugSummaries": true,
-            "ReplayBufferCapacity": 10000,
             "ParallelBufferCalls": 1,
-            "BatchSize": 128,
             "BufferNumSteps": 2,
             "BufferPrefetch": 3
         },
-        "BehaviorTFAAgents": {
-            "CheckpointPath": "",
-            "NumCheckpointsToKeep": 3
-        },
-        "TFARunner": {
-            "EvaluationSteps": 25,
-            "InitialCollectionEpisodes": 50,
-            "CollectionEpisodesPerStep": 1,
-            "SummaryPath": ""
-        },
-        "SACRunner": {
-            "EvaluateEveryNSteps": 100,
-            "NumberOfCollections": 40000
-        },
-        "GraphObserver": {
-            "AgentLimit": 4,
-            "VisibilityRadius": 50
+        "NearestObserver": {
+            "NNearestAgents": 4,
+            "MinVel": 0.0,
+            "MaxVel": 50.0,
+            "MaxDist": 75.0,
+            "StateSize": 4
         }
     },
     "BehaviorIDMClassic": {
@@ -109,7 +108,7 @@
         "MinVelocity": 0.0,
         "MaxVelocity": 50.0,
         "Exponent": 4,
-        "BrakeForLaneEnd": false,
+        "BrakeForLaneEnd": true,
         "BrakeForLaneEndEnabledDistance": 60.0,
         "BrakeForLaneEndDistanceOffset": 15.0,
         "NumTrajectoryTimePoints": 11,
@@ -197,5 +196,19 @@
                 "Alpha": 1.0
             }
         }
+    },
+    "BehaviorIDMLaneTracking": {
+        "CrosstrackErrorGain": 1.0
+    },
+    "BehaviorLaneChangeRuleBased": {
+        "MinRemainingLaneCorridorDistance": 60.0,
+        "MinVehicleRearDistance": 5.0,
+        "MinVehicleFrontDistance": 5.0,
+        "TimeKeepingGap": 1.0
+    },
+    "BehaviorMobilRuleBased": {
+        "AThr": 0.20000000298023224,
+        "Politeness": 0.5,
+        "SafeDeceleration": 4.0
     }
 }
