@@ -97,18 +97,17 @@ def create_parameter_servers_for_scenarios(
     num_rows = len(df.index)
 
     param_server = ParameterServer()
+    generation_params = ParameterServer()
+
+    generation_params["MapFilename"] = map_file
+    generation_params["TrackFilename"] = track
+    generation_params["TrackIds"] = list(track_ids)
+    generation_params["StartTs"] = start_ts
+    generation_params["EndTs"] = end_ts
+    generation_params["EgoTrackId"] = track_ids[0]
     param_server["Scenario"]["Generation"][
-        "InteractionDatasetScenarioGeneration"]["MapFilename"] = map_file
-    param_server["Scenario"]["Generation"][
-        "InteractionDatasetScenarioGeneration"]["TrackFilename"] = track
-    param_server["Scenario"]["Generation"][
-        "InteractionDatasetScenarioGeneration"]["TrackIds"] = list(track_ids)
-    param_server["Scenario"]["Generation"][
-        "InteractionDatasetScenarioGeneration"]["StartTs"] = start_ts
-    param_server["Scenario"]["Generation"][
-        "InteractionDatasetScenarioGeneration"]["EndTs"] = end_ts
-    param_server["Scenario"]["Generation"][
-        "InteractionDatasetScenarioGeneration"]["EgoTrackId"] = track_ids[0]
+        "InteractionDatasetScenarioGeneration"] = generation_params
+
     map_id = map_file.split("/")[-1].replace(".xodr", "")
     track_id = track.split("/")[-1].replace(".csv", "")
     param_servers[map_id, track_id] = param_server

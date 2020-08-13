@@ -35,12 +35,13 @@ class PyTrainingBARKTests(unittest.TestCase):
             os.path.dirname(__file__),
             "gail_data/params/gail_params_test_env.json"))
 
+    local_params = self.params["ML"]["GAILRunner"]["tf2rl"]
+
     # creating the dirs for logging if they are not present already:
     for key in ['logdir', 'model_dir', 'expert_path_dir']:
-      self.params["ML"]["GAILRunner"]["tf2rl"][key] = os.path.join(
-        Path.home(), self.params["ML"]["GAILRunner"]["tf2rl"][key])
-      if not os.path.exists(self.params["ML"]["GAILRunner"]["tf2rl"][key]):
-        os.makedirs(self.params["ML"]["GAILRunner"]["tf2rl"][key])
+      local_params[key] = os.path.join(Path.home(), local_params[key])
+      if not os.path.exists(local_params[key]):
+        os.makedirs(local_params[key])
 
     # create environment
     self.env = test_env()

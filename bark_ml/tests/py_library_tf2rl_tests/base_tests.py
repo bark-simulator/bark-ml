@@ -57,21 +57,18 @@ class CreateParameterServersForScenariosTests(unittest.TestCase):
     self.assertIn(known_key, param_servers)
 
     param_server = param_servers[known_key]
-    assert param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["MapFilename"].endswith(
+    generation_params = param_server["Scenario"]["Generation"][
+        "InteractionDatasetScenarioGeneration"]
+    assert generation_params["MapFilename"].endswith(
         'bark_ml/tests/py_library_tf2rl_tests/data/interaction_data_set_mock/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_v01_shifted.xodr')
-    assert param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackFilename"].endswith(
+    assert generation_params["TrackFilename"].endswith(
         'bark_ml/tests/py_library_tf2rl_tests/data/interaction_data_set_mock/DR_DEU_Merging_MT/tracks/vehicle_tracks_013.csv')
 
     track_ids = [i for i in range(1, 87) if i != 18]
-    self.assertEqual(
-        param_server["Scenario"]["Generation"]
-        ["InteractionDatasetScenarioGeneration"]["TrackIds"],
-        track_ids)
+    self.assertEqual(generation_params["TrackIds"], track_ids)
 
-    self.assertEqual(param_server["Scenario"]["Generation"]
-                     ["InteractionDatasetScenarioGeneration"]["StartTs"], 100)
-    self.assertEqual(param_server["Scenario"]["Generation"]
-                     ["InteractionDatasetScenarioGeneration"]["EndTs"], 327300)
+    self.assertEqual(generation_params["StartTs"], 100)
+    self.assertEqual(generation_params["EndTs"], 327300)
 
     param_server["Scenario"]["Generation"][
         "InteractionDatasetScenarioGeneration"]["EgoTrackId"] = 1

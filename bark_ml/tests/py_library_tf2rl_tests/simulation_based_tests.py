@@ -22,15 +22,15 @@ class SimulationBasedTests(unittest.TestCase):
     self.assertIn(known_key, param_servers)
 
     param_server = param_servers[known_key]
-    param_server["Scenario"]["Generation"][
-        "InteractionDatasetScenarioGeneration"]["TrackIds"] = [
-        63, 64, 65, 66, 67, 68]
-    param_server["Scenario"]["Generation"][
-        "InteractionDatasetScenarioGeneration"]["StartTs"] = 232000
-    param_server["Scenario"]["Generation"][
-        "InteractionDatasetScenarioGeneration"]["EndTs"] = 259000
+    generation_params = param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]
+    generation_params["TrackIds"] = [63, 64, 65, 66, 67, 68]
+    generation_params["StartTs"] = 232000
+    generation_params["EndTs"] = 259000
+
     self.test_agent_id = 65
-    param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EgoTrackId"] = self.test_agent_id
+    generation_params["EgoTrackId"] = self.test_agent_id
+    param_server["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"] = generation_params
+
     self.param_server = param_server
     self.expert_trajectories = {}
     self.sim_time_step = 100
