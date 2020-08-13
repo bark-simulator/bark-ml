@@ -3,9 +3,11 @@ from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, Beha
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
   ContinuousMergingBlueprint, ContinuousIntersectionBlueprint
-from bark_project.bark.runtime.viewer.video_renderer import VideoRenderer
-from bark_project.bark.runtime.viewer.matplotlib_viewer import MPViewer
-from bark_project.bark.runtime.commons.parameters import ParameterServer
+  
+from bark.runtime.viewer.video_renderer import VideoRenderer
+from bark.runtime.viewer.matplotlib_viewer import MPViewer
+from bark.runtime.commons.parameters import ParameterServer
+
 import os
 import sys
 from pathlib import Path
