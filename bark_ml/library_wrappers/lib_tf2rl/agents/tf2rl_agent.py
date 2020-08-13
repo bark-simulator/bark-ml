@@ -23,7 +23,6 @@ class BehaviorTF2RLAgent:
     self._params = params
     self._environment = environment
     self._training = False
-    pass
 
   def Act(self, state):
     """agent specific implemetation"""

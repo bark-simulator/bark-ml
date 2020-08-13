@@ -1,5 +1,5 @@
 def rescale(feature, feature_space):
-    """rescales a feature back to their original range."""
+    """Rescales a feature back to their original range."""
     rescaled_feature = (feature + 1.) / 2.
     rescaled_feature *= (feature_space.high - feature_space.low)
     rescaled_feature += feature_space.low

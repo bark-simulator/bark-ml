@@ -10,14 +10,6 @@ jobs:
       image: docker://barksim/bark-ml:latest
     steps:
       - uses: actions/checkout@v1
-      # - name: Install python3 dependency
-      #   run: |
-      #         apt-get update -y
-      #         apt-get upgrade -y
-      #         apt-get install --reinstall python3.7
-      #         apt-get install --reinstall python3.7-dev
-      #         apt-get install --reinstall python3.7-tk
-      #         pip3 install virtualenv==16.7.8
       - name: Setting up virtual environment
         run: virtualenv -p python3 ./bark_ml/python_wrapper/venv  --system-site-packages
       - name: Entering the virtual python environment..

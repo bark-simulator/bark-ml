@@ -48,11 +48,9 @@ class GAILRunner(TF2RLRunner):
 
   def GetTrainer(self):
     """Creates an IRLtrainer instance."""
-    policy = self._agent.generator   # the agent's generator network, so in our case the DDPG agent
-    # the agent's discriminator network so in our case the GAIL network
+    policy = self._agent.generator   
     irl = self._agent.discriminator
 
-    # creating args from the ParameterServer which can be given to the IRLtrainer:
     args = self._get_args_from_params()
 
     trainer = IRLTrainer(policy=policy,
@@ -98,40 +96,10 @@ class GAILRunner(TF2RLRunner):
         - gpu:                    int, name of gpu device
 
     """
-    tf2rl_params = self._params['ML']['GAILRunner']['tf2rl']
-    args = {}
-
-    # experiment settings
-    args['max_steps'] = tf2rl_params['max_steps']
-    args['episode_max_steps'] = tf2rl_params['episode_max_steps']
-    args['n_experiments'] = tf2rl_params['n_experiments']
-    args['show_progress'] = tf2rl_params['show_progress']
-    args['save_model_interval'] = tf2rl_params['save_model_interval']
-    args['save_summary_interval'] = tf2rl_params['save_summary_interval']
-    args['dir_suffix'] = tf2rl_params['dir_suffix']
-    args['normalize_obs'] = tf2rl_params['normalize_obs']
-    args['logdir'] = tf2rl_params['logdir']
-    args['logging_level'] = tf2rl_params['logging_level']
-    args['model_dir'] = tf2rl_params['model_dir']
-
-    # replay buffer
-    args['use_prioritized_rb'] = tf2rl_params['use_prioritized_rb']
-    args['use_nstep_rb'] = tf2rl_params['use_nstep_rb']
-    args['n_step'] = tf2rl_params['n_step']
-
-    # test settings
-    args['evaluate'] = tf2rl_params['evaluate']
-    args['test_interval'] = tf2rl_params['test_interval']
-    args['show_test_progress'] = tf2rl_params['show_test_progress']
-    args['test_episodes'] = tf2rl_params['test_episodes']
-    args['save_test_path'] = tf2rl_params['save_test_path']
-    args['save_test_movie'] = tf2rl_params['save_test_movie']
-    args['show_test_images'] = tf2rl_params['show_test_images']
-
-    # other:
+    args = self._params['ML']['GAILRunner']['tf2rl']
     args['gpu'] = self._params["ML"]["Settings"]["GPUUse", "", 0]
 
     Path(args['model_dir']).mkdir(parents=True, exist_ok=True)
     Path(args['logdir']).mkdir(parents=True, exist_ok=True)
 
-    return argparse.Namespace(**args)
+    return argparse.Namespace(**args.store)

@@ -21,17 +21,16 @@ from bark_ml.library_wrappers.lib_tf_agents.tfa_wrapper import TFAWrapper
 # TODO(@hart): pass individual observer?
 class BehaviorTFAAgent:
   def __init__(self,
-              environment=None,
-              params=None):
-              
+               environment=None,
+               params=None):
     self._params = params
     self._environment = environment
     self._wrapped_env = tf_py_environment.TFPyEnvironment(
-    TFAWrapper(self._environment))
+      TFAWrapper(self._environment))
     self._ckpt = tf.train.Checkpoint(step=tf.Variable(0, dtype=tf.int64))
     self._agent = self.GetAgent(self._wrapped_env, params)
     self._ckpt = tf.train.Checkpoint(step=tf.Variable(0, dtype=tf.int64),
-                                    agent=self._agent)
+                                     agent=self._agent)
     self._ckpt_manager = self.GetCheckpointer()
     self._logger = logging.getLogger()
     self._training = False
@@ -45,17 +44,17 @@ class BehaviorTFAAgent:
   def GetCheckpointer(self):
     checkpointer = Checkpointer(
         self._params["ML"]["BehaviorTFAAgents"]["CheckpointPath", "", ""],
-    global_step=self._ckpt.step,
-    tf_agent=self._agent,
-    max_to_keep=self._params["ML"]["BehaviorTFAAgents"]["NumCheckpointsToKeep", "", 3])
+      global_step=self._ckpt.step,
+      tf_agent=self._agent,
+      max_to_keep=self._params["ML"]["BehaviorTFAAgents"]["NumCheckpointsToKeep", "", 3])
     checkpointer.initialize_or_restore()
     return checkpointer
 
   def Save(self):
     save_path = self._ckpt_manager.save(
-    global_step=self._agent._train_step_counter)
+      global_step=self._agent._train_step_counter)
     self._logger.info("Saved checkpoint for step {}.".format(
-    int(self._agent._train_step_counter.numpy())))
+      int(self._agent._train_step_counter.numpy())))
 
   def Load(self):
     try:
@@ -64,6 +63,6 @@ class BehaviorTFAAgent:
       return RuntimeError("Could not load agent.")
     if self._ckpt_manager.latest_checkpoint:
       self._logger.info("Restored agent from {}".format(
-          self._ckpt_manager.latest_checkpoint))
+        self._ckpt_manager.latest_checkpoint))
     else:
       self._logger.info("Initializing agent from scratch.")

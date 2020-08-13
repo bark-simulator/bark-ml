@@ -71,6 +71,6 @@ class GenerateSACTrajectoryTestsBase(unittest.TestCase):
             places=2)
 
   def remove(self, directory):
-    """Teardown
+    """Removes the given directory
     """
     shutil.rmtree(directory, ignore_errors=True)

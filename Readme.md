@@ -5,8 +5,8 @@
 
 # BARK-ML - Machine Learning for Autonomous Driving
 
-![CI Build](https://github.com/GAIL-4-BARK/bark-ml/workflows/CI/badge.svg)
-![CI-DIADEM Build](https://github.com/GAIL-4-BARK/bark-ml/workflows/CI-DIADEM/badge.svg)
+![CI Build](https://github.com/bark-simulator/bark-ml/workflows/CI/badge.svg)
+![CI-DIADEM Build](https://github.com/bark-simulator/bark-ml/workflows/CI-DIADEM/badge.svg)
 
 BARK-ML provides <i>simple-to-use</i> [OpenAi-Gym](https://github.com/openai/gym) environments for several scenarios, such as highway driving, merging and intersections.
 Additionally, BARK-ML integrates <i>state-of-the-art</i> machine learning libraries to learn driving behaviors for autonomous vehicles.
@@ -16,6 +16,7 @@ BARK-ML supported machine learning libraries:
 * [TF-Agents](https://github.com/tensorflow/agents)
 * [Baselines](https://github.com/openai/baselines) (Planned)
 * [Diadem](https://github.com/juloberno/diadem)
+* [tf2rl](https://github.com/keiohta/tf2rl)
 
 ## Gym Environments
 
@@ -46,14 +47,24 @@ TF-Agents SAC-example: `bazel run //examples:tfa`.
 ## GAIL 
 
 <p align="center">
-<img src="https://github.com/GAIL-4-BARK/bark-ml/blob/gail-4-bark/wiki/docs/images/gail_overview.gif" width="65%" alt="BARK-ML" />
+<img src="https://github.com/GAIL-4-BARK/bark-ml/blob/master/docs/images/gail_overview.gif" width="65%" alt="BARK-ML" />
 </p>
 
 ## Running tests
 
 ```
+# Separate sets of tests
+
 bazel test :unit_tests  
 bazel test :examples_tests
+bazel test :gail_tests
+bazel test :generate_load_tests
+
+# All test sets combined
+bazel test :all_tests
+
+# All tests in workspace
+bazel test //...
 ```
 
 ## License

@@ -33,16 +33,13 @@ class SACRunner(TFARunner):
 
   def _train(self):
     iterator = iter(self._agent._dataset)
-    for _ in range(
-            0, self._params["ML"]["SACRunner"]
-            ["NumberOfCollections", "", 1000000]):
+    for _ in range(0, self._params["ML"]["SACRunner"]["NumberOfCollections", "", 10000]):
       self._agent._training = True
       global_iteration = self._agent._agent._train_step_counter.numpy()
       self._collection_driver.run()
       experience, _ = next(iterator)
       self._agent._agent.train(experience)
-      if global_iteration % self._params["ML"]["SACRunner"][
-              "EvaluateEveryNSteps", "", 100] == 0:
+      if global_iteration % self._params["ML"]["SACRunner"]["EvaluateEveryNSteps", "", 100] == 0:
         self.Evaluate()
         self._agent.Save()
 
@@ -74,7 +71,7 @@ class SACRunnerGenerator(SACRunner):
 
   def GenerateExpertTrajectories(
           self, num_trajectories: int = 1000, render: bool = False) -> dict:
-    """Generates expert trajectories based on a tfa agent.
+    """Generates expert trajectories based on a sac agent.
 
     Args:
         num_trajectories (int, optional): The minimal number of generated expert trajectories. Defaults to 1000. 
@@ -89,11 +86,6 @@ class SACRunnerGenerator(SACRunner):
     while len(per_scenario_expert_trajectories) < num_trajectories:
       expert_trajectories = {'obs_norm': [], 'obs': [], 'act': []}
 
-      # Merging Blueprint
-      # X: 881.707/1006.72
-      # Y: 1001.59/1010.82
-      # Theta: 0/6.28
-      # Velo: 0/50
       state = self._environment.reset()
       state_not_norm = self.GetStateNotNormalized()
 

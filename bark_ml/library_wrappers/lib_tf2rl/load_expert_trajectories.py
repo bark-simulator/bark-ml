@@ -14,11 +14,19 @@ from tf2rl.experiments.utils import load_trajectories
 
 
 def GetFeatureSpace(env):
+  """This method extracts the observation feature space from the given environment.
+
+  Args:
+      env (gym.environment): The environment from which the feature space is extracted.
+
+  Returns:
+      FeatureSpace: The feature space with the low and high bounds set
+  """
   observation = env.reset()
   observer = NearestAgentsObserver()
   observer._max_num_vehicles = int(len(observation) / 4) - 1
   observer.Reset(env._world)
-  observer._VelocityRange = [0., 50.]
+
   space = list(np.array([
       observer._world_x_range,
       observer._world_y_range,
@@ -27,7 +35,11 @@ def GetFeatureSpace(env):
   ] * (observer._max_num_vehicles + 1)).transpose())
 
   class FeatureSpace:
+    """The feature space wrapper.
+    """
     def __init__(self, low, high):
+      """Constructor
+      """
       self.high = high
       self.low = low
   return FeatureSpace(space[0], space[1])

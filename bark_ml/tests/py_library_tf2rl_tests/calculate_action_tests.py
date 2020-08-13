@@ -101,38 +101,6 @@ class CalculateActionTests(GenerateSACTrajectoryTestsBase):
 
     self.list_almost_equal(expected_action, action)
 
-  # def test_calculate_action_2nd_degree(self):
-  #     """
-  #     Test: Calculate the action based on two consecutive observations.
-  #     """
-  #     observations = [[0] * 4, [1000] * 4, [0] * 4]
-  #     time_step = 1000
-
-  #     expected_action = [0.0, 0.0]
-  #     action = calculate_action(observations[0:3], time_step, 2.7)
-
-  #     steering_error = abs(action[0] - expected_action[0])
-  #     acceleration_error = abs(action[1] - expected_action[1])
-
-  #     self.assertLessEqual(steering_error, 1e-8)
-  #     self.assertLessEqual(acceleration_error, 1e-8)
-
-  # def test_calculate_action_collinear(self):
-  #     """
-  #     Test: Calculate the action based on two consecutive observations.
-  #     """
-  #     observations = [[0] * 4, [1000] * 4, [2000] * 4]
-  #     time_step = 1000
-
-  #     expected_action = [1.0, 0.002699993439028698]
-  #     action = calculate_action(observations[0:3], time_step, 2.7)
-
-  #     steering_error = abs(action[0] - expected_action[0])
-  #     acceleration_error = abs(action[1] - expected_action[1])
-
-  #     self.assertLessEqual(steering_error, 1e-8)
-  #     self.assertLessEqual(acceleration_error, 1e-8)
-
   def test_calculate_action_zero_time_step(self):
     """
     Test: Calculate the action based on two consecutive observations.
@@ -173,15 +141,6 @@ class CalculateActionTests(GenerateSACTrajectoryTestsBase):
       if observation[3] != 0:
         self.assertAlmostEqual(rotation_change, math.tan(
           calculated_action[1]) * observation[3])
-
-    # for i, observation in enumerate(observations[1:-1]):
-    #     current_observations = [observations[i], observation, observations[i+2]]
-
-    #     calculated_action = calculate_action(current_observations, time_step, wheel_base=1)
-    #     self.list_almost_equal(expected_actions[i + 1], calculated_action)
-
-    #     rotation_change = observation[2] - observations[i][2]
-    #     self.assertAlmostEqual(rotation_change, math.tan(calculated_action[0]))
 
   def test_calculate_action_circle_zero_acceleration(self):
     """
@@ -252,35 +211,6 @@ class CalculateActionTests(GenerateSACTrajectoryTestsBase):
     calculated_action = calculate_action(
       observations[1:], time_step, wheel_base=1)
     self.assertAlmostEqual(expected_action, calculated_action)
-
-  # def test_calculate_action_sin(self):
-  #     """
-  #     Test: Calculate the action based on consecutive observations with sinusoid angle changes.
-  #     """
-  #     velocity = 30.0
-  #     time_step = 1
-  #     wheel_base = 2.7
-  #     num_samples = 500
-
-  #     observations = []
-  #     for i in range(num_samples):
-  #         angle = i * math.pi / num_samples
-  #         entry = [0, 0, math.sin(angle), velocity]
-  #         observations.append(entry)
-
-  #     for i in range(1, num_samples-1):
-  #         action = calculate_action(observations[i-1:i+2], time_step, wheel_base)
-
-  #         d_theta = math.cos(i * math.pi / num_samples) * math.pi / num_samples
-  #         steering_angle = math.atan2(wheel_base * d_theta, velocity)
-  #         expected_action = [0.0, steering_angle]
-
-  #         steering_error = abs(action[1] - expected_action[1])
-  #         acceleration_error = abs(action[0] - expected_action[0])
-
-  #         # Higher threshold for the steering angle due to the sine derivative approximation
-  #         self.assertLessEqual(steering_error, 1e-5)
-  #         self.assertLessEqual(acceleration_error, 1e-8)
 
 
 if __name__ == '__main__':

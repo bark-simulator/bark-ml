@@ -73,11 +73,3 @@ class BoundedContinuous(Space):
 
   def __eq__(self, other):
     return isinstance(other, BoundedContinuous) and self._n == other._n
-
-
-class BoundedBox(gym.spaces.Box):
-  def __init__(self,
-               n,
-               low=None,
-               high=None):
-    super.__init__(self, shape=(n,), low=low, high=high, )
