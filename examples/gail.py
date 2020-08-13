@@ -5,7 +5,7 @@ from absl import app
 from absl import flags
 
 # BARK imports
-from bark_project.bark.runtime.commons.parameters import ParameterServer
+from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.viewer.video_renderer import VideoRenderer
 

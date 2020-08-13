@@ -12,7 +12,7 @@ import numpy as np
 from gym.spaces.box import Box
 from bark_ml.library_wrappers.lib_tf2rl.load_expert_trajectories import *
 from bark_ml.library_wrappers.lib_tf2rl.load_save_utils import *
-from bark_project.bark.runtime.commons.parameters import ParameterServer
+from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 
 
