@@ -25,24 +25,7 @@ class BehaviorTF2RLAgent:
     self._training = False
     pass
 
-  def Reset(self):
-    """agent specific implemetation"""
-    pass
-
   def Act(self, state):
     """agent specific implemetation"""
     pass
-
-  def Plan(self, observed_world, dt):
-    """agent specific implemetation"""
-    pass
-
-  def Save(self):
-    """Placeholder
-    """
-    pass
-
-  def Load(self):
-    """Placeholder
-    """
-    pass
+    

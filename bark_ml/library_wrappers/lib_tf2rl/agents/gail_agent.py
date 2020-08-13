@@ -75,20 +75,10 @@ class BehaviorGAILAgent(BehaviorTF2RLAgent, BehaviorContinuousML):
         gpu=self._params["ML"]["Settings"]["GPUUse", "", 0])
     return irl
 
-  def Reset(self):
-    """Currently ommited due to missing example in SAC
-    """
-    pass
-
   def Act(self, state):
     """Returns action corresponding to state
     """
     return self.generator.get_action(state)
-
-  def Plan(self, observed_world, dt):
-    """Currently ommited due to missing example in SAC
-    """
-    pass
 
   @property
   def action_space(self):
