@@ -49,8 +49,6 @@ class TFARunner:
           self._params["ML"]["TFARunner"]["SummaryPath"])
       except:
         pass
-    self.get_initial_collection_driver()
-    self.get_collection_driver()
 
   def GetInitialCollectionDriver(self):
     self._initial_collection_driver = \

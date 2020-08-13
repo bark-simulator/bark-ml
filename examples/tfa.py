@@ -1,5 +1,7 @@
-# Copyright (c) 2020 Patrick Hart, Julian Bernhard,
-# Klemens Esterle, Tobias Kessler
+# Copyright (c) 2020 fortiss GmbH
+#
+# Authors: Patrick Hart, Julian Bernhard, Klemens Esterle, and
+# Tobias Kessler
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
@@ -35,11 +37,11 @@ flags.DEFINE_enum("mode",
 
 
 def run_configuration(argv):
-  params = ParameterServer(filename="examples/example_params/tfa_params.json")
-  # params = ParameterServer()
+  # params = ParameterServer(filename="examples/example_params/tfa_params.json")
+  params = ParameterServer()
   # NOTE: Modify these paths in order to save the checkpoints and summaries
-  # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/home/hart/Dokumente/2020/bark-ml/checkpoints/"
-  # params["ML"]["TFARunner"]["SummaryPath"] = "/home/hart/Dokumente/2020/bark-ml/checkpoints/"
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/checkpoints/"
+  params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/summaries/"
   params["World"]["remove_agents_out_of_map"] = True
 
   # create environment
@@ -64,8 +66,8 @@ def run_configuration(argv):
   runner = SACRunner(params=params,
                      environment=env,
                      agent=sac_agent)
-
   if FLAGS.mode == "train":
+    runner.SetupSummaryWriter()
     runner.Train()
   elif FLAGS.mode == "visualize":
     runner.Visualize(5)
