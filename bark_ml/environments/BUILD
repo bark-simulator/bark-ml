@@ -7,7 +7,7 @@ py_library(
                  "blueprints/*/*.json"]) +
                 ["@bark_project//bark/python_wrapper:core.so",
                  "//bark_ml:generate_core"],
-    imports = ["../external/bark_project/bark/python_wrapper/",
+    imports = ["../bark_ml/python_wrapper/",
                "../python_wrapper/"],
     deps = ["//bark_ml/observers:observers",
             "//bark_ml/evaluators:evaluators",
@@ -19,7 +19,7 @@ py_library(
 py_library(
     name = "single_agent_runtime",
     srcs = ["single_agent_runtime.py"],
-    imports = ["../external/bark_project/bark/python_wrapper/"],
+    imports = ["../bark_ml/python_wrapper/"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
     deps = ["//bark_ml/environments:blueprints",
             "@bark_project//bark/runtime:runtime"],
@@ -29,7 +29,7 @@ py_library(
 py_library(
     name = "gym",
     srcs = ["gym.py"],
-    imports = ["../external/bark_project/bark/python_wrapper/"],
+    imports = ["../bark_ml/python_wrapper/"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
     deps = ["//bark_ml/environments:blueprints",
             "//bark_ml/environments:single_agent_runtime"],

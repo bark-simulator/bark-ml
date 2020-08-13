@@ -3,7 +3,7 @@ py_test(
   srcs = ["continuous_env.py"],
   data = ["@bark_project//bark/python_wrapper:core.so",
           "//bark_ml:generate_core"],
-    imports = ["../external/bark_project/bark/python_wrapper/"],
+    imports = ["../bark_ml/python_wrapper/"],
   deps = [
     "//bark_ml/environments:gym",
   ]
@@ -14,7 +14,7 @@ py_test(
   srcs = ["discrete_env.py"],
   data = ["@bark_project//bark/python_wrapper:core.so",
           "//bark_ml:generate_core"],
-    imports = ["../external/bark_project/bark/python_wrapper/"],
+    imports = ["../bark_ml/python_wrapper/"],
   deps = [
     "//bark_ml/environments:gym",
   ]
@@ -25,7 +25,7 @@ py_test(
   srcs = ["blueprint_config.py"],
   data = ["@bark_project//bark/python_wrapper:core.so",
           "//bark_ml:generate_core"],
-    imports = ["../external/bark_project/bark/python_wrapper/"],
+    imports = ["../bark_ml/python_wrapper/"],
   deps = [
     "//bark_ml/observers:observers",
     "//bark_ml/evaluators:evaluators",
@@ -59,7 +59,7 @@ py_test(
           "//examples/example_params:example_params",
           "@com_github_gail_4_bark_large_data_store"
           ],
-    imports = ["../external/bark_project/bark/python_wrapper/"],
+    imports = ["../bark_ml/python_wrapper/"],
   deps = [
     "//bark_ml/environments:single_agent_runtime",
     "//bark_ml/environments:blueprints",
@@ -77,7 +77,7 @@ py_test(
           "//examples/example_params",
           "@com_github_gail_4_bark_large_data_store"
           ],
-    imports = ["../external/bark_project/bark/python_wrapper/"],
+    imports = ["../bark_ml/python_wrapper/"],
   deps = [
     "//bark_ml/environments:single_agent_runtime",
     "//bark_ml/environments:blueprints",
@@ -92,7 +92,7 @@ py_test(
           "//bark_ml:generate_core",
           "//examples/example_params:example_params"
         ],
-    imports = ["../external/bark_project/bark/python_wrapper/",
+    imports = ["../bark_ml/python_wrapper/",
              "./external/diadem_project/"],
   deps = [
     "//bark_ml/environments:single_agent_runtime",

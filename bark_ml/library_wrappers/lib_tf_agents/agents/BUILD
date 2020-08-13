@@ -5,7 +5,7 @@ py_library(
             "ppo_agent.py",
             "tfa_agent.py"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
-    imports = ["../external/bark_project/bark/python_wrapper/"],
+    imports = ["../bark_ml/python_wrapper/"],
     deps = ["//bark_ml/library_wrappers/lib_tf_agents:tfa_wrapper",
             "//bark_ml/commons:py_spaces"],
     visibility = ["//visibility:public"],

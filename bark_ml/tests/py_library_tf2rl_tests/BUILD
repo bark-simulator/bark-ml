@@ -8,7 +8,7 @@ py_test(
         "//bark_ml/tests/py_library_tf2rl_tests/gail_data",
         "//bark_ml/observers",
         ],
-    imports = ["../../external/bark_project/bark/python_wrapper/"],
+    imports = ["../../bark_ml/python_wrapper/"],
     deps = [
             "@com_github_keiohta_tf2rl",
             "//bark_ml/library_wrappers/lib_tf2rl:load_expert_trajectories",
@@ -24,7 +24,7 @@ py_test(
     data = [ 
         "//bark_ml/tests/py_library_tf2rl_tests/gail_data",
         ],
-    imports = ["../../external/bark_project/bark/python_wrapper/"],
+    imports = ["../../bark_ml/python_wrapper/"],
     deps = [
             "generate_sac_trajectory_tests_base",
             "@com_github_keiohta_tf2rl",
@@ -42,7 +42,7 @@ py_library(
         "@bark_project//bark/python_wrapper:core.so",
         "@com_github_gail_4_bark_large_data_store",
         ],
-    imports = ["../../external/bark_project/bark/python_wrapper/"],
+    imports = ["../../bark_ml/python_wrapper/"],
     deps = [
             "//bark_ml/library_wrappers/lib_tf2rl:load_expert_trajectories",
             "@bark_project//bark/runtime:runtime",
@@ -83,7 +83,7 @@ py_test(
 py_test(
     name = "base_tests",
     srcs = ["base_tests.py"],
-    imports = ["../../../external/bark_project/bark/python_wrapper/"],
+    imports = ["../../../bark_ml/python_wrapper/"],
 
     deps = [
             "//bark_ml/library_wrappers/lib_tf2rl:generate_expert_trajectories",
@@ -98,7 +98,7 @@ py_test(
 py_test(
     name = "calculate_action_tests",
     srcs = ["calculate_action_tests.py"],
-    imports = ["../../../external/bark_project/bark/python_wrapper/"],
+    imports = ["../../../bark_ml/python_wrapper/"],
     deps = [
             "generate_sac_trajectory_tests_base",
             "//bark_ml/library_wrappers/lib_tf2rl:lib_tf2rl",
@@ -138,7 +138,7 @@ py_test(
             "@bark_project//bark/python_wrapper:core.so",
             "//bark_ml/tests/py_library_tf2rl_tests/gail_data",
             ],
-    imports = ["../../external/bark_project/bark/python_wrapper/"],
+    imports = ["../../bark_ml/python_wrapper/"],
     deps = [
             "//bark_ml/environments:blueprints",
             "//bark_ml/environments:single_agent_runtime",
@@ -159,7 +159,7 @@ py_test(
             "@bark_project//bark/python_wrapper:core.so",
             "//bark_ml/tests/py_library_tf2rl_tests/gail_data",
             ],
-    imports = ["../../external/bark_project/bark/python_wrapper/"],
+    imports = ["../../bark_ml/python_wrapper/"],
     deps = [
             "//bark_ml/library_wrappers/lib_tf2rl/agents",
             "@bark_project//bark/runtime:runtime",
@@ -176,7 +176,7 @@ py_test(
             "@bark_project//bark/python_wrapper:core.so",
             "//bark_ml/tests/py_library_tf2rl_tests/gail_data",
             ],
-    imports = ["../../external/bark_project/bark/python_wrapper/"],
+    imports = ["../../bark_ml/python_wrapper/"],
     deps = [
             "//bark_ml/library_wrappers/lib_tf2rl/runners",
             "//bark_ml/library_wrappers/lib_tf2rl/agents",
@@ -193,7 +193,7 @@ py_test(
     data = [
             "@bark_project//bark/python_wrapper:core.so",
             ],
-    imports = ["../../external/bark_project/bark/python_wrapper/"],
+    imports = ["../../bark_ml/python_wrapper/"],
     deps = [
             "//bark_ml/library_wrappers/lib_tf2rl:tf2rl_wrapper",
             ],
