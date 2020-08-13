@@ -17,7 +17,7 @@ py_binary(
         "//docs/report/data:data_dirs",
         "@com_github_gail_4_bark_large_data_store"
         ],
-    imports = ["../bark_ml/python_wrapper/"],
+    imports = ["../external/bark_project/bark/python_wrapper/"],
     deps = [
         "//bark_ml/environments:single_agent_runtime",
         "//bark_ml/environments:blueprints",

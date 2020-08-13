@@ -4,7 +4,7 @@ py_library(
             "simple_observer.py",
             "observer.py"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
-    imports = ["../bark_ml/python_wrapper/"],
+    imports = ["../external/bark_project/bark/python_wrapper/"],
     deps = ["@bark_project//bark/runtime:runtime"],
     visibility = ["//visibility:public"],
 )

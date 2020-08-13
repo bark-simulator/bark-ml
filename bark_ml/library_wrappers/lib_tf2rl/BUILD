@@ -15,7 +15,7 @@ py_library(
     name = "tf2rl_wrapper",
     srcs = ["tf2rl_wrapper.py"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
-    imports = ["../bark_ml/python_wrapper/"],
+    imports = ["../external/bark_project/bark/python_wrapper/"],
     deps = [
       "@bark_project//bark/runtime:runtime",
       "@com_github_keiohta_tf2rl",

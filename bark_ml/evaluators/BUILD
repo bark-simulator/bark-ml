@@ -7,7 +7,7 @@ py_library(
             "goal_reached_guiding.py",
             "evaluator.py"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
-    imports = ["../bark_ml/python_wrapper/"],
+    imports = ["../external/bark_project/bark/python_wrapper/"],
     deps = ["@bark_project//bark/runtime:runtime"],
     visibility = ["//visibility:public"],
 )
