@@ -2,6 +2,7 @@ import sys
 import logging
 import time
 import tensorflow as tf
+import numpy as np
 tf.compat.v1.enable_v2_behavior()
 
 # BARK imports
@@ -49,6 +50,8 @@ class TFARunner:
           self._params["ML"]["TFARunner"]["SummaryPath"])
       except:
         pass
+    self.GetInitialCollectionDriver()
+    self.GetCollectionDriver()
 
   def GetInitialCollectionDriver(self):
     self._initial_collection_driver = \
@@ -90,7 +93,8 @@ class TFARunner:
       self._eval_metrics,
       self._wrapped_env,
       self._agent._agent.policy,
-      num_episodes=self._params["ML"]["TFARunner"]["EvaluationSteps", "", 20])
+      num_episodes=self._params["ML"]["TFARunner"]["EvaluationSteps", "", 20],
+      use_function=False)
     metric_utils.log_metrics(self._eval_metrics)
     tf.summary.scalar("mean_reward",
                       self._eval_metrics[0].result().numpy(),
@@ -98,9 +102,9 @@ class TFARunner:
     tf.summary.scalar("mean_steps",
                       self._eval_metrics[1].result().numpy(),
                       step=global_iteration)
+    
     self._logger.info(
-      "The agent achieved on average {} reward and {} steps in \
-      {} episodes." \
+      "The agent achieved on average {} reward and {} steps in {} episodes." \
       .format(str(self._eval_metrics[0].result().numpy()),
               str(self._eval_metrics[1].result().numpy()),
               str(self._params["ML"]["TFARunner"]["EvaluationSteps", "", 20])))
@@ -113,5 +117,14 @@ class TFARunner:
       is_terminal = False
       while not is_terminal:
         action_step = self._agent._eval_policy.action(ts.transition(state, reward=0.0, discount=1.0))
-        state, reward, is_terminal, _ = self._environment.step(action_step.action.numpy())
+        action_shape = action_step.action.shape
+        expected_shape = self._agent._eval_policy.action_spec.shape
+        action = action_step.action.numpy()
+        if action_shape != expected_shape:
+          logging.warning("Action shape" + str(action_shape) + \
+            " does not match with expected shape " + str(expected_shape) +\
+            " -> reshaping is tried")
+          action = np.reshape(action, expected_shape)
+          logging.info(action)
+        state, reward, is_terminal, _ = self._environment.step(action)
         self._environment.render()

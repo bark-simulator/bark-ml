@@ -14,7 +14,11 @@ jobs:
         run: virtualenv -p python3 ./bark_ml/python_wrapper/venv  --system-site-packages
       - name: Entering the virtual python environment..
         run: . ./bark_ml/python_wrapper/venv/bin/activate
+      - name: Installing additional Python packages..
+        run: pip install tf2_gnn spektral
       - name: Running unit tests..
         run: bazel test :unit_tests
+      - name: Running graph tests..
+        run: bazel test :graph_tests
       - name: Running examples..
         run: bazel test :examples_tests
