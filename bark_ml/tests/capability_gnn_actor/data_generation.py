@@ -50,8 +50,7 @@ class DataGenerator():
     self._params = params
     self._bp = ContinuousHighwayBlueprint(self._params,\
       number_of_senarios=self._num_scenarios, random_seed=0)
-    self._observer = GraphObserver(normalize_observations=True,
-                                   params=self._params)
+    self._observer = GraphObserver(params=self._params)
     self._env = SingleAgentRuntime(blueprint=self._bp, observer=self._observer,
                                    render=render)
 
@@ -133,8 +132,8 @@ class DataGenerator():
       KeyError: A needed node attribute seems not to be present in the
                 observation
     """
-    # Get relvant meta data from the observer
-    attribute_keys = self._observer.enabled_node_attribute_keys
+    # Get relevant meta data from the observer
+    attribute_keys = self._observer._enabled_node_attribute_keys
     norm_data = self._observer.normalization_data
     normalize = self._observer._normalize_observations
     feature_len = self._observer.feature_len
