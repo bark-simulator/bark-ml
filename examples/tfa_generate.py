@@ -44,7 +44,7 @@ def save_expert_trajectories(output_dir: str, expert_trajectories: dict):
 
 def run_configuration(argv):
   """ Main """
-  params = ParameterServer(filename="examples/example_params/tfa_params.json")
+  params = ParameterServer(filename="examples/example_params/tfa_generate_params.json")
   # params = ParameterServer()
   output_dir = params["GenerateExpertTrajectories"]["OutputDirectory"]
 
