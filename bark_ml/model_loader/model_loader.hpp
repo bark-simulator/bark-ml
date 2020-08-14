@@ -18,18 +18,18 @@ public:
     std::vector<float> Evaluator(std::vector<float> neural_network_input, int num_actions);
 
 private:
-    TF_Status* Status;
-    TF_Graph* Graph;
+    TF_Status* status_;
+    TF_Graph* graph_;
     const char* tags;
-    TF_Session* Session;
-    const int NumInputs = 1;
-    TF_Output* Input;
+    TF_Session* session_;
+    const int num_inputs = 1;
+    TF_Output* input_;
     TF_Output t0;
     TF_Output t2;
-    const int NumOutputs = 1;
-    TF_Output* Output;
-    TF_Tensor** InputValues;
-    TF_Tensor** OutputValues;
+    const int num_outputs = 1;
+    TF_Output* output_;
+    TF_Tensor** input_values;
+    TF_Tensor** output_values;
 };
 
 #endif // SRC_MODEL_LOADER_MODEL_LOADER_HPP_

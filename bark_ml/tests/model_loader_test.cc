@@ -6,7 +6,7 @@
 #include <numeric>
 #include <string>
 #include <random>
-#include "bark_ml/model_loader/ModelLoader.hpp"
+#include "bark_ml/model_loader/model_loader.hpp"
 
 
 int main()
@@ -19,15 +19,13 @@ int main()
     std::uniform_real_distribution<float> distribution(0.0, 1.0);
 
     std::vector<float> input(16);
-    for (int i=0;i<16;i++)
-    {
+    for (int i=0;i<16;i++){
         input[i] = distribution(generator);
     };
     
     std::vector<float> q_values = model.Evaluator(input, 8);
 
-    for (int i=0;i<8;i++)
-    {
+    for (int i=0;i<8;i++){
         std::cout << q_values[i] << std::endl;
     }
     
