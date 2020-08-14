@@ -8,7 +8,7 @@ filegroup(
 # add bark deps here
 py_binary(
     name = "run",
-    srcs = ["run.py"],
+    srcs = ["run.py", "helpers.py"],
     data = [
         "@bark_project//bark/python_wrapper:core.so",
         "//bark_ml:generate_core",
