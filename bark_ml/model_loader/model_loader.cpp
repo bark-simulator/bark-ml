@@ -6,6 +6,7 @@
 #include <vector>
 #include <numeric>
 #include <string.h>
+#include <glog/logging.h>
 
 void NoOpDeallocator(void* data, size_t a, void* b) {}
 

@@ -22,10 +22,10 @@ from bark.runtime.viewer.video_renderer import VideoRenderer
 
 # BARK-ML imports
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
-  ContinuousMergingBlueprint, ContinuousIntersectionBlueprint, DiscreteMergingBlueprint
+  ContinuousMergingBlueprint, ContinuousIntersectionBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, BehaviorPPOAgent, BehaviorCDQNAgent
-from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner, CDQNRunner
+from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, BehaviorPPOAgent
+from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner
 
 
 # for training: bazel run //examples:tfa -- --mode=train

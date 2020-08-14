@@ -21,11 +21,10 @@ from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.viewer.video_renderer import VideoRenderer
 
 # BARK-ML imports
-from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
-  ContinuousMergingBlueprint, ContinuousIntersectionBlueprint, DiscreteMergingBlueprint
+from bark_ml.environments.blueprints import DiscreteMergingBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, BehaviorPPOAgent, BehaviorCDQNAgent
-from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner, CDQNRunner
+from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorCDQNAgent
+from bark_ml.library_wrappers.lib_tf_agents.runners import CDQNRunner
 
 
 # for training: bazel run //examples:tfa -- --mode=train
@@ -40,9 +39,9 @@ def run_configuration(argv):
   # params = ParameterServer(filename="examples/example_params/tfa_params_discrete.json")
   params = ParameterServer()
   # NOTE: Modify these paths in order to save the checkpoints and summaries
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/checkpoints/"
-  params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/summaries/"
-  params["ML"]["TFARunner"]["ModelPath"] = "/Users/hart/Development/bark-ml/model/"
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/home/sebastian/Bark-Simulator/bark-ml_MCTS_RL/checkpoints/"
+  params["ML"]["TFARunner"]["SummaryPath"] = "/home/sebastian/Bark-Simulator/bark-ml_MCTS_RL/summaries/"
+  params["ML"]["TFARunner"]["ModelPath"] = "/home/sebastian/Bark-Simulator/bark-ml_MCTS_RL/model/"
   params["World"]["remove_agents_out_of_map"] = True
 
   # create environment
@@ -56,8 +55,8 @@ def run_configuration(argv):
   #                                number_of_senarios=2500,
   #                                random_seed=0)
 
-  #env = SingleAgentRuntime(blueprint=bp,
-  #                         render=False)
+  env = SingleAgentRuntime(blueprint=bp,
+                           render=False)
 
   # CDQN-agent
   cdqn_agent = BehaviorCDQNAgent(environment=env,
