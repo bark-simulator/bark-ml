@@ -36,28 +36,25 @@
         "NearestAgentsObserver": {
             "MaxOtherDistance": 100
         },
-        "BehaviorSACAgent": {
-            "ActorFcLayerParams": [
-                512,
-                256,
-                256
+        "BehaviorCDQNAgent": {
+            "CategoricalFcLayerParams": [
+                300,
+                300,
+                300
             ],
-            "CriticJointFcLayerParams": [
-                512,
-                256,
-                256
-            ],
-            "ActorLearningRate": 0.0003,
-            "CriticLearningRate": 0.0003,
-            "AlphaLearningRate": 0.0003,
+            "LearningRate": 5e-5,
+            "NumAtoms":51,
             "TargetUpdateTau": 0.05,
             "TargetUpdatePeriod": 3,
+            "MinQValue": -5,
+            "MaxQValue": 5,
+            "EpsilonGreedy":0.3,
             "Gamma": 0.995,
             "RewardScaleFactor": 1.0,
-            "AgentName": "sac_agent",
+            "AgentName": "cdqn_agent",
             "DebugSummaries": false,
             "ReplayBufferCapacity": 10000,
-            "ParallelBufferCalls": 1,
+            "ParallelBufferCalls": 3,
             "BatchSize": 512,
             "BufferNumSteps": 2,
             "BufferPrefetch": 3

@@ -32,6 +32,8 @@ class CDQNRunner(TFARunner):
 
   @tf.function
   def _inference(self, input):
+    """Q network of the categorical DQN returns a value distribution"""
+    """This function calculates the Expectation what is the q-value"""
     q_logits, _ = self.q_model.call(input)
     q_probabilities = tf.nn.softmax(q_logits)
     q_values = tf.reduce_sum(self._agent._agent._support * q_probabilities, axis=-1)

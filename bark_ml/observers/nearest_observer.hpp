@@ -57,7 +57,7 @@ class NearestObserver : public BaseObserver {
     BaseObserver(params),
     min_x_(0.), max_x_(100.),
     min_y_(0.), max_y_(100.),
-    min_theta_(0.), max_theta_(2*3.14) {
+    min_theta_(0), max_theta_(6.283185307179586) {
       nearest_agent_num_ =
         params->GetInt(
           "ML::NearestObserver::NNearestAgents", "Nearest agents number", 4);
@@ -65,6 +65,8 @@ class NearestObserver : public BaseObserver {
       max_vel_ = params->GetReal("ML::NearestObserver::MaxVel", "", 50.0);
       max_dist_ = params->GetReal("ML::NearestObserver::MaxDist", "", 75.0);
       state_size_ = params->GetInt("ML::NearestObserver::StateSize", "", 4);
+      normalization_enabled = params->GetBool("ML::NearestObserver::normalization_enabled", "", true);
+      distance_method_ = params->GetInt("ML::NearestObserver::distance_method", "", 2); //1=L1; 2=L2(default)
       observation_len_ = nearest_agent_num_ * state_size_;
   }
 
@@ -74,12 +76,23 @@ class NearestObserver : public BaseObserver {
 
   ObservedState FilterState(const State& state) const {
     ObservedState ret_state(1, state_size_);
-    const float normalized_angle = Norm0To2PI(state(THETA_POSITION));
-    ret_state << Norm(state(X_POSITION), min_x_, max_x_),
-                 Norm(state(Y_POSITION), min_y_, max_y_),
-                 Norm(normalized_angle, min_theta_, max_theta_),
-                 Norm(state(VEL_POSITION), min_vel_, max_vel_);
-    return ret_state;
+    if (normalization_enabled == true){
+      const float normalized_angle = Norm0To2PI(state(THETA_POSITION));
+      ret_state << Norm(state(X_POSITION), min_x_, max_x_),
+                  Norm(state(Y_POSITION), min_y_, max_y_),
+                  Norm(normalized_angle, min_theta_, max_theta_),
+                  Norm(state(VEL_POSITION), min_vel_, max_vel_);
+      return ret_state;
+    }
+    else{
+      ret_state <<
+        state(X_POSITION),
+        state(Y_POSITION),
+        state(THETA_POSITION),
+        state(VEL_POSITION);
+      return ret_state;
+    }   
+    
   }
 
   ObservedState Observe(const ObservedWorldPtr& observed_world) const {
@@ -95,10 +108,21 @@ class NearestObserver : public BaseObserver {
     std::map<float, AgentPtr, std::greater<float>> distance_agent_map;
     for (const auto& agent : nearest_agents) {
       const auto& agent_state = agent.second->GetCurrentPosition();
-      float distance = Distance(
-        observed_world->CurrentEgoPosition(), agent_state);
+      float distance = 0; //init  
+      if (distance_method_ == 1){
+        float distance = L1_Distance(observed_world->CurrentEgoPosition(), agent_state);
+      }
+      else{
+        float distance = Distance(observed_world->CurrentEgoPosition(), agent_state);
+      }
       if (distance < max_dist_)
         distance_agent_map[distance] = agent.second;
+        #if terminal_output_enabled==true
+          auto view_state = agent.second->GetCurrentState();
+          std::cout<<"agent Id: "<< agent.first << std::endl;
+          std::cout<<"distance to ego_agent: "<< distance << std::endl;
+          std::cout<<"State : \n"<< view_state << std::endl;
+        #endif  
     }
 
     // add ego agent state
@@ -107,6 +131,12 @@ class NearestObserver : public BaseObserver {
     state.block(0, row_idx*state_size_, 1, state_size_) = obs_ego_agent_state;
     row_idx++;
 
+    #if terminal_output_enabled==true
+      std::cout<<"ego_id: " << ego_agent->GetAgentId() << std::endl;
+      std::cout<<"ego_state_normalized: \n" << obs_ego_agent_state << std::endl;
+      std::cout<<"state_vector: \n" << state << std::endl;
+    #endif
+
     // add other states
     for (const auto& agent : distance_agent_map) {
       if (agent.second->GetAgentId() != observed_world->GetEgoAgentId()) {
@@ -114,9 +144,21 @@ class NearestObserver : public BaseObserver {
           FilterState(agent.second->GetCurrentState());
         state.block(0, row_idx*state_size_, 1, state_size_) = other_agent_state;  // NOLINT
         row_idx++;
+
+         #if terminal_output_enabled==true
+          std::cout<<"agent_id: "<<agent.second->GetAgentId()<<std::endl;
+          std::cout<<"agent_state_normalized: \n" << other_agent_state << std::endl;
+          std::cout<<"state_vector: \n" << state << std::endl;
+        #endif
       }
     }
     return state;
+  }
+
+  float L1_Distance (const Point2d &p1, const Point2d &p2) const {
+    float dx = boost::geometry::get<0>(p1) - boost::geometry::get<0>(p2);
+    float dy = boost::geometry::get<1>(p1) - boost::geometry::get<1>(p2);
+    return (abs(dx) + abs(dy));
   }
 
   WorldPtr Reset(const WorldPtr& world) {
@@ -140,9 +182,10 @@ class NearestObserver : public BaseObserver {
   }
 
  private:
-  int state_size_, nearest_agent_num_, observation_len_;
+  int state_size_, nearest_agent_num_, observation_len_, distance_method_;
   float min_theta_, max_theta_, min_vel_, max_vel_, max_dist_,
          min_x_, max_x_, min_y_, max_y_;
+  bool normalization_enabled;
 };
 
 }  // namespace observers
