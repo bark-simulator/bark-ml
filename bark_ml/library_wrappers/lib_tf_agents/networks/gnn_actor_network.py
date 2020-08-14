@@ -109,16 +109,16 @@ class GNNActorNetwork(network.Network):
       observations = tf.expand_dims(observations, axis=0)
 
     batch_size = observations.shape[0]
-    output = self._gnn(observations, training=training)
+    embeddings = self._gnn(observations, training=training)
     
     # extract ego state (node 0)
     if batch_size > 0: 
-      output = output[:, 0]
+      embeddings = embeddings[:, 0]
 
     with tf.name_scope("GNNActorNetwork"):
-      tf.summary.histogram("actor_gnn_output", output)
+      tf.summary.histogram("actor_gnn_output", embeddings)
     
-    output, network_state = self._encoder(output, training=training)
+    output, network_state = self._encoder(embeddings, training=training)
       
     outer_rank = nest_utils.get_outer_rank(
       observations, 

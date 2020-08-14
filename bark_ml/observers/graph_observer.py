@@ -10,7 +10,6 @@ import logging
 import tensorflow as tf
 from gym import spaces
 from typing import Dict
-from collections import OrderedDict
 
 from bark.core.models.dynamic import StateDefinition
 from bark.core.geometry import Distance, Point2d
@@ -28,9 +27,7 @@ class GraphObserver(StateObserver):
   the agents that constitute these connections.
   """
 
-  def __init__(self,
-               normalize_observations=True,
-               params=ParameterServer()):
+  def __init__(self, params=ParameterServer()):
     """
     Creates an instance of `GraphObserver`.
 
@@ -42,8 +39,12 @@ class GraphObserver(StateObserver):
         configuration of the observer. Defaults to a new instance.
     """
     StateObserver.__init__(self, params)
-    self._normalize_observations = normalize_observations
     self._logger = logging.getLogger()
+
+    self._normalize_observations = \
+      self._params["ML"]["GraphObserver"]["NormalizationEnabled",
+      "Whether normalization of features should be performed.",
+      True]
 
     self._agent_limit =\
       params["ML"]["GraphObserver"]["AgentLimit", 
@@ -69,13 +70,13 @@ class GraphObserver(StateObserver):
       self.available_node_attributes()
     ]
 
-    self.enabled_node_attribute_keys = self._filter_requested_attributes(
+    self._enabled_node_attribute_keys = self._filter_requested_attributes(
       requested_keys=requested_node_attribute_keys,
       available_keys=self.available_node_attributes(),
       context="node")
     self._logger.info(
       "GraphObserver configured with node attributes: " +
-      f"{self.enabled_node_attribute_keys}")
+      f"{self._enabled_node_attribute_keys}")
 
     requested_edge_attribute_keys =\
       params["ML"]["GraphObserver"]["EnabledEdgeFeatures",
@@ -86,19 +87,19 @@ class GraphObserver(StateObserver):
       self.available_edge_attributes()
     ]
 
-    self.enabled_edge_attribute_keys = self._filter_requested_attributes(
+    self._enabled_edge_attribute_keys = self._filter_requested_attributes(
       requested_keys=requested_edge_attribute_keys,
       available_keys=self.available_edge_attributes(),
       context="edge")
     self._logger.info(
       "GraphObserver configured with edge attributes: " +
-      f"{self.enabled_edge_attribute_keys}")
+      f"{self._enabled_edge_attribute_keys}")
 
     # the number of features of a node in the graph
-    self.feature_len = len(self.enabled_node_attribute_keys)
+    self.feature_len = len(self._enabled_node_attribute_keys)
 
     # the number of features of an edge between two nodes
-    self.edge_feature_len = len(self.enabled_edge_attribute_keys)
+    self.edge_feature_len = len(self._enabled_edge_attribute_keys)
 
   def Observe(self, world):
     """see base class"""
@@ -249,7 +250,7 @@ class GraphObserver(StateObserver):
     original list of agents.
 
     Args:
-      world: A `bark.core.World` instance.
+      world: A `bark.core.ObservedWorld` instance.
 
     Returns:
       A list of tuples, consisting of an index and an 
@@ -304,11 +305,10 @@ class GraphObserver(StateObserver):
     return nearby_agents
 
   def _extract_node_features(self, agent, as_dict=False):
-    """Returns dict containing all features of the agent"""
-    res = OrderedDict()
+    res = {}
 
     # Init data (to keep ordering always equal for reading and writing)
-    for label in self.enabled_node_attribute_keys:
+    for label in self._enabled_node_attribute_keys:
       res[label] = "inf"
     
     n = self.normalization_data
@@ -355,8 +355,8 @@ class GraphObserver(StateObserver):
         "parameter is not supported by the current BARK-ML environment.")
     
     # remove disabled attributes
-    res = {key: res[key] for key in self.enabled_node_attribute_keys}
-    assert list(res.keys()) == self.enabled_node_attribute_keys
+    res = {key: res[key] for key in self._enabled_node_attribute_keys}
+    assert list(res.keys()) == self._enabled_node_attribute_keys
 
     if not as_dict:
       res = list(res.values())
@@ -388,9 +388,9 @@ class GraphObserver(StateObserver):
       "dtheta": source_features["theta"] - target_features["theta"]
     }
 
-    features = {key: features[key] for key in self.enabled_edge_attribute_keys}
+    features = {key: features[key] for key in self._enabled_edge_attribute_keys}
     features = list(features.values())
-    assert len(features) == len(self.enabled_edge_attribute_keys)
+    assert len(features) == len(self._enabled_edge_attribute_keys)
 
     return features
 

@@ -55,8 +55,8 @@ class PyGraphObserverTests(unittest.TestCase):
     params = ParameterServer()
     params["ML"]["GraphObserver"]["AgentLimit"] = expected_agent_limit
     params["ML"]["GraphObserver"]["VisibilityRadius"] = expected_visibility_radius
-    params["ML"]["GraphObserver"]["SelfLoops"] = True
-    observer = GraphObserver(normalize_observations=True, params=params)
+    params["ML"]["GraphObserver"]["NormalizationEnabled"] = True
+    observer = GraphObserver(params=params)
 
     self.assertEqual(observer._agent_limit, expected_agent_limit)
     self.assertEqual(observer._visibility_radius, expected_visibility_radius)
@@ -71,7 +71,7 @@ class PyGraphObserverTests(unittest.TestCase):
     observer = GraphObserver(params=params)
 
     self.assertEqual(
-      observer.enabled_node_attribute_keys, 
+      observer._enabled_node_attribute_keys, 
       requested_features)
 
   def test_request_subset_of_available_edge_features(self):
@@ -82,7 +82,7 @@ class PyGraphObserverTests(unittest.TestCase):
     observer = GraphObserver(params=params)
 
     self.assertEqual(
-      observer.enabled_edge_attribute_keys, 
+      observer._enabled_edge_attribute_keys, 
       requested_features)
 
   def test_request_partially_invalid_node_features(self):
@@ -97,7 +97,7 @@ class PyGraphObserverTests(unittest.TestCase):
     requested_features.pop(-1)
     
     self.assertEqual(
-      observer.enabled_node_attribute_keys, 
+      observer._enabled_node_attribute_keys, 
       requested_features)
 
   def test_request_partially_invalid_edge_features(self):
@@ -112,7 +112,7 @@ class PyGraphObserverTests(unittest.TestCase):
     requested_features.pop(-1)
     
     self.assertEqual(
-      observer.enabled_edge_attribute_keys, 
+      observer._enabled_edge_attribute_keys, 
       requested_features)
 
   def test_observe_with_self_loops(self):
