@@ -466,11 +466,12 @@ class GraphObserver(StateObserver):
     like distances, velocities, angles, etc.
     E.g. all distances (between agents, between objects, etc.)
     are scaled relative to the 'distance' range. 
-    """
-    d = OrderedDict()
+    """ 
     x_range = self._world_x_range[1] - self._world_x_range[0]
     y_range = self._world_y_range[1] - self._world_y_range[0]
     max_dist = np.linalg.norm([x_range, y_range])
+
+    d = {}
     d['x'] = self._world_x_range
     d['y'] = self._world_y_range
     d['theta'] = self._ThetaRange
