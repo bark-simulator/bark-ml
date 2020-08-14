@@ -13,8 +13,8 @@ py_binary(
         "//bark_ml:generate_core",
         "//examples/example_params:example_params",
         ":notebooks_folder",
-        "//docs/gnn_practial_course_2020/data",
-        "//docs/gnn_practial_course_2020/images",
+        "//docs/gnn_practical_course_2020/data",
+        "//docs/gnn_practical_course_2020/images",
         "//bark_ml/tests/capability_gnn_actor/data:data"
         ],
     imports = ["../external/bark_project/bark/python_wrapper/"],
