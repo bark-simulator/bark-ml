@@ -61,8 +61,6 @@ class SingleAgentRuntime(Runtime):
 
     # step and observe
     self._world.Step(self._step_time)
-    if eval_id not in self._world.agents:
-      return [0] * self._observer.observation_space.shape[0], -1, True, None
     observed_world = self._world.Observe([eval_id])[0]
 
     # observe and evaluate
