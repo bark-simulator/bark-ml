@@ -1,4 +1,5 @@
 import os
+import sys
 from pathlib import Path
 
 from absl import app
@@ -38,12 +39,14 @@ def run_configuration(argv):
   # If you want to visualize or evaluate using your locally trained gail agent, you have to specify the run to use.
   # Therefore look into the directory specified in params["ML"]["GAILRunner"]["tf2rl"]["logdir"] and
   # pick one of your runs with the naming scheme '<timestamp>_DDPG_GAIL'
-  # Add the name of the folder with the run to your:
-  # params["ML"]["GAILRunner"]["tf2rl"]["logdir"] and params["ML"]["GAILRunner"]["tf2rl"]["model_dir"]
-  # So if your model_dir and logdir were 'examples/gail_training' it becomes 'examples/gail_training/20200807T121018.454776_DDPG_GAIL' in the gail_params.json
-  # Alternatively append it as in the following lines:
-  # params["ML"]["GAILRunner"]["tf2rl"]["logdir"] = os.path.join(params["ML"]["GAILRunner"]["tf2rl"]["logdir"], "20200807T121018.454776_DDPG_GAIL")
-  # params["ML"]["GAILRunner"]["tf2rl"]["model_dir"] = os.path.join(params["ML"]["GAILRunner"]["tf2rl"]["model_dir"], "20200807T121018.454776_DDPG_GAIL")
+  # Please copy the folder to a location outside of bazel-bin, as the folders get deleted if bazel is run again.
+  #
+  # Replace the params["ML"]["GAILRunner"]["tf2rl"]["logdir"] and params["ML"]["GAILRunner"]["tf2rl"]["model_dir"]
+  # in your example_params/gail_params.json definition with the path where you placed the trained agent.
+  #
+  # Alternatively set it from this script as in the following lines:
+  # params["ML"]["GAILRunner"]["tf2rl"]["logdir"] = <insert-your-path>
+  # params["ML"]["GAILRunner"]["tf2rl"]["model_dir"] = <insert-your-path>
 
   # create environment
   blueprint = params['World']['blueprint']
@@ -51,10 +54,6 @@ def run_configuration(argv):
     bp = ContinuousMergingBlueprint(params,
                                     number_of_senarios=2500,
                                     random_seed=0)
-  elif blueprint == 'intersection':
-    bp = ContinuousIntersectionBlueprint(params,
-                                         number_of_senarios=2500,
-                                         random_seed=0)
   elif blueprint == 'highway':
     bp = ContinuousHighwayBlueprint(params,
                                     number_of_senarios=2500,
@@ -75,9 +74,9 @@ def run_configuration(argv):
   # np.random.seed(123456789)
   expert_trajectories = None
   if FLAGS.mode != 'visualize':
-    expert_trajectories, avg_trajectory_length, num_trajectories = load_expert_trajectories(params['ML']['ExpertTrajectories']['expert_path_dir'],
-                                                                                            normalize_features=params["ML"][
-        "Settings"]["NormalizeFeatures"],
+    expert_trajectories, avg_trajectory_length, num_trajectories = load_expert_trajectories(
+        params['ML']['ExpertTrajectories']['expert_path_dir'],
+        normalize_features=params["ML"]["Settings"]["NormalizeFeatures"],
         # the unwrapped env has to be used, since that contains the unnormalized spaces.
         env=env,
         subset_size=params['ML']['ExpertTrajectories']['subset_size']
