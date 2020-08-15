@@ -31,10 +31,11 @@
                 6.283185307179586
             ],
             "NormalizationEnabled": true,
-            "MaxNumAgents": 2
+            "MaxNumAgents": 4
         },
         "NearestAgentsObserver": {
-            "MaxOtherDistance": 100
+            "MaxOtherDistance": 100,
+            "DistanceMethod": 2
         },
         "BehaviorSACAgent": {
             "ActorFcLayerParams": [

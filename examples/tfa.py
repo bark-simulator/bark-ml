@@ -40,9 +40,9 @@ def run_configuration(argv):
   # params = ParameterServer(filename="examples/example_params/tfa_params.json")
   params = ParameterServer()
   # NOTE: Modify these paths in order to save the checkpoints and summaries
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/checkpoints/"
-  params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/summaries/"
-  params["ML"]["TFARunner"]["ModelPath"] = "/Users/hart/Development/bark-ml/model/"
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/home/sebastian/Bark-Simulator/bark-ml_MCTS_RL/checkpoints/"
+  params["ML"]["TFARunner"]["SummaryPath"] = "/home/sebastian/Bark-Simulator/bark-ml_MCTS_RL/summaries/"
+  params["ML"]["TFARunner"]["ModelPath"] = "/home/sebastian/Bark-Simulator/bark-ml_MCTS_RL/model/"
   params["World"]["remove_agents_out_of_map"] = True
 
   # create environment
@@ -59,14 +59,6 @@ def run_configuration(argv):
   env = SingleAgentRuntime(blueprint=bp,
                            render=False)
 
-  # CDQN-agent
-  # cdqn_agent = BehaviorCDQNAgent(environment=env,
-  #                              params=params)
-  # env.ml_behavior = cdqn_agent
-  # runner = CDQNRunner(params=params,
-  #                    environment=env,
-  #                    agent=cdqn_agent)
-  
   # PPO-agent
   # ppo_agent = BehaviorPPOAgent(environment=env,
   #                              params=params)

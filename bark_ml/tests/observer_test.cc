@@ -36,7 +36,8 @@ TEST(observers, test_state_vector_length){
   auto params = std::make_shared<SetterParams>();
   const int state_size_ = 4;  
   int nearest_agent_num_ = 3;
-  params->SetInt("ML::Observer::n_nearest_agents", nearest_agent_num_);  
+  params->SetInt("ML::StateObserver::MaxNumAgents", nearest_agent_num_); 
+  params->SetBool("ML::StateObserver::NormalizationEnabled", false); //switch off normalization to avoid implicit testing   
   int res_rows;
   int res_length; 
 
@@ -48,7 +49,7 @@ TEST(observers, test_state_vector_length){
   Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
 
 
-  /*test1: add only one agent; nearest_agent_num_=4*/ 
+  /*test1: add only one agent to observed world; nearest_agent_num_=3*/ 
   State init_state0(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state0 << 0.0, 10, 10, 0, 5.0;
   AgentPtr agent0(new Agent(init_state0, beh_model_idm, dyn_model, exec_model, polygon, params)); //ego
@@ -78,7 +79,8 @@ TEST(observers, test_state_vector_length2){
   auto params = std::make_shared<SetterParams>();
   const int state_size_ = 4;  
   int nearest_agent_num_ = 4;
-  params->SetInt("ML::Observer::n_nearest_agents", nearest_agent_num_);  
+  params->SetInt("ML::StateObserver::MaxNumAgents", nearest_agent_num_);  
+  params->SetBool("ML::StateObserver::NormalizationEnabled", false); //switch off normalization to avoid implicit testing  
   int res_rows;
   int res_length; 
 
@@ -138,10 +140,10 @@ TEST(observers, test_max_distance){
   auto params = std::make_shared<SetterParams>();
   const int state_size_ = 4;  
   int max_dist_ = 75.0;
-  params->SetInt("ML::Observer::n_nearest_agents", 4); 
-  params->SetReal("ML::Observer::max_dist", max_dist_);
-  params->SetInt("ML::Observer::distance_method", 2); //L2 Distance
-  params->SetBool("ML::Observer::normalization_enabled", false); //switch off normalization to avoid implicit testing  
+  params->SetInt("ML::StateObserver::MaxNumAgents", 4); 
+  params->SetReal("ML::NearestAgentsObserver::MaxOtherDistance", max_dist_);
+  params->SetInt("ML::NearestAgentsObserver::DistanceMethod", 2); //L2 Distance
+  params->SetBool("ML::StateObserver::NormalizationEnabled", false); //switch off normalization to avoid implicit testing  
 
   //float max_dist_ = params->GetReal("ML::Observer::max_dist", "", 75); //[m]
   //int distance_method_ = params->GetInt("ML::Observer::distance_method", "Nearest agents number", 2); //1=L1; 2=L2(default)
@@ -203,10 +205,10 @@ TEST(observers, test_state_vector_order){
   //auto params = std::make_shared<DefaultParams>();
   auto params = std::make_shared<SetterParams>();
   const int state_size_ = 4;  
-  params->SetInt("ML::Observer::n_nearest_agents", 4);
-  params->SetReal("ML::Observer::max_dist", 100);
-  params->SetInt("ML::Observer::distance_method", 2); //L2 Distance
-  params->SetBool("ML::Observer::normalization_enabled", false); //switch off normalization to avoid implicit testing   
+  params->SetInt("ML::StateObserver::MaxNumAgents", 4);
+  params->SetReal("ML::NearestAgentsObserver::MaxOtherDistance", 100);
+  params->SetInt("ML::NearestAgentsObserver::DistanceMethod", 2); //L2 Distance
+  params->SetBool("ML::StateObserver::NormalizationEnabled", false); //switch off normalization to avoid implicit testing   
   
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
@@ -221,9 +223,9 @@ TEST(observers, test_state_vector_order){
   State init_state3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));  
 
   init_state0 << 0.0, 0, 0, 0, 5.0;       //ego
-  init_state1 << 0.0, -15, -15, 0, 5.0;   //3rd closest
-  init_state2 << 0.0, 10, 0, 0.0, 5.0;    //1st closest
-  init_state3 << 0.0, 15, -5, 0.0, 10.0;  //2nd closest
+  init_state1 << 0.0, 0, 70, 0, 5.0;      //3rd closest
+  init_state2 << 0.0, 3, 4, 0.0, 5.0;    //1st closest
+  init_state3 << 0.0, 6, 0, 0.0, 10.0;  //2nd closest
   
   AgentPtr agent0(new Agent(init_state0, beh_model_idm, dyn_model, exec_model, polygon, params)); //ego
   AgentPtr agent1(new Agent(init_state1, beh_model_const, dyn_model, exec_model, polygon, params));
@@ -244,7 +246,7 @@ TEST(observers, test_state_vector_order){
   //create instance of Observer and pass observed world
   NearestObserver TestObserver4(params);
   ObservedState res = TestObserver4.Observe(obs_world_ptr);
-  //std::cout << res << std::endl;
+  std::cout << res << std::endl;
 
   //select here psoitions in the order how it should be according the state definition
   float obs_X_pos_agent0 = res.coeff(0,0);
@@ -275,15 +277,15 @@ TEST(observers, test_normalization){
   //auto params = std::make_shared<DefaultParams>();
   auto params = std::make_shared<SetterParams>();
   const int state_size_ = 4;  
-  params->SetInt("ML::Observer::n_nearest_agents", 4);
-  params->SetReal("ML::Observer::max_dist", 100);
-  params->SetInt("ML::Observer::distance_method", 2); //L2 Distance
-  params->SetBool("ML::Observer::normalization_enabled", true); //switch on normalization 
-  params->SetReal("ML::Observer::min_theta", -3.14159);  //[rad]
-  params->SetReal("ML::Observer::max_theta", 3.14159);   //[rad]
-  params->SetReal("ML::Observer::min_vel", 0.0);  //[m/s]
-  params->SetReal("ML::Observer::max_vel", 25.0); //[m/s]
-    
+  params->SetInt("ML::StateObserver::MaxNumAgents", 4);
+  params->SetReal("ML::NearestAgentsObserver::MaxOtherDistance", 100);
+  params->SetInt("ML::NearestAgentsObserver::DistanceMethod", 2); //L2 Distance
+  params->SetBool("ML::StateObserver::NormalizationEnabled", true); //switch on normalization 
+  
+  float min_vel = 0;
+  float max_vel = 50;
+  float min_theta_ = 0;
+  float max_theta_ = 6.283185307179586;  
   float world_x_min_ = 0;
   float world_x_max_ = 100.0;
   float world_y_min_ = 0.0;
@@ -306,13 +308,13 @@ TEST(observers, test_normalization){
   /*
   init_state0 << 0.0, 0.0, 0.0, 0.0, 5.0;
   init_state1 << 0.0, 10.0, 20.0, -1.5708, 5.0;
-  init_state2 << 0.0, -10, 5, 1.5708, 10;       //90deg rotated, would crash ego agent
-  init_state3 << 0.0, 0.02, -9999.95, 0.0, 5.0; //check computational limits
-  init_state4 << 0.0, 10000, 10000, 0.0, 5.0;   //add to verify that oberver only uses defined maximum number of agents
+  init_state2 << 0.0, 10, 5, 1.5708, 10;       //90deg rotated, would crash ego agent
+  init_state3 << 0.0, 0.02, 99.9995, 0.0, 5.0; //check computational limits
+  init_state4 << 0.0, 100, 100, 0.0, 5.0;   //add to verify that oberver only uses defined maximum number of agents
   */
 
-  init_state0 << 0.0, 10, -10, 0.1, 5.0;
-  init_state1 << 0.0, 0, 20, -3.14, 20;
+  init_state0 << 0.0, 10, 15, 1.57079, 5.0;
+  init_state1 << 0.0, 0, 20, 3.14159, 20;
   
   //create agents
   AgentPtr agent0(new Agent(init_state0, beh_model_idm, dyn_model, exec_model, polygon, params)); //ego
@@ -345,13 +347,13 @@ TEST(observers, test_normalization){
   float max_devation = 0.00005;
 
   EXPECT_NEAR(obs_X_pos_agent0, 0.1, max_devation);
-  EXPECT_NEAR(obs_Y_pos_agent0, -0.1, max_devation);
-  EXPECT_NEAR(obs_theta_agent0, 0.5159155, max_devation);
-  EXPECT_NEAR(obs_vel_agent0, 0.2, max_devation);
+  EXPECT_NEAR(obs_Y_pos_agent0, 0.15, max_devation);
+  EXPECT_NEAR(obs_theta_agent0, 0.25, max_devation);
+  EXPECT_NEAR(obs_vel_agent0, 0.1, max_devation);
   EXPECT_NEAR(obs_X_pos_agent1, 0, max_devation);
   EXPECT_NEAR(obs_Y_pos_agent1, 0.2, max_devation);
-  EXPECT_NEAR(obs_theta_agent1, 0.0002531, max_devation);
-  EXPECT_NEAR(obs_vel_agent1, 0.8, max_devation);
+  EXPECT_NEAR(obs_theta_agent1, 0.5, max_devation);
+  EXPECT_NEAR(obs_vel_agent1, 0.4, max_devation);
 
   // Reset
   //std::vector<int> agent_ids1{0};

@@ -50,6 +50,7 @@ using ObservedState = Eigen::Matrix<float, 1, Eigen::Dynamic>;
 using bark::commons::transformation::FrenetPosition;
 using State = Eigen::Matrix<float, Eigen::Dynamic, 1>;
 
+#define terminal_output_enabled false
 
 class NearestObserver : public BaseObserver {
  public:
@@ -57,16 +58,16 @@ class NearestObserver : public BaseObserver {
     BaseObserver(params),
     min_x_(0.), max_x_(100.),
     min_y_(0.), max_y_(100.),
-    min_theta_(0), max_theta_(6.283185307179586) {
+    min_theta_(0), max_theta_(2*3.14159) {
       nearest_agent_num_ =
         params->GetInt(
-          "ML::NearestObserver::NNearestAgents", "Nearest agents number", 4);
+          "ML::StateObserver::MaxNumAgents", "Nearest agents number", 4);
       min_vel_ = params->GetReal("ML::NearestObserver::MinVel", "", 0.0);
       max_vel_ = params->GetReal("ML::NearestObserver::MaxVel", "", 50.0);
-      max_dist_ = params->GetReal("ML::NearestObserver::MaxDist", "", 75.0);
+      max_dist_ = params->GetReal("ML::NearestAgentsObserver::MaxOtherDistance", "", 75.0);
       state_size_ = params->GetInt("ML::NearestObserver::StateSize", "", 4);
-      normalization_enabled = params->GetBool("ML::NearestObserver::normalization_enabled", "", true);
-      distance_method_ = params->GetInt("ML::NearestObserver::distance_method", "", 2); //1=L1; 2=L2(default)
+      normalization_enabled = params->GetBool("ML::StateObserver::NormalizationEnabled", "", true);
+      distance_method_ = params->GetInt("ML::NearestAgentsObserver::DistanceMethod", "", 2); //1=L1; 2=L2(default)
       observation_len_ = nearest_agent_num_ * state_size_;
   }
 
@@ -91,8 +92,7 @@ class NearestObserver : public BaseObserver {
         state(THETA_POSITION),
         state(VEL_POSITION);
       return ret_state;
-    }   
-    
+    }       
   }
 
   ObservedState Observe(const ObservedWorldPtr& observed_world) const {
@@ -105,15 +105,15 @@ class NearestObserver : public BaseObserver {
       observed_world->CurrentEgoPosition(), nearest_agent_num_);
 
     // sort agents by distance and distance < max_dist_
-    std::map<float, AgentPtr, std::greater<float>> distance_agent_map;
+    std::map<float, AgentPtr, std::less<float>> distance_agent_map;
     for (const auto& agent : nearest_agents) {
       const auto& agent_state = agent.second->GetCurrentPosition();
       float distance = 0; //init  
       if (distance_method_ == 1){
-        float distance = L1_Distance(observed_world->CurrentEgoPosition(), agent_state);
+        distance = L1_Distance(observed_world->CurrentEgoPosition(), agent_state);
       }
       else{
-        float distance = Distance(observed_world->CurrentEgoPosition(), agent_state);
+        distance = Distance(observed_world->CurrentEgoPosition(), agent_state);
       }
       if (distance < max_dist_)
         distance_agent_map[distance] = agent.second;
@@ -132,6 +132,7 @@ class NearestObserver : public BaseObserver {
     row_idx++;
 
     #if terminal_output_enabled==true
+      std::shared_ptr<const Agent> ego_agent = observed_world->GetEgoAgent();
       std::cout<<"ego_id: " << ego_agent->GetAgentId() << std::endl;
       std::cout<<"ego_state_normalized: \n" << obs_ego_agent_state << std::endl;
       std::cout<<"state_vector: \n" << state << std::endl;
@@ -191,4 +192,5 @@ class NearestObserver : public BaseObserver {
 }  // namespace observers
 }  // namespace bark_ml
 
+#undef terminal_output_enabled
 #endif  // BARK_ML_OBSERVERS_NEAREST_OBSERVER_HPP_

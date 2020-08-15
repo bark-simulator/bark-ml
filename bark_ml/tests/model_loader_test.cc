@@ -12,7 +12,7 @@
 int main()
 {
     // NOTE: Modify this path in order to get the saves model
-    ModelLoader model("/Users/hart/Development/bark-ml/model/");
+    ModelLoader model("/home/sebastian/Bark-Simulator/bark-ml_MCTS_RL/model/");
 
     std::random_device rd;
     std::default_random_engine generator(rd());
