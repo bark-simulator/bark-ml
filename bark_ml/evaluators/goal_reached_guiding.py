@@ -34,12 +34,10 @@ class GoalReachedGuiding(StateEvaluator):
     self._eval_agent = eval_agent
 
   def _add_evaluators(self):
-    evaluators = {}
-    evaluators["goal_reached"] = EvaluatorGoalReached()
-    evaluators["collision"] = EvaluatorCollisionEgoAgent()
-    evaluators["step_count"] = EvaluatorStepCount()
-    evaluators["drivable_area"] = EvaluatorDrivableArea()
-    return evaluators
+    self._evaluators["goal_reached"] = EvaluatorGoalReached()
+    self._evaluators["collision"] = EvaluatorCollisionEgoAgent()
+    self._evaluators["step_count"] = EvaluatorStepCount()
+    self._evaluators["drivable_area"] = EvaluatorDrivableArea()
 
   def CalculateGuidingReward(self, observed_world, action):
     ego_agent = observed_world.ego_agent
@@ -50,7 +48,6 @@ class GoalReachedGuiding(StateEvaluator):
     for lc in rc.lane_corridors:
       if Collide(lc.polygon, goal_shape):
         lane_corr = lc
-    
     total_reward =  0.
     goal_center_line = lane_corr.center_line
     ego_agent_state = ego_agent.state
