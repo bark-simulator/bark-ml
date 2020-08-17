@@ -10,12 +10,22 @@ test_suite(
 )
 
 test_suite(
+  name = "graph_tests",
+  tests = [
+    "//bark_ml/tests:py_graph_observer_tests",
+    "//bark_ml/tests:py_gnn_wrapper_tests",
+    "//bark_ml/tests/capability_gnn_actor:py_gnn_actor_tests",
+  ]
+)
+
+test_suite(
   name = "examples_tests",
   tests = [
     "//examples:blueprint_config",
     "//examples:continuous_env",
     "//examples:discrete_env",
-    "//examples:tfa"
+    "//examples:tfa",
+    "//examples:tfa_gnn"
   ]
 )
 

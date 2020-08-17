@@ -13,9 +13,12 @@ import os
 import matplotlib
 import time
 
+# Bark imports
+from bark.runtime.commons.parameters import ParameterServer
+
+# Bark-ml imports
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteML
-from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, DiscreteHighwayBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
@@ -23,6 +26,7 @@ from bark_ml.core.observers import NearestObserver
 
 
 class PyObserverTests(unittest.TestCase):
+
   def test_nearest_observer(self):
     params = ParameterServer()
     bp = ContinuousHighwayBlueprint(params)
@@ -40,7 +44,6 @@ class PyObserverTests(unittest.TestCase):
     end_time = time.time()
     print(f"It took {end_time-start_time} seconds.")
     print(observed_state, observer.observation_space.shape)
-
     
   def test_nearest_observer_cpp(self):
     params = ParameterServer()
@@ -60,7 +63,6 @@ class PyObserverTests(unittest.TestCase):
     end_time = time.time()
     print(f"It took {end_time-start_time} seconds.")
     print(observed_state, observer.observation_space.shape)
-
 
 if __name__ == '__main__':
   unittest.main()
