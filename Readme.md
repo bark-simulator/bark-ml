@@ -6,7 +6,6 @@
 # BARK-ML - Machine Learning for Autonomous Driving
 
 ![CI Build](https://github.com/bark-simulator/bark-ml/workflows/CI/badge.svg)
-![CI-DIADEM Build](https://github.com/bark-simulator/bark-ml/workflows/CI-DIADEM/badge.svg)
 
 BARK-ML provides <i>simple-to-use</i> [OpenAi-Gym](https://github.com/openai/gym) environments for several scenarios, such as highway driving, merging and intersections.
 Additionally, BARK-ML integrates <i>state-of-the-art</i> machine learning libraries to learn driving behaviors for autonomous vehicles.
@@ -37,7 +36,7 @@ Available environments:
 
 ## TF-Agents
 
-TF-Agents SAC-example: `bazel run //examples:tfa`.
+TF-Agents SAC-example: `bazel run //examples:tfa`:
 
 <p align="center">
 <img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/bark-ml.gif" alt="BARK-ML Highway" />
