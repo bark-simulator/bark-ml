@@ -74,7 +74,7 @@ class GNNWrapper(tf.keras.Model):
       GNNWrapper.SupportedLibrary.spektral]
 
     logging.info(
-      f'GNN configured with `{lib}` for input graphs with ' +
+      f'"{name}" configured with `{lib}` for input graphs with ' +
       f'{graph_dims[0]} nodes, {graph_dims[1]} node features, ' + 
       f'and {graph_dims[2]} edge features.')
     
@@ -127,7 +127,8 @@ class GNNWrapper(tf.keras.Model):
 
     self._gnn = GNN(gnn_params)
 
-  @tf.function
+  @tf.function(experimental_relax_shapes=True)
+  # relax shapes due to varying batch sizes
   def call(self, observations, training=False):
     if observations.shape[0] == 0:
       return tf.random.normal(shape=(0, self.num_units))

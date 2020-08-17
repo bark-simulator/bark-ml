@@ -54,22 +54,31 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
   def GetAgent(self, env, params):
     gnn_sac_params = self._params["ML"]["BehaviorGraphSACAgent"]
 
+    def init_gnn(name):
+      """
+      Returns a new `GNNWrapper`instance with the given `name`.
+      We need this function to be able to prefix the variable
+      names with the names of the parent actor or critic network,
+      by passing in this function and initializing the instance in 
+      the parent network.
+      """
+      return GNNWrapper(
+        params=gnn_sac_params["GNN"], 
+        graph_dims=self._observer.graph_dimensions,
+        name=name)
+
     # actor network
     actor_net = GNNActorNetwork(
       input_tensor_spec=env.observation_spec(),
       output_tensor_spec=env.action_spec(),
-      gnn=GNNWrapper(
-        params=gnn_sac_params["GNN"], 
-        graph_dims=self._observer.graph_dimensions),
+      gnn=init_gnn,
       fc_layer_params=gnn_sac_params["ActorFcLayerParams", "", [128, 64]]
     )
 
     # critic network
     critic_net = GNNCriticNetwork(
       (env.observation_spec(), env.action_spec()),
-      gnn=GNNWrapper(
-        params=gnn_sac_params["GNN"], 
-        graph_dims=self._observer.graph_dimensions),
+      gnn=init_gnn,
       observation_fc_layer_params=gnn_sac_params["CriticObservationFcLayerParams", "", [128]],
       action_fc_layer_params=gnn_sac_params["CriticActionFcLayerParams", "", None],
       joint_fc_layer_params=gnn_sac_params["CriticJointFcLayerParams", "", [128, 128]]
@@ -89,7 +98,7 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent, BehaviorContinuousML):
           learning_rate=gnn_sac_params["AlphaLearningRate", "", 3e-4]),
       target_update_tau=gnn_sac_params["TargetUpdateTau", "", 0.05],
       target_update_period=gnn_sac_params["TargetUpdatePeriod", "", 3],
-      td_errors_loss_fn=tf.compat.v1.losses.mean_squared_error,
+      td_errors_loss_fn=tf.math.squared_difference,
       gamma=gnn_sac_params["Gamma", "", 0.995],
       reward_scale_factor=gnn_sac_params["RewardScaleFactor", "", 1.],
       train_step_counter=self._ckpt.step,

@@ -40,8 +40,8 @@ class GNNActorNetwork(network.Network):
         inputs.
       output_tensor_spec: A nest of `tensor_spec.BoundedTensorSpec` representing
         the outputs.
-      gnn: The graph neural network that accepts the input observations and 
-        computes node embeddings.
+      gnn: The function that initializes a graph neural network that 
+        accepts the input observations and computes node embeddings.
       fc_layer_params: Optional list of fully_connected parameters, where each
         item is the number of units in the layer.
       dropout_layer_params: Optional list of dropout layer parameters, each item
@@ -80,7 +80,7 @@ class GNNActorNetwork(network.Network):
     if gnn is None:
       raise ValueError('`gnn` must not be `None`.')
 
-    self._gnn = gnn
+    self._gnn = gnn(name=name + "_GNN")
     
     self._encoder = encoding_network.EncodingNetwork(
       input_tensor_spec=tf.TensorSpec([None, self._gnn.num_units]),

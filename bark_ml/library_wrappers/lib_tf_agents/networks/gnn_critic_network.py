@@ -35,8 +35,8 @@ class GNNCriticNetwork(network.Network):
     Args:
       input_tensor_spec: A tuple of (observation, action) each a nest of
         `tensor_spec.TensorSpec` representing the inputs.
-      gnn: The graph neural network that accepts the input observations and 
-        computes node embeddings.
+      gnn: The function that initializes a graph neural network that 
+        accepts the input observations and computes node embeddings.
       observation_fc_layer_params: Optional list of fully connected parameters
         for observations, where each item is the number of units in the layer.
       observation_dropout_layer_params: Optional list of dropout layer
@@ -109,7 +109,7 @@ class GNNCriticNetwork(network.Network):
     if gnn is None:
       raise ValueError('`gnn` must not be `None`.')
 
-    self._gnn = gnn
+    self._gnn = gnn(name=name + "_GNN")
 
     self._observation_layers = utils.mlp_layers(
       observation_conv_layer_params,
