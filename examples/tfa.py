@@ -40,7 +40,7 @@ def run_configuration(argv):
   # params = ParameterServer(filename="examples/example_params/tfa_params.json")
   params = ParameterServer()
   # NOTE: Modify these paths in order to save the checkpoints and summaries
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/checkpoints/"
+  params["ML"]["BehaviorTFAContAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/checkpoints/"
   params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/summaries/"
   params["World"]["remove_agents_out_of_map"] = True
 

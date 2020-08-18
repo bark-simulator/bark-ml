@@ -62,7 +62,7 @@
             "BufferNumSteps": 2,
             "BufferPrefetch": 3
         },
-        "BehaviorTFAAgents": {
+        "BehaviorTFAContAgents": {
             "CheckpointPath": "",
             "NumCheckpointsToKeep": 3
         },

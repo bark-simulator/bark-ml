@@ -33,7 +33,7 @@
             "NormalizationEnabled": true,
             "MaxNumAgents": 2
         },
-        "BehaviorTFAAgents": {
+        "BehaviorTFAContAgents": {
             "CheckpointPath": "training/sac_gnn_spektral/checkpoints",
             "NumCheckpointsToKeep": 3
         },
@@ -44,7 +44,7 @@
             "SummaryPath": "training/sac_gnn_spektral/summaries"
         },
         "SACRunner": {
-            "EvaluateEveryNSteps": 100,
+            "EvaluateEveryNSteps": 500,
             "NumberOfCollections": 1000000
         },
         "GraphObserver": {
