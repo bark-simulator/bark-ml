@@ -62,6 +62,19 @@ py_test(
 )
 
 py_test(
+    name = "py_bark_behavior_model_tests",
+    srcs = ["py_bark_behavior_model_tests.py"],
+    data = ["@bark_project//bark/python_wrapper:core.so"],
+    imports = ["../external/bark_project/bark/python_wrapper/"],
+    deps = ["//bark_ml/environments:single_agent_runtime",
+            "//bark_ml/environments:gym",
+            "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
+            "//bark_ml/library_wrappers/lib_tf_agents/runners:runners",
+            "//bark_ml/commons:py_spaces"],
+    visibility = ["//visibility:public"],
+)
+
+py_test(
     name = "py_graph_observer_tests",
     srcs = ["py_graph_observer_tests.py"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
