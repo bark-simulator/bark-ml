@@ -49,7 +49,8 @@ class BehaviorTFAAgent(BehaviorModel):
         self._params["ML"]["BehaviorTFAAgents"]["CheckpointPath", "", ""],
       global_step=self._ckpt.step,
       tf_agent=self._agent,
-      max_to_keep=self._params["ML"]["BehaviorTFAAgents"]["NumCheckpointsToKeep", "", 3])
+      max_to_keep=self._params["ML"]["BehaviorTFAAgents"][
+        "NumCheckpointsToKeep", "", 3])
     checkpointer.initialize_or_restore()
     return checkpointer
 
@@ -87,11 +88,11 @@ class BehaviorTFAAgent(BehaviorModel):
         observed_world)
       self._action = self.Act(observed_state)
     # NOTE: BARK expects (m, 1) actions
-    reshaped_action = self._action
+    action = self._action
     if isinstance(self.action_space, BoundedContinuous):
-      reshaped_action = np.reshape(self._action, (-1, 1))
+      action = np.reshape(self._action, (-1, 1))
     # set action to be executed
-    self._bark_behavior_model.ActionToBehavior(reshaped_action)
+    self._bark_behavior_model.ActionToBehavior(action)
     trajectory = self._bark_behavior_model.Plan(dt, observed_world)
     # NOTE: BARK requires models to have trajectories of the past
     BehaviorModel.SetLastTrajectory(self, trajectory)

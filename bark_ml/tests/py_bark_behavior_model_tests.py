@@ -39,15 +39,22 @@ class PyBarkBehaviorModelTests(unittest.TestCase):
     env = gym.make("highway-v0")
     sac_agent = BehaviorSACAgent(environment=env, params=params)
     ppo_agent = BehaviorPPOAgent(environment=env, params=params)
-
     behaviors = [ppo_agent, sac_agent]
     for ml_agent in behaviors:
       env.ml_behavior = ml_agent
       env.reset()
       eval_id = env._scenario._eval_agent_ids[0]
+      cloned_world = env._world.Copy()
       self.assertEqual(env._world.agents[eval_id].behavior_model, ml_agent)
       for _ in range(0, 5):
         env._world.Step(0.2)
+      self.assertEqual(cloned_world.agents[eval_id].behavior_model, ml_agent)
+      for _ in range(0, 5):
+        cloned_world.Step(0.2)
+      for cloned_agent, agent in zip(env._world.agents.values(),
+                                     cloned_world.agents.values()):
+        # NOTE: should be the same as mean is taken from the agents
+        np.testing.assert_array_equal(cloned_agent.state, agent.state)
   
   def test_sac_graph_agent(self):
     params = ParameterServer()

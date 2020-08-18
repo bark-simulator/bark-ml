@@ -65,16 +65,22 @@ class PyLibraryWrappersTFAgentTests(unittest.TestCase):
         observed_next_state, reward, done, info = env.step(action)
         print(f"Observed state: {observed_next_state}, Reward: {reward}, Done: {done}")
       
-      # test training, visualization, and evaluation
+      # training, the action is set externally
       ml_behavior._training = True
-      # sampling
-      a = ml_behavior.Plan(0.2, observed_next_state)
-      b = ml_behavior.Plan(0.2, observed_next_state)
-      np.assert_raises(AssertionError, np.assert_array_equal, a, b)
-      # deteerministic
+      agent_id = list(env._world.agents.keys())[0]
+      observed_world = env._world.Observe([agent_id])[0]
+      action = np.random.uniform(low=-0.1, high=0.1, size=(2, ))
+      ml_behavior.ActionToBehavior(action)
+      a = ml_behavior.Plan(0.2, observed_world)
+      action = np.random.uniform(low=-0.1, high=0.1, size=(2, ))
+      ml_behavior.ActionToBehavior(action)
+      b = ml_behavior.Plan(0.2, observed_world)
+      self.assertEqual(np.any(np.not_equal(a, b)), True)
+
+      # deterministic
       ml_behavior._training = False
-      a = ml_behavior.Plan(0.2, observed_next_state)
-      b = ml_behavior.Plan(0.2, observed_next_state)
+      a = ml_behavior.Plan(0.2, observed_world)
+      b = ml_behavior.Plan(0.2, observed_world)
       np.testing.assert_array_equal(a, b)
 
 
