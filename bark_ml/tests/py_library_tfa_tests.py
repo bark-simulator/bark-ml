@@ -64,6 +64,19 @@ class PyLibraryWrappersTFAgentTests(unittest.TestCase):
         action = np.random.uniform(low=-0.1, high=0.1, size=(2, ))
         observed_next_state, reward, done, info = env.step(action)
         print(f"Observed state: {observed_next_state}, Reward: {reward}, Done: {done}")
+      
+      # test training, visualization, and evaluation
+      ml_behavior._training = True
+      # sampling
+      a = ml_behavior.Plan(0.2, observed_next_state)
+      b = ml_behavior.Plan(0.2, observed_next_state)
+      np.assert_raises(AssertionError, np.assert_array_equal, a, b)
+      # deteerministic
+      ml_behavior._training = False
+      a = ml_behavior.Plan(0.2, observed_next_state)
+      b = ml_behavior.Plan(0.2, observed_next_state)
+      np.testing.assert_array_equal(a, b)
+
 
   # agent + runner
   def test_agent_and_runner(self):
@@ -81,8 +94,10 @@ class PyLibraryWrappersTFAgentTests(unittest.TestCase):
     runner = PPORunner(params=params,
                        environment=env,
                        agent=agent)
+
     # runner.Train()
     runner.Visualize()
+
 
 
 if __name__ == '__main__':
