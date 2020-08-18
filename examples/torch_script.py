@@ -6,7 +6,7 @@ import time
 import bark_ml.environments.gym
 from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent import IQNAgent
-import examples.pytorch_script_wrapper as pytorch_script_wrapper
+from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.model_wrapper import pytorch_script_wrapper
 
 
 model_path = "/home/mansoor/Study/Werkstudent/fortiss/code/bark-ml/checkpoints/best"
