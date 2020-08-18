@@ -76,8 +76,31 @@ cc_test(
            #"-Lexternal/torchcpp/libtorch/lib",
            "-D_GLIBCXX_USE_CXX11_ABI=0"],
 
-  linkopts = ["-ltorch","-lc10"],
+  linkopts = ["-ltorch_cpu","-lc10"],
   linkstatic=False,
+)
+
+cc_binary(
+  name = "pytorch_script_wrapper.so",
+  srcs = ["pytorch_script_wrapper.cpp"],
+  deps = ["@torchcpp//:lib",
+          "@python_linux//:python-lib",
+          "@pybind11//:pybind11",
+          ],
+  copts = ["-Iexternal/torchcpp/torch/include",
+           "-Lexternal/torchcpp/libtorch/lib",
+           "-D_GLIBCXX_USE_CXX11_ABI=0"],
+
+   linkopts = ["-ltorch_cpu","-lc10"],
+   linkshared = 1,
+   linkstatic = 1
+)
+
+py_test(
+  name = "pytorch_script_wrapper_test",
+  srcs = ["pytorch_script_wrapper_test.py"],
+  data = ["@torchcpp//:lib",":pytorch_script_wrapper.so"],
+  imports = ["external/torchcpp/libtorch/lib"]
 )
 
 cc_test(

@@ -190,6 +190,10 @@ int main(int argc, const char* argv[]) {
   world->Step(dt);
   WorldPtr current_world_state2(world->Clone());
   ObservedWorldPtr obs_world2(new ObservedWorld(current_world_state2, agent2->GetAgentId()));
-
+  
+  // next state after taking the predicted action
+  auto nextObservedState = observer->Observe(obs_world1);
+  
+  //loop - todo
   return 0;
 }

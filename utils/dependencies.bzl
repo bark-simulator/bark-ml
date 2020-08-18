@@ -52,10 +52,9 @@ cc_library(
     build_file_content = """
 cc_library(
     name = "lib",
+    #srcs = glob(["torch/lib/*.so"]),
     srcs = ["torch/lib/libc10.so",
-            "torch/lib/libtorch.so",
-            "torch/lib/libtorch_cpu.so",
-            "torch/lib/libtorch_cuda.so"],
+            "torch/lib/libtorch_cpu.so"],
     hdrs = glob(["torch/include/**/*.h", "torch/include/*.h"]),
     visibility = ["//visibility:public"],
 )
