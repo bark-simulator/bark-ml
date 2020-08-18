@@ -42,8 +42,8 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
       the agent.
     """
     # the super init calls 'GetAgent', so assign the observer before
+    self._gnn_sac_params = params["ML"]["BehaviorGraphSACAgent"]
     self._observer = observer
-
     BehaviorTFAAgent.__init__(self,
                               environment=environment,
                               params=params)
@@ -53,7 +53,7 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
     self._eval_policy = self.GetEvalPolicy()
 
   def GetAgent(self, env, params):
-    gnn_sac_params = self._params["ML"]["BehaviorGraphSACAgent"]
+    
 
     def init_gnn(name):
       """
@@ -64,7 +64,7 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
       the parent network.
       """
       return GNNWrapper(
-        params=gnn_sac_params["GNN"], 
+        params=self._gnn_sac_params["GNN"], 
         graph_dims=self._observer.graph_dimensions,
         name=name)
 
@@ -73,16 +73,20 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
       input_tensor_spec=env.observation_spec(),
       output_tensor_spec=env.action_spec(),
       gnn=init_gnn,
-      fc_layer_params=gnn_sac_params["ActorFcLayerParams", "", [128, 64]]
+      fc_layer_params=self._gnn_sac_params[
+        "ActorFcLayerParams", "", [128, 64]]
     )
 
     # critic network
     critic_net = GNNCriticNetwork(
       (env.observation_spec(), env.action_spec()),
       gnn=init_gnn,
-      observation_fc_layer_params=gnn_sac_params["CriticObservationFcLayerParams", "", [128]],
-      action_fc_layer_params=gnn_sac_params["CriticActionFcLayerParams", "", None],
-      joint_fc_layer_params=gnn_sac_params["CriticJointFcLayerParams", "", [128, 128]]
+      observation_fc_layer_params=self._gnn_sac_params[
+        "CriticObservationFcLayerParams", "", [128]],
+      action_fc_layer_params=self._gnn_sac_params[
+        "CriticActionFcLayerParams", "", None],
+      joint_fc_layer_params=self._gnn_sac_params[
+        "CriticJointFcLayerParams", "", [128, 128]]
     )
     
     # agent
@@ -92,19 +96,19 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
       actor_network=actor_net,
       critic_network=critic_net,
       actor_optimizer=tf.compat.v1.train.AdamOptimizer(
-          learning_rate=gnn_sac_params["ActorLearningRate", "", 3e-4]),
+          learning_rate=self._gnn_sac_params["ActorLearningRate", "", 3e-4]),
       critic_optimizer=tf.compat.v1.train.AdamOptimizer(
-          learning_rate=gnn_sac_params["CriticLearningRate", "", 3e-4]),
+          learning_rate=self._gnn_sac_params["CriticLearningRate", "", 3e-4]),
       alpha_optimizer=tf.compat.v1.train.AdamOptimizer(
-          learning_rate=gnn_sac_params["AlphaLearningRate", "", 3e-4]),
-      target_update_tau=gnn_sac_params["TargetUpdateTau", "", 0.05],
-      target_update_period=gnn_sac_params["TargetUpdatePeriod", "", 3],
+          learning_rate=self._gnn_sac_params["AlphaLearningRate", "", 3e-4]),
+      target_update_tau=self._gnn_sac_params["TargetUpdateTau", "", 0.05],
+      target_update_period=self._gnn_sac_params["TargetUpdatePeriod", "", 3],
       td_errors_loss_fn=tf.math.squared_difference,
-      gamma=gnn_sac_params["Gamma", "", 0.995],
-      reward_scale_factor=gnn_sac_params["RewardScaleFactor", "", 1.],
+      gamma=self._gnn_sac_params["Gamma", "", 0.995],
+      reward_scale_factor=self._gnn_sac_params["RewardScaleFactor", "", 1.],
       train_step_counter=self._ckpt.step,
-      name=gnn_sac_params["AgentName", "", "gnn_sac_agent"],
-      debug_summaries=gnn_sac_params["DebugSummaries", "", False])
+      name=self._gnn_sac_params["AgentName", "", "gnn_sac_agent"],
+      debug_summaries=self._gnn_sac_params["DebugSummaries", "", False])
     
     tf_agent.initialize()
     return tf_agent
@@ -113,14 +117,14 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
     return tf_uniform_replay_buffer.TFUniformReplayBuffer(
       data_spec=self._agent.collect_data_spec,
       batch_size=self._wrapped_env.batch_size,
-      max_length=self._params["ML"]["BehaviorSACAgent"]["ReplayBufferCapacity", "", 10000])
+      max_length=self._gnn_sac_params["ReplayBufferCapacity", "", 10000])
 
   def GetDataset(self):
     dataset = self._replay_buffer.as_dataset(
-      num_parallel_calls=self._params["ML"]["BehaviorGraphSACAgent"]["ParallelBufferCalls", "", 1],
-      sample_batch_size=self._params["ML"]["BehaviorGraphSACAgent"]["BatchSize", "", 512],
-      num_steps=self._params["ML"]["BehaviorGraphSACAgent"]["BufferNumSteps", "", 2]) \
-        .prefetch(self._params["ML"]["BehaviorGraphSACAgent"]["BufferPrefetch", "", 3])
+      num_parallel_calls=self._gnn_sac_params["ParallelBufferCalls", "", 1],
+      sample_batch_size=self._gnn_sac_params["BatchSize", "", 512],
+      num_steps=self._gnn_sac_params["BufferNumSteps", "", 2]) \
+        .prefetch(self._gnn_sac_params["BufferPrefetch", "", 3])
     return dataset
 
   def GetCollectionPolicy(self):
