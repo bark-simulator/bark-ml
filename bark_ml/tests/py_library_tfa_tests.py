@@ -46,7 +46,7 @@ class PyLibraryWrappersTFAgentTests(unittest.TestCase):
                                     number_of_senarios=10,
                                     random_seed=0)
     env = SingleAgentRuntime(blueprint=bp,
-                             render=True)
+                             render=False)
     ml_behaviors = []
     ml_behaviors.append(
       BehaviorPPOAgent(environment=env,
@@ -90,19 +90,26 @@ class PyLibraryWrappersTFAgentTests(unittest.TestCase):
     bp = ContinuousHighwayBlueprint(params,
                                     number_of_senarios=10,
                                     random_seed=0)
-    env = SingleAgentRuntime(blueprint=bp,
-                             render=False)
-    agent = BehaviorPPOAgent(environment=env,
-                     params=params)
+    env = SingleAgentRuntime(blueprint=bp, render=False)
+    agent = BehaviorPPOAgent(environment=env, params=params)
     
     # set agent
+    params["ML"]["PPORunner"]["NumberOfCollections"] = 2
+    params["ML"]["SACRunner"]["NumberOfCollections"] = 2
+    params["ML"]["TFARunner"]["EvaluationSteps"] = 2
     env.ml_behavior = agent
     runner = PPORunner(params=params,
                        environment=env,
                        agent=agent)
+    
 
-    # runner.Train()
+    runner.Train()
+    # NOTE: after Evaluation is run this will be False as well
+    self.assertEqual(runner._agent._training, True)
+    runner.Evaluate()
+    self.assertEqual(runner._agent._training, False)
     runner.Visualize()
+    self.assertEqual(runner._agent._training, False)
 
 
 
