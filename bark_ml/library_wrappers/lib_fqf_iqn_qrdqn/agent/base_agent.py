@@ -113,10 +113,16 @@ class BaseAgent(ABC):
 
     def exploit(self, state):
         # Act without randomness.
+        #state = torch.Tensor(state).unsqueeze(0).to(self.device).float() 
+        actions = self.calculate_actions(state).argmax().item()
+        return actions
+
+    def calculate_actions(self, state):
+        # Act without randomness.
         state = torch.Tensor(state).unsqueeze(0).to(self.device).float() 
         with torch.no_grad():
-            action = self.online_net.calculate_q(states=state).argmax().item()
-        return action
+            actions = self.online_net.calculate_q(states=state)
+        return actions
 
     @abstractmethod
     def learn(self):

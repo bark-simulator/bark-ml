@@ -99,8 +99,14 @@ cc_binary(
 py_test(
   name = "pytorch_script_wrapper_test",
   srcs = ["pytorch_script_wrapper_test.py"],
-  data = ["@torchcpp//:lib",":pytorch_script_wrapper.so"],
-  imports = ["external/torchcpp/libtorch/lib"]
+  data = ["@torchcpp//:lib",
+          ":pytorch_script_wrapper.so",
+          "@bark_project//bark/runtime/commons:commons"],
+  imports = ["external/torchcpp/libtorch/lib"],
+  deps = [
+    "//bark_ml/environments:gym",
+    "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent:agents",
+  ]
 )
 
 cc_test(
