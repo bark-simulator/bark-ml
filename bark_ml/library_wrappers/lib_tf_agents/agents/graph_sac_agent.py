@@ -17,12 +17,12 @@ from tf_agents.utils.common import Checkpointer
 from tf_agents.trajectories import time_step as ts
 
 from bark_ml.library_wrappers.lib_tf_agents.networks import GNNActorNetwork, GNNCriticNetwork
-from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAContAgent
+from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAAgent
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_wrapper import GNNWrapper
 
 
-class BehaviorGraphSACAgent(BehaviorTFAContAgent):
+class BehaviorGraphSACAgent(BehaviorTFAAgent):
   """
   SAC-Agent with graph neural networks.
   This agent is based on the tf-agents library.
@@ -44,7 +44,7 @@ class BehaviorGraphSACAgent(BehaviorTFAContAgent):
     # the super init calls 'GetAgent', so assign the observer before
     self._observer = observer
 
-    BehaviorTFAContAgent.__init__(self,
+    BehaviorTFAAgent.__init__(self,
                               environment=environment,
                               params=params)
     self._replay_buffer = self.GetReplayBuffer()

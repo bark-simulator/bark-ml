@@ -41,13 +41,11 @@ class PyBarkBehaviorModelTests(unittest.TestCase):
     ppo_agent = BehaviorPPOAgent(environment=env, params=params)
 
     behaviors = [ppo_agent, sac_agent]
-
     for ml_agent in behaviors:
       env.ml_behavior = ml_agent
       env.reset()
-      for agent_id, agent in env._world.agents.items():
-        print(agent_id, agent.behavior_model)
-        print(agent_id, agent.dynamic_model)
+      eval_id = env._scenario._eval_agent_ids[0]
+      self.assertEqual(env._world.agents[eval_id].behavior_model, ml_agent)
       for _ in range(0, 5):
         env._world.Step(0.2)
   
@@ -66,17 +64,10 @@ class PyBarkBehaviorModelTests(unittest.TestCase):
                                       params=params)
     env.ml_behavior = sac_agent
     env.reset()
-    for agent_id, agent in env._world.agents.items():
-      print(agent_id, agent.behavior_model)
-      print(agent_id, agent.dynamic_model)
-    
+    eval_id = env._scenario._eval_agent_ids[0]
+    self.assertEqual(env._world.agents[eval_id].behavior_model, sac_agent)
     for _ in range(0, 5):
       env._world.Step(0.2)
-
-    # agent_id = list(env._world.agents.keys())[0]
-    # observed_world = env._world.Observe([agent_id])[0]
-    # print(sac_agent.Plan(0.2, observed_world))
-    # sac_graph_agent = BehaviorGraphSACAgent(environment=env, params=params)
 
 
 if __name__ == '__main__':

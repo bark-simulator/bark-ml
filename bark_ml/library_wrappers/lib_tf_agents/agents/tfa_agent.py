@@ -19,22 +19,16 @@ from tf_agents.trajectories import time_step as ts
 # BARK-ML imports
 from bark_ml.library_wrappers.lib_tf_agents.tfa_wrapper import TFAWrapper
 from bark_ml.commons.py_spaces import BoundedContinuous
+from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 
 
-class BehaviorTFAContAgent(BehaviorModel):
+class BehaviorTFAAgent(BehaviorModel):
   def __init__(self,
                environment=None,
-               params=None):
+               params=None,
+               bark_behavior=None):
     BehaviorModel.__init__(self, params)
     self._params = params
-    self._lower_bounds = params["ML"]["BehaviorContinuousML"][
-      "ActionsLowerBound",
-      "Lower-bound for actions.",
-      [-5.0, -0.2]]
-    self._upper_bounds = params["ML"]["BehaviorContinuousML"][
-      "ActionsUpperBound",
-      "Upper-bound for actions.",
-      [4.0, 0.2]]
     self._environment = environment
     self._wrapped_env = tf_py_environment.TFPyEnvironment(
       TFAWrapper(self._environment))
@@ -45,20 +39,17 @@ class BehaviorTFAContAgent(BehaviorModel):
     self._ckpt_manager = self.GetCheckpointer()
     self._logger = logging.getLogger()
     self._training = False
-    self._bark_behavior_model = BehaviorDynamicModel(params)
+    self._bark_behavior_model = bark_behavior or BehaviorContinuousML(params)
 
   def Reset(self):
-    pass
-
-  def Act(self, state):
     pass
   
   def GetCheckpointer(self):
     checkpointer = Checkpointer(
-        self._params["ML"]["BehaviorTFAContAgents"]["CheckpointPath", "", ""],
+        self._params["ML"]["BehaviorTFAAgents"]["CheckpointPath", "", ""],
       global_step=self._ckpt.step,
       tf_agent=self._agent,
-      max_to_keep=self._params["ML"]["BehaviorTFAContAgents"]["NumCheckpointsToKeep", "", 3])
+      max_to_keep=self._params["ML"]["BehaviorTFAAgents"]["NumCheckpointsToKeep", "", 3])
     checkpointer.initialize_or_restore()
     return checkpointer
 
@@ -80,29 +71,35 @@ class BehaviorTFAContAgent(BehaviorModel):
       self._logger.info("Initializing agent from scratch.")
 
   def Act(self, state):
-    # NOTE: this is the greedy policy
+    # NOTE: greedy action
     action_step = self.eval_policy.action(
       ts.transition(state, reward=0.0, discount=1.0))
     return action_step.action.numpy()
 
+  def ActionToBehavior(self, action):
+    # NOTE: will either be set externally or internally
+    self._action = action
+
   def Plan(self, dt, observed_world):
-    # NOTE: if training is enabled the action is set from the outside
+    # NOTE: if training is enabled the action is set externally
     if not self._training:
       observed_state = self._environment._observer.Observe(
         observed_world)
-      action = self.Act(observed_state)
-      # NOTE: remove reshape
-      self._bark_behavior_model.ActionToBehavior(np.reshape(action, [-1, 1]))
+      self._action = self.Act(observed_state)
+    # NOTE: BARK expects (m, 1) actions
+    reshaped_action = self._action
+    if isinstance(self.action_space, BoundedContinuous):
+      reshaped_action = np.reshape(self._action, (-1, 1))
+    # set action to be executed
+    self._bark_behavior_model.ActionToBehavior(reshaped_action)
     trajectory = self._bark_behavior_model.Plan(dt, observed_world)
+    # NOTE: BARK requires models to have trajectories of the past
     BehaviorModel.SetLastTrajectory(self, trajectory)
     return trajectory
 
   @property
   def action_space(self):
-    return BoundedContinuous(
-      2, # acceleration and steering-rate
-      low=np.array(self._lower_bounds, dtype=np.float32),
-      high=np.array(self._upper_bounds, dtype=np.float32))
+    return self._bark_behavior_model.action_space
 
   def Clone(self):
     return self

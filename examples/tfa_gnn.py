@@ -46,8 +46,8 @@ def run_configuration(argv):
   params = ParameterServer(filename=param_filename)
 
   # NOTE: Modify these paths to specify your preferred path for checkpoints and summaries
-  # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "YOUR_PATH"
-  # params["ML"]["TFARunner"]["SummaryPath"] = "YOUR_PATH"
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/checkpoints/"
+  params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/checkpoints/"
 
   #viewer = MPViewer(
   #  params=params,

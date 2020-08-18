@@ -13,15 +13,15 @@ from tf_agents.agents.ppo import ppo_agent
 from tf_agents.replay_buffers import tf_uniform_replay_buffer
 from tf_agents.trajectories import time_step as ts
 
-from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAContAgent
+from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAAgent
 from bark_ml.commons.py_spaces import BoundedContinuous
 
 
-class BehaviorPPOAgent(BehaviorTFAContAgent):
+class BehaviorPPOAgent(BehaviorTFAAgent):
   def __init__(self,
                environment=None,
                params=None):
-    BehaviorTFAContAgent.__init__(self,
+    BehaviorTFAAgent.__init__(self,
                       environment=environment,
                       params=params)
     self._replay_buffer = self.GetReplayBuffer()
