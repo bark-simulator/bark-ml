@@ -26,6 +26,7 @@ class TFARunner:
                environment=None,
                agent=None,
                params=None):
+
     self._params = params
     self._eval_metrics = [
       tf_metrics.AverageReturnMetric(
@@ -34,6 +35,7 @@ class TFARunner:
         buffer_size=self._params["ML"]["TFARunner"]["EvaluationSteps", "", 25])
     ]
     self._agent = agent
+    self._agent.set_action_externally = True
     self._summary_writer = None
     self._params = params or ParameterServer()
     self._environment = environment

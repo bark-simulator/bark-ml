@@ -38,11 +38,23 @@ class BehaviorTFAAgent(BehaviorModel):
                                      agent=self._agent)
     self._ckpt_manager = self.GetCheckpointer()
     self._logger = logging.getLogger()
+    # NOTE: by default we do not want the action to be set externally
+    #       as this enables the agents to be plug and played in BARK.
     self._set_action_externally = False
     self._bark_behavior_model = bark_behavior or BehaviorContinuousML(params)
 
   def Reset(self):
     pass
+  
+  @property
+  def set_action_externally(self):
+    return self._set_action_externally
+  
+  @set_action_externally.setter
+  def set_action_externally(self, externally):
+    if externally:
+      self._logger.info("Actions are now set externally.")
+    self._set_action_externally = externally
   
   def GetCheckpointer(self):
     checkpointer = Checkpointer(
