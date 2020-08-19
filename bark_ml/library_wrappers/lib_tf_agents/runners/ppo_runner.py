@@ -36,5 +36,5 @@ class PPORunner(TFARunner):
       if i % self._params["ML"]["PPORunner"]["EvaluateEveryNSteps", "", 100] == 0:
         self.Run(
           num_episodes=self._params["ML"]["TFARunner"]["EvaluationSteps", "", 20],
-          mode=training)
+          mode="training")
         self._agent.Save()
