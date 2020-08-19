@@ -1,10 +1,9 @@
 # Copyright (c) 2020 fortiss GmbH
 #
-# Authors: Patrick Hart, Julian Bernhard, Klemens Esterle, and
-# Tobias Kessler
+# Authors: Patrick Hart
 #
-# This software is released under the MIT License.
-# https://opensource.org/licenses/MIT
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
 
 import unittest
 import numpy as np
@@ -46,7 +45,7 @@ class PyLibraryWrappersTFAgentTests(unittest.TestCase):
                                     number_of_senarios=10,
                                     random_seed=0)
     env = SingleAgentRuntime(blueprint=bp,
-                             render=True)
+                             render=False)
     ml_behaviors = []
     ml_behaviors.append(
       BehaviorPPOAgent(environment=env,
@@ -64,6 +63,24 @@ class PyLibraryWrappersTFAgentTests(unittest.TestCase):
         action = np.random.uniform(low=-0.1, high=0.1, size=(2, ))
         observed_next_state, reward, done, info = env.step(action)
         print(f"Observed state: {observed_next_state}, Reward: {reward}, Done: {done}")
+      
+      # action is set externally
+      ml_behavior._set_action_externally = True
+      agent_id = list(env._world.agents.keys())[0]
+      observed_world = env._world.Observe([agent_id])[0]
+      action = np.random.uniform(low=-0.1, high=0.1, size=(2, ))
+      ml_behavior.ActionToBehavior(action)
+      a = ml_behavior.Plan(0.2, observed_world)
+      action = np.random.uniform(low=-0.1, high=0.1, size=(2, ))
+      ml_behavior.ActionToBehavior(action)
+      b = ml_behavior.Plan(0.2, observed_world)
+      self.assertEqual(np.any(np.not_equal(a, b)), True)
+
+      # action will be calculated within the Plan(..) fct.
+      a = ml_behavior.Plan(0.2, observed_world)
+      b = ml_behavior.Plan(0.2, observed_world)
+      np.testing.assert_array_equal(a, b)
+
 
   # agent + runner
   def test_agent_and_runner(self):
@@ -71,18 +88,23 @@ class PyLibraryWrappersTFAgentTests(unittest.TestCase):
     bp = ContinuousHighwayBlueprint(params,
                                     number_of_senarios=10,
                                     random_seed=0)
-    env = SingleAgentRuntime(blueprint=bp,
-                             render=False)
-    agent = BehaviorPPOAgent(environment=env,
-                     params=params)
+    env = SingleAgentRuntime(blueprint=bp, render=False)
+    agent = BehaviorPPOAgent(environment=env, params=params)
     
     # set agent
+    params["ML"]["PPORunner"]["NumberOfCollections"] = 2
+    params["ML"]["SACRunner"]["NumberOfCollections"] = 2
+    params["ML"]["TFARunner"]["EvaluationSteps"] = 2
     env.ml_behavior = agent
+    self.assertEqual(env.ml_behavior.set_action_externally, False)
     runner = PPORunner(params=params,
                        environment=env,
                        agent=agent)
-    # runner.Train()
-    runner.Visualize()
+    runner.Train()
+    self.assertEqual(env.ml_behavior.set_action_externally, True)
+    runner.Run()
+    self.assertEqual(env.ml_behavior.set_action_externally, True)
+
 
 
 if __name__ == '__main__':

@@ -25,3 +25,10 @@ py_library(
     srcs = ["py_spaces.py"],
     visibility = ["//visibility:public"],
 )
+
+
+py_library(
+  name = "tracer",
+  srcs = ["tracer.py"],
+  visibility = ["//visibility:public"],
+)

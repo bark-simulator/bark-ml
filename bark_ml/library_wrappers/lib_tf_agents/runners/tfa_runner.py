@@ -1,3 +1,9 @@
+# Copyright (c) 2020 fortiss GmbH
+#
+# Authors: Patrick Hart
+#
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
 import sys
 import logging
 import time
@@ -19,14 +25,16 @@ from tf_agents.trajectories import time_step as ts
 
 # BARK-ML imports
 from bark_ml.library_wrappers.lib_tf_agents.tfa_wrapper import TFAWrapper
+from bark_ml.commons.tracer import Tracer
 
 
 class TFARunner:
   def __init__(self,
                environment=None,
                agent=None,
+               tracer=None,
                params=None):
-    self._params = params
+    self._params = params or ParameterServer()
     self._eval_metrics = [
       tf_metrics.AverageReturnMetric(
         buffer_size=self._params["ML"]["TFARunner"]["EvaluationSteps", "", 25]),
@@ -34,14 +42,15 @@ class TFARunner:
         buffer_size=self._params["ML"]["TFARunner"]["EvaluationSteps", "", 25])
     ]
     self._agent = agent
+    self._agent.set_action_externally = True
     self._summary_writer = None
-    self._params = params or ParameterServer()
     self._environment = environment
     self._wrapped_env = tf_py_environment.TFPyEnvironment(
       TFAWrapper(self._environment))
     self.GetInitialCollectionDriver()
     self.GetCollectionDriver()
     self._logger = logging.getLogger()
+    self._tracer = tracer or Tracer()
 
   def SetupSummaryWriter(self):
     if self._params["ML"]["TFARunner"]["SummaryPath"] is not None:
@@ -84,47 +93,50 @@ class TFARunner:
     """
     pass
 
-  def Evaluate(self):
-    self._agent._training = False
-    global_iteration = self._agent._agent._train_step_counter.numpy()
-    self._logger.info("Evaluating the agent's performance in {} episodes."
-      .format(str(self._params["ML"]["TFARunner"]["EvaluationSteps", "", 20])))
-    metric_utils.eager_compute(
-      self._eval_metrics,
-      self._wrapped_env,
-      self._agent._agent.policy,
-      num_episodes=self._params["ML"]["TFARunner"]["EvaluationSteps", "", 20],
-      use_function=False)
-    metric_utils.log_metrics(self._eval_metrics)
-    tf.summary.scalar("mean_reward",
-                      self._eval_metrics[0].result().numpy(),
-                      step=global_iteration)
-    tf.summary.scalar("mean_steps",
-                      self._eval_metrics[1].result().numpy(),
-                      step=global_iteration)
-    
-    self._logger.info(
-      "The agent achieved on average {} reward and {} steps in {} episodes." \
-      .format(str(self._eval_metrics[0].result().numpy()),
-              str(self._eval_metrics[1].result().numpy()),
-              str(self._params["ML"]["TFARunner"]["EvaluationSteps", "", 20])))
+  def ReshapeActionIfRequired(self, action_step):
+    action_shape = action_step.action.shape
+    expected_shape = self._agent._eval_policy.action_spec.shape
+    action = action_step.action.numpy()
+    if action_shape != expected_shape:
+      # logging.warning("Action shape" + str(action_shape) + \
+      #   " does not match with expected shape " + str(expected_shape) +\
+      #   " -> reshaping is tried")
+      action = np.reshape(action, expected_shape)
+      # logging.info(action)
+    return action
 
-
-  def Visualize(self, num_episodes=1):
-    self._agent._training = False
-    for _ in range(0, num_episodes):
-      state = self._environment.reset()
-      is_terminal = False
-      while not is_terminal:
-        action_step = self._agent._eval_policy.action(ts.transition(state, reward=0.0, discount=1.0))
-        action_shape = action_step.action.shape
-        expected_shape = self._agent._eval_policy.action_spec.shape
-        action = action_step.action.numpy()
-        if action_shape != expected_shape:
-          logging.warning("Action shape" + str(action_shape) + \
-            " does not match with expected shape " + str(expected_shape) +\
-            " -> reshaping is tried")
-          action = np.reshape(action, expected_shape)
-          logging.info(action)
-        state, reward, is_terminal, _ = self._environment.step(action)
+  def RunEpisode(self, render=True, **kwargs):
+    state = self._environment.reset()
+    is_terminal = False
+    while not is_terminal:
+      action_step = self._agent._eval_policy.action(
+        ts.transition(state, reward=0.0, discount=1.0))
+      action = self.ReshapeActionIfRequired(action_step)
+      env_data = self._environment.step(action)
+      self._tracer.Trace(env_data, **kwargs)
+      state, is_terminal = env_data[0], env_data[2]
+      if render:
         self._environment.render()
+
+  def Run(self, num_episodes=10, render=False, mode="not_training", **kwargs):
+    for i in range(0, num_episodes):
+      trajectory = self.RunEpisode(
+        render=render, **kwargs, num_episode=i)
+    # average collision, reward, and step count
+    mean_col_rate = self._tracer.Query(
+      key="collision", group_by="num_episode", agg_type="MEAN").mean()
+    mean_reward = self._tracer.Query(
+      key="reward", group_by="num_episode", agg_type="SUM").mean()
+    mean_steps = self._tracer.Query(
+      key="step_count", group_by="num_episode", agg_type="LAST_VALUE").mean()
+    if mode == "training":
+      global_iteration = self._agent._agent._train_step_counter.numpy()
+      tf.summary.scalar("mean_reward", mean_reward, step=global_iteration)
+      tf.summary.scalar("mean_steps", mean_steps, step=global_iteration)
+      tf.summary.scalar(
+        "mean_collision_rate", mean_col_rate, step=global_iteration)
+    self._logger.info(f"The agent achieved an average reward of {mean_reward:.3f}," +
+                      f" collision-rate of {mean_col_rate:.5f}, and took on average" +
+                      f" {mean_steps:.3f} steps (evaluated over {num_episodes} episodes).")
+    # reset tracer
+    self._tracer.Reset()

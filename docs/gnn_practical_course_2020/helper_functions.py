@@ -167,7 +167,6 @@ def prepare_agent(agent, params, env):
   runner = SACRunner(params=params, environment=env, agent=agent)
   
   iterator = iter(agent._dataset)
-  agent._training = True
   runner._collection_driver.run()
   experience, _ = next(iterator)
   agent._agent.train(experience)
@@ -204,6 +203,7 @@ def run_rl_example(env, agent, params, mode="visualize"):
     runner.SetupSummaryWriter()
     runner.Train()
   elif mode == "visualize":
-    runner.Visualize(5)
+    runner.Run(num_episodes=10, render=True)
   elif mode == "evaluate":
-    runner.Evaluate()
+    runner.Run(num_episodes=10, render=False)
+    

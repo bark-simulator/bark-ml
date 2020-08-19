@@ -15,7 +15,8 @@ from bark.core.models.dynamic import SingleTrackModel
 from bark.core.world.opendrive import XodrDrivingDirection
 from bark.core.world.goal_definition import GoalDefinitionPolygon
 from bark.core.world.goal_definition import GoalDefinitionStateLimitsFrenet
-from bark.core.models.behavior import BehaviorMobilRuleBased, BehaviorIDMClassic
+from bark.core.models.behavior import BehaviorLaneChangeRuleBased, BehaviorIDMClassic, \
+  BehaviorMobilRuleBased
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
 from bark_ml.evaluators.goal_reached import GoalReached
@@ -50,6 +51,10 @@ class MergingBlueprint(Blueprint):
                ml_behavior=None,
                viewer=True):
     params["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
+    params["BehaviorIDMClassic"]["BrakeForLaneEndEnabledDistance"] = 100.
+    params["BehaviorIDMClassic"]["BrakeForLaneEndDistanceOffset"] = 25.
+    params["BehaviorIDMClassic"]["DesiredVelocity"] = 12.5
+    params["World"]["remove_agents_out_of_map"] = False
     left_lane = MergingLaneCorridorConfig(
       params=params,
       road_ids=[0, 1],

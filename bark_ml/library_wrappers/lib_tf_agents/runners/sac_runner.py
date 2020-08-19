@@ -1,3 +1,10 @@
+# Copyright (c) 2020 fortiss GmbH
+#
+# Authors: Patrick Hart
+#
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
+
 import sys
 import logging
 import time
@@ -39,12 +46,10 @@ class SACRunner(TFARunner):
     iterator = iter(self._agent._dataset)
     iteration_start_time = time.time()
 
-    for i in range(0, self._number_of_collections):
+    for i in range(1, self._number_of_collections):
       global_iteration = self._agent._agent._train_step_counter.numpy()
       tf.summary.experimental.set_step(global_iteration)
 
-      self._agent._training = True
-      
       t0 = time.time()
       self._collection_driver.run()
       self._log_collection_duration(start_time=t0, iteration=global_iteration)
@@ -61,7 +66,9 @@ class SACRunner(TFARunner):
           iteration=global_iteration)
         iteration_start_time = time.time()
 
-        self.Evaluate()
+        self.Run(
+          num_episodes=self._params["ML"]["TFARunner"]["EvaluationSteps", "", 20],
+          mode="training")
         self._agent.Save()
 
   def _log_collection_duration(self, start_time, iteration):
