@@ -23,10 +23,10 @@ class Tracer:
       eval_dict["reward"] = reward
       eval_dict["is_terminal"] = is_terminal
       for info_key, info_value in info.items():
-        eval_dict["info_"+info_key] = info_value
+        eval_dict[info_key] = info_value
     if type(eval_state) is dict:
       for info_key, info_value in eval_state.items():
-        eval_dict["info_"+info_key] = info_value
+        eval_dict[info_key] = info_value
     return eval_dict
 
   def Trace(self, eval_state, **kwargs):
@@ -39,13 +39,18 @@ class Tracer:
   
   def Query(
     self,
-    key="collisions",
-    group_by="episode_num",
+    key="collision",
+    group_by="num_episode",
     type="Mean"):
     if self._df == None:
       self.ConvertToDf()
     # NOTE: insert pandas logic here
+    df = self.df.groupby([group_by])
 
+  @property
+  def df(self):
+    return self._df
+  
   def ConvertToDf(self):
     """Conversts states to pandas dataframe"""
     self._df = pd.DataFrame(self._states)

@@ -40,29 +40,50 @@ class PyTracerTests(unittest.TestCase):
     bp = ContinuousHighwayBlueprint(params)
     tracer = Tracer()
     env = SingleAgentRuntime(blueprint=bp, render=False)
-    env.reset()
-    for _ in range(0, 10):
-      action = np.random.uniform(low=-0.1, high=0.1, size=(2, ))
-      data = (observed_next_state, reward, done, info) = env.step(action)
-      tracer.Trace(data)
+    for i in range(0, 2):
+      env.reset()
+      for _ in range(0, 10):
+        action = np.random.uniform(low=-0.01, high=0.01, size=(2, ))
+        data = (observed_next_state, reward, done, info) = env.step(action)
+        tracer.Trace(data, num_episode=i)
+
     # NOTE: test basic tracing
-    self.assertEqual(len(tracer._states), 10)
-    for i in range(0, 10):
+    self.assertEqual(len(tracer._states), 20)
+    for i in range(0, 20):
       self.assertEqual("is_terminal" in tracer._states[i].keys(), True)
       self.assertEqual("reward" in tracer._states[i].keys(), True)
-      self.assertEqual("info_collision" in tracer._states[i].keys(), True)
-      self.assertEqual("info_drivable_area" in tracer._states[i].keys(), True)
-      self.assertEqual("info_drivable_area" in tracer._states[i].keys(), True)
+      self.assertEqual("collision" in tracer._states[i].keys(), True)
+      self.assertEqual("drivable_area" in tracer._states[i].keys(), True)
+      self.assertEqual("goal_reached" in tracer._states[i].keys(), True)
+      self.assertEqual("step_count" in tracer._states[i].keys(), True)
 
     # NOTE: test pandas magic
-    
-
+    tracer.ConvertToDf()
+    # group_by
+    for i in tracer.df["num_episode"].unique():
+      traj_df = tracer.df[tracer.df["num_episode"] == i]
+      # NOTE: trajectory should have 10 steps
+      self.assertEqual(traj_df.shape[0], 10)
+      key = "collision"
+      traj_df[key]
 
     # NOTE: test reset
     tracer.Reset()
     self.assertEqual(len(tracer._states), 0)
-    self.assertEqual(self._df, None)
+    self.assertEqual(tracer._df, None)
 
+  def test_trace_dict(self):
+    """make sure tracing of dictionaries works as well"""
+    tracer = Tracer()
+    for j in range(0, 5):
+      for i in range(0, 10):
+        eval_dict = {"step_count": i}
+        tracer.Trace(eval_dict, num_episode=j)
+    self.assertEqual(len(tracer._states), 50)
+    for i in range(0, 50):
+      self.assertEqual("step_count" in tracer._states[i].keys(), True)
+      self.assertEqual("num_episode" in tracer._states[i].keys(), True)
+    
 
 if __name__ == '__main__':
   unittest.main()
