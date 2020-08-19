@@ -94,12 +94,14 @@ class PyTracerTests(unittest.TestCase):
     env.ml_behavior.set_actions_externally = False
     env.reset()
     bark_world = env._world
-    for i in range(0, 5):
-      bark_world.Step(0.2)
-      eval_dict = bark_world.Evaluate()
-      tracer.Trace(eval_dict, num_episode=i)
-    self.assertEqual(len(tracer._states), 5)
-    print(tracer._states)
+    for j in range(0, 2):
+      for i in range(0, 5):
+        bark_world.Step(0.2)
+        eval_dict = bark_world.Evaluate()
+        tracer.Trace(eval_dict, num_episode=j)
+    self.assertEqual(len(tracer._states), 10)
+    # print(tracer._states)
+    # print(tracer.Query(key="collision", group_by="num_episode", agg_type="MEAN").mean())
 
 
 if __name__ == '__main__':
