@@ -1,57 +1,30 @@
-#include <torch/script.h> // One-stop header.
-
+#include <gtest/gtest.h>
 #include <iostream>
 #include <memory>
+#include <random>
+#include <algorithm>
 
-// Load a pytorch trained network (nn.Module) saved from
-// python and perform an inference
+#include "bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/model_wrapper/model_loader.hpp"
 
-int main(int argc, const char* argv[]) {
-  if (argc != 2) {
-    std::cerr << "usage: bazel run //examples:pytorch_model_cpp <model_path>\n";
-    return -1;
-  }
 
-  torch::jit::script::Module module;
-  try {
-    // deserialize the ScriptModule from a saved python trained model using torch::jit::load().
-    module = torch::jit::load(argv[1]);
-  }
-  catch (const c10::Error& e) {
-    std::cerr << "Error loading the model\n";
-    return -1;
-  }
+#define OBSERVATION_SPACE 16
+#define ACTION_SPACE 50
 
-  // wrap environment observation for inference
-  const u_int64_t OBSERVATION_SPACE = 16;
-  const u_int64_t ACTION_SPACE = 50;
-  const float MIN_REWARD = -1;
-  const float MAX_REWARD = 1;
+TEST(model_loader, load_module) {
 
-  std::vector<torch::jit::IValue> inputs;
+  //std::vector<float> state(OBSERVATION_SPACE);
+  //std::generate(std::begin(state), std::end(state),[](){return ((double) rand() / (RAND_MAX));});
 
-  // sample a random sample from observation_space
-  auto observation = torch::rand({1, OBSERVATION_SPACE});
-  inputs.push_back(observation);
-  
-  at::Tensor actions;
-  try {
-    // run the inference
-    actions = module.forward(inputs).toTensor();
+  ModelLoader ml("/home/mansoor/Study/Werkstudent/fortiss/code/bark-ml/checkpoints/best/online_net_script.pt", ACTION_SPACE, OBSERVATION_SPACE);
+  bool load_status = ml.LoadModel();
+  //auto actions = ml.Inference(state);
 
-  } catch (const c10::Error& e) {
-    std::cerr << e.msg();
-    return -1;
-  }
+  //ASSERT_TRUE(load_status);
+  //ASSERT_EQ(actions.size(), ACTION_SPACE)
+}
 
-  // verify the output range and shape
-  assert(actions.sizes()[1] == ACTION_SPACE);
-  assert(actions.min().item().toFloat() >= MIN_REWARD);
-  assert(actions.max().item().toFloat() <= MAX_REWARD);
 
-  // pick the action with maximum reward
-  auto maxRewardAction = *torch::argmax(actions).data<int64_t>();
-  std::cout << "Action:"<<maxRewardAction<<std::endl;
-
-  return 0;
+int main(int argc, char** argv) {
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
 }

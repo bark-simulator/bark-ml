@@ -1,7 +1,9 @@
 cc_binary(
   name = "pytorch_script_wrapper.so",
   srcs = ["pytorch_script_wrapper.cpp"],
-  deps = ["@torchcpp//:lib",
+  data=["//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/model_wrapper/model_data:weights"],
+  deps = [":model_loader",
+          "@torchcpp//:lib",
           "@python_linux//:python-lib",
           "@pybind11//:pybind11",
           ],
@@ -18,9 +20,25 @@ cc_binary(
 cc_test(
   name = "pytorch_model_cpp",
   srcs = ["pytorch_model_cpp.cc"],
-  deps = ["@torchcpp//:lib",],
+  data=["//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/model_wrapper/model_data:weights"],
+  deps = [":model_loader",
+          "@torchcpp//:lib",
+          "@gtest//:gtest"],
+
   copts = ["-Iexternal/torchcpp/torch/include",
-           #"-Lexternal/torchcpp/libtorch/lib",
+           #"-Lexternal/torchcpp/torch/lib",
+           "-Iexternal/gtest/include",
+           "-D_GLIBCXX_USE_CXX11_ABI=0"],
+
+  linkopts = ["-ltorch_cpu","-lc10"],
+  linkstatic=False
+)
+
+cc_library(
+  name = "model_loader",
+  hdrs = ["model_loader.hpp"],
+  deps = ["@torchcpp//:lib"],
+  copts = ["-Iexternal/torchcpp/torch/include",
            "-D_GLIBCXX_USE_CXX11_ABI=0"],
 
   linkopts = ["-ltorch_cpu","-lc10"],
@@ -48,6 +66,20 @@ cc_test(
            #"-Lexternal/torchcpp/libtorch/lib",
            "-D_GLIBCXX_USE_CXX11_ABI=0"],
 
-  linkopts = ["-ltorch","-lc10"],
+  linkopts = ["-ltorch_cpu","-lc10"],
   linkstatic=False,
+)
+
+py_test(
+  name = "torch_script",
+  srcs = ["torch_script.py"],
+  data = ["@torchcpp//:lib",
+          "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/model_wrapper/model_data:weights",
+          "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/model_wrapper:pytorch_script_wrapper.so",
+          "@bark_project//bark/runtime/commons:commons"],
+  imports = ["external/torchcpp/libtorch/lib"],
+  deps = [
+    "//bark_ml/environments:gym",
+    "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent:agents",
+  ]
 )

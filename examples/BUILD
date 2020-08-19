@@ -69,19 +69,6 @@ py_test(
 )
 
 py_test(
-  name = "torch_script",
-  srcs = ["torch_script.py"],
-  data = ["@torchcpp//:lib",
-          "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/model_wrapper:pytorch_script_wrapper.so",
-          "@bark_project//bark/runtime/commons:commons"],
-  imports = ["external/torchcpp/libtorch/lib"],
-  deps = [
-    "//bark_ml/environments:gym",
-    "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent:agents",
-  ]
-)
-
-py_test(
   name = "iqn",
   srcs = ["iqn.py"],
   data = ["@bark_project//bark/python_wrapper:core.so",

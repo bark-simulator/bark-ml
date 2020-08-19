@@ -9,22 +9,18 @@ from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent import IQNAgent
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.model_wrapper import pytorch_script_wrapper
 
 
-model_path = "/home/mansoor/Study/Werkstudent/fortiss/code/bark-ml/checkpoints/best"
-
 env = "highway-v1"
 env = gym.make(env)
 action_space_size = env.action_space.n
 state_space_size = env.observation_space.shape[0]
 
+
 # a sample random state [0-1] to evaluate actions
 random_state = np.random.rand(16).tolist()
 
 # Do inference using C++ wrapped model
-model = pytorch_script_wrapper.ModelLoader(os.path.join(model_path, "online_net_script.pt"), action_space_size, state_space_size)
-loaded = model.LoadModel()
-
-if not loaded:
-  raise Exception("Model not loaded!")
+model = pytorch_script_wrapper.ModelLoader(os.path.join(os.path.dirname(__file__), "model_data/online_net_script.pt"), action_space_size, state_space_size)
+model.LoadModel()
 
 # Time 10000 iterations for inference in cpp
 start = time.time()
@@ -35,7 +31,7 @@ time_cpp = end-start
 
 # Do inference using python model
 agent = IQNAgent(env=env, test_env=env, params = ParameterServer())
-agent.load_models(model_path)
+agent.load_models(os.path.join(os.path.dirname(__file__), "model_data"))
 
 # Time 10000 iterations for inference using python model
 start = time.time()
@@ -45,18 +41,18 @@ end = time.time()
 time_py = end-start
 
 # Print report
-print ("----------------- Time comparison -----------------")
+print ("----------------------- Time comparison ------------------------")
 print("Time(python):{}".format(time_cpp))
 print("Time(cpp):{}".format(time_py))
-print ("---------------------------------------------------\n")
+print ("----------------------------------------------------------------\n")
 
-print ("----------------- Action comparison -----------------")
+print ("----------------- Action comparison ----------------------------")
 print("Time(python):{}".format(actions_py.argmax()))
 print("Time(cpp):{}".format(np.asarray(actions_cpp).argmax().item()))
-print ("-----------------------------------------------------\n")
+print ("----------------------------------------------------------------\n")
 
-print ("----------------- Action reward comparison -----------------")
+print ("----------------- Action reward comparison -----------------------")
 print ("Actions(python model):\n{}\n".format(actions_py.tolist()))
 print ("Actions(cpp model):\n{}\n".format(actions_cpp))
-print ("------------------------------------------------------------")
+print ("------------------------------------------------------------------")
 
