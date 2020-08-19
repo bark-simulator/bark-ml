@@ -1,3 +1,10 @@
+# Copyright (c) 2020 fortiss GmbH
+#
+# Authors: Patrick Hart
+#
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
+
 import numpy as np
 import tensorflow as tf
 import logging

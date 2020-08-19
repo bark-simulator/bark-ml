@@ -1,6 +1,11 @@
-import tensorflow as tf
+# Copyright (c) 2020 fortiss GmbH
+#
+# Authors: Patrick Hart
+#
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
 
-# BARK imports
+import tensorflow as tf
 
 # tfa
 from tf_agents.networks import actor_distribution_network
