@@ -112,7 +112,7 @@ class TFARunner:
       if render:
         self._environment.render()
 
-  def Run(self, num_episodes=10, render=True, mode="not_training", **kwargs):
+  def Run(self, num_episodes=10, render=False, mode="not_training", **kwargs):
     for i in range(0, num_episodes):
       trajectory = self.RunEpisode(
         render=render, **kwargs, num_episode=i)
