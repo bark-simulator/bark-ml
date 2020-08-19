@@ -50,6 +50,10 @@ class MergingBlueprint(Blueprint):
                ml_behavior=None,
                viewer=True):
     params["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
+    params["BehaviorIDMClassic"]["BrakeForLaneEndEnabledDistance"] = 100.
+    params["BehaviorIDMClassic"]["BrakeForLaneEndDistanceOffset"] = 25.
+    params["BehaviorIDMClassic"]["DesiredVelocity"] = 12.5
+    params["World"]["remove_agents_out_of_map"] = False
     left_lane = MergingLaneCorridorConfig(
       params=params,
       road_ids=[0, 1],
@@ -67,7 +71,7 @@ class MergingBlueprint(Blueprint):
       s_max=25.,
       min_vel=8.,
       max_vel=12.,
-      behavior_model=BehaviorIDMClassic(params),
+      behavior_model=BehaviorMobilRuleBased(params),
       controlled_ids=True)
     scenario_generation = \
       ConfigWithEase(
