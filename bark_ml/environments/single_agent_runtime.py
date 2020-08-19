@@ -1,8 +1,9 @@
-# Copyright (c) 2020 Patrick Hart, Julian Bernhard, 
-# Klemens Esterle, Tobias Kessler
+# Copyright (c) 2020 fortiss GmbH
 #
-# This software is released under the MIT License.
-# https://opensource.org/licenses/MIT
+# Authors: Patrick Hart
+#
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
 
 import numpy as np
 from bark.runtime.runtime import Runtime
