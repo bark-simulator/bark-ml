@@ -5,6 +5,8 @@ py_test(
     imports = ["../external/bark_project/bark/python_wrapper/",
                "../python_wrapper/"],
     deps = ["//bark_ml/environments:single_agent_runtime",
+            "//bark_ml/environments:counterfactual_runtime",
+            "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
             "//bark_ml/environments:gym",
             "//bark_ml/commons:py_spaces"],
     visibility = ["//visibility:public"],
