@@ -59,7 +59,9 @@ class SACRunner(TFARunner):
           iteration=global_iteration)
         iteration_start_time = time.time()
 
-        self.Evaluate()
+        self.Run(
+          num_episodes=self._params["ML"]["TFARunner"]["EvaluationSteps", "", 20],
+          mode=training)
         self._agent.Save()
 
   def _log_collection_duration(self, start_time, iteration):

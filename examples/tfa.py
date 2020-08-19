@@ -40,8 +40,8 @@ def run_configuration(argv):
   # params = ParameterServer(filename="examples/example_params/tfa_params.json")
   params = ParameterServer()
   # NOTE: Modify these paths in order to save the checkpoints and summaries
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/checkpoints/"
-  params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/summaries/"
+  # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "YOUR_PATH"
+  # params["ML"]["TFARunner"]["SummaryPath"] = "YOUR_PATH"
   params["World"]["remove_agents_out_of_map"] = True
 
   # create environment
@@ -70,10 +70,12 @@ def run_configuration(argv):
     runner.SetupSummaryWriter()
     runner.Train()
   elif FLAGS.mode == "visualize":
-    runner.Visualize(5)
+    runner.Run(num_episodes=10, render=True)
+  elif FLAGS.mode == "evaluate":
+    runner.Run(num_episodes=100, render=False)
   
   # store all used params of the training
-  # params.Save("/home/hart/Dokumente/2020/bark-ml/examples/example_params/tfa_params.json")
+  # params.Save("YOUR_PATH")
 
 
 if __name__ == '__main__':

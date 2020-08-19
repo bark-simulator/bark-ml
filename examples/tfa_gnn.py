@@ -84,12 +84,12 @@ def run_configuration(argv):
     runner.SetupSummaryWriter()
     runner.Train()
   elif FLAGS.mode == "visualize":
-    runner.Visualize(5)
+    runner.Run(num_episodes=10, render=True)
   elif FLAGS.mode == "evaluate":
-    runner.Evaluate()
+    runner.Run(num_episodes=100, render=False)
   
   # store all used params of the training
-  #params.Save("your_path_here/tfa_sac_gnn_params.json")
+  # params.Save("your_path_here/tfa_sac_gnn_params.json")
 
 if __name__ == '__main__':
   app.run(run_configuration)

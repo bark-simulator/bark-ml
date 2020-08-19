@@ -62,7 +62,7 @@ class PyTracerTests(unittest.TestCase):
     # average collisions 
     print(tracer.Query(key="collision", group_by="num_episode", agg_type="MEAN").mean())
     # average reward
-    print(tracer.Query(key="reward", group_by="num_episode", agg_type="MEAN").mean())
+    print(tracer.Query(key="reward", group_by="num_episode", agg_type="SUM").mean())
 
     # NOTE: test reset
     tracer.Reset()
@@ -81,6 +81,26 @@ class PyTracerTests(unittest.TestCase):
       self.assertEqual("step_count" in tracer._states[i].keys(), True)
       self.assertEqual("num_episode" in tracer._states[i].keys(), True)
     
+  def test_tracing_bark_world(self):
+    params = ParameterServer()
+    bp = ContinuousHighwayBlueprint(params)
+    tracer = Tracer()
+    env = SingleAgentRuntime(blueprint=bp, render=False)
+    sac_agent = BehaviorSACAgent(
+      environment=env,
+      params=params)
+    env.ml_behavior = sac_agent
+    # NOTE: this also tests if a BARK agent is self-contained
+    env.ml_behavior.set_actions_externally = False
+    env.reset()
+    bark_world = env._world
+    for i in range(0, 5):
+      bark_world.Step(0.2)
+      eval_dict = bark_world.Evaluate()
+      tracer.Trace(eval_dict, num_episode=i)
+    self.assertEqual(len(tracer._states), 5)
+    print(tracer._states)
+
 
 if __name__ == '__main__':
   unittest.main()

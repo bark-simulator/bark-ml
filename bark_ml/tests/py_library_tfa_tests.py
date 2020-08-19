@@ -103,9 +103,7 @@ class PyLibraryWrappersTFAgentTests(unittest.TestCase):
                        agent=agent)
     runner.Train()
     self.assertEqual(env.ml_behavior.set_action_externally, True)
-    runner.Evaluate()
-    self.assertEqual(env.ml_behavior.set_action_externally, True)
-    runner.Visualize()
+    runner.Run()
     self.assertEqual(env.ml_behavior.set_action_externally, True)
 
 

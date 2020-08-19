@@ -203,6 +203,7 @@ def run_rl_example(env, agent, params, mode="visualize"):
     runner.SetupSummaryWriter()
     runner.Train()
   elif mode == "visualize":
-    runner.Visualize(5)
+    runner.Run(num_episodes=10, render=True)
   elif mode == "evaluate":
-    runner.Evaluate()
+    runner.Run(num_episodes=10, render=False)
+    

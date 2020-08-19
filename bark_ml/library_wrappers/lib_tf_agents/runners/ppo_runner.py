@@ -34,5 +34,7 @@ class PPORunner(TFARunner):
       self._agent._agent.train(experience=trajectories)
       self._agent._replay_buffer.clear()
       if i % self._params["ML"]["PPORunner"]["EvaluateEveryNSteps", "", 100] == 0:
-        self.Evaluate()
+        self.Run(
+          num_episodes=self._params["ML"]["TFARunner"]["EvaluationSteps", "", 20],
+          mode=training)
         self._agent.Save()

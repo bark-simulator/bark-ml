@@ -9,6 +9,8 @@ class Tracer:
     """
     TRACE = "TRACE"
     MEAN  = "MEAN"
+    SUM  = "SUM"
+    LAST_VALUE  = "LAST_VALUE"
     ANY_TRUE  = "ANY_TRUE"
     ANY_FALSE  = "ANY_FALSE"
   
@@ -50,6 +52,10 @@ class Tracer:
     # NOTE: different aggregation types
     if agg_type == Tracer.QueryTypes.MEAN:
       return df.mean()
+    if agg_type == Tracer.QueryTypes.SUM:
+      return df.sum()
+    if agg_type == Tracer.QueryTypes.LAST_VALUE:
+      return df.tail(1)
     elif agg_type == Tracer.QueryTypes.ANY_TRUE:
       return any(df.apply(list)) == True
     elif agg_type == Tracer.QueryTypes.ANY_FALSE:
