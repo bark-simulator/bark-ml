@@ -7,8 +7,10 @@ class Tracer:
     Trace: returns the trace
     Mean: calculates the mean of the trace
     """
-    trace = "Trace"
-    mean  = "Mean"
+    TRACE = "TRACE"
+    MEAN  = "MEAN"
+    ANY_TRUE  = "ANY_TRUE"
+    ANY_FALSE  = "ANY_FALSE"
   
   def __init__(self):
     self._states = []
@@ -41,11 +43,18 @@ class Tracer:
     self,
     key="collision",
     group_by="num_episode",
-    type="Mean"):
-    if self._df == None:
+    agg_type="TRACE"):
+    if self.df is None:
       self.ConvertToDf()
-    # NOTE: insert pandas logic here
-    df = self.df.groupby([group_by])
+    df = self.df.groupby(group_by)[key]
+    # NOTE: different aggregation types
+    if agg_type == Tracer.QueryTypes.MEAN:
+      return df.mean()
+    elif agg_type == Tracer.QueryTypes.ANY_TRUE:
+      return any(df.apply(list)) == True
+    elif agg_type == Tracer.QueryTypes.ANY_FALSE:
+      return df == False
+    return df.apply(list)
 
   @property
   def df(self):
@@ -57,7 +66,7 @@ class Tracer:
   
   def Save(self, filepath="./"):
     """Saves trace as pandas dataframe"""
-    if self._df == None:
+    if self._df is None:
       self.ConvertoToDf()
     self._df.to_pickle(filepath)
 

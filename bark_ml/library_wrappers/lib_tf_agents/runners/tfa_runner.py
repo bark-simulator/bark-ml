@@ -19,12 +19,13 @@ from tf_agents.trajectories import time_step as ts
 
 # BARK-ML imports
 from bark_ml.library_wrappers.lib_tf_agents.tfa_wrapper import TFAWrapper
-
+from bark_ml.commons.tracer import Tracer
 
 class TFARunner:
   def __init__(self,
                environment=None,
                agent=None,
+               tracer=None,
                params=None):
 
     self._params = params
@@ -44,6 +45,7 @@ class TFARunner:
     self.GetInitialCollectionDriver()
     self.GetCollectionDriver()
     self._logger = logging.getLogger()
+    self._tracer = tracer or Tracer()
 
   def SetupSummaryWriter(self):
     if self._params["ML"]["TFARunner"]["SummaryPath"] is not None:
@@ -98,27 +100,31 @@ class TFARunner:
       logging.info(action)
     return action
 
-  def RunEpisode(self, visualize=True, **kwargs):
+  def RunEpisode(self, render=True, **kwargs):
     state = self._environment.reset()
     is_terminal = False
-    trajectory = []
     while not is_terminal:
       action_step = self._agent._eval_policy.action(
         ts.transition(state, reward=0.0, discount=1.0))
       action = self.ReshapeActionIfRequired(action_step)
-      state = self._environment.step(action)
-      # tracer.Trace(state, kwargs)
-      state, is_terminal = state[0], state[2]
-      trajectory.append([state])
-      if visualize:
+      env_data = self._environment.step(action)
+      self._tracer.Trace(env_data, **kwargs)
+      state, is_terminal = env_data[0], env_data[2]
+      if render:
         self._environment.render()
-      return trajectory
 
-  def Run(self, num_episodes=10, visualize=True, **kwargs):
+  def Run(self, num_episodes=10, render=True, **kwargs):
     for i in range(0, num_episodes):
       trajectory = self.RunEpisode(
-        visualize=visualize, **kwargs, episode_num=i)
-    # return query_object
+        render=render, **kwargs, num_episode=i)
+    # NOTE: log stuff
+    # average collisions 
+    print(self._tracer.Query(key="collision", group_by="num_episode", agg_type="MEAN").mean())
+    # average reward
+    print(self._tracer.Query(key="reward", group_by="num_episode", agg_type="MEAN").mean())
+
+    # reset tracer
+    self._tracer.reset()
 
   # NOTE: combine Evaluate(..) with Visualize(..) in Run(..)
   # Run(episode_number, visualize)
@@ -145,7 +151,6 @@ class TFARunner:
       .format(str(self._eval_metrics[0].result().numpy()),
               str(self._eval_metrics[1].result().numpy()),
               str(self._params["ML"]["TFARunner"]["EvaluationSteps", "", 20])))
-
 
   def Visualize(self, num_episodes=1):
     for _ in range(0, num_episodes):

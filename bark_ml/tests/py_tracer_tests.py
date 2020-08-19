@@ -43,7 +43,7 @@ class PyTracerTests(unittest.TestCase):
     for i in range(0, 2):
       env.reset()
       for _ in range(0, 10):
-        action = np.random.uniform(low=-0.01, high=0.01, size=(2, ))
+        action = np.random.uniform(low=-0.1, high=0.1, size=(2, ))
         data = (observed_next_state, reward, done, info) = env.step(action)
         tracer.Trace(data, num_episode=i)
 
@@ -59,13 +59,10 @@ class PyTracerTests(unittest.TestCase):
 
     # NOTE: test pandas magic
     tracer.ConvertToDf()
-    # group_by
-    for i in tracer.df["num_episode"].unique():
-      traj_df = tracer.df[tracer.df["num_episode"] == i]
-      # NOTE: trajectory should have 10 steps
-      self.assertEqual(traj_df.shape[0], 10)
-      key = "collision"
-      traj_df[key]
+    # average collisions 
+    print(tracer.Query(key="collision", group_by="num_episode", agg_type="MEAN").mean())
+    # average reward
+    print(tracer.Query(key="reward", group_by="num_episode", agg_type="MEAN").mean())
 
     # NOTE: test reset
     tracer.Reset()
