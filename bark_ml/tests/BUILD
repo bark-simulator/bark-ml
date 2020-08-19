@@ -100,3 +100,17 @@ py_test(
     ],
     visibility = ["//visibility:public"],
 )
+
+py_test(
+    name = "py_tracer_tests",
+    srcs = ["py_tracer_tests.py"],
+    data = ["@bark_project//bark/python_wrapper:core.so"],
+    imports = ["../external/bark_project/bark/python_wrapper/"],
+    deps = ["//bark_ml/environments:single_agent_runtime",
+            "//bark_ml/environments:gym",
+            "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
+            "//bark_ml/library_wrappers/lib_tf_agents/runners:runners",
+            "//bark_ml/commons:py_spaces",
+            "//bark_ml/commons:tracer"],
+    visibility = ["//visibility:public"],
+)

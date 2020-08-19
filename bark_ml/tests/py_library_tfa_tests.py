@@ -97,14 +97,16 @@ class PyLibraryWrappersTFAgentTests(unittest.TestCase):
     params["ML"]["SACRunner"]["NumberOfCollections"] = 2
     params["ML"]["TFARunner"]["EvaluationSteps"] = 2
     env.ml_behavior = agent
+    self.assertEqual(env.ml_behavior.set_action_externally, False)
     runner = PPORunner(params=params,
                        environment=env,
                        agent=agent)
-    
-
     runner.Train()
+    self.assertEqual(env.ml_behavior.set_action_externally, True)
     runner.Evaluate()
+    self.assertEqual(env.ml_behavior.set_action_externally, True)
     runner.Visualize()
+    self.assertEqual(env.ml_behavior.set_action_externally, True)
 
 
 

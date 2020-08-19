@@ -98,7 +98,7 @@ class TFARunner:
       logging.info(action)
     return action
 
-  def RunEpisode(self, visualize=True):
+  def RunEpisode(self, visualize=True, **kwargs):
     state = self._environment.reset()
     is_terminal = False
     trajectory = []
@@ -106,19 +106,19 @@ class TFARunner:
       action_step = self._agent._eval_policy.action(
         ts.transition(state, reward=0.0, discount=1.0))
       action = self.ReshapeActionIfRequired(action_step)
-      observations = self._environment.step(action)
-      state, is_terminal = observations[0], observations[2]
-      trajectory.append([observations])
+      state = self._environment.step(action)
+      # tracer.Trace(state, kwargs)
+      state, is_terminal = state[0], state[2]
+      trajectory.append([state])
       if visualize:
         self._environment.render()
       return trajectory
 
   def Run(self, num_episodes=10, visualize=True, **kwargs):
     for i in range(0, num_episodes):
-      trajectory = self.RunEpisode(visualize=visualize)
-      # NOTE: log stuff 
-      # tracer.Trace(trajectory, num_episode=i) -> extract and log
-    # NOTE: Evaluate some stuff
+      trajectory = self.RunEpisode(
+        visualize=visualize, **kwargs, episode_num=i)
+    # return query_object
 
   # NOTE: combine Evaluate(..) with Visualize(..) in Run(..)
   # Run(episode_number, visualize)

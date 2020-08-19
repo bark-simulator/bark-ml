@@ -1,0 +1,68 @@
+# Copyright (c) 2020 fortiss GmbH
+#
+# Authors: Patrick Hart, Julian Bernhard, Klemens Esterle, and
+# Tobias Kessler
+#
+# This software is released under the MIT License.
+# https://opensource.org/licenses/MIT
+
+
+import unittest
+import numpy as np
+import os
+import matplotlib
+import time
+import gym
+import matplotlib.pyplot as plt
+
+
+# BARK
+from bark.runtime.commons.parameters import ParameterServer
+from bark.core.models.dynamic import SingleTrackModel
+from bark.core.world import World, MakeTestWorldHighway
+from bark.runtime.viewer.matplotlib_viewer import MPViewer
+
+# BARK-ML
+from bark_ml.library_wrappers.lib_tf_agents.agents.sac_agent import BehaviorSACAgent
+from bark_ml.library_wrappers.lib_tf_agents.agents.ppo_agent import BehaviorPPOAgent
+from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, ContinuousMergingBlueprint
+from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
+from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorGraphSACAgent
+from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner
+from bark_ml.observers.graph_observer import GraphObserver
+from bark_ml.commons.tracer import Tracer
+import bark_ml.environments.gym
+
+
+class PyTracerTests(unittest.TestCase):
+  def test_tracer(self):
+    params = ParameterServer()
+    bp = ContinuousHighwayBlueprint(params)
+    tracer = Tracer()
+    env = SingleAgentRuntime(blueprint=bp, render=False)
+    env.reset()
+    for _ in range(0, 10):
+      action = np.random.uniform(low=-0.1, high=0.1, size=(2, ))
+      data = (observed_next_state, reward, done, info) = env.step(action)
+      tracer.Trace(data)
+    # NOTE: test basic tracing
+    self.assertEqual(len(tracer._states), 10)
+    for i in range(0, 10):
+      self.assertEqual("is_terminal" in tracer._states[i].keys(), True)
+      self.assertEqual("reward" in tracer._states[i].keys(), True)
+      self.assertEqual("info_collision" in tracer._states[i].keys(), True)
+      self.assertEqual("info_drivable_area" in tracer._states[i].keys(), True)
+      self.assertEqual("info_drivable_area" in tracer._states[i].keys(), True)
+
+    # NOTE: test pandas magic
+    
+
+
+    # NOTE: test reset
+    tracer.Reset()
+    self.assertEqual(len(tracer._states), 0)
+    self.assertEqual(self._df, None)
+
+
+if __name__ == '__main__':
+  unittest.main()
