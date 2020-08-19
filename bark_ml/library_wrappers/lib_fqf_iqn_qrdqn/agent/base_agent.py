@@ -18,9 +18,8 @@ class BaseAgent(ABC):
 
         torch.manual_seed(self._params["ML"]["BaseAgent"]["Seed", "", 0])
         np.random.seed(self._params["ML"]["BaseAgent"]["Seed", "", 0])
-        self.env.seed(self._params["ML"]["BaseAgent"]["Seed", "", 0])
-        self.test_env.seed(
-            2**31-1-self._params["ML"]["BaseAgent"]["Seed", "", 0])
+        #self.env.seed(self._params["ML"]["BaseAgent"]["Seed", "", 0])
+        #self.test_env.seed(2**31-1-self._params["ML"]["BaseAgent"]["Seed", "", 0])
         # torch.backends.cudnn.deterministic = True  # It harms a performance.
         # torch.backends.cudnn.benchmark = False  # It harms a performance.
 

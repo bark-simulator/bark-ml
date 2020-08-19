@@ -6,8 +6,10 @@
 
 import gym
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent import IQNAgent
-import bark_ml.environments.gym
+from bark_ml.environments.gym import DiscreteHighwayGym, DiscreteIntersectionGym, DiscreteMergingGym
 from bark.runtime.commons.parameters import ParameterServer
+from bark_ml.environments.blueprints import DiscreteHighwayBlueprint
+from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from absl import app
 from absl import flags
 # this will disable all BARK log messages
@@ -18,7 +20,7 @@ os.environ['GLOG_minloglevel'] = '3'
 # for training: bazel run //examples:iqn -- --mode=train
 FLAGS = flags.FLAGS
 flags.DEFINE_enum("mode",
-                  "visualize",
+                  "train",
                   ["train", "visualize", "evaluate"],
                   "Mode the configuration should be executed in.")
 
@@ -34,8 +36,20 @@ def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/iqn_params.json")
   params["ML"]["BaseAgent"]["SummaryPath"] = "/home/mansoor/Study/Werkstudent/fortiss/code/bark-ml/summaries"
   params["ML"]["BaseAgent"]["CheckpointPath"] = "/home/mansoor/Study/Werkstudent/fortiss/code/bark-ml/checkpoints"
+  params["World"]["remove_agents_out_of_map"] = True
+  params["Test"] = 123
+
+  env = gym.make(FLAGS.env, params=params)
   
-  env = gym.make(FLAGS.env)
+  # if FLAGS.env == "highway-v1":
+  #   env = DiscreteHighwayGym(params)
+  # elif FLAGS.env == "merging-v1":
+  #   env = DiscreteMergingGym(params)
+  # elif FLAGS.env == "intersection-v1":
+  #   env = DiscreteIntersectionGym(params)
+  # else:
+  #   raise Exception("Invalid argument for --env ")
+  
   agent = IQNAgent(env=env, test_env=env,params = params)
 
   if FLAGS.load and params["ML"]["BaseAgent"]["CheckpointPath"]:
@@ -43,9 +57,14 @@ def run_configuration(argv):
 
   if FLAGS.mode == "train": 
     agent.run()
-
   elif FLAGS.mode == "visualize":
     agent.visualize()
+  elif FLAGS.mode == "evaluate":
+    # writes evaluaion data using summary writer in summary path
+    agent.evaluate() 
+
+  else:
+    raise Exception("Invalid argument for --mode")
 
 if __name__ == '__main__':
   app.run(run_configuration)

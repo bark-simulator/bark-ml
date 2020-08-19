@@ -35,7 +35,7 @@ def run_configuration(argv):
   params["ML"]["BaseAgent"]["SummaryPath"] = "/home/mansoor/Study/Werkstudent/fortiss/code/bark-ml/logs/summaries"
   params["ML"]["BaseAgent"]["CheckpointPath"] = "/home/mansoor/Study/Werkstudent/fortiss/code/bark-ml/checkpoints"
   
-  env = gym.make(FLAGS.env)
+  env = gym.make(FLAGS.env, params=params)
   agent = QRDQNAgent(env=env, test_env=env, params = params)
 
   if FLAGS.load and params["ML"]["BaseAgent"]["CheckpointPath"]:
