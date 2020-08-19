@@ -84,8 +84,43 @@ class TFARunner:
     """
     pass
 
+  def ReshapeActionIfRequired(self, action_step):
+    action_shape = action_step.action.shape
+    expected_shape = self._agent._eval_policy.action_spec.shape
+    action = action_step.action.numpy()
+    if action_shape != expected_shape:
+      logging.warning("Action shape" + str(action_shape) + \
+        " does not match with expected shape " + str(expected_shape) +\
+        " -> reshaping is tried")
+      action = np.reshape(action, expected_shape)
+      logging.info(action)
+    return action
+
+  def RunEpisode(self, visualize=True):
+    state = self._environment.reset()
+    is_terminal = False
+    trajectory = []
+    while not is_terminal:
+      action_step = self._agent._eval_policy.action(
+        ts.transition(state, reward=0.0, discount=1.0))
+      action = self.ReshapeActionIfRequired(action_step)
+      observations = self._environment.step(action)
+      state, is_terminal = observations[0], observations[2]
+      trajectory.append([observations])
+      if visualize:
+        self._environment.render()
+      return trajectory
+
+  def Run(self, num_episodes=10, visualize=True, **kwargs):
+    for i in range(0, num_episodes):
+      trajectory = self.RunEpisode(visualize=visualize)
+      # NOTE: log stuff 
+      # tracer.Trace(trajectory, num_episode=i) -> extract and log
+    # NOTE: Evaluate some stuff
+
+  # NOTE: combine Evaluate(..) with Visualize(..) in Run(..)
+  # Run(episode_number, visualize)
   def Evaluate(self):
-    self._agent._training = False
     global_iteration = self._agent._agent._train_step_counter.numpy()
     self._logger.info("Evaluating the agent's performance in {} episodes."
       .format(str(self._params["ML"]["TFARunner"]["EvaluationSteps", "", 20])))
@@ -111,7 +146,6 @@ class TFARunner:
 
 
   def Visualize(self, num_episodes=1):
-    self._agent._training = False
     for _ in range(0, num_episodes):
       state = self._environment.reset()
       is_terminal = False

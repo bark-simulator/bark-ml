@@ -42,7 +42,6 @@ class SACRunner(TFARunner):
     for i in range(1, self._number_of_collections):
       global_iteration = self._agent._agent._train_step_counter.numpy()
       tf.summary.experimental.set_step(global_iteration)
-      self._agent._training = True
 
       t0 = time.time()
       self._collection_driver.run()

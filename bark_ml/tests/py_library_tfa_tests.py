@@ -65,8 +65,8 @@ class PyLibraryWrappersTFAgentTests(unittest.TestCase):
         observed_next_state, reward, done, info = env.step(action)
         print(f"Observed state: {observed_next_state}, Reward: {reward}, Done: {done}")
       
-      # training, the action is set externally
-      ml_behavior._training = True
+      # action is set externally
+      ml_behavior._set_action_externally = True
       agent_id = list(env._world.agents.keys())[0]
       observed_world = env._world.Observe([agent_id])[0]
       action = np.random.uniform(low=-0.1, high=0.1, size=(2, ))
@@ -77,8 +77,7 @@ class PyLibraryWrappersTFAgentTests(unittest.TestCase):
       b = ml_behavior.Plan(0.2, observed_world)
       self.assertEqual(np.any(np.not_equal(a, b)), True)
 
-      # deterministic
-      ml_behavior._training = False
+      # action will be calculated within the Plan(..) fct.
       a = ml_behavior.Plan(0.2, observed_world)
       b = ml_behavior.Plan(0.2, observed_world)
       np.testing.assert_array_equal(a, b)
@@ -104,12 +103,8 @@ class PyLibraryWrappersTFAgentTests(unittest.TestCase):
     
 
     runner.Train()
-    # NOTE: after Evaluation is run this will be False as well
-    self.assertEqual(runner._agent._training, True)
     runner.Evaluate()
-    self.assertEqual(runner._agent._training, False)
     runner.Visualize()
-    self.assertEqual(runner._agent._training, False)
 
 
 

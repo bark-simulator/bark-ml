@@ -29,7 +29,6 @@ class PPORunner(TFARunner):
   def _train(self):
     global_iteration = self._agent._agent._train_step_counter.numpy()
     for i in range(1, self._params["ML"]["PPORunner"]["NumberOfCollections", "", 10000]):
-      self._agent._training = True
       self._collection_driver.run()
       trajectories = self._agent._replay_buffer.gather_all()
       self._agent._agent.train(experience=trajectories)
@@ -37,4 +36,3 @@ class PPORunner(TFARunner):
       if i % self._params["ML"]["PPORunner"]["EvaluateEveryNSteps", "", 100] == 0:
         self.Evaluate()
         self._agent.Save()
-    print(self._agent._training)

@@ -38,7 +38,7 @@ class BehaviorTFAAgent(BehaviorModel):
                                      agent=self._agent)
     self._ckpt_manager = self.GetCheckpointer()
     self._logger = logging.getLogger()
-    self._training = False
+    self._set_action_externally = False
     self._bark_behavior_model = bark_behavior or BehaviorContinuousML(params)
 
   def Reset(self):
@@ -83,7 +83,7 @@ class BehaviorTFAAgent(BehaviorModel):
 
   def Plan(self, dt, observed_world):
     # NOTE: if training is enabled the action is set externally
-    if not self._training:
+    if not self._set_action_externally:
       observed_state = self._environment._observer.Observe(
         observed_world)
       self._action = self.Act(observed_state)
