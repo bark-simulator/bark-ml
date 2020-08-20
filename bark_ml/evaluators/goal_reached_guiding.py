@@ -7,7 +7,7 @@ import numpy as np
 # BARK
 from bark.core.world.evaluation import \
   EvaluatorGoalReached, EvaluatorCollisionEgoAgent, \
-  EvaluatorStepCount, EvaluatorDrivableArea
+  EvaluatorStepCount, EvaluatorDrivableArea, EvaluatorCaptureStates
 from bark.runtime.commons.parameters import ParameterServer
 from bark.core.geometry import *
 # BARK-ML
@@ -44,10 +44,13 @@ class GoalReachedGuiding(StateEvaluator):
 
   def _add_evaluators(self):
     """Evaluators that will be set in the BARK world"""
-    self._evaluators["goal_reached"] = EvaluatorGoalReached()
-    self._evaluators["collision"] = EvaluatorCollisionEgoAgent()
-    self._evaluators["step_count"] = EvaluatorStepCount()
-    self._evaluators["drivable_area"] = EvaluatorDrivableArea()
+    evaluators = {}
+    evaluators["goal_reached"] = EvaluatorGoalReached()
+    evaluators["collision"] = EvaluatorCollisionEgoAgent()
+    evaluators["step_count"] = EvaluatorStepCount()
+    evaluators["drivable_area"] = EvaluatorDrivableArea()
+    evaluators["states"] = EvaluatorCaptureStates()
+    return evaluators
 
   def GetGoalLaneCorridorForGoal(self, observed_world):
     """Returns the lanecorridor the goal is in"""
@@ -93,6 +96,8 @@ class GoalReachedGuiding(StateEvaluator):
     success = eval_results["goal_reached"]
     collision = eval_results["collision"] or eval_results["drivable_area"]
     step_count = eval_results["step_count"]
+    # for agent_id, agent in observed_world.agents.items():
+    #   eval_results[agent_id] = agent.state
     # determine whether the simulation should terminate
     if success or collision or step_count > self._max_steps:
       done = True

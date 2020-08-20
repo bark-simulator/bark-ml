@@ -17,7 +17,6 @@ class StateEvaluator(ABC):
   def __init__(self,
                params=ParameterServer()):
     self._params = params
-    self._evaluators = {}
     self._viewer = None
 
   def Evaluate(self, observed_world, action):
@@ -31,8 +30,8 @@ class StateEvaluator(ABC):
 
   def Reset(self, world):
     world.ClearEvaluators()
-    self._add_evaluators()
-    for key, evaluator in self._evaluators.items():
+    evaluators = self._add_evaluators()
+    for key, evaluator in evaluators.items():
       world.AddEvaluator(key, evaluator)
     return world
 
