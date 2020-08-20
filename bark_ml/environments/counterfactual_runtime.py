@@ -157,7 +157,7 @@ class CounterfactualRuntime(SingleAgentRuntime):
     # for group in grouped_data:
     #   self._logger.info(group)
       # self._logger.info(grouped_data["state_0"].apply(list))
-    self._logger.info(grouped_data)
+    # self._logger.info(grouped_data.tonumpy())
   
     # evaluate counterfactual worlds
     collision_rate = local_tracer.Query(
