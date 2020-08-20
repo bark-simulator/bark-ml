@@ -46,6 +46,7 @@ class CounterfactualRuntime(SingleAgentRuntime):
     self._logger = logging.getLogger()
     self._behavior_model_pool = behavior_model_pool or []
     self._ego_rule_based = ego_rule_based or BehaviorIDMLaneTracking(self._params)
+    self._tracer = Tracer()
 
   def reset(self, scenario=None):
     """resets the runtime and its objects"""
@@ -54,6 +55,10 @@ class CounterfactualRuntime(SingleAgentRuntime):
   def ReplaceBehaviorModel(self, agent_id, behavior):
     """clones the world and replaced the behavior of an agent"""
     cloned_world = self._world.Copy()
+    # NOTE: refactor this function
+    self._evaluator._add_evaluators()
+    for eval_key, eval in self._evaluator._evaluators.items():
+      cloned_world.AddEvaluator(eval_key, eval)
     cloned_world.agents[agent_id].behavior_model = behavior
     return cloned_world
   
@@ -83,8 +88,14 @@ class CounterfactualRuntime(SingleAgentRuntime):
     self._world.agents[eval_id].behavior_model = self.ml_behavior
     for i in range(0, N):
       world.Step(self._step_time)
-      eval_state = world.Evaluate()
+      # NOTE: clear, draw and save using self._count + num_virtual_world + replaced_agent
+      self._viewer.clear()
+      self._viewer.drawWorld(world, eval_agent_ids=self._scenario._eval_agent_ids)
+      observed_world = world.Observe([eval_id])[0]  # need this for ego evaluators
+      eval_state = observed_world.Evaluate()
       local_tracer.Trace(eval_state, **kwargs)
+      if eval_state["collision"] == True or eval_state["drivable_area"] == True:
+        break
     self.ml_behavior.set_action_externally = True
   
   def St(self):
@@ -95,7 +106,10 @@ class CounterfactualRuntime(SingleAgentRuntime):
     dt = end_time - self._start_time
     self._logger.info(f"It took {dt:.3f} seconds to simulate all" + \
                       f" counterfactual worlds.")
-
+  @property
+  def tracer(self):
+    return self._tracer
+  
   def step(self, action):
     """perform the cf evaluation"""
     # simulate counterfactual worlds
@@ -103,25 +117,37 @@ class CounterfactualRuntime(SingleAgentRuntime):
     eval_id = self._scenario._eval_agent_ids[0]
     self.St()
     cf_worlds = self.GenerateCounterfactualWorlds()
-    for cf_world in cf_worlds:
+    for i, cf_world in enumerate(cf_worlds):
       cf_key = list(cf_world.keys())[0]
       self.SimulateWorld(
-        cf_world[cf_key], local_tracer, N=10, replaced_agent=cf_key)
+        cf_world[cf_key], local_tracer, N=10,
+        replaced_agent=cf_key, num_virtual_world=i)
     self.Et()
 
+    # NOTE: the local tracer capture the displacement of the other agents
     # evaluate counterfactual worlds
     collision_rate = local_tracer.Query(
       key="collision", group_by="replaced_agent", agg_type="MEAN")
     collision_rate_drivable_area = local_tracer.Query(
       key="drivable_area", group_by="replaced_agent", agg_type="MEAN")
-
+    goal_reached = local_tracer.Query(
+      key="goal_reached", group_by="replaced_agent", agg_type="MEAN")
+    print(local_tracer._states)
     mean_collision_rate = collision_rate.mean() + \
       collision_rate_drivable_area.mean()
     self._logger.info(f"The counterfactual worlds have a collision" + \
                       f"-rate of {mean_collision_rate:.3f}.")
     
+    executed_learned_policy = 1
     # choose a policy
     if mean_collision_rate > self._max_col_rate:
+      executed_learned_policy = 0
       self._world.agents[eval_id].behavior_model = self._ego_rule_based
-
+    
+    self._tracer.Trace({
+      "collision": collision_rate.mean(),
+      "drivable_area": collision_rate_drivable_area.mean(),
+      "goal_reached": goal_reached.mean(),
+      "executed_learned_policy": executed_learned_policy})
+    
     return SingleAgentRuntime.step(self, action)

@@ -14,6 +14,7 @@ import gym
 import matplotlib
 # matplotlib.use('PS')
 import time
+import pprint
 
 from bark.core.models.behavior import BehaviorConstantAcceleration
 from bark.runtime.commons.parameters import ParameterServer
@@ -79,6 +80,8 @@ class PyEnvironmentTests(unittest.TestCase):
   def test_counterfactual_runtime(self):
     params = ParameterServer()
     bp = ContinuousMergingBlueprint(params)
+    # BehaviorConstantAcceleration::ConstAcceleration
+    params["BehaviorConstantAcceleration"]["ConstAcceleration"] = -4.
     behavior_model_pool = [BehaviorConstantAcceleration(params)]
     env = CounterfactualRuntime(
       blueprint=bp,
@@ -93,6 +96,7 @@ class PyEnvironmentTests(unittest.TestCase):
       action = np.random.uniform(low=-0.1, high=0.1, size=(2, ))
       observed_next_state, reward, done, info = env.step(action)
       print(f"Observed state: {observed_next_state}, Reward: {reward}, Done: {done}")
+    pprint.pprint(env.tracer._states)
 
 if __name__ == '__main__':
   unittest.main()
