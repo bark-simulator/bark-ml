@@ -11,6 +11,7 @@ import logging
 
 # bark
 from bark.runtime.commons.parameters import ParameterServer
+from bark.core.models.behavior import BehaviorIDMLaneTracking
 
 # bark-ml
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
@@ -27,7 +28,9 @@ class CounterfactualRuntime(SingleAgentRuntime):
                viewer=None,
                scenario_generator=None,
                render=False,
-               max_col_rate=0.1):
+               max_col_rate=0.1,
+               behavior_model_pool=None,
+               ego_rule_based=None):
     SingleAgentRuntime.__init__(
       self,
       blueprint=blueprint,
@@ -38,19 +41,24 @@ class CounterfactualRuntime(SingleAgentRuntime):
       viewer=viewer,
       scenario_generator=scenario_generator,
       render=render)
+    self._params = self._scenario_generator._params
     self._max_col_rate = max_col_rate
     self._logger = logging.getLogger()
+    self._behavior_model_pool = behavior_model_pool or []
+    self._ego_rule_based = ego_rule_based or BehaviorIDMLaneTracking(self._params)
 
   def reset(self, scenario=None):
-    """Resets the runtime and its objects
-    """
+    """resets the runtime and its objects"""
     return SingleAgentRuntime.reset(self, scenario=scenario)
 
-  def ReplaceBehaviorModel(self, agent_id):
-    # NOTE: dummy implementation
-    return self._world.Copy()
+  def ReplaceBehaviorModel(self, agent_id, behavior):
+    """clones the world and replaced the behavior of an agent"""
+    cloned_world = self._world.Copy()
+    cloned_world.agents[agent_id].behavior_model = behavior
+    return cloned_world
   
   def GetAgentIds(self):
+    """returns a list of the other agent's ids"""
     # NOTE: only use nearby agents
     agent_ids = list(self._world.agents.keys())
     eval_id = self._scenario._eval_agent_ids[0]
@@ -58,15 +66,18 @@ class CounterfactualRuntime(SingleAgentRuntime):
     return agent_ids
 
   def GenerateCounterfactualWorlds(self):
+    """generates (len(agents) - 1) x M-behavior counterfactual worlds"""
     cf_worlds = []
     agent_ids = self.GetAgentIds()
     for agent_id in agent_ids:
-      return_dict = {}
-      return_dict[agent_id] = self.ReplaceBehaviorModel(agent_id)
-      cf_worlds.append(return_dict)
+      for behavior in self._behavior_model_pool:
+        return_dict = {}
+        return_dict[agent_id] = self.ReplaceBehaviorModel(agent_id, behavior)
+        cf_worlds.append(return_dict)
     return cf_worlds
 
   def SimulateWorld(self, world, local_tracer, N=5, **kwargs):
+    """simulates the world for N steps"""
     self.ml_behavior.set_action_externally = False
     eval_id = self._scenario._eval_agent_ids[0]
     self._world.agents[eval_id].behavior_model = self.ml_behavior
@@ -89,23 +100,28 @@ class CounterfactualRuntime(SingleAgentRuntime):
     """perform the cf evaluation"""
     # simulate counterfactual worlds
     local_tracer = Tracer()
+    eval_id = self._scenario._eval_agent_ids[0]
     self.St()
     cf_worlds = self.GenerateCounterfactualWorlds()
     for cf_world in cf_worlds:
       cf_key = list(cf_world.keys())[0]
       self.SimulateWorld(
-        cf_world[cf_key], local_tracer, N=5, replaced_agent=cf_key)
+        cf_world[cf_key], local_tracer, N=10, replaced_agent=cf_key)
     self.Et()
 
     # evaluate counterfactual worlds
     collision_rate = local_tracer.Query(
       key="collision", group_by="replaced_agent", agg_type="MEAN")
-    mean_collision_rate = collision_rate.mean()
+    collision_rate_drivable_area = local_tracer.Query(
+      key="drivable_area", group_by="replaced_agent", agg_type="MEAN")
+
+    mean_collision_rate = collision_rate.mean() + \
+      collision_rate_drivable_area.mean()
     self._logger.info(f"The counterfactual worlds have a collision" + \
                       f"-rate of {mean_collision_rate:.3f}.")
     
     # choose a policy
     if mean_collision_rate > self._max_col_rate:
-      # NOTE: assign a backup model if the collision-rate is too high
-      pass
+      self._world.agents[eval_id].behavior_model = self._ego_rule_based
+
     return SingleAgentRuntime.step(self, action)

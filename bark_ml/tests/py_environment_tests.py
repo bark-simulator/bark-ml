@@ -15,6 +15,7 @@ import matplotlib
 # matplotlib.use('PS')
 import time
 
+from bark.core.models.behavior import BehaviorConstantAcceleration
 from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
   DiscreteHighwayBlueprint, ContinuousMergingBlueprint, DiscreteMergingBlueprint
@@ -77,13 +78,18 @@ class PyEnvironmentTests(unittest.TestCase):
 
   def test_counterfactual_runtime(self):
     params = ParameterServer()
-    bp = ContinuousHighwayBlueprint(params)
-    env = CounterfactualRuntime(blueprint=bp, render=False)
+    bp = ContinuousMergingBlueprint(params)
+    behavior_model_pool = [BehaviorConstantAcceleration(params)]
+    env = CounterfactualRuntime(
+      blueprint=bp,
+      render=True,
+      behavior_model_pool=behavior_model_pool)
     sac_agent = BehaviorSACAgent(environment=env,
                                  params=params)
     env.ml_behavior = sac_agent
+    env.ml_behavior.set_action_externally = False
     env.reset()
-    for _ in range(0, 10):
+    for _ in range(0, 20):
       action = np.random.uniform(low=-0.1, high=0.1, size=(2, ))
       observed_next_state, reward, done, info = env.step(action)
       print(f"Observed state: {observed_next_state}, Reward: {reward}, Done: {done}")
