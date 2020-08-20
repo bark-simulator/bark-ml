@@ -89,9 +89,10 @@ class CounterfactualRuntime(SingleAgentRuntime):
     for i in range(0, N):
       world.Step(self._step_time)
       # NOTE: clear, draw and save using self._count + num_virtual_world + replaced_agent
-      self._viewer.clear()
-      self._viewer.drawWorld(world, eval_agent_ids=self._scenario._eval_agent_ids)
-      observed_world = world.Observe([eval_id])[0]  # need this for ego evaluators
+      # self._viewer.clear()
+      # self._viewer.drawWorld(
+      #   world, eval_agent_ids=self._scenario._eval_agent_ids)
+      observed_world = world.Observe([eval_id])[0]
       eval_state = observed_world.Evaluate()
       local_tracer.Trace(eval_state, **kwargs)
       if eval_state["collision"] == True or eval_state["drivable_area"] == True:
@@ -125,6 +126,8 @@ class CounterfactualRuntime(SingleAgentRuntime):
     self.Et()
 
     # NOTE: the local tracer capture the displacement of the other agents
+    #       e.g. collision_rate / replaced_agent
+
     # evaluate counterfactual worlds
     collision_rate = local_tracer.Query(
       key="collision", group_by="replaced_agent", agg_type="MEAN")
@@ -132,22 +135,19 @@ class CounterfactualRuntime(SingleAgentRuntime):
       key="drivable_area", group_by="replaced_agent", agg_type="MEAN")
     goal_reached = local_tracer.Query(
       key="goal_reached", group_by="replaced_agent", agg_type="MEAN")
-    print(local_tracer._states)
     mean_collision_rate = collision_rate.mean() + \
       collision_rate_drivable_area.mean()
     self._logger.info(f"The counterfactual worlds have a collision" + \
                       f"-rate of {mean_collision_rate:.3f}.")
     
-    executed_learned_policy = 1
     # choose a policy
+    executed_learned_policy = 1
     if mean_collision_rate > self._max_col_rate:
       executed_learned_policy = 0
       self._world.agents[eval_id].behavior_model = self._ego_rule_based
-    
     self._tracer.Trace({
       "collision": collision_rate.mean(),
       "drivable_area": collision_rate_drivable_area.mean(),
       "goal_reached": goal_reached.mean(),
       "executed_learned_policy": executed_learned_policy})
-    
     return SingleAgentRuntime.step(self, action)

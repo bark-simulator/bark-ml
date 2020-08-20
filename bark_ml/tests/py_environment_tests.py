@@ -92,7 +92,7 @@ class PyEnvironmentTests(unittest.TestCase):
     env.ml_behavior = sac_agent
     env.ml_behavior.set_action_externally = False
     env.reset()
-    for _ in range(0, 20):
+    for _ in range(0, 40):
       action = np.random.uniform(low=-0.1, high=0.1, size=(2, ))
       observed_next_state, reward, done, info = env.step(action)
       print(f"Observed state: {observed_next_state}, Reward: {reward}, Done: {done}")
