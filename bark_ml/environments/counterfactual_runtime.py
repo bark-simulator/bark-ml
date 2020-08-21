@@ -56,7 +56,8 @@ class CounterfactualRuntime(SingleAgentRuntime):
     self._behavior_model_pool = behavior_model_pool or []
     self._ego_rule_based = ego_rule_based or BehaviorIDMLaneTracking(self._params)
     self._tracer = Tracer()
-    self._fig, self._axs = plt.subplots()
+    self._fig, self._axs = plt.subplots(1,1)
+    
 
   def reset(self, scenario=None):
     """resets the runtime and its objects"""
@@ -141,9 +142,7 @@ class CounterfactualRuntime(SingleAgentRuntime):
     agent_ids_removed.remove(eval_id)
 
     arr = np.zeros(shape=(len(agent_ids), len(agent_ids_removed)), dtype=np.float32)
-    y_axis, x_axis = [], []
     for i, agent_id in enumerate(agent_ids):
-      y_axis.append(agent_id)
       # we view only agent_id
       grouped_df = local_tracer.df.groupby(
         ["num_virtual_world", "replaced_agent"])["state_"+str(agent_id)].apply(
@@ -151,7 +150,6 @@ class CounterfactualRuntime(SingleAgentRuntime):
       # gt for agent_id
       gt_traj = np.stack(grouped_df.iloc[grouped_df.index.get_level_values("replaced_agent") == "None"][0])
       for j, aid_r in enumerate(agent_ids_removed):
-        x_axis.append(aid_r)
         a = grouped_df.iloc[grouped_df.index.get_level_values("replaced_agent") == aid_r]
         diff = []
         for _, a_ in a.items():
@@ -160,10 +158,16 @@ class CounterfactualRuntime(SingleAgentRuntime):
           arr[i, j] = np.mean(np.array(diff, dtype=np.float32))
     # self._logger.info(arr)
     self._axs.imshow(arr)
-    # self._axs.set_xticks(np.arange(len(x_axis)))
-    # self._axs.set_yticks(np.arange(len(y_axis)))
-    # self._axs.set_xticklabels(x_axis)
-    # self._axs.set_yticklabels(y_axis)
+
+    self._axs.set_yticks(np.arange(len(agent_ids)))
+    self._axs.set_xticks(np.arange(len(agent_ids_removed)))
+    self._axs.set_yticklabels([str(x) for x in agent_ids])
+    self._axs.set_xticklabels([str(x) for x in agent_ids_removed])
+    self._axs.get_xaxis().set_visible(True)
+    self._axs.get_yaxis().set_visible(True)
+    plt.axis('on')
+
+    
     
   def step(self, action):
     """perform the cf evaluation"""
