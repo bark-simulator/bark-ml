@@ -63,6 +63,7 @@ py_test(
   imports = ["../bark_ml/python_wrapper/"],
   deps = [
     "//bark_ml/environments:single_agent_runtime",
+    "//bark_ml/environments:counterfactual_runtime",
     "//bark_ml/environments:blueprints",
     "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
     "//bark_ml/library_wrappers/lib_tf_agents/runners:runners",

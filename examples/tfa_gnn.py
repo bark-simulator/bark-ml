@@ -19,10 +19,12 @@ import tensorflow as tf
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.viewer.video_renderer import VideoRenderer
+from bark.core.models.behavior import BehaviorConstantAcceleration
 
 # BARK-ML imports
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, ContinuousMergingBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
+from bark_ml.environments.counterfactual_runtime import CounterfactualRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorGraphSACAgent
 from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner
 from bark_ml.observers.graph_observer import GraphObserver
@@ -67,11 +69,24 @@ def run_configuration(argv):
 
   observer = GraphObserver(params=params)
   
-  env = SingleAgentRuntime(
+  # env = SingleAgentRuntime(
+  #   blueprint=bp,
+  #   observer=observer,
+  #   render=False)
+  behavior_model_pool = []
+  count = 0
+  for a in [-2., 0., 2.]:
+    local_params = params.AddChild("local_"+str(count))
+    local_params["BehaviorConstantAcceleration"]["ConstAcceleration"] = a
+    behavior = BehaviorConstantAcceleration(local_params)
+    behavior_model_pool.append(behavior)
+    count += 1
+  env = CounterfactualRuntime(
     blueprint=bp,
     observer=observer,
-    render=False)
-
+    render=False,
+    params=params,
+    behavior_model_pool=behavior_model_pool)
   sac_agent = BehaviorGraphSACAgent(environment=env,
                                     observer=observer,
                                     params=params)

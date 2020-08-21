@@ -59,8 +59,8 @@ class BehaviorTFAAgent(BehaviorModel):
   
   @set_action_externally.setter
   def set_action_externally(self, externally):
-    if externally:
-      self._logger.info("Actions are now set externally.")
+    # if externally:
+    #   self._logger.info("Actions are now set externally.")
     self._set_action_externally = externally
   
   def GetCheckpointer(self):

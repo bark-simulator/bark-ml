@@ -123,6 +123,7 @@ class TFARunner:
       trajectory = self.RunEpisode(
         render=render, **kwargs, num_episode=i)
     # average collision, reward, and step count
+    # NOTE: we need to use any here
     mean_col_rate = self._tracer.Query(
       key="collision", group_by="num_episode", agg_type="MEAN").mean()
     mean_reward = self._tracer.Query(

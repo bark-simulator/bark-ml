@@ -48,7 +48,7 @@ class CounterfactualRuntime(SingleAgentRuntime):
       "Max. collision rate allowed over all counterfactual worlds.", 0.1]
     self._cf_simulation_steps = params["ML"][
       "CfSimSteps",
-      "Simulation steps for the counterfactual worlds.", 10]
+      "Simulation steps for the counterfactual worlds.", 5]
     self._logger = logging.getLogger()
     self._behavior_model_pool = behavior_model_pool or []
     self._ego_rule_based = ego_rule_based or BehaviorIDMLaneTracking(self._params)
@@ -148,7 +148,7 @@ class CounterfactualRuntime(SingleAgentRuntime):
     gt_world = self.ReplaceBehaviorModel()
     self.SimulateWorld(
       gt_world, local_tracer, N=self._cf_simulation_steps,
-      replaced_agent="None", num_virtual_world=i+1)
+      replaced_agent="None", num_virtual_world="None")
 
     # NOTE: DrawHeatmap(local_tracer)
     # agent_ids = list(self._world.agents.keys())
