@@ -7,7 +7,7 @@ import numpy as np
 # BARK
 from bark.core.world.evaluation import \
   EvaluatorGoalReached, EvaluatorCollisionEgoAgent, \
-  EvaluatorStepCount, EvaluatorDrivableArea, EvaluatorCaptureStates
+  EvaluatorStepCount, EvaluatorDrivableArea, EvaluatorCaptureAgentStates
 from bark.runtime.commons.parameters import ParameterServer
 from bark.core.geometry import *
 # BARK-ML
@@ -49,7 +49,7 @@ class GoalReachedGuiding(StateEvaluator):
     evaluators["collision"] = EvaluatorCollisionEgoAgent()
     evaluators["step_count"] = EvaluatorStepCount()
     evaluators["drivable_area"] = EvaluatorDrivableArea()
-    evaluators["states"] = EvaluatorCaptureStates()
+    evaluators["states"] = EvaluatorCaptureAgentStates()
     return evaluators
 
   def GetGoalLaneCorridorForGoal(self, observed_world):

@@ -6,7 +6,7 @@
 
 from bark.core.world.evaluation import \
   EvaluatorGoalReached, EvaluatorCollisionEgoAgent, \
-  EvaluatorStepCount, EvaluatorDrivableArea, EvaluatorCaptureStates
+  EvaluatorStepCount, EvaluatorDrivableArea, EvaluatorCaptureAgentStates
 from bark.runtime.commons.parameters import ParameterServer
 
 from bark_ml.evaluators.evaluator import StateEvaluator
@@ -37,7 +37,7 @@ class GoalReached(StateEvaluator):
     evaluators["collision"] = EvaluatorCollisionEgoAgent()
     evaluators["step_count"] = EvaluatorStepCount()
     evaluators["drivable_area"] = EvaluatorDrivableArea()
-    evaluators["states"] = EvaluatorCaptureStates()
+    evaluators["states"] = EvaluatorCaptureAgentStates()
     return evaluators
 
   def _evaluate(self, observed_world, eval_results, action):

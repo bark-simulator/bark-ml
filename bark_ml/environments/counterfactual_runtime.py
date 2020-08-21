@@ -93,7 +93,6 @@ class CounterfactualRuntime(SingleAgentRuntime):
     eval_id = self._scenario._eval_agent_ids[0]
     self._world.agents[eval_id].behavior_model = self.ml_behavior
     for i in range(0, N):
-      world.Step(self._step_time)
       # NOTE: clear, draw and save using self._count + num_virtual_world + replaced_agent
       # self._viewer.clear()
       # self._viewer.drawWorld(
@@ -107,6 +106,7 @@ class CounterfactualRuntime(SingleAgentRuntime):
       local_tracer.Trace(eval_state, **kwargs)
       if eval_state["collision"] == True or eval_state["drivable_area"] == True:
         break
+      world.Step(self._step_time)
     self.ml_behavior.set_action_externally = True
   
   def St(self):
@@ -121,6 +121,17 @@ class CounterfactualRuntime(SingleAgentRuntime):
   def tracer(self):
     return self._tracer
   
+  def TraceCounterfactualWorldStats(self, local_tracer):
+    collision_rate = local_tracer.Query(
+      key="collision", group_by="replaced_agent", agg_type="MEAN")
+    collision_rate_drivable_area = local_tracer.Query(
+      key="drivable_area", group_by="replaced_agent", agg_type="MEAN")
+    goal_reached = local_tracer.Query(
+      key="goal_reached", group_by="replaced_agent", agg_type="MEAN")
+    return {"collision": collision_rate.mean(),
+            "drivable_area": collision_rate_drivable_area.mean(),
+            "goal_reached": goal_reached.mean()}
+
   def step(self, action):
     """perform the cf evaluation"""
     # simulate counterfactual worlds
@@ -134,51 +145,32 @@ class CounterfactualRuntime(SingleAgentRuntime):
         cf_world[cf_key], local_tracer, N=self._cf_simulation_steps,
         replaced_agent=cf_key, num_virtual_world=i)
     self.Et()
-
     gt_world = self.ReplaceBehaviorModel()
     self.SimulateWorld(
       gt_world, local_tracer, N=self._cf_simulation_steps,
       replaced_agent="None", num_virtual_world=i+1)
 
-    # NOTE: the local tracer capture the displacement of the other agents
-    #       e.g. collision_rate / replaced_agent
-    # e.g. mean disp. of agent 0:
-    agent_ids = list(self._world.agents.keys())
-    first_agent_key = "state_" + str(agent_ids[0])
-    state_keys = {}
-    for agent_id in agent_ids:
-      state_keys["state_" + str(agent_id)] = "mean"
-    # state_0 = local_tracer.Query(
-    #   key="state_"+str(agent_ids[0]),
-    #   group_by=["num_virtual_world", "replaced_agent"])
-    # print(state_0)
-    # self._logger.info(local_tracer.df["state_0"])
-    grouped_data = local_tracer.df.groupby(["num_virtual_world", "replaced_agent"])["state_0"].apply(lambda group_series: group_series.tolist())
-    # for group in grouped_data:
-    #   self._logger.info(group)
-      # self._logger.info(grouped_data["state_0"].apply(list))
-    # self._logger.info(grouped_data.tonumpy())
+    # NOTE: DrawHeatmap(local_tracer)
+    # agent_ids = list(self._world.agents.keys())
+    # grouped_df = local_tracer.df.groupby(
+    #   ["num_virtual_world", "replaced_agent"])["state_0"].apply(
+    #     lambda group_series: group_series.tolist())
+    # self._logger.info( 
+    #   grouped_df.iloc[grouped_df.index.get_level_values("replaced_agent") == agent_ids[0]])
+    # self._logger.info( 
+    #   grouped_df.iloc[grouped_df.index.get_level_values("replaced_agent") == "None"])
   
     # evaluate counterfactual worlds
-    collision_rate = local_tracer.Query(
-      key="collision", group_by="replaced_agent", agg_type="MEAN")
-    collision_rate_drivable_area = local_tracer.Query(
-      key="drivable_area", group_by="replaced_agent", agg_type="MEAN")
-    goal_reached = local_tracer.Query(
-      key="goal_reached", group_by="replaced_agent", agg_type="MEAN")
-    mean_collision_rate = collision_rate.mean() + \
-      collision_rate_drivable_area.mean()
+    trace = self.TraceCounterfactualWorldStats(local_tracer)
+    mean_collision_rate = trace["collision"] + trace["drivable_area"]
     self._logger.info(f"The counterfactual worlds have a collision" + \
                       f"-rate of {mean_collision_rate:.3f}.")
-    
+
     # choose a policy
     executed_learned_policy = 1
     if mean_collision_rate > self._max_col_rate:
       executed_learned_policy = 0
       self._world.agents[eval_id].behavior_model = self._ego_rule_based
-    self._tracer.Trace({
-      "collision": collision_rate.mean(),
-      "drivable_area": collision_rate_drivable_area.mean(),
-      "goal_reached": goal_reached.mean(),
-      "executed_learned_policy": executed_learned_policy})
+    trace["executed_learned_policy"] = executed_learned_policy
+    self._tracer.Trace(trace)
     return SingleAgentRuntime.step(self, action)
