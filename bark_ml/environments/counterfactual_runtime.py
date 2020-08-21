@@ -12,6 +12,7 @@ import logging
 # bark
 from bark.runtime.commons.parameters import ParameterServer
 from bark.core.models.behavior import BehaviorIDMLaneTracking
+from bark.core.world.evaluation import CaptureAgentStates
 
 # bark-ml
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
@@ -99,10 +100,8 @@ class CounterfactualRuntime(SingleAgentRuntime):
       #   world, eval_agent_ids=self._scenario._eval_agent_ids)
       observed_world = world.Observe([eval_id])[0]
       eval_state = observed_world.Evaluate()
-      if "states" in eval_state:
-        for key, state in eval_state["states"].items():
-          eval_state[key] = state
-        del eval_state["states"]
+      agent_states = CaptureAgentStates(observed_world)
+      eval_state = {**eval_state, **agent_states}
       local_tracer.Trace(eval_state, **kwargs)
       if eval_state["collision"] == True or eval_state["drivable_area"] == True:
         break
@@ -132,6 +131,16 @@ class CounterfactualRuntime(SingleAgentRuntime):
             "drivable_area": collision_rate_drivable_area.mean(),
             "goal_reached": goal_reached.mean()}
 
+  def DrawHeatmap(self, local_tracer):
+    agent_ids = list(self._world.agents.keys())
+    grouped_df = local_tracer.df.groupby(
+      ["num_virtual_world", "replaced_agent"])["state_"+str(agent_ids[0])].apply(
+        lambda group_series: group_series.tolist())
+    self._logger.info( 
+      grouped_df.iloc[grouped_df.index.get_level_values("replaced_agent") == agent_ids[0]])
+    self._logger.info( 
+      grouped_df.iloc[grouped_df.index.get_level_values("replaced_agent") == "None"])
+    
   def step(self, action):
     """perform the cf evaluation"""
     # simulate counterfactual worlds
@@ -150,15 +159,7 @@ class CounterfactualRuntime(SingleAgentRuntime):
       gt_world, local_tracer, N=self._cf_simulation_steps,
       replaced_agent="None", num_virtual_world="None")
 
-    # NOTE: DrawHeatmap(local_tracer)
-    # agent_ids = list(self._world.agents.keys())
-    # grouped_df = local_tracer.df.groupby(
-    #   ["num_virtual_world", "replaced_agent"])["state_0"].apply(
-    #     lambda group_series: group_series.tolist())
-    # self._logger.info( 
-    #   grouped_df.iloc[grouped_df.index.get_level_values("replaced_agent") == agent_ids[0]])
-    # self._logger.info( 
-    #   grouped_df.iloc[grouped_df.index.get_level_values("replaced_agent") == "None"])
+    self.DrawHeatmap(local_tracer)
   
     # evaluate counterfactual worlds
     trace = self.TraceCounterfactualWorldStats(local_tracer)
