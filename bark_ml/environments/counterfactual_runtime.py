@@ -132,14 +132,24 @@ class CounterfactualRuntime(SingleAgentRuntime):
             "goal_reached": goal_reached.mean()}
 
   def DrawHeatmap(self, local_tracer):
+    eval_id = self._scenario._eval_agent_ids[0]
     agent_ids = list(self._world.agents.keys())
+    agent_ids.remove(eval_id)
     grouped_df = local_tracer.df.groupby(
       ["num_virtual_world", "replaced_agent"])["state_"+str(agent_ids[0])].apply(
         lambda group_series: group_series.tolist())
-    self._logger.info( 
-      grouped_df.iloc[grouped_df.index.get_level_values("replaced_agent") == agent_ids[0]])
-    self._logger.info( 
-      grouped_df.iloc[grouped_df.index.get_level_values("replaced_agent") == "None"])
+    gt_traj = np.stack(grouped_df.iloc[grouped_df.index.get_level_values("replaced_agent") == "None"][0])
+    arr = np.zeros(shape=(len(agent_ids), len(agent_ids)), dtype=np.float32)
+    for aid, agent_id in enumerate(agent_ids):
+      a = grouped_df.iloc[grouped_df.index.get_level_values("replaced_agent") == agent_id]
+      rid = 0
+      for _, a_ in a.items():
+        # NOTE: handle different lengths
+        diff = np.mean((np.stack(a_) - gt_traj)**2, axis=(0, 1))
+        arr[aid, rid] = diff
+        rid += 1
+    self._logger.info(arr)
+      
     
   def step(self, action):
     """perform the cf evaluation"""
