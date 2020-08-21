@@ -123,11 +123,11 @@ class CounterfactualRuntime(SingleAgentRuntime):
   
   def TraceCounterfactualWorldStats(self, local_tracer):
     collision_rate = local_tracer.Query(
-      key="collision", group_by="replaced_agent", agg_type="MEAN")
+      key="collision", group_by="replaced_agent", agg_type="ANY_TRUE")
     collision_rate_drivable_area = local_tracer.Query(
-      key="drivable_area", group_by="replaced_agent", agg_type="MEAN")
+      key="drivable_area", group_by="replaced_agent", agg_type="ANY_TRUE")
     goal_reached = local_tracer.Query(
-      key="goal_reached", group_by="replaced_agent", agg_type="MEAN")
+      key="goal_reached", group_by="replaced_agent", agg_type="ANY_TRUE")
     return {"collision": collision_rate.mean(),
             "drivable_area": collision_rate_drivable_area.mean(),
             "goal_reached": goal_reached.mean()}
@@ -162,13 +162,14 @@ class CounterfactualRuntime(SingleAgentRuntime):
   
     # evaluate counterfactual worlds
     trace = self.TraceCounterfactualWorldStats(local_tracer)
-    mean_collision_rate = trace["collision"] + trace["drivable_area"]
-    self._logger.info(f"The counterfactual worlds have a collision" + \
-                      f"-rate of {mean_collision_rate:.3f}.")
+    self._logger.info(
+      f"The counterfactual worlds have a collision" + \
+      f"-rate of {trace['collision']:.3f} and a drivable-area-rate " + \
+      f"of {trace['drivable_area']:.3f}.")
 
     # choose a policy
     executed_learned_policy = 1
-    if mean_collision_rate > self._max_col_rate:
+    if trace["collision"] > self._max_col_rate or trace["drivable_area"] > self._max_col_rate:
       executed_learned_policy = 0
       self._world.agents[eval_id].behavior_model = self._ego_rule_based
     trace["executed_learned_policy"] = executed_learned_policy

@@ -40,7 +40,7 @@ class MergingLaneCorridorConfig(LaneCorridorConfig):
     return GoalDefinitionStateLimitsFrenet(lane_corr.center_line,
                                            (0.4, 0.4),
                                            (0.1, 0.1),
-                                           (10., 15.))
+                                           (5., 15.))
 
 
 class MergingBlueprint(Blueprint):

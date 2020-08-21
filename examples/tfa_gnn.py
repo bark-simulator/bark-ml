@@ -74,13 +74,11 @@ def run_configuration(argv):
   #   observer=observer,
   #   render=False)
   behavior_model_pool = []
-  count = 0
-  for a in [-2., 0., 2.]:
+  for count, a in enumerate([-2., 0., 2.]):
     local_params = params.AddChild("local_"+str(count))
     local_params["BehaviorConstantAcceleration"]["ConstAcceleration"] = a
     behavior = BehaviorConstantAcceleration(local_params)
     behavior_model_pool.append(behavior)
-    count += 1
   env = CounterfactualRuntime(
     blueprint=bp,
     observer=observer,

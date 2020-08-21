@@ -19,11 +19,13 @@ os.environ['GLOG_minloglevel'] = '3'
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.viewer.video_renderer import VideoRenderer
+from bark.core.models.behavior import BehaviorConstantAcceleration
 
 # BARK-ML imports
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
   ContinuousMergingBlueprint, ContinuousIntersectionBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
+from bark_ml.environments.counterfactual_runtime import CounterfactualRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, BehaviorPPOAgent
 from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner
 
@@ -48,9 +50,20 @@ def run_configuration(argv):
   bp = ContinuousMergingBlueprint(params,
                                   number_of_senarios=2500,
                                   random_seed=0)
-  env = SingleAgentRuntime(blueprint=bp,
-                           render=False)
-
+  # env = SingleAgentRuntime(blueprint=bp,
+  #                          render=False)
+  behavior_model_pool = []
+  for count, a in enumerate([-2., 0., 2.]):
+    local_params = params.AddChild("local_"+str(count))
+    local_params["BehaviorConstantAcceleration"]["ConstAcceleration"] = a
+    behavior = BehaviorConstantAcceleration(local_params)
+    behavior_model_pool.append(behavior)
+  env = CounterfactualRuntime(
+    blueprint=bp,
+    render=False,
+    params=params,
+    behavior_model_pool=behavior_model_pool)
+  
   # PPO-agent
   # ppo_agent = BehaviorPPOAgent(environment=env,
   #                              params=params)
