@@ -103,8 +103,8 @@ class CounterfactualRuntime(SingleAgentRuntime):
       agent_states = CaptureAgentStates(observed_world)
       eval_state = {**eval_state, **agent_states}
       local_tracer.Trace(eval_state, **kwargs)
-      if eval_state["collision"] == True or eval_state["drivable_area"] == True:
-        break
+      # if eval_state["collision"] == True or eval_state["drivable_area"] == True:
+      #   break
       world.Step(self._step_time)
     self.ml_behavior.set_action_externally = True
   
