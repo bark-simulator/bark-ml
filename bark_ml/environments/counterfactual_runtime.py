@@ -8,6 +8,8 @@
 import time
 import numpy as np
 import logging
+import copy
+import matplotlib.pyplot as plt
 
 # bark
 from bark.runtime.commons.parameters import ParameterServer
@@ -54,6 +56,7 @@ class CounterfactualRuntime(SingleAgentRuntime):
     self._behavior_model_pool = behavior_model_pool or []
     self._ego_rule_based = ego_rule_based or BehaviorIDMLaneTracking(self._params)
     self._tracer = Tracer()
+    self._fig, self._axs = plt.subplots()
 
   def reset(self, scenario=None):
     """resets the runtime and its objects"""
@@ -134,22 +137,33 @@ class CounterfactualRuntime(SingleAgentRuntime):
   def DrawHeatmap(self, local_tracer):
     eval_id = self._scenario._eval_agent_ids[0]
     agent_ids = list(self._world.agents.keys())
-    agent_ids.remove(eval_id)
-    grouped_df = local_tracer.df.groupby(
-      ["num_virtual_world", "replaced_agent"])["state_"+str(agent_ids[0])].apply(
-        lambda group_series: group_series.tolist())
-    gt_traj = np.stack(grouped_df.iloc[grouped_df.index.get_level_values("replaced_agent") == "None"][0])
-    arr = np.zeros(shape=(len(agent_ids), len(agent_ids)), dtype=np.float32)
-    for aid, agent_id in enumerate(agent_ids):
-      a = grouped_df.iloc[grouped_df.index.get_level_values("replaced_agent") == agent_id]
-      rid = 0
-      for _, a_ in a.items():
-        # NOTE: handle different lengths
-        diff = np.mean((np.stack(a_) - gt_traj)**2, axis=(0, 1))
-        arr[aid, rid] = diff
-        rid += 1
-    self._logger.info(arr)
-      
+    agent_ids_removed = copy.copy(agent_ids)
+    agent_ids_removed.remove(eval_id)
+
+    arr = np.zeros(shape=(len(agent_ids), len(agent_ids_removed)), dtype=np.float32)
+    y_axis, x_axis = [], []
+    for i, agent_id in enumerate(agent_ids):
+      y_axis.append(agent_id)
+      # we view only agent_id
+      grouped_df = local_tracer.df.groupby(
+        ["num_virtual_world", "replaced_agent"])["state_"+str(agent_id)].apply(
+          lambda group_series: group_series.tolist())
+      # gt for agent_id
+      gt_traj = np.stack(grouped_df.iloc[grouped_df.index.get_level_values("replaced_agent") == "None"][0])
+      for j, aid_r in enumerate(agent_ids_removed):
+        x_axis.append(aid_r)
+        a = grouped_df.iloc[grouped_df.index.get_level_values("replaced_agent") == aid_r]
+        diff = []
+        for _, a_ in a.items():
+          diff.append(np.mean((np.stack(a_) - gt_traj)**2, axis=(0, 1)))
+        if aid_r != agent_id:
+          arr[i, j] = np.mean(np.array(diff, dtype=np.float32))
+    # self._logger.info(arr)
+    self._axs.imshow(arr)
+    # self._axs.set_xticks(np.arange(len(x_axis)))
+    # self._axs.set_yticks(np.arange(len(y_axis)))
+    # self._axs.set_xticklabels(x_axis)
+    # self._axs.set_yticklabels(y_axis)
     
   def step(self, action):
     """perform the cf evaluation"""

@@ -45,7 +45,7 @@ def run_configuration(argv):
   # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "YOUR_PATH"
   # params["ML"]["TFARunner"]["SummaryPath"] = "YOUR_PATH"
   params["World"]["remove_agents_out_of_map"] = True
-
+  params["Visualization"]["Agents"]["Alpha"]["Other"] = 0.2
   # create environment
   bp = ContinuousMergingBlueprint(params,
                                   number_of_senarios=2500,
