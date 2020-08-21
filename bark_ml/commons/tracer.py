@@ -20,7 +20,6 @@ class Tracer:
     SUM  = "SUM"
     LAST_VALUE  = "LAST_VALUE"
     ANY_TRUE  = "ANY_TRUE"
-    ANY_FALSE  = "ANY_FALSE"
   
   def __init__(self):
     self._states = []
@@ -67,9 +66,7 @@ class Tracer:
     if agg_type == Tracer.QueryTypes.LAST_VALUE:
       return df.tail(1)
     elif agg_type == Tracer.QueryTypes.ANY_TRUE:
-      return any(df.apply(list)) == True
-    elif agg_type == Tracer.QueryTypes.ANY_FALSE:
-      return df == False
+      return df.any().mean()
     return df
 
   @property

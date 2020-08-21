@@ -125,7 +125,11 @@ class TFARunner:
     # average collision, reward, and step count
     # NOTE: we need to use any here
     mean_col_rate = self._tracer.Query(
-      key="collision", group_by="num_episode", agg_type="MEAN").mean()
+      key="collision", group_by="num_episode", agg_type="ANY_TRUE").mean()
+    mean_col_rate += self._tracer.Query(
+      key="drivable_area", group_by="num_episode", agg_type="ANY_TRUE").mean()
+    goal_reached = self._tracer.Query(
+      key="goal_reached", group_by="num_episode", agg_type="ANY_TRUE").mean()
     mean_reward = self._tracer.Query(
       key="reward", group_by="num_episode", agg_type="SUM").mean()
     mean_steps = self._tracer.Query(
@@ -136,8 +140,10 @@ class TFARunner:
       tf.summary.scalar("mean_steps", mean_steps, step=global_iteration)
       tf.summary.scalar(
         "mean_collision_rate", mean_col_rate, step=global_iteration)
-    self._logger.info(f"The agent achieved an average reward of {mean_reward:.3f}," +
-                      f" collision-rate of {mean_col_rate:.5f}, and took on average" +
-                      f" {mean_steps:.3f} steps (evaluated over {num_episodes} episodes).")
+    self._logger.info(
+      f"The agent achieved an average reward of {mean_reward:.3f}," +
+      f" collision-rate of {mean_col_rate:.5f}, took on average" +
+      f" {mean_steps:.3f} steps, and reached the goal " + 
+      f" {goal_reached:.3f} (evaluated over {num_episodes} episodes).")
     # reset tracer
     self._tracer.Reset()
