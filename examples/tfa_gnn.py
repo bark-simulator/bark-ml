@@ -105,7 +105,7 @@ def run_configuration(argv):
   elif FLAGS.mode == "visualize":
     # NOTE: set different risk levels
     runner.Run(num_episodes=2, render=False)
-    # NOTE: save add save and load capability for the Tracer class
+    # NOTE: query the tracer: goal_reached, executed_learned_policy, collision, drivable_area and groupby: max_col_rate 
     print(runner._environment._tracer._states)
   elif FLAGS.mode == "evaluate":
     runner.Run(num_episodes=100, render=False)
