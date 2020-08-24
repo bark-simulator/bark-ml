@@ -72,7 +72,7 @@ class MergingBlueprint(Blueprint):
       s_max=25.,
       min_vel=8.,
       max_vel=12.,
-      behavior_model=BehaviorIDMClassic(params),
+      behavior_model=BehaviorMobilRuleBased(params),
       controlled_ids=True)
     scenario_generation = \
       ConfigWithEase(

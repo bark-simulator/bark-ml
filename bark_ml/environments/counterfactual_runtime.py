@@ -156,19 +156,16 @@ class CounterfactualRuntime(SingleAgentRuntime):
           diff.append(np.mean((np.stack(a_) - gt_traj)**2, axis=(0, 1)))
         if aid_r != agent_id:
           arr[i, j] = np.mean(np.array(diff, dtype=np.float32))
-    # self._logger.info(arr)
     self._axs.imshow(arr)
-
     self._axs.set_yticks(np.arange(len(agent_ids)))
     self._axs.set_xticks(np.arange(len(agent_ids_removed)))
-    self._axs.set_yticklabels([str(x) for x in agent_ids])
-    self._axs.set_xticklabels([str(x) for x in agent_ids_removed])
-    self._axs.get_xaxis().set_visible(True)
-    self._axs.get_yaxis().set_visible(True)
-    plt.axis('on')
+    def GetName(idx, eval_id):
+      if idx == eval_id:
+        idx = "ego"
+      return "$v_{"+str(idx)+"}$"
+    self._axs.set_yticklabels([GetName(x, eval_id) for x in agent_ids])
+    self._axs.set_xticklabels(["$r_{"+str(x)+"}$" for x in agent_ids_removed])
 
-    
-    
   def step(self, action):
     """perform the cf evaluation"""
     # simulate counterfactual worlds

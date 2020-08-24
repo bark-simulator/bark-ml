@@ -50,7 +50,8 @@ def run_configuration(argv):
   # NOTE: Modify these paths to specify your preferred path for checkpoints and summaries
   params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/checkpoints/"
   params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/checkpoints/"
-
+  params["Visualization"]["Agents"]["Alpha"]["Other"] = 0.2
+  params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
   #viewer = MPViewer(
   #  params=params,
   #  x_range=[-35, 35],
