@@ -53,6 +53,9 @@ def run_configuration(argv):
   params["Visualization"]["Agents"]["Alpha"]["Other"] = 0.2
   params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
   params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
+  params["ML"]["VisualizeCfWorlds"] = True
+  params["ML"]["VisualizeCfHeatmap"] = True
+  params["ML"]["ResultsFolder"] = "/Users/hart/Development/bark-ml/results/"
   
   #viewer = MPViewer(
   #  params=params,

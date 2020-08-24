@@ -59,6 +59,9 @@ class CounterfactualRuntime(SingleAgentRuntime):
     self._visualize_heatmap = params["ML"][
       "VisualizeCfHeatmap",
       "Whether the heatmap is being visualized.", False]
+    self._results_folder = params["ML"][
+      "ResultsFolder",
+      "Whether the heatmap is being visualized.", "./"]
     self._logger = logging.getLogger()
     self._behavior_model_pool = behavior_model_pool or []
     self._ego_rule_based = ego_rule_based or BehaviorIDMLaneTracking(self._params)
@@ -122,7 +125,7 @@ class CounterfactualRuntime(SingleAgentRuntime):
         viewer.drawWorld(
           world,
           eval_agent_ids=self._scenario._eval_agent_ids,
-          filename="/Users/hart/Development/bark-ml/results/cf_"+str(self._count)+"_replaced_"+str(replaced_agent_id)+".png",
+          filename=self._results_folder + "cf_"+str(self._count)+"_replaced_"+str(replaced_agent_id)+".png",
           debug_text=False)
         self._cf_axs[replaced_agent_id]["count"] += 1
       observed_world = world.Observe([eval_id])[0]
@@ -217,7 +220,7 @@ class CounterfactualRuntime(SingleAgentRuntime):
     if self._visualize_heatmap:
       self.DrawHeatmap(
         local_tracer,
-        filename="/Users/hart/Development/bark-ml/results/cf_"+str(self._count)+"_heatmap.png")
+        filename=self._results_folder + "cf_"+str(self._count)+"_heatmap.png")
   
     # evaluate counterfactual worlds
     trace = self.TraceCounterfactualWorldStats(local_tracer)
