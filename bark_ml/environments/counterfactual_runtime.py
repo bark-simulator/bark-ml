@@ -53,16 +53,21 @@ class CounterfactualRuntime(SingleAgentRuntime):
     self._cf_simulation_steps = params["ML"][
       "CfSimSteps",
       "Simulation steps for the counterfactual worlds.", 5]
+    self._visualize_cf_worlds = params["ML"][
+      "VisualizeCfWorlds",
+      "Whether the counterfactual worlds are visualized.", True]
+    self._visualize_heatmap = params["ML"][
+      "VisualizeCfHeatmap",
+      "Whether the heatmap is being visualized.", True]
     self._logger = logging.getLogger()
     self._behavior_model_pool = behavior_model_pool or []
     self._ego_rule_based = ego_rule_based or BehaviorIDMLaneTracking(self._params)
     self._tracer = Tracer()
-    _, self._axs_heatmap = plt.subplots(1, 1)
+    if self._visualize_heatmap:
+      _, self._axs_heatmap = plt.subplots(1, 1)
     self._count = 0
     self._cf_axs = {}
-    # _, self._axs_cf_worlds = plt.subplots(3, 1)
     
-
   def reset(self, scenario=None):
     """resets the runtime and its objects"""
     self._count = 0
@@ -103,12 +108,11 @@ class CounterfactualRuntime(SingleAgentRuntime):
     eval_id = self._scenario._eval_agent_ids[0]
     self._world.agents[eval_id].behavior_model = self.ml_behavior
     replaced_agent_id = kwargs.get("replaced_agent", 0)
-    if replaced_agent_id not in self._cf_axs:
+    if replaced_agent_id not in self._cf_axs and self._visualize_cf_worlds:
       self._cf_axs[replaced_agent_id] = {"ax": plt.subplots(3, 1)[1], "count": 0}
     for i in range(0, N):
-      # NOTE: replaced agent
-      if i == N - 1 and kwargs.get("num_virtual_world", 0) is not None:
-        print(self._cf_axs[replaced_agent_id]["count"])
+      if i == N - 1 and kwargs.get("num_virtual_world", 0) is not None and \
+        self._visualize_cf_worlds and replaced_agent_id is not None:
         viewer = MPViewer(
            params=self._params,
            x_range=[-35, 35],
@@ -121,7 +125,6 @@ class CounterfactualRuntime(SingleAgentRuntime):
           filename="/Users/hart/Development/bark-ml/results/cf_"+str(self._count)+"_replaced_"+str(replaced_agent_id)+".png",
           debug_text=False)
         self._cf_axs[replaced_agent_id]["count"] += 1
-
       observed_world = world.Observe([eval_id])[0]
       eval_state = observed_world.Evaluate()
       agent_states = CaptureAgentStates(observed_world)
@@ -153,12 +156,11 @@ class CounterfactualRuntime(SingleAgentRuntime):
             "drivable_area": collision_rate_drivable_area.mean(),
             "goal_reached": goal_reached.mean()}
 
-  def DrawHeatmap(self, local_tracer):
+  def DrawHeatmap(self, local_tracer, filename="./"):
     eval_id = self._scenario._eval_agent_ids[0]
     agent_ids = list(self._world.agents.keys())
     agent_ids_removed = copy.copy(agent_ids)
     agent_ids_removed.remove(eval_id)
-
     arr = np.zeros(
       shape=(len(agent_ids), len(agent_ids_removed)), dtype=np.float32)
     for i, agent_id in enumerate(agent_ids):
@@ -188,7 +190,9 @@ class CounterfactualRuntime(SingleAgentRuntime):
     self._axs_heatmap.set_yticklabels([GetName(x, eval_id) for x in agent_ids])
     self._axs_heatmap.set_xticklabels(
       ["$r_{"+str(x)+"}$" for x in agent_ids_removed])
-
+    # NOTE: save heatmap for _count
+    self._axs_heatmap.get_figure().savefig(filename)
+    
   def step(self, action):
     """perform the cf evaluation"""
     # simulate counterfactual worlds
@@ -209,7 +213,10 @@ class CounterfactualRuntime(SingleAgentRuntime):
       gt_world, local_tracer, N=self._cf_simulation_steps,
       replaced_agent="None", num_virtual_world="None")
 
-    self.DrawHeatmap(local_tracer)
+    if self._visualize_heatmap:
+      self.DrawHeatmap(
+        local_tracer,
+        filename="/Users/hart/Development/bark-ml/results/cf_"+str(self._count)+"_heatmap.png")
   
     # evaluate counterfactual worlds
     trace = self.TraceCounterfactualWorldStats(local_tracer)
