@@ -52,6 +52,8 @@ def run_configuration(argv):
   params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/checkpoints/"
   params["Visualization"]["Agents"]["Alpha"]["Other"] = 0.2
   params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
+  params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
+  
   #viewer = MPViewer(
   #  params=params,
   #  x_range=[-35, 35],
@@ -75,7 +77,7 @@ def run_configuration(argv):
   #   observer=observer,
   #   render=False)
   behavior_model_pool = []
-  for count, a in enumerate([-2., 0., 2.]):
+  for count, a in enumerate([-5., 0., 5.]):
     local_params = params.AddChild("local_"+str(count))
     local_params["BehaviorConstantAcceleration"]["ConstAcceleration"] = a
     behavior = BehaviorConstantAcceleration(local_params)
