@@ -100,7 +100,10 @@ def run_configuration(argv):
     runner.SetupSummaryWriter()
     runner.Train()
   elif FLAGS.mode == "visualize":
-    runner.Run(num_episodes=10, render=True)
+    # NOTE: set different risk levels
+    runner.Run(num_episodes=2, render=False)
+    # NOTE: save add save and load capability for the Tracer class
+    print(runner._environment._tracer._states)
   elif FLAGS.mode == "evaluate":
     runner.Run(num_episodes=100, render=False)
   

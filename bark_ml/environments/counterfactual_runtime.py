@@ -55,10 +55,10 @@ class CounterfactualRuntime(SingleAgentRuntime):
       "Simulation steps for the counterfactual worlds.", 5]
     self._visualize_cf_worlds = params["ML"][
       "VisualizeCfWorlds",
-      "Whether the counterfactual worlds are visualized.", True]
+      "Whether the counterfactual worlds are visualized.", False]
     self._visualize_heatmap = params["ML"][
       "VisualizeCfHeatmap",
-      "Whether the heatmap is being visualized.", True]
+      "Whether the heatmap is being visualized.", False]
     self._logger = logging.getLogger()
     self._behavior_model_pool = behavior_model_pool or []
     self._ego_rule_based = ego_rule_based or BehaviorIDMLaneTracking(self._params)
@@ -154,7 +154,8 @@ class CounterfactualRuntime(SingleAgentRuntime):
       key="goal_reached", group_by="replaced_agent", agg_type="ANY_TRUE")
     return {"collision": collision_rate.mean(),
             "drivable_area": collision_rate_drivable_area.mean(),
-            "goal_reached": goal_reached.mean()}
+            "goal_reached": goal_reached.mean(),
+            "max_col_rate": self._max_col_rate}
 
   def DrawHeatmap(self, local_tracer, filename="./"):
     eval_id = self._scenario._eval_agent_ids[0]
@@ -233,5 +234,4 @@ class CounterfactualRuntime(SingleAgentRuntime):
       self._world.agents[eval_id].behavior_model = self._ego_rule_based
     trace["executed_learned_policy"] = executed_learned_policy
     self._tracer.Trace(trace)
-    self._count += 1
     return SingleAgentRuntime.step(self, action)
