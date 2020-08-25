@@ -71,18 +71,16 @@ class Tracer:
 
   @property
   def df(self):
-    if self._df is None:
-      self.ConvertToDf()
+    self.ConvertToDf()
     return self._df
   
   def ConvertToDf(self):
     """Conversts states to pandas dataframe"""
-    self._df = pd.DataFrame(self._states)
+    self._df = pd.DataFrame.from_records(self._states)
   
   def Save(self, filepath="./"):
     """Saves trace as pandas dataframe"""
-    if self._df is None:
-      self.ConvertToDf()
+    self.ConvertToDf()
     self._df.to_pickle(filepath)
 
   def Load(self, filepath="./"):

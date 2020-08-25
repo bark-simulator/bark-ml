@@ -107,10 +107,13 @@ def run_configuration(argv):
   elif FLAGS.mode == "evaluate":
     for cr in [0.1, 0.2]:
       runner._environment._max_col_rate = cr
-      runner.Run(num_episodes=2, render=False)
+      runner.Run(num_episodes=2, render=False, max_col_rate=cr)
     runner._environment._tracer.Save(
-      params["ML"]["ResultsFolder"] + "evaluation_results.pckl")
-
+      params["ML"]["ResultsFolder"] + "evaluation_results_runtime.pckl")
+    goal_reached = runner._tracer.Query(
+      key="goal_reached", group_by="max_col_rate", agg_type="MEAN")
+    runner._tracer.Save(
+      params["ML"]["ResultsFolder"] + "evaluation_results_runner.pckl")
   # store all used params of the training
   # params.Save("your_path_here/tfa_sac_gnn_params.json")
 

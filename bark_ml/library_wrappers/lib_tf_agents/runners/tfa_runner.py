@@ -51,7 +51,7 @@ class TFARunner:
     self.GetCollectionDriver()
     self._logger = logging.getLogger()
     self._tracer = tracer or Tracer()
-
+    
   def SetupSummaryWriter(self):
     if self._params["ML"]["TFARunner"]["SummaryPath"] is not None:
       try:
@@ -121,7 +121,7 @@ class TFARunner:
   def Run(self, num_episodes=10, render=False, mode="not_training", **kwargs):
     for i in range(0, num_episodes):
       trajectory = self.RunEpisode(
-        render=render, **kwargs, num_episode=i)
+        render=render, num_episode=i, **kwargs)
     # average collision, reward, and step count
     # NOTE: we need to use any here
     mean_col_rate = self._tracer.Query(
@@ -145,5 +145,3 @@ class TFARunner:
       f" collision-rate of {mean_col_rate:.5f}, took on average" +
       f" {mean_steps:.3f} steps, and reached the goal " + 
       f" {goal_reached:.3f} (evaluated over {num_episodes} episodes).")
-    # reset tracer
-    self._tracer.Reset()
