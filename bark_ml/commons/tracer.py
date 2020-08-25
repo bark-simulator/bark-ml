@@ -66,7 +66,7 @@ class Tracer:
     if agg_type == Tracer.QueryTypes.LAST_VALUE:
       return df.tail(1)
     elif agg_type == Tracer.QueryTypes.ANY_TRUE:
-      return df.any().mean()
+      return df.any()
     return df
 
   @property
@@ -82,8 +82,12 @@ class Tracer:
   def Save(self, filepath="./"):
     """Saves trace as pandas dataframe"""
     if self._df is None:
-      self.ConvertoToDf()
+      self.ConvertToDf()
     self._df.to_pickle(filepath)
+
+  def Load(self, filepath="./"):
+    self._df = pd.read_pickle(filepath)
+    self._states = self._df.apply(list)
 
   def Reset(self):
     self._states = []

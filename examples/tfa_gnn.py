@@ -53,9 +53,9 @@ def run_configuration(argv):
   params["Visualization"]["Agents"]["Alpha"]["Other"] = 0.2
   params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
   params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
-  params["ML"]["VisualizeCfWorlds"] = True
-  params["ML"]["VisualizeCfHeatmap"] = True
-  params["ML"]["ResultsFolder"] = "/Users/hart/Development/bark-ml/results/"
+  params["ML"]["VisualizeCfWorlds"] = False
+  params["ML"]["VisualizeCfHeatmap"] = False
+  params["ML"]["ResultsFolder"] = "/Users/hart/Development/bark-ml/results/data/"
   
   #viewer = MPViewer(
   #  params=params,
@@ -103,13 +103,14 @@ def run_configuration(argv):
     runner.SetupSummaryWriter()
     runner.Train()
   elif FLAGS.mode == "visualize":
-    # NOTE: set different risk levels
-    runner.Run(num_episodes=2, render=False)
-    # NOTE: query the tracer: goal_reached, executed_learned_policy, collision, drivable_area and groupby: max_col_rate 
-    print(runner._environment._tracer._states)
+    runner.Run(num_episodes=2, render=True)
   elif FLAGS.mode == "evaluate":
-    runner.Run(num_episodes=100, render=False)
-  
+    for cr in [0.1, 0.2]:
+      runner._environment._max_col_rate = cr
+      runner.Run(num_episodes=2, render=False)
+    runner._environment._tracer.Save(
+      params["ML"]["ResultsFolder"] + "evaluation_results.pckl")
+
   # store all used params of the training
   # params.Save("your_path_here/tfa_sac_gnn_params.json")
 

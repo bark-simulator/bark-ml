@@ -150,11 +150,14 @@ class CounterfactualRuntime(SingleAgentRuntime):
   
   def TraceCounterfactualWorldStats(self, local_tracer):
     collision_rate = local_tracer.Query(
-      key="collision", group_by="replaced_agent", agg_type="ANY_TRUE")
+      key="collision", group_by="replaced_agent",
+      agg_type="ANY_TRUE").mean()
     collision_rate_drivable_area = local_tracer.Query(
-      key="drivable_area", group_by="replaced_agent", agg_type="ANY_TRUE")
+      key="drivable_area",
+      group_by="replaced_agent", agg_type="ANY_TRUE").mean()
     goal_reached = local_tracer.Query(
-      key="goal_reached", group_by="replaced_agent", agg_type="ANY_TRUE")
+      key="goal_reached", group_by="replaced_agent",
+      agg_type="ANY_TRUE").mean()
     return {"collision": collision_rate.mean(),
             "drivable_area": collision_rate_drivable_area.mean(),
             "goal_reached": goal_reached.mean(),
