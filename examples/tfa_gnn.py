@@ -105,9 +105,9 @@ def run_configuration(argv):
   elif FLAGS.mode == "visualize":
     runner.Run(num_episodes=2, render=True)
   elif FLAGS.mode == "evaluate":
-    for cr in [0.1, 0.2]:
+    for cr in [0., 0.25, 0.5, 0.75, 1.]:
       runner._environment._max_col_rate = cr
-      runner.Run(num_episodes=2, render=False, max_col_rate=cr)
+      runner.Run(num_episodes=50, render=False, max_col_rate=cr)
     runner._environment._tracer.Save(
       params["ML"]["ResultsFolder"] + "evaluation_results_runtime.pckl")
     goal_reached = runner._tracer.Query(
