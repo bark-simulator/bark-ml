@@ -7,6 +7,7 @@
 
 # TensorFlow Agents (https://github.com/tensorflow/agents) example
 import gym
+import numpy as np
 from absl import app
 from absl import flags
 import tensorflow as tf
@@ -75,22 +76,22 @@ def run_configuration(argv):
 
   observer = GraphObserver(params=params)
   
-  # env = SingleAgentRuntime(
-  #   blueprint=bp,
-  #   observer=observer,
-  #   render=False)
-  behavior_model_pool = []
-  for count, a in enumerate([-5., 0., 5.]):
-    local_params = params.AddChild("local_"+str(count))
-    local_params["BehaviorConstantAcceleration"]["ConstAcceleration"] = a
-    behavior = BehaviorConstantAcceleration(local_params)
-    behavior_model_pool.append(behavior)
-  env = CounterfactualRuntime(
+  env = SingleAgentRuntime(
     blueprint=bp,
     observer=observer,
-    render=False,
-    params=params,
-    behavior_model_pool=behavior_model_pool)
+    render=False)
+  # behavior_model_pool = []
+  # for count, a in enumerate([-5., 0., 5.]):
+  #   local_params = params.AddChild("local_"+str(count))
+  #   local_params["BehaviorConstantAcceleration"]["ConstAcceleration"] = a
+  #   behavior = BehaviorConstantAcceleration(local_params)
+  #   behavior_model_pool.append(behavior)
+  # env = CounterfactualRuntime(
+  #   blueprint=bp,
+  #   observer=observer,
+  #   render=False,
+  #   params=params,
+  #   behavior_model_pool=behavior_model_pool)
   sac_agent = BehaviorGraphSACAgent(environment=env,
                                     observer=observer,
                                     params=params)
@@ -103,17 +104,20 @@ def run_configuration(argv):
     runner.SetupSummaryWriter()
     runner.Train()
   elif FLAGS.mode == "visualize":
-    runner.Run(num_episodes=2, render=True)
+    runner._environment._max_col_rate = 0.
+    runner.Run(num_episodes=10, render=True)
   elif FLAGS.mode == "evaluate":
-    for cr in [0., 0.25, 0.5, 0.75, 1.]:
+    for cr in np.arange(0, 1, 0.1):
       runner._environment._max_col_rate = cr
-      runner.Run(num_episodes=50, render=False, max_col_rate=cr)
+      runner.Run(num_episodes=250, render=False, max_col_rate=cr)
     runner._environment._tracer.Save(
       params["ML"]["ResultsFolder"] + "evaluation_results_runtime.pckl")
     goal_reached = runner._tracer.Query(
       key="goal_reached", group_by="max_col_rate", agg_type="MEAN")
     runner._tracer.Save(
       params["ML"]["ResultsFolder"] + "evaluation_results_runner.pckl")
+    
+    
   # store all used params of the training
   # params.Save("your_path_here/tfa_sac_gnn_params.json")
 

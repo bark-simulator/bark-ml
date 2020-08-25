@@ -65,7 +65,7 @@ class SACRunner(TFARunner):
           start_time=iteration_start_time, 
           iteration=global_iteration)
         iteration_start_time = time.time()
-
+        self._tracer.Reset()
         self.Run(
           num_episodes=self._params["ML"]["TFARunner"]["EvaluationSteps", "", 20],
           mode="training")
