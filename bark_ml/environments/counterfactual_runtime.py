@@ -187,7 +187,7 @@ class CounterfactualRuntime(SingleAgentRuntime):
           diff.append(np.mean((np.stack(a_) - gt_traj)**2, axis=(0, 1)))
         if aid_r != agent_id:
           arr[i, j] = np.mean(np.array(diff, dtype=np.float32))
-    self._axs_heatmap.imshow(arr)
+    self._axs_heatmap.imshow(arr, cmap=plt.get_cmap('Blues'))
     self._axs_heatmap.set_yticks(np.arange(len(agent_ids)))
     self._axs_heatmap.set_xticks(np.arange(len(agent_ids_removed)))
     def GetName(idx, eval_id):
@@ -240,4 +240,5 @@ class CounterfactualRuntime(SingleAgentRuntime):
       self._world.agents[eval_id].behavior_model = self._ego_rule_based
     trace["executed_learned_policy"] = executed_learned_policy
     self._tracer.Trace(trace)
+    self._count += 1
     return SingleAgentRuntime.step(self, action)
