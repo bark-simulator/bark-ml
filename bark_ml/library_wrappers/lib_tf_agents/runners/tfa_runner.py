@@ -140,6 +140,8 @@ class TFARunner:
       tf.summary.scalar("mean_steps", mean_steps, step=global_iteration)
       tf.summary.scalar(
         "mean_collision_rate", mean_col_rate, step=global_iteration)
+      tf.summary.scalar(
+        "goal_reached", goal_reached, step=global_iteration)
     self._logger.info(
       f"The agent achieved an average reward of {mean_reward:.3f}," +
       f" collision-rate of {mean_col_rate:.5f}, took on average" +
