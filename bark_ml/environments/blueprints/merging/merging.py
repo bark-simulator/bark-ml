@@ -58,8 +58,10 @@ class MergingBlueprint(Blueprint):
     left_lane = MergingLaneCorridorConfig(
       params=params,
       road_ids=[0, 1],
-      min_vel=10.,
-      max_vel=15.,
+      ds_min=5.,
+      ds_max=15.,
+      min_vel=9.,
+      max_vel=11.,
       s_min=5.,
       s_max=45.,
       lane_corridor_id=0,
@@ -68,10 +70,12 @@ class MergingBlueprint(Blueprint):
       params=params,
       road_ids=[0, 1],
       lane_corridor_id=1,
+      ds_min=5.,
+      ds_max=15.,
       s_min=5.,
       s_max=25.,
-      min_vel=8.,
-      max_vel=12.,
+      min_vel=9.,
+      max_vel=11.,
       behavior_model=BehaviorMobilRuleBased(params),
       controlled_ids=True)
     scenario_generation = \

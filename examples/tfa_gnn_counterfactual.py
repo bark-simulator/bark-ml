@@ -54,7 +54,7 @@ def run_configuration(argv):
   params["Visualization"]["Agents"]["Alpha"]["Other"] = 0.2
   params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
   params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
-  params["ML"]["VisualizeCfWorlds"] = True
+  params["ML"]["VisualizeCfWorlds"] = False
   params["ML"]["VisualizeCfHeatmap"] = True
   params["ML"]["ResultsFolder"] = "/Users/hart/Development/bark-ml/results/data/"
   
@@ -97,7 +97,7 @@ def run_configuration(argv):
     runner.Train()
   elif FLAGS.mode == "visualize":
     runner._environment._max_col_rate = 0.
-    runner.Run(num_episodes=1, render=True)
+    runner.Run(num_episodes=5, render=True)
   elif FLAGS.mode == "evaluate":
     for cr in np.arange(0, 1, 0.1):
       runner._environment._max_col_rate = cr
