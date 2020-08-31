@@ -40,9 +40,12 @@ cc_library(
   _maybe(
     git_repository,
     name = "libtensorflow-RL-MCTS",
-    commit = "31adfc2112ce41b81574b6f44192ec47f0853fbc",
+    commit = "0573ec5ca275da195802ab73a69e87947309ac03",
     remote = "https://github.com/steven-guo94/libtensorflow_so"
   )
+
+  ## this repository named "libtensorflow-RL-MCTS" is a precompiled tensorflow2.1 C API
+  ## it is build according to this tutorial https://medium.com/analytics-vidhya/deploying-tensorflow-2-1-as-c-c-executable-1d090845055c
 
   # if we include glog twice, gflags are defined mult. times
   _maybe(
