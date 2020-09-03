@@ -57,3 +57,17 @@ class QRDQN(BaseModel):
 
         return q
         
+    def forward(self, states):
+        assert states is not None 
+        batch_size = states.shape[0]
+
+        state_embeddings = self.dqn_net(states)
+
+        # Calculate quantiles.
+        quantiles = self.q_net(state_embeddings).view(batch_size, self.N, self.num_actions)
+
+        # Calculate expectations of value distributions.
+        q = quantiles.mean(dim=1)
+        assert q.shape == (batch_size, self.num_actions)
+
+        return q

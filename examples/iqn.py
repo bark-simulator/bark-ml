@@ -20,7 +20,7 @@ os.environ['GLOG_minloglevel'] = '3'
 # for training: bazel run //examples:iqn -- --mode=train
 FLAGS = flags.FLAGS
 flags.DEFINE_enum("mode",
-                  "train",
+                  "visualize",
                   ["train", "visualize", "evaluate"],
                   "Mode the configuration should be executed in.")
 
@@ -29,27 +29,15 @@ flags.DEFINE_enum("env",
                   ["highway-v1", "merging-v1", "intersection-v1"],
                   "Environment the agent should interact in.")
 
-flags.DEFINE_bool("load", True, "Load weights from checkpoint path.")
+flags.DEFINE_bool("load", False, "Load weights from checkpoint path.")
 
 def run_configuration(argv):
 
   params = ParameterServer(filename="examples/example_params/iqn_params.json")
   params["ML"]["BaseAgent"]["SummaryPath"] = "/home/mansoor/Study/Werkstudent/fortiss/code/bark-ml/summaries"
   params["ML"]["BaseAgent"]["CheckpointPath"] = "/home/mansoor/Study/Werkstudent/fortiss/code/bark-ml/checkpoints"
-  params["World"]["remove_agents_out_of_map"] = True
-  params["Test"] = 123
 
   env = gym.make(FLAGS.env, params=params)
-  
-  # if FLAGS.env == "highway-v1":
-  #   env = DiscreteHighwayGym(params)
-  # elif FLAGS.env == "merging-v1":
-  #   env = DiscreteMergingGym(params)
-  # elif FLAGS.env == "intersection-v1":
-  #   env = DiscreteIntersectionGym(params)
-  # else:
-  #   raise Exception("Invalid argument for --env ")
-  
   agent = IQNAgent(env=env, test_env=env,params = params)
 
   if FLAGS.load and params["ML"]["BaseAgent"]["CheckpointPath"]:
@@ -57,8 +45,10 @@ def run_configuration(argv):
 
   if FLAGS.mode == "train": 
     agent.run()
+
   elif FLAGS.mode == "visualize":
     agent.visualize()
+    
   elif FLAGS.mode == "evaluate":
     # writes evaluaion data using summary writer in summary path
     agent.evaluate() 

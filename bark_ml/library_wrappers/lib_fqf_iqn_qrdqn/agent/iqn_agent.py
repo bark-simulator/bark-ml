@@ -89,7 +89,7 @@ class IQNAgent(BaseAgent):
 
         with torch.no_grad():
             # Calculate Q values of next states.
-            if self.double_q_learning:
+            if self.double_q_learning: # note: double q learning set to always false.
                 # Sample the noise of online network to decorrelate between
                 # the action selection and the quantile calculation.
                 self.online_net.sample_noise()

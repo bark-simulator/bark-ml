@@ -199,9 +199,7 @@ class FQFAgent(BaseAgent):
             else:
                 next_state_embeddings =\
                     self.target_net.calculate_state_embeddings(next_states)
-                next_q = self.target_net.calculate_q(
-                    state_embeddings=next_state_embeddings,
-                    fraction_net=self.online_net.fraction_net)
+                next_q = self.target_net.calculate_q(state_embeddings=next_state_embeddings)
 
             # Calculate greedy actions.
             next_actions = torch.argmax(next_q, dim=1, keepdim=True)

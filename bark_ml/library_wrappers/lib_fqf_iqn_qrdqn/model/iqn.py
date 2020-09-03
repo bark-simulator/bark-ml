@@ -71,11 +71,11 @@ class IQN(BaseModel):
 
         state_embeddings = self.dqn_net(states)
 
-        # Sample fractions.
-        taus = torch.rand(
+        # Sample fractions. # note. causing bug in torch script.
+        taus = torch.ones(
             batch_size, self.K, dtype=state_embeddings.dtype,
             device=state_embeddings.device)
-
+        
         # Calculate quantiles.
         tau_embeddings = self.cosine_net(taus)
         quantiles = self.quantile_net(state_embeddings, tau_embeddings)

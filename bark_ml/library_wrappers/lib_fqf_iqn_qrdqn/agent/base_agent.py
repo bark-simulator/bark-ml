@@ -18,8 +18,8 @@ class BaseAgent(ABC):
 
         torch.manual_seed(self._params["ML"]["BaseAgent"]["Seed", "", 0])
         np.random.seed(self._params["ML"]["BaseAgent"]["Seed", "", 0])
-        #self.env.seed(self._params["ML"]["BaseAgent"]["Seed", "", 0])
-        #self.test_env.seed(2**31-1-self._params["ML"]["BaseAgent"]["Seed", "", 0])
+        self.env.seed(self._params["ML"]["BaseAgent"]["Seed", "", 0])
+        self.test_env.seed(2**31-1-self._params["ML"]["BaseAgent"]["Seed", "", 0])
         # torch.backends.cudnn.deterministic = True  # It harms a performance.
         # torch.backends.cudnn.benchmark = False  # It harms a performance.
 
@@ -120,7 +120,7 @@ class BaseAgent(ABC):
         # Act without randomness.
         state = torch.Tensor(state).unsqueeze(0).to(self.device).float() 
         with torch.no_grad():
-            actions = self.online_net.calculate_q(states=state)
+            actions = self.online_net(states=state)
         return actions
 
     @abstractmethod

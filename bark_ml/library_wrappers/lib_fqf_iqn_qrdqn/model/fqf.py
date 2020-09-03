@@ -39,15 +39,14 @@ class FQF(BaseModel):
     def calculate_state_embeddings(self, states):
         return self.dqn_net(states)
 
-    def calculate_fractions(self, states=None, state_embeddings=None,
-                            fraction_net=None):
-        assert states is not None or state_embeddings is not None
-        assert not self.target or fraction_net is not None
+    def calculate_fractions(self, state_embeddings):
+        assert state_embeddings is not None
+        assert not self.target or self.fraction_net is not None
 
-        if state_embeddings is None:
-            state_embeddings = self.dqn_net(states)
+        # if state_embeddings is None:
+        #     state_embeddings = self.dqn_net(states)
 
-        fraction_net = fraction_net if self.target else self.fraction_net
+        fraction_net = self.fraction_net#fraction_net if self.target else self.fraction_net
         taus, tau_hats, entropies = fraction_net(state_embeddings)
 
         return taus, tau_hats, entropies
@@ -62,7 +61,7 @@ class FQF(BaseModel):
         return self.quantile_net(state_embeddings, tau_embeddings)
 
     def calculate_q(self, taus=None, tau_hats=None, states=None,
-                    state_embeddings=None, fraction_net=None):
+                    state_embeddings=None):
         assert states is not None or state_embeddings is not None
         assert not self.target or fraction_net is not None
 
@@ -73,8 +72,7 @@ class FQF(BaseModel):
 
         # Calculate fractions.
         if taus is None or tau_hats is None:
-            taus, tau_hats, _ = self.calculate_fractions(
-                state_embeddings=state_embeddings, fraction_net=fraction_net)
+            taus, tau_hats, _ = self.calculate_fractions(state_embeddings=state_embeddings)
 
         # Calculate quantiles.
         quantile_hats = self.calculate_quantiles(

@@ -71,12 +71,12 @@ py_test(
 py_test(
   name = "iqn",
   srcs = ["iqn.py"],
-  data = ["@bark_project//bark/python_wrapper:core.so",
-          "//bark_ml:generate_core",
+  data = ["//bark_ml:generate_core",
           "//examples/example_params:example_params"],
   imports = ["../bark_ml/python_wrapper/"],
   deps = [
     "//bark_ml/environments:gym",
+    "@bark_project//bark/runtime/commons:commons",
     "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent:agents",
   ]
 )

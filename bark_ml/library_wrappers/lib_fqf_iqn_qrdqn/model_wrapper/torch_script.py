@@ -14,17 +14,19 @@ env = gym.make(env)
 action_space_size = env.action_space.n
 state_space_size = env.observation_space.shape[0]
 
-
+#np.random.seed(0)
 # a sample random state [0-1] to evaluate actions
-random_state = np.random.rand(16).tolist()
+random_state = np.random.rand(state_space_size).tolist()
 
 # Do inference using C++ wrapped model
 model = pytorch_script_wrapper.ModelLoader(os.path.join(os.path.dirname(__file__), "model_data/online_net_script.pt"), action_space_size, state_space_size)
 model.LoadModel()
 
-# Time 10000 iterations for inference in cpp
+num_iters = 10000 # Number of times to repeat experiment to calcualte runtime
+
+# Time num_iters iterations for inference using C++ model
 start = time.time()
-for i in range(10000):
+for i in range(num_iters):
   actions_cpp = model.Inference(random_state)
 end = time.time()
 time_cpp = end-start
@@ -33,26 +35,22 @@ time_cpp = end-start
 agent = IQNAgent(env=env, test_env=env, params = ParameterServer())
 agent.load_models(os.path.join(os.path.dirname(__file__), "model_data"))
 
-# Time 10000 iterations for inference using python model
+# Time num_iters iterations for inference using python model
 start = time.time()
-for i in range(10000):
+for i in range(num_iters):
   actions_py = agent.calculate_actions(random_state)
+
 end = time.time()
 time_py = end-start
 
+# Calcualte relative error between C++ and python models
+relative_error = lambda x,y: np.max(np.abs(x - y) / (np.maximum(1e-8, np.abs(x) + np.abs(y))))
+error = relative_error(actions_py.numpy(), np.asarray(actions_cpp))
+
+assert error < 5e-6 , "C++ and python models don't match"
+
 # Print report
-print ("----------------------- Time comparison ------------------------")
-print("Time(python):{}".format(time_cpp))
-print("Time(cpp):{}".format(time_py))
-print ("----------------------------------------------------------------\n")
-
-print ("----------------- Action comparison ----------------------------")
-print("Time(python):{}".format(actions_py.argmax()))
-print("Time(cpp):{}".format(np.asarray(actions_cpp).argmax().item()))
-print ("----------------------------------------------------------------\n")
-
-print ("----------------- Action reward comparison -----------------------")
-print ("Actions(python model):\n{}\n".format(actions_py.tolist()))
-print ("Actions(cpp model):\n{}\n".format(actions_cpp))
-print ("------------------------------------------------------------------")
-
+print ("\nRun Time comparison\n----------------------------------")
+print("Time (cpp): {:.2f} s/{} iters".format(time_py, num_iters))
+print("Time (python): {:.2f} s/{} iters".format(time_cpp, num_iters))
+print("Relative error: {}".format(error))
