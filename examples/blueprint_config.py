@@ -1,5 +1,7 @@
-# Copyright (c) 2020 Patrick Hart, Julian Bernhard,
-# Klemens Esterle, Tobias Kessler
+# Copyright (c) 2020 fortiss GmbH
+#
+# Authors: Patrick Hart, Julian Bernhard, Klemens Esterle, and
+# Tobias Kessler
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
@@ -7,13 +9,13 @@
 import numpy as np
 
 # BARK imports
-from bark_project.modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.viewer.matplotlib_viewer import MPViewer
-from modules.runtime.viewer.video_renderer import VideoRenderer
+from bark.runtime.commons.parameters import ParameterServer
+from bark.runtime.viewer.matplotlib_viewer import MPViewer
+from bark.runtime.viewer.video_renderer import VideoRenderer
 
 # BARK-ML imports
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-from bark_ml_library.observers import NearestObserver
+from bark_ml.core.observers import NearestObserver
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
   DiscreteHighwayBlueprint
 

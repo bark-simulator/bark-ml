@@ -37,7 +37,7 @@ from diadem.preprocessors import Normalization
 
 from bark_ml.library_wrappers.lib_diadem.diadem_bark_environment import DiademBarkEnvironment
 
-from bark_project.modules.runtime.commons.parameters import ParameterServer
+from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.environments.blueprints import DiscreteMergingBlueprint

@@ -1,13 +1,14 @@
-# Copyright (c) 2020 Patrick Hart, Julian Bernhard,
-# Klemens Esterle, Tobias Kessler
+# Copyright (c) 2020 fortiss GmbH
 #
-# This software is released under the MIT License.
-# https://opensource.org/licenses/MIT
+# Authors: Patrick Hart
+#
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
 
 import gym
 from gym.envs.registration import register
 
-from bark_project.modules.runtime.commons.parameters import ParameterServer
+from bark.runtime.commons.parameters import ParameterServer
 
 from bark_ml.environments.blueprints.highway.highway import \
   ContinuousHighwayBlueprint, DiscreteHighwayBlueprint

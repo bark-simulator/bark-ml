@@ -1,3 +1,10 @@
+# Copyright (c) 2020 fortiss GmbH
+#
+# Authors: Patrick Hart
+#
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
+
 import numpy as np
 import tensorflow as tf
 
@@ -5,6 +12,7 @@ import tensorflow as tf
 from tf_agents.environments import py_environment
 from tf_agents.specs import array_spec
 from tf_agents.trajectories import time_step as ts
+from collections import OrderedDict
 
 tf.compat.v1.enable_v2_behavior()
 

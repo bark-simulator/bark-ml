@@ -4,5 +4,6 @@ py_library(
             "tfa_runner.py",
             "ppo_runner.py",
             "sac_runner.py"],
+    deps = ["//bark_ml/commons:tracer"],
     visibility = ["//visibility:public"],
 )
