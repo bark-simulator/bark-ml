@@ -15,7 +15,7 @@ TEST(model_loader, load_module) {
   //std::vector<float> state(OBSERVATION_SPACE);
   //std::generate(std::begin(state), std::end(state),[](){return ((double) rand() / (RAND_MAX));});
 
-  ModelLoader ml("/home/mansoor/Study/Werkstudent/fortiss/code/bark-ml/checkpoints/best/online_net_script.pt", ACTION_SPACE, OBSERVATION_SPACE);
+  ModelLoader ml("bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/model_wrapper/model_data/online_net_script.pt", ACTION_SPACE, OBSERVATION_SPACE);
   bool load_status = ml.LoadModel();
   //auto actions = ml.Inference(state);
 
