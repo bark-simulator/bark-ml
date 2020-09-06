@@ -51,7 +51,6 @@ public:
     auto options = torch::TensorOptions().dtype(torch::kFloat32);
     torch::Tensor tharray = torch::from_blob(actions.data(), {1, action_space_}, options);
     tharray.copy_(predicted_actions);
-    //}
 
     return actions;
   }

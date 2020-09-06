@@ -47,5 +47,12 @@ def run_configuration(argv):
   elif FLAGS.mode == "visualize":
     agent.visualize()
 
+  elif FLAGS.mode == "evaluate":
+    # writes evaluaion data using summary writer in summary path
+    agent.evaluate() 
+
+  else:
+    raise Exception("Invalid argument for --mode")
+
 if __name__ == '__main__':
   app.run(run_configuration)

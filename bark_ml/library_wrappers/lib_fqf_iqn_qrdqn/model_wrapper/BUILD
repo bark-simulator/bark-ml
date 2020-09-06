@@ -29,8 +29,8 @@ cc_library(
 )
 
 py_test(
-  name = "torch_script",
-  srcs = ["torch_script.py"],
+  name = "test_torch_script",
+  srcs = ["test_torch_script.py"],
   data = ["@torchcpp//:lib",
           "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/model_wrapper/model_data:weights",
           "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/model_wrapper:pytorch_script_wrapper.so",

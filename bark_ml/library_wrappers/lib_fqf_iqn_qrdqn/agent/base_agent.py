@@ -58,7 +58,7 @@ class BaseAgent(ABC):
 
         self.summary_dir = self._params["ML"]["BaseAgent"]["SummaryPath", "", ""]
         self.model_dir = self._params["ML"]["BaseAgent"]["CheckpointPath", "", ""]
-        #self.summary_dir = os.path.join(log_dir, 'summary')
+        
         if not os.path.exists(self.model_dir) and self.model_dir:
             os.makedirs(self.model_dir)
         if not os.path.exists(self.summary_dir) and self.summary_dir:
@@ -236,8 +236,6 @@ class BaseAgent(ABC):
                     action = self.exploit(state)
 
                 next_state, reward, done, _ = self.test_env.step(action)
-                #self.test_env.render()
-                print("Reward:", reward)
                 num_steps += 1
                 episode_steps += 1
                 episode_return += reward

@@ -44,7 +44,7 @@
             "HiddenDims":512
         },
         "FQFAgent":{
-            "N":64,
+            "N":32,
             "Kappa":1.0,
             "Ent_coefs":0,
             "FractionalLearningRate":5e-5,

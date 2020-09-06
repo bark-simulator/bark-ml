@@ -5,7 +5,7 @@ from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.network import DQNBase, CosineEm
 
 class FQF(BaseModel):
 
-    def __init__(self, num_channels, num_actions, params, N=32, num_cosines=32, dueling_net=False, noisy_net=False,
+    def __init__(self, num_channels, num_actions, params, N=64, num_cosines=32, dueling_net=False, noisy_net=False,
                  target=False):
         super(FQF, self).__init__()
 
@@ -34,17 +34,12 @@ class FQF(BaseModel):
             self.fraction_net = FractionProposalNetwork(
                 N=N, embedding_dim=self.embedding_dim)
 
-        
-
     def calculate_state_embeddings(self, states):
         return self.dqn_net(states)
 
     def calculate_fractions(self, state_embeddings):
         assert state_embeddings is not None
         assert not self.target or self.fraction_net is not None
-
-        # if state_embeddings is None:
-        #     state_embeddings = self.dqn_net(states)
 
         fraction_net = self.fraction_net#fraction_net if self.target else self.fraction_net
         taus, tau_hats, entropies = fraction_net(state_embeddings)

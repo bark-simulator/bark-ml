@@ -1,5 +1,11 @@
 filegroup(
     name = "weights",
-    srcs = glob(["*.pt", "*.pth"]),
+    srcs = glob(["iqn/*.pt",
+                 "iqn/*.pth",
+                 "fqf/*.pt",
+                 "fqf/*.pth",
+                 "qrdqn/*.pt",
+                 "qrdqn/*.pth",
+                 ]),
     visibility = ["//visibility:public"],
 )
