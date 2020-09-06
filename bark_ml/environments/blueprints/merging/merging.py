@@ -1,5 +1,7 @@
-# Copyright (c) 2020 Patrick Hart, Julian Bernhard,
-# Klemens Esterle, Tobias Kessler
+# Copyright (c) 2020 fortiss GmbH
+#
+# Authors: Patrick Hart, Julian Bernhard, Klemens Esterle, and
+# Tobias Kessler
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
@@ -12,10 +14,13 @@ from bark.runtime.scenario.scenario_generation.config_with_ease import \
 from bark.core.models.dynamic import SingleTrackModel
 from bark.core.world.opendrive import XodrDrivingDirection
 from bark.core.world.goal_definition import GoalDefinitionPolygon
-from bark.core.models.behavior import BehaviorMobilRuleBased
+from bark.core.world.goal_definition import GoalDefinitionStateLimitsFrenet
+from bark.core.models.behavior import BehaviorLaneChangeRuleBased, BehaviorIDMClassic, \
+  BehaviorMobilRuleBased
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
 from bark_ml.evaluators.goal_reached import GoalReached
+from bark_ml.evaluators.goal_reached_guiding import GoalReachedGuiding
 # from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteML
@@ -27,12 +32,15 @@ class MergingLaneCorridorConfig(LaneCorridorConfig):
                params=None,
                **kwargs):
     super(MergingLaneCorridorConfig, self).__init__(params, **kwargs)
-  
+
   def goal(self, world):
     road_corr = world.map.GetRoadCorridor(
       self._road_ids, XodrDrivingDirection.forward)
     lane_corr = self._road_corridor.lane_corridors[0]
-    return GoalDefinitionPolygon(lane_corr.polygon)
+    return GoalDefinitionStateLimitsFrenet(lane_corr.center_line,
+                                           (0.4, 0.4),
+                                           (0.1, 0.1),
+                                           (10., 15.))
 
 
 class MergingBlueprint(Blueprint):
@@ -43,6 +51,10 @@ class MergingBlueprint(Blueprint):
                ml_behavior=None,
                viewer=True):
     params["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
+    params["BehaviorIDMClassic"]["BrakeForLaneEndEnabledDistance"] = 100.
+    params["BehaviorIDMClassic"]["BrakeForLaneEndDistanceOffset"] = 25.
+    params["BehaviorIDMClassic"]["DesiredVelocity"] = 12.5
+    params["World"]["remove_agents_out_of_map"] = False
     left_lane = MergingLaneCorridorConfig(
       params=params,
       road_ids=[0, 1],
@@ -60,7 +72,7 @@ class MergingBlueprint(Blueprint):
       s_max=25.,
       min_vel=8.,
       max_vel=12.,
-      behavior_model=BehaviorMobilRuleBased(params),
+      behavior_model=BehaviorIDMClassic(params),
       controlled_ids=True)
     scenario_generation = \
       ConfigWithEase(
@@ -75,7 +87,8 @@ class MergingBlueprint(Blueprint):
                         y_range=[-35, 35],
                         follow_agent_id=True)
     dt = 0.2
-    evaluator = GoalReached(params)
+    evaluator = GoalReachedGuiding(params)
+    # evaluator = GoalReached(params)
     observer = NearestObserver(params)
     ml_behavior = ml_behavior
 

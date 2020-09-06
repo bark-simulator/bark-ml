@@ -1,5 +1,7 @@
-# Copyright (c) 2020 Patrick Hart, Julian Bernhard,
-# Klemens Esterle, Tobias Kessler
+# Copyright (c) 2020 fortiss GmbH
+#
+# Authors: Patrick Hart, Julian Bernhard, Klemens Esterle, and
+# Tobias Kessler
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
@@ -14,6 +16,7 @@ class BehaviorContinuousML(BehaviorDynamicModel):
   def __init__(self,
                params=None):
     BehaviorDynamicModel.__init__(self, params)
+    # BehaviorModel.__init__(self, params)
     self._lower_bounds = params["ML"]["BehaviorContinuousML"][
       "ActionsLowerBound",
       "Lower-bound for actions.",
@@ -29,3 +32,6 @@ class BehaviorContinuousML(BehaviorDynamicModel):
       2,  # acceleration and steering-rate
       low=np.array(self._lower_bounds, dtype=np.float32),
       high=np.array(self._upper_bounds, dtype=np.float32))
+  
+  def Clone(self):
+    return self

@@ -1,8 +1,9 @@
-# Copyright (c) 2020 Patrick Hart, Julian Bernhard, 
-# Klemens Esterle, Tobias Kessler
+# Copyright (c) 2020 fortiss GmbH
 #
-# This software is released under the MIT License.
-# https://opensource.org/licenses/MIT
+# Authors: Patrick Hart
+#
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
 
 import numpy as np
 from bark.runtime.runtime import Runtime
@@ -58,10 +59,15 @@ class SingleAgentRuntime(Runtime):
     eval_id = self._scenario._eval_agent_ids[0]
     if eval_id in self._world.agents:
       self._world.agents[eval_id].behavior_model.ActionToBehavior(action)
-
+    
     # step and observe
     self._world.Step(self._step_time)
-    observed_world = self._world.Observe([eval_id])[0]
+    observed_world = self._world.Observe([eval_id])
+    
+    if len(observed_world) > 0:
+      observed_world = observed_world[0]
+    else:
+      raise Exception('No world instance available.')
 
     # observe and evaluate
     observed_next_state = self._observer.Observe(observed_world)
@@ -69,7 +75,6 @@ class SingleAgentRuntime(Runtime):
       observed_world=observed_world,
       action=action)
     
-    # print(action, observed_next_state, reward)
     # render
     if self._render:
       self.render()
