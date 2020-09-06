@@ -116,6 +116,7 @@ class CounterfactualRuntime(SingleAgentRuntime):
     for i in range(0, N):
       if i == N - 1 and kwargs.get("num_virtual_world", 0) is not None and \
         self._visualize_cf_worlds and replaced_agent_id is not None:
+        # NOTE: outsource
         viewer = MPViewer(
            params=self._params,
            x_range=[-35, 35],
@@ -163,6 +164,7 @@ class CounterfactualRuntime(SingleAgentRuntime):
             "goal_reached": goal_reached.mean(),
             "max_col_rate": self._max_col_rate}
 
+  # NOTE: outsource
   def DrawHeatmap(self, local_tracer, filename="./"):
     eval_id = self._scenario._eval_agent_ids[0]
     agent_ids = list(self._world.agents.keys())
@@ -215,11 +217,17 @@ class CounterfactualRuntime(SingleAgentRuntime):
         cf_world[cf_key], local_tracer, N=self._cf_simulation_steps,
         replaced_agent=cf_key, num_virtual_world=i)
     self.Et()
+    
+    # NOTE: this world would actually have the predicted traj.
     gt_world = self.ReplaceBehaviorModel()
     self.SimulateWorld(
       gt_world, local_tracer, N=self._cf_simulation_steps,
       replaced_agent="None", num_virtual_world="None")
-
+    # NOTE: outsource
+    hist = gt_world.agents[eval_id].history
+    traj = np.stack([x[0] for x in hist])
+    self._viewer.drawTrajectory(traj, color='blue')
+    
     if self._visualize_heatmap:
       self.DrawHeatmap(
         local_tracer,

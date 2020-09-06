@@ -16,10 +16,10 @@
                 0.2
             ]
         },
-        "GoalReachedEvaluator": {
-            "GoalReward": 1.0,
-            "CollisionPenalty": -1.0,
-            "MaxSteps": 30
+        "GoalReachedGuiding": {
+            "GoalReward": 10.0,
+            "CollisionPenalty": -10.0,
+            "MaxSteps": 60
         },
         "StateObserver": {
             "VelocityRange": [
@@ -48,31 +48,31 @@
             "NumberOfCollections": 1000000
         },
         "GraphObserver": {
-            "AgentLimit": 4,
-            "VisibilityRadius": 50,
+            "AgentLimit": 7,
+            "VisibilityRadius": 80,
             "SelfLoops": true
         },
         "BehaviorGraphSACAgent": {
             "DebugSummaries": false,
             "BatchSize": 128,
             "CriticJointFcLayerParams": [
-                128,
-                128
+                256,
+                256
             ],
             "CriticObservationFcLayerParams": [
-                128,
-                128
+                256,
+                256
             ],
             "ActorFcLayerParams": [
                 256,
-                128
+                256
             ],
             "GNN": {
-                "NumMpLayers": 2,
+                "NumMpLayers": 3,
                 "MpLayersHiddenDim": 80,
                 "Library": "spektral",
                 "EdgeFcLayerParams": [
-                    128,
+                    64,
                     64
                 ]
             },
