@@ -1,3 +1,5 @@
+# The code is adapted from opensource implementation - https://github.com/ku2482/fqf-iqn-qrdqn.pytorch 
+# MIT License -Copyright (c) 2020 Toshiki Watanabe
 from torch import nn
 
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.network import NoisyLinear

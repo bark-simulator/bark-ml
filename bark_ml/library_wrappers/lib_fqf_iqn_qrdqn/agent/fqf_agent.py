@@ -1,8 +1,20 @@
+# Copyright (c) 2020 fortiss GmbH
+#
+# Authors: Patrick Hart, Julian Bernhard, Klemens Esterle, and
+# Tobias Kessler, Mansoor Nasir
+#
+# This software is released under the MIT License.
+# https://opensource.org/licenses/MIT
+
+# The code is adapted from opensource implementation - https://github.com/ku2482/fqf-iqn-qrdqn.pytorch
+# MIT License -Copyright (c) 2020 Toshiki Watanabe
+
 import torch
 from torch.optim import Adam, RMSprop
 
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.model import FQF
-from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.utils import disable_gradients, update_params,\
+from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.utils \
+  import disable_gradients, update_params,\
     calculate_quantile_huber_loss, evaluate_quantile_at_action
 from .base_agent import BaseAgent
 
@@ -28,13 +40,15 @@ class FQFAgent(BaseAgent):
             num_channels=env.observation_space.shape[0],
             num_actions=self.num_actions, N=self.N,
             num_cosines=self.num_cosines, dueling_net=self.dueling_net,
-            noisy_net=self.noisy_net,params=self._params).to(self.device)
+            noisy_net=self.noisy_net, params=self._params).to(self.device)
         # Target network.
         self.target_net = FQF(
             num_channels=env.observation_space.shape[0],
             num_actions=self.num_actions, N=self.N,
             num_cosines=self.num_cosines, dueling_net=self.dueling_net,
-            noisy_net=self.noisy_net, target=True,params=self._params).to(self.device)
+            noisy_net=self.noisy_net,
+            target=True,
+            params=self._params) .to(self.device)
 
         # Copy parameters of the learning network to the target network.
         self.update_target()
@@ -43,15 +57,19 @@ class FQFAgent(BaseAgent):
 
         self.fraction_optim = RMSprop(
             self.online_net.fraction_net.parameters(),
-            lr=self._params["ML"]["FQFAgent"]["FractionalLearningRate", "", 2.5e-9], alpha=0.95, eps=0.00001)
+            lr=self._params["ML"]["FQFAgent"]["FractionalLearningRate",
+                                              "",
+                                              2.5e-9],
+            alpha=0.95, eps=0.00001)
 
         self.quantile_optim = Adam(
             list(self.online_net.dqn_net.parameters())
             + list(self.online_net.cosine_net.parameters())
             + list(self.online_net.quantile_net.parameters()),
-            lr=self._params["ML"]["FQFAgent"]["QuantileLearningRate", "", 5e-5], eps=1e-2/self.batch_size)
-
-        
+            lr=self._params["ML"]["FQFAgent"]["QuantileLearningRate",
+                                              "",
+                                              5e-5],
+            eps=1e-2/self.batch_size)
 
     def update_target(self):
         self.target_net.dqn_net.load_state_dict(
@@ -199,7 +217,9 @@ class FQFAgent(BaseAgent):
             else:
                 next_state_embeddings =\
                     self.target_net.calculate_state_embeddings(next_states)
-                next_q = self.target_net.calculate_q(state_embeddings=next_state_embeddings)
+                next_q = \
+                    self.target_net.calculate_q(
+                        state_embeddings=next_state_embeddings)
 
             # Calculate greedy actions.
             next_actions = torch.argmax(next_q, dim=1, keepdim=True)

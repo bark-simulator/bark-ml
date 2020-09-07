@@ -1,14 +1,30 @@
+// Copyright (c) fortiss GmbH
+//
+// Authors: Patrick Hart, Julian Bernhard, Klemens Esterle, and
+// Tobias Kessler, Mansoor Nasir
+//
+// This work is licensed under the terms of the MIT license.
+// For a copy, see <https://opensource.org/licenses/MIT>.
+
+
+#ifndef BARK_ML_LIB_FQF_IQN_QRDQN_MODEL_LOADER_HPP_
+#define BARK_ML_LIB_FQF_IQN_QRDQN_MODEL_LOADER_HPP_
+
 #include <torch/script.h>
 
 #include <iostream>
 #include <memory>
 
+namespace bark_ml {
+namespace lib_fqf_iqn_qrdqn {
+
 // Load a pytorch trained network (nn.Module) saved from
 // python and perform an inference
 class ModelLoader {
-public:
+ public:
   ModelLoader(const std::string& model_filename, const long action_space, const long state_space) 
-    : model_filename_(model_filename), module_loaded_(false),action_space_(action_space), state_space_(state_space) {
+    : model_filename_(model_filename), module_loaded_(false), action_space_(action_space),
+     state_space_(state_space) {
   }
 
   bool LoadModel() {
@@ -55,7 +71,7 @@ public:
     return actions;
   }
 
-private:
+ private:
   std::string model_filename_;
   long action_space_;
   long state_space_;
@@ -63,3 +79,8 @@ private:
   torch::jit::script::Module module_;
 
 };
+
+}  // namespace lib_fqf_iqn_qrdqn
+}  // namespace bark_ml
+
+#endif //BARK_ML_LIB_FQF_IQN_QRDQN_MODEL_LOADER_HPP_

@@ -1,8 +1,20 @@
+# Copyright (c) 2020 fortiss GmbH
+#
+# Authors: Patrick Hart, Julian Bernhard, Klemens Esterle, and
+# Tobias Kessler, Mansoor Nasir
+#
+# This software is released under the MIT License.
+# https://opensource.org/licenses/MIT
+
+# The code is adapted from opensource implementation - https://github.com/ku2482/fqf-iqn-qrdqn.pytorch
+# MIT License -Copyright (c) 2020 Toshiki Watanabe
+
 import torch
 from torch.optim import Adam
 
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.model import QRDQN
-from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.utils import disable_gradients, update_params,\
+from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.utils \
+    import disable_gradients, update_params,\
     calculate_quantile_huber_loss, evaluate_quantile_at_action
 from .base_agent import BaseAgent
 
@@ -12,20 +24,26 @@ class QRDQNAgent(BaseAgent):
     def __init__(self, env, test_env, params):
         super(QRDQNAgent, self).__init__(
             env, test_env, params)
-        
+
         self.N = self._params["ML"]["QRDQNAgent"]["N", "", 200]
         self.kappa = self._params["ML"]["QRDQNAgent"]["Kappa", "", 1.0]
 
         # Online network.
         self.online_net = QRDQN(
             num_channels=env.observation_space.shape[0],
-            num_actions=self.num_actions, N=self.N, dueling_net=self.dueling_net,
-            noisy_net=self.noisy_net, params=self._params).to(self.device)
+            num_actions=self.num_actions,
+            N=self.N,
+            dueling_net=self.dueling_net,
+            noisy_net=self.noisy_net,
+            params=self._params).to(self.device)
         # Target network.
         self.target_net = QRDQN(
             num_channels=env.observation_space.shape[0],
-            num_actions=self.num_actions, N=self.N, dueling_net=self.dueling_net,
-            noisy_net=self.noisy_net, params=self._params).to(self.device).to(self.device)
+            num_actions=self.num_actions,
+            N=self.N,
+            dueling_net=self.dueling_net,
+            noisy_net=self.noisy_net,
+            params=self._params).to(self.device).to(self.device)
 
         # Copy parameters of the learning network to the target network.
         self.update_target()
@@ -34,13 +52,14 @@ class QRDQNAgent(BaseAgent):
 
         self.optim = Adam(
             self.online_net.parameters(),
-            lr=self._params["ML"]["QRDQNAgent"]["LearningRate", "", 5e-5], eps=1e-2/self.batch_size)
+            lr=self._params["ML"]["QRDQNAgent"]["LearningRate", "", 5e-5],
+            eps=1e-2/self.batch_size)
 
         # Fixed fractions.
-        taus = torch.arange(0, self.N+1, device=self.device, dtype=torch.float32) / self.N
+        taus = torch.arange(0, self.N+1,
+                            device=self.device,
+                            dtype=torch.float32) / self.N
         self.tau_hats = ((taus[1:] + taus[:-1]) / 2.0).view(1, self.N)
-
-        
 
     def learn(self):
         self.learning_steps += 1

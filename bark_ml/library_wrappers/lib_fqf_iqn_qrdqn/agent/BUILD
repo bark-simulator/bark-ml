@@ -14,6 +14,7 @@ py_library(
 py_library(
     name = "base_agent",
     srcs = ["base_agent.py"],
+    data = ["@bark_project//bark/python_wrapper:core.so"],
     deps = [
         "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/memory:init",
     ],

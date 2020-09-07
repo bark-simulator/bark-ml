@@ -1,17 +1,29 @@
-from abc import ABC, abstractmethod
-import os
-import numpy as np
-import torch
-from torch.utils.tensorboard import SummaryWriter
+# Copyright (c) 2020 fortiss GmbH
+#
+# Authors: Patrick Hart, Julian Bernhard, Klemens Esterle, and
+# Tobias Kessler, Mansoor Nasir
+#
+# This software is released under the MIT License.
+# https://opensource.org/licenses/MIT
 
+# The code is adapted from opensource implementation - https://github.com/ku2482/fqf-iqn-qrdqn.pytorch
+# MIT License - Copyright (c) 2020 Toshiki Watanabe
+
+from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.utils import RunningMeanStats, LinearAnneaer
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.memory import LazyMultiStepMemory, \
     LazyPrioritizedMultiStepMemory
-from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.utils import RunningMeanStats, LinearAnneaer
+from bark.core.models.behavior import BehaviorModel
+from torch.utils.tensorboard import SummaryWriter
+import torch
+import numpy as np
+import os
+from abc import ABC, abstractmethod
 
 
-class BaseAgent(ABC):
+class BaseAgent(BehaviorModel):
 
     def __init__(self, env, test_env, params):
+        BehaviorModel.__init__(self, params)
         self._params = params
         self.env = env
         self.test_env = test_env
@@ -19,12 +31,14 @@ class BaseAgent(ABC):
         torch.manual_seed(self._params["ML"]["BaseAgent"]["Seed", "", 0])
         np.random.seed(self._params["ML"]["BaseAgent"]["Seed", "", 0])
         self.env.seed(self._params["ML"]["BaseAgent"]["Seed", "", 0])
-        self.test_env.seed(2**31-1-self._params["ML"]["BaseAgent"]["Seed", "", 0])
+        self.test_env.seed(
+            2**31-1-self._params["ML"]["BaseAgent"]["Seed", "", 0])
         # torch.backends.cudnn.deterministic = True  # It harms a performance.
         # torch.backends.cudnn.benchmark = False  # It harms a performance.
 
         self.device = torch.device(
-            "cuda" if self._params["ML"]["BaseAgent"]["Cuda", "", True] and torch.cuda.is_available() else "cpu")
+            "cuda" if self._params["ML"]["BaseAgent"]["Cuda", "", True]
+            and torch.cuda.is_available() else "cpu")
 
         self.online_net = None
         self.target_net = None
@@ -34,31 +48,80 @@ class BaseAgent(ABC):
         self.episodes = 0
         self.best_eval_score = -np.inf
         self.num_actions = self.env.action_space.n
-        self.num_steps = self._params["ML"]["BaseAgent"]["NumSteps", "", 5000000]
-        self.batch_size = self._params["ML"]["BaseAgent"]["BatchSize", "", 32]
+        self.num_steps = \
+            self._params["ML"]["BaseAgent"]["NumSteps",
+                                            "",
+                                            5000000]
+        self.batch_size = \
+            self._params["ML"]["BaseAgent"]["BatchSize",
+                                            "",
+                                            32]
 
-        self.double_q_learning = self._params["ML"]["BaseAgent"]["Double_q_learning", "", False]
-        self.dueling_net = self._params["ML"]["BaseAgent"]["DuelingNet", "", False]
-        self.noisy_net = self._params["ML"]["BaseAgent"]["NoisyNet", "", False]
-        self.use_per = self._params["ML"]["BaseAgent"]["Use_per", "", False]
+        self.double_q_learning = \
+            self._params["ML"]["BaseAgent"]["Double_q_learning",
+                                            "",
+                                            False]
+        self.dueling_net = \
+            self._params["ML"]["BaseAgent"]["DuelingNet",
+                                            "",
+                                            False]
+        self.noisy_net = self._params["ML"]["BaseAgent"]["NoisyNet",
+                                                         "",
+                                                         False]
+        self.use_per = self._params["ML"]["BaseAgent"]["Use_per",
+                                                       "",
+                                                       False]
 
-        self.log_interval = self._params["ML"]["BaseAgent"]["LogInterval", "", 100]
-        self.eval_interval = self._params["ML"]["BaseAgent"]["EvalInterval", "", 25000]
-        self.num_eval_steps = self._params["ML"]["BaseAgent"]["NumEvalSteps", "", 12500]
-        self.gamma_n = self._params["ML"]["BaseAgent"]["Gamma", "",
-                                                       0.99] ** self._params["ML"]["BaseAgent"]["Multi_step", "", 1]
-        self.start_steps = self._params["ML"]["BaseAgent"]["StartSteps", "", 5000]
-        self.epsilon_train = LinearAnneaer(
-            1.0, self._params["ML"]["BaseAgent"]["EpsilonTrain", "", 0.01], self._params["ML"]["BaseAgent"]["EpsilonDecaySteps", "", 25000])
-        self.epsilon_eval = self._params["ML"]["BaseAgent"]["EpsilonEval", "", 0.001]
-        self.update_interval = self._params["ML"]["BaseAgent"]["Update_interval", "", 4]
-        self.target_update_interval = self._params["ML"]["BaseAgent"]["TargetUpdateInterval", "", 5000]
-        self.max_episode_steps = self._params["ML"]["BaseAgent"]["MaxEpisodeSteps", "", 10000]
-        self.grad_cliping = self._params["ML"]["BaseAgent"]["GradCliping", "", 5.0]
+        self.log_interval = \
+            self._params["ML"]["BaseAgent"]["LogInterval",
+                                            "",
+                                            100]
+        self.eval_interval = \
+            self._params["ML"]["BaseAgent"]["EvalInterval",
+                                            "",
+                                            25000]
+        self.num_eval_steps = \
+            self._params["ML"]["BaseAgent"]["NumEvalSteps",
+                                            "",
+                                            12500]
+        self.gamma_n = \
+            self._params["ML"]["BaseAgent"]["Gamma", "", 0.99] ** \
+            self._params["ML"]["BaseAgent"]["Multi_step", "", 1]
 
-        self.summary_dir = self._params["ML"]["BaseAgent"]["SummaryPath", "", ""]
-        self.model_dir = self._params["ML"]["BaseAgent"]["CheckpointPath", "", ""]
-        
+        self.start_steps = \
+            self._params["ML"]["BaseAgent"]["StartSteps",
+                                            "",
+                                            5000]
+        self.epsilon_train = \
+            LinearAnneaer(1.0, self._params["ML"]["BaseAgent"]["EpsilonTrain",
+                                                               "",
+                                                               0.01],
+                          self._params["ML"]["BaseAgent"]["EpsilonDecaySteps",
+                                                          "",
+                                                          25000])
+        self.epsilon_eval = self._params["ML"]["BaseAgent"]["EpsilonEval",
+                                                            "",
+                                                            0.001]
+        self.update_interval = \
+            self._params["ML"]["BaseAgent"]["Update_interval",
+                                            "",
+                                            4]
+        self.target_update_interval = \
+            self._params["ML"]["BaseAgent"]["TargetUpdateInterval",
+                                            "",
+                                            5000]
+        self.max_episode_steps = \
+            self._params["ML"]["BaseAgent"]["MaxEpisodeSteps",
+                                            "",
+                                            10000]
+        self.grad_cliping = self._params["ML"]["BaseAgent"]["GradCliping",
+                                                            "", 5.0]
+
+        self.summary_dir = \
+            self._params["ML"]["BaseAgent"]["SummaryPath", "", ""]
+        self.model_dir = \
+            self._params["ML"]["BaseAgent"]["CheckpointPath", "", ""]
+
         if not os.path.exists(self.model_dir) and self.model_dir:
             os.makedirs(self.model_dir)
         if not os.path.exists(self.summary_dir) and self.summary_dir:
@@ -67,19 +130,36 @@ class BaseAgent(ABC):
         self.writer = SummaryWriter(log_dir=self.summary_dir)
         self.train_return = RunningMeanStats(self.log_interval)
 
+        # NOTE: by default we do not want the action to be set externally
+        #       as this enables the agents to be plug and played in BARK.
+        self._set_action_externally = False
+
         # Replay memory which is memory-efficient to store stacked frames.
         if self.use_per:
             beta_steps = (self.num_steps - self.start_steps) / \
                 self.update_interval
             self.memory = LazyPrioritizedMultiStepMemory(
                 self._params["ML"]["BaseAgent"]["MemorySize",
-                                                "", 10**6], self.env.observation_space.shape,
-                self.device, self._params["ML"]["BaseAgent"]["Gamma", "", 0.99], self._params["ML"]["BaseAgent"]["Multi_step", "", 1], beta_steps=beta_steps)
+                                                "",
+                                                10**6],
+                self.env.observation_space.shape,
+                self.device, self._params["ML"]["BaseAgent"]["Gamma",
+                                                             "",
+                                                             0.99],
+                self._params["ML"]["BaseAgent"]["Multi_step",
+                                                "",
+                                                1],
+                beta_steps=beta_steps)
         else:
             self.memory = LazyMultiStepMemory(
                 self._params["ML"]["BaseAgent"]["MemorySize",
-                                                "", 10**6], self.env.observation_space.shape,
-                self.device, self._params["ML"]["BaseAgent"]["Gamma", "", 0.99], self._params["ML"]["BaseAgent"]["Multi_step", "", 1])
+                                                "",
+                                                10**6],
+                self.env.observation_space.shape,
+                self.device, self._params["ML"]["BaseAgent"]["Gamma",
+                                                             "",
+                                                             0.99],
+                self._params["ML"]["BaseAgent"]["Multi_step", "", 1])
 
     def run(self):
         while True:
@@ -110,22 +190,52 @@ class BaseAgent(ABC):
         action = self.env.action_space.sample()
         return action
 
-    def exploit(self, state):
+    @property
+    def set_action_externally(self):
+        return self._set_action_externally
+
+    @set_action_externally.setter
+    def set_action_externally(self, externally):
+        self._set_action_externally = externally
+
+    def ActionToBehavior(self, action):
+        # NOTE: will either be set externally or internally
+        self._action = action
+
+    def Act(self, state):
         # Act without randomness.
-        #state = torch.Tensor(state).unsqueeze(0).to(self.device).float() 
+        #state = torch.Tensor(state).unsqueeze(0).to(self.device).float()
         actions = self.calculate_actions(state).argmax().item()
         return actions
 
     def calculate_actions(self, state):
         # Act without randomness.
-        state = torch.Tensor(state).unsqueeze(0).to(self.device).float() 
+        state = torch.Tensor(state).unsqueeze(0).to(self.device).float()
         with torch.no_grad():
             actions = self.online_net(states=state)
         return actions
 
+    def Plan(self, dt, observed_world):
+        # NOTE: if training is enabled the action is set externally
+        if not self._set_action_externally:
+            observed_state = self.env._observer.Observe(observed_world)
+            action = self.Act(observed_state)
+            self._action = action.numpy().reshape(-1, 1)
+
+        action = self._action
+        # set action to be executed
+        self.env._ml_behavior.ActionToBehavior(action)
+        trajectory = self.env._ml_behavior.Plan(dt, observed_world)
+        # NOTE: BARK requires models to have trajectories of the past
+        BehaviorModel.SetLastTrajectory(self, trajectory)
+        return trajectory
+
     @abstractmethod
     def learn(self):
         pass
+
+    def Clone(self):
+        return self
 
     def save_models(self, save_dir):
         if not os.path.exists(save_dir):
@@ -150,7 +260,7 @@ class BaseAgent(ABC):
             state = self.env.reset()
             done = False
             while (not done):
-                action = self.exploit(state)
+                action = self.Act(state)
                 next_state, reward, done, _ = self.env.step(action)
                 self.env.render()
                 state = next_state
@@ -175,7 +285,7 @@ class BaseAgent(ABC):
             if self.is_random(eval=False):
                 action = self.explore()
             else:
-                action = self.exploit(state)
+                action = self.Act(state)
 
             next_state, reward, done, _ = self.env.step(action)
             if self.episodes % 10000 == 0:
@@ -233,7 +343,7 @@ class BaseAgent(ABC):
                 if self.is_random(eval=True):
                     action = self.explore()
                 else:
-                    action = self.exploit(state)
+                    action = self.Act(state)
 
                 next_state, reward, done, _ = self.test_env.step(action)
                 num_steps += 1

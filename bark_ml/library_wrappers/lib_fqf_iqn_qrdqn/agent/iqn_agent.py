@@ -1,8 +1,20 @@
+# Copyright (c) 2020 fortiss GmbH
+#
+# Authors: Patrick Hart, Julian Bernhard, Klemens Esterle, and
+# Tobias Kessler, Mansoor Nasir
+#
+# This software is released under the MIT License.
+# https://opensource.org/licenses/MIT
+
+# The code is adapted from opensource implementation - https://github.com/ku2482/fqf-iqn-qrdqn.pytorch
+# MIT License -Copyright (c) 2020 Toshiki Watanabe
+
 import torch
 from torch.optim import Adam
 
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.model import IQN
-from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.utils import disable_gradients, update_params,\
+from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.utils \
+    import disable_gradients, update_params,\
     calculate_quantile_huber_loss, evaluate_quantile_at_action
 from .base_agent import BaseAgent
 
@@ -23,12 +35,14 @@ class IQNAgent(BaseAgent):
         self.online_net = IQN(
             num_channels=env.observation_space.shape[0],
             num_actions=self.num_actions, num_cosines=self.num_cosines,
-            dueling_net=self.dueling_net, noisy_net=self.noisy_net, params=self._params).to(self.device)
+            dueling_net=self.dueling_net, noisy_net=self.noisy_net,
+            params=self._params).to(self.device)
         # Target network.
         self.target_net = IQN(
             num_channels=env.observation_space.shape[0],
             num_actions=self.num_actions, num_cosines=self.num_cosines,
-            dueling_net=self.dueling_net, noisy_net=self.noisy_net, params=self._params).to(self.device)
+            dueling_net=self.dueling_net, noisy_net=self.noisy_net,
+            params=self._params).to(self.device)
 
         # Copy parameters of the learning network to the target network.
         self.update_target()
@@ -37,7 +51,8 @@ class IQNAgent(BaseAgent):
 
         self.optim = Adam(
             self.online_net.parameters(),
-            lr=self._params["ML"]["IQNAgent"]["LearningRate", "", 5e-5], eps=1e-2/self.batch_size)
+            lr=self._params["ML"]["IQNAgent"]["LearningRate", "", 5e-5],
+            eps=1e-2/self.batch_size)
 
     def learn(self):
         self.learning_steps += 1
@@ -89,7 +104,7 @@ class IQNAgent(BaseAgent):
 
         with torch.no_grad():
             # Calculate Q values of next states.
-            if self.double_q_learning: # note: double q learning set to always false.
+            if self.double_q_learning:  # note: double q learning set to always false.
                 # Sample the noise of online network to decorrelate between
                 # the action selection and the quantile calculation.
                 self.online_net.sample_noise()

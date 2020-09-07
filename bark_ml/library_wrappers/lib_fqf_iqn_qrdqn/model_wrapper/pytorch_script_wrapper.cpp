@@ -7,6 +7,7 @@
 
 namespace py = pybind11;
 
+using bark_ml::lib_fqf_iqn_qrdqn::ModelLoader;
 
 PYBIND11_MODULE(pytorch_script_wrapper, m) {
     py::class_<ModelLoader>(m, "ModelLoader")

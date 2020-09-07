@@ -24,7 +24,7 @@ flags.DEFINE_integer("iters",
                      lower_bound=0)
 
 flags.DEFINE_enum("network",
-                  "qrdqn",
+                  "iqn",
                   ["iqn", "fqf", "qrdqn"],
                   "Environment the agent should interact in.")
 
