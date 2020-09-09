@@ -53,8 +53,6 @@ class Tracer:
     key="collision",
     group_by="num_episode",
     agg_type="TRACE"):
-    if self.df is None:
-      self.ConvertToDf()
     df = self.df.groupby(group_by)[key]
     # NOTE: different aggregation types
     if agg_type == Tracer.QueryTypes.MEAN:
@@ -71,6 +69,7 @@ class Tracer:
 
   @property
   def df(self):
+    # NOTE: make more efficient
     self.ConvertToDf()
     return self._df
   

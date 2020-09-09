@@ -24,7 +24,7 @@ goal_reached = [goal_reached.iloc[goal_reached.index.get_level_values("max_col_r
 col_rate = [col_rate.iloc[col_rate.index.get_level_values("max_col_rate") == cr].mean() for cr in max_col_rates]
 plt.plot(max_col_rates, col_rate, label="Collision-rate", color="black", linestyle="dashed")
 plt.plot(max_col_rates, goal_reached, label="Success-rate", color="black", linestyle="solid")
-plt.plot(max_col_rates, exc_pol, label="Exection-rate of $\pi_{learned}$", color="black", linestyle="dotted")
+plt.plot(max_col_rates, exc_pol, label="Execution-rate of $\pi_{ego}$", color="black", linestyle="dotted")
 plt.xlabel("Max. allowed risk [%]")
 plt.ylabel("%")
 plt.legend()

@@ -193,6 +193,21 @@ class GraphObserver(StateObserver):
     adj_end_idx = adj_start_idx + n_nodes ** 2
     A = tf.reshape(obs[:, adj_start_idx:adj_end_idx], [batch_size, n_nodes, n_nodes])
 
+    # F is correct
+    # [0 0 0]
+    #  [0 0 1]
+    #  [0 0 2]
+    #  ...
+    #  [0 3 1]
+    #  [0 3 2]
+    # tf.print(tf.shape(F), tf.shape(A), tf.where(tf.greater(A, 0)))
+    
+    # NOTE: edge indices
+    tmp = tf.where(tf.greater(A, 0))
+    tmp = tf.reshape(tmp[:, 1:], [batch_size, -1, 2])
+    tmp = tf.cast(tmp, tf.int32)
+    # tf.print(tmp, tf.shape(tmp), tf.shape(F))
+    
     if dense:
       # in dense mode, the nodes of all graphs are 
       # concatenated into one list that contains all 
@@ -240,7 +255,7 @@ class GraphObserver(StateObserver):
     n_edge_features = graph_dims[2]
     E_shape = [batch_size, n_nodes, n_nodes, n_edge_features]
     E = tf.reshape(obs[:, adj_end_idx:], E_shape)
-
+    tf.print(tf.shape(E))
     return F, A, E
 
   def _preprocess_agents(self, world):

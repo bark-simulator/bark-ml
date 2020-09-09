@@ -6,6 +6,6 @@ py_library(
             "gnn_critic_network.py"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
     imports = ["../external/bark_project/bark/python_wrapper/"],
-    deps = [],
+    deps = ["@sgnn//simple_gnn:simple_gnn"],
     visibility = ["//visibility:public"],
 )

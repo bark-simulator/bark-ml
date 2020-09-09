@@ -17,6 +17,11 @@ def bark_ml_dependencies():
     path = "/Users/hart/Development/bark"
   )
   _maybe(
+    native.local_repository,
+    name = "sgnn",
+    path = "/Users/hart/Development/gnn"
+  )
+  _maybe(
     native.new_local_repository,
     name = "python_linux",
     path = "./bark_ml/python_wrapper/venv/",

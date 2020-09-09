@@ -39,30 +39,34 @@ flags.DEFINE_enum("mode",
 
 
 def run_configuration(argv):
-  # params = ParameterServer(filename="examples/example_params/tfa_params.json")
-  params = ParameterServer()
+  params = ParameterServer(filename="examples/example_params/tfa_params.json")
+  # params = ParameterServer()
   # NOTE: Modify these paths in order to save the checkpoints and summaries
-  # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "YOUR_PATH"
-  # params["ML"]["TFARunner"]["SummaryPath"] = "YOUR_PATH"
-  params["World"]["remove_agents_out_of_map"] = True
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/nn_checkpoints/"
+  params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/nn_checkpoints/"
   params["Visualization"]["Agents"]["Alpha"]["Other"] = 0.2
+  params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
+  params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
+  params["ML"]["VisualizeCfWorlds"] = False
+  params["ML"]["VisualizeCfHeatmap"] = True
+  params["ML"]["ResultsFolder"] = "/Users/hart/Development/bark-ml/results/data/"
   # create environment
   bp = ContinuousMergingBlueprint(params,
-                                  number_of_senarios=2500,
+                                  number_of_senarios=10000,
                                   random_seed=0)
-  # env = SingleAgentRuntime(blueprint=bp,
-  #                          render=False)
-  behavior_model_pool = []
-  for count, a in enumerate([-2., 0., 2.]):
-    local_params = params.AddChild("local_"+str(count))
-    local_params["BehaviorConstantAcceleration"]["ConstAcceleration"] = a
-    behavior = BehaviorConstantAcceleration(local_params)
-    behavior_model_pool.append(behavior)
-  env = CounterfactualRuntime(
-    blueprint=bp,
-    render=False,
-    params=params,
-    behavior_model_pool=behavior_model_pool)
+  env = SingleAgentRuntime(blueprint=bp,
+                           render=False)
+  # behavior_model_pool = []
+  # for count, a in enumerate([-2., 0., 2.]):
+  #   local_params = params.AddChild("local_"+str(count))
+  #   local_params["BehaviorConstantAcceleration"]["ConstAcceleration"] = a
+  #   behavior = BehaviorConstantAcceleration(local_params)
+  #   behavior_model_pool.append(behavior)
+  # env = CounterfactualRuntime(
+  #   blueprint=bp,
+  #   render=False,
+  #   params=params,
+  #   behavior_model_pool=behavior_model_pool)
   
   # PPO-agent
   # ppo_agent = BehaviorPPOAgent(environment=env,

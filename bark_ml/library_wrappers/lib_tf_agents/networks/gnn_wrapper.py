@@ -11,9 +11,11 @@ import tensorflow as tf
 from enum import Enum
 from tf2_gnn.layers import GNN, GNNInput
 from spektral.layers import EdgeConditionedConv
+from simple_gnn.simple_gnn import SimpleGNN
 
 from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.observers.graph_observer import GraphObserver
+
 
 class GNNWrapper(tf.keras.Model):
   """
@@ -29,6 +31,7 @@ class GNNWrapper(tf.keras.Model):
     """
     spektral = "spektral"
     tf2_gnn  = "tf2_gnn"
+    simple_gnn = "simple_gnn"
 
   def __init__(self,
                params=ParameterServer(),
@@ -68,8 +71,8 @@ class GNNWrapper(tf.keras.Model):
     
     lib = params[
       "Library", 
-      "Either 'spektral' or 'tf2_gnn'. Specifies with which of the two\
-       libraries the GNN is initialized. Note that depending on the\
+      "Either 'spektral', 'tf2_gnn' or 'simple_gnn'. Specifies with which of\
+       the two libraries the GNN is initialized. Note that depending on the\
        library, a different set of params may apply.", 
       GNNWrapper.SupportedLibrary.spektral]
 
@@ -84,9 +87,13 @@ class GNNWrapper(tf.keras.Model):
     elif lib in [GNNWrapper.SupportedLibrary.tf2_gnn, "tf2_gnn"]:
       self._init_tf2_gnn_layers(params.ConvertToDict())
       self._call_func = self._call_tf2_gnn
+    elif lib in [GNNWrapper.SupportedLibrary.simple_gnn, "simple_gnn"]:
+      self._init_simple_gnn_layers(params.ConvertToDict())
+      self._call_func = self._call_simple_gnn
     else:
       raise ValueError(
-        f"Invalid GNN library '{lib}'. Use 'spektral' or 'tf2_gnn'")
+        f"Invalid GNN library '{lib}'. Use 'spektral', 'tf2_gnn'\
+          or 'simple_gnn.")
 
   def _validated_graph_dims(self, graph_dims):
     if graph_dims is None:
@@ -100,6 +107,18 @@ class GNNWrapper(tf.keras.Model):
       raise ValueError('Graph dimensions must be positive.')
 
     return int_dims
+
+  def _init_simple_gnn_layers(self, params):
+    self._gnn = gnn = SimpleGNN(
+      node_layers_def=[
+        {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
+        {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
+        {"units" : 80, "activation": "linear", "dropout_rate": 0.0, "type": "DenseLayer"},
+      ],
+      edge_layers_def=[
+        {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
+        {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
+        {"units" : 80, "activation": "linear", "dropout_rate": 0.0, "type": "DenseLayer"}])
 
   def _init_spektral_layers(self, params):
     self._convolutions = []
@@ -141,11 +160,22 @@ class GNNWrapper(tf.keras.Model):
     embeddings, adj_matrix, edge_features = GraphObserver.graph(
       observations=observations, 
       graph_dims=self._graph_dims)
-
     for conv in self._convolutions: 
       embeddings = conv([embeddings, adj_matrix, edge_features])
 
     return embeddings
+
+  @tf.function
+  def _call_simple_gnn(self, observations, training=False):
+    embeddings, adj_matrix, edge_features = GraphObserver.graph(
+      observations=observations, 
+      graph_dims=self._graph_dims,
+      dense=True)
+    tf.print(embeddings, adj_matrix, edge_features)
+    # NOTE: this will not work
+    # node_values, edge_values = self._gnn.batch_separated(adj_matrix, embeddings, edge_features)
+    # output = tf.reshape(flat_output, [batch_size, -1, self.num_units])
+    # return node_values
 
   @tf.function 
   def _call_tf2_gnn(self, observations, training=False):

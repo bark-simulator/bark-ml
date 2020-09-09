@@ -81,7 +81,11 @@ class GoalReachedGuiding(StateEvaluator):
     goal_lane_corr = self.GetGoalLaneCorridorForGoal(observed_world)
     distance_to_goal = self.CalculateDistanceToGoal(observed_world, goal_lane_corr)
     guiding_reward -= self._goal_dist*distance_to_goal
-    # NOTE: this will only work for continious actions
+    
+    # NOTE: hack
+    # desired_velocity = 10
+    
+    # NOTE: this will only work for cont. actions
     if action is not None and type(action) is not int:
       accs = action[0]
       delta = action[1]

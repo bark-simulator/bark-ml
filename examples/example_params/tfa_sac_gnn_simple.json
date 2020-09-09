@@ -70,7 +70,7 @@
             "GNN": {
                 "NumMpLayers": 2,
                 "MpLayersHiddenDim": 80,
-                "Library": "spektral",
+                "Library": "simple_gnn",
                 "EdgeFcLayerParams": [
                     128,
                     64
