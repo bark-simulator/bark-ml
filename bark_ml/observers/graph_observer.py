@@ -194,14 +194,14 @@ class GraphObserver(StateObserver):
 
     # NOTE: simple_gnn; HACK
     # NOTE: integrate and test
-    # tmp = tf.where(tf.greater(A, 0))
-    # tmp = tf.reshape(tmp[:, 1:], [batch_size, -1, 2])
-    # n_edge_features = graph_dims[2]
-    # E_shape = [batch_size, n_nodes, n_nodes, n_edge_features]
-    # E = tf.reshape(obs[:, adj_end_idx:], E_shape)
-    # ef = tf.reshape(E, [batch_size, -1, n_edge_features])
-    # # tf.print(tf.shape(F), tf.shape(tmp), tf.shape(ef))
-    # return F, tf.cast(tmp, tf.int32), ef
+    tmp = tf.where(tf.greater(A, 0))
+    tmp = tf.reshape(tmp[:, 1:], [batch_size, -1, 2])
+    n_edge_features = graph_dims[2]
+    E_shape = [batch_size, n_nodes, n_nodes, n_edge_features]
+    E = tf.reshape(obs[:, adj_end_idx:], E_shape)
+    ef = tf.reshape(E, [batch_size, -1, n_edge_features])
+    # tf.print(tf.shape(F), tf.shape(tmp), tf.shape(ef))
+    return F, tf.cast(tmp, tf.int32), ef
   
     # tf.print(tmp, tf.shape(tmp))
     if dense:

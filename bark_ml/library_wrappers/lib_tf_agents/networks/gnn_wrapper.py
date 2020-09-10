@@ -113,8 +113,12 @@ class GNNWrapper(tf.keras.Model):
       node_layers_def=[
         {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
         {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
+        {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
+        {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
       ],
       edge_layers_def=[
+        {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
+        {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
         {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
         {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"}])
 
