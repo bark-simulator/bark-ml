@@ -113,12 +113,10 @@ class GNNWrapper(tf.keras.Model):
       node_layers_def=[
         {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
         {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
-        {"units" : 80, "activation": "linear", "dropout_rate": 0.0, "type": "DenseLayer"},
       ],
       edge_layers_def=[
         {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
-        {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
-        {"units" : 80, "activation": "linear", "dropout_rate": 0.0, "type": "DenseLayer"}])
+        {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"}])
 
   def _init_spektral_layers(self, params):
     self._convolutions = []

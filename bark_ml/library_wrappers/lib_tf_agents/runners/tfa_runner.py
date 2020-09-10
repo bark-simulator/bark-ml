@@ -116,10 +116,13 @@ class TFARunner:
       self._tracer.Trace(env_data, **kwargs)
       state, is_terminal = env_data[0], env_data[2]
       if render:
+        self._logger.info(f"Ego agent's action is {action}.")
         self._environment.render()
 
   def Run(self, num_episodes=10, render=False, mode="not_training", **kwargs):
     for i in range(0, num_episodes):
+      if render:
+        self._logger.info(f"Simulating episode {i}.")
       trajectory = self.RunEpisode(
         render=render, num_episode=i, **kwargs)
     # average collision, reward, and step count

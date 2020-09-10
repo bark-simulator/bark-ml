@@ -44,7 +44,7 @@ def run_configuration(argv):
   # param_filename = "examples/example_params/tfa_sac_gnn_tf2_gnn_default.json"
   
   # File with standard parameters for spektral use:
-  param_filename = "examples/example_params/tfa_sac_gnn_spektral_default.json"
+  param_filename = "examples/example_params/tfa_sac_gnn_tf2_gnn_default.json"
   params = ParameterServer(filename=param_filename)
 
   # NOTE: Modify these paths to specify your preferred path for checkpoints and summaries

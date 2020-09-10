@@ -114,6 +114,7 @@ class GNNActorNetwork(network.Network):
     # extract ego state (node 0)
     if batch_size > 0: 
       embeddings = embeddings[:, 0]
+      # tf.print(embeddings)
 
     with tf.name_scope("GNNActorNetwork"):
       tf.summary.histogram("actor_gnn_output", embeddings)
