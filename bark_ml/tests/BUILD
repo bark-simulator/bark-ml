@@ -62,6 +62,18 @@ py_test(
 )
 
 py_test(
+    name = "py_library_torch_agents_tests",
+    srcs = ["py_library_torch_agents_tests.py"],
+    data = ["@bark_project//bark/python_wrapper:core.so"],
+    imports = ["../external/bark_project/bark/python_wrapper/"],
+    deps = ["//bark_ml/environments:single_agent_runtime",
+            "//bark_ml/environments:gym",
+            "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent:agents",
+            "//bark_ml/commons:py_spaces"],
+    visibility = ["//visibility:public"],
+)
+
+py_test(
     name = "py_bark_behavior_model_tests",
     srcs = ["py_bark_behavior_model_tests.py"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
