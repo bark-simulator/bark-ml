@@ -169,13 +169,12 @@ class GNNWrapper(tf.keras.Model):
   def _call_simple_gnn(self, observations, training=False):
     embeddings, adj_matrix, edge_features = GraphObserver.graph(
       observations=observations, 
-      graph_dims=self._graph_dims,
-      dense=True)
-    tf.print(embeddings, adj_matrix, edge_features)
+      graph_dims=self._graph_dims)
+    
+    node_values = self._gnn.special_call(adj_matrix, embeddings, edge_features)
     # NOTE: this will not work
-    # node_values, edge_values = self._gnn.batch_separated(adj_matrix, embeddings, edge_features)
     # output = tf.reshape(flat_output, [batch_size, -1, self.num_units])
-    # return node_values
+    return node_values
 
   @tf.function 
   def _call_tf2_gnn(self, observations, training=False):

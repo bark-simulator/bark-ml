@@ -49,7 +49,7 @@
         },
         "GraphObserver": {
             "AgentLimit": 4,
-            "VisibilityRadius": 50,
+            "VisibilityRadius": 250,
             "SelfLoops": true
         },
         "BehaviorGraphSACAgent": {
