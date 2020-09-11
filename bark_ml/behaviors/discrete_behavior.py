@@ -8,24 +8,26 @@
 
 import numpy as np
 
-from bark.core.models.behavior import BehaviorModel, BehaviorMPContinuousActions
+from bark.core.models.behavior import BehaviorModel, \
+    BehaviorMPContinuousActions, BehaviorMPMacroActions, BehaviorMacroActionsFromParamServer
 from bark.core.models.dynamic import SingleTrackModel
+
 from bark_ml.commons.py_spaces import Discrete
 
 
-class BehaviorDiscreteML(BehaviorMPContinuousActions):
+class BehaviorDiscreteMotionPrimitivesML(BehaviorMPContinuousActions):
   def __init__(self,
                params=None):
     BehaviorMPContinuousActions.__init__(
       self,
       params)
-    self._min_max_acc = params["ML"]["BehaviorDiscreteML"][
+    self._min_max_acc = params["ML"]["BehaviorDiscretePrimitivesML"][
       "MinMaxAcc", "", [-3., 3.]]
-    self._acc_d_steps = params["ML"]["BehaviorDiscreteML"][
+    self._acc_d_steps = params["ML"]["BehaviorDiscretePrimitivesML"][
       "AccDiscretizationSteps", "", 10]
-    self._min_max_steer = params["ML"]["BehaviorDiscreteML"][
+    self._min_max_steer = params["ML"]["BehaviorDiscretePrimitivesML"][
       "MinMaxSteeringRate", "", [-.2, .2]]
-    self._steer_d_steps = params["ML"]["BehaviorDiscreteML"][
+    self._steer_d_steps = params["ML"]["BehaviorDiscretePrimitivesML"][
       "SteeringRateDiscretizationSteps", "", 5]
 
     # add motion primitives
@@ -39,3 +41,16 @@ class BehaviorDiscreteML(BehaviorMPContinuousActions):
   @property
   def action_space(self):
     return Discrete(self.GetNumMotionPrimitives(None))
+
+
+class BehaviorDiscreteMacroActionsML(BehaviorMPMacroActions):
+  def __init__(self,
+               params=None):
+    self._macro_action_params = params.AddChild("ML").AddChild("BehaviorMPMacroActions")
+    self._macro_action_params["BehaviorMPMacroActions"]["CheckValidityInPlan", "", False]
+    default_model = BehaviorMacroActionsFromParamServer(self._macro_action_params)
+    super().__init__(self._macro_action_params, default_model.GetMotionPrimitives())
+
+  @property
+  def action_space(self):
+    return Discrete(len(self.GetMotionPrimitives()))
