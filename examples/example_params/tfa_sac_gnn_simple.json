@@ -76,14 +76,14 @@
                     64
                 ]
             },
-            "CriticActionFcLayerParams": null,
+            "CriticActionFcLayerParams": [25],
             "ActorLearningRate": 0.0003,
             "CriticLearningRate": 0.0003,
             "AlphaLearningRate": 0.0003,
             "TargetUpdateTau": 0.05,
             "TargetUpdatePeriod": 3,
             "Gamma": 0.995,
-            "RewardScaleFactor": 1.0,
+            "RewardScaleFactor": 0.0,
             "AgentName": "gnn_sac_agent",
             "ParallelBufferCalls": 1,
             "BufferNumSteps": 2,

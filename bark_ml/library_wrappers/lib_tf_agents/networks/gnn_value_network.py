@@ -1,6 +1,6 @@
 # Copyright (c) 2020 fortiss GmbH
 #
-# Authors: Marco Oliva
+# Authors: Patrick Hart
 #
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
@@ -8,7 +8,7 @@
 import gin
 import tensorflow as tf  # pylint: disable=g-explicit-tensorflow-version-import
 
-from tf_agents.networks import network, utils
+from tf_agents.networks import network, utils, encoding_network
 
 
 @gin.configurable
@@ -67,7 +67,7 @@ class GNNValueNetwork(network.Network):
     Raises:
       ValueError: If input_tensor_spec is not an instance of network.InputSpec.
     """
-    super(ValueNetwork, self).__init__(
+    super(GNNValueNetwork, self).__init__(
         input_tensor_spec=input_tensor_spec,
         state_spec=(),
         name=name)
@@ -99,11 +99,12 @@ class GNNValueNetwork(network.Network):
             minval=-0.03, maxval=0.03))
 
   def call(self, observation, step_type=None, network_state=(), training=False):
-    observations, actions = inputs
+    observations, _ = observation
     batch_size = observations.shape[0]
     embeddings = self._gnn(observations, training=training)
+    
     if batch_size > 0:
-      embeddings = embeddings[:, 0] # extract ego state
+      embeddings = tf.expand_dims(embeddings[:, 0], axis=0)
       
     state, network_state = self._encoder(
         embeddings, step_type=step_type, network_state=network_state,

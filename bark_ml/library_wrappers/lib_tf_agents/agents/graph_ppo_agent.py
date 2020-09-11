@@ -11,18 +11,18 @@ from bark.core.models.behavior import BehaviorModel, BehaviorDynamicModel
 import tensorflow as tf
 
 from tf_agents.policies import greedy_policy
-from tf_agents.agents.sac import sac_agent
+from tf_agents.agents.ppo import ppo_agent
 from tf_agents.replay_buffers import tf_uniform_replay_buffer
 from tf_agents.utils.common import Checkpointer
 from tf_agents.trajectories import time_step as ts
 
-from bark_ml.library_wrappers.lib_tf_agents.networks import GNNActorNetwork, GNNCriticNetwork
+from bark_ml.library_wrappers.lib_tf_agents.networks import GNNActorDistributionNetwork, GNNValueNetwork
 from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAAgent
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_wrapper import GNNWrapper
 
 
-class BehaviorGraphSACAgent(BehaviorTFAAgent):
+class BehaviorGraphPPOAgent(BehaviorTFAAgent):
   """
   SAC-Agent with graph neural networks.
   This agent is based on the tf-agents library.
@@ -42,7 +42,8 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
       the agent.
     """
     # the super init calls 'GetAgent', so assign the observer before
-    self._gnn_sac_params = params["ML"]["BehaviorGraphSACAgent"]
+    self._gnn_sac_params = params["ML"]["BehaviorGraphPPOAgent"]
+    
     self._observer = observer
     BehaviorTFAAgent.__init__(self,
                               environment=environment,
@@ -53,8 +54,6 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
     self._eval_policy = self.GetEvalPolicy()
 
   def GetAgent(self, env, params):
-    
-
     def init_gnn(name):
       """
       Returns a new `GNNWrapper`instance with the given `name`.
@@ -69,7 +68,7 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
         name=name)
 
     # actor network
-    actor_net = GNNActorNetwork(
+    actor_net = GNNActorDistributionNetwork(
       input_tensor_spec=env.observation_spec(),
       output_tensor_spec=env.action_spec(),
       gnn=init_gnn,
@@ -81,8 +80,8 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
     critic_net = GNNValueNetwork(
       (env.observation_spec(), env.action_spec()),
       gnn=init_gnn,
-      fc_layer_params=tuple(self._ppo_params[
-        "CriticFcLayerParams", "", [512, 256, 256]])
+      fc_layer_params=tuple(self._gnn_sac_params[
+        "CriticFcLayerParams", "", [256, 256]])
     )
     
     # agent
@@ -91,15 +90,15 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
       env.action_spec(),
       actor_net=actor_net,
       value_net=critic_net,
-      normalize_observations=self._ppo_params[
+      normalize_observations=self._gnn_sac_params[
         "NormalizeObservations", "", False],
-      normalize_rewards=self._ppo_params["NormalizeRewards", "", False],
+      normalize_rewards=self._gnn_sac_params["NormalizeRewards", "", False],
       optimizer=tf.compat.v1.train.AdamOptimizer(
-        learning_rate=self._ppo_params["LearningRate", "", 3e-4]),
+        learning_rate=self._gnn_sac_params["LearningRate", "", 3e-4]),
       train_step_counter=self._ckpt.step,
-      num_epochs=self._ppo_params["NumEpochs", "", 30],
-      name=self._ppo_params["AgentName", "", "ppo_agent"],
-      debug_summaries=self._ppo_params["DebugSummaries", "", False])
+      num_epochs=self._gnn_sac_params["NumEpochs", "", 30],
+      name=self._gnn_sac_params["AgentName", "", "ppo_agent"],
+      debug_summaries=self._gnn_sac_params["DebugSummaries", "", False])
     
     tf_agent.initialize()
     return tf_agent
