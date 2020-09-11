@@ -61,6 +61,10 @@ class DiscreteIntersectionGym(SingleAgentRuntime, gym.Env):
     SingleAgentRuntime.__init__(self,
       blueprint=discrete_merging_bp, render=render)
 
+class GymSingleAgentRuntime(SingleAgentRuntime, gym.Wrapper):
+    def __init__(self, *args, **kwargs):
+        SingleAgentRuntime.__init__(self, *args, **kwargs)
+
 
 # register gym envs
 register(
