@@ -19,6 +19,7 @@ from bark_ml.observers.graph_observer import GraphObserver
 
 from graph_nets import modules
 from graph_nets import utils_tf
+from graph_nets.graphs import GraphsTuple
 import sonnet as snt
 
 
@@ -110,7 +111,7 @@ class GNNWrapper(tf.keras.Model):
       "Hidden dim of the message passing layers. This will be the\
        size of the output node embeddings. If using spektral, this\
        specifies the number of channels in the convolution layer.", 
-      256]
+      16]
     
     self._num_message_passing_layers = params[
       "NumMpLayers",
@@ -209,32 +210,37 @@ class GNNWrapper(tf.keras.Model):
       graph_dims=self._graph_dims)
     for conv in self._convolutions: 
       embeddings = conv([embeddings, adj_matrix, edge_features])
+    
 
     return embeddings
 
-  @tf.function
   def _call_simple_gnn(self, observations, training=False):
-    embeddings, adj_matrix, edge_features = GraphObserver.graph(
+    embeddings, adj_matrix, nm, edge_features = GraphObserver.graph(
       observations=observations, 
-      graph_dims=self._graph_dims)
+      graph_dims=self._graph_dims,
+      dense=True)
     
-    data_dicts = []
-    # for ei, nv, ev in zip(adj_matrix, embeddings, edge_features):
-    data_dict_0 = {
-      "nodes": embeddings[0, :],
-      "edges": edge_features[0, :],
-      "senders": edge_features[0, :, 0],
-      "receivers": edge_features[1, :, 1]
-    }
-
-    node_values = self._gnn(data_dicts)
-    return node_values
+    
+    batch_size = tf.constant(observations.shape[0])
+    input_graph = GraphsTuple(
+      nodes=tf.cast(embeddings, tf.float32), # tf.convert_to_tensor(nodes_0, dtype=tf.float32),
+      edges=tf.cast(edge_features, tf.float32), # tf.convert_to_tensor(edges_0, dtype=tf.float32),
+      globals=tf.cast(tf.tile([[0]], [batch_size, 1]), tf.float32),
+      receivers=tf.cast(adj_matrix[:, 1], tf.int32),
+      senders=tf.cast(adj_matrix[:, 0], tf.int32),
+      n_node=tf.tile([4], [batch_size]),
+      n_edge=tf.tile([16], [batch_size]))
+    
+    tf.print(input_graph)
+    node_values = self._gnn(input_graph)
+    output = tf.reshape(node_values.nodes, [batch_size, -1, self.num_units])
+    return output
 
   @tf.function 
   def _call_tf2_gnn(self, observations, training=False):
     batch_size = tf.constant(observations.shape[0])
 
-    embeddings, adj_list, node_to_graph_map = GraphObserver.graph(
+    embeddings, adj_list, node_to_graph_map, edge_features = GraphObserver.graph(
       observations=observations, 
       graph_dims=self._graph_dims, 
       dense=True)
@@ -246,6 +252,8 @@ class GNNWrapper(tf.keras.Model):
       num_graphs=batch_size,
     )
 
+    
+    tf.print(input_graph)
     # tf2_gnn outputs a flattened node embeddings vector, so we 
     # reshape it to have the embeddings of each node seperately.
     flat_output = self._gnn(gnn_input, training=training)

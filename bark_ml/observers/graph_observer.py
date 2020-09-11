@@ -192,16 +192,16 @@ class GraphObserver(StateObserver):
     adj_end_idx = adj_start_idx + n_nodes ** 2
     A = tf.reshape(obs[:, adj_start_idx:adj_end_idx], [batch_size, n_nodes, n_nodes])
 
-    # NOTE: simple_gnn; HACK
-    # NOTE: integrate and test
-    tmp = tf.where(tf.greater(A, 0))
-    tmp = tf.reshape(tmp[:, 1:], [batch_size, -1, 2])
-    n_edge_features = graph_dims[2]
-    E_shape = [batch_size, n_nodes, n_nodes, n_edge_features]
-    E = tf.reshape(obs[:, adj_end_idx:], E_shape)
-    ef = tf.reshape(E, [batch_size, -1, n_edge_features])
-    # tf.print(tf.shape(F), tf.shape(tmp), tf.shape(ef))
-    return F, tf.cast(tmp, tf.int32), ef
+    # # NOTE: simple_gnn; HACK
+    # # NOTE: integrate and test
+    # tmp = tf.where(tf.greater(A, 0))
+    # tmp = tf.reshape(tmp[:, 1:], [batch_size, -1, 2])
+    # n_edge_features = graph_dims[2]
+    # E_shape = [batch_size, n_nodes, n_nodes, n_edge_features]
+    # E = tf.reshape(obs[:, adj_end_idx:], E_shape)
+    # ef = tf.reshape(E, [batch_size, -1, n_edge_features])
+    # # tf.print(tf.shape(F), tf.shape(tmp), tf.shape(ef))
+    # return F, tf.cast(tmp, tf.int32), ef
   
     # tf.print(tmp, tf.shape(tmp))
     if dense:
@@ -244,8 +244,12 @@ class GraphObserver(StateObserver):
       node_to_graph_map = tf.reshape(tf.range(batch_size), [-1, 1])
       node_to_graph_map = tf.tile(node_to_graph_map, [1, n_nodes])
       node_to_graph_map = tf.reshape(node_to_graph_map, [-1])
-
-      return F, A, node_to_graph_map
+      
+      # extract edge features
+      n_edge_features = graph_dims[2]
+      E_shape = [-1, n_edge_features]
+      E = tf.reshape(obs[:, adj_end_idx:], E_shape)
+      return F, A, node_to_graph_map, E
 
     # extract edge features
     n_edge_features = graph_dims[2]
