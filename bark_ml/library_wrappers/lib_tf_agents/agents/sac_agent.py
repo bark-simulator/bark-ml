@@ -76,6 +76,7 @@ class BehaviorSACAgent(BehaviorTFAAgent):
       env.action_spec(),
       actor_network=actor_net,
       critic_network=critic_net,
+      alpha_loss_weight=0,
       actor_optimizer=tf.compat.v1.train.AdamOptimizer(
           learning_rate=self._sac_params["ActorLearningRate", "", 3e-4]),
       critic_optimizer=tf.compat.v1.train.AdamOptimizer(

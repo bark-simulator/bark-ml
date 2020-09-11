@@ -2,6 +2,7 @@ py_library(
     name = "agents",
     srcs = ["__init__.py",
             "graph_sac_agent.py",
+            "graph_ppo_agent.py",
             "sac_agent.py",
             "ppo_agent.py",
             "tfa_agent.py"],
