@@ -23,7 +23,7 @@ from graph_nets.graphs import GraphsTuple
 import sonnet as snt
 
 
-NUM_LAYERS = 3  # Hard-code number of layers in the edge/node/global models.
+NUM_LAYERS = 2  # Hard-code number of layers in the edge/node/global models.
 LATENT_SIZE = 80  # Hard-code latent layer sizes for demos.
 
 
@@ -35,8 +35,8 @@ def make_mlp_model():
     A Sonnet module which contains the MLP and LayerNorm.
   """
   return snt.Sequential([
-      snt.nets.MLP([LATENT_SIZE] * NUM_LAYERS, activate_final=True),
-      snt.LayerNorm(axis=-1, create_offset=True, create_scale=True)
+      snt.nets.MLP([LATENT_SIZE] * NUM_LAYERS, activate_final=True, with_bias=True),
+      # snt.LayerNorm(axis=-1, create_offset=True, create_scale=True)
   ])
 
 class MLPGraphIndependent(snt.Module):
@@ -158,7 +158,10 @@ class GNNWrapper(tf.keras.Model):
     return int_dims
 
   def _init_simple_gnn_layers(self, params):
-    self._gnn = MLPGraphNetwork()
+    self._gnn_encoder = MLPGraphIndependent()
+    self._gnn_core = MLPGraphNetwork()
+    self._gnn_decoder = MLPGraphIndependent()
+    
     # self._gnn = gnn = SimpleGNN(
     #   node_layers_def=[
     #     {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
@@ -231,7 +234,9 @@ class GNNWrapper(tf.keras.Model):
       n_node=tf.tile([4], [batch_size]),
       n_edge=tf.tile([16], [batch_size]))
     
-    node_values = self._gnn(input_graph)
+    node_values = self._gnn_encoder(input_graph)
+    node_values = self._gnn_core(node_values)
+    node_values = self._gnn_decoder(node_values)
     output = tf.reshape(node_values.nodes, [batch_size, -1, self.num_units])
     return output
 
