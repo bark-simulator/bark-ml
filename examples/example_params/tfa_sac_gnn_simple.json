@@ -69,7 +69,7 @@
             ],
             "GNN": {
                 "NumMpLayers": 2,
-                "MpLayersHiddenDim": 16,
+                "MpLayersHiddenDim": 80,
                 "Library": "simple_gnn",
                 "EdgeFcLayerParams": [
                     128,

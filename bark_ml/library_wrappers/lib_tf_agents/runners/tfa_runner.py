@@ -108,6 +108,7 @@ class TFARunner:
   def RunEpisode(self, render=True, **kwargs):
     state = self._environment.reset()
     is_terminal = False
+    # print(self._agent._eval_policy.trainable_variables)
     while not is_terminal:
       action_step = self._agent._eval_policy.action(
         ts.transition(state, reward=0.0, discount=1.0))

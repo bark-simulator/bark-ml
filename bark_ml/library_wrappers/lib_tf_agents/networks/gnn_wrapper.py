@@ -23,8 +23,8 @@ from graph_nets.graphs import GraphsTuple
 import sonnet as snt
 
 
-NUM_LAYERS = 2  # Hard-code number of layers in the edge/node/global models.
-LATENT_SIZE = 16  # Hard-code latent layer sizes for demos.
+NUM_LAYERS = 3  # Hard-code number of layers in the edge/node/global models.
+LATENT_SIZE = 80  # Hard-code latent layer sizes for demos.
 
 
 def make_mlp_model():
@@ -223,15 +223,14 @@ class GNNWrapper(tf.keras.Model):
     
     batch_size = tf.constant(observations.shape[0])
     input_graph = GraphsTuple(
-      nodes=tf.cast(embeddings, tf.float32), # tf.convert_to_tensor(nodes_0, dtype=tf.float32),
-      edges=tf.cast(edge_features, tf.float32), # tf.convert_to_tensor(edges_0, dtype=tf.float32),
+      nodes=tf.cast(embeddings, tf.float32),
+      edges=tf.cast(edge_features, tf.float32),
       globals=tf.cast(tf.tile([[0]], [batch_size, 1]), tf.float32),
       receivers=tf.cast(adj_matrix[:, 1], tf.int32),
       senders=tf.cast(adj_matrix[:, 0], tf.int32),
       n_node=tf.tile([4], [batch_size]),
       n_edge=tf.tile([16], [batch_size]))
     
-    tf.print(input_graph)
     node_values = self._gnn(input_graph)
     output = tf.reshape(node_values.nodes, [batch_size, -1, self.num_units])
     return output
