@@ -1,8 +1,8 @@
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository", "new_git_repository")
 
 def _maybe(repo_rule, name, **kwargs):
-  # if name not in native.existing_rules():
-  repo_rule(name = name, **kwargs)
+  if name not in native.existing_rules():
+    repo_rule(name = name, **kwargs)
 
 def bark_ml_dependencies():
   _maybe(
@@ -33,7 +33,7 @@ cc_library(
   _maybe(
     git_repository,
     name = "diadem_project",
-    commit = "741b9ea7a96657e399ae039ab922a8baf0b0fce1",
+    commit = "64b2987fbdd69ad533f30b545568c691ad5afb00",
     remote = "https://github.com/juloberno/diadem"
   )
 

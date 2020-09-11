@@ -6,4 +6,4 @@ agents:
 
 experiment: 
   <<: *base_experiment
-  max_episodes: 50
+  max_episodes: 150000
