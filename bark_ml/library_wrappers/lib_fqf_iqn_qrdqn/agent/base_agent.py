@@ -22,6 +22,7 @@ from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
 
 # BARK imports
 from bark.core.models.behavior import BehaviorModel
+import logging
 
 
 class BaseAgent(BehaviorModel):
@@ -52,7 +53,8 @@ class BaseAgent(BehaviorModel):
     self.noisy_net = self._params["ML"]["BaseAgent"]["NoisyNet", "", False]
     self.use_per = self._params["ML"]["BaseAgent"]["Use_per", "", False]
 
-    self.log_interval = self._params["ML"]["BaseAgent"]["LogInterval", "", 100]
+    self.reward_log_interval = self._params["ML"]["BaseAgent"]["RewardLogInterval", "", 5]
+    self.summary_log_interval = self._params["ML"]["BaseAgent"]["SummaryLogInterval", "", 100]
     self.eval_interval = self._params["ML"]["BaseAgent"]["EvalInterval", "",
                                                          25000]
     self.num_eval_steps = self._params["ML"]["BaseAgent"]["NumEvalSteps", "",
@@ -86,7 +88,7 @@ class BaseAgent(BehaviorModel):
       os.makedirs(self.summary_dir)
 
     self.writer = SummaryWriter(log_dir=self.summary_dir)
-    self.train_return = RunningMeanStats(self.log_interval)
+    self.train_return = RunningMeanStats(self.summary_log_interval)
 
     # NOTE: by default we do not want the action to be set externally
     #       as this enables the agents to be plug and played in BARK.
@@ -239,9 +241,9 @@ class BaseAgent(BehaviorModel):
         action = self.Act(state)
 
       next_state, reward, done, _ = self.env.step(action)
-      if self.episodes % 10000 == 0:
+      if self.episodes % self.reward_log_interval == 0:
         # self.env.render()
-        print("Reward:", reward)
+        logging.info(f"Reward: {reward:<4}")
 
       # To calculate efficiently, I just set priority=max_priority here.
       self.memory.append(state, action, reward, next_state, done)
@@ -257,11 +259,11 @@ class BaseAgent(BehaviorModel):
     self.train_return.append(episode_return)
 
     # We log evaluation results along with training frames = 4 * steps.
-    if self.episodes % self.log_interval == 0:
+    if self.episodes % self.summary_log_interval == 0:
       self.writer.add_scalar('return/train', self.train_return.get(),
                              4 * self.steps)
 
-    print(f'Episode: {self.episodes:<4}  '
+    logging.info(f'Episode: {self.episodes:<4}  '
           f'episode steps: {episode_steps:<4}  '
           f'return: {episode_return:<5.1f}')
 
@@ -316,9 +318,9 @@ class BaseAgent(BehaviorModel):
 
     # We log evaluation results along with training frames = 4 * steps.
     self.writer.add_scalar('return/test', mean_return, 4 * self.steps)
-    print('-' * 60)
-    print(f'Num steps: {self.steps:<5}  ' f'return: {mean_return:<5.1f}')
-    print('-' * 60)
+    logging.info('-' * 60)
+    logging.info(f'Num steps: {self.steps:<5}  ' f'return: {mean_return:<5.1f}')
+    logging.info('-' * 60)
 
   def __del__(self):
     # self.env.close()
