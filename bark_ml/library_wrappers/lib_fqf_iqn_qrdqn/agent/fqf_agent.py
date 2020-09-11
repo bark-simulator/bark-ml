@@ -136,7 +136,7 @@ class FQFAgent(BaseAgent):
     if self.use_per:
       self.memory.update_priority(errors)
 
-    if self.learning_steps % self.log_interval == 0:
+    if self.learning_steps % self.summary_log_interval == 0:
       self.writer.add_scalar('loss/fraction_loss',
                              fraction_loss.detach().item(), 4 * self.steps)
       self.writer.add_scalar('loss/quantile_loss',

@@ -82,7 +82,7 @@ class IQNAgent(BaseAgent):
     if self.use_per:
       self.memory.update_priority(errors)
 
-    if 4 * self.steps % self.log_interval == 0:
+    if 4 * self.steps % self.summary_log_interval == 0:
       self.writer.add_scalar('loss/quantile_loss',
                              quantile_loss.detach().item(), 4 * self.steps)
       self.writer.add_scalar('stats/mean_Q', mean_q, 4 * self.steps)
