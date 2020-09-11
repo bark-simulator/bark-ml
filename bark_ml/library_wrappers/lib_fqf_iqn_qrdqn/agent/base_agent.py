@@ -18,7 +18,7 @@ from abc import ABC, abstractmethod
 # BARK-ML imports
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.utils import RunningMeanStats, LinearAnneaer
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.memory import LazyMultiStepMemory, LazyPrioritizedMultiStepMemory
-from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteML
+from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
 
 # BARK imports
 from bark.core.models.behavior import BehaviorModel
