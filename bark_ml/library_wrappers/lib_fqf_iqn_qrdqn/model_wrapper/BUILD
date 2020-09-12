@@ -8,7 +8,7 @@ cc_binary(
           "@pybind11//:pybind11",
           ],
   copts = ["-Iexternal/torchcpp/torch/include",
-           "-Lexternal/torchcpp/libtorch/lib",
+           #"-Lexternal/torchcpp/libtorch/lib",
            "-D_GLIBCXX_USE_CXX11_ABI=0"],
 
    linkopts = ["-ltorch_cpu","-lc10"],
