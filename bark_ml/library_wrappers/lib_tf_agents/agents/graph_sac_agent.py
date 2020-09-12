@@ -108,7 +108,7 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
       reward_scale_factor=self._gnn_sac_params["RewardScaleFactor", "", 0.],
       train_step_counter=self._ckpt.step,
       name=self._gnn_sac_params["AgentName", "", "gnn_sac_agent"],
-      debug_summaries=self._gnn_sac_params["DebugSummaries", "", False])
+      debug_summaries=self._gnn_sac_params["DebugSummaries", "", True])
     
     tf_agent.initialize()
     return tf_agent

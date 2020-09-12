@@ -67,8 +67,8 @@ def run_configuration(argv):
   #  fig_path="/your_path_here/training/video/")
 
   # create environment
-  bp = ContinuousMergingBlueprint(params,
-                                  number_of_senarios=2500,
+  bp = ContinuousHighwayBlueprint(params,
+                                  number_of_senarios=10000,
                                   random_seed=0)
 
   observer = GraphObserver(params=params)

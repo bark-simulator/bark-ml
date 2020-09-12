@@ -158,9 +158,9 @@ class GNNWrapper(tf.keras.Model):
     return int_dims
 
   def _init_simple_gnn_layers(self, params):
-    self._gnn_encoder = MLPGraphIndependent()
-    self._gnn_core = MLPGraphNetwork()
-    self._gnn_decoder = MLPGraphIndependent()
+    self._gnn_core_0 = MLPGraphNetwork()
+    self._gnn_core_1 = MLPGraphNetwork()
+    self._gnn_core_2 = MLPGraphNetwork()
     
     # self._gnn = gnn = SimpleGNN(
     #   node_layers_def=[
@@ -213,18 +213,16 @@ class GNNWrapper(tf.keras.Model):
       graph_dims=self._graph_dims)
     for conv in self._convolutions: 
       embeddings = conv([embeddings, adj_matrix, edge_features])
-    
-
     return embeddings
 
   def _call_simple_gnn(self, observations, training=False):
+    """Graph nets implementation"""
     embeddings, adj_matrix, nm, edge_features = GraphObserver.graph(
       observations=observations, 
       graph_dims=self._graph_dims,
       dense=True)
-    
-    
     batch_size = tf.constant(observations.shape[0])
+    # NODE: change number of nodes and edges
     input_graph = GraphsTuple(
       nodes=tf.cast(embeddings, tf.float32),
       edges=tf.cast(edge_features, tf.float32),
@@ -233,10 +231,9 @@ class GNNWrapper(tf.keras.Model):
       senders=tf.cast(adj_matrix[:, 0], tf.int32),
       n_node=tf.tile([4], [batch_size]),
       n_edge=tf.tile([16], [batch_size]))
-    
-    node_values = self._gnn_encoder(input_graph)
-    node_values = self._gnn_core(node_values)
-    node_values = self._gnn_decoder(node_values)
+    node_values = self._gnn_core_0(input_graph)
+    node_values = self._gnn_core_1(node_values)
+    node_values = self._gnn_core_2(node_values)
     output = tf.reshape(node_values.nodes, [batch_size, -1, self.num_units])
     return output
 
