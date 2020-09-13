@@ -66,7 +66,7 @@ py_test(
     srcs = ["py_library_torch_agents_tests.py"],
     data = ["@torchcpp//:lib",
             "@bark_project//bark/python_wrapper:core.so",
-            "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/model_wrapper/model_data:weights",
+            "//bark_ml/tests/lib_fqf_iqn_qrdqn_test_data:weights",
             "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/model_wrapper:pytorch_script_wrapper.so"],
     imports = ["../external/bark_project/bark/python_wrapper/",
                "../external/torchcpp/torch/lib" # this path does not exist even after adding data dependency. Keeping it for further research. 

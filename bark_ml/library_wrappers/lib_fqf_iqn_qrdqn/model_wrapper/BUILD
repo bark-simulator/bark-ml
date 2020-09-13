@@ -1,7 +1,6 @@
 cc_binary(
   name = "pytorch_script_wrapper.so",
   srcs = ["pytorch_script_wrapper.cpp"],
-  data=["//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/model_wrapper/model_data:weights"],
   deps = [":model_loader",
           "@torchcpp//:lib",
           "@python_linux//:python-lib",

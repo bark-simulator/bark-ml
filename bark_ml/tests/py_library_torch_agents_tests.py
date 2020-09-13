@@ -136,7 +136,7 @@ class PyLibraryWrappersPyTorchAgentTests(unittest.TestCase):
       model = pytorch_script_wrapper.ModelLoader(
           os.path.join(
               os.path.dirname(__file__),
-              "../library_wrappers/lib_fqf_iqn_qrdqn/model_wrapper/model_data/{}/online_net_script.pt"
+              "lib_fqf_iqn_qrdqn_test_data/{}/online_net_script.pt"
               .format(network)), action_space_size, state_space_size)
       model.LoadModel()
 
@@ -162,7 +162,7 @@ class PyLibraryWrappersPyTorchAgentTests(unittest.TestCase):
       agent.load_models(
           os.path.join(
               os.path.dirname(__file__),
-              "../library_wrappers/lib_fqf_iqn_qrdqn/model_wrapper/model_data",
+              "lib_fqf_iqn_qrdqn_test_data",
               network))
 
       # Time num_iters iterations for inference using python model
