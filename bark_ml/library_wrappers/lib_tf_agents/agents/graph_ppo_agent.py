@@ -78,7 +78,7 @@ class BehaviorGraphPPOAgent(BehaviorTFAAgent):
 
     # critic network
     critic_net = GNNValueNetwork(
-      (env.observation_spec(), env.action_spec()),
+      env.observation_spec(),
       gnn=init_gnn,
       fc_layer_params=tuple(self._gnn_sac_params[
         "CriticFcLayerParams", "", [256, 256]])

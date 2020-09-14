@@ -107,14 +107,12 @@ class GNNActorNetwork(network.Network):
 
     if len(observations.shape) == 1:
       observations = tf.expand_dims(observations, axis=0)
-
     batch_size = observations.shape[0]
     embeddings = self._gnn(observations, training=training)
-    
+
     # extract ego state (node 0)
     if batch_size > 0: 
       embeddings = embeddings[:, 0]
-      # tf.print(embeddings)
 
     with tf.name_scope("GNNActorNetwork"):
       tf.summary.histogram("actor_gnn_output", embeddings)
@@ -130,6 +128,6 @@ class GNNActorNetwork(network.Network):
       return distribution
 
     output_actions = tf.nest.map_structure(
-        call_projection_net, self._projection_nets)
+      call_projection_net, self._projection_nets)
 
     return output_actions, network_state

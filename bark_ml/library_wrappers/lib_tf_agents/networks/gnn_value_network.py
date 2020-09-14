@@ -25,7 +25,7 @@ class GNNValueNetwork(network.Network):
                dropout_layer_params=None,
                activation_fn=tf.keras.activations.relu,
                kernel_initializer=None,
-               batch_squash=True,
+               batch_squash=False,
                dtype=tf.float32,
                name='ValueNetwork'):
     """Creates an instance of `ValueNetwork`.
@@ -98,16 +98,23 @@ class GNNValueNetwork(network.Network):
         kernel_initializer=tf.compat.v1.initializers.random_uniform(
             minval=-0.03, maxval=0.03))
 
-  def call(self, observation, step_type=None, network_state=(), training=False):
-    observations, _ = observation
+  def call(self, observations, step_type=None, network_state=(), training=False):
+    print(observations)
+    # we get through this call
+    if len(tf.shape(observations)) == 3:
+      observations = tf.reshape(observations, [-1, 64])
+    
     batch_size = observations.shape[0]
     embeddings = self._gnn(observations, training=training)
     
     if batch_size > 0:
-      embeddings = tf.expand_dims(embeddings[:, 0], axis=0)
-      
+      embeddings = embeddings[:, 0] # extract ego state
+
+    # here it goes wrong
     state, network_state = self._encoder(
-        embeddings, step_type=step_type, network_state=network_state,
-        training=training)
+      embeddings, step_type=step_type, network_state=network_state,
+      training=training)
+    
+    state = tf.expand_dims(state, axis=0)  
     value = self._postprocessing_layers(state, training=training)
     return tf.squeeze(value, -1), network_state

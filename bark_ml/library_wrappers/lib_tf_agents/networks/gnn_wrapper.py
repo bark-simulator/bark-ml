@@ -7,6 +7,8 @@
 
 import logging
 import tensorflow as tf
+import matplotlib.pyplot as plt
+import networkx as nx
 
 from enum import Enum
 from tf2_gnn.layers import GNN, GNNInput
@@ -19,12 +21,14 @@ from bark_ml.observers.graph_observer import GraphObserver
 
 from graph_nets import modules
 from graph_nets import utils_tf
+from graph_nets import utils_np
+
 from graph_nets.graphs import GraphsTuple
 import sonnet as snt
 
 
 NUM_LAYERS = 2  # Hard-code number of layers in the edge/node/global models.
-LATENT_SIZE = 80  # Hard-code latent layer sizes for demos.
+LATENT_SIZE = 40  # Hard-code latent layer sizes for demos.
 
 
 def make_mlp_model():
@@ -39,27 +43,19 @@ def make_mlp_model():
       # snt.LayerNorm(axis=-1, create_offset=True, create_scale=True)
   ])
 
-class MLPGraphIndependent(snt.Module):
-  """GraphIndependent with MLP edge, node, and global models."""
 
-  def __init__(self, name="MLPGraphIndependent"):
-    super(MLPGraphIndependent, self).__init__(name=name)
-    self._network = modules.GraphIndependent(
-        edge_model_fn=make_mlp_model,
-        node_model_fn=make_mlp_model,
-        global_model_fn=make_mlp_model)
-
-  def __call__(self, inputs):
-    return self._network(inputs)
-  
-  
 class MLPGraphNetwork(snt.Module):
   """GraphNetwork with MLP edge, node, and global models."""
 
-  def __init__(self, name="MLPGraphNetwork"):
+  def __init__(self, edge_block_opt, node_block_opt, global_block_opt, name="MLPGraphNetwork"):
     super(MLPGraphNetwork, self).__init__(name=name)
-    self._network = modules.GraphNetwork(make_mlp_model, make_mlp_model,
-                                         make_mlp_model)
+    self._network = modules.GraphNetwork(
+      make_mlp_model,
+      make_mlp_model,
+      make_mlp_model,
+      edge_block_opt=edge_block_opt,
+      node_block_opt=node_block_opt,
+      global_block_opt=global_block_opt)
 
   def __call__(self, inputs):
     return self._network(inputs)
@@ -158,18 +154,21 @@ class GNNWrapper(tf.keras.Model):
     return int_dims
 
   def _init_simple_gnn_layers(self, params):
-    self._gnn_core_0 = MLPGraphNetwork()
-    self._gnn_core_1 = MLPGraphNetwork()
-    self._gnn_core_2 = MLPGraphNetwork()
-    
-    # self._gnn = gnn = SimpleGNN(
-    #   node_layers_def=[
-    #     {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
-    #     {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
-    #   ],
-    #   edge_layers_def=[
-    #     {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"},
-    #     {"units" : 80, "activation": "relu", "dropout_rate": 0.0, "type": "DenseLayer"}])
+    edge_block_opt = {
+      "use_edges": True,
+      "use_receiver_nodes": True,
+      "use_sender_nodes": True,
+      "use_globals": False
+    }
+    node_block_opt = {
+      "use_received_edges": True,
+      "use_nodes": True,
+      "use_globals": False
+    }
+    self._gnn_core_0 = MLPGraphNetwork(
+      edge_block_opt, node_block_opt, global_block_opt=None)
+    self._gnn_core_1 = MLPGraphNetwork(
+      edge_block_opt, node_block_opt, global_block_opt=None)
 
   def _init_spektral_layers(self, params):
     self._convolutions = []
@@ -217,7 +216,7 @@ class GNNWrapper(tf.keras.Model):
 
   def _call_simple_gnn(self, observations, training=False):
     """Graph nets implementation"""
-    embeddings, adj_matrix, nm, edge_features = GraphObserver.graph(
+    embeddings, adj_matrix, _, edge_features = GraphObserver.graph(
       observations=observations, 
       graph_dims=self._graph_dims,
       dense=True)
@@ -231,9 +230,9 @@ class GNNWrapper(tf.keras.Model):
       senders=tf.cast(adj_matrix[:, 0], tf.int32),
       n_node=tf.tile([4], [batch_size]),
       n_edge=tf.tile([16], [batch_size]))
+
     node_values = self._gnn_core_0(input_graph)
     node_values = self._gnn_core_1(node_values)
-    node_values = self._gnn_core_2(node_values)
     output = tf.reshape(node_values.nodes, [batch_size, -1, self.num_units])
     return output
 
@@ -254,7 +253,6 @@ class GNNWrapper(tf.keras.Model):
     )
 
     
-    tf.print(input_graph)
     # tf2_gnn outputs a flattened node embeddings vector, so we 
     # reshape it to have the embeddings of each node seperately.
     flat_output = self._gnn(gnn_input, training=training)

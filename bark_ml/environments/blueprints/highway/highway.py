@@ -73,7 +73,7 @@ class HighwayBlueprint(Blueprint):
                         y_range=[-35, 35],
                         follow_agent_id=True)
     dt = 0.2
-    evaluator = GoalReached(params)
+    evaluator = GoalReachedGuiding(params)
     observer = NearestObserver(params)
     ml_behavior = ml_behavior
 

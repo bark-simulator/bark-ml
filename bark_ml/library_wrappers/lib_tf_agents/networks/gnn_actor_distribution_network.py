@@ -69,7 +69,7 @@ class GNNActorDistributionNetwork(network.DistributionNetwork):
                dropout_layer_params=None,
                activation_fn=tf.keras.activations.relu,
                kernel_initializer=None,
-               batch_squash=True,
+               batch_squash=False,
                dtype=tf.float32,
                discrete_projection_net=_categorical_projection_net,
                continuous_projection_net=_normal_projection_net,
@@ -172,21 +172,21 @@ class GNNActorDistributionNetwork(network.DistributionNetwork):
            training=False,
            mask=None):
     
-    if len(observations.shape) == 1:
-      observations = tf.expand_dims(observations, axis=0)
-
+    if len(tf.shape(observations)) == 3:
+      observations = tf.reshape(observations, [-1, 64])
     batch_size = observations.shape[0]
     embeddings = self._gnn(observations, training=training)
     
     # extract ego state (node 0)
     if batch_size > 0: 
-      embeddings = tf.expand_dims(embeddings[:, 0], axis=0)
-      # tf.print(embeddings)
+      embeddings = embeddings[:, 0]
+    
     state, network_state = self._encoder(
-        embeddings,
-        step_type=step_type,
-        network_state=network_state,
-        training=training)
+      embeddings,
+      step_type=step_type,
+      network_state=network_state,
+      training=training)
+  
     outer_rank = nest_utils.get_outer_rank(observations, self.input_tensor_spec)
 
     def call_projection_net(proj_net):

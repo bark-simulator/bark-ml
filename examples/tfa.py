@@ -49,13 +49,16 @@ def run_configuration(argv):
   params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
   params["ML"]["VisualizeCfWorlds"] = False
   params["ML"]["VisualizeCfHeatmap"] = True
+  params["World"]["remove_agents_out_of_map"] = False
   params["ML"]["ResultsFolder"] = "/Users/hart/Development/bark-ml/results/data/"
+  
   # create environment
-  bp = ContinuousMergingBlueprint(params,
+  bp = ContinuousHighwayBlueprint(params,
                                   number_of_senarios=10000,
                                   random_seed=0)
   env = SingleAgentRuntime(blueprint=bp,
                            render=False)
+
   # behavior_model_pool = []
   # for count, a in enumerate([-2., 0., 2.]):
   #   local_params = params.AddChild("local_"+str(count))

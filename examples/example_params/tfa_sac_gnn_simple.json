@@ -17,8 +17,8 @@
             ]
         },
         "GoalReachedGuiding": {
-            "GoalReward": 10.0,
-            "CollisionPenalty": -10.0,
+            "GoalReward": 1.0,
+            "CollisionPenalty": -1.0,
             "MaxSteps": 60
         },
         "StateObserver": {
@@ -50,14 +50,24 @@
         "GraphObserver": {
             "AgentLimit": 4,
             "VisibilityRadius": 250,
-            "SelfLoops": true
+            "SelfLoops": true,
+            "EnabledNodeFeatures": [
+                "x",
+                "y",
+                "theta",
+                "vel"
+            ],
+            "EnabledEdgeFeatures": [
+                "dx",
+                "dy"
+            ]
         },
         "BehaviorGraphSACAgent": {
             "DebugSummaries": true,
             "BatchSize": 128,
             "CriticJointFcLayerParams": [
-                128,
-                128
+                256,
+                256
             ],
             "CriticObservationFcLayerParams": [
                 128,
@@ -65,11 +75,11 @@
             ],
             "ActorFcLayerParams": [
                 256,
-                128
+                256
             ],
             "GNN": {
                 "NumMpLayers": 2,
-                "MpLayersHiddenDim": 80,
+                "MpLayersHiddenDim": 40,
                 "Library": "simple_gnn",
                 "EdgeFcLayerParams": [
                     128,
@@ -79,9 +89,46 @@
             "CriticActionFcLayerParams": null,
             "ActorLearningRate": 0.0003,
             "CriticLearningRate": 0.0003,
-            "AlphaLearningRate": 0.0,
-            "TargetUpdateTau": 0.05,
-            "TargetUpdatePeriod": 3,
+            "AlphaLearningRate": 0.0003,
+            "TargetUpdateTau": 1.0,
+            "TargetUpdatePeriod": 1,
+            "Gamma": 0.995,
+            "RewardScaleFactor": 1.0,
+            "AgentName": "gnn_sac_agent",
+            "ParallelBufferCalls": 1,
+            "BufferNumSteps": 2,
+            "BufferPrefetch": 3
+        },
+        "BehaviorGraphPPOAgent": {
+            "DebugSummaries": true,
+            "BatchSize": 128,
+            "CriticJointFcLayerParams": [
+                256,
+                256
+            ],
+            "CriticObservationFcLayerParams": [
+                128,
+                128
+            ],
+            "ActorFcLayerParams": [
+                256,
+                256
+            ],
+            "GNN": {
+                "NumMpLayers": 2,
+                "MpLayersHiddenDim": 40,
+                "Library": "simple_gnn",
+                "EdgeFcLayerParams": [
+                    128,
+                    64
+                ]
+            },
+            "CriticActionFcLayerParams": null,
+            "ActorLearningRate": 0.0003,
+            "CriticLearningRate": 0.0003,
+            "AlphaLearningRate": 0.0003,
+            "TargetUpdateTau": 1.0,
+            "TargetUpdatePeriod": 1,
             "Gamma": 0.995,
             "RewardScaleFactor": 1.0,
             "AgentName": "gnn_sac_agent",

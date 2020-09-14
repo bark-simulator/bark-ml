@@ -91,5 +91,5 @@
     "__functional_03": "cpp",
     "*.ipp": "cpp"
   },
-  "python.pythonPath": "${workspaceFolder}/python/venv/bin/python",
+  "python.pythonPath": "/Users/hart/Development/bark_ml/python_wrapper/venv/bin/python3.7",
 }

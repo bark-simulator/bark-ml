@@ -27,6 +27,7 @@ from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, Continuo
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorGraphSACAgent, BehaviorGraphPPOAgent
 from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner
+from bark_ml.library_wrappers.lib_tf_agents.runners import PPORunner
 from bark_ml.observers.graph_observer import GraphObserver
 
 # for training: bazel run //examples:tfa -- --mode=train
@@ -44,12 +45,12 @@ def run_configuration(argv):
   # param_filename = "examples/example_params/tfa_sac_gnn_tf2_gnn_default.json"
   
   # File with standard parameters for spektral use:
-  param_filename = "examples/example_params/tfa_sac_gnn_simple.json"
+  param_filename = "examples/example_params/tfa_sac_gnn_spektral_default.json"
   params = ParameterServer(filename=param_filename)
 
   # NOTE: Modify these paths to specify your preferred path for checkpoints and summaries
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/simple_checkpoints/"
-  params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/simple_checkpoints/"
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/simple_checkpoints_spektral/"
+  params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/simple_checkpoints_spektral/"
   params["Visualization"]["Agents"]["Alpha"]["Other"] = 0.2
   params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
   params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
@@ -77,13 +78,13 @@ def run_configuration(argv):
     blueprint=bp,
     observer=observer,
     render=False)
-  sac_agent = BehaviorGraphSACAgent(environment=env,
+  ppo_agent = BehaviorGraphSACAgent(environment=env,
                                     observer=observer,
                                     params=params)
-  env.ml_behavior = sac_agent
+  env.ml_behavior = ppo_agent
   runner = SACRunner(params=params,
                      environment=env,
-                     agent=sac_agent)
+                     agent=ppo_agent)
 
   if FLAGS.mode == "train":
     runner.SetupSummaryWriter()
