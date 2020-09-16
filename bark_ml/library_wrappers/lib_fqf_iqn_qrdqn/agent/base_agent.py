@@ -16,8 +16,10 @@ import torch
 import numpy as np
 
 # BARK-ML imports
-from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.utils import RunningMeanStats, LinearAnneaer
-from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.memory import LazyMultiStepMemory, LazyPrioritizedMultiStepMemory
+from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.utils \
+  import RunningMeanStats, LinearAnneaer
+from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.memory \
+  import LazyMultiStepMemory, LazyPrioritizedMultiStepMemory
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
 
 # BARK imports
@@ -165,7 +167,7 @@ class BaseAgent(BehaviorModel):
     # Act without randomness.
     state = torch.Tensor(state).unsqueeze(0).to(self._device).float()
     with torch.no_grad():
-      actions = self._online_net(states=state)
+      actions = self._online_net(states=state)  # pylint: disable=not-callable
     return actions
 
   def Plan(self, dt, observed_world):

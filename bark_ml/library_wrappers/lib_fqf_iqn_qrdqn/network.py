@@ -32,11 +32,13 @@ def initialize_weights_he(m):
 
 
 class Flatten(nn.Module):
+
   def forward(self, x):
     return x.view(x.size(0), -1)
 
 
 class DQNBase(nn.Module):
+
   def __init__(self, num_channels, hidden=512, embedding_dim=512):
     super(DQNBase, self).__init__()
 
@@ -59,6 +61,7 @@ class DQNBase(nn.Module):
 
 
 class FractionProposalNetwork(nn.Module):
+
   def __init__(self, N=32, embedding_dim=7 * 7 * 64):
     super(FractionProposalNetwork, self).__init__()
 
@@ -98,10 +101,8 @@ class FractionProposalNetwork(nn.Module):
 
 
 class CosineEmbeddingNetwork(nn.Module):
-  def __init__(self,
-               num_cosines=64,
-               embedding_dim=7 * 7 * 64,
-               noisy_net=False):
+
+  def __init__(self, num_cosines=64, embedding_dim=7 * 7 * 64, noisy_net=False):
     super(CosineEmbeddingNetwork, self).__init__()
     linear = NoisyLinear if noisy_net else nn.Linear
 
@@ -125,13 +126,13 @@ class CosineEmbeddingNetwork(nn.Module):
         batch_size * N, self._num_cosines)
 
     # Calculate embeddings of taus.
-    tau_embeddings = self._net(cosines).view(batch_size, N,
-                                             self._embedding_dim)
+    tau_embeddings = self._net(cosines).view(batch_size, N, self._embedding_dim)
 
     return tau_embeddings
 
 
 class QuantileNetwork(nn.Module):
+
   def __init__(self, num_actions, embedding_dim=7 * 7 * 64, noisy_net=False):
     super(QuantileNetwork, self).__init__()
     linear = NoisyLinear if noisy_net else nn.Linear
@@ -155,8 +156,7 @@ class QuantileNetwork(nn.Module):
     N = tau_embeddings.shape[1]
 
     # Reshape into (batch_size, 1, embedding_dim).
-    state_embeddings = state_embeddings.view(batch_size, 1,
-                                             self._embedding_dim)
+    state_embeddings = state_embeddings.view(batch_size, 1, self._embedding_dim)
 
     # Calculate embeddings of states and taus.
     embeddings = (state_embeddings * tau_embeddings).view(
@@ -169,6 +169,7 @@ class QuantileNetwork(nn.Module):
 
 
 class NoisyLinear(nn.Module):
+
   def __init__(self, in_features, out_features, sigma=0.5):
     super(NoisyLinear, self).__init__()
 

@@ -1,17 +1,18 @@
 # Copyright (c) 2020 fortiss GmbH
 #
-# Authors: Patrick Hart, Julian Bernhard, Klemens Esterle, and
-# Tobias Kessler, Mansoor Nasir
+# Authors: Patrick Hart, Julian Bernhard, Klemens Esterle,
+# Tobias Kessler and Mansoor Nasir
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-# The code is adapted from opensource implementation - https://github.com/ku2482/fqf-iqn-qrdqn.pytorch
+# The code is adapted from opensource implementation -
+# https://github.com/ku2482/fqf-iqn-qrdqn.pytorch
 # MIT License -Copyright (c) 2020 Toshiki Watanabe
 
 from .base_model import BaseModel
-from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.network import DQNBase, CosineEmbeddingNetwork, \
- FractionProposalNetwork, QuantileNetwork
+from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.network import \
+  DQNBase, CosineEmbeddingNetwork, FractionProposalNetwork, QuantileNetwork
 
 
 class FQF(BaseModel):

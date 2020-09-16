@@ -1,7 +1,7 @@
 # Copyright (c) 2020 fortiss GmbH
 #
-# Authors: Patrick Hart, Julian Bernhard, Klemens Esterle, and
-# Tobias Kessler, Mansoor Nasir
+# Authors: Patrick Hart, Julian Bernhard, Klemens Esterle,
+# Tobias Kessler and Mansoor Nasir
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT

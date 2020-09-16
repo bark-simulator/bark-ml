@@ -20,8 +20,8 @@ class MultiStepBuff:
 
   def get(self, gamma=0.99):
     assert len(self._rewards) > 0
-    state = self.states.popleft()
-    action = self.actions.popleft()
+    state = self._states.popleft()
+    action = self._actions.popleft()
     reward = self._nstep_return(gamma)
     return state, action, reward
 
@@ -47,9 +47,9 @@ class MultiStepBuff:
 
 
 class LazyMemory(dict):
-  state_keys = ['state', 'next_state']
-  np_keys = ['action', 'reward', 'done']
-  keys = state_keys + np_keys
+  _state_keys = ['state', 'next_state']
+  _np_keys = ['action', 'reward', 'done']
+  _keys = _state_keys + _np_keys
 
   def __init__(self, capacity, state_shape, device):
     super(LazyMemory, self).__init__()
@@ -69,7 +69,7 @@ class LazyMemory(dict):
     self._n = 0
     self._p = 0
 
-  def append(self, state, action, reward, next_state, done, episode_done=None):
+  def append(self, state, action, reward, next_state, done):
     self._append(state, action, reward, next_state, done)
 
   def _append(self, state, action, reward, next_state, done):
@@ -104,8 +104,8 @@ class LazyMemory(dict):
       states[i, ...] = self['state'][_index]
       next_states[i, ...] = self['next_state'][_index]
 
-    states = torch.ByteTensor(states).to(self._device).float() / 255.
-    next_states = torch.ByteTensor(next_states).to(self._device).float() / 255.
+    states = torch.ByteTensor(states).to(self._device).float()
+    next_states = torch.ByteTensor(next_states).to(self._device).float()
     actions = torch.LongTensor(self['action'][indices]).to(self._device)
     rewards = torch.FloatTensor(self['reward'][indices]).to(self._device)
     dones = torch.FloatTensor(self['done'][indices]).to(self._device)

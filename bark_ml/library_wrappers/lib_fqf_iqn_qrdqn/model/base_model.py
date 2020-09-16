@@ -8,7 +8,7 @@ from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.network import NoisyLinear
 class BaseModel(nn.Module):
 
   def __init__(self):
-    super().__init__()
+    super(BaseModel, self).__init__()
 
   def sample_noise(self):
     if self._noisy_net:

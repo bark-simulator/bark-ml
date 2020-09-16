@@ -3,11 +3,7 @@ import numpy as np
 import torch
 
 
-def update_params(optim,
-                  loss,
-                  networks,
-                  retain_graph=False,
-                  grad_cliping=None):
+def update_params(optim, loss, networks, retain_graph=False, grad_cliping=None):
   optim.zero_grad()
   loss.backward(retain_graph=retain_graph)
   # Clip norms of gradients to stebilize training.
@@ -70,6 +66,7 @@ def evaluate_quantile_at_action(s_quantiles, actions):
 
 
 class RunningMeanStats:
+
   def __init__(self, n=10):
     self._n = n
     self._stats = deque(maxlen=n)
@@ -82,6 +79,7 @@ class RunningMeanStats:
 
 
 class LinearAnneaer:
+
   def __init__(self, start_value, end_value, num_steps):
     assert num_steps > 0 and isinstance(num_steps, int)
 

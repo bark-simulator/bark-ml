@@ -1,12 +1,12 @@
 # Copyright (c) 2020 fortiss GmbH
 #
-# Authors: Patrick Hart, Julian Bernhard, Klemens Esterle
+# Authors: Patrick Hart, Julian Bernhard, Klemens Esterle,
 # Tobias Kessler and Mansoor Nasir
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-# The code is adapted from opensource implementation 
+# The code is adapted from opensource implementation
 # - https://github.com/ku2482/fqf-iqn-qrdqn.pytorch
 # MIT License -Copyright (c) 2020 Toshiki Watanabe
 

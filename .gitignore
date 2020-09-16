@@ -165,6 +165,7 @@ web/node_modules
 tests/data/database_maps_DR_DEU_Merging_MT_shifted.xodr
 *.png
 *.p
+.pylintrc
 
 /checkpoints**
 /summaries**

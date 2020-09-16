@@ -1,7 +1,7 @@
 # Copyright (c) 2020 fortiss GmbH
 #
-# Authors: Patrick Hart, Julian Bernhard, Klemens Esterle, and
-# Tobias Kessler, Mansoor Nasir
+# Authors: Patrick Hart, Julian Bernhard, Klemens Esterle,
+# Tobias Kessler and Mansoor Nasir
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
@@ -113,8 +113,8 @@ class FQFAgent(BaseAgent):
         actions, weights)
 
     quantile_loss, mean_q, errors = self._calculate_quantile_loss(
-        tau_hats, current_sa_quantile_hats, rewards, next_states,
-        dones, weights)
+        tau_hats, current_sa_quantile_hats, rewards, next_states, dones,
+        weights)
 
     entropy_loss = -self._ent_coef * entropies.mean()
 
@@ -193,8 +193,8 @@ class FQFAgent(BaseAgent):
 
     return fraction_loss
 
-  def calculate_quantile_loss(self, tau_hats, current_sa_quantile_hats,
-                              rewards, next_states, dones, weights):
+  def calculate_quantile_loss(self, tau_hats, current_sa_quantile_hats, rewards,
+                              next_states, dones, weights):
     assert not tau_hats.requires_grad
 
     with torch.no_grad():

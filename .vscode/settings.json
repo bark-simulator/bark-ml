@@ -95,7 +95,8 @@
   "python.linting.enabled": true,
   "python.linting.pylintEnabled": true,
   "python.linting.pylintArgs": [
-    "--generated-members=bark_ml.*,bark.*, torch.*",
+    "--generated-members=torch.*",
     "--indent-string=\"  \""
     ]
+  
 }
