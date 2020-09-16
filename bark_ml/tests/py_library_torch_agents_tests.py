@@ -101,21 +101,21 @@ class PyLibraryWrappersPyTorchAgentTests(unittest.TestCase):
     iqn_agent = IQNAgent(env=env, test_env=env, params=params)
     env.ml_behavior = iqn_agent
     self.assertEqual(env.ml_behavior.set_action_externally, False)
-    iqn_agent.run()
+    iqn_agent.train()
     self.assertEqual(env.ml_behavior.set_action_externally, True)
 
     # FQF Agent
     fqf_agent = FQFAgent(env=env, test_env=env, params=params)
     env.ml_behavior = fqf_agent
     self.assertEqual(env.ml_behavior.set_action_externally, False)
-    fqf_agent.run()
+    fqf_agent.train()
     self.assertEqual(env.ml_behavior.set_action_externally, True)
 
     # QRDQN Agent
     qrdqn_agent = QRDQNAgent(env=env, test_env=env, params=params)
     env.ml_behavior = qrdqn_agent
     self.assertEqual(env.ml_behavior.set_action_externally, False)
-    qrdqn_agent.run()
+    qrdqn_agent.train()
     self.assertEqual(env.ml_behavior.set_action_externally, True)
 
   def test_model_loader(self):

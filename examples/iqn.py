@@ -44,7 +44,7 @@ def run_configuration(argv):
     agent.load_models(os.path.join(params["ML"]["BaseAgent"]["CheckpointPath"],"best"))
 
   if FLAGS.mode == "train": 
-    agent.run()
+    agent.train()
 
   elif FLAGS.mode == "visualize":
     agent.visualize()

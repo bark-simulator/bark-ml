@@ -114,7 +114,7 @@ class BaseAgent(BehaviorModel):
           self._params["ML"]["BaseAgent"]["Gamma", "", 0.99],
           self._params["ML"]["BaseAgent"]["Multi_step", "", 1])
 
-  def run(self):
+  def train(self):
     while True:
       self.train_episode()
       if self._steps > self._num_steps:
