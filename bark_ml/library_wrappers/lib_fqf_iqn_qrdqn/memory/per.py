@@ -9,6 +9,7 @@ from .segment_tree import SumTree, MinTree
 
 
 class LazyPrioritizedMultiStepMemory(LazyMultiStepMemory):
+
   def __init__(self,
                capacity,
                state_shape,
@@ -23,55 +24,55 @@ class LazyPrioritizedMultiStepMemory(LazyMultiStepMemory):
                eps=0.01):
     super().__init__(capacity, state_shape, device, gamma, multi_step)
 
-    self.alpha = alpha
-    self.beta = beta
-    self.beta_diff = (1.0 - beta) / beta_steps
-    self.min_pa = min_pa
-    self.max_pa = max_pa
-    self.eps = eps
+    self._alpha = alpha
+    self._beta = beta
+    self._beta_diff = (1.0 - beta) / beta_steps
+    self._min_pa = min_pa
+    self._max_pa = max_pa
+    self._eps = eps
     self._cached = None
 
     it_capacity = 1
     while it_capacity < capacity:
       it_capacity *= 2
-    self.it_sum = SumTree(it_capacity)
-    self.it_min = MinTree(it_capacity)
+    self._it_sum = SumTree(it_capacity)
+    self._it_min = MinTree(it_capacity)
 
   def _pa(self, p):
-    return np.clip((p + self.eps)**self.alpha, self.min_pa, self.max_pa)
+    return np.clip((p + self._eps)**self._alpha, self._min_pa, self._max_pa)
 
   def append(self, state, action, reward, next_state, done, p=None):
     # Calculate priority.
     if p is None:
-      pa = self.max_pa
+      pa = self._max_pa
     else:
       pa = self._pa(p)
 
-    if self.multi_step != 1:
-      self.buff.append(state, action, reward)
+    if self._multi_step != 1:
+      self._buff.append(state, action, reward)
 
-      if self.buff.is_full():
-        state, action, reward = self.buff.get(self.gamma)
+      if self._buff.is_full():
+        state, action, reward = self._buff.get(self._gamma)
         self._append(state, action, reward, next_state, done, pa)
 
       if done:
-        while not self.buff.is_empty():
-          state, action, reward = self.buff.get(self.gamma)
+        while not self._buff.is_empty():
+          state, action, reward = self._buff.get(self._gamma)
           self._append(state, action, reward, next_state, done, pa)
     else:
       self._append(state, action, reward, next_state, done, pa)
 
   def _append(self, state, action, reward, next_state, done, pa):
     # Store priority, which is done efficiently by SegmentTree.
-    self.it_min[self._p] = pa
-    self.it_sum[self._p] = pa
+    self._it_min[self._p] = pa
+    self._it_sum[self._p] = pa
     super()._append(state, action, reward, next_state, done)
 
   def _sample_idxes(self, batch_size):
-    total_pa = self.it_sum.sum(0, self._n)
+    total_pa = self._it_sum.sum(0, self._n)
     rands = np.random.rand(batch_size) * total_pa
-    indices = [self.it_sum.find_prefixsum_idx(r) for r in rands]
-    self.beta = min(1., self.beta + self.beta_diff)
+    indices = [self._it_sum.find_prefixsum_idx(r) for r in rands]
+    self._beta = min(1., self._beta + self._beta_diff)
     return indices
 
   def sample(self, batch_size):
@@ -83,9 +84,9 @@ class LazyPrioritizedMultiStepMemory(LazyMultiStepMemory):
     return batch, weights
 
   def _calc_weights(self, indices):
-    min_pa = self.it_min.min()
-    weights = [(self.it_sum[i] / min_pa)**-self.beta for i in indices]
-    return torch.FloatTensor(weights).to(self.device).view(-1, 1)
+    min_pa = self._it_min.min()
+    weights = [(self._it_sum[i] / min_pa)**-self._beta for i in indices]
+    return torch.FloatTensor(weights).to(self._device).view(-1, 1)
 
   def update_priority(self, errors):
     assert self._cached is not None
@@ -96,7 +97,7 @@ class LazyPrioritizedMultiStepMemory(LazyMultiStepMemory):
     for index, pa in zip(self._cached, pas):
       assert 0 <= index < self._n
       assert 0 < pa
-      self.it_sum[index] = pa
-      self.it_min[index] = pa
+      self._it_sum[index] = pa
+      self._it_min[index] = pa
 
     self._cached = None

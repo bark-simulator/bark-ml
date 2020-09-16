@@ -5,6 +5,7 @@ import operator
 
 
 class SegmentTree:
+
   def __init__(self, size, op, init_val):
     assert size > 0 and size & (size - 1) == 0
     self._size = size
@@ -57,6 +58,7 @@ class SegmentTree:
 
 
 class SumTree(SegmentTree):
+
   def __init__(self, size):
     super().__init__(size, operator.add, 0.0)
 
@@ -79,6 +81,7 @@ class SumTree(SegmentTree):
 
 
 class MinTree(SegmentTree):
+
   def __init__(self, size):
     super().__init__(size, min, float("inf"))
 

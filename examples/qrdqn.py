@@ -31,7 +31,7 @@ flags.DEFINE_bool("load", False, "Load weights from checkpoint path.")
 
 def run_configuration(argv):
 
-  params = ParameterServer(filename="examples/example_params/qrdqn_params.json")
+  params = ParameterServer()
   params["ML"]["BaseAgent"]["SummaryPath"] = "/home/mansoor/Study/Werkstudent/fortiss/code/bark-ml/summaries"
   params["ML"]["BaseAgent"]["CheckpointPath"] = "/home/mansoor/Study/Werkstudent/fortiss/code/bark-ml/checkpoints"
   
