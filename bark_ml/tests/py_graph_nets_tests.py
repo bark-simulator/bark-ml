@@ -15,8 +15,10 @@ import time
 import tensorflow as tf
 from graph_nets import utils_tf
 from graph_nets.graphs import GraphsTuple
+from bark.runtime.commons.parameters import ParameterServer
 
-from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_wrapper import MLPGraphNetwork, MLPGraphIndependent
+from bark_ml.observers.graph_observer import GraphObserver
+
 
 class PyGraphNetsTests(unittest.TestCase):
   def test_gnn(self):
@@ -49,35 +51,48 @@ class PyGraphNetsTests(unittest.TestCase):
                   3,  # Index of the receiver node for edge 4
                   4]  # Index of the receiver node for edge 5
 
-    # data_dict_0 = {
-    #   "globals": [],
-    #   "nodes": nodes_0,
-    #   "edges": edges_0,
-    #   "senders": senders_0,
-    #   "receivers": receivers_0
-    # }
+    data_dict_0 = {
+      "globals": [],
+      "nodes": nodes_0,
+      "edges": edges_0,
+      "senders": senders_0,
+      "receivers": receivers_0
+    }
     
-    # input_graph = utils_tf.data_dicts_to_graphs_tuple(
-    #   [data_dict_0, data_dict_0])
+    input_graph = utils_tf.data_dicts_to_graphs_tuple(
+      [data_dict_0, data_dict_0])
+
+    num_nodes = len(nodes_0)
+    num_features = 3
+    num_edge_features = len(edges_0)
+    graph_dims = (num_nodes, num_features, num_edge_features)
     
-    # tf.print(type(input_graph.nodes), summarize=1000)
-    gnn = MLPGraphNetwork()
-    # result = gnn(input_graph)
-    # reshaped = tf.reshape(result.nodes, [-1, 5, 16])
-    # tf.print(tf.shape(reshaped), summarize=1000)
+    # 6 edges x 2
+    # 5 nodes x 3
+    # adj matrix 5x5
+    obs = np.zeros(shape=(1, 52))
+    # NOTE: use dense
+    params = ParameterServer()
+    graph_observer = GraphObserver(params)
+    graph_observer.feature_len = 2
+    graph_observer.edge_feature_len = 3
     
-    input_graph_1 = GraphsTuple(
-      nodes=tf.convert_to_tensor(nodes_0, dtype=tf.float32),
-      edges=tf.convert_to_tensor(edges_0, dtype=tf.float32),
-      globals=tf.cast(tf.tile([[0]], [1, 1]), tf.float32),
-      receivers=tf.convert_to_tensor(receivers_0, dtype=tf.int32),
-      senders=tf.convert_to_tensor(senders_0, dtype=tf.int32),
-      n_node=tf.tile([5], [1]),
-      n_edge=tf.tile([6], [1]))
+    nodes, _, _ = graph_observer.graph(obs, graph_dims=graph_dims)
     
-    tf.print(input_graph_1)
-    result = gnn(input_graph_1)
-    tf.print(result)
+    print(input_graph)    
+    # gnn = MLPGraphNetwork()
+    # input_graph_1 = GraphsTuple(
+    #   nodes=tf.convert_to_tensor(nodes_0, dtype=tf.float32),
+    #   edges=tf.convert_to_tensor(edges_0, dtype=tf.float32),
+    #   globals=tf.cast(tf.tile([[0]], [1, 1]), tf.float32),
+    #   receivers=tf.convert_to_tensor(receivers_0, dtype=tf.int32),
+    #   senders=tf.convert_to_tensor(senders_0, dtype=tf.int32),
+    #   n_node=tf.tile([5], [1]),
+    #   n_edge=tf.tile([6], [1]))
+    
+    # tf.print(input_graph_1)
+    # result = gnn(input_graph_1)
+    # tf.print(result)
     
 
 if __name__ == '__main__':

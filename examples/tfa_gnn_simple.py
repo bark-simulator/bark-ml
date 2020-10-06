@@ -56,16 +56,15 @@ def run_configuration(argv):
   params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
 
   
-  #viewer = MPViewer(
-  #  params=params,
-  #  x_range=[-35, 35],
-  #  y_range=[-35, 35],
-  #  follow_agent_id=True)
-  
-  #viewer = VideoRenderer(
-  #  renderer=viewer,
-  #  world_step_time=0.2,
-  #  fig_path="/your_path_here/training/video/")
+  viewer = MPViewer(
+   params=params,
+   x_range=[-35, 35],
+   y_range=[-35, 35],
+   follow_agent_id=True)
+  viewer = VideoRenderer(
+   renderer=viewer,
+   world_step_time=0.2,
+   fig_path="/Users/hart/Development/bark-ml/videos/gnn")
 
   # create environment
   bp = ContinuousHighwayBlueprint(params,
@@ -77,7 +76,8 @@ def run_configuration(argv):
   env = SingleAgentRuntime(
     blueprint=bp,
     observer=observer,
-    render=False)
+    render=False,
+    viewer=viewer)
   ppo_agent = BehaviorGraphSACAgent(environment=env,
                                     observer=observer,
                                     params=params)
@@ -90,10 +90,11 @@ def run_configuration(argv):
     runner.SetupSummaryWriter()
     runner.Train()
   elif FLAGS.mode == "visualize":
-    runner.Run(num_episodes=10, render=True)
+    runner.Run(num_episodes=50, render=True)
   elif FLAGS.mode == "evaluate":
     runner.Run(num_episodes=250, render=False, max_col_rate=cr)
 
+  # viewer.export_video("/Users/hart/Development/bark-ml/videos/gnn/highway.mp4")
   # store all used params of the training
   # params.Save("your_path_here/tfa_sac_gnn_params.json")
 

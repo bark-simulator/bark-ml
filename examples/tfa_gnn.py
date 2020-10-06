@@ -44,12 +44,12 @@ def run_configuration(argv):
   # param_filename = "examples/example_params/tfa_sac_gnn_tf2_gnn_default.json"
   
   # File with standard parameters for spektral use:
-  param_filename = "examples/example_params/tfa_sac_gnn_tf2_gnn_default.json"
+  param_filename = "examples/example_params/tfa_sac_gnn_spektral_default.json"
   params = ParameterServer(filename=param_filename)
 
   # NOTE: Modify these paths to specify your preferred path for checkpoints and summaries
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/checkpoints/"
-  params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/checkpoints/"
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/checkpoints_merge_spektral/"
+  params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/checkpoints_merge_spektral/"
   params["Visualization"]["Agents"]["Alpha"]["Other"] = 0.2
   params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
   params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
@@ -67,7 +67,7 @@ def run_configuration(argv):
   #  fig_path="/your_path_here/training/video/")
 
   # create environment
-  bp = ContinuousHighwayBlueprint(params,
+  bp = ContinuousMergingBlueprint(params,
                                   number_of_senarios=2500,
                                   random_seed=0)
 

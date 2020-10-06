@@ -42,8 +42,8 @@ def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/tfa_params.json")
   # params = ParameterServer()
   # NOTE: Modify these paths in order to save the checkpoints and summaries
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/nn_checkpoints/"
-  params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/nn_checkpoints/"
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/checkpoints_merging_nn/"
+  params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/checkpoints_merging_nn/"
   params["Visualization"]["Agents"]["Alpha"]["Other"] = 0.2
   params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
   params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
@@ -51,13 +51,24 @@ def run_configuration(argv):
   params["ML"]["VisualizeCfHeatmap"] = True
   params["World"]["remove_agents_out_of_map"] = False
   params["ML"]["ResultsFolder"] = "/Users/hart/Development/bark-ml/results/data/"
-  
+
+  viewer = MPViewer(
+   params=params,
+   x_range=[-35, 35],
+   y_range=[-35, 35],
+   follow_agent_id=True)
+  viewer = VideoRenderer(
+   renderer=viewer,
+   world_step_time=0.2,
+   fig_path="/Users/hart/Development/bark-ml/videos/normal")
+
   # create environment
-  bp = ContinuousHighwayBlueprint(params,
+  bp = ContinuousMergingBlueprint(params,
                                   number_of_senarios=10000,
                                   random_seed=0)
   env = SingleAgentRuntime(blueprint=bp,
-                           render=False)
+                           render=False,
+                           viewer=viewer)
 
   # behavior_model_pool = []
   # for count, a in enumerate([-2., 0., 2.]):
@@ -90,7 +101,7 @@ def run_configuration(argv):
     runner.SetupSummaryWriter()
     runner.Train()
   elif FLAGS.mode == "visualize":
-    runner.Run(num_episodes=10, render=True)
+    runner.Run(num_episodes=50, render=True)
   elif FLAGS.mode == "evaluate":
     runner.Run(num_episodes=100, render=False)
   
