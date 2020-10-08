@@ -89,7 +89,17 @@
     "memory_resource": "cpp",
     "dense": "cpp",
     "__functional_03": "cpp",
-    "*.ipp": "cpp"
+    "*.ipp": "cpp",
+    "csetjmp": "cpp",
+    "any": "cpp",
+    "hash_map": "cpp",
+    "hash_set": "cpp",
+    "filesystem": "cpp",
+    "regex": "cpp",
+    "rope": "cpp",
+    "slist": "cpp",
+    "scoped_allocator": "cpp",
+    "shared_mutex": "cpp"
   },
-  "python.pythonPath": "${workspaceFolder}/python/venv/bin/python",
+  "python.pythonPath": "${workspaceFolder}/bark_ml/python_wrapper/venv/bin/python",
 }
