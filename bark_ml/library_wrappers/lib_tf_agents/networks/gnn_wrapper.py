@@ -11,6 +11,7 @@ import tensorflow as tf
 from enum import Enum
 from tf2_gnn.layers import GNN, GNNInput
 from spektral.layers import EdgeConditionedConv
+import spektral
 
 from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.observers.graph_observer import GraphObserver
@@ -103,13 +104,21 @@ class GNNWrapper(tf.keras.Model):
 
   def _init_spektral_layers(self, params):
     self._convolutions = []
-    
-    for _ in range(self._num_message_passing_layers):
-      self._convolutions.append(EdgeConditionedConv(
-        channels=self.num_units,
-        kernel_network=params.get("EdgeFcLayerParams", [256]),
-        activation=params.get("MPLayerActivation", "relu"))
-      )
+
+    # for _ in range(self._num_message_passing_layers):         
+    conv_layer = spektral.layers.GraphAttention(
+      self.num_units, attn_heads=8, concat_heads=True,
+      dropout_rate=0., activation='elu', use_bias=True)
+    self._convolutions.append(conv_layer)
+    conv_layer = spektral.layers.GraphAttention(
+      self.num_units, attn_heads=1, concat_heads=True,
+      dropout_rate=0., activation='elu', use_bias=True)
+    self._convolutions.append(conv_layer)
+    # self._convolutions.append(EdgeConditionedConv(
+    #   channels=self.num_units,
+    #   kernel_network=params.get("EdgeFcLayerParams", [256]),
+    #   activation=params.get("MPLayerActivation", "relu"))
+    # )
 
   def _init_tf2_gnn_layers(self, params):
     # map bark-ml parameter keys to tf2_gnn parameter keys
@@ -143,7 +152,8 @@ class GNNWrapper(tf.keras.Model):
       graph_dims=self._graph_dims)
 
     for conv in self._convolutions: 
-      embeddings = conv([embeddings, adj_matrix, edge_features])
+      # embeddings = conv([embeddings, adj_matrix, edge_features])
+      embeddings = conv([embeddings, adj_matrix])
 
     return embeddings
 
