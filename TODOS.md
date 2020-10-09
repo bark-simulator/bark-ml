@@ -1,7 +1,7 @@
 # TODOS
 - [d0n3] configurable GNNs (to be passed to the agent)
-- [IP] make sure BARK-ML agent runs with the benchmark runner
-- [NEXT] do not like the tracking system with pandas
+- [d0n3] make sure BARK-ML agent runs with the benchmark runner (runs without deepcopy)
+- [NEXT] do not like the tracking system with pandas + fix this + units
 
 # FUTURE TODOS
 - better checkpoint management system (+ git lfs to push and pull these)
