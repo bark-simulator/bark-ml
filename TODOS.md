@@ -1,5 +1,5 @@
 # TODOS
-- configurable GNNs (to be passed to the agent)
+- configurable GNNs (to be passed to the agent) [in progress]
 - make sure BARK-ML agents runs with benchmark runner
 - better checkpoint management system (+ git lfs to push and pull these)
 - do not like the tracking system with pandas

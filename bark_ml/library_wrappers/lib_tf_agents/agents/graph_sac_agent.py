@@ -53,8 +53,6 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
     self._eval_policy = self.GetEvalPolicy()
 
   def GetAgent(self, env, params):
-    
-
     def init_gnn(name):
       """
       Returns a new `GNNWrapper`instance with the given `name`.

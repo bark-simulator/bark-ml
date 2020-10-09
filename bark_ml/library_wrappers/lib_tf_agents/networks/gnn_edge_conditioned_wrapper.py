@@ -39,11 +39,11 @@ class GCNWrapper(GNNWrapper):
     name: Name of the instance.
     output_dtype: The dtype to which the GNN output is casted.
     """
-    self._num_message_passing_layers = params["GCN"][
+    self._num_message_passing_layers = params["EdgeCond"][
       "NumMessagePassingLayers", "Number of message passing layers", 3]
-    self._embedding_size = params["GCN"][
+    self._embedding_size = params["EdgeCond"][
       "EmbeddingSize", "Embedding size of nodes", 128]
-    self._activation_func = params["GCN"][
+    self._activation_func = params["EdgeCond"][
       "Activation", "Activation function", "relu"]
     self._layers = []
     super(GCNWrapper, self).__init__(
