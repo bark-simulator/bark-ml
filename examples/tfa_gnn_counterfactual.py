@@ -55,7 +55,7 @@ def run_configuration(argv):
   params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
   params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
   params["ML"]["VisualizeCfWorlds"] = False
-  params["ML"]["VisualizeCfHeatmap"] = True
+  params["ML"]["VisualizeCfHeatmap"] = False
   params["ML"]["ResultsFolder"] = "/Users/hart/Development/bark-ml/results/data/"
   
   # viewer = MPViewer(
@@ -78,6 +78,7 @@ def run_configuration(argv):
     local_params["BehaviorConstantAcceleration"]["ConstAcceleration"] = a
     behavior = BehaviorConstantAcceleration(local_params)
     behavior_model_pool.append(behavior)
+  
   env = CounterfactualRuntime(
     blueprint=bp,
     observer=observer,
