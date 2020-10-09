@@ -24,6 +24,9 @@ from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_gcn_wrapper import GCNW
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_edge_conditioned_wrapper import GEdgeCondWrapper
 
 
+
+
+
 class BehaviorGraphSACAgent(BehaviorTFAAgent):
   """
   SAC-Agent with graph neural networks.
@@ -67,7 +70,7 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
         params=self._gnn_sac_params["GNN"], 
         graph_dims=self._observer.graph_dimensions,
         name=name)
-
+    
     # actor network
     actor_net = GNNActorNetwork(
       input_tensor_spec=env.observation_spec(),
