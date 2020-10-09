@@ -16,6 +16,7 @@ class Tracer:
     """
     TRACE = "TRACE"
     MEAN  = "MEAN"
+    MEAN_ABS  = "MEAN_ABS"
     SUM  = "SUM"
     LAST_VALUE  = "LAST_VALUE"
     ANY_TRUE  = "ANY_TRUE"
@@ -52,33 +53,38 @@ class Tracer:
     key="collision",
     group_by="num_episode",
     agg_type="TRACE"):
-    if self.df is None:
-      self.ConvertToDf()
     df = self.df.groupby(group_by)[key]
     # NOTE: different aggregation types
     if agg_type == Tracer.QueryTypes.MEAN:
       return df.mean()
+    if agg_type == Tracer.QueryTypes.MEAN_ABS:
+      return df.apply(abs).mean()
     if agg_type == Tracer.QueryTypes.SUM:
       return df.sum()
     if agg_type == Tracer.QueryTypes.LAST_VALUE:
       return df.tail(1)
     elif agg_type == Tracer.QueryTypes.ANY_TRUE:
-      return df.any().mean()
+      return df.any()
     return df
 
   @property
   def df(self):
+    # NOTE: make more efficient
+    self.ConvertToDf()
     return self._df
   
   def ConvertToDf(self):
     """Conversts states to pandas dataframe"""
-    self._df = pd.DataFrame(self._states)
+    self._df = pd.DataFrame.from_records(self._states)
   
   def Save(self, filepath="./"):
     """Saves trace as pandas dataframe"""
-    if self._df is None:
-      self.ConvertoToDf()
+    self.ConvertToDf()
     self._df.to_pickle(filepath)
+
+  def Load(self, filepath="./"):
+    self._df = pd.read_pickle(filepath)
+    self._states = self._df.apply(list)
 
   def Reset(self):
     self._states = []

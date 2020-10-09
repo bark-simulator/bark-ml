@@ -27,6 +27,18 @@ py_library(
 )
 
 py_library(
+    name = "counterfactual_runtime",
+    srcs = ["counterfactual_runtime.py"],
+    imports = ["../external/bark_project/bark/python_wrapper/"],
+    data = ["@bark_project//bark/python_wrapper:core.so"],
+    deps = ["//bark_ml/environments:blueprints",
+            "@bark_project//bark/runtime:runtime",
+            ":single_agent_runtime",
+            "//bark_ml/commons:tracer"],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
     name = "gym",
     srcs = ["gym.py"],
     imports = ["../external/bark_project/bark/python_wrapper/"],

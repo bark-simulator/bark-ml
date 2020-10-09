@@ -54,7 +54,7 @@ class GraphObserver(StateObserver):
     self._visibility_radius =\
       params["ML"]["GraphObserver"]["VisibilityRadius",
       "The radius in which agent can 'see', i.e. detect other agents.", 
-      50]
+      150]
 
     self._add_self_loops =\
       params["ML"]["GraphObserver"]["SelfLoops", 
@@ -129,7 +129,6 @@ class GraphObserver(StateObserver):
 
       for target_index, nearby_agent in nearby_agents:
         edge_features[index, target_index, :] = self._extract_edge_features(agent, nearby_agent)
-
         adjacency_matrix[index, target_index] = 1
         adjacency_matrix[target_index, index] = 1
     
@@ -193,6 +192,7 @@ class GraphObserver(StateObserver):
     adj_end_idx = adj_start_idx + n_nodes ** 2
     A = tf.reshape(obs[:, adj_start_idx:adj_end_idx], [batch_size, n_nodes, n_nodes])
 
+  
     if dense:
       # in dense mode, the nodes of all graphs are 
       # concatenated into one list that contains all 
@@ -233,14 +233,17 @@ class GraphObserver(StateObserver):
       node_to_graph_map = tf.reshape(tf.range(batch_size), [-1, 1])
       node_to_graph_map = tf.tile(node_to_graph_map, [1, n_nodes])
       node_to_graph_map = tf.reshape(node_to_graph_map, [-1])
-
-      return F, A, node_to_graph_map
+      
+      # extract edge features
+      n_edge_features = graph_dims[2]
+      E_shape = [-1, n_edge_features]
+      E = tf.reshape(obs[:, adj_end_idx:], E_shape)
+      return F, A, node_to_graph_map, E
 
     # extract edge features
     n_edge_features = graph_dims[2]
     E_shape = [batch_size, n_nodes, n_nodes, n_edge_features]
     E = tf.reshape(obs[:, adj_end_idx:], E_shape)
-
     return F, A, E
 
   def _preprocess_agents(self, world):
@@ -534,7 +537,7 @@ class GraphObserver(StateObserver):
   @property
   def _len_state(self):
     len_node_features = self._agent_limit * self.feature_len
-    len_adjacency = self._agent_limit ** 2
+    len_adjacency = self._agent_limit**2
     len_edge_features = len_adjacency * self.edge_feature_len
     return len_node_features + len_adjacency + len_edge_features
 

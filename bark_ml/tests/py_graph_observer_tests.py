@@ -60,7 +60,7 @@ class PyGraphObserverTests(unittest.TestCase):
 
     self.assertEqual(observer._agent_limit, expected_agent_limit)
     self.assertEqual(observer._visibility_radius, expected_visibility_radius)
-    self.assertTrue(observer._add_self_loops)
+    # self.assertTrue(observer._add_self_loops)
     self.assertTrue(observer._normalize_observations)
 
   def test_request_subset_of_available_node_features(self):
@@ -203,6 +203,10 @@ class PyGraphObserverTests(unittest.TestCase):
       max_distance_to_ego = distance_to_ego
 
   def test_observation_to_graph_conversion(self):
+    params = ParameterServer()
+    params["ML"]["GraphObserver"]["SelfLoops"] = False
+    graph_observer = GraphObserver(params=params)
+    
     num_nodes = 5
     num_features = 5
     num_edge_features = 4
@@ -232,7 +236,7 @@ class PyGraphObserverTests(unittest.TestCase):
     expected_edge_features = tf.constant([edge_features, edge_features])
 
     graph_dims = (num_nodes, num_features, num_edge_features)
-    nodes, edges, edge_features = GraphObserver.graph(observations, graph_dims)
+    nodes, edges, edge_features = graph_observer.graph(observations, graph_dims)
 
     self.assertTrue(tf.reduce_all(tf.equal(nodes, expected_nodes)))
     self.assertTrue(tf.reduce_all(tf.equal(edge_features, expected_edge_features)))
@@ -268,9 +272,9 @@ class PyGraphObserverTests(unittest.TestCase):
       2, 2, 2, 2, 2
     ])
 
-    nodes, edges, node_to_graph_map =\
+    nodes, edges, node_to_graph_map, E =\
       GraphObserver.graph(observations, graph_dims, dense=True)
-        
+    
     self.assertTrue(tf.reduce_all(tf.equal(nodes, expected_nodes)))
     self.assertTrue(tf.reduce_all(tf.equal(edges, expected_dense_edges)))
     self.assertTrue(tf.reduce_all(

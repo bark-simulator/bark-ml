@@ -86,7 +86,7 @@ class BehaviorSACAgent(BehaviorTFAAgent):
           learning_rate=self._sac_params["AlphaLearningRate", "", 3e-4]),
       target_update_tau=self._sac_params["TargetUpdateTau", "", 0.05],
       target_update_period=self._sac_params["TargetUpdatePeriod", "", 3],
-      td_errors_loss_fn=tf.compat.v1.losses.mean_squared_error,
+      td_errors_loss_fn=tf.math.squared_difference,
       gamma=self._sac_params["Gamma", "", 0.995],
       reward_scale_factor=self._sac_params["RewardScaleFactor", "", 1.],
       train_step_counter=self._ckpt.step,

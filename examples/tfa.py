@@ -19,11 +19,13 @@ os.environ['GLOG_minloglevel'] = '3'
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.viewer.video_renderer import VideoRenderer
+from bark.core.models.behavior import BehaviorConstantAcceleration
 
 # BARK-ML imports
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
   ContinuousMergingBlueprint, ContinuousIntersectionBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
+from bark_ml.environments.counterfactual_runtime import CounterfactualRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, BehaviorPPOAgent
 from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner
 
@@ -37,20 +39,49 @@ flags.DEFINE_enum("mode",
 
 
 def run_configuration(argv):
-  # params = ParameterServer(filename="examples/example_params/tfa_params.json")
-  params = ParameterServer()
+  params = ParameterServer(filename="examples/example_params/tfa_params.json")
+  # params = ParameterServer()
   # NOTE: Modify these paths in order to save the checkpoints and summaries
-  # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "YOUR_PATH"
-  # params["ML"]["TFARunner"]["SummaryPath"] = "YOUR_PATH"
-  params["World"]["remove_agents_out_of_map"] = True
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/checkpoints_merging_nn/"
+  params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/checkpoints_merging_nn/"
+  params["Visualization"]["Agents"]["Alpha"]["Other"] = 0.2
+  params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
+  params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
+  params["ML"]["VisualizeCfWorlds"] = False
+  params["ML"]["VisualizeCfHeatmap"] = True
+  params["World"]["remove_agents_out_of_map"] = False
+  params["ML"]["ResultsFolder"] = "/Users/hart/Development/bark-ml/results/data/"
+
+  viewer = MPViewer(
+   params=params,
+   x_range=[-35, 35],
+   y_range=[-35, 35],
+   follow_agent_id=True)
+  viewer = VideoRenderer(
+   renderer=viewer,
+   world_step_time=0.2,
+   fig_path="/Users/hart/Development/bark-ml/videos/normal")
 
   # create environment
   bp = ContinuousMergingBlueprint(params,
-                                  number_of_senarios=2500,
+                                  number_of_senarios=10000,
                                   random_seed=0)
   env = SingleAgentRuntime(blueprint=bp,
-                           render=False)
+                           render=False,
+                           viewer=viewer)
 
+  # behavior_model_pool = []
+  # for count, a in enumerate([-2., 0., 2.]):
+  #   local_params = params.AddChild("local_"+str(count))
+  #   local_params["BehaviorConstantAcceleration"]["ConstAcceleration"] = a
+  #   behavior = BehaviorConstantAcceleration(local_params)
+  #   behavior_model_pool.append(behavior)
+  # env = CounterfactualRuntime(
+  #   blueprint=bp,
+  #   render=False,
+  #   params=params,
+  #   behavior_model_pool=behavior_model_pool)
+  
   # PPO-agent
   # ppo_agent = BehaviorPPOAgent(environment=env,
   #                              params=params)
@@ -70,7 +101,7 @@ def run_configuration(argv):
     runner.SetupSummaryWriter()
     runner.Train()
   elif FLAGS.mode == "visualize":
-    runner.Run(num_episodes=10, render=True)
+    runner.Run(num_episodes=50, render=True)
   elif FLAGS.mode == "evaluate":
     runner.Run(num_episodes=100, render=False)
   

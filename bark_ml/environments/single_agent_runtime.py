@@ -55,6 +55,10 @@ class SingleAgentRuntime(Runtime):
     return self._observer.Observe(observed_world)
 
   def step(self, action):
+    # render
+    if self._render:
+      self.render()
+      
     # set actions
     eval_id = self._scenario._eval_agent_ids[0]
     if eval_id in self._world.agents:
@@ -75,9 +79,7 @@ class SingleAgentRuntime(Runtime):
       observed_world=observed_world,
       action=action)
     
-    # render
-    if self._render:
-      self.render()
+
     return observed_next_state, reward, done, info
 
   @property

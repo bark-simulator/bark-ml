@@ -40,7 +40,7 @@ class MergingLaneCorridorConfig(LaneCorridorConfig):
     return GoalDefinitionStateLimitsFrenet(lane_corr.center_line,
                                            (0.4, 0.4),
                                            (0.1, 0.1),
-                                           (10., 15.))
+                                           (5., 15.))
 
 
 class MergingBlueprint(Blueprint):
@@ -52,27 +52,31 @@ class MergingBlueprint(Blueprint):
                viewer=True):
     params["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
     params["BehaviorIDMClassic"]["BrakeForLaneEndEnabledDistance"] = 100.
-    params["BehaviorIDMClassic"]["BrakeForLaneEndDistanceOffset"] = 25.
+    params["BehaviorIDMClassic"]["BrakeForLaneEndDistanceOffset"] = 30.
     params["BehaviorIDMClassic"]["DesiredVelocity"] = 12.5
     params["World"]["remove_agents_out_of_map"] = False
     left_lane = MergingLaneCorridorConfig(
       params=params,
       road_ids=[0, 1],
-      min_vel=10.,
-      max_vel=15.,
+      ds_min=5.,
+      ds_max=15.,
+      min_vel=9.,
+      max_vel=11.,
       s_min=5.,
-      s_max=25.,
+      s_max=45.,
       lane_corridor_id=0,
       controlled_ids=None)
     right_lane = MergingLaneCorridorConfig(
       params=params,
       road_ids=[0, 1],
       lane_corridor_id=1,
+      ds_min=5.,
+      ds_max=15.,
       s_min=5.,
       s_max=25.,
-      min_vel=8.,
-      max_vel=12.,
-      behavior_model=BehaviorIDMClassic(params),
+      min_vel=9.,
+      max_vel=11.,
+      behavior_model=BehaviorMobilRuleBased(params),
       controlled_ids=True)
     scenario_generation = \
       ConfigWithEase(
@@ -89,8 +93,7 @@ class MergingBlueprint(Blueprint):
     dt = 0.2
     # evaluator = GoalReachedGuiding(params)
     evaluator = GoalReached(params)
-    # observer = NearestObserver(params)
-    observer = NearestAgentsObserver(params)
+    observer = NearestObserver(params)
     ml_behavior = ml_behavior
 
     super().__init__(

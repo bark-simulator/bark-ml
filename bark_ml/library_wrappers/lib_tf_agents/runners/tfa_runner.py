@@ -51,7 +51,7 @@ class TFARunner:
     self.GetCollectionDriver()
     self._logger = logging.getLogger()
     self._tracer = tracer or Tracer()
-
+    
   def SetupSummaryWriter(self):
     if self._params["ML"]["TFARunner"]["SummaryPath"] is not None:
       try:
@@ -108,6 +108,7 @@ class TFARunner:
   def RunEpisode(self, render=True, **kwargs):
     state = self._environment.reset()
     is_terminal = False
+    # print(self._agent._eval_policy.trainable_variables)
     while not is_terminal:
       action_step = self._agent._eval_policy.action(
         ts.transition(state, reward=0.0, discount=1.0))
@@ -116,13 +117,17 @@ class TFARunner:
       self._tracer.Trace(env_data, **kwargs)
       state, is_terminal = env_data[0], env_data[2]
       if render:
+        self._logger.info(f"Ego agent's action is {action}.")
         self._environment.render()
 
   def Run(self, num_episodes=10, render=False, mode="not_training", **kwargs):
     for i in range(0, num_episodes):
+      if render:
+        self._logger.info(f"Simulating episode {i}.")
       trajectory = self.RunEpisode(
-        render=render, **kwargs, num_episode=i)
+        render=render, num_episode=i, **kwargs)
     # average collision, reward, and step count
+    # NOTE: we need to use any here
     mean_col_rate = self._tracer.Query(
       key="collision", group_by="num_episode", agg_type="ANY_TRUE").mean()
     mean_col_rate += self._tracer.Query(
@@ -139,10 +144,10 @@ class TFARunner:
       tf.summary.scalar("mean_steps", mean_steps, step=global_iteration)
       tf.summary.scalar(
         "mean_collision_rate", mean_col_rate, step=global_iteration)
+      tf.summary.scalar(
+        "goal_reached", goal_reached, step=global_iteration)
     self._logger.info(
       f"The agent achieved an average reward of {mean_reward:.3f}," +
       f" collision-rate of {mean_col_rate:.5f}, took on average" +
       f" {mean_steps:.3f} steps, and reached the goal " + 
       f" {goal_reached:.3f} (evaluated over {num_episodes} episodes).")
-    # reset tracer
-    self._tracer.Reset()

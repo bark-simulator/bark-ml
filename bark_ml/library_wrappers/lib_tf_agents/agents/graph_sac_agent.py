@@ -136,10 +136,10 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
       target_update_period=self._gnn_sac_params["TargetUpdatePeriod", "", 3],
       td_errors_loss_fn=tf.math.squared_difference,
       gamma=self._gnn_sac_params["Gamma", "", 0.995],
-      reward_scale_factor=self._gnn_sac_params["RewardScaleFactor", "", 1.],
+      reward_scale_factor=self._gnn_sac_params["RewardScaleFactor", "", 0.],
       train_step_counter=self._ckpt.step,
       name=self._gnn_sac_params["AgentName", "", "gnn_sac_agent"],
-      debug_summaries=self._gnn_sac_params["DebugSummaries", "", False])
+      debug_summaries=self._gnn_sac_params["DebugSummaries", "", True])
     
     tf_agent.initialize()
     return tf_agent

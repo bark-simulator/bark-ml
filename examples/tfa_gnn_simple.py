@@ -25,9 +25,9 @@ from bark.core.models.behavior import BehaviorConstantAcceleration
 # BARK-ML imports
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, ContinuousMergingBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorGraphSACAgent
-from bark_ml.library_wrappers.lib_tf_agents.agents.graph_sac_agent import init_gat, init_gcn, init_gnn_edge_cond
+from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorGraphSACAgent, BehaviorGraphPPOAgent
 from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner
+from bark_ml.library_wrappers.lib_tf_agents.runners import PPORunner
 from bark_ml.observers.graph_observer import GraphObserver
 
 # for training: bazel run //examples:tfa -- --mode=train
@@ -49,24 +49,26 @@ def run_configuration(argv):
   params = ParameterServer(filename=param_filename)
 
   # NOTE: Modify these paths to specify your preferred path for checkpoints and summaries
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/checkpoints_merge_spektral_att2/"
-  params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/checkpoints_merge_spektral_att2/"
+  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/simple_checkpoints_spektral/"
+  params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/simple_checkpoints_spektral/"
+  params["Visualization"]["Agents"]["Alpha"]["Other"] = 0.2
+  params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
+  params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
 
   
-  #viewer = MPViewer(
-  #  params=params,
-  #  x_range=[-35, 35],
-  #  y_range=[-35, 35],
-  #  follow_agent_id=True)
-  
-  #viewer = VideoRenderer(
-  #  renderer=viewer,
-  #  world_step_time=0.2,
-  #  fig_path="/your_path_here/training/video/")
+  viewer = MPViewer(
+   params=params,
+   x_range=[-35, 35],
+   y_range=[-35, 35],
+   follow_agent_id=True)
+  viewer = VideoRenderer(
+   renderer=viewer,
+   world_step_time=0.2,
+   fig_path="/Users/hart/Development/bark-ml/videos/gnn")
 
   # create environment
-  bp = ContinuousMergingBlueprint(params,
-                                  number_of_senarios=2500,
+  bp = ContinuousHighwayBlueprint(params,
+                                  number_of_senarios=10000,
                                   random_seed=0)
 
   observer = GraphObserver(params=params)
@@ -74,24 +76,25 @@ def run_configuration(argv):
   env = SingleAgentRuntime(
     blueprint=bp,
     observer=observer,
-    render=False)
-  sac_agent = BehaviorGraphSACAgent(environment=env,
+    render=False,
+    viewer=viewer)
+  ppo_agent = BehaviorGraphSACAgent(environment=env,
                                     observer=observer,
-                                    params=params,
-                                    init_gnn=init_gat)
-  env.ml_behavior = sac_agent
+                                    params=params)
+  env.ml_behavior = ppo_agent
   runner = SACRunner(params=params,
                      environment=env,
-                     agent=sac_agent)
+                     agent=ppo_agent)
 
   if FLAGS.mode == "train":
     runner.SetupSummaryWriter()
     runner.Train()
   elif FLAGS.mode == "visualize":
-    runner.Run(num_episodes=10, render=True)
+    runner.Run(num_episodes=50, render=True)
   elif FLAGS.mode == "evaluate":
     runner.Run(num_episodes=250, render=False, max_col_rate=cr)
 
+  # viewer.export_video("/Users/hart/Development/bark-ml/videos/gnn/highway.mp4")
   # store all used params of the training
   # params.Save("your_path_here/tfa_sac_gnn_params.json")
 
