@@ -1,6 +1,6 @@
 # Copyright (c) 2020 fortiss GmbH
 #
-# Authors: Marco Oliva
+# Authors: Patrick Hart, Marco Oliva
 #
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
@@ -19,7 +19,9 @@ from tf_agents.trajectories import time_step as ts
 from bark_ml.library_wrappers.lib_tf_agents.networks import GNNActorNetwork, GNNCriticNetwork
 from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAAgent
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
-from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_wrapper import GNNWrapper
+from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_gat_wrapper import GATWrapper
+from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_gcn_wrapper import GCNWrapper
+from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_edge_conditioned_wrapper import GEdgeCondWrapper
 
 
 class BehaviorGraphSACAgent(BehaviorTFAAgent):
@@ -61,7 +63,7 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
       by passing in this function and initializing the instance in 
       the parent network.
       """
-      return GNNWrapper(
+      return GEdgeCondWrapper(
         params=self._gnn_sac_params["GNN"], 
         graph_dims=self._observer.graph_dimensions,
         name=name)

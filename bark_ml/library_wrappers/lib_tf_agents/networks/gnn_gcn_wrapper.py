@@ -27,7 +27,7 @@ class GCNWrapper(GNNWrapper):
                name='GNN',
                output_dtype=tf.float32):
     """
-    Initializes a GNNWrapper instance.
+    Initializes a GCNWrapper instance.
 
     Args:
     params: A `ParameterServer` instance containing the parameters
@@ -39,22 +39,25 @@ class GCNWrapper(GNNWrapper):
     name: Name of the instance.
     output_dtype: The dtype to which the GNN output is casted.
     """
-    self._num_message_passing_layers = params["GCN"][
-      "NumMessagePassingLayers", "Number of message passing layers", 3]
-    self._embedding_size = params["GCN"][
-      "EmbeddingSize", "Embedding size of nodes", 128]
-    self._activation_func = params["GCN"][
-      "Activation", "Activation function", "relu"]
-    self._layers = []
     super(GCNWrapper, self).__init__(
       params=params,
       graph_dims=graph_dims,
       name=name,
       output_dtype=output_dtype)
+    self._num_message_passing_layers = params[
+      "NumMessagePassingLayers", "Number of message passing layers", 3]
+    self._embedding_size = params[
+      "EmbeddingSize", "Embedding size of nodes", 128]
+    self._activation_func = params[
+      "Activation", "Activation function", "relu"]
+    self._layers = []
+    # initialize network & call func
+    self._init_network()
+    self._call_func = self._init_call_func
     
   def _init_network(self):
     for _ in range(self._num_message_passing_layers):
-      layer = spektral.layers.GraphConv(
+      layer = GraphConv(
         self._embedding_size, activation=self._activation_func)
       self._layers.append(layer)
 

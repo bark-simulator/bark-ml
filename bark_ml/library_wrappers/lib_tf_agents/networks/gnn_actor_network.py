@@ -82,8 +82,9 @@ class GNNActorNetwork(network.Network):
 
     self._gnn = gnn(name=name + "_GNN")
     
+    # TODO: this will not work
     self._encoder = encoding_network.EncodingNetwork(
-      input_tensor_spec=tf.TensorSpec([None, self._gnn.num_units]),
+      input_tensor_spec=tf.TensorSpec([None, self._gnn._embedding_size]),
       preprocessing_layers=None,
       preprocessing_combiner=None,
       conv_layer_params=conv_layer_params,

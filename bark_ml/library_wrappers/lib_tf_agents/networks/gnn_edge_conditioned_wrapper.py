@@ -16,9 +16,9 @@ from bark_ml.observers.graph_observer import GraphObserver
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_wrapper import GNNWrapper
 
 
-class GCNWrapper(GNNWrapper):
+class GEdgeCondWrapper(GNNWrapper):
   """
-  Implements a GCN.
+  Implements a Edge Conditioned Graph Neural Network (ECGNN)
   """
 
   def __init__(self,
@@ -39,6 +39,11 @@ class GCNWrapper(GNNWrapper):
     name: Name of the instance.
     output_dtype: The dtype to which the GNN output is casted.
     """
+    super(GEdgeCondWrapper, self).__init__(
+      params=params,
+      graph_dims=graph_dims,
+      name=name,
+      output_dtype=output_dtype)
     self._num_message_passing_layers = params["EdgeCond"][
       "NumMessagePassingLayers", "Number of message passing layers", 3]
     self._embedding_size = params["EdgeCond"][
@@ -46,12 +51,10 @@ class GCNWrapper(GNNWrapper):
     self._activation_func = params["EdgeCond"][
       "Activation", "Activation function", "relu"]
     self._layers = []
-    super(GCNWrapper, self).__init__(
-      params=params,
-      graph_dims=graph_dims,
-      name=name,
-      output_dtype=output_dtype)
-    
+    # initialize network & call func
+    self._init_network()
+    self._call_func = self._init_call_func
+
   def _init_network(self):
     for _ in range(self._num_message_passing_layers):
       layer = EdgeConditionedConv(
@@ -65,6 +68,6 @@ class GCNWrapper(GNNWrapper):
       observations=observations, 
       graph_dims=self._graph_dims)
     for layer in self._layers: 
-      embeddings = layer([embeddings, adj_matrix])
+      embeddings = layer([embeddings, adj_matrix, edge_features])
     return embeddings
 
