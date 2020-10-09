@@ -81,24 +81,24 @@ class DatabaseRunnerTests(unittest.TestCase):
       observer=observer,
       environment=env,
       params=params)
-    print(pickle_trick(sac_behavior))
     
-    # behaviors_tested = {"IDM": BehaviorIDMClassic(params),
-    #                     "Const" : BehaviorConstantAcceleration(params),
-    #                     "GraphSAC": sac_behavior}
+    behaviors_tested = {"IDM": BehaviorIDMClassic(params),
+                        "Const" : BehaviorConstantAcceleration(params),
+                        "GraphSAC": sac_behavior}
                                     
 
-    # benchmark_runner = BenchmarkRunner(benchmark_database=db,
-    #                                    evaluators=evaluators,
-    #                                    terminal_when=terminal_when,
-    #                                    behaviors=behaviors_tested,
-    #                                    log_eval_avg_every=5)
+    benchmark_runner = BenchmarkRunner(benchmark_database=db,
+                                       evaluators=evaluators,
+                                       terminal_when=terminal_when,
+                                       behaviors=behaviors_tested,
+                                       log_eval_avg_every=5)
 
-    # result = benchmark_runner.run()
-    # df = result.get_data_frame()
-    # print(df)
+    result = benchmark_runner.run()
+    df = result.get_data_frame()
+    print(df)
     # self.assertEqual(len(df.index), 2*2*2) # 2 Behaviors * 2 Serialize Scenarios * 1 scenario sets
-    # groups = result.get_evaluation_groups()
+    groups = result.get_evaluation_groups()
+    print(groups)
     # self.assertEqual(set(groups), set(["behavior", "scen_set"]))
 
 

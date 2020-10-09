@@ -32,7 +32,8 @@ class BehaviorSACAgent(BehaviorTFAAgent):
   """
   def __init__(self,
                environment=None,
-               params=None):
+               params=None,
+               observer=None):
     self._sac_params = params
     BehaviorTFAAgent.__init__(
       self,

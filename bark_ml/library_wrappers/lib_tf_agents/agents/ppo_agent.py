@@ -26,7 +26,8 @@ from bark_ml.commons.py_spaces import BoundedContinuous
 class BehaviorPPOAgent(BehaviorTFAAgent):
   def __init__(self,
                environment=None,
-               params=None):
+               params=None,
+               observer=None):
     self._ppo_params = params["ML"]["BehaviorPPOAgent"]
     BehaviorTFAAgent.__init__(
       self,

@@ -174,3 +174,4 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
   @property
   def eval_policy(self):
     return self._eval_policy
+  

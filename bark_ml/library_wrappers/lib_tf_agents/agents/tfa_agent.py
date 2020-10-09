@@ -106,7 +106,7 @@ class BehaviorTFAAgent(BehaviorModel):
     # NOTE: if training is enabled the action is set externally
     if not self._set_action_externally:
       # NOTE: we need to store the observer differently
-      observed_state = self._observer.Observe(
+      observed_state = self._environment._observer.Observe(
         observed_world)
       self._action = self.Act(observed_state)
     # NOTE: BARK expects (m, 1) actions
