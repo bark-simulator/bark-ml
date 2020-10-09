@@ -24,7 +24,41 @@ from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_gcn_wrapper import GCNW
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_edge_conditioned_wrapper import GEdgeCondWrapper
 
 
-
+def init_gnn_edge_cond(name, params):
+  """
+  Returns a new `GEdgeCondWrapper`instance with the given `name`.
+  We need this function to be able to prefix the variable
+  names with the names of the parent actor or critic network,
+  by passing in this function and initializing the instance in 
+  the parent network.
+  """
+  return GEdgeCondWrapper(
+    params=params, 
+    name=name + "_GEdgeCond")
+  
+def init_gat(name, params):
+  """
+  Returns a new `GATdWrapper`instance with the given `name`.
+  We need this function to be able to prefix the variable
+  names with the names of the parent actor or critic network,
+  by passing in this function and initializing the instance in 
+  the parent network.
+  """
+  return GATWrapper(
+    params=params, 
+    name=name + "_GAT")
+  
+def init_gcn(name, params):
+  """
+  Returns a new `GCNWrapper`instance with the given `name`.
+  We need this function to be able to prefix the variable
+  names with the names of the parent actor or critic network,
+  by passing in this function and initializing the instance in 
+  the parent network.
+  """
+  return GATWrapper(
+    params=params, 
+    name=name + "_GCN")
 
 
 class BehaviorGraphSACAgent(BehaviorTFAAgent):
@@ -36,7 +70,8 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
   def __init__(self,
                environment=None,
                observer=None,
-               params=None):
+               params=None,
+               init_gnn=init_gnn_edge_cond):
     """
     Initializes a `BehaviorGraphSACAgent` instance.
 
@@ -49,6 +84,7 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
     # the super init calls 'GetAgent', so assign the observer before
     self._gnn_sac_params = params["ML"]["BehaviorGraphSACAgent"]
     self._observer = observer
+    self._init_gnn = init_gnn
     BehaviorTFAAgent.__init__(self,
                               environment=environment,
                               params=params)
@@ -58,38 +94,29 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
     self._eval_policy = self.GetEvalPolicy()
 
   def GetAgent(self, env, params):
-    def init_gnn(name):
-      """
-      Returns a new `GNNWrapper`instance with the given `name`.
-      We need this function to be able to prefix the variable
-      names with the names of the parent actor or critic network,
-      by passing in this function and initializing the instance in 
-      the parent network.
-      """
-      return GEdgeCondWrapper(
-        params=self._gnn_sac_params["GNN"], 
-        graph_dims=self._observer.graph_dimensions,
-        name=name)
+    params["GraphDims"] = self._observer.graph_dimensions
     
     # actor network
     actor_net = GNNActorNetwork(
       input_tensor_spec=env.observation_spec(),
       output_tensor_spec=env.action_spec(),
-      gnn=init_gnn,
+      gnn=self._init_gnn,
       fc_layer_params=self._gnn_sac_params[
-        "ActorFcLayerParams", "", [128, 64]]
+        "ActorFcLayerParams", "", [128, 64]],
+      params=params
     )
 
     # critic network
     critic_net = GNNCriticNetwork(
       (env.observation_spec(), env.action_spec()),
-      gnn=init_gnn,
+      gnn=self._init_gnn,
       observation_fc_layer_params=self._gnn_sac_params[
         "CriticObservationFcLayerParams", "", [128]],
       action_fc_layer_params=self._gnn_sac_params[
         "CriticActionFcLayerParams", "", None],
       joint_fc_layer_params=self._gnn_sac_params[
-        "CriticJointFcLayerParams", "", [128, 128]]
+        "CriticJointFcLayerParams", "", [128, 128]],
+      params=params
     )
     
     # agent

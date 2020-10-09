@@ -23,8 +23,7 @@ class GCNWrapper(GNNWrapper):
 
   def __init__(self,
                params=ParameterServer(),
-               graph_dims=None,
-               name='GNN',
+               name='GCN',
                output_dtype=tf.float32):
     """
     Initializes a GCNWrapper instance.
@@ -41,14 +40,13 @@ class GCNWrapper(GNNWrapper):
     """
     super(GCNWrapper, self).__init__(
       params=params,
-      graph_dims=graph_dims,
       name=name,
       output_dtype=output_dtype)
-    self._num_message_passing_layers = params[
+    self._num_message_passing_layers = params["GCN"][
       "NumMessagePassingLayers", "Number of message passing layers", 3]
-    self._embedding_size = params[
+    self._embedding_size = params["GCN"][
       "EmbeddingSize", "Embedding size of nodes", 128]
-    self._activation_func = params[
+    self._activation_func = params["GCN"][
       "Activation", "Activation function", "relu"]
     self._layers = []
     # initialize network & call func

@@ -23,8 +23,7 @@ class GEdgeCondWrapper(GNNWrapper):
 
   def __init__(self,
                params=ParameterServer(),
-               graph_dims=None,
-               name='GNN',
+               name='EdgeCond',
                output_dtype=tf.float32):
     """
     Initializes a GNNWrapper instance.
@@ -32,16 +31,11 @@ class GEdgeCondWrapper(GNNWrapper):
     Args:
     params: A `ParameterServer` instance containing the parameters
       to configure the GNN.
-    graph_dims: A tuple containing the three elements
-      (num_nodes, len_node_features, len_edge_features) of the input graph.
-      Needed to properly convert observations back into a graph structure 
-      that can be processed by the GNN.
     name: Name of the instance.
     output_dtype: The dtype to which the GNN output is casted.
     """
     super(GEdgeCondWrapper, self).__init__(
       params=params,
-      graph_dims=graph_dims,
       name=name,
       output_dtype=output_dtype)
     self._num_message_passing_layers = params["EdgeCond"][

@@ -23,7 +23,6 @@ class GNNWrapper(tf.keras.Model):
 
   def __init__(self,
                params=ParameterServer(),
-               graph_dims=None,
                name='GNN',
                output_dtype=tf.float32):
     """
@@ -42,12 +41,12 @@ class GNNWrapper(tf.keras.Model):
     super(GNNWrapper, self).__init__(name=name)
     self.output_dtype = output_dtype
     self._params = params
-    self._graph_dims = self._validated_graph_dims(graph_dims)
+    self._graph_dims = self._validated_graph_dims(params["GraphDims"])
     
     logging.info(
       f'"{name}" configured with `spektral` for input graphs with ' +
-      f'{graph_dims[0]} nodes, {graph_dims[1]} node features, ' + 
-      f'and {graph_dims[2]} edge features.')
+      f'{self._graph_dims[0]} nodes, {self._graph_dims[1]} node features, ' + 
+      f'and {self._graph_dims[2]} edge features.')
 
 
   def _validated_graph_dims(self, graph_dims):

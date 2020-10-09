@@ -11,6 +11,7 @@ import tensorflow as tf # pylint: disable=g-explicit-tensorflow-version-import
 from tf_agents.agents.sac import sac_agent
 from tf_agents.networks import network, normal_projection_network, encoding_network
 from tf_agents.utils import nest_utils
+from bark.runtime.commons.parameters import ParameterServer
 
 def projection_net(spec):
   return normal_projection_network.NormalProjectionNetwork(
@@ -33,7 +34,8 @@ class GNNActorNetwork(network.Network):
                dropout_layer_params=None,
                conv_layer_params=None,
                activation_fn=tf.nn.relu,
-               name='ActorNetwork'):
+               name='ActorNetwork',
+               params=ParameterServer()):
     """Creates an instance of `ActorNetwork`.
     Args:
       input_tensor_spec: A nest of `tensor_spec.TensorSpec` representing the
@@ -62,9 +64,9 @@ class GNNActorNetwork(network.Network):
         item, or if the action data type is not `float`.
     """
     super(GNNActorNetwork, self).__init__(
-        input_tensor_spec=input_tensor_spec,
-        state_spec=(),
-        name=name)
+      input_tensor_spec=input_tensor_spec,
+      state_spec=(),
+      name=name)
 
     if len(tf.nest.flatten(input_tensor_spec)) > 1:
       raise ValueError('Only a single observation is supported by this network')
@@ -80,9 +82,8 @@ class GNNActorNetwork(network.Network):
     if gnn is None:
       raise ValueError('`gnn` must not be `None`.')
 
-    self._gnn = gnn(name=name + "_GNN")
+    self._gnn = gnn(name=name, params=params)
     
-    # TODO: this will not work
     self._encoder = encoding_network.EncodingNetwork(
       input_tensor_spec=tf.TensorSpec([None, self._gnn._embedding_size]),
       preprocessing_layers=None,

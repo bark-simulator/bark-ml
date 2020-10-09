@@ -23,8 +23,7 @@ class GATWrapper(GNNWrapper):
 
   def __init__(self,
                params=ParameterServer(),
-               graph_dims=None,
-               name='GNN',
+               name='GAT',
                output_dtype=tf.float32):
     """
     Initializes a GATWrapper instance.
@@ -41,16 +40,15 @@ class GATWrapper(GNNWrapper):
     """
     super(GATWrapper, self).__init__(
       params=params,
-      graph_dims=graph_dims,
       name=name,
       output_dtype=output_dtype)
-    self._num_message_passing_layers = params[
+    self._num_message_passing_layers = params["GAT"][
       "NumMessagePassingLayers", "Number of message passing layers", 2]
     self._embedding_size = params[
       "EmbeddingSize", "Embedding size of nodes", 128]
-    self._activation_func = params[
+    self._activation_func = params["GAT"][
       "Activation", "Activation function", "elu"]
-    self._num_attn_heads = params[
+    self._num_attn_heads = params["GAT"][
       "NumAttnHeads", "Number of attention heads to be used", 4]
     self._dropout_rate = params[
       "DropoutRate", "", 0.]

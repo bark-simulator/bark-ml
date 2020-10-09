@@ -9,6 +9,7 @@ import gin
 import tensorflow as tf  # pylint: disable=g-explicit-tensorflow-version-import
 
 from tf_agents.networks import network, utils
+from bark.runtime.commons.parameters import ParameterServer
 
 @gin.configurable
 class GNNCriticNetwork(network.Network):
@@ -29,7 +30,8 @@ class GNNCriticNetwork(network.Network):
                joint_dropout_layer_params=None,
                joint_activation_fn=tf.nn.relu,
                output_activation_fn=None,
-               name='CriticNetwork'):
+               name='CriticNetwork',
+               params=ParameterServer()):
     """Creates an instance of `GNNCriticNetwork`.
 
     Args:
@@ -109,7 +111,7 @@ class GNNCriticNetwork(network.Network):
     if gnn is None:
       raise ValueError('`gnn` must not be `None`.')
 
-    self._gnn = gnn(name=name + "_GNN")
+    self._gnn = gnn(name=name, params=params)
 
     self._observation_layers = utils.mlp_layers(
       observation_conv_layer_params,
@@ -135,7 +137,7 @@ class GNNCriticNetwork(network.Network):
         joint_dropout_layer_params,
         activation_fn=joint_activation_fn,
         kernel_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
-            scale=1./3., mode='fan_in', distribution='uniform'),
+          scale=1./3., mode='fan_in', distribution='uniform'),
         name='joint_mlp')
 
     self._joint_layers.append(
