@@ -1,9 +1,21 @@
 py_library(
     name = "networks",
     srcs = ["__init__.py",
-            "gnn_wrapper.py",
             "gnn_actor_network.py",
             "gnn_critic_network.py"],
+    data = ["@bark_project//bark/python_wrapper:core.so"],
+    imports = ["../external/bark_project/bark/python_wrapper/"],
+    deps = [":gnn_wrappers"],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "gnn_wrappers",
+    srcs = ["__init__.py",
+            "gnn_wrapper.py",
+            "gnn_gcn_wrapper.py",
+            "gnn_edge_conditioned_wrapper.py",
+            "gnn_gat_wrapper.py"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
     imports = ["../external/bark_project/bark/python_wrapper/"],
     deps = [],
