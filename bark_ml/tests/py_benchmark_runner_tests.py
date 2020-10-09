@@ -12,6 +12,7 @@ import unittest
 import os
 import time
 import ray
+import pickle
 
 try:
     import debug_settings
@@ -34,11 +35,15 @@ from bark.core.models.behavior import BehaviorIDMClassic, BehaviorConstantAccele
 # bark-ml
 from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorGraphSACAgent
 from bark_ml.observers.graph_observer import GraphObserver
+from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
+from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, ContinuousMergingBlueprint
+
 
 try: # bazel run
   os.chdir("../benchmark_database/")
 except: # debug
   os.chdir("bazel-bin/bark/benchmark/tests/py_benchmark_runner_tests.runfiles/benchmark_database")
+
 
 class DatabaseRunnerTests(unittest.TestCase):
   def test_database_runner(self):
@@ -58,29 +63,43 @@ class DatabaseRunnerTests(unittest.TestCase):
     }
     params = ParameterServer() # only for evaluated agents not passed to scenario!
     
-    # NOTE: pass ml behavior
+
     observer = GraphObserver(params=params)
+    
+    # HACK
+    bp = ContinuousMergingBlueprint(
+      params,
+      number_of_senarios=1,
+      random_seed=0)
+    # HACK
+    env = SingleAgentRuntime(
+      blueprint=bp,
+      observer=observer,
+      render=False)
+    # HACK
     sac_behavior = BehaviorGraphSACAgent(
       observer=observer,
+      environment=env,
       params=params)
+    print(pickle_trick(sac_behavior))
     
-    behaviors_tested = {"IDM": BehaviorIDMClassic(params),
-                        "Const" : BehaviorConstantAcceleration(params)}
+    # behaviors_tested = {"IDM": BehaviorIDMClassic(params),
+    #                     "Const" : BehaviorConstantAcceleration(params),
+    #                     "GraphSAC": sac_behavior}
                                     
 
-    benchmark_runner = BenchmarkRunner(benchmark_database=db,
-                                       evaluators=evaluators,
-                                       terminal_when=terminal_when,
-                                       behaviors=behaviors_tested,
-                                       log_eval_avg_every=5)
+    # benchmark_runner = BenchmarkRunner(benchmark_database=db,
+    #                                    evaluators=evaluators,
+    #                                    terminal_when=terminal_when,
+    #                                    behaviors=behaviors_tested,
+    #                                    log_eval_avg_every=5)
 
-    result = benchmark_runner.run()
-    df = result.get_data_frame()
-    print(df)
-    self.assertEqual(len(df.index), 2*2*2) # 2 Behaviors * 2 Serialize Scenarios * 1 scenario sets
-
-    groups = result.get_evaluation_groups()
-    self.assertEqual(set(groups), set(["behavior", "scen_set"]))
+    # result = benchmark_runner.run()
+    # df = result.get_data_frame()
+    # print(df)
+    # self.assertEqual(len(df.index), 2*2*2) # 2 Behaviors * 2 Serialize Scenarios * 1 scenario sets
+    # groups = result.get_evaluation_groups()
+    # self.assertEqual(set(groups), set(["behavior", "scen_set"]))
 
 
 if __name__ == '__main__':

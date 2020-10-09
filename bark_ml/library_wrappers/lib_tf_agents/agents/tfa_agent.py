@@ -126,3 +126,4 @@ class BehaviorTFAAgent(BehaviorModel):
 
   def Clone(self):
     return self
+  
