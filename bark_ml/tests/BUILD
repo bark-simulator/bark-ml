@@ -114,3 +114,20 @@ py_test(
             "//bark_ml/commons:tracer"],
     visibility = ["//visibility:public"],
 )
+
+py_test(
+  name = "py_benchmark_runner_tests",
+  srcs = ["py_benchmark_runner_tests.py"],
+  data = ["@bark_project//bark/python_wrapper:core.so",
+          "@benchmark_database//data/database1:database1",
+          ],
+  deps = [
+      "@bark_project//bark/benchmark:benchmark_runner",
+      "@bark_project//bark/benchmark:benchmark_runner_mp",
+      "@bark_project//bark/benchmark:benchmark_result",
+      "@bark_project//bark/runtime/viewer:matplotlib_viewer",
+      "@benchmark_database//load:benchmark_database",
+      "@benchmark_database//serialization:database_serializer",
+      "@bark_project//bark/runtime/commons:commons",
+      ],
+)
