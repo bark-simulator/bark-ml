@@ -4,6 +4,7 @@
 - [d0n3] do not like the tracking system with pandas + fix this + units
 - visualize graph
 - visualize agents that are being included
+- visualize training
 - scenario generation using configurable scenario generation (+ database)
 - experiments + checkpoint folder + training tag
 

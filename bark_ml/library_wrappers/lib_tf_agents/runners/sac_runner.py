@@ -78,7 +78,7 @@ class SACRunner(TFARunner):
 
   def _log_training_duration(self, start_time, iteration):
     with tf.name_scope("Durations"):
-      tf.summary.scalar("training_turation", time.time() - start_time, iteration)
+      tf.summary.scalar("training_duration", time.time() - start_time, iteration)
 
   def _log_evaluation_interval_duration(self, start_time, iteration):
     if iteration == 0: 
