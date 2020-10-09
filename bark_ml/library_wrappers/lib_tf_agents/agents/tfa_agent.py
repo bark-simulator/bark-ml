@@ -33,11 +33,13 @@ class BehaviorTFAAgent(BehaviorModel):
   def __init__(self,
                environment=None,
                params=None,
-               bark_behavior=None):
+               bark_behavior=None,
+               observer=None):
     BehaviorModel.__init__(self, params)
     self._params = params
+    self._observer = observer
     self._environment = environment
-    self._wrapped_env = tf_py_environment.TFPyEnvironment(
+    self._wrapped_env = None or tf_py_environment.TFPyEnvironment(
       TFAWrapper(self._environment))
     self._ckpt = tf.train.Checkpoint(step=tf.Variable(0, dtype=tf.int64))
     self._agent = self.GetAgent(self._wrapped_env, params)
@@ -103,7 +105,8 @@ class BehaviorTFAAgent(BehaviorModel):
   def Plan(self, dt, observed_world):
     # NOTE: if training is enabled the action is set externally
     if not self._set_action_externally:
-      observed_state = self._environment._observer.Observe(
+      # NOTE: we need to store the observer differently
+      observed_state = self._observer.Observe(
         observed_world)
       self._action = self.Act(observed_state)
     # NOTE: BARK expects (m, 1) actions

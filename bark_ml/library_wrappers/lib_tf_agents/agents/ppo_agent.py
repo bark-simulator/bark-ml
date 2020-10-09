@@ -31,7 +31,8 @@ class BehaviorPPOAgent(BehaviorTFAAgent):
     BehaviorTFAAgent.__init__(
       self,
       environment=environment,
-      params=params)
+      params=params,
+      observer=observer)
     self._replay_buffer = self.GetReplayBuffer()
     self._collect_policy = self.GetCollectionPolicy()
     self._eval_policy = self.GetEvalPolicy()

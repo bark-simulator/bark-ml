@@ -31,6 +31,10 @@ from bark.core.world.evaluation.ltl import ConstantLabelFunction
 from bark.runtime.commons.parameters import ParameterServer
 from bark.core.models.behavior import BehaviorIDMClassic, BehaviorConstantAcceleration
 
+# bark-ml
+from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorGraphSACAgent
+from bark_ml.observers.graph_observer import GraphObserver
+
 try: # bazel run
   os.chdir("../benchmark_database/")
 except: # debug
@@ -43,19 +47,32 @@ class DatabaseRunnerTests(unittest.TestCase):
     local_release_filename = dbs.release(version="test")
 
     db = BenchmarkDatabase(database_root=local_release_filename)
-    evaluators = {"success" : "EvaluatorGoalReached",
-                  "collision" : "EvaluatorCollisionEgoAgent",
-                  "max_steps": "EvaluatorStepCount"}
-    terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>2}
+    evaluators = {
+      "success" : "EvaluatorGoalReached",
+      "collision" : "EvaluatorCollisionEgoAgent",
+      "max_steps": "EvaluatorStepCount"
+    }
+    terminal_when = {
+      "collision" :lambda x: x,
+      "max_steps": lambda x : x>2
+    }
     params = ParameterServer() # only for evaluated agents not passed to scenario!
-    behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantAcceleration(params)}
+    
+    # NOTE: pass ml behavior
+    observer = GraphObserver(params=params)
+    sac_behavior = BehaviorGraphSACAgent(
+      observer=observer,
+      params=params)
+    
+    behaviors_tested = {"IDM": BehaviorIDMClassic(params),
+                        "Const" : BehaviorConstantAcceleration(params)}
                                     
 
     benchmark_runner = BenchmarkRunner(benchmark_database=db,
-                                        evaluators=evaluators,
-                                        terminal_when=terminal_when,
-                                        behaviors=behaviors_tested,
-                                        log_eval_avg_every=5)
+                                       evaluators=evaluators,
+                                       terminal_when=terminal_when,
+                                       behaviors=behaviors_tested,
+                                       log_eval_avg_every=5)
 
     result = benchmark_runner.run()
     df = result.get_data_frame()

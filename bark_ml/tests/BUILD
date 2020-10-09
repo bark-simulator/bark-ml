@@ -129,5 +129,8 @@ py_test(
       "@benchmark_database//load:benchmark_database",
       "@benchmark_database//serialization:database_serializer",
       "@bark_project//bark/runtime/commons:commons",
+      "//bark_ml/observers:observers",
+      "//bark_ml/behaviors:behaviors",
+      "//bark_ml/library_wrappers/lib_tf_agents/agents:agents"
       ],
 )

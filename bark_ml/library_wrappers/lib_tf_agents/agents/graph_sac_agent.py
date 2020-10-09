@@ -83,11 +83,11 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
     """
     # the super init calls 'GetAgent', so assign the observer before
     self._gnn_sac_params = params["ML"]["BehaviorGraphSACAgent"]
-    self._observer = observer
     self._init_gnn = init_gnn
     BehaviorTFAAgent.__init__(self,
                               environment=environment,
-                              params=params)
+                              params=params,
+                              observer=observer)
     self._replay_buffer = self.GetReplayBuffer()
     self._dataset = self.GetDataset()
     self._collect_policy = self.GetCollectionPolicy()
@@ -95,6 +95,7 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
 
   def GetAgent(self, env, params):
     params["GraphDims"] = self._observer.graph_dimensions
+    # NOTE: MIGHT NOT HAVE THE ENV!
     
     # actor network
     actor_net = GNNActorNetwork(

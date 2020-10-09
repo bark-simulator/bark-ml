@@ -37,7 +37,8 @@ class BehaviorSACAgent(BehaviorTFAAgent):
     BehaviorTFAAgent.__init__(
       self,
       environment=environment,
-      params=params)
+      params=params,
+      observer=observer)
     BehaviorModel.__init__(self, params)
     self._replay_buffer = self.GetReplayBuffer()
     self._dataset = self.GetDataset()
