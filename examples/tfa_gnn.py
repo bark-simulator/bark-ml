@@ -78,7 +78,7 @@ def run_configuration(argv):
   sac_agent = BehaviorGraphSACAgent(environment=env,
                                     observer=observer,
                                     params=params,
-                                    init_gnn=init_gat)
+                                    init_gnn=init_gcn)
   env.ml_behavior = sac_agent
   runner = SACRunner(params=params,
                      environment=env,
