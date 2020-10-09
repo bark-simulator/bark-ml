@@ -83,7 +83,7 @@ class Tracer:
 
   def Reset(self):
     self._states = []
-    self._total_episodes += 1
-    self._total_collisions += 1
-    self._total_goals_reached += 1
-    self._total_steps += 1
+    self._total_episodes = 0
+    self._total_collisions = 0
+    self._total_goals_reached = 0
+    self._total_steps = 0
