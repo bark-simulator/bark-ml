@@ -105,8 +105,7 @@ def run_configuration(argv):
       runner.Run(num_episodes=250, render=False, max_col_rate=cr)
     runner._environment._tracer.Save(
       params["ML"]["ResultsFolder"] + "evaluation_results_runtime.pckl")
-    goal_reached = runner._tracer.Query(
-      key="goal_reached", group_by="max_col_rate", agg_type="MEAN")
+    goal_reached = runner._tracer.success_rate
     runner._tracer.Save(
       params["ML"]["ResultsFolder"] + "evaluation_results_runner.pckl")
     

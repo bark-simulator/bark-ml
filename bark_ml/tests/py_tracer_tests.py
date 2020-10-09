@@ -56,17 +56,9 @@ class PyTracerTests(unittest.TestCase):
       self.assertEqual("goal_reached" in tracer._states[i].keys(), True)
       self.assertEqual("step_count" in tracer._states[i].keys(), True)
 
-    # NOTE: test pandas magic
-    tracer.ConvertToDf()
-    # average collisions 
-    print(tracer.Query(key="collision", group_by="num_episode", agg_type="MEAN").mean())
-    # average reward
-    print(tracer.Query(key="reward", group_by="num_episode", agg_type="SUM").mean())
-
     # NOTE: test reset
     tracer.Reset()
     self.assertEqual(len(tracer._states), 0)
-    self.assertEqual(tracer._df, None)
 
   def test_trace_dict(self):
     """make sure tracing of dictionaries works as well"""
@@ -100,7 +92,6 @@ class PyTracerTests(unittest.TestCase):
         tracer.Trace(eval_dict, num_episode=j)
     self.assertEqual(len(tracer._states), 10)
     # print(tracer._states)
-    # print(tracer.Query(key="collision", group_by="num_episode", agg_type="MEAN").mean())
 
 
 if __name__ == '__main__':

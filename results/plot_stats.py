@@ -11,10 +11,8 @@ runtime_tracer = Tracer()
 runtime_tracer.Load("/Users/hart/Development/bark-ml/results/data/evaluation_results_runtime.pckl")
 
 
-goal_reached = runner_tracer.Query(
-  key="goal_reached", group_by=["max_col_rate", "num_episode"], agg_type="ANY_TRUE")
-col_rate = runner_tracer.Query(
-  key="collision", group_by=["max_col_rate", "num_episode"], agg_type="ANY_TRUE")
+goal_reached = runner_tracer.success_rate
+col_rate = runner_tracer.collision_rate
 exc_pol = runtime_tracer.Query(
   key="executed_learned_policy", group_by="max_col_rate", agg_type="MEAN")
 

@@ -5,25 +5,18 @@
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
-import pandas as pd
+import pickle
 from enum import Enum
 
 class Tracer:
-  class QueryTypes(str, Enum):
-    """
-    Trace: returns the trace
-    Mean: calculates the mean of the trace
-    """
-    TRACE = "TRACE"
-    MEAN  = "MEAN"
-    MEAN_ABS  = "MEAN_ABS"
-    SUM  = "SUM"
-    LAST_VALUE  = "LAST_VALUE"
-    ANY_TRUE  = "ANY_TRUE"
-  
   def __init__(self):
     self._states = []
-    self._df = None
+    self._trace_history = True
+    self._total_episodes = 0  # increases with terminal count
+    self._total_collisions = 0
+    self._total_goals_reached = 0
+    self._total_reward = 0
+    self._total_steps = 0
 
   def EvalStateToDict(self, eval_state):
     """Converts an eval_state to a flat eval_dict"""
@@ -43,49 +36,54 @@ class Tracer:
   def Trace(self, eval_state, **kwargs):
     """Traces and stores a state"""
     eval_dict = self.EvalStateToDict(eval_state)
-    # additional things to log
     for key, value in kwargs.items():
       eval_dict[key] = value
-    self._states.append(eval_dict)
+    if self._trace_history:
+      self._states.append(eval_dict)
+    
+    if eval_dict["is_terminal"]:
+      self._total_episodes += 1
+    if eval_dict["drivable_area"] or eval_dict["collision"]:
+      self._total_collisions += 1
+    if eval_dict["goal_reached"]:
+      self._total_goals_reached += 1
+    self._total_reward += eval_dict["reward"] 
+    self._total_steps += 1
   
-  def Query(
-    self,
-    key="collision",
-    group_by="num_episode",
-    agg_type="TRACE"):
-    df = self.df.groupby(group_by)[key]
-    # NOTE: different aggregation types
-    if agg_type == Tracer.QueryTypes.MEAN:
-      return df.mean()
-    if agg_type == Tracer.QueryTypes.MEAN_ABS:
-      return df.apply(abs).mean()
-    if agg_type == Tracer.QueryTypes.SUM:
-      return df.sum()
-    if agg_type == Tracer.QueryTypes.LAST_VALUE:
-      return df.tail(1)
-    elif agg_type == Tracer.QueryTypes.ANY_TRUE:
-      return df.any()
-    return df
+  @property
+  def collision_rate(self):
+    return self._total_collisions/self._total_episodes
+  
+  @property
+  def success_rate(self):
+    return self._total_goals_reached/self._total_episodes
+  
+  @property
+  def mean_steps(self):
+    return self._total_steps/self._total_episodes
 
   @property
-  def df(self):
-    # NOTE: make more efficient
-    self.ConvertToDf()
-    return self._df
+  def mean_reward(self):
+    return self._total_reward/self._total_episodes
   
-  def ConvertToDf(self):
-    """Conversts states to pandas dataframe"""
-    self._df = pd.DataFrame.from_records(self._states)
-  
+  @property
+  def episode_number(self):
+    return self._total_episodes
+
   def Save(self, filepath="./"):
     """Saves trace as pandas dataframe"""
-    self.ConvertToDf()
-    self._df.to_pickle(filepath)
+    filehandler = open(filepath, "wb")
+    pickle.dump(self.__dict__, file=filehandler)
+    filehandler.close()
 
   def Load(self, filepath="./"):
-    self._df = pd.read_pickle(filepath)
-    self._states = self._df.apply(list)
+    filehandler = open(filepath, "wb")
+    self.__dict__ = pickle.load(self, file=filehandler)
+    filehandler.close()
 
   def Reset(self):
     self._states = []
-    self._df = None
+    self._total_episodes += 1
+    self._total_collisions += 1
+    self._total_goals_reached += 1
+    self._total_steps += 1

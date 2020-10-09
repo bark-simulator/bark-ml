@@ -126,18 +126,11 @@ class TFARunner:
         self._logger.info(f"Simulating episode {i}.")
       trajectory = self.RunEpisode(
         render=render, num_episode=i, **kwargs)
-    # average collision, reward, and step count
-    # NOTE: we need to use any here
-    mean_col_rate = self._tracer.Query(
-      key="collision", group_by="num_episode", agg_type="ANY_TRUE").mean()
-    mean_col_rate += self._tracer.Query(
-      key="drivable_area", group_by="num_episode", agg_type="ANY_TRUE").mean()
-    goal_reached = self._tracer.Query(
-      key="goal_reached", group_by="num_episode", agg_type="ANY_TRUE").mean()
-    mean_reward = self._tracer.Query(
-      key="reward", group_by="num_episode", agg_type="SUM").mean()
-    mean_steps = self._tracer.Query(
-      key="step_count", group_by="num_episode", agg_type="LAST_VALUE").mean()
+    mean_col_rate = self._tracer.collision_rate
+    goal_reached = self._tracer.success_rate
+    mean_reward = self._tracer.mean_reward
+    mean_steps = self._tracer.mean_steps
+  
     if mode == "training":
       global_iteration = self._agent._agent._train_step_counter.numpy()
       tf.summary.scalar("mean_reward", mean_reward, step=global_iteration)
