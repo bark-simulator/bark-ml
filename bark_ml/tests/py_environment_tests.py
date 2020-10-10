@@ -25,6 +25,8 @@ from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.environments.counterfactual_runtime import CounterfactualRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents.sac_agent import BehaviorSACAgent
 import bark_ml.environments.gym
+from bark_ml.commons.py_spaces import BoundedContinuous
+from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 
 class PyEnvironmentTests(unittest.TestCase):
   def test_envs_cont_rl(self):
@@ -109,16 +111,20 @@ class PyEnvironmentTests(unittest.TestCase):
 
   def test_configurable_blueprint(self):
     params = ParameterServer(filename="bark_ml/tests/data/highway_merge_configurable.json")
-    bp = ConfigurableScenarioBlueprint(params=params)
-    env = SingleAgentRuntime(blueprint=bp, render=False)
-    # sac_agent = BehaviorSACAgent(environment=env,
-    #                              params=params)
-    # env.ml_behavior = sac_agent
     
-    # env.reset()
-    # for _ in range(0, 10):
-    #   action = np.random.randint(low=0, high=3)
-    #   observed_next_state, reward, done, info = env.step(action)
+    # NOTE: can be either continuous or discrete behavior
+    bp = ConfigurableScenarioBlueprint(params=params)
+    env = SingleAgentRuntime(blueprint=bp, render=True)
+    
+    # so we have an action space available
+    env.ml_behavior = BehaviorContinuousML(params=params)
+    sac_agent = BehaviorSACAgent(environment=env,
+                                 params=params)
+    env.ml_behavior = sac_agent
+    env.reset()
+    for _ in range(0, 10):
+      action = np.random.randint(low=0, high=3)
+      observed_next_state, reward, done, info = env.step(action)
   
 
 if __name__ == '__main__':
