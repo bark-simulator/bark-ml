@@ -111,16 +111,17 @@ class PyEnvironmentTests(unittest.TestCase):
 
   def test_configurable_blueprint(self):
     params = ParameterServer(filename="bark_ml/tests/data/highway_merge_configurable.json")
-    
-    # NOTE: can be either continuous or discrete behavior
-    bp = ConfigurableScenarioBlueprint(params=params)
-    env = SingleAgentRuntime(blueprint=bp, render=True)
-    
-    # so we have an action space available
-    env.ml_behavior = BehaviorContinuousML(params=params)
+    # continuous model
+    ml_behavior = BehaviorContinuousML(params=params)
+    bp = ConfigurableScenarioBlueprint(
+      params=params,
+      ml_behavior=ml_behavior)
+    env = SingleAgentRuntime(blueprint=bp, render=False)
+    # agent
     sac_agent = BehaviorSACAgent(environment=env,
                                  params=params)
     env.ml_behavior = sac_agent
+    # test run
     env.reset()
     for _ in range(0, 10):
       action = np.random.randint(low=0, high=3)
