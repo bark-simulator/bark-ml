@@ -32,10 +32,11 @@ class ConfigurableScenarioBlueprint(Blueprint):
   def __init__(self,
                params=None,
                ml_behavior=None,
+               num_scenarios=100,
                viewer=True):
     # NOTE: scneario number is wrong
     scenario_generation = ConfigurableScenarioGeneration(
-      num_scenarios=2500,
+      num_scenarios=num_scenarios,
       params=params)
     if viewer:
       viewer = MPViewer(params=params,

@@ -3,60 +3,29 @@
 # 3. create hash out of file and handle the training like this
 
 --> load JSON FILE via ParameterServer -> will enable ConfigurableScenarioConf
-experiment = Experiment("experiment_01.json")
+experiment = ExperimentRunner("experiment_01.json")
 experiment.train()
 experiment.visualize()
 experiment.evaluate()
 
-
-{
-    "blueprint": {
-        "name": "ContinuousMergingBlueprint",
-        "number_of_senarios": 2500,
-        "random_seed": 1000
-    },
-    "observer": {
-        "name": "GraphObserver",
-        ...
-    },
-    "evaluator": {
-        "name": "GoalReached",
-        ...
-    },
-    "agent": {
-        "name": "BehaviorGraphSACAgent",
-        ...
-    },
-    "runner": {
-        "name": abc
-        ...
-    },
-    "runtime": {
-        "name": "SingleAgentRuntime",
-        ...
-    },
-    "logging": {
-        "checkpoint_path": "./",
-        "summary_path": "./",
-    } 
-}
+# bazel run //experiments:runner --  --exp=experiments_01/02/03...  --mode=train
 
 
 # NOTE: IF WE USE THE CONFIGURABLE SCENARIO GENERATION; WOULD BE REPRODUCIBLE
 
-bp = ContinuousMergingBlueprint(params)
-observer = GraphObserver(params=params)
-env = SingleAgentRuntime(
+bp = ConfigurableScenarioBlueprint(params)  # eval
+observer = GraphObserver(params=params)  # eval
+env = SingleAgentRuntime(  # eval
     blueprint=bp,
     observer=observer,
     render=False)
 # behavior
-sac_agent = BehaviorGraphSACAgent(environment=env,
+sac_agent = BehaviorGraphSACAgent(environment=env,  # eval
                                   observer=observer,
                                   params=params,
-                                  init_gnn=init_gcn)
+                                  init_gnn='init_gcn')  # eval
 env.ml_behavior = sac_agent
 # runner
-runner = SACRunner(params=params,
+runner = SACRunner(params=params,  # eval
                     environment=env,
                     agent=sac_agent)
