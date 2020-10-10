@@ -87,3 +87,4 @@ class Tracer:
     self._total_collisions = 0
     self._total_goals_reached = 0
     self._total_steps = 0
+    self._total_reward = 0
