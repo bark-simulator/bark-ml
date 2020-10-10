@@ -42,25 +42,20 @@ experiment.evaluate()
 }
 
 
+# NOTE: IF WE USE THE CONFIGURABLE SCENARIO GENERATION; WOULD BE REPRODUCIBLE
 
-bp = ContinuousMergingBlueprint(params,
-                                number_of_senarios=2500,
-                                random_seed=0)
+bp = ContinuousMergingBlueprint(params)
 observer = GraphObserver(params=params)
 env = SingleAgentRuntime(
     blueprint=bp,
     observer=observer,
     render=False)
-
-
 # behavior
 sac_agent = BehaviorGraphSACAgent(environment=env,
                                   observer=observer,
                                   params=params,
                                   init_gnn=init_gcn)
 env.ml_behavior = sac_agent
-
-
 # runner
 runner = SACRunner(params=params,
                     environment=env,
