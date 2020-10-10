@@ -1,8 +1,8 @@
-
+# always build hash when training, loading, saving
 
 class ExperimentRunner:
   def __init__(self, json_file):
-      self._experiment = None
+    self._experiment = None
 
   def Train(self):
     pass
