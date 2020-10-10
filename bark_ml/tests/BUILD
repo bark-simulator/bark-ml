@@ -1,7 +1,14 @@
+filegroup(
+    name = "data",
+    srcs = glob(["data/*.yaml", "data/*.json", "data/*.xodr"]),
+    visibility = ["//visibility:public"],
+)
+
 py_test(
     name = "py_environment_tests",
     srcs = ["py_environment_tests.py"],
-    data = ["@bark_project//bark/python_wrapper:core.so"],
+    data = ["@bark_project//bark/python_wrapper:core.so",
+            ":data"],
     imports = ["../external/bark_project/bark/python_wrapper/",
                "../python_wrapper/"],
     deps = ["//bark_ml/environments:single_agent_runtime",
@@ -136,28 +143,6 @@ py_test(
 py_test(
   name = "py_benchmark_runner_tests",
   srcs = ["py_benchmark_runner_tests.py"],
-  data = ["@bark_project//bark/python_wrapper:core.so",
-          "@benchmark_database//data/database1:database1",
-          ],
-  deps = [
-      "@bark_project//bark/benchmark:benchmark_runner",
-      "@bark_project//bark/benchmark:benchmark_runner_mp",
-      "@bark_project//bark/benchmark:benchmark_result",
-      "@bark_project//bark/runtime/viewer:matplotlib_viewer",
-      "@benchmark_database//load:benchmark_database",
-      "@benchmark_database//serialization:database_serializer",
-      "@bark_project//bark/runtime/commons:commons",
-      "//bark_ml/environments:single_agent_runtime",
-      "//bark_ml/observers:observers",
-      "//bark_ml/environments:blueprints",
-      "//bark_ml/behaviors:behaviors",
-      "//bark_ml/library_wrappers/lib_tf_agents/agents:agents"
-      ],
-)
-
-py_test(
-  name = "py_pickling_tests",
-  srcs = ["py_pickling_tests.py"],
   data = ["@bark_project//bark/python_wrapper:core.so",
           "@benchmark_database//data/database1:database1",
           ],

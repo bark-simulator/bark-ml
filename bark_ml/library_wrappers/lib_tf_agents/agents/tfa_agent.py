@@ -39,7 +39,7 @@ class BehaviorTFAAgent(BehaviorModel):
     self._params = params
     self._observer = observer
     self._environment = environment
-    self._wrapped_env = None or tf_py_environment.TFPyEnvironment(
+    self._wrapped_env = tf_py_environment.TFPyEnvironment(
       TFAWrapper(self._environment))
     self._ckpt = tf.train.Checkpoint(step=tf.Variable(0, dtype=tf.int64))
     self._agent = self.GetAgent(self._wrapped_env, params)

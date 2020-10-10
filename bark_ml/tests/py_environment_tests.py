@@ -19,7 +19,8 @@ import pprint
 from bark.core.models.behavior import BehaviorConstantAcceleration
 from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
-  DiscreteHighwayBlueprint, ContinuousMergingBlueprint, DiscreteMergingBlueprint
+  DiscreteHighwayBlueprint, ContinuousMergingBlueprint, DiscreteMergingBlueprint, \
+  ConfigurableScenarioBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.environments.counterfactual_runtime import CounterfactualRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents.sac_agent import BehaviorSACAgent
@@ -105,6 +106,20 @@ class PyEnvironmentTests(unittest.TestCase):
       observed_next_state, reward, done, info = env.step(action)
       print(f"Observed state: {observed_next_state}, Reward: {reward}, Done: {done}")
     pprint.pprint(env.tracer._states)
+
+  def test_configurable_blueprint(self):
+    params = ParameterServer(filename="bark_ml/tests/data/highway_merge_configurable.json")
+    bp = ConfigurableScenarioBlueprint(params=params)
+    env = SingleAgentRuntime(blueprint=bp, render=False)
+    # sac_agent = BehaviorSACAgent(environment=env,
+    #                              params=params)
+    # env.ml_behavior = sac_agent
+    
+    # env.reset()
+    # for _ in range(0, 10):
+    #   action = np.random.randint(low=0, high=3)
+    #   observed_next_state, reward, done, info = env.step(action)
+  
 
 if __name__ == '__main__':
   unittest.main()

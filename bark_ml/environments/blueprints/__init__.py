@@ -5,3 +5,4 @@ from bark_ml.environments.blueprints.merging.merging import ContinuousMergingBlu
 from bark_ml.environments.blueprints.merging.merging import DiscreteMergingBlueprint
 from bark_ml.environments.blueprints.intersection.intersection import ContinuousIntersectionBlueprint
 from bark_ml.environments.blueprints.intersection.intersection import DiscreteIntersectionBlueprint
+from bark_ml.environments.blueprints.configurable.configurable_scenario import ConfigurableScenarioBlueprint
