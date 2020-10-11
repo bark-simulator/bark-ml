@@ -89,7 +89,7 @@ def run_configuration(argv):
   elif FLAGS.mode == "visualize":
     runner.Run(num_episodes=10, render=True)
   elif FLAGS.mode == "evaluate":
-    runner.Run(num_episodes=250, render=False, max_col_rate=cr)
+    runner.Run(num_episodes=250, render=False)
 
   # store all used params of the training
   # params.Save("your_path_here/tfa_sac_gnn_params.json")

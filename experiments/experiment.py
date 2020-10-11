@@ -85,3 +85,7 @@ class Experiment:
   @property
   def runner(self):
     return self._runner
+  
+  @property
+  def params(self):
+    return self._params

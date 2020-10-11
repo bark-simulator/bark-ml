@@ -116,9 +116,16 @@ class PyExperimentTests(unittest.TestCase):
     runner = LoadModule(module_name, items)
 
   def test_experiment_class(self):
-    experiment = Experiment("experiments/example_experiment/config.json")
-    experiment.runner.Run(num_episodes=5, render=True)
-  
+    experiment = Experiment("experiments/data/config.json")
+    # visualize/evaluate
+    # experiment.runner.Run(num_episodes=5, render=True)
+    # train
+    experiment.params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = \
+      "/Users/hart/Development/bark-ml/checkpoints_merge_spektral_att3/"
+    experiment.params["ML"]["TFARunner"]["SummaryPath"] = \
+      "/Users/hart/Development/bark-ml/checkpoints_merge_spektral_att3/"
+    experiment.runner.SetupSummaryWriter()
+    experiment.runner.Train()
 
 if __name__ == '__main__':
   unittest.main()
