@@ -1,4 +1,35 @@
 {
+    "Experiment": {
+        "Observer": {
+            "ModuleName": "GraphObserver",
+            "Config": {}
+        },
+        "Evaluator": {
+            "ModuleName": "GoalReached",
+            "Config": {}
+        },
+        "Runtime": {
+            "ModuleName": "SingleAgentRuntime",
+            "Config": {}
+        },
+        "Runner": {
+            "ModuleName": "SACRunner",
+            "Config": {}
+        },
+        "Agent": {
+            "ModuleName": "BehaviorGraphSACAgent",
+            "Config": {
+                "init_gnn": "init_gcn"
+            }
+        },
+        "Blueprint": {
+            "ModuleName": "ConfigurableScenarioBlueprint",
+            "Config": {
+                "num_scenarios": 2500,
+                "viewer": false
+            }
+        }
+    },
     "ML": {
         "BehaviorContinuousML": {
             "ActionsLowerBound": [
