@@ -12,6 +12,8 @@ experiment.evaluate()
 
 
 # NOTE: IF WE USE THE CONFIGURABLE SCENARIO GENERATION; WOULD BE REPRODUCIBLE
+# NOTE: hash(Experiment, ML)
+
 
 bp = ConfigurableScenarioBlueprint(params)  # eval
 observer = GraphObserver(params=params)  # eval

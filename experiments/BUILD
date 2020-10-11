@@ -6,8 +6,8 @@ filegroup(
 
 
 py_library(
-    name = "experiment_template",
-    srcs = ["experiment_template.py"],
+    name = "experiment",
+    srcs = ["experiment.py"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
     imports = ["../external/bark_project/bark/python_wrapper/"],
     deps = ["//bark_ml/commons:py_spaces"],
@@ -22,10 +22,9 @@ py_test(
     imports = ["../external/bark_project/bark/python_wrapper/",
                "../python_wrapper/"],
     deps = ["//bark_ml/environments:single_agent_runtime",
-            "//bark_ml/environments:counterfactual_runtime",
+            "//bark_ml/environments:blueprints",
             "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
-            "//bark_ml/environments:gym",
-            "//bark_ml/commons:py_spaces",
-            ":experiment_template"],
+            "//bark_ml/library_wrappers/lib_tf_agents/runners:runners",
+            "//bark_ml/observers:observers"],
     visibility = ["//visibility:public"],
 )

@@ -71,7 +71,7 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
                environment=None,
                observer=None,
                params=None,
-               init_gnn=init_gnn_edge_cond):
+               init_gnn='init_gat'):
     """
     Initializes a `BehaviorGraphSACAgent` instance.
 
@@ -83,7 +83,7 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
     """
     # the super init calls 'GetAgent', so assign the observer before
     self._gnn_sac_params = params["ML"]["BehaviorGraphSACAgent"]
-    self._init_gnn = init_gnn
+    self._init_gnn = eval(init_gnn)
     BehaviorTFAAgent.__init__(self,
                               environment=environment,
                               params=params,

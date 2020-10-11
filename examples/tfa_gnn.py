@@ -26,7 +26,6 @@ from bark.core.models.behavior import BehaviorConstantAcceleration
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, ContinuousMergingBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorGraphSACAgent
-from bark_ml.library_wrappers.lib_tf_agents.agents.graph_sac_agent import init_gat, init_gcn, init_gnn_edge_cond
 from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner
 from bark_ml.observers.graph_observer import GraphObserver
 
@@ -78,7 +77,7 @@ def run_configuration(argv):
   sac_agent = BehaviorGraphSACAgent(environment=env,
                                     observer=observer,
                                     params=params,
-                                    init_gnn=init_gcn)
+                                    init_gnn='init_gat')
   env.ml_behavior = sac_agent
   runner = SACRunner(params=params,
                      environment=env,

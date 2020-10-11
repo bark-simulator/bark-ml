@@ -10,20 +10,58 @@
 import unittest
 import numpy as np
 import os
+import importlib
 import matplotlib
 import time
 import tensorflow as tf
 from graph_nets import utils_tf
 from graph_nets.graphs import GraphsTuple
 from bark.runtime.commons.parameters import ParameterServer
+from bark_ml.environments.blueprints.configurable.configurable_scenario import ConfigurableScenarioBlueprint
+from bark_ml.evaluators.goal_reached import GoalReached
+from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
+from bark_ml.library_wrappers.lib_tf_agents.runners.sac_runner import SACRunner
+from bark_ml.library_wrappers.lib_tf_agents.agents.graph_sac_agent import BehaviorGraphSACAgent
+from bark_ml.observers.graph_observer import GraphObserver
+from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 
-from experiments.example_experiment.experiment import Experiment
 
-
-class PyExperimentTests(unittest.TestCase):
-  def test_experiment(self):
-    experiment = Experiment(
-      json_file="experiments/example_experiment/config.json")
+class PyExperimentTests(unittest.TestCase):  
+  def test_module_creation(self):
+    params = ParameterServer(filename="experiments/example_experiment/config.json")
     
+    # Blueprint
+    ml_behavior = BehaviorContinuousML(params=params)
+    module_name = "ConfigurableScenarioBlueprint"
+    further_items = {"num_scenarios": 3500, "viewer": False, "ml_behavior": ml_behavior}
+    blueprint = eval("{}(params=params, **further_items)".format(module_name))
+    # NOTE: set dummy behavior model for continuous or discerte actions
+    
+    # Evaluator
+    module_name = "GoalReached"
+    evaluator = eval("{}(params=params)".format(module_name))
+    
+    # Obserevr
+    module_name = "GraphObserver"
+    observer = eval("{}(params=params)".format(module_name))
+    
+    # Runtime
+    module_name = "SingleAgentRuntime"
+    runtime = eval("{}(blueprint=blueprint, evaluator=evaluator, \
+                       observer=observer, render=False)".format(module_name))
+    
+    # SAC-Agent
+    module_name = "BehaviorGraphSACAgent"
+    further_items = {"init_gnn": 'init_gcn'}
+    agent = eval("{}(environment=runtime, observer=observer, \
+                     params=params, **further_items)".format(module_name))
+    runtime.ml_behavior = agent
+    
+    # SAC-Runner
+    module_name = "SACRunner"
+    runner = eval("{}(params=params, environment=runtime, \
+                      agent=agent)".format(module_name))
+
+
 if __name__ == '__main__':
   unittest.main()
