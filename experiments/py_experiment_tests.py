@@ -24,9 +24,11 @@ from bark_ml.library_wrappers.lib_tf_agents.runners.sac_runner import SACRunner
 from bark_ml.library_wrappers.lib_tf_agents.agents.graph_sac_agent import BehaviorGraphSACAgent
 from bark_ml.observers.graph_observer import GraphObserver
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
+from experiments.experiment import Experiment
 
 
 class PyExperimentTests(unittest.TestCase):
+  @unittest.skip("...")
   def test_module_creation(self):
     params = ParameterServer(filename="experiments/example_experiment/config.json")
     # Blueprint
@@ -61,7 +63,7 @@ class PyExperimentTests(unittest.TestCase):
     runner = eval("{}(params=params, environment=runtime, \
                       agent=agent)".format(module_name))
 
-
+  @unittest.skip("...")
   def test_module_creation_from_json(self):
     params = ParameterServer(filename="experiments/example_experiment/config.json")
     exp_params = params["Experiment"]
@@ -113,6 +115,10 @@ class PyExperimentTests(unittest.TestCase):
     items["agent"] = agent
     runner = LoadModule(module_name, items)
 
+  def test_experiment_class(self):
+    experiment = Experiment("experiments/example_experiment/config.json")
+    pass
+  
 
 if __name__ == '__main__':
   unittest.main()

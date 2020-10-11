@@ -3,7 +3,8 @@
 
 py_library(
     name = "evaluators",
-    srcs = ["goal_reached.py",
+    srcs = ["__init__.py",
+            "goal_reached.py",
             "goal_reached_guiding.py",
             "evaluator.py"],
     data = ["@bark_project//bark/python_wrapper:core.so"],

@@ -47,3 +47,14 @@ py_library(
             "//bark_ml/environments:single_agent_runtime"],
     visibility = ["//visibility:public"],
 )
+
+py_library(
+    name = "environments",
+    srcs = ["__init__.py"],
+    imports = ["../external/bark_project/bark/python_wrapper/"],
+    data = ["@bark_project//bark/python_wrapper:core.so"],
+    deps = ["//bark_ml/environments:blueprints",
+            "//bark_ml/environments:single_agent_runtime",
+            "//bark_ml/environments:counterfactual_runtime"],
+    visibility = ["//visibility:public"],
+)

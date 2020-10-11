@@ -1,6 +1,7 @@
 py_library(
     name = "observers",
-    srcs = ["nearest_state_observer.py",
+    srcs = ["__init__.py",
+            "nearest_state_observer.py",
             "simple_observer.py",
             "observer.py",
             "graph_observer.py"],

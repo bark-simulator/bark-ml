@@ -10,7 +10,11 @@ py_library(
     srcs = ["experiment.py"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
     imports = ["../external/bark_project/bark/python_wrapper/"],
-    deps = ["//bark_ml/commons:py_spaces"],
+    deps = ["//bark_ml/environments:environments",
+            "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
+            "//bark_ml/library_wrappers/lib_tf_agents/runners:runners",
+            "//bark_ml/evaluators:evaluators",
+            "//bark_ml/observers:observers"],
     visibility = ["//visibility:public"],
 )
 
@@ -21,10 +25,6 @@ py_test(
             ":data"],
     imports = ["../external/bark_project/bark/python_wrapper/",
                "../python_wrapper/"],
-    deps = ["//bark_ml/environments:single_agent_runtime",
-            "//bark_ml/environments:blueprints",
-            "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
-            "//bark_ml/library_wrappers/lib_tf_agents/runners:runners",
-            "//bark_ml/observers:observers"],
+    deps = [":experiment"],
     visibility = ["//visibility:public"],
 )
