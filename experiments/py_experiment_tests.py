@@ -117,7 +117,7 @@ class PyExperimentTests(unittest.TestCase):
 
   def test_experiment_class(self):
     experiment = Experiment("experiments/example_experiment/config.json")
-    pass
+    experiment.runner.Run(num_episodes=5, render=True)
   
 
 if __name__ == '__main__':

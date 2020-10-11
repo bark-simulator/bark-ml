@@ -26,7 +26,7 @@
             "ModuleName": "ConfigurableScenarioBlueprint",
             "Config": {
                 "num_scenarios": 2500,
-                "viewer": false
+                "viewer": true
             }
         }
     },

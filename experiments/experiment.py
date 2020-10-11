@@ -15,19 +15,19 @@ def LoadModule(module_name, dict_items):
 
 class Experiment:
   def __init__(self, json_file):
-    self.GetJson(json_file)
+    self.InitJson(json_file)
   
-  def GetJson(self, json_file):
+  def InitJson(self, json_file):
     self._params = ParameterServer(filename=json_file)
     self._exp_params = self._params["Experiment"]
-    self._blueprint = self.GetBlueprint()
-    self._observer = self.GetObserver()
-    self._evaluator = self.GetEvaluator()
-    self._runtime = self.GetRuntime()
-    self._agent = self.GetAgent()
-    self._runner = self.GetRunner() 
+    self._blueprint = self.InitBlueprint()
+    self._observer = self.InitObserver()
+    self._evaluator = self.InitEvaluator()
+    self._runtime = self.InitRuntime()
+    self._agent = self.InitAgent()
+    self._runner = self.InitRunner() 
 
-  def GetBlueprint(self):
+  def InitBlueprint(self):
     module_name = self._exp_params["Blueprint"]["ModuleName"]
     items = self._exp_params["Blueprint"]["Config"].ConvertToDict()
     items["params"] = self._params
@@ -36,19 +36,19 @@ class Experiment:
     blueprint._ml_behavior = BehaviorContinuousML(params=self._params)
     return blueprint
   
-  def GetObserver(self):
+  def InitObserver(self):
     module_name = self._exp_params["Observer"]["ModuleName"]
     items = self._exp_params["Observer"]["Config"].ConvertToDict()
     items["params"] = self._params
     return LoadModule(module_name, items)
   
-  def GetEvaluator(self):
+  def InitEvaluator(self):
     module_name = self._exp_params["Evaluator"]["ModuleName"]
     items = self._exp_params["Evaluator"]["Config"].ConvertToDict()
     items["params"] = self._params
     return LoadModule(module_name, items)
   
-  def GetAgent(self):
+  def InitAgent(self):
     module_name = self._exp_params["Agent"]["ModuleName"]
     items = self._exp_params["Agent"]["Config"].ConvertToDict()
     items["environment"] = self._runtime
@@ -58,7 +58,7 @@ class Experiment:
     self._runtime.ml_behavior = agent
     return agent
   
-  def GetRuntime(self):
+  def InitRuntime(self):
     module_name = self._exp_params["Runtime"]["ModuleName"]
     items = self._exp_params["Runtime"]["Config"].ConvertToDict()
     items["evaluator"] = self._evaluator
@@ -66,10 +66,22 @@ class Experiment:
     items["blueprint"] = self._blueprint
     return LoadModule(module_name, items)
   
-  def GetRunner(self):
+  def InitRunner(self):
     module_name = self._exp_params["Runner"]["ModuleName"]
     items = self._exp_params["Runner"]["Config"].ConvertToDict()
     items["environment"] = self._runtime
     items["params"] = self._params
     items["agent"] = self._agent
     return LoadModule(module_name, items)
+  
+  @property
+  def agent(self):
+    return self._agent
+  
+  @property
+  def runtime(self):
+    return self._runtime
+  
+  @property
+  def runner(self):
+    return self._runner
