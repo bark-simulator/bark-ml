@@ -27,7 +27,6 @@ from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 
 
 class PyExperimentTests(unittest.TestCase):
-  @unittest.skip("..")
   def test_module_creation(self):
     params = ParameterServer(filename="experiments/example_experiment/config.json")
     # Blueprint
@@ -67,40 +66,53 @@ class PyExperimentTests(unittest.TestCase):
     params = ParameterServer(filename="experiments/example_experiment/config.json")
     exp_params = params["Experiment"]
     
+    def LoadModule(module_name, dict_items):
+      return eval("{}(**dict_items)".format(module_name))
+      
     # blueprint
     module_name = exp_params["Blueprint"]["ModuleName"]
-    further_items = exp_params["Blueprint"]["Config"].ConvertToDict()
-    blueprint = eval("{}(params=params, **further_items)".format(module_name))
+    items = exp_params["Blueprint"]["Config"].ConvertToDict()
+    items["params"] = params
+    blueprint = LoadModule(module_name, items)
     blueprint._ml_behavior = BehaviorContinuousML(params=params)
     
     # Evaluator
     module_name = exp_params["Evaluator"]["ModuleName"]
-    further_items = exp_params["Evaluator"]["Config"].ConvertToDict()
-    evaluator = eval("{}(params=params, **further_items)".format(module_name))
+    items = exp_params["Evaluator"]["Config"].ConvertToDict()
+    items["params"] = params
+    evaluator = LoadModule(module_name, items)
     
     # Observer
     module_name = exp_params["Observer"]["ModuleName"]
-    further_items = exp_params["Observer"]["Config"].ConvertToDict()
-    observer = eval("{}(params=params, **further_items)".format(module_name))
+    items = exp_params["Observer"]["Config"].ConvertToDict()
+    items["params"] = params
+    observer = LoadModule(module_name, items)
     
     # Runtime
     module_name = exp_params["Runtime"]["ModuleName"]
-    further_items = exp_params["Runtime"]["Config"].ConvertToDict()
-    runtime = eval("{}(blueprint=blueprint, evaluator=evaluator, \
-                       observer=observer, **further_items)".format(module_name))
+    items = exp_params["Runtime"]["Config"].ConvertToDict()
+    items["evaluator"] = evaluator
+    items["observer"] = observer
+    items["blueprint"] = blueprint
+    runtime = LoadModule(module_name, items)
     
     # SAC-Agent
     module_name = exp_params["Agent"]["ModuleName"]
-    further_items = exp_params["Agent"]["Config"].ConvertToDict()
-    agent = eval("{}(environment=runtime, observer=observer, \
-                     params=params, **further_items)".format(module_name))
+    items = exp_params["Agent"]["Config"].ConvertToDict()
+    items["environment"] = runtime
+    items["observer"] = observer
+    items["params"] = params
+    agent = LoadModule(module_name, items)
     runtime.ml_behavior = agent
     
     # SAC-Runner
     module_name = exp_params["Runner"]["ModuleName"]
-    further_items = exp_params["Runner"]["Config"].ConvertToDict()
-    runner = eval("{}(environment=runtime, agent=agent, \
-                      params=params, **further_items)".format(module_name))
-    
+    items = exp_params["Runner"]["Config"].ConvertToDict()
+    items["environment"] = runtime
+    items["params"] = params
+    items["agent"] = agent
+    runner = LoadModule(module_name, items)
+
+
 if __name__ == '__main__':
   unittest.main()
