@@ -18,6 +18,16 @@ py_library(
     visibility = ["//visibility:public"],
 )
 
+py_binary(
+    name = "experiment_runner",
+    srcs = ["experiment_runner.py"],
+    data = ["@bark_project//bark/python_wrapper:core.so",
+            ":data"],
+    imports = ["../external/bark_project/bark/python_wrapper/"],
+    deps = [":experiment"],
+    visibility = ["//visibility:public"],
+)
+
 py_test(
     name = "py_experiment_tests",
     srcs = ["py_experiment_tests.py"],
@@ -26,5 +36,5 @@ py_test(
     imports = ["../external/bark_project/bark/python_wrapper/",
                "../python_wrapper/"],
     deps = [":experiment"],
-    visibility = ["//visibility:public"],
+    visibility = ["//visibility:public"]
 )
