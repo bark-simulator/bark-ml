@@ -64,7 +64,7 @@ def run_configuration(argv):
 
   # create environment
   bp = ContinuousMergingBlueprint(params,
-                                  number_of_senarios=10000,
+                                  num_scenarios=10000,
                                   random_seed=0)
   env = SingleAgentRuntime(blueprint=bp,
                            render=False,

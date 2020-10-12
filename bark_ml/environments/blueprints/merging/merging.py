@@ -46,7 +46,7 @@ class MergingLaneCorridorConfig(LaneCorridorConfig):
 class MergingBlueprint(Blueprint):
   def __init__(self,
                params=None,
-               number_of_senarios=250,
+               num_scenarios=250,
                random_seed=0,
                ml_behavior=None,
                viewer=True):
@@ -80,7 +80,7 @@ class MergingBlueprint(Blueprint):
       controlled_ids=True)
     scenario_generation = \
       ConfigWithEase(
-        num_scenarios=number_of_senarios,
+        num_scenarios=num_scenarios,
         map_file_name=os.path.join(os.path.dirname(__file__), "../../../environments/blueprints/merging/DR_DEU_Merging_MT_v01_shifted.xodr"),  # NOLINT
         random_seed=random_seed,
         params=params,
@@ -108,13 +108,13 @@ class MergingBlueprint(Blueprint):
 class ContinuousMergingBlueprint(MergingBlueprint):
   def __init__(self,
                params=None,
-               number_of_senarios=25,
+               num_scenarios=25,
                random_seed=0,
                viewer=True):
     ml_behavior = BehaviorContinuousML(params)
     MergingBlueprint.__init__(self,
                               params=params,
-                              number_of_senarios=number_of_senarios,
+                              num_scenarios=num_scenarios,
                               random_seed=random_seed,
                               ml_behavior=ml_behavior,
                               viewer=True)
@@ -123,13 +123,13 @@ class ContinuousMergingBlueprint(MergingBlueprint):
 class DiscreteMergingBlueprint(MergingBlueprint):
   def __init__(self,
                params=None,
-               number_of_senarios=25,
+               num_scenarios=25,
                random_seed=0,
                viewer=True):
     ml_behavior = BehaviorDiscreteML(params)
     MergingBlueprint.__init__(self,
                               params=params,
-                              number_of_senarios=number_of_senarios,
+                              num_scenarios=num_scenarios,
                               random_seed=random_seed,
                               ml_behavior=ml_behavior,
                               viewer=True)

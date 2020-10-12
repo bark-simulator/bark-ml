@@ -69,7 +69,7 @@ class DatabaseRunnerTests(unittest.TestCase):
     # HACK
     bp = ContinuousMergingBlueprint(
       params,
-      number_of_senarios=1,
+      num_scenarios=1,
       random_seed=0)
     # HACK
     env = SingleAgentRuntime(

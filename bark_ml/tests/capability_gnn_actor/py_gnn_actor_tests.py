@@ -122,7 +122,7 @@ class PyGNNActorTests(unittest.TestCase):
     params = ParameterServer(filename=params_filename)
     observer = GraphObserver(params=params)
     bp = ContinuousHighwayBlueprint(params,
-                                    number_of_senarios=2,
+                                    num_scenarios=2,
                                     random_seed=0)
     env = SingleAgentRuntime(blueprint=bp, observer=observer,
                              render=False)

@@ -42,7 +42,7 @@ class PyLibraryWrappersTFAgentTests(unittest.TestCase):
     # create scenario
     params = ParameterServer()
     bp = ContinuousHighwayBlueprint(params,
-                                    number_of_senarios=10,
+                                    num_scenarios=10,
                                     random_seed=0)
     env = SingleAgentRuntime(blueprint=bp,
                              render=False)
@@ -86,7 +86,7 @@ class PyLibraryWrappersTFAgentTests(unittest.TestCase):
   def test_agent_and_runner(self):
     params = ParameterServer()
     bp = ContinuousHighwayBlueprint(params,
-                                    number_of_senarios=10,
+                                    num_scenarios=10,
                                     random_seed=0)
     env = SingleAgentRuntime(blueprint=bp, render=False)
     agent = BehaviorPPOAgent(environment=env, params=params)

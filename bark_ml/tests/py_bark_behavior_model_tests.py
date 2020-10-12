@@ -58,7 +58,7 @@ class PyBarkBehaviorModelTests(unittest.TestCase):
   def test_sac_graph_agent(self):
     params = ParameterServer()
     bp = ContinuousMergingBlueprint(params,
-                                number_of_senarios=2500,
+                                num_scenarios=2500,
                                 random_seed=0)
     observer = GraphObserver(params=params)
     env = SingleAgentRuntime(

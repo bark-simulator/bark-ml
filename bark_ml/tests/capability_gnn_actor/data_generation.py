@@ -49,7 +49,7 @@ class DataGenerator():
     self._num_scenarios = num_scenarios
     self._params = params
     self._bp = ContinuousHighwayBlueprint(self._params,\
-      number_of_senarios=self._num_scenarios, random_seed=0)
+      num_scenarios=self._num_scenarios, random_seed=0)
     self._observer = GraphObserver(params=self._params)
     self._env = SingleAgentRuntime(blueprint=self._bp, observer=self._observer,
                                    render=render)

@@ -52,7 +52,7 @@ class NearestAgentsObserver(StateObserver):
 
     # preallocate np.array and add ego state
     concatenated_state = np.zeros(self._len_ego_state + \
-      self._max_num_vehicles*self._len_relative_agent_state)
+      self._max_num_vehicles*self._len_relative_agent_state, dtype=np.float32)
     concatenated_state[0:self._len_ego_state] = \
       self._select_state_by_index(self._norm(ego_state)) 
     

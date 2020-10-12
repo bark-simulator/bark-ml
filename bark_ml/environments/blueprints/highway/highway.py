@@ -42,27 +42,31 @@ class HighwayLaneCorridorConfig(LaneCorridorConfig):
 class HighwayBlueprint(Blueprint):
   def __init__(self,
                params=None,
-               number_of_senarios=250,
+               num_scenarios=250,
                random_seed=0,
                ml_behavior=None,
                viewer=True):
-
     params["BehaviorIDMClassic"]["DesiredVelocity"] = 30.
+    params["World"]["remove_agents_out_of_map"] = False
     left_lane = HighwayLaneCorridorConfig(params=params,
                                           road_ids=[16],
                                           lane_corridor_id=0,
-                                          min_vel=25.0,
-                                          max_vel=30.0,
+                                          min_vel=28.0,
+                                          max_vel=32.0,
+                                          ds_min=10.,
+                                          ds_max=15.,
                                           controlled_ids=None)
     right_lane = HighwayLaneCorridorConfig(params=params,
                                            road_ids=[16],
                                            lane_corridor_id=1,
-                                           min_vel=25.0,
-                                           max_vel=30.0,
+                                           min_vel=28.0,
+                                           max_vel=32.0,
+                                           ds_min=10.,
+                                           ds_max=15.,
                                            controlled_ids=True)
     scenario_generation = \
       ConfigWithEase(
-        num_scenarios=number_of_senarios,
+        num_scenarios=num_scenarios,
         map_file_name=os.path.join(os.path.dirname(__file__), "../../../environments/blueprints/highway/city_highway_straight.xodr"),  # NOLINT
         random_seed=random_seed,
         params=params,
@@ -89,13 +93,13 @@ class HighwayBlueprint(Blueprint):
 class ContinuousHighwayBlueprint(HighwayBlueprint):
   def __init__(self,
                params=None,
-               number_of_senarios=25,
+               num_scenarios=25,
                random_seed=0,
                viewer=True):
     ml_behavior = BehaviorContinuousML(params)
     HighwayBlueprint.__init__(self,
                               params=params,
-                              number_of_senarios=number_of_senarios,
+                              num_scenarios=num_scenarios,
                               random_seed=random_seed,
                               ml_behavior=ml_behavior,
                               viewer=True)
@@ -104,13 +108,13 @@ class ContinuousHighwayBlueprint(HighwayBlueprint):
 class DiscreteHighwayBlueprint(HighwayBlueprint):
   def __init__(self,
                params=None,
-               number_of_senarios=25,
+               num_scenarios=25,
                random_seed=0,
                viewer=True):
     ml_behavior = BehaviorDiscreteML(params)
     HighwayBlueprint.__init__(self,
                               params=params,
-                              number_of_senarios=number_of_senarios,
+                              num_scenarios=num_scenarios,
                               random_seed=random_seed,
                               ml_behavior=ml_behavior,
                               viewer=True)

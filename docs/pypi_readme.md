@@ -78,7 +78,7 @@ params["World"]["remove_agents_out_of_map"] = True
 
 # create environment
 bp = ContinuousMergingBlueprint(params,
-                                number_of_senarios=2500,
+                                num_scenarios=2500,
                                 random_seed=0)
 env = SingleAgentRuntime(blueprint=bp,
                          render=False)

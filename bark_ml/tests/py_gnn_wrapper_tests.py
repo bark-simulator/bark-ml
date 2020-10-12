@@ -31,7 +31,7 @@ class PyGNNWrapperTests(unittest.TestCase):
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["Library"] = gnn_library
 
     
-    bp = ContinuousHighwayBlueprint(params, number_of_senarios=2500, random_seed=0)
+    bp = ContinuousHighwayBlueprint(params, num_scenarios=2500, random_seed=0)
     observer = GraphObserver(params=params)
     env = SingleAgentRuntime(blueprint=bp, observer=observer, render=False)
     sac_agent = BehaviorGraphSACAgent(environment=env, observer=observer, params=params)

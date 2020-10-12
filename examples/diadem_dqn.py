@@ -39,7 +39,7 @@ from bark_ml.environments.blueprints import DiscreteHighwayBlueprint
 # create scenario
 bark_params = ParameterServer()
 bp = DiscreteHighwayBlueprint(bark_params,
-                              number_of_senarios=10,
+                              num_scenarios=10,
                               random_seed=0,
                               viewer=False)
 

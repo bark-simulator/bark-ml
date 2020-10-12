@@ -44,7 +44,7 @@ class IntersectionLaneCorridorConfig(LaneCorridorConfig):
 class IntersectionBlueprint(Blueprint):
   def __init__(self,
                params=None,
-               number_of_senarios=250,
+               num_scenarios=250,
                random_seed=0,
                ml_behavior=None,
                viewer=True):
@@ -88,7 +88,7 @@ class IntersectionBlueprint(Blueprint):
 
     scenario_generation = \
       ConfigWithEase(
-        num_scenarios=number_of_senarios,
+        num_scenarios=num_scenarios,
         map_file_name=os.path.join(os.path.dirname(__file__), "../../../environments/blueprints/intersection/4way_intersection.xodr"),  # NOLINT
         random_seed=random_seed,
         params=params,
@@ -115,13 +115,13 @@ class IntersectionBlueprint(Blueprint):
 class ContinuousIntersectionBlueprint(IntersectionBlueprint):
   def __init__(self,
                params=None,
-               number_of_senarios=25,
+               num_scenarios=25,
                random_seed=0,
                viewer=True):
     ml_behavior = BehaviorContinuousML(params)
     IntersectionBlueprint.__init__(self,
                                    params=params,
-                                   number_of_senarios=number_of_senarios,
+                                   num_scenarios=num_scenarios,
                                    random_seed=random_seed,
                                    ml_behavior=ml_behavior,
                                    viewer=True)
@@ -130,13 +130,13 @@ class ContinuousIntersectionBlueprint(IntersectionBlueprint):
 class DiscreteIntersectionBlueprint(IntersectionBlueprint):
   def __init__(self,
                params=None,
-               number_of_senarios=25,
+               num_scenarios=25,
                random_seed=0,
                viewer=True):
     ml_behavior = BehaviorDiscreteML(params)
     IntersectionBlueprint.__init__(self,
                                    params=params,
-                                   number_of_senarios=number_of_senarios,
+                                   num_scenarios=num_scenarios,
                                    random_seed=random_seed,
                                    ml_behavior=ml_behavior,
                                    viewer=True)

@@ -22,10 +22,10 @@ from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
 # create scenario
 params = ParameterServer()
 bp = ContinuousHighwayBlueprint(params,
-                                number_of_senarios=10,
+                                num_scenarios=10,
                                 random_seed=0)
 # bp = DiscreteHighwayBlueprint(params,
-#                               number_of_senarios=10,
+#                               num_scenarios=10,
 #                               random_seed=0)
 
 

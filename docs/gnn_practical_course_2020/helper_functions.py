@@ -71,7 +71,7 @@ def configurable_setup(params, num_scenarios, graph_sac=True):
   """
   observer = GraphObserver(params=params)
   bp = ContinuousHighwayBlueprint(params,
-                                  number_of_senarios=num_scenarios,
+                                  num_scenarios=num_scenarios,
                                   random_seed=0)
   env = SingleAgentRuntime(blueprint=bp, observer=observer,
                             render=False)

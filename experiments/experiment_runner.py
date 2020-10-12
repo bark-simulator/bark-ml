@@ -14,7 +14,7 @@ flags.DEFINE_enum("mode",
                   ["train", "visualize", "evaluate", "print", "save"],
                   "Mode the configuration should be executed in.")
 flags.DEFINE_string("exp_json",
-                    "/Users/hart/Development/bark-ml/experiments/configs/gcn_three_layers.json",
+                    "/Users/hart/Development/bark-ml/experiments/configs/highway_gat_small.json",
                     "Path to the experiment json.")
 flags.DEFINE_string("save_path",
                     "/Users/hart/Development/bark-ml/experiments/configs/new_exp.json",
