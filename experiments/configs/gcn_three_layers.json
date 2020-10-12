@@ -28,7 +28,9 @@
                 "num_scenarios": 2500,
                 "viewer": true
             }
-        }
+        },
+        "NumEvaluationEpisodes": 1000,
+        "NumVisualizationEpisodes": 10
     },
     "ML": {
         "BehaviorContinuousML": {

@@ -5,7 +5,7 @@
 - visualize graph
 - visualize agents that are being included
 - visualize training
-- scenario generation using configurable scenario generation (+ database)
+- [don3] scenario generation using configurable scenario generation
 - experiments + checkpoint folder + training tag
 
 # FUTURE TODOS

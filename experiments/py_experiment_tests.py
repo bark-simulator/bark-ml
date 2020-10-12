@@ -30,7 +30,7 @@ from experiments.experiment import Experiment
 class PyExperimentTests(unittest.TestCase):
   @unittest.skip("..")
   def test_module_creation(self):
-    params = ParameterServer(filename="experiments/data/config.json")
+    params = ParameterServer(filename="experiments/configs/gcn_three_layers.json")
     # Blueprint
     ml_behavior = BehaviorContinuousML(params=params)
     module_name = "ConfigurableScenarioBlueprint"
@@ -65,7 +65,7 @@ class PyExperimentTests(unittest.TestCase):
   
   @unittest.skip("..")
   def test_module_creation_from_json(self):
-    params = ParameterServer(filename="experiments/data/config.json")
+    params = ParameterServer(filename="experiments/configs/gcn_three_layers.json")
     exp_params = params["Experiment"]
     
     def LoadModule(module_name, dict_items):
@@ -116,7 +116,7 @@ class PyExperimentTests(unittest.TestCase):
     runner = LoadModule(module_name, items)
 
   def test_experiment_class(self):
-    experiment = Experiment("experiments/data/config.json")
+    experiment = Experiment("experiments/configs/gcn_three_layers.json")
     # visualize/evaluate
     experiment.runner.Run(num_episodes=2, render=False)
     # experiment.params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = \

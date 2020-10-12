@@ -166,7 +166,4 @@ tests/data/database_maps_DR_DEU_Merging_MT_shifted.xodr
 *.png
 *.p
 
-/checkpoints**
-/nn_checkpoints**
-/summaries**
-/results/data**
+/experiments/runs/**
