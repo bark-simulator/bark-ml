@@ -14,11 +14,13 @@ def LoadModule(module_name, dict_items):
   return eval("{}(**dict_items)".format(module_name))
 
 class Experiment:
-  def __init__(self, json_file):
+  def __init__(self, json_file, params=None):
+    self._params = params
     self.InitJson(json_file)
   
   def InitJson(self, json_file):
-    self._params = ParameterServer(filename=json_file)
+    if self._params is None:
+      self._params = ParameterServer(filename=json_file)
     self._exp_params = self._params["Experiment"]
     self._blueprint = self.InitBlueprint()
     self._observer = self.InitObserver()

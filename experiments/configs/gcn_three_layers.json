@@ -29,7 +29,7 @@
                 "viewer": true
             }
         },
-        "NumEvaluationEpisodes": 1000,
+        "NumEvaluationEpisodes": 100,
         "NumVisualizationEpisodes": 10
     },
     "ML": {
@@ -99,7 +99,7 @@
             "CollectionEpisodesPerStep": 1
         },
         "SACRunner": {
-            "EvaluateEveryNSteps": 1000,
+            "EvaluateEveryNSteps": 50,
             "NumberOfCollections": 100000
         }
     },
