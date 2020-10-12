@@ -42,11 +42,11 @@ class GCNWrapper(GNNWrapper):
       params=params,
       name=name,
       output_dtype=output_dtype)
-    self._num_message_passing_layers = params["GCN"][
+    self._num_message_passing_layers = params["ML"]["GCN"][
       "NumMessagePassingLayers", "Number of message passing layers", 3]
-    self._embedding_size = params["GCN"][
+    self._embedding_size = params["ML"]["GCN"][
       "EmbeddingSize", "Embedding size of nodes", 128]
-    self._activation_func = params["GCN"][
+    self._activation_func = params["ML"]["GCN"][
       "Activation", "Activation function", "relu"]
     self._layers = []
     # initialize network & call func

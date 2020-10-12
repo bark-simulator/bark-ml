@@ -94,7 +94,7 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
     self._eval_policy = self.GetEvalPolicy()
 
   def GetAgent(self, env, params):
-    params["GraphDims"] = self._observer.graph_dimensions
+    self._params["ML"]["GraphDims"] = self._observer.graph_dimensions
     # NOTE: MIGHT NOT HAVE THE ENV!
     
     # actor network

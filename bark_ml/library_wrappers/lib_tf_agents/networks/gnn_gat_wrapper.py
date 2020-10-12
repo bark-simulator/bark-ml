@@ -42,13 +42,13 @@ class GATWrapper(GNNWrapper):
       params=params,
       name=name,
       output_dtype=output_dtype)
-    self._num_message_passing_layers = params["GAT"][
+    self._num_message_passing_layers = params["ML"]["GAT"][
       "NumMessagePassingLayers", "Number of message passing layers", 2]
     self._embedding_size = params[
       "EmbeddingSize", "Embedding size of nodes", 128]
-    self._activation_func = params["GAT"][
+    self._activation_func = params["ML"]["GAT"][
       "Activation", "Activation function", "elu"]
-    self._num_attn_heads = params["GAT"][
+    self._num_attn_heads = params["ML"]["GAT"][
       "NumAttnHeads", "Number of attention heads to be used", 4]
     self._dropout_rate = params[
       "DropoutRate", "", 0.]

@@ -11,12 +11,14 @@ from experiments.experiment import Experiment
 FLAGS = flags.FLAGS
 flags.DEFINE_enum("mode",
                   "visualize",
-                  ["train", "visualize", "evaluate", "print"],
+                  ["train", "visualize", "evaluate", "print", "save"],
                   "Mode the configuration should be executed in.")
 flags.DEFINE_string("exp_json",
                     "/Users/hart/Development/bark-ml/experiments/configs/gcn_three_layers.json",
                     "Path to the experiment json.")
-
+flags.DEFINE_string("save_path",
+                    "/Users/hart/Development/bark-ml/experiments/configs/new_exp.json",
+                    "Path to the experiment json.")
 
 class ExperimentRunner:
   def __init__(self, json_file, mode):
@@ -37,7 +39,9 @@ class ExperimentRunner:
       self.Evaluate()
     if mode == "print":
       self.PrintExperiment()
-  
+    if mode == "save":
+      self.SaveExperiment(FLAGS.save_path)
+      
   def BuildExperiment(self, json_file):
     return Experiment(json_file, self._params)
   
@@ -103,6 +107,8 @@ class ExperimentRunner:
   def PrintExperiment(self):
     pprint.pprint(self._experiment.params.ConvertToDict())
 
+  def SaveExperiment(self, file_path):
+    self._params.Save(file_path)
 
 # run experiment
 def run_experiment(argv):

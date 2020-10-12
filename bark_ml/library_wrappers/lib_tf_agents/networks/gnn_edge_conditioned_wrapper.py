@@ -38,11 +38,11 @@ class GEdgeCondWrapper(GNNWrapper):
       params=params,
       name=name,
       output_dtype=output_dtype)
-    self._num_message_passing_layers = params["EdgeCond"][
+    self._num_message_passing_layers = params["ML"]["EdgeCond"][
       "NumMessagePassingLayers", "Number of message passing layers", 3]
-    self._embedding_size = params["EdgeCond"][
+    self._embedding_size = params["ML"]["EdgeCond"][
       "EmbeddingSize", "Embedding size of nodes", 128]
-    self._activation_func = params["EdgeCond"][
+    self._activation_func = params["ML"]["EdgeCond"][
       "Activation", "Activation function", "relu"]
     self._layers = []
     # initialize network & call func

@@ -2,19 +2,19 @@
     "Experiment": {
         "Observer": {
             "ModuleName": "GraphObserver",
-            "Config": {}
+            "Config": "MISSING"
         },
         "Evaluator": {
             "ModuleName": "GoalReached",
-            "Config": {}
+            "Config": "MISSING"
         },
         "Runtime": {
             "ModuleName": "SingleAgentRuntime",
-            "Config": {}
+            "Config": "MISSING"
         },
         "Runner": {
             "ModuleName": "SACRunner",
-            "Config": {}
+            "Config": "MISSING"
         },
         "Agent": {
             "ModuleName": "BehaviorGraphSACAgent",
