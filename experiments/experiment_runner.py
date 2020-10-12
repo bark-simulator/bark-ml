@@ -44,24 +44,39 @@ class ExperimentRunner:
     file_name = os.path.splitext(base_name)[0]
     return dir_name, file_name
   
-  def GenerateHash(self):
+  def GenerateHash(self, params):
     """hash-function to indicate whether the same json is used
        as during training"""
-    ml_params = self._experiment.params.ConvertToDict()
-    return hash(frozenset(ml_params.items()))
+    exp_params = params.ConvertToDict()
+    return hash(repr(sorted(exp_params.items())))
 
+  def CompareExpHashes(self):
+    pass
+  
   def SetCkptsAndSummaries(self):
-    runs_folder = \
+    self._runs_folder = \
       str(self._experiment_folder) + "/runs/" + self._json_name + "/"
-    ckpt_folder = runs_folder + "ckpts/"
-    summ_folder = runs_folder + "summ/"
+    ckpt_folder = self._runs_folder + "ckpts/"
+    summ_folder = self._runs_folder + "summ/"
     self._experiment.params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = \
       ckpt_folder
     self._experiment.params["ML"]["TFARunner"]["SummaryPath"] = \
       summ_folder
 
   def Train(self):
-    # NOTE: safe params in folder
+    # NOTE: here we safe the hash and params if they do not exist yet
+    hash_file_path = self._runs_folder + "hash.txt"
+    if not os.path.isfile(hash_file_path):
+      file = open(hash_file_path, 'w')
+      file.write(str(self.GenerateHash(self._experiment.params)))
+      file.close()
+    else:
+      experiment_hash = self.GenerateHash(self._experiment.params)
+      file = open(hash_file_path, 'r')
+      old_experiment_hash = file.readline()
+      file.close()
+      if experiment_hash != old_experiment_hash:
+        assert "Experiment hashes do not match."
     self._experiment.runner.SetupSummaryWriter()
     self._experiment.runner.Train()
   
