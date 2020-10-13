@@ -54,4 +54,4 @@ virtualenv -p python3 ./bark_ml/python_wrapper/venv --system-site-packages
 bazel run //examples:tfa_gnn -- $@
 
 -- command to be executed in sbatch --
-singularity exec -B $PWD:/bark-ml bark_ml.img /bin/bash /bark-ml/bark-ml/run_exp.sh
+singularity exec -B $PWD:/bark-ml bark_ml.img /bin/bash /bark-ml/bark-ml/run_exp.sh --exp_json /bark-ml/bark-ml/experiments/configs/highway_gcn_small.json --mode train
