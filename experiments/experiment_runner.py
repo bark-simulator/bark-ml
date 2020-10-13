@@ -1,6 +1,7 @@
 import pprint
 import os
 import hashlib
+import logging
 from pathlib import Path
 from absl import app
 from absl import flags
@@ -22,6 +23,7 @@ flags.DEFINE_string("save_path",
 
 class ExperimentRunner:
   def __init__(self, json_file, mode):
+    self._logger = logging.getLogger()
     self._experiment_json = json_file
     self._params = ParameterServer(filename=json_file)
     self._experiment_folder, self._json_name = \
@@ -67,13 +69,14 @@ class ExperimentRunner:
       old_experiment_hash = file.readline()
       file.close()
       if experiment_hash != old_experiment_hash:
-        print("\033[31m Trained experiment hash does not match \033[0m")
+        self._logger.warning("\033[31m Trained experiment hash does not match \033[0m")
   
   def SetCkptsAndSummaries(self):
     self._runs_folder = \
       str(self._experiment_folder) + "/runs/" + self._json_name + "/"
     ckpt_folder = self._runs_folder + "ckpts/"
     summ_folder = self._runs_folder + "summ/"
+    self._logger.info(f"Run folder of the agent {self._runs_folder}.")
     self._hash_file_path = self._runs_folder + "hash.txt"
     self._params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = \
       ckpt_folder
