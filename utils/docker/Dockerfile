@@ -4,7 +4,6 @@ FROM python:3.7
 ENV PATH /opt/conda/bin:$PATH
 ENV DISPLAY :0
 
-
 # Run installers.
 COPY installers /tmp/installers
 RUN bash /tmp/installers/install_bazel.sh
@@ -16,4 +15,7 @@ RUN pip3 install -r /tmp/installers/requirements.txt
 
 # renewe bash
 CMD [ "/bin/bash" ]
-WORKDIR /bark
+RUN mkdir -p /bark-ml
+ENV WORKSPACE /bark-ml
+ENV MPLBACKEND "agg"
+WORKDIR /bark-ml

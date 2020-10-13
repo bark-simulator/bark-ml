@@ -4,15 +4,13 @@
 - [d0n3] do not like the tracking system with pandas + fix this + units
 - [d0n3] scenario generation using configurable scenario generation
 - [d0n3] experiments + checkpoint folder + training tag
-- run in cluster and singularity
-- good highway and merging scenarios
-- random seeds of agents
+- [in prog] good highway and merging scenarios
+- [d0n3] run in docker and singularity
+- [in prog] cluster setup
+- introduce tags for training
 - visualize graph
-- visualize agents that are being included
+- visualize agents that are being sensed
 - visualize training
-
-# Outcome
-- Multiple trained experiments that are benchmarkable
 
 
 docker run -v /Users/hart/Development/bark-ml:/bark-ml -other -options BARK-ML echo "Hello from container"
