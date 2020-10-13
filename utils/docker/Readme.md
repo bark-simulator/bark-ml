@@ -51,7 +51,7 @@ virtualenv -p python3 ./bark_ml/python_wrapper/venv --system-site-packages
 #!bin/bash
 cd /bark-ml/bark-ml
 virtualenv -p python3 ./bark_ml/python_wrapper/venv --system-site-packages
-bazel run //examples:tfa_gnn
+bazel run //examples:tfa_gnn -- $@
 
 -- command to be executed in sbatch --
 singularity exec -B $PWD:/bark-ml bark_ml.img /bin/bash /bark-ml/run_bazel.sh
