@@ -6,8 +6,9 @@
 - [d0n3] experiments + checkpoint folder + training tag
 - [in prog] good highway and merging scenarios
 - [d0n3] run in docker and singularity
-- [in prog] cluster setup
-- introduce tags for training
+- [d0n3] cluster setup
+- [in prog] introduce tags for training
+- [in prog] verify graph observer
 - visualize graph
 - visualize agents that are being sensed
 - visualize training

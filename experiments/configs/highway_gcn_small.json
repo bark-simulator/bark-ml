@@ -163,10 +163,6 @@
                 "y",
                 "theta",
                 "vel",
-                "goal_x",
-                "goal_y",
-                "goal_dx",
-                "goal_dy",
                 "goal_theta",
                 "goal_d",
                 "goal_vel"
