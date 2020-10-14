@@ -52,7 +52,7 @@ class GNNCriticNetwork(network.Network):
         observation_fc_layer_params, or be None.
       observation_conv_layer_params: Optional list of convolution layer
         parameters for observations, where each item is a length-three tuple
-        indicating (num_units, kernel_size, stride).
+        indicating (embedding_size, kernel_size, stride).
       observation_activation_fn: Activation function applied to the observation 
         layers, e.g. tf.nn.relu, slim.leaky_relu, ...
       action_fc_layer_params: Optional list of fully connected parameters for
@@ -68,7 +68,7 @@ class GNNCriticNetwork(network.Network):
         be None.
       action_conv_layer_params: Optional list of convolution layer
         parameters for actions, where each item is a length-three tuple
-        indicating (num_units, kernel_size, stride).
+        indicating (embedding_size, kernel_size, stride).
       action_activation_fn: Activation function applied to the action layers,
         e.g. tf.nn.relu, slim.leaky_relu, ...
       joint_fc_layer_params: Optional list of fully connected parameters after

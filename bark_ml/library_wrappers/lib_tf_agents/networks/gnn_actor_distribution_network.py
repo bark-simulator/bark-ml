@@ -130,7 +130,7 @@ class GNNActorDistributionNetwork(network.DistributionNetwork):
     self._gnn = gnn(name=name + "_GNN")
     
     encoder = encoding_network.EncodingNetwork(
-        input_tensor_spec=tf.TensorSpec([None, self._gnn.num_units]),
+        input_tensor_spec=tf.TensorSpec([None, self._gnn._embedding_size]),
         preprocessing_layers=preprocessing_layers,
         preprocessing_combiner=preprocessing_combiner,
         conv_layer_params=conv_layer_params,
