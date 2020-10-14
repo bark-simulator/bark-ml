@@ -46,7 +46,7 @@ class GraphObserver(StateObserver):
       "Whether normalization of features should be performed.",
       True]
 
-    self._agent_limit =\
+    self._num_agents =\
       params["ML"]["GraphObserver"]["AgentLimit", 
       "The maximum number of agents that can be observed.",
       4]
@@ -59,7 +59,7 @@ class GraphObserver(StateObserver):
     self._add_self_loops =\
       params["ML"]["GraphObserver"]["SelfLoops", 
       "Whether each node has an edge pointing to itself.", 
-      False]
+      True]
 
     requested_node_attribute_keys =\
       params["ML"]["GraphObserver"]["EnabledNodeFeatures",
@@ -114,8 +114,8 @@ class GraphObserver(StateObserver):
       end_index = start_index + self.feature_len
       obs[start_index:end_index] = self._extract_node_features(agent)
 
-    edge_features = np.zeros((self._agent_limit, self._agent_limit, self.edge_feature_len))
-    adjacency_matrix = np.zeros((self._agent_limit, self._agent_limit))
+    edge_features = np.zeros((self._num_agents, self._num_agents, self.edge_feature_len))
+    adjacency_matrix = np.zeros((self._num_agents, self._num_agents))
 
     # add edges to all visible agents
     for index, agent in agents:
@@ -133,8 +133,8 @@ class GraphObserver(StateObserver):
         adjacency_matrix[target_index, index] = 1
     
     # insert adjacency list
-    adj_start_index = self._agent_limit * self.feature_len
-    adj_end_index = adj_start_index + self._agent_limit ** 2
+    adj_start_index = self._num_agents * self.feature_len
+    adj_end_index = adj_start_index + self._num_agents ** 2
     obs[adj_start_index:adj_end_index] = adjacency_matrix.reshape(-1)
 
     # insert edge features
@@ -261,7 +261,7 @@ class GraphObserver(StateObserver):
 
       The first element always represents the ego agent.
       The remaining elements resemble other agents, up 
-      to the limit defined by `self._agent_limit`, sorted 
+      to the limit defined by `self._num_agents`, sorted 
       in ascending order with respect to the agents'
       distance in the world to the ego agent.
     """
@@ -270,7 +270,7 @@ class GraphObserver(StateObserver):
     agents.remove(ego_agent)
     agents = self._agents_sorted_by_distance(ego_agent, agents)
     agents.insert(0, ego_agent)
-    return list(enumerate(agents))[:self._agent_limit]
+    return list(enumerate(agents))[:self._num_agents]
 
   def _agents_sorted_by_distance(self, ego_agent, agents):
     """
@@ -477,8 +477,8 @@ class GraphObserver(StateObserver):
     d = {}
     d['x'] = self._world_x_range
     d['y'] = self._world_y_range
-    d['theta'] = self._ThetaRange
-    d['vel'] = self._VelocityRange
+    d['theta'] = self._theta_range
+    d['vel'] = self._velocity_range
     d['distance'] = [0, max_dist]
     d['dx'] = [-x_range, x_range]
     d['dy'] = [-y_range, y_range]
@@ -529,15 +529,15 @@ class GraphObserver(StateObserver):
     # -1 ... 1   for the edge attributes
     return spaces.Box(
       low=np.concatenate((
-        np.full(self._agent_limit * self.feature_len, -1),
-        np.zeros(self._agent_limit ** 2),
-        np.full((self._agent_limit ** 2) * self.edge_feature_len, -1))),
+        np.full(self._num_agents * self.feature_len, -1),
+        np.zeros(self._num_agents ** 2),
+        np.full((self._num_agents ** 2) * self.edge_feature_len, -1))),
       high=np.ones(self._len_state))
 
   @property
   def _len_state(self):
-    len_node_features = self._agent_limit * self.feature_len
-    len_adjacency = self._agent_limit**2
+    len_node_features = self._num_agents * self.feature_len
+    len_adjacency = self._num_agents**2
     len_edge_features = len_adjacency * self.edge_feature_len
     return len_node_features + len_adjacency + len_edge_features
 
@@ -552,7 +552,7 @@ class GraphObserver(StateObserver):
     - the number of edge features
     """
     return (
-      self._agent_limit,
+      self._num_agents,
       self.feature_len,
       self.edge_feature_len
     )

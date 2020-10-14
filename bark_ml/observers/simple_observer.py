@@ -66,11 +66,11 @@ class SimpleObserver(StateObserver):
     agent_state = \
       self._norm(agent_state,
                  StateDefinition.THETA_POSITION,
-                 self._ThetaRange)
+                 self._theta_range)
     agent_state = \
       self._norm(agent_state,
                  StateDefinition.VEL_POSITION,
-                 self._VelocityRange)
+                 self._velocity_range)
     return agent_state
 
   def Reset(self, world, controlled_agent_ids):

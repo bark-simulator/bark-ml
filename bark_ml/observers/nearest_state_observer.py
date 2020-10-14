@@ -87,7 +87,7 @@ class NearestAgentsObserver(StateObserver):
         self._max_num_vehicles*self._len_relative_agent_state))
 
   def _norm(self, agent_state):
-    if not self._NormalizationEnabled:
+    if not self._normalization_enabled:
         return agent_state
     agent_state[int(StateDefinition.X_POSITION)] = \
       self._norm_to_range(agent_state[int(StateDefinition.X_POSITION)],
@@ -97,10 +97,10 @@ class NearestAgentsObserver(StateObserver):
                           self._world_y_range)
     agent_state[int(StateDefinition.THETA_POSITION)] = \
       self._norm_to_range(agent_state[int(StateDefinition.THETA_POSITION)],
-                          self._ThetaRange)
+                          self._theta_range)
     agent_state[int(StateDefinition.VEL_POSITION)] = \
       self._norm_to_range(agent_state[int(StateDefinition.VEL_POSITION)],
-                          self._VelocityRange)
+                          self._velocity_range)
     return agent_state
 
   def _norm_to_range(self, value, range):

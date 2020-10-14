@@ -15,15 +15,15 @@ class StateObserver(ABC):
   def __init__(self,
                params):
     self._params = params
-    self._VelocityRange = \
+    self._velocity_range = \
       self._params["ML"]["StateObserver"]["VelocityRange",
       "Boundaries for min and max velocity for normalization",
       [0, 100]]
-    self._ThetaRange = \
+    self._theta_range = \
       self._params["ML"]["StateObserver"]["ThetaRange",
       "Boundaries for min and max theta for normalization",
       [0, 2*math.pi]]
-    self._NormalizationEnabled = \
+    self._normalization_enabled = \
       self._params["ML"]["StateObserver"]["NormalizationEnabled",
       "Whether normalization should be performed",
       True]

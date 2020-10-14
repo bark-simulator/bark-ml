@@ -49,16 +49,16 @@ class PyGraphObserverTests(unittest.TestCase):
     self.assertTrue(abs(0.1 - observer._normalize_value(1, range=range_)) < eps)
 
   def test_parameter_server_usage(self):
-    expected_agent_limit = 15
+    expected_num_agents = 15
     expected_visibility_radius = 100
 
     params = ParameterServer()
-    params["ML"]["GraphObserver"]["AgentLimit"] = expected_agent_limit
+    params["ML"]["GraphObserver"]["AgentLimit"] = expected_num_agents
     params["ML"]["GraphObserver"]["VisibilityRadius"] = expected_visibility_radius
     params["ML"]["GraphObserver"]["NormalizationEnabled"] = True
     observer = GraphObserver(params=params)
 
-    self.assertEqual(observer._agent_limit, expected_agent_limit)
+    self.assertEqual(observer._num_agents, expected_num_agents)
     self.assertEqual(observer._visibility_radius, expected_visibility_radius)
     # self.assertTrue(observer._add_self_loops)
     self.assertTrue(observer._normalize_observations)

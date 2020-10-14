@@ -157,7 +157,7 @@
             "NormalizationEnabled": true,
             "AgentLimit": 5,
             "VisibilityRadius": 150,
-            "SelfLoops": false,
+            "SelfLoops": true,
             "EnabledNodeFeatures": [
                 "x",
                 "y",
