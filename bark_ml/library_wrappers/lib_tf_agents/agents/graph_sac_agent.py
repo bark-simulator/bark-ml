@@ -101,7 +101,7 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
     actor_net = GNNActorNetwork(
       input_tensor_spec=env.observation_spec(),
       output_tensor_spec=env.action_spec(),
-      gnn=eval(init_gnn),
+      gnn=self._init_gnn,
       fc_layer_params=self._gnn_sac_params[
         "ActorFcLayerParams", "", [128, 64]],
       params=params
@@ -110,7 +110,7 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
     # critic network
     critic_net = GNNCriticNetwork(
       (env.observation_spec(), env.action_spec()),
-      gnn=eval(init_gnn),
+      gnn=self._init_gnn,
       observation_fc_layer_params=self._gnn_sac_params[
         "CriticObservationFcLayerParams", "", [128]],
       action_fc_layer_params=self._gnn_sac_params[
