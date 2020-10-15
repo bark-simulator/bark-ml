@@ -207,8 +207,8 @@
             "Activation": "relu"
         },
         "SACRunner": {
-            "NumberOfCollections": 40000,
-            "EvaluateEveryNSteps": 250
+            "NumberOfCollections": 250000,
+            "EvaluateEveryNSteps": 1000
         }
     },
     "BehaviorDynamicModel": {
