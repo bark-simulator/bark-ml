@@ -59,6 +59,11 @@ singularity exec -B $PWD:/bark-ml bark_ml.img /bin/bash /bark-ml/bark-ml/run_exp
 
 ssh 8gpu
 rsync bark_ml.img 8gpu:/mnt/glusterdata/home/hart/ -a --copy-links -v -z -P 
+rsync run_sbatch.sh 8gpu:/mnt/glusterdata/home/hart/ -a --copy-links -v -z -P 
 rsync bark-ml/ 8gpu:/mnt/glusterdata/home/hart/bark-ml/ -a --copy-links -v -z -P
 sbatch run_sbatch.sh experiment_0
 sattach job_id.0
+
+
+-- to execute on the cluster --
+sbatch run_sbatch.sh --exp_json=/bark-ml/bark-ml/experiments/configs/highway_nn_small.json --mode=train

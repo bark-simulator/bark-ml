@@ -204,7 +204,8 @@
         },
         "GCN": {
             "NumMessagePassingLayers": 2,
-            "Activation": "relu"
+            "Activation": "relu",
+            "EmbeddingSize": 64
         },
         "SACRunner": {
             "NumberOfCollections": 250000,
@@ -213,8 +214,5 @@
     },
     "BehaviorDynamicModel": {
         "IntegrationTimeDelta": 0.05000000074505806
-    },
-    "EmbeddingSize": 128,
-    "DropoutRate": 0.0
-
+    }
 }

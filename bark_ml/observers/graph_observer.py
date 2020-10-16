@@ -32,9 +32,6 @@ class GraphObserver(StateObserver):
     Creates an instance of `GraphObserver`.
 
     Args:
-      normalize_observations: A boolean value indicating whether
-        the observations returned by the `Observe` function
-        should be normalized into the range of [-1, 1].
       params: A `ParameterServer` instance that enables further
         configuration of the observer. Defaults to a new instance.
     """
@@ -48,19 +45,16 @@ class GraphObserver(StateObserver):
 
     self._num_agents =\
       params["ML"]["GraphObserver"]["AgentLimit", 
-      "The maximum number of agents that can be observed.",
+      "The maximum number of agents that is observed.",
       4]
-
     self._visibility_radius =\
       params["ML"]["GraphObserver"]["VisibilityRadius",
       "The radius in which agent can 'see', i.e. detect other agents.", 
       150]
-
     self._add_self_loops =\
       params["ML"]["GraphObserver"]["SelfLoops", 
-      "Whether each node has an edge pointing to itself.", 
+      "Whether nodes have self connections.", 
       True]
-
     requested_node_attribute_keys =\
       params["ML"]["GraphObserver"]["EnabledNodeFeatures",
       "The list of available node features, given by their string key that \
@@ -69,7 +63,6 @@ class GraphObserver(StateObserver):
        returned by `GraphObserver.available_node_attributes`.",
       self.available_node_attributes()
     ]
-
     self._enabled_node_attribute_keys = self._filter_requested_attributes(
       requested_keys=requested_node_attribute_keys,
       available_keys=self.available_node_attributes(),
@@ -77,7 +70,6 @@ class GraphObserver(StateObserver):
     self._logger.info(
       "GraphObserver configured with node attributes: " +
       f"{self._enabled_node_attribute_keys}")
-
     requested_edge_attribute_keys =\
       params["ML"]["GraphObserver"]["EnabledEdgeFeatures",
       "The list of available edge features, given by their string key that \
@@ -86,7 +78,6 @@ class GraphObserver(StateObserver):
        returned by `GraphObserver.available_edge_attributes`.",
       self.available_edge_attributes()
     ]
-
     self._enabled_edge_attribute_keys = self._filter_requested_attributes(
       requested_keys=requested_edge_attribute_keys,
       available_keys=self.available_edge_attributes(),
@@ -97,7 +88,6 @@ class GraphObserver(StateObserver):
 
     # the number of features of a node in the graph
     self.feature_len = len(self._enabled_node_attribute_keys)
-
     # the number of features of an edge between two nodes
     self.edge_feature_len = len(self._enabled_edge_attribute_keys)
 
@@ -249,8 +239,7 @@ class GraphObserver(StateObserver):
   def _preprocess_agents(self, world):
     """
     Preproccesses the agents for constructing an
-    observation by resorting and pruning the 
-    original list of agents.
+    observation by resorting.
 
     Args:
       world: A `bark.core.ObservedWorld` instance.
@@ -281,10 +270,8 @@ class GraphObserver(StateObserver):
       return Distance(
         self._position(ego_agent), 
         self._position(agent))
-    
     if len(agents) > 2:
       agents.sort(key=distance)
-
     return agents
 
   def _nearby_agents(self, center_agent, agents, radius: float):
@@ -295,16 +282,12 @@ class GraphObserver(StateObserver):
     """
     center_agent_pos = self._position(center_agent)
     other_agents = filter(lambda a: a[1].id != center_agent.id, agents)
-
     nearby_agents = []
-
     for index, agent in other_agents:
       agent_pos = self._position(agent)
       distance = Distance(center_agent_pos, agent_pos)
-
       if distance <= radius:
         nearby_agents.append((index, agent))
-
     return nearby_agents
 
   def _extract_node_features(self, agent, as_dict=False):
@@ -529,16 +512,16 @@ class GraphObserver(StateObserver):
     # -1 ... 1   for the edge attributes
     return spaces.Box(
       low=np.concatenate((
-        np.full(self._num_agents * self.feature_len, -1),
-        np.zeros(self._num_agents ** 2),
-        np.full((self._num_agents ** 2) * self.edge_feature_len, -1))),
+        np.full(self._num_agents*self.feature_len, -1),
+        np.zeros(self._num_agents**2),
+        np.full((self._num_agents**2)*self.edge_feature_len, -1))),
       high=np.ones(self._len_state))
 
   @property
   def _len_state(self):
-    len_node_features = self._num_agents * self.feature_len
+    len_node_features = self._num_agents*self.feature_len
     len_adjacency = self._num_agents**2
-    len_edge_features = len_adjacency * self.edge_feature_len
+    len_edge_features = len_adjacency*self.edge_feature_len
     return len_node_features + len_adjacency + len_edge_features
 
   @property

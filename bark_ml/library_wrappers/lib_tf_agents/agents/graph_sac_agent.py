@@ -56,7 +56,7 @@ def init_gcn(name, params):
   by passing in this function and initializing the instance in 
   the parent network.
   """
-  return GATWrapper(
+  return GCNWrapper(
     params=params, 
     name=name + "_GCN")
 

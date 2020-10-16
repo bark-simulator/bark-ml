@@ -9,6 +9,7 @@ import logging
 import tensorflow as tf
 from enum import Enum
 from spektral.layers import GraphConv
+import spektral
 
 # bark-ml
 from bark.runtime.commons.parameters import ParameterServer
@@ -64,7 +65,8 @@ class GCNWrapper(GNNWrapper):
     embeddings, adj_matrix, edge_features = GraphObserver.graph(
       observations=observations, 
       graph_dims=self._graph_dims)
+    lap = spektral.utils.localpooling_filter(adj_matrix, symmetric=True)
     for layer in self._layers: 
-      embeddings = layer([embeddings, adj_matrix])
+      embeddings = layer([embeddings, lap])
     return embeddings
 

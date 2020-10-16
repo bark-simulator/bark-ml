@@ -44,13 +44,13 @@ class GATWrapper(GNNWrapper):
       output_dtype=output_dtype)
     self._num_message_passing_layers = params["ML"]["GAT"][
       "NumMessagePassingLayers", "Number of message passing layers", 2]
-    self._embedding_size = params[
-      "EmbeddingSize", "Embedding size of nodes", 128]
+    self._embedding_size = params["ML"]["GAT"][
+      "EmbeddingSize", "Embedding size of nodes", 64]
     self._activation_func = params["ML"]["GAT"][
       "Activation", "Activation function", "elu"]
     self._num_attn_heads = params["ML"]["GAT"][
       "NumAttnHeads", "Number of attention heads to be used", 4]
-    self._dropout_rate = params[
+    self._dropout_rate = params["ML"]["GAT"][
       "DropoutRate", "", 0.]
     self._layers = []
     # initialize network & call func
@@ -60,10 +60,11 @@ class GATWrapper(GNNWrapper):
   def _init_network(self):
     for _ in range(self._num_message_passing_layers):
       layer = GraphAttention(
-        self._embedding_size,
+        64,  # 8 heads x 8 features
         attn_heads=self._num_attn_heads,
         dropout_rate=self._dropout_rate,
-        activation=self._activation_func)
+        activation=self._activation_func,
+        concat_heads=True)
       self._layers.append(layer)
     layer = GraphAttention(
       self._embedding_size,

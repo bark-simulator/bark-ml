@@ -198,14 +198,15 @@
             "DebugSummaries": true,
             "ReplayBufferCapacity": 10000,
             "ParallelBufferCalls": 1,
-            "BatchSize": 512,
+            "BatchSize": 128,
             "BufferNumSteps": 2,
             "BufferPrefetch": 3
         },
         "GAT": {
             "NumMessagePassingLayers": 1,
-            "Activation": "elu",
-            "NumAttnHeads": 4
+            "Activation": "relu",
+            "NumAttnHeads": 8,
+            "EmbeddingSize": 128
         },
         "SACRunner": {
             "NumberOfCollections": 250000,
@@ -214,8 +215,5 @@
     },
     "BehaviorDynamicModel": {
         "IntegrationTimeDelta": 0.05000000074505806
-    },
-    "EmbeddingSize": 128,
-    "DropoutRate": 0.0
-
+    }
 }
