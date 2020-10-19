@@ -161,6 +161,9 @@ class GNNCriticNetwork(network.Network):
     else:
       actions = tf.zeros([0, actions.shape[-1]])
 
+    with tf.name_scope("GNNCriticEmbeddings"):
+      tf.summary.histogram("critic_gnn_output", embeddings)
+      
     embeddings = tf.cast(tf.nest.flatten(embeddings)[0], tf.float32)
     for layer in self._observation_layers:
       embeddings = layer(embeddings, training=training)

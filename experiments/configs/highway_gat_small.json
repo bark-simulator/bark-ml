@@ -198,7 +198,7 @@
             "DebugSummaries": true,
             "ReplayBufferCapacity": 10000,
             "ParallelBufferCalls": 1,
-            "BatchSize": 128,
+            "BatchSize": 512,
             "BufferNumSteps": 2,
             "BufferPrefetch": 3
         },

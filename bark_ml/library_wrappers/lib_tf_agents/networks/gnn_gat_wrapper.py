@@ -64,8 +64,8 @@ class GATWrapper(GNNWrapper):
       layer = GraphAttention(
         8,  # 8 heads x 8 features
         attn_heads=self._num_attn_heads,
-        dropout_rate=self._dropout_rate,
-        activation="eul",
+        dropout_rate=0.5,
+        activation="elu",
         concat_heads=True,
         kernel_regularizer=l2(l2_reg),
         attn_kernel_regularizer=l2(l2_reg))
@@ -73,9 +73,9 @@ class GATWrapper(GNNWrapper):
     layer = GraphAttention(
       self._embedding_size,
       attn_heads=1,
-      dropout_rate=self._dropout_rate,
-      activation="softmax",
-      concat_heads=False,
+      dropout_rate=0.5,
+      activation="relu",
+      concat_heads=True,
       kernel_regularizer=l2(l2_reg),
       attn_kernel_regularizer=l2(l2_reg))
     self._layers.append(layer)
