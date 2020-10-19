@@ -9,6 +9,7 @@ import logging
 import tensorflow as tf
 from enum import Enum
 from spektral.layers import GraphAttention
+from tensorflow.keras.regularizers import l2
 
 # bark-ml
 from bark.runtime.commons.parameters import ParameterServer
@@ -58,19 +59,25 @@ class GATWrapper(GNNWrapper):
     self._call_func = self._init_call_func
     
   def _init_network(self):
+    l2_reg = 5e-6
     for _ in range(self._num_message_passing_layers):
       layer = GraphAttention(
-        64,  # 8 heads x 8 features
+        8,  # 8 heads x 8 features
         attn_heads=self._num_attn_heads,
         dropout_rate=self._dropout_rate,
         activation=self._activation_func,
-        concat_heads=True)
+        concat_heads=True,
+        kernel_regularizer=l2(l2_reg),
+        attn_kernel_regularizer=l2(l2_reg))
       self._layers.append(layer)
     layer = GraphAttention(
       self._embedding_size,
       attn_heads=1,
       dropout_rate=self._dropout_rate,
-      activation=self._activation_func)
+      activation=self._activation_func,
+      concat_heads=False,
+      kernel_regularizer=l2(l2_reg),
+      attn_kernel_regularizer=l2(l2_reg))
     self._layers.append(layer)
 
   @tf.function

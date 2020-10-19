@@ -204,9 +204,9 @@
         },
         "GAT": {
             "NumMessagePassingLayers": 1,
-            "Activation": "relu",
+            "Activation": "elu",
             "NumAttnHeads": 8,
-            "EmbeddingSize": 128
+            "EmbeddingSize": 64
         },
         "SACRunner": {
             "NumberOfCollections": 250000,

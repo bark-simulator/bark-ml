@@ -65,8 +65,9 @@ class GCNWrapper(GNNWrapper):
     embeddings, adj_matrix, edge_features = GraphObserver.graph(
       observations=observations, 
       graph_dims=self._graph_dims)
-    lap = spektral.utils.localpooling_filter(adj_matrix, symmetric=True)
+    # lap = spektral.utils.localpooling_filter(
+    #   adj_matrix, symmetric=True)
     for layer in self._layers: 
-      embeddings = layer([embeddings, lap])
+      embeddings = layer([embeddings, adj_matrix])
     return embeddings
 
