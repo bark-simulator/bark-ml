@@ -65,7 +65,7 @@ class GATWrapper(GNNWrapper):
         8,  # 8 heads x 8 features
         attn_heads=self._num_attn_heads,
         dropout_rate=self._dropout_rate,
-        activation=self._activation_func,
+        activation="eul",
         concat_heads=True,
         kernel_regularizer=l2(l2_reg),
         attn_kernel_regularizer=l2(l2_reg))
@@ -74,7 +74,7 @@ class GATWrapper(GNNWrapper):
       self._embedding_size,
       attn_heads=1,
       dropout_rate=self._dropout_rate,
-      activation=self._activation_func,
+      activation="softmax",
       concat_heads=False,
       kernel_regularizer=l2(l2_reg),
       attn_kernel_regularizer=l2(l2_reg))

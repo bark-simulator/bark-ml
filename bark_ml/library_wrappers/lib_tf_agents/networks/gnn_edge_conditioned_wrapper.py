@@ -53,11 +53,10 @@ class GEdgeCondWrapper(GNNWrapper):
     for _ in range(self._num_message_passing_layers):
       layer = EdgeConditionedConv(
         channels=self._embedding_size,
-        activation=self._activation_func,
         kernel_network=self._params["ML"]["EdgeCond"][
           "EdgeMLPLayers", "edge mpl", [128, 64]],
         activation=self._params["ML"][
-          "MPLActivationFunction", "", "relu"]
+          "MPLActivationFunction", "", "relu"])
       self._layers.append(layer)
 
   @tf.function
