@@ -9,6 +9,7 @@ import gin
 import tensorflow as tf  # pylint: disable=g-explicit-tensorflow-version-import
 
 from tf_agents.networks import network, utils, encoding_network
+from bark.runtime.commons.parameters import ParameterServer
 
 
 @gin.configurable
@@ -27,7 +28,8 @@ class GNNValueNetwork(network.Network):
                kernel_initializer=None,
                batch_squash=False,
                dtype=tf.float32,
-               name='ValueNetwork'):
+               name='ValueNetwork',
+               params=ParameterServer()):
     """Creates an instance of `ValueNetwork`.
     Network supports calls with shape outer_rank + observation_spec.shape. Note
     outer_rank must be at least 1.
@@ -78,7 +80,7 @@ class GNNValueNetwork(network.Network):
     if gnn is None:
       raise ValueError('`gnn` must not be `None`.')
 
-    self._gnn = gnn(name=name + "_GNN")
+    self._gnn = gnn(name=name + "_GNN", params=params)
     
     self._encoder = encoding_network.EncodingNetwork(
         input_tensor_spec=tf.TensorSpec([None, self._gnn._embedding_size]),

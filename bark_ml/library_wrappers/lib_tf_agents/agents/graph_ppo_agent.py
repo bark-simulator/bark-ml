@@ -20,6 +20,13 @@ from bark_ml.library_wrappers.lib_tf_agents.networks import GNNActorDistribution
 from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAAgent
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_wrapper import GNNWrapper
+from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_gsnt_wrapper import GSNTWrapper
+
+
+def init_snt(name, params):
+  return GSNTWrapper(
+    params=params, 
+    name=name + "_GSNT")
 
 
 class BehaviorGraphPPOAgent(BehaviorTFAAgent):
@@ -31,7 +38,8 @@ class BehaviorGraphPPOAgent(BehaviorTFAAgent):
   def __init__(self,
                environment=None,
                observer=None,
-               params=None):
+               params=None,
+               init_gnn='init_gat'):
     """
     Initializes a `BehaviorGraphSACAgent` instance.
 
@@ -43,45 +51,35 @@ class BehaviorGraphPPOAgent(BehaviorTFAAgent):
     """
     # the super init calls 'GetAgent', so assign the observer before
     self._gnn_sac_params = params["ML"]["BehaviorGraphPPOAgent"]
-    
-    self._observer = observer
+    self._init_gnn = eval(init_gnn)
     BehaviorTFAAgent.__init__(self,
                               environment=environment,
-                              params=params)
+                              params=params,
+                              observer=observer)
     self._replay_buffer = self.GetReplayBuffer()
     self._dataset = self.GetDataset()
     self._collect_policy = self.GetCollectionPolicy()
     self._eval_policy = self.GetEvalPolicy()
 
   def GetAgent(self, env, params):
-    def init_gnn(name):
-      """
-      Returns a new `GNNWrapper`instance with the given `name`.
-      We need this function to be able to prefix the variable
-      names with the names of the parent actor or critic network,
-      by passing in this function and initializing the instance in 
-      the parent network.
-      """
-      return GNNWrapper(
-        params=self._gnn_sac_params["GNN"], 
-        graph_dims=self._observer.graph_dimensions,
-        name=name)
-
+    self._params["ML"]["GraphDims"] = self._observer.graph_dimensions
     # actor network
     actor_net = GNNActorDistributionNetwork(
       input_tensor_spec=env.observation_spec(),
       output_tensor_spec=env.action_spec(),
-      gnn=init_gnn,
+      gnn=self._init_gnn,
       fc_layer_params=self._gnn_sac_params[
-        "ActorFcLayerParams", "", [128, 64]]
+        "ActorFcLayerParams", "", [128, 64]],
+      params=params
     )
 
     # critic network
     critic_net = GNNValueNetwork(
       env.observation_spec(),
-      gnn=init_gnn,
+      gnn=self._init_gnn,
       fc_layer_params=tuple(self._gnn_sac_params[
-        "CriticFcLayerParams", "", [256, 256]])
+        "CriticFcLayerParams", "", [256, 256]]),
+      params=params
     )
     
     # agent

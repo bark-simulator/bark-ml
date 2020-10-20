@@ -30,6 +30,8 @@ from tf_agents.networks import normal_projection_network
 from tf_agents.specs import tensor_spec
 from tf_agents.utils import nest_utils
 
+from bark.runtime.commons.parameters import ParameterServer
+
 
 def _categorical_projection_net(action_spec, logits_init_output_factor=0.1):
   return categorical_projection_network.CategoricalProjectionNetwork(
@@ -73,7 +75,8 @@ class GNNActorDistributionNetwork(network.DistributionNetwork):
                dtype=tf.float32,
                discrete_projection_net=_categorical_projection_net,
                continuous_projection_net=_normal_projection_net,
-               name='ActorDistributionNetwork'):
+               name='ActorDistributionNetwork',
+               params=ParameterServer()):
     """Creates an instance of `ActorDistributionNetwork`.
 
     Args:
@@ -127,7 +130,7 @@ class GNNActorDistributionNetwork(network.DistributionNetwork):
     if gnn is None:
       raise ValueError('`gnn` must not be `None`.')
 
-    self._gnn = gnn(name=name + "_GNN")
+    self._gnn = gnn(name=name + "_GNN", params=params)
     
     encoder = encoding_network.EncodingNetwork(
         input_tensor_spec=tf.TensorSpec([None, self._gnn._embedding_size]),
