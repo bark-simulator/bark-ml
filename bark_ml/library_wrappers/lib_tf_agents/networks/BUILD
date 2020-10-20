@@ -16,6 +16,7 @@ py_library(
     srcs = ["__init__.py",
             "gnn_wrapper.py",
             "gnn_gcn_wrapper.py",
+            "gnn_gsnt_wrapper.py",
             "gnn_edge_conditioned_wrapper.py",
             "gnn_gat_wrapper.py"],
     data = ["@bark_project//bark/python_wrapper:core.so"],

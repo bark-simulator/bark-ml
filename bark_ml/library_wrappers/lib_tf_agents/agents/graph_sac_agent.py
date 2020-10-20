@@ -22,16 +22,15 @@ from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_gat_wrapper import GATWrapper
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_gcn_wrapper import GCNWrapper
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_edge_conditioned_wrapper import GEdgeCondWrapper
+from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_gsnt_wrapper import GSNTWrapper
 
 
+def init_snt(name, params):
+  return GSNTWrapper(
+    params=params, 
+    name=name + "_GSNT")
+  
 def init_gnn_edge_cond(name, params):
-  """
-  Returns a new `GEdgeCondWrapper`instance with the given `name`.
-  We need this function to be able to prefix the variable
-  names with the names of the parent actor or critic network,
-  by passing in this function and initializing the instance in 
-  the parent network.
-  """
   return GEdgeCondWrapper(
     params=params, 
     name=name + "_GEdgeCond")
