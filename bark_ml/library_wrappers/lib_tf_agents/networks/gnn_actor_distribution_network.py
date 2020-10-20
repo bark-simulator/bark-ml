@@ -175,8 +175,9 @@ class GNNActorDistributionNetwork(network.DistributionNetwork):
            training=False,
            mask=None):
     
-    if len(tf.shape(observations)) == 3:
-      observations = tf.reshape(observations, [-1, 64])
+    if len(tf.shape(observations)) == 2 or len(tf.shape(observations)) == 1:
+      observations = tf.reshape(observations, [1, -1])
+      
     batch_size = observations.shape[0]
     embeddings = self._gnn(observations, training=training)
     

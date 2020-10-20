@@ -116,6 +116,7 @@ class GSNTWrapper(GNNWrapper):
   @tf.function
   def _init_call_func(self, observations, training=False):
     """Graph nets implementation"""
+    print(observations)
     embeddings, adj_matrix, _, edge_features = GraphObserver.graph(
       observations=observations, 
       graph_dims=self._graph_dims,
