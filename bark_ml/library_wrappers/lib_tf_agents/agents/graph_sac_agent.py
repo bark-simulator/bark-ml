@@ -131,15 +131,15 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
           learning_rate=self._gnn_sac_params["CriticLearningRate", "", 3e-4]),
       alpha_optimizer=tf.compat.v1.train.AdamOptimizer(
           learning_rate=self._gnn_sac_params["AlphaLearningRate", "", 3e-4]),
-      target_update_tau=self._gnn_sac_params["TargetUpdateTau", "", 0.05],
-      target_update_period=self._gnn_sac_params["TargetUpdatePeriod", "", 3],
+      target_update_tau=self._gnn_sac_params["TargetUpdateTau", "", 1.],
+      target_update_period=self._gnn_sac_params["TargetUpdatePeriod", "", 1],
       td_errors_loss_fn=tf.math.squared_difference,
       gamma=self._gnn_sac_params["Gamma", "", 0.995],
-      reward_scale_factor=self._gnn_sac_params["RewardScaleFactor", "", 0.],
+      reward_scale_factor=self._gnn_sac_params["RewardScaleFactor", "", 1.],
       train_step_counter=self._ckpt.step,
       name=self._gnn_sac_params["AgentName", "", "gnn_sac_agent"],
-      debug_summaries=self._gnn_sac_params["DebugSummaries", "", True])
-    
+      debug_summaries=self._gnn_sac_params["DebugSummaries", "", True],
+      use_log_alpha_in_alpha_loss=False)
     tf_agent.initialize()
     return tf_agent
 
