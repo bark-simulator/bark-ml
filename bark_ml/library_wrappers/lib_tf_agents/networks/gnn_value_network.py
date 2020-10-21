@@ -24,7 +24,7 @@ class GNNValueNetwork(network.Network):
                conv_layer_params=None,
                fc_layer_params=(75, 40),
                dropout_layer_params=None,
-               activation_fn=tf.keras.activations.relu,
+               activation_fn=tf.nn.relu,
                kernel_initializer=None,
                batch_squash=False,
                dtype=tf.float32,
@@ -89,8 +89,8 @@ class GNNValueNetwork(network.Network):
       conv_layer_params=conv_layer_params,
       fc_layer_params=fc_layer_params,
       dropout_layer_params=dropout_layer_params,
-      activation_fn=activation_fn,
-      kernel_initializer=tf.compat.v1.keras.initializers.glorot_uniform(),
+      activation_fn=tf.keras.activations.relu,
+      kernel_initializer=kernel_initializer,
       batch_squash=False,
       dtype=tf.float32)
 
@@ -102,29 +102,21 @@ class GNNValueNetwork(network.Network):
 
   def call(self, observations, step_type=None, network_state=(), training=False):
     # print(observations)
-    embeddings = None
-    if len(observations.shape) == 3:
-      obs_ = tf.squeeze(observations, axis=0)
-      # print("oha0", obs_)
-      embeddings_t0 = self._gnn(obs_, training=training)
-      embeddings = embeddings_t0[:, 0] # extract ego state
-      with tf.name_scope("PPOCriticNetwork"):
-        tf.summary.histogram("embedding", embeddings)
-      embeddings = tf.expand_dims(embeddings, axis=0) 
-    else:
-      # print("oha1", observations)
-      embeddings_t0 = self._gnn(observations, training=training)
-      embeddings = embeddings_t0[:, 0] # extract ego state
-      with tf.name_scope("PPOCriticNetwork"):
-        tf.summary.histogram("embedding", embeddings)
-      embeddings = tf.expand_dims(embeddings, axis=0)
+    if len(tf.shape(observations)) == 3:
+      observations = tf.squeeze(observations, axis=0)
 
-    # print("embeddings", embeddings)
+    embeddings_t0 = self._gnn(observations, training=training)
+    embeddings = embeddings_t0[:, 0] # extract ego state
+    
+    with tf.name_scope("PPOCriticNetwork"):
+      tf.summary.histogram("embedding", embeddings)
+
     state, network_state = self._encoder(
-      tf.squeeze(embeddings, axis=0),
+      embeddings,
       step_type=step_type,
       network_state=network_state,
       training=training)
     
-    value = self._postprocessing_layers(embeddings, training=training)
+    value = self._postprocessing_layers(state, training=training)
+    value = tf.expand_dims(value, axis=0)
     return tf.squeeze(value, -1), network_state

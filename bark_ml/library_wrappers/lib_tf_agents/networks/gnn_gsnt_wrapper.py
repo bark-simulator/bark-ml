@@ -27,9 +27,9 @@ def make_mlp_model(layer_config=None):
   Returns:
     A Sonnet module which contains the MLP and LayerNorm.
   """
-  lc = layer_config or [80, 80]
+  lc = layer_config or [32, 16]
   return snt.Sequential([
-      snt.nets.MLP(lc, activation=tf.math.tanh, activate_final=True)
+      snt.nets.MLP(lc, activation=tf.keras.activations.relu, activate_final=True)
   ])
 
 class MLPGraphNetwork(snt.Module):
