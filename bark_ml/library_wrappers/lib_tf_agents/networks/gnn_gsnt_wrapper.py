@@ -29,8 +29,7 @@ def make_mlp_model(layer_config=None):
   """
   lc = layer_config or [80, 80]
   return snt.Sequential([
-      snt.nets.MLP(lc, activate_final=True),
-      snt.LayerNorm(axis=-1, create_offset=True, create_scale=True)
+      snt.nets.MLP(lc, activation=tf.math.tanh, activate_final=True)
   ])
 
 class MLPGraphNetwork(snt.Module):

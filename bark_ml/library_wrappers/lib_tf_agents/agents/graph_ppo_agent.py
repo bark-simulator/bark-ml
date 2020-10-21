@@ -57,7 +57,6 @@ class BehaviorGraphPPOAgent(BehaviorTFAAgent):
                               params=params,
                               observer=observer)
     self._replay_buffer = self.GetReplayBuffer()
-    self._dataset = self.GetDataset()
     self._collect_policy = self.GetCollectionPolicy()
     self._eval_policy = self.GetEvalPolicy()
 
@@ -107,19 +106,11 @@ class BehaviorGraphPPOAgent(BehaviorTFAAgent):
       batch_size=self._wrapped_env.batch_size,
       max_length=self._gnn_ppo_params["ReplayBufferCapacity", "", 10000])
 
-  def GetDataset(self):
-    dataset = self._replay_buffer.as_dataset(
-      num_parallel_calls=self._gnn_ppo_params["ParallelBufferCalls", "", 1],
-      sample_batch_size=self._gnn_ppo_params["BatchSize", "", 512],
-      num_steps=self._gnn_ppo_params["BufferNumSteps", "", 2]) \
-        .prefetch(self._gnn_ppo_params["BufferPrefetch", "", 3])
-    return dataset
-
   def GetCollectionPolicy(self):
     return self._agent.collect_policy
 
   def GetEvalPolicy(self):
-    return greedy_policy.GreedyPolicy(self._agent.policy)
+    return self._agent.policy
 
   def Reset(self):
     pass
