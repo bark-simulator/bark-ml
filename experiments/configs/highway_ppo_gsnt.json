@@ -174,7 +174,7 @@
                 "dtheta"
             ]
         },
-        "BehaviorGraphSACAgent": {
+        "BehaviorGraphPPOAgent": {
             "ActorFcLayerParams": [
                 128,
                 128

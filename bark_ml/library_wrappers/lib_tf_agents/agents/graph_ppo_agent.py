@@ -31,7 +31,7 @@ def init_snt(name, params):
 
 class BehaviorGraphPPOAgent(BehaviorTFAAgent):
   """
-  SAC-Agent with graph neural networks.
+  ppo-Agent with graph neural networks.
   This agent is based on the tf-agents library.
   """
   
@@ -41,7 +41,7 @@ class BehaviorGraphPPOAgent(BehaviorTFAAgent):
                params=None,
                init_gnn='init_gat'):
     """
-    Initializes a `BehaviorGraphSACAgent` instance.
+    Initializes a `BehaviorGraphppoAgent` instance.
 
     Args:
     environment:
@@ -50,7 +50,7 @@ class BehaviorGraphPPOAgent(BehaviorTFAAgent):
       the agent.
     """
     # the super init calls 'GetAgent', so assign the observer before
-    self._gnn_sac_params = params["ML"]["BehaviorGraphPPOAgent"]
+    self._gnn_ppo_params = params["ML"]["BehaviorGraphPPOAgent"]
     self._init_gnn = eval(init_gnn)
     BehaviorTFAAgent.__init__(self,
                               environment=environment,
@@ -68,8 +68,8 @@ class BehaviorGraphPPOAgent(BehaviorTFAAgent):
       input_tensor_spec=env.observation_spec(),
       output_tensor_spec=env.action_spec(),
       gnn=self._init_gnn,
-      fc_layer_params=self._gnn_sac_params[
-        "ActorFcLayerParams", "", [128, 64]],
+      fc_layer_params=self._gnn_ppo_params[
+        "ActorFcLayerParams", "", [256, 128]],
       params=params
     )
 
@@ -77,8 +77,8 @@ class BehaviorGraphPPOAgent(BehaviorTFAAgent):
     critic_net = GNNValueNetwork(
       env.observation_spec(),
       gnn=self._init_gnn,
-      fc_layer_params=tuple(self._gnn_sac_params[
-        "CriticFcLayerParams", "", [256, 256]]),
+      fc_layer_params=tuple(self._gnn_ppo_params[
+        "CriticFcLayerParams", "", [256, 128]]),
       params=params
     )
     
@@ -88,15 +88,15 @@ class BehaviorGraphPPOAgent(BehaviorTFAAgent):
       env.action_spec(),
       actor_net=actor_net,
       value_net=critic_net,
-      normalize_observations=self._gnn_sac_params[
+      normalize_observations=self._gnn_ppo_params[
         "NormalizeObservations", "", False],
-      normalize_rewards=self._gnn_sac_params["NormalizeRewards", "", False],
+      normalize_rewards=self._gnn_ppo_params["NormalizeRewards", "", False],
       optimizer=tf.compat.v1.train.AdamOptimizer(
-        learning_rate=self._gnn_sac_params["LearningRate", "", 3e-4]),
+        learning_rate=self._gnn_ppo_params["LearningRate", "", 3e-4]),
       train_step_counter=self._ckpt.step,
-      num_epochs=self._gnn_sac_params["NumEpochs", "", 30],
-      name=self._gnn_sac_params["AgentName", "", "ppo_agent"],
-      debug_summaries=self._gnn_sac_params["DebugSummaries", "", False])
+      num_epochs=self._gnn_ppo_params["NumEpochs", "", 30],
+      name=self._gnn_ppo_params["AgentName", "", "ppo_agent"],
+      debug_summaries=self._gnn_ppo_params["DebugSummaries", "", False])
     
     tf_agent.initialize()
     return tf_agent
@@ -105,14 +105,14 @@ class BehaviorGraphPPOAgent(BehaviorTFAAgent):
     return tf_uniform_replay_buffer.TFUniformReplayBuffer(
       data_spec=self._agent.collect_data_spec,
       batch_size=self._wrapped_env.batch_size,
-      max_length=self._gnn_sac_params["ReplayBufferCapacity", "", 10000])
+      max_length=self._gnn_ppo_params["ReplayBufferCapacity", "", 10000])
 
   def GetDataset(self):
     dataset = self._replay_buffer.as_dataset(
-      num_parallel_calls=self._gnn_sac_params["ParallelBufferCalls", "", 1],
-      sample_batch_size=self._gnn_sac_params["BatchSize", "", 512],
-      num_steps=self._gnn_sac_params["BufferNumSteps", "", 2]) \
-        .prefetch(self._gnn_sac_params["BufferPrefetch", "", 3])
+      num_parallel_calls=self._gnn_ppo_params["ParallelBufferCalls", "", 1],
+      sample_batch_size=self._gnn_ppo_params["BatchSize", "", 512],
+      num_steps=self._gnn_ppo_params["BufferNumSteps", "", 2]) \
+        .prefetch(self._gnn_ppo_params["BufferPrefetch", "", 3])
     return dataset
 
   def GetCollectionPolicy(self):
