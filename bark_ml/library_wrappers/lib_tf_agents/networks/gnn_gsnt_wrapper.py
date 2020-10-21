@@ -116,13 +116,13 @@ class GSNTWrapper(GNNWrapper):
   @tf.function
   def _init_call_func(self, observations, training=False):
     """Graph nets implementation"""
-    print(observations)
+    # print("gsnt", observations)
     embeddings, adj_matrix, _, edge_features = GraphObserver.graph(
       observations=observations, 
       graph_dims=self._graph_dims,
       dense=True)
     
-    batch_size = tf.constant(observations.shape[0])
+    batch_size = tf.shape(observations)[0]
     input_graph = GraphsTuple(
       nodes=tf.cast(embeddings, tf.float32),  # validate
       edges=tf.cast(edge_features, tf.float32),  # validate

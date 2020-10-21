@@ -1,7 +1,7 @@
 {
     "Experiment": {
         "Observer": {
-            "ModuleName": "GraphObserver",
+            "ModuleName": "NearestAgentsObserver",
             "Config": {}
         },
         "Evaluator": {
@@ -17,10 +17,8 @@
             "Config": {}
         },
         "Agent": {
-            "ModuleName": "BehaviorGraphPPOAgent",
-            "Config": {
-                "init_gnn": "init_snt"
-            }
+            "ModuleName": "BehaviorPPOAgent",
+            "Config": {}
         },
         "Blueprint": {
             "ModuleName": "ContinuousHighwayBlueprint",

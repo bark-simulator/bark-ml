@@ -177,13 +177,14 @@ class GNNActorDistributionNetwork(network.DistributionNetwork):
     
     if len(tf.shape(observations)) == 2 or len(tf.shape(observations)) == 1:
       observations = tf.reshape(observations, [1, -1])
+    
+    if len(tf.shape(observations)) == 3:
+      observations = tf.squeeze(observations, axis=0)
       
-    batch_size = observations.shape[0]
     embeddings = self._gnn(observations, training=training)
     
     # extract ego state (node 0)
-    if batch_size > 0: 
-      embeddings = embeddings[:, 0]
+    embeddings = embeddings[:, 0]
     
     state, network_state = self._encoder(
       embeddings,

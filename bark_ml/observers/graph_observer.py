@@ -175,12 +175,12 @@ class GraphObserver(StateObserver):
     batch_size = observations.shape[0]
         
     # extract node features F
-    F = tf.reshape(obs[:, :n_nodes * n_features], [batch_size, n_nodes, n_features])
+    F = tf.reshape(obs[:, :n_nodes * n_features], [-1, n_nodes, n_features])
 
     # extract adjacency matrix A
     adj_start_idx = n_nodes * n_features
     adj_end_idx = adj_start_idx + n_nodes ** 2
-    A = tf.reshape(obs[:, adj_start_idx:adj_end_idx], [batch_size, n_nodes, n_nodes])
+    A = tf.reshape(obs[:, adj_start_idx:adj_end_idx], [-1, n_nodes, n_nodes])
 
   
     if dense:
@@ -189,7 +189,7 @@ class GraphObserver(StateObserver):
       # feature vectors of the whole batch.
       # the assignment to graphs is handled by the
       # node_to_graph_map.
-      F = tf.reshape(F, [batch_size * n_nodes, n_features])
+      F = tf.reshape(F, [-1, n_features])
 
       # find non-zero elements in the adjacency matrix (edges)
       # and collect their indices
@@ -220,15 +220,15 @@ class GraphObserver(StateObserver):
       # contains the index of the graph that the feature vector at
       # the same index in F belongs to, e.g. if each graph contains
       # two nodes, then the node_to_graph_map is [0, 0, 1, 1, 2, 2, ...]
-      node_to_graph_map = tf.reshape(tf.range(batch_size), [-1, 1])
-      node_to_graph_map = tf.tile(node_to_graph_map, [1, n_nodes])
-      node_to_graph_map = tf.reshape(node_to_graph_map, [-1])
+      # node_to_graph_map = tf.reshape(tf.range(batch_size), [-1, 1])
+      # node_to_graph_map = tf.tile(node_to_graph_map, [1, n_nodes])
+      # node_to_graph_map = tf.reshape(node_to_graph_map, [-1])
       
       # extract edge features
       n_edge_features = graph_dims[2]
       E_shape = [-1, n_edge_features]
       E = tf.reshape(obs[:, adj_end_idx:], E_shape)
-      return F, A, node_to_graph_map, E
+      return F, A, None, E
 
     # extract edge features
     n_edge_features = graph_dims[2]

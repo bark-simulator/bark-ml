@@ -26,7 +26,7 @@ class GNNValueNetwork(network.Network):
                dropout_layer_params=None,
                activation_fn=tf.keras.activations.relu,
                kernel_initializer=None,
-               batch_squash=False,
+               batch_squash=True,
                dtype=tf.float32,
                name='ValueNetwork',
                params=ParameterServer()):
@@ -83,16 +83,16 @@ class GNNValueNetwork(network.Network):
     self._gnn = gnn(name=name + "_GNN", params=params)
     
     self._encoder = encoding_network.EncodingNetwork(
-        input_tensor_spec=tf.TensorSpec([None, self._gnn._embedding_size]),
-        preprocessing_layers=preprocessing_layers,
-        preprocessing_combiner=preprocessing_combiner,
-        conv_layer_params=conv_layer_params,
-        fc_layer_params=fc_layer_params,
-        dropout_layer_params=dropout_layer_params,
-        activation_fn=activation_fn,
-        kernel_initializer=kernel_initializer,
-        batch_squash=batch_squash,
-        dtype=dtype)
+      input_tensor_spec=tf.TensorSpec([1, None, self._gnn._embedding_size]),
+      preprocessing_layers=None,
+      preprocessing_combiner=None,
+      conv_layer_params=conv_layer_params,
+      fc_layer_params=fc_layer_params,
+      dropout_layer_params=dropout_layer_params,
+      activation_fn=activation_fn,
+      kernel_initializer=tf.compat.v1.keras.initializers.glorot_uniform(),
+      batch_squash=False,
+      dtype=tf.float32)
 
     self._postprocessing_layers = tf.keras.layers.Dense(
         1,
@@ -101,22 +101,31 @@ class GNNValueNetwork(network.Network):
             minval=-0.03, maxval=0.03))
 
   def call(self, observations, step_type=None, network_state=(), training=False):
-    print(observations)
-    # we get through this call
-    if len(tf.shape(observations)) == 3:
-      observations = tf.reshape(observations, [-1, 64])
-    
-    batch_size = observations.shape[0]
-    embeddings = self._gnn(observations, training=training)
-    
-    if batch_size > 0:
-      embeddings = embeddings[:, 0] # extract ego state
+    # print(observations)
+    embeddings = None
+    if len(observations.shape) == 3:
+      obs_ = tf.squeeze(observations, axis=0)
+      # print("oha0", obs_)
+      embeddings_t0 = self._gnn(obs_, training=training)
+      embeddings = embeddings_t0[:, 0] # extract ego state
+      embeddings = tf.expand_dims(embeddings, axis=0) 
+      
+    else:
+      # print("oha1", observations)
+      embeddings_t0 = self._gnn(observations, training=training)
+      embeddings = embeddings_t0[:, 0] # extract ego state
+      embeddings = tf.expand_dims(embeddings, axis=0) 
+      # embeddings = tf.reshape(embeddings, [-1, 32])
+      # embeddings = tf.expand_dims(embeddings, axis=0)  
 
+    print("embeddings", embeddings)
     # here it goes wrong
-    state, network_state = self._encoder(
-      embeddings, step_type=step_type, network_state=network_state,
-      training=training)
+    # state, network_state = self._encoder(
+    #   embeddings,
+    #   step_type=step_type,
+    #   network_state=network_state,
+    #   training=training)
+    # state = tf.expand_dims(state, axis=0)  
     
-    state = tf.expand_dims(state, axis=0)  
-    value = self._postprocessing_layers(state, training=training)
+    value = self._postprocessing_layers(embeddings, training=training)
     return tf.squeeze(value, -1), network_state
