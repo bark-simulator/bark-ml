@@ -62,7 +62,7 @@ class BehaviorPPOAgent(BehaviorTFAAgent):
       train_step_counter=self._ckpt.step,
       num_epochs=self._ppo_params["NumEpochs", "", 30],
       name=self._ppo_params["AgentName", "", "ppo_agent"],
-      debug_summaries=self._ppo_params["DebugSummaries", "", False])
+      debug_summaries=self._ppo_params["DebugSummaries", "", True])
     tf_agent.initialize()
     return tf_agent
 

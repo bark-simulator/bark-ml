@@ -208,9 +208,9 @@
             "NumAttnHeads": 8,
             "EmbeddingSize": 32
         },
-        "SACRunner": {
+        "PPORunner": {
             "NumberOfCollections": 250000,
-            "EvaluateEveryNSteps": 1000
+            "EvaluateEveryNSteps": 20
         }
     },
     "BehaviorDynamicModel": {

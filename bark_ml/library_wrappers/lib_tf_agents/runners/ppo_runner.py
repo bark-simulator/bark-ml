@@ -23,6 +23,7 @@ from tf_agents.trajectories import time_step as ts
 
 from bark_ml.library_wrappers.lib_tf_agents.runners.tfa_runner import TFARunner
 
+
 class PPORunner(TFARunner):
   def __init__(self,
                environment=None,
@@ -36,6 +37,7 @@ class PPORunner(TFARunner):
   def _train(self):
     global_iteration = self._agent._agent._train_step_counter.numpy()
     for i in range(1, self._params["ML"]["PPORunner"]["NumberOfCollections", "", 10000]):
+      print(f"Collection {i}")
       self._collection_driver.run()
       trajectories = self._agent._replay_buffer.gather_all()
       self._agent._agent.train(experience=trajectories)

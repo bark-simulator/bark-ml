@@ -26,7 +26,7 @@ class GNNValueNetwork(network.Network):
                dropout_layer_params=None,
                activation_fn=tf.keras.activations.relu,
                kernel_initializer=None,
-               batch_squash=True,
+               batch_squash=False,
                dtype=tf.float32,
                name='ValueNetwork',
                params=ParameterServer()):
@@ -83,7 +83,7 @@ class GNNValueNetwork(network.Network):
     self._gnn = gnn(name=name + "_GNN", params=params)
     
     self._encoder = encoding_network.EncodingNetwork(
-      input_tensor_spec=tf.TensorSpec([1, None, self._gnn._embedding_size]),
+      input_tensor_spec=tf.TensorSpec([None, self._gnn._embedding_size]),
       preprocessing_layers=None,
       preprocessing_combiner=None,
       conv_layer_params=conv_layer_params,
@@ -118,14 +118,12 @@ class GNNValueNetwork(network.Network):
       # embeddings = tf.reshape(embeddings, [-1, 32])
       # embeddings = tf.expand_dims(embeddings, axis=0)  
 
-    print("embeddings", embeddings)
-    # here it goes wrong
-    # state, network_state = self._encoder(
-    #   embeddings,
-    #   step_type=step_type,
-    #   network_state=network_state,
-    #   training=training)
-    # state = tf.expand_dims(state, axis=0)  
+    # print("embeddings", embeddings)
+    state, network_state = self._encoder(
+      tf.squeeze(embeddings, axis=0),
+      step_type=step_type,
+      network_state=network_state,
+      training=training)
     
     value = self._postprocessing_layers(embeddings, training=training)
     return tf.squeeze(value, -1), network_state
