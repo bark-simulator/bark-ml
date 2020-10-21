@@ -94,7 +94,7 @@ class BehaviorGraphPPOAgent(BehaviorTFAAgent):
       optimizer=tf.compat.v1.train.AdamOptimizer(
         learning_rate=self._gnn_ppo_params["LearningRate", "", 3e-4]),
       train_step_counter=self._ckpt.step,
-      num_epochs=self._gnn_ppo_params["NumEpochs", "", 30],
+      num_epochs=self._gnn_ppo_params["NumEpochs", "", 10],
       name=self._gnn_ppo_params["AgentName", "", "ppo_agent"],
       debug_summaries=self._gnn_ppo_params["DebugSummaries", "", False])
     

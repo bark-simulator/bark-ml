@@ -174,40 +174,6 @@
                 "dtheta"
             ]
         },
-        "BehaviorGraphPPOAgent": {
-            "ActorFcLayerParams": [
-                128,
-                128
-            ],
-            "CriticObservationFcLayerParams": [
-                128
-            ],
-            "CriticActionFcLayerParams": null,
-            "CriticJointFcLayerParams": [
-                128,
-                128
-            ],
-            "ActorLearningRate": 0.0003,
-            "CriticLearningRate": 0.0003,
-            "AlphaLearningRate": 0.00001,
-            "TargetUpdateTau": 1.0,
-            "TargetUpdatePeriod": 1,
-            "Gamma": 0.995,
-            "RewardScaleFactor": 1.0,
-            "AgentName": "gnn_sac_agent",
-            "DebugSummaries": true,
-            "ReplayBufferCapacity": 10000,
-            "ParallelBufferCalls": 1,
-            "BatchSize": 512,
-            "BufferNumSteps": 2,
-            "BufferPrefetch": 3
-        },
-        "GAT": {
-            "NumMessagePassingLayers": 1,
-            "Activation": "elu",
-            "NumAttnHeads": 8,
-            "EmbeddingSize": 32
-        },
         "PPORunner": {
             "NumberOfCollections": 250000,
             "EvaluateEveryNSteps": 20

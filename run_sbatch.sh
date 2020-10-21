@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --qos lowprio
+#SBATCH --qos normal
 #SBATCH -c 4
 ##SBATCH --gres=gpu:1
 #SBATCH --mem=10GB

@@ -66,4 +66,4 @@ sattach job_id.0
 
 
 -- to execute on the cluster --
-sbatch run_sbatch.sh --exp_json=/bark-ml/bark-ml/experiments/configs/highway_nn_small.json --mode=train
+sbatch run_sbatch.sh --exp_json=/bark-ml/bark-ml/experiments/configs/highway_ppo_gsnt.json --mode=train
