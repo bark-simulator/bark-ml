@@ -17,3 +17,4 @@ tf2-gnn==2.8.0
 spektral>=0.6.2
 notebook
 cloudpickle==1.3.0
+graph-nets==1.1.0

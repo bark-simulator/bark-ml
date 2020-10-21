@@ -96,7 +96,7 @@ class BehaviorGraphPPOAgent(BehaviorTFAAgent):
       train_step_counter=self._ckpt.step,
       num_epochs=self._gnn_ppo_params["NumEpochs", "", 10],
       name=self._gnn_ppo_params["AgentName", "", "ppo_agent"],
-      debug_summaries=self._gnn_ppo_params["DebugSummaries", "", False])
+      debug_summaries=self._gnn_ppo_params["DebugSummaries", "", True])
     
     tf_agent.initialize()
     return tf_agent
