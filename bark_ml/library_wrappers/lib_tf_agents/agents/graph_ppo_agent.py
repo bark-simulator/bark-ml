@@ -69,7 +69,7 @@ class BehaviorGraphPPOAgent(BehaviorTFAAgent):
       output_tensor_spec=env.action_spec(),
       gnn=self._init_gnn,
       fc_layer_params=self._gnn_ppo_params[
-        "ActorFcLayerParams", "", [256, 128]],
+        "ActorFcLayerParams", "", [256, 256]],
       params=params
     )
 
@@ -78,7 +78,7 @@ class BehaviorGraphPPOAgent(BehaviorTFAAgent):
       env.observation_spec(),
       gnn=self._init_gnn,
       fc_layer_params=tuple(self._gnn_ppo_params[
-        "CriticFcLayerParams", "", [256, 128]]),
+        "CriticFcLayerParams", "", [256, 256]]),
       params=params
     )
     

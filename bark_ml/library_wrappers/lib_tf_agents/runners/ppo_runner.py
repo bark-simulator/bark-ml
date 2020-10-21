@@ -38,6 +38,9 @@ class PPORunner(TFARunner):
     global_iteration = self._agent._agent._train_step_counter.numpy()
     for i in range(1, self._params["ML"]["PPORunner"]["NumberOfCollections", "", 10000]):
       print(f"Collection {i}")
+      global_iteration = self._agent._agent._train_step_counter.numpy()
+      tf.summary.experimental.set_step(global_iteration)
+      
       self._collection_driver.run()
       trajectories = self._agent._replay_buffer.gather_all()
       self._agent._agent.train(experience=trajectories)

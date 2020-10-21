@@ -108,15 +108,16 @@ class GNNValueNetwork(network.Network):
       # print("oha0", obs_)
       embeddings_t0 = self._gnn(obs_, training=training)
       embeddings = embeddings_t0[:, 0] # extract ego state
+      with tf.name_scope("PPOCriticNetwork"):
+        tf.summary.histogram("embedding", embeddings)
       embeddings = tf.expand_dims(embeddings, axis=0) 
-      
     else:
       # print("oha1", observations)
       embeddings_t0 = self._gnn(observations, training=training)
       embeddings = embeddings_t0[:, 0] # extract ego state
-      embeddings = tf.expand_dims(embeddings, axis=0) 
-      # embeddings = tf.reshape(embeddings, [-1, 32])
-      # embeddings = tf.expand_dims(embeddings, axis=0)  
+      with tf.name_scope("PPOCriticNetwork"):
+        tf.summary.histogram("embedding", embeddings)
+      embeddings = tf.expand_dims(embeddings, axis=0)
 
     # print("embeddings", embeddings)
     state, network_state = self._encoder(

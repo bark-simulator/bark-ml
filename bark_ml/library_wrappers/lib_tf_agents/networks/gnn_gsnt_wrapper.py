@@ -19,9 +19,6 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.observers.graph_observer import GraphObserver
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_wrapper import GNNWrapper
 
-NUM_LAYERS = 2  # Hard-code number of layers in the edge/node/global models.
-LATENT_SIZE = 40  # Hard-code latent layer sizes for demos.
-
 
 def make_mlp_model(layer_config=None):
   """Instantiates a new MLP, followed by LayerNorm.
@@ -30,7 +27,7 @@ def make_mlp_model(layer_config=None):
   Returns:
     A Sonnet module which contains the MLP and LayerNorm.
   """
-  lc = layer_config or [64, 32]
+  lc = layer_config or [128, 64]
   return snt.Sequential([
       snt.nets.MLP(lc, activate_final=True, with_bias=True),
   ])
@@ -84,7 +81,7 @@ class GSNTWrapper(GNNWrapper):
     self._num_message_passing_layers = params["ML"]["GSNT"][
       "NumMessagePassingLayers", "Number of message passing layers", 2]
     self._embedding_size = params["ML"]["GSNT"][
-      "EmbeddingSize", "Embedding size of nodes", 32]
+      "EmbeddingSize", "Embedding size of nodes", 64]
     # self._activation_func = params["ML"]["GAT"][
     #   "Activation", "Activation function", "elu"]
     # self._num_attn_heads = params["ML"]["GAT"][
@@ -116,7 +113,6 @@ class GSNTWrapper(GNNWrapper):
   @tf.function
   def _init_call_func(self, observations, training=False):
     """Graph nets implementation"""
-    # print("gsnt", observations)
     embeddings, adj_matrix, _, edge_features = GraphObserver.graph(
       observations=observations, 
       graph_dims=self._graph_dims,

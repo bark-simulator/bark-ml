@@ -185,6 +185,8 @@ class GNNActorDistributionNetwork(network.DistributionNetwork):
     
     # extract ego state (node 0)
     embeddings = embeddings[:, 0]
+    with tf.name_scope("PPOActorNetwork"):
+      tf.summary.histogram("embedding", embeddings)
     
     state, network_state = self._encoder(
       embeddings,
