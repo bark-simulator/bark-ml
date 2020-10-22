@@ -14,7 +14,7 @@ from tf_agents.networks import value_network
 from tf_agents.networks import value_rnn_network
 from tf_agents.policies import greedy_policy
 
-from tf_agents.agents.ppo import ppo_clip_agent
+from tf_agents.agents.ppo import ppo_agent
 from tf_agents.replay_buffers import tf_uniform_replay_buffer
 from tf_agents.trajectories import time_step as ts
 
@@ -43,27 +43,26 @@ class BehaviorPPOAgent(BehaviorTFAAgent):
       env.observation_spec(),
       env.action_spec(),
       fc_layer_params=tuple(self._ppo_params[
-        "ActorFcLayerParams", "", [512, 256, 256]]))
+        "ActorFcLayerParams", "", [256, 256]]))
     value_net = value_network.ValueNetwork(
       env.observation_spec(),
       fc_layer_params=tuple(self._ppo_params[
-        "CriticFcLayerParams", "", [512, 256, 256]]))
+        "CriticFcLayerParams", "", [256, 256]]))
 
-    tf_agent = ppo_clip_agent.PPOClipAgent(
+    tf_agent = ppo_agent.PPOAgent(
       env.time_step_spec(),
       env.action_spec(),
-      optimizer=tf.compat.v1.train.AdamOptimizer(learning_rate=1e-3),
       actor_net=actor_net,
       value_net=value_net,
-      entropy_regularization=0.0,
-      importance_ratio_clipping=0.2,
-      normalize_observations=False,
-      normalize_rewards=False,
-      use_gae=True,
-      num_epochs=25,
-      debug_summaries=True,
-      summarize_grads_and_vars=True,
-      train_step_counter=self._ckpt.step)
+      normalize_observations=self._ppo_params[
+        "NormalizeObservations", "", False],
+      normalize_rewards=self._ppo_params["NormalizeRewards", "", False],
+      optimizer=tf.compat.v1.train.AdamOptimizer(
+        learning_rate=self._ppo_params["LearningRate", "", 3e-4]),
+      train_step_counter=self._ckpt.step,
+      num_epochs=self._ppo_params["NumEpochs", "", 1],
+      name=self._ppo_params["AgentName", "", "ppo_agent"],
+      debug_summaries=self._ppo_params["DebugSummaries", "", False])
     tf_agent.initialize()
     return tf_agent
 

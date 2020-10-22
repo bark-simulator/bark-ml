@@ -27,10 +27,8 @@ def make_mlp_model(layer_config=None):
   Returns:
     A Sonnet module which contains the MLP and LayerNorm.
   """
-  lc = layer_config or [64, 32]
   return snt.Sequential([
-      snt.nets.MLP(lc, activation=tf.keras.activations.relu, activate_final=True),
-      snt.LayerNorm(axis=-1, create_offset=True, create_scale=True)
+      snt.nets.MLP([80, 80], activate_final=True),
   ])
 
 class MLPGraphNetwork(snt.Module):
@@ -82,7 +80,7 @@ class GSNTWrapper(GNNWrapper):
     self._num_message_passing_layers = params["ML"]["GSNT"][
       "NumMessagePassingLayers", "Number of message passing layers", 2]
     self._embedding_size = params["ML"]["GSNT"][
-      "EmbeddingSize", "Embedding size of nodes", 32]
+      "EmbeddingSize", "Embedding size of nodes", 80]
     # self._activation_func = params["ML"]["GAT"][
     #   "Activation", "Activation function", "elu"]
     # self._num_attn_heads = params["ML"]["GAT"][
@@ -118,8 +116,8 @@ class GSNTWrapper(GNNWrapper):
       observations=observations, 
       graph_dims=self._graph_dims,
       dense=True)
-    
     batch_size = tf.shape(observations)[0]
+    # print("ef", edge_features, adj_matrix[:, 1])
     input_graph = GraphsTuple(
       nodes=tf.cast(embeddings, tf.float32),  # validate
       edges=tf.cast(edge_features, tf.float32),  # validate
@@ -130,7 +128,7 @@ class GSNTWrapper(GNNWrapper):
       n_edge=tf.tile([25], [batch_size]))  # change
 
     out = self._gnn_core_0(input_graph)
-    out = self._gnn_core_1(out)
+    # out = self._gnn_core_1(out)
     
     # validate
     node_values = tf.reshape(out.nodes, [batch_size, -1, self._embedding_size])

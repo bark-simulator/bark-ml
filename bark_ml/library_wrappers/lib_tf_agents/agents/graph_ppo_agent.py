@@ -85,15 +85,12 @@ class BehaviorGraphPPOAgent(BehaviorTFAAgent):
     tf_agent = ppo_clip_agent.PPOClipAgent(
       env.time_step_spec(),
       env.action_spec(),
-      optimizer=tf.compat.v1.train.AdamOptimizer(learning_rate=1e-3),
+      optimizer=tf.compat.v1.train.AdamOptimizer(learning_rate=3e-4),
       actor_net=actor_net,
       value_net=value_net,
-      entropy_regularization=0.0,
-      importance_ratio_clipping=0.2,
       normalize_observations=False,
       normalize_rewards=False,
-      use_gae=True,
-      num_epochs=25,
+      use_gae=False,
       debug_summaries=True,
       summarize_grads_and_vars=True,
       train_step_counter=self._ckpt.step)

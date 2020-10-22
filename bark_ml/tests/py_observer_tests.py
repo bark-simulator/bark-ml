@@ -23,6 +23,7 @@ from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, Discrete
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.core.observers import NearestObserver
+from bark_ml.core.observers import GraphObserverV2
 
 
 class PyObserverTests(unittest.TestCase):

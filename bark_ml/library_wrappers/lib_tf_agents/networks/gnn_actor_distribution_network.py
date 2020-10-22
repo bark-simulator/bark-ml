@@ -180,7 +180,7 @@ class GNNActorDistributionNetwork(network.DistributionNetwork):
     
     if len(tf.shape(observations)) == 3:
       observations = tf.squeeze(observations, axis=0)
-      
+    
     embeddings = self._gnn(observations, training=training)
     
     # extract ego state (node 0)
