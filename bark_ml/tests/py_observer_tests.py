@@ -24,6 +24,7 @@ from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, Discrete
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.observers.graph_observer_v2 import GraphObserverV2
+from bark_ml.observers.graph_observer import GraphObserver
 from bark_ml.core.observers import NearestObserver
 
 from graph_nets import utils_np
@@ -78,22 +79,27 @@ class PyObserverTests(unittest.TestCase):
 
     # under test
     observer = GraphObserverV2(params)
+    gobserver = GraphObserver(params)
     observer.Reset(world)
     
     eval_id = env._scenario._eval_agent_ids[0]
     observed_world = world.Observe([eval_id])[0]
     start_time = time.time()
     observed_state = observer.Observe(observed_world)
-    print(observed_state)
+    gobserved_state = gobserver.Observe(observed_world)
+    gobserved_state._self_loops = True
+    print(observed_state, gobserved_state)
     end_time = time.time()
     print(f"It took {end_time-start_time} seconds.")
     
     # non-batch
     ob = GraphObserverV2.graph([observed_state])
-    print(ob)
+    
+    ob2 = GraphObserver.graph(gobserved_state, graph_dims=gobserver.graph_dimensions, dense=True)
+    print(ob, ob2)
     # batch
-    batch_observation = tf.concat([observed_state, observed_state], axis=0)
-    node_vals, edge_indices, node_lens, edge_lens, globals, edge_vals = GraphObserverV2.graph(batch_observation)
+    # batch_observation = tf.concat([observed_state, observed_state], axis=0)
+    # node_vals, edge_indices, node_lens, edge_lens, globals, edge_vals = GraphObserverV2.graph(batch_observation)
 
     
     # data_dict_0 = {

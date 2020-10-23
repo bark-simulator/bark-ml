@@ -11,7 +11,7 @@ from bark.core.models.behavior import BehaviorModel, BehaviorDynamicModel
 import tensorflow as tf
 
 from tf_agents.policies import greedy_policy
-from tf_agents.agents.ppo import ppo_clip_agent
+from tf_agents.agents.ppo import ppo_agent
 from tf_agents.replay_buffers import tf_uniform_replay_buffer
 from tf_agents.utils.common import Checkpointer
 from tf_agents.trajectories import time_step as ts
@@ -68,7 +68,7 @@ class BehaviorGraphPPOAgent(BehaviorTFAAgent):
       output_tensor_spec=env.action_spec(),
       gnn=self._init_gnn,
       fc_layer_params=self._gnn_ppo_params[
-        "ActorFcLayerParams", "", [256, 256]],
+        "ActorFcLayerParams", "", [512, 256, 256]],
       params=params
     )
 
@@ -77,12 +77,12 @@ class BehaviorGraphPPOAgent(BehaviorTFAAgent):
       env.observation_spec(),
       gnn=self._init_gnn,
       fc_layer_params=tuple(self._gnn_ppo_params[
-        "CriticFcLayerParams", "", [256, 256]]),
+        "CriticFcLayerParams", "", [512, 256, 256]]),
       params=params
     )
     
     # agent
-    tf_agent = ppo_clip_agent.PPOClipAgent(
+    tf_agent = ppo_agent.PPOAgent(
       env.time_step_spec(),
       env.action_spec(),
       optimizer=tf.compat.v1.train.AdamOptimizer(learning_rate=3e-4),
@@ -90,7 +90,7 @@ class BehaviorGraphPPOAgent(BehaviorTFAAgent):
       value_net=value_net,
       normalize_observations=False,
       normalize_rewards=False,
-      use_gae=False,
+      use_gae=True,
       debug_summaries=True,
       summarize_grads_and_vars=True,
       train_step_counter=self._ckpt.step)

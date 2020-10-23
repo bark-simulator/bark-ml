@@ -29,9 +29,10 @@ def make_mlp_model(layer_config=None):
     A Sonnet module which contains the MLP and LayerNorm.
   """
   return snt.Sequential([
-    snt.nets.MLP([80, 80],
+    snt.nets.MLP([80, 80, 80],
     w_init=tf.keras.initializers.GlorotUniform(),
     b_init=tf.keras.initializers.Constant(0.0001),
+    activation=tf.keras.activations.relu,
     activate_final=True)
   ])
 

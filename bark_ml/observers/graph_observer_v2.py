@@ -105,11 +105,11 @@ class GraphObserverV2(StateObserver):
         edge_vals.append(edge_value)
         edge_ids = [nearby_agent_node_pos, node_pos]
         edge_index.append(edge_ids)
-          
+    # print(np.vstack(node_vals), np.vstack(edge_index), np.vstack(edge_vals))
+    
     node_vals = np.reshape(np.vstack(node_vals), (1, -1))
     edge_vals = np.reshape(np.vstack(edge_vals), (1, -1))
     edge_index = np.reshape(np.vstack(edge_index), (1, -1))
-    
     observation = np.concatenate([
       np.array([[np.shape(node_vals)[1]]], dtype=np.float32),
       np.array([[np.shape(edge_vals)[1]]], dtype=np.float32),
