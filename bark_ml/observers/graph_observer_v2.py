@@ -139,7 +139,7 @@ class GraphObserverV2(StateObserver):
       edge_val = tf.cast(
         tf.reshape(
           obs[len_nodes+2+len_edges:len_nodes+2+2*len_edges], [-1, 2]), dtype=tf.int32) + edge_idx_start
-      print(node_val, edge_index, edge_val)
+      # print(node_val, edge_index, edge_val)
       node_vals.append(node_val)
       edge_indices.append(edge_index)
       edge_vals.append(edge_val)
