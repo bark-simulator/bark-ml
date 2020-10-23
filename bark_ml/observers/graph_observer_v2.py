@@ -120,7 +120,7 @@ class GraphObserverV2(StateObserver):
     obs[0, :np.shape(observation)[1]] = observation
     
     obs = tf.convert_to_tensor(obs, dtype=tf.float32)
-    return obs
+    return tf.reshape(obs, [-1])
   
   @classmethod
   def graph(cls, observations, graph_dims=None, dense=False):

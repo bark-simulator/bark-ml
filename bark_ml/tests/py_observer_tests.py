@@ -84,7 +84,7 @@ class PyObserverTests(unittest.TestCase):
     observed_world = world.Observe([eval_id])[0]
     start_time = time.time()
     observed_state = observer.Observe(observed_world)
-    # print(observed_state)
+    print(observed_state)
     end_time = time.time()
     print(f"It took {end_time-start_time} seconds.")
     
@@ -94,18 +94,19 @@ class PyObserverTests(unittest.TestCase):
     # batch
     batch_observation = tf.concat([observed_state, observed_state], axis=0)
     node_vals, edge_indices, node_lens, edge_lens, globals, edge_vals = GraphObserverV2.graph(batch_observation)
+
     
-    data_dict_0 = {
-      "globals": globals,
-      "nodes": node_vals,
-      "edges": edge_indices,
-      "senders": edge_indices[:, 0],
-      "receivers": edge_indices[:, 1]
-    }
+    # data_dict_0 = {
+    #   "globals": globals,
+    #   "nodes": node_vals,
+    #   "edges": edge_indices,
+    #   "senders": edge_indices[:, 0],
+    #   "receivers": edge_indices[:, 1]
+    # }
     
-    data_dict_list = [data_dict_0]
-    graphs_tuple = utils_np.data_dicts_to_graphs_tuple(data_dict_list)
-    print(graphs_tuple)
+    # data_dict_list = [data_dict_0]
+    # graphs_tuple = utils_np.data_dicts_to_graphs_tuple(data_dict_list)
+    # print(graphs_tuple)
     
     
 if __name__ == '__main__':
