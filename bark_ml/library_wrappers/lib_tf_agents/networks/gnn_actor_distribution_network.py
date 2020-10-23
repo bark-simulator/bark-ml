@@ -183,7 +183,7 @@ class GNNActorDistributionNetwork(network.DistributionNetwork):
     
     embeddings = self._gnn(observations, training=training)
     # extract ego state (node 0)
-    print(embeddings)
+    # print(embeddings)
     
     if tf.shape(embeddings)[0] > 0:
       embeddings = embeddings[:, 0]

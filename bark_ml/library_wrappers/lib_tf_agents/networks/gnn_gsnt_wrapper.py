@@ -29,7 +29,7 @@ def make_mlp_model(layer_config=None):
     A Sonnet module which contains the MLP and LayerNorm.
   """
   return snt.Sequential([
-      snt.nets.MLP([80, 80], activate_final=True),
+      snt.nets.MLP([64, 32], activate_final=True)
   ])
 
 class MLPGraphNetwork(snt.Module):
