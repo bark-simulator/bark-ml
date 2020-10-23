@@ -106,6 +106,7 @@ class GNNValueNetwork(network.Network):
       observations = tf.squeeze(observations, axis=0)
 
     embeddings = self._gnn(observations, training=training)
+    
     if tf.shape(embeddings)[0] > 0:
       embeddings = embeddings[:, 0] # extract ego state
     
@@ -121,5 +122,4 @@ class GNNValueNetwork(network.Network):
     
     value = self._postprocessing_layers(state, training=training)
     # value = tf.expand_dims(value, axis=0)
-    print(value)
     return tf.squeeze(value, -1), network_state

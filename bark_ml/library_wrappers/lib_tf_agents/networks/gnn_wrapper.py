@@ -70,6 +70,6 @@ class GNNWrapper(tf.keras.Model):
   def call(self, observations, training=False):
     print(observations)
     if observations[0, -1] != 0.:
-      return tf.random.normal(shape=(0, self._embedding_size))
+      return tf.random.normal(shape=(1, 80))
     output = self._call_func(observations, training=training)
     return tf.cast(output, self.output_dtype)
