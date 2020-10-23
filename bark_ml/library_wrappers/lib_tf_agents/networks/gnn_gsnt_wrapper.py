@@ -118,6 +118,7 @@ class GSNTWrapper(GNNWrapper):
       dense=True)
     batch_size = tf.shape(observations)[0]
     nsz = tf.shape(node_vals)[0]
+    
     print(edge_indices)
     # print("ef", edge_features, adj_matrix[:, 1])
     input_graph = GraphsTuple(
@@ -126,13 +127,9 @@ class GSNTWrapper(GNNWrapper):
       globals=tf.cast(globals, tf.float32),
       receivers=tf.cast(edge_indices[:, 1], tf.int32),  # validate
       senders=tf.cast(edge_indices[:, 0], tf.int32),  # validate
-      n_node=tf.tile([5], [batch_size]),  # change
-      n_edge=tf.tile([25], [batch_size]))  
+      n_node=node_lens,  # change
+      n_edge=edge_lens)  
 
-    print(input_graph)
-    if nsz == 0:
-      return tf.random.normal(shape=(batch_size, 0, self._embedding_size))
-    
     out = self._gnn_core_0(input_graph)
     out = self._gnn_core_1(out)
     

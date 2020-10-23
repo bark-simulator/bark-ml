@@ -124,13 +124,8 @@ class GraphObserverV2(StateObserver):
   
   @classmethod
   def graph(cls, observations, graph_dims=None, dense=False):
-    # len_nodes = tf.cast(observations[:, 0], dtype=tf.int32) # nodes sizes
-    # len_edges = tf.cast(observations[:, 1], dtype=tf.int32) # edge sizes
     batch_size = tf.shape(observations)[0]
     obs = observations
-    
-    # row_ids = tf.reshape(tf.range(batch_size), [-1, 1])
-    # col_ids = tf.reshape(tf.range(2, 25), [1, -1])
     
     node_vals = []
     edge_vals = []
@@ -154,7 +149,7 @@ class GraphObserverV2(StateObserver):
       edge_idx_start += tf.shape(node_val)[0]
       node_lens.append([tf.shape(node_val)[0]])
       edge_lens.append([tf.shape(edge_val)[0]])
-      globals.append([0])
+      globals.append(0)
     
     node_vals = tf.concat(node_vals, axis=0)
     edge_indices = tf.concat(edge_indices, axis=0)

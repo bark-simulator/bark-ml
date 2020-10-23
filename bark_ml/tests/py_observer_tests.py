@@ -26,6 +26,8 @@ from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.observers.graph_observer_v2 import GraphObserverV2
 from bark_ml.core.observers import NearestObserver
 
+from graph_nets import utils_np
+
 
 class PyObserverTests(unittest.TestCase):
 
@@ -91,8 +93,19 @@ class PyObserverTests(unittest.TestCase):
     # print(ob)
     # batch
     batch_observation = tf.concat([observed_state, observed_state], axis=0)
-    ob = GraphObserverV2.graph(batch_observation)
-    print(ob)
+    node_vals, edge_indices, node_lens, edge_lens, globals, edge_vals = GraphObserverV2.graph(batch_observation)
+    
+    data_dict_0 = {
+      "globals": globals,
+      "nodes": node_vals,
+      "edges": edge_indices,
+      "senders": edge_indices[:, 0],
+      "receivers": edge_indices[:, 1]
+    }
+    
+    data_dict_list = [data_dict_0]
+    graphs_tuple = utils_np.data_dicts_to_graphs_tuple(data_dict_list)
+    print(graphs_tuple)
     
     
 if __name__ == '__main__':
