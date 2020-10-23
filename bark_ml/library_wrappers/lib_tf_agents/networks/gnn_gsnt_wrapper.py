@@ -128,7 +128,7 @@ class GSNTWrapper(GNNWrapper):
       n_node=node_lens,  # change
       n_edge=edge_lens)  
 
-    print(input_graph)
+    # print(input_graph)
     out = self._gnn_core_0(input_graph)
     out = self._gnn_core_1(out)
     
