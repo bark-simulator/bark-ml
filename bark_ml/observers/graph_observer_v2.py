@@ -29,7 +29,9 @@ class GraphObserverV2(StateObserver):
                            int(StateDefinition.THETA_POSITION),
                             int(StateDefinition.VEL_POSITION)]
 
-    self._self_con = False
+    self._self_con = True
+    self._state_definition = 250
+    self.graph_dimensions = None
 
   def _position(self, agent) -> Point2d:
     return Point2d(
@@ -104,21 +106,24 @@ class GraphObserverV2(StateObserver):
         edge_ids = [nearby_agent_node_pos, node_pos]
         edge_index.append(edge_ids)
           
-    node_vals = tf.reshape(
-      tf.convert_to_tensor(node_vals, dtype=tf.float32), [1, -1])
-    edge_vals = tf.reshape(
-      tf.convert_to_tensor(edge_vals, dtype=tf.float32), [1, -1])
-    edge_index = tf.reshape(
-      tf.convert_to_tensor(edge_index, dtype=tf.float32), [1, -1])
+    node_vals = np.reshape(np.vstack(node_vals), (1, -1))
+    edge_vals = np.reshape(np.vstack(edge_vals), (1, -1))
+    edge_index = np.reshape(np.vstack(edge_index), (1, -1))
     
-    observation = tf.concat([
-      tf.reshape(tf.cast(tf.shape(node_vals)[1], dtype=tf.float32), [1, 1]),
-      tf.reshape(tf.cast(tf.shape(edge_vals)[1], dtype=tf.float32), [1, 1]),
+    observation = np.concatenate([
+      np.array([[np.shape(node_vals)[1]]], dtype=np.float32),
+      np.array([[np.shape(edge_vals)[1]]], dtype=np.float32),
       node_vals, edge_vals, edge_index], axis=1)
-    return observation
+    
+    # equality transf
+    obs = np.zeros(shape=(1, self._len_ego_state))
+    obs[0, :np.shape(observation)[1]] = observation
+    
+    obs = tf.convert_to_tensor(obs, dtype=tf.float32)
+    return obs
   
   @classmethod
-  def graph(cls, observations, dense=False):
+  def graph(cls, observations, graph_dims=None, dense=False):
     # len_nodes = tf.cast(observations[:, 0], dtype=tf.int32) # nodes sizes
     # len_edges = tf.cast(observations[:, 1], dtype=tf.int32) # edge sizes
     batch_size = tf.shape(observations)[0]
@@ -130,33 +135,42 @@ class GraphObserverV2(StateObserver):
     node_vals = []
     edge_vals = []
     edge_indices = []
+    node_lens = []
+    edge_lens = []
+    globals = []
     edge_idx_start = 0
     for obs in observations:
       len_nodes = tf.cast(obs[0], dtype=tf.int32)
       len_edges = tf.cast(obs[1], dtype=tf.int32)
       node_val = tf.reshape(obs[2:len_nodes+2], [-1, 4])
-      edge_index = tf.reshape(obs[len_nodes+2:len_nodes+2+len_edges], [-1, 4])
-      edge_val = tf.cast(
+      edge_val = tf.reshape(obs[len_nodes+2:len_nodes+2+len_edges], [-1, 4])
+      edge_index = tf.cast(
         tf.reshape(
-          obs[len_nodes+2+len_edges:len_nodes+2+2*len_edges], [-1, 2]), dtype=tf.int32) + edge_idx_start
+          obs[len_nodes+2+len_edges:(len_nodes+2+len_edges + 50)], [-1, 2]), dtype=tf.int32) + edge_idx_start
       # print(node_val, edge_index, edge_val)
       node_vals.append(node_val)
       edge_indices.append(edge_index)
       edge_vals.append(edge_val)
       edge_idx_start += tf.shape(node_val)[0]
-      
+      node_lens.append([tf.shape(node_val)[0]])
+      edge_lens.append([tf.shape(edge_val)[0]])
+      globals.append([0])
+    
     node_vals = tf.concat(node_vals, axis=0)
     edge_indices = tf.concat(edge_indices, axis=0)
     edge_vals = tf.concat(edge_vals, axis=0)
-    return node_vals, edge_indices, edge_vals
+    node_lens = tf.cast(tf.concat(node_lens, axis=0), dtype=tf.int32)
+    edge_lens = tf.cast(tf.concat(edge_lens, axis=0), dtype=tf.int32)
+    globals = tf.concat(globals, axis=0)
+    
+    
+    return node_vals, edge_indices, node_lens, edge_lens, globals, edge_vals
     
   @property
   def observation_space(self):
     return spaces.Box(
-      low=np.zeros(self._len_ego_state + \
-        self._max_num_vehicles*self._len_relative_agent_state),
-      high = np.ones(self._len_ego_state + \
-        self._max_num_vehicles*self._len_relative_agent_state))
+      low=np.zeros(self._len_ego_state),
+      high=np.ones(self._len_ego_state))
 
   def _norm(self, agent_state):
     if not self._normalization_enabled:
@@ -179,9 +193,5 @@ class GraphObserverV2(StateObserver):
     return (value - range[0])/(range[1]-range[0])
 
   @property
-  def _len_relative_agent_state(self):
-    return len(self._state_definition)
-
-  @property
   def _len_ego_state(self):
-    return len(self._state_definition)
+    return self._state_definition

@@ -1,7 +1,7 @@
 {
     "Experiment": {
         "Observer": {
-            "ModuleName": "GraphObserver",
+            "ModuleName": "GraphObserverV2",
             "Config": {}
         },
         "Evaluator": {

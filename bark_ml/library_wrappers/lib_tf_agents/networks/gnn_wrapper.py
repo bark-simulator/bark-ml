@@ -41,12 +41,12 @@ class GNNWrapper(tf.keras.Model):
     super(GNNWrapper, self).__init__(name=name)
     self.output_dtype = output_dtype
     self._params = params
-    self._graph_dims = self._validated_graph_dims(params["ML"]["GraphDims"])
+    self._graph_dims = None  # self._validated_graph_dims(params["ML"]["GraphDims"])
     
-    logging.info(
-      f'"{name}" configured with `spektral` for input graphs with ' +
-      f'{self._graph_dims[0]} nodes, {self._graph_dims[1]} node features, ' + 
-      f'and {self._graph_dims[2]} edge features.')
+    # logging.info(
+    #   f'"{name}" configured with `spektral` for input graphs with ' +
+    #   f'{self._graph_dims[0]} nodes, {self._graph_dims[1]} node features, ' + 
+    #   f'and {self._graph_dims[2]} edge features.')
 
 
   def _validated_graph_dims(self, graph_dims):
@@ -62,14 +62,13 @@ class GNNWrapper(tf.keras.Model):
   def _init_network(self):
     pass
   
-  @tf.function
   def _init_call_func(self, observations, training=False):
     pass
   
   # relax shapes due to varying batch sizes
-  @tf.function(experimental_relax_shapes=True)
+  # @tf.function(experimental_relax_shapes=True)
   def call(self, observations, training=False):
-    if observations.shape[0] == 0:
+    if tf.shape(observations)[0] == 0:
       return tf.random.normal(shape=(0, self._embedding_size))
     output = self._call_func(observations, training=training)
     return tf.cast(output, self.output_dtype)

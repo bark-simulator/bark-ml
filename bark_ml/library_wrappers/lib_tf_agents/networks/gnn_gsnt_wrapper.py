@@ -17,6 +17,7 @@ import sonnet as snt
 # bark-ml
 from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.observers.graph_observer import GraphObserver
+from bark_ml.observers.graph_observer_v2 import GraphObserverV2
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_wrapper import GNNWrapper
 
 
@@ -109,26 +110,31 @@ class GSNTWrapper(GNNWrapper):
     self._gnn_core_1 = MLPGraphNetwork(
       edge_block_opt, node_block_opt, global_block_opt=None)
 
-  @tf.function
   def _init_call_func(self, observations, training=False):
     """Graph nets implementation"""
-    embeddings, adj_matrix, _, edge_features = GraphObserver.graph(
+    node_vals, edge_indices, node_lens, edge_lens, globals, edge_vals = GraphObserverV2.graph(
       observations=observations, 
       graph_dims=self._graph_dims,
       dense=True)
     batch_size = tf.shape(observations)[0]
+    nsz = tf.shape(node_vals)[0]
+    print(edge_indices)
     # print("ef", edge_features, adj_matrix[:, 1])
     input_graph = GraphsTuple(
-      nodes=tf.cast(embeddings, tf.float32),  # validate
-      edges=tf.cast(edge_features, tf.float32),  # validate
-      globals=tf.cast(tf.tile([[0]], [batch_size, 1]), tf.float32),
-      receivers=tf.cast(adj_matrix[:, 1], tf.int32),  # validate
-      senders=tf.cast(adj_matrix[:, 0], tf.int32),  # validate
+      nodes=tf.cast(node_vals, tf.float32),  # validate
+      edges=tf.cast(edge_vals, tf.float32),  # validate
+      globals=tf.cast(globals, tf.float32),
+      receivers=tf.cast(edge_indices[:, 1], tf.int32),  # validate
+      senders=tf.cast(edge_indices[:, 0], tf.int32),  # validate
       n_node=tf.tile([5], [batch_size]),  # change
-      n_edge=tf.tile([25], [batch_size]))  # change
+      n_edge=tf.tile([25], [batch_size]))  
 
+    print(input_graph)
+    if nsz == 0:
+      return tf.random.normal(shape=(batch_size, 0, self._embedding_size))
+    
     out = self._gnn_core_0(input_graph)
-    # out = self._gnn_core_1(out)
+    out = self._gnn_core_1(out)
     
     # validate
     node_values = tf.reshape(out.nodes, [batch_size, -1, self._embedding_size])
