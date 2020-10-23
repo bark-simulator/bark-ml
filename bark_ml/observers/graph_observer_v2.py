@@ -29,7 +29,7 @@ class GraphObserverV2(StateObserver):
                            int(StateDefinition.THETA_POSITION),
                             int(StateDefinition.VEL_POSITION)]
 
-    self._self_con = False
+    self._self_con = True
     self._state_definition = 250
     self.graph_dimensions = None
 
@@ -94,7 +94,7 @@ class GraphObserverV2(StateObserver):
     node_vals = []
     edge_vals = []
     edge_index = []
-    for node_pos, agent in pos_agent.items():
+    for node_pos, agent in sorted(pos_agent.items()):
       node_vals.append(self._norm(agent.state)[1:])
       nearby_agents = self.GetNearbyAgents(agent, pos_agent, 150, include_ego=True)
       for nearby_agent in nearby_agents:
@@ -141,7 +141,7 @@ class GraphObserverV2(StateObserver):
       edge_val = tf.reshape(obs[len_nodes+2:len_nodes+2+len_edges], [-1, 4])
       edge_index = tf.cast(
         tf.reshape(
-          obs[len_nodes+2+len_edges:(len_nodes+2+len_edges + 40)], [-1, 2]), dtype=tf.int32) + edge_idx_start
+          obs[len_nodes+2+len_edges:(len_nodes+2+len_edges + 50)], [-1, 2]), dtype=tf.int32) + edge_idx_start
       # print(node_val, edge_index, edge_val)
       node_vals.append(node_val)
       edge_indices.append(edge_index)

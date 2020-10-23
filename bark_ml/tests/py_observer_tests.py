@@ -89,8 +89,8 @@ class PyObserverTests(unittest.TestCase):
     print(f"It took {end_time-start_time} seconds.")
     
     # non-batch
-    ob = GraphObserverV2.graph(observed_state)
-    # print(ob)
+    ob = GraphObserverV2.graph([observed_state])
+    print(ob)
     # batch
     batch_observation = tf.concat([observed_state, observed_state], axis=0)
     node_vals, edge_indices, node_lens, edge_lens, globals, edge_vals = GraphObserverV2.graph(batch_observation)
