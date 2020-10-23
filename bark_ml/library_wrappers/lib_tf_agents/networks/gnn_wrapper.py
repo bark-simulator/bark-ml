@@ -68,7 +68,8 @@ class GNNWrapper(tf.keras.Model):
   # relax shapes due to varying batch sizes
   # @tf.function(experimental_relax_shapes=True)
   def call(self, observations, training=False):
-    if tf.shape(observations)[0] == 0:
+    print(observations)
+    if observations[0, -1] != 0.:
       return tf.random.normal(shape=(0, self._embedding_size))
     output = self._call_func(observations, training=training)
     return tf.cast(output, self.output_dtype)

@@ -119,8 +119,6 @@ class GSNTWrapper(GNNWrapper):
     batch_size = tf.shape(observations)[0]
     nsz = tf.shape(node_vals)[0]
     
-    print(edge_indices)
-    # print("ef", edge_features, adj_matrix[:, 1])
     input_graph = GraphsTuple(
       nodes=tf.cast(node_vals, tf.float32),  # validate
       edges=tf.cast(edge_vals, tf.float32),  # validate
@@ -130,6 +128,7 @@ class GSNTWrapper(GNNWrapper):
       n_node=node_lens,  # change
       n_edge=edge_lens)  
 
+    print(input_graph)
     out = self._gnn_core_0(input_graph)
     out = self._gnn_core_1(out)
     

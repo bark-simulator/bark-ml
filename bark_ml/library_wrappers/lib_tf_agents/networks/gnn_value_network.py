@@ -106,9 +106,10 @@ class GNNValueNetwork(network.Network):
       observations = tf.squeeze(observations, axis=0)
 
     embeddings = self._gnn(observations, training=training)
-    if tf.shape(embeddings)[1] > 0:
+    if tf.shape(embeddings)[0] > 0:
       embeddings = embeddings[:, 0] # extract ego state
     
+    print(embeddings)
     with tf.name_scope("PPOCriticNetwork"):
       tf.summary.histogram("embedding", embeddings)
 
@@ -119,5 +120,6 @@ class GNNValueNetwork(network.Network):
       training=training)
     
     value = self._postprocessing_layers(state, training=training)
-    value = tf.expand_dims(value, axis=0)
+    # value = tf.expand_dims(value, axis=0)
+    print(value)
     return tf.squeeze(value, -1), network_state
