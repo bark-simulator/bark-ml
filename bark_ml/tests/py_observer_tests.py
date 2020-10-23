@@ -12,6 +12,7 @@ import numpy as np
 import os
 import matplotlib
 import time
+import tensorflow as tf
 
 # Bark imports
 from bark.runtime.commons.parameters import ParameterServer
@@ -22,8 +23,8 @@ from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteML
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, DiscreteHighwayBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
+from bark_ml.observers.graph_observer_v2 import GraphObserverV2
 from bark_ml.core.observers import NearestObserver
-from bark_ml.core.observers import GraphObserverV2
 
 
 class PyObserverTests(unittest.TestCase):
@@ -65,5 +66,30 @@ class PyObserverTests(unittest.TestCase):
     print(f"It took {end_time-start_time} seconds.")
     print(observed_state, observer.observation_space.shape)
 
+
+  def test_graph_observer_v2(self):
+    params = ParameterServer()
+    bp = ContinuousHighwayBlueprint(params)
+    env = SingleAgentRuntime(blueprint=bp, render=True)
+    env.reset()
+    world = env._world
+
+    # under test
+    observer = GraphObserverV2(params)
+    observer.Reset(world)
+    
+    eval_id = env._scenario._eval_agent_ids[0]
+    observed_world = world.Observe([eval_id])[0]
+    start_time = time.time()
+    observed_state = observer.Observe(observed_world)
+    # print(observed_state)
+    end_time = time.time()
+    print(f"It took {end_time-start_time} seconds.")
+    
+    batch_observation = tf.concat([observed_state, observed_state], axis=0)
+    ob = GraphObserverV2.graph(batch_observation)
+    print(ob)
+    
+    
 if __name__ == '__main__':
   unittest.main()
