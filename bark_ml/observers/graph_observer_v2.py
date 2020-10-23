@@ -149,14 +149,14 @@ class GraphObserverV2(StateObserver):
       edge_idx_start += tf.shape(node_val)[0]
       node_lens.append([tf.shape(node_val)[0]])
       edge_lens.append([tf.shape(edge_val)[0]])
-      globals.append(0)
+      globals.append([0])
     
     node_vals = tf.concat(node_vals, axis=0)
     edge_indices = tf.concat(edge_indices, axis=0)
     edge_vals = tf.concat(edge_vals, axis=0)
     node_lens = tf.cast(tf.concat(node_lens, axis=0), dtype=tf.int32)
     edge_lens = tf.cast(tf.concat(edge_lens, axis=0), dtype=tf.int32)
-    globals = tf.concat(globals, axis=0)
+    globals = tf.stack(globals, axis=0)
     
     
     return node_vals, edge_indices, node_lens, edge_lens, globals, edge_vals
