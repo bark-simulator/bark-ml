@@ -178,5 +178,8 @@
     },
     "BehaviorDynamicModel": {
         "IntegrationTimeDelta": 0.05000000074505806
-    }
+    },
+    "World": {
+        "remove_agents_out_of_map": false
+    }    
 }

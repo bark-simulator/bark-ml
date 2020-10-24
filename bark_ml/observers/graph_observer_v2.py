@@ -95,17 +95,19 @@ class GraphObserverV2(StateObserver):
     edge_vals = []
     edge_index = []
     for node_pos, agent in sorted(pos_agent.items()):
+      # TODO: make dynamic
       node_vals.append(self._norm(agent.state)[1:])
-      nearby_agents = self.GetNearbyAgents(agent, pos_agent, 150, include_ego=True)
+      # TODO: make dynamic
+      nearby_agents = self.GetNearbyAgents(agent, pos_agent, 1000, include_ego=True)
       for nearby_agent in nearby_agents:
         nearby_agent_node_pos = self.QueryNodePos(pos_agent, nearby_agent)
         if self._self_con == False and nearby_agent_node_pos == node_pos:
           continue
+        # TODO: make dynamic
         edge_value = self.CalcEdgeValue(nearby_agent, agent)[1:]
         edge_vals.append(edge_value)
         edge_ids = [nearby_agent_node_pos, node_pos]
         edge_index.append(edge_ids)
-    # print(np.vstack(node_vals), np.vstack(edge_index), np.vstack(edge_vals))
     
     node_vals = np.reshape(np.vstack(node_vals), (1, -1))
     edge_vals = np.reshape(np.vstack(edge_vals), (1, -1))
@@ -125,8 +127,6 @@ class GraphObserverV2(StateObserver):
   @classmethod
   def graph(cls, observations, graph_dims=None, dense=False):
     batch_size = tf.shape(observations)[0]
-    obs = observations
-    
     node_vals = []
     edge_vals = []
     edge_indices = []
@@ -137,19 +137,21 @@ class GraphObserverV2(StateObserver):
     for obs in observations:
       len_nodes = tf.cast(obs[0], dtype=tf.int32)
       len_edges = tf.cast(obs[1], dtype=tf.int32)
+      # TODO: make dynamic
       node_val = tf.reshape(obs[2:len_nodes+2], [-1, 4])
+      # TODO: make dynamic
       edge_val = tf.reshape(obs[len_nodes+2:len_nodes+2+len_edges], [-1, 4])
+      # print(len_edges)
       edge_index = tf.cast(
         tf.reshape(
-          obs[len_nodes+2+len_edges:(len_nodes+2+len_edges + 50)], [-1, 2]), dtype=tf.int32) + edge_idx_start
-      # print(node_val, edge_index, edge_val)
+          obs[len_nodes+2+len_edges:(len_nodes+2+len_edges + tf.cast(len_edges/2, dtype=tf.int32))], [-1, 2]), dtype=tf.int32) + edge_idx_start
       node_vals.append(node_val)
       edge_indices.append(edge_index)
       edge_vals.append(edge_val)
       edge_idx_start += tf.shape(node_val)[0]
       node_lens.append([tf.shape(node_val)[0]])
       edge_lens.append([tf.shape(edge_val)[0]])
-      globals.append([0])
+      globals.append(node_val[0,:])
     
     node_vals = tf.concat(node_vals, axis=0)
     edge_indices = tf.concat(edge_indices, axis=0)
@@ -157,8 +159,6 @@ class GraphObserverV2(StateObserver):
     node_lens = tf.cast(tf.concat(node_lens, axis=0), dtype=tf.int32)
     edge_lens = tf.cast(tf.concat(edge_lens, axis=0), dtype=tf.int32)
     globals = tf.stack(globals, axis=0)
-    
-    
     return node_vals, edge_indices, node_lens, edge_lens, globals, edge_vals
     
   @property

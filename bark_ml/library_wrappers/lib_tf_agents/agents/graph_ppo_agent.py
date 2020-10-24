@@ -90,7 +90,7 @@ class BehaviorGraphPPOAgent(BehaviorTFAAgent):
       value_net=value_net,
       normalize_observations=False,
       normalize_rewards=False,
-      use_gae=True,
+      use_gae=False,
       debug_summaries=True,
       summarize_grads_and_vars=True,
       train_step_counter=self._ckpt.step)
