@@ -100,28 +100,14 @@ class PyObserverTests(unittest.TestCase):
     # first
     gobs = tf.expand_dims(gobserved_state, 0) # add a batch dimension
     abc = GraphObserver.graph(gobs, graph_dims=gobserver.graph_dimensions, dense=True)
-    # print(ob, ob2)
     
     # batch
     batch_observation = tf.stack([observed_state, observed_state], axis=0)
     obs1 = GraphObserverV2.graph(batch_observation, dense=True)
     
     batch_observation2 = tf.stack([gobserved_state, gobserved_state], axis=0)
-    bobs2 = GraphObserver.graph(batch_observation, graph_dims=gobserver.graph_dimensions, dense=True)
-    print(batch_observation2)
-    
-    # data_dict_0 = {
-    #   "globals": globals,
-    #   "nodes": node_vals,
-    #   "edges": edge_indices,
-    #   "senders": edge_indices[:, 0],
-    #   "receivers": edge_indices[:, 1]
-    # }
-    
-    # data_dict_list = [data_dict_0]
-    # graphs_tuple = utils_np.data_dicts_to_graphs_tuple(data_dict_list)
-    # print(graphs_tuple)
-    
+    graph_observer_obs = GraphObserver.graph(batch_observation2, graph_dims=gobserver.graph_dimensions, dense=True)
+    print(obs1, graph_observer_obs)
     
 if __name__ == '__main__':
   unittest.main()

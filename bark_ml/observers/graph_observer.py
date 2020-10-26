@@ -105,7 +105,7 @@ class GraphObserver(StateObserver):
       obs[start_index:end_index] = self._extract_node_features(agent)
 
     edge_features = np.zeros((self._num_agents, self._num_agents, self.edge_feature_len))
-    adjacency_matrix = np.zeros((self._num_agents, self._num_agents))
+    adjacency_matrix = np.zeros((self._num_agents, self._num_agents), dtype=np.int32)
 
     # add edges to all visible agents
     for index, agent in agents:
@@ -166,11 +166,10 @@ class GraphObserver(StateObserver):
       E: Edge features of shape 
         (batch_size, num_nodes, num_edge_features, num_edge_features).
     """
-    obs = observations # for brevity
-
+    obs = observations
     if not tf.is_tensor(obs):
       obs = tf.convert_to_tensor(obs)
-    
+      
     n_nodes, n_features = graph_dims[0:2]
     batch_size = observations.shape[0]
         
@@ -180,9 +179,10 @@ class GraphObserver(StateObserver):
     # extract adjacency matrix A
     adj_start_idx = n_nodes * n_features
     adj_end_idx = adj_start_idx + n_nodes ** 2
-    A = tf.reshape(obs[:, adj_start_idx:adj_end_idx], [-1, n_nodes, n_nodes])
+    # print(observations, adj_start_idx, adj_end_idx)
+    
+    A = tf.cast(tf.reshape(obs[:, adj_start_idx:adj_end_idx], [-1, n_nodes, n_nodes]), dtype=tf.int32)
 
-    print(observations)
   
     if dense:
       # in dense mode, the nodes of all graphs are 
@@ -194,8 +194,6 @@ class GraphObserver(StateObserver):
 
       # find non-zero elements in the adjacency matrix (edges)
       # and collect their indices
-      print(A)
-      
       A = tf.where(tf.greater(A, 0))
       # we need the indices of the source and target nodes to
       # be represented as their indices in the whole batch,

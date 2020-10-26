@@ -38,15 +38,6 @@ class PyGraphObserverTests(unittest.TestCase):
     self.observer = GraphObserver(params)
     self.eval_id = self.env._scenario._eval_agent_ids[0]
 
-  def test_norming(self):
-    observer = GraphObserver()
-    range_ = [-10, 10]
-    eps = 1*10-6
-
-    self.assertTrue(abs(1 - observer._normalize_value(10, range=range_)) < eps)
-    self.assertTrue(abs(-1 - observer._normalize_value(-10, range=range_)) < eps)
-    self.assertTrue(abs(1 - observer._normalize_value(100, range=range_)) < eps)
-    self.assertTrue(abs(0.1 - observer._normalize_value(1, range=range_)) < eps)
 
   def test_parameter_server_usage(self):
     expected_num_agents = 15
@@ -215,7 +206,7 @@ class PyGraphObserverTests(unittest.TestCase):
     edge_features = np.random.random_sample((num_nodes, num_nodes, num_edge_features))
 
     # note that edges are bidirectional, the
-    # the matrix is symmetric
+    # the matrix is symmetric 
     adjacency_list = [
       [0, 1, 1, 1, 0], # 1 connects with 2, 3, 4
       [1, 0, 1, 1, 0], # 2 connects with 3, 4
@@ -272,10 +263,11 @@ class PyGraphObserverTests(unittest.TestCase):
       2, 2, 2, 2, 2
     ])
 
+    observations = tf.convert_to_tensor(observations)
+    print(observations)
     nodes, edges, node_to_graph_map, E =\
       GraphObserver.graph(observations, graph_dims, dense=True)
     
-    print(nodes, edges, E)
     self.assertTrue(tf.reduce_all(tf.equal(nodes, expected_nodes)))
     self.assertTrue(tf.reduce_all(tf.equal(edges, expected_dense_edges)))
     # self.assertTrue(tf.reduce_all(
