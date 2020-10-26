@@ -1,7 +1,7 @@
 {
     "Experiment": {
         "Observer": {
-            "ModuleName": "GraphObserverV2",
+            "ModuleName": "GraphObserver",
             "Config": {}
         },
         "Evaluator": {
@@ -201,12 +201,6 @@
             "BatchSize": 512,
             "BufferNumSteps": 2,
             "BufferPrefetch": 3
-        },
-        "GAT": {
-            "NumMessagePassingLayers": 1,
-            "Activation": "elu",
-            "NumAttnHeads": 8,
-            "EmbeddingSize": 32
         },
         "SACRunner": {
             "NumberOfCollections": 250000,

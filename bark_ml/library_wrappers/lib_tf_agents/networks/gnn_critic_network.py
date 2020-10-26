@@ -152,7 +152,6 @@ class GNNCriticNetwork(network.Network):
     del step_type # unused.
 
     observations, actions = inputs
-    
     batch_size = observations.shape[0]
     embeddings = self._gnn(observations, training=training)
     
