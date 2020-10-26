@@ -211,7 +211,7 @@ class GraphObserver(StateObserver):
       
       A = A[:, 1:] + graph_indices
       A = tf.cast(A, tf.int32)
-
+      
       # since the node feature vectors are all stored in a 2D array,
       # we need to map them to the graphs that they belong to.
 

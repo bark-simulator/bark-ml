@@ -25,7 +25,7 @@
         "Blueprint": {
             "ModuleName": "ContinuousHighwayBlueprint",
             "Config": {
-                "num_scenarios": 10000,
+                "num_scenarios": 100,
                 "viewer": true
             }
         },
