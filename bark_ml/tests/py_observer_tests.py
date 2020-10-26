@@ -76,38 +76,42 @@ class PyObserverTests(unittest.TestCase):
     env = SingleAgentRuntime(blueprint=bp, render=True)
     env.reset()
     world = env._world
-
-    # under test
-    observer = GraphObserverV2(params)
-    gobserver = GraphObserver(params)
+    params["ML"]["GraphObserver"]["AgentLimit"] = 5
+    
+    # observers
+    observer = GraphObserver(params)
+    reference_observer = GraphObserverV2(params)
+    reference_observer.Reset(world)
     observer.Reset(world)
+    
     
     eval_id = env._scenario._eval_agent_ids[0]
     observed_world = world.Observe([eval_id])[0]
     start_time = time.time()
     observed_state = observer.Observe(observed_world)
-    gobserver.Reset(world)
-    
-    gobserved_state = gobserver.Observe(observed_world)
-    gobserved_state._self_loops = True
-    # print(observed_state, gobserved_state)
+    observed_ref_state = reference_observer.Observe(observed_world)
     end_time = time.time()
     print(f"It took {end_time-start_time} seconds.")
-    
-    # ref. impl
-    ob = GraphObserverV2.graph([observed_state])
-    
-    # first
-    gobs = tf.expand_dims(gobserved_state, 0) # add a batch dimension
-    abc = GraphObserver.graph(gobs, graph_dims=gobserver.graph_dimensions, dense=True)
-    
+
     # batch
     batch_observation = tf.stack([observed_state, observed_state], axis=0)
-    obs1 = GraphObserverV2.graph(batch_observation, dense=True)
+    graph = GraphObserver.graph(
+      batch_observation, graph_dims=observer.graph_dimensions, dense=True)
     
-    batch_observation2 = tf.stack([gobserved_state, gobserved_state], axis=0)
-    graph_observer_obs = GraphObserver.graph(batch_observation2, graph_dims=gobserver.graph_dimensions, dense=True)
-    print(obs1, graph_observer_obs)
+    batch_observation_reference = tf.stack(
+      [observed_ref_state, observed_ref_state], axis=0)
+    graph_ref = GraphObserverV2.graph(
+      batch_observation_reference, dense=True)
     
+    # unpack values
+    ref_node_vals, ref_edge_indices, ref_node_lens, ref_edge_lens, ref_globals, ref_edge_vals = graph_ref
+    node_vals, edge_indices, _, edge_vals = graph
+    
+    # print(ref_node_vals, node_vals)
+    # print(ref_edge_vals, edge_vals)
+    # print(ref_edge_indices, ref_edge_vals)
+    # print(edge_indices, edge_vals)
+
+
 if __name__ == '__main__':
   unittest.main()
