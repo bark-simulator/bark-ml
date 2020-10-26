@@ -132,10 +132,10 @@ class GSNTWrapper(GNNWrapper):
       edge_block_opt, node_block_opt, global_block_opt=None)
     self._decoder = MLPGraphIndependent()
     
-
+  @tf.function
   def _init_call_func(self, observations, training=False):
     """Graph nets implementation"""
-    node_vals, edge_indices, node_lens, edge_lens, globals, edge_vals = GraphObserverV2.graph(
+    node_vals, edge_indices, _, edge_vals = GraphObserver.graph(
       observations=observations, 
       graph_dims=self._graph_dims,
       dense=True)
@@ -147,8 +147,8 @@ class GSNTWrapper(GNNWrapper):
       globals=tf.cast(globals, tf.float32),
       receivers=tf.cast(edge_indices[:, 1], tf.int32),  # validate
       senders=tf.cast(edge_indices[:, 0], tf.int32),  # validate
-      n_node=node_lens,  # change
-      n_edge=edge_lens)  
+      n_node=tf.tile([5], batch_size),  # change
+      n_edge=tf.tile([50], batch_size))  
 
     # print(input_graph)
     
