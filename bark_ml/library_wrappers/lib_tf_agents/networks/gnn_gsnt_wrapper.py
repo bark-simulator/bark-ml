@@ -152,7 +152,7 @@ class GSNTWrapper(GNNWrapper):
     latent = self._encoder(input_graph)
     latent0 = latent
     # message passing
-    for _ in range(0, 3):
+    for _ in range(0, 10):
       core_input = utils_tf.concat([latent0, latent], axis=1)
       latent = self._gnn_core(core_input)
       
