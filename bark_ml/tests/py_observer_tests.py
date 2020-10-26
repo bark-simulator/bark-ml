@@ -86,22 +86,29 @@ class PyObserverTests(unittest.TestCase):
     observed_world = world.Observe([eval_id])[0]
     start_time = time.time()
     observed_state = observer.Observe(observed_world)
+    gobserver.Reset(world)
+    
     gobserved_state = gobserver.Observe(observed_world)
     gobserved_state._self_loops = True
-    print(observed_state, gobserved_state)
+    # print(observed_state, gobserved_state)
     end_time = time.time()
     print(f"It took {end_time-start_time} seconds.")
     
-    # non-batch
+    # ref. impl
     ob = GraphObserverV2.graph([observed_state])
     
-    ob2 = GraphObserver.graph(gobserved_state, graph_dims=gobserver.graph_dimensions, dense=True)
-    print(ob, ob2)
+    # first
+    gobs = tf.expand_dims(gobserved_state, 0) # add a batch dimension
+    abc = GraphObserver.graph(gobs, graph_dims=gobserver.graph_dimensions, dense=True)
+    # print(ob, ob2)
     
     # batch
-    # batch_observation = tf.concat([observed_state, observed_state], axis=0)
-    # node_vals, edge_indices, node_lens, edge_lens, globals, edge_vals = GraphObserverV2.graph(batch_observation)
-
+    batch_observation = tf.stack([observed_state, observed_state], axis=0)
+    obs1 = GraphObserverV2.graph(batch_observation, dense=True)
+    
+    batch_observation2 = tf.stack([gobserved_state, gobserved_state], axis=0)
+    bobs2 = GraphObserver.graph(batch_observation, graph_dims=gobserver.graph_dimensions, dense=True)
+    print(batch_observation2)
     
     # data_dict_0 = {
     #   "globals": globals,

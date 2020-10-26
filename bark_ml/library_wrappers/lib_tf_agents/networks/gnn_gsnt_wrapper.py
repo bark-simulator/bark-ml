@@ -149,12 +149,15 @@ class GSNTWrapper(GNNWrapper):
     # print(input_graph)
     
     # encoding
-    out = self._encoder(input_graph)
+    latent = self._encoder(input_graph)
+    latent0 = latent
     # message passing
     for _ in range(0, 3):
-      out = self._gnn_core(out)
+      core_input = utils_tf.concat([latent0, latent], axis=1)
+      latent = self._gnn_core(core_input)
+      
     # decoder
-    out = self._decoder(out)
+    out = self._decoder(latent)
 
     node_values = tf.reshape(out.nodes, [batch_size, -1, self._embedding_size])
     return node_values

@@ -182,6 +182,7 @@ class GraphObserver(StateObserver):
     adj_end_idx = adj_start_idx + n_nodes ** 2
     A = tf.reshape(obs[:, adj_start_idx:adj_end_idx], [-1, n_nodes, n_nodes])
 
+    print(observations)
   
     if dense:
       # in dense mode, the nodes of all graphs are 
@@ -193,8 +194,9 @@ class GraphObserver(StateObserver):
 
       # find non-zero elements in the adjacency matrix (edges)
       # and collect their indices
+      print(A)
+      
       A = tf.where(tf.greater(A, 0))
-
       # we need the indices of the source and target nodes to
       # be represented as their indices in the whole batch,
       # in other words: each node index must be the index
@@ -423,9 +425,9 @@ class GraphObserver(StateObserver):
     If the `value` is outside the given range, it's clamped 
     to the bound of [-1, 1]
     """
-    normed = 2 * (value - range[0]) / (range[1] - range[0]) - 1
-    normed = max(-1, normed) # values lower -1 clipped
-    normed = min(1, normed) # values bigger 1 clipped
+    normed = (value - range[0]) / (range[1] - range[0])
+    # normed = max(-1, normed) # values lower -1 clipped
+    # normed = min(1, normed) # values bigger 1 clipped
     return normed
 
   def reset(self, world):
