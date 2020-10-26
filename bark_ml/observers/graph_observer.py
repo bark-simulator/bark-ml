@@ -105,7 +105,7 @@ class GraphObserver(StateObserver):
       obs[start_index:end_index] = self._extract_node_features(agent)
 
     edge_features = np.zeros((self._num_agents, self._num_agents, self.edge_feature_len))
-    adjacency_matrix = np.zeros((self._num_agents, self._num_agents), dtype=np.int32)
+    adjacency_matrix = np.zeros((self._num_agents, self._num_agents))
 
     # add edges to all visible agents
     for index, agent in agents:
@@ -166,22 +166,21 @@ class GraphObserver(StateObserver):
       E: Edge features of shape 
         (batch_size, num_nodes, num_edge_features, num_edge_features).
     """
-    obs = observations
+    obs = observations # for brevity
+
     if not tf.is_tensor(obs):
       obs = tf.convert_to_tensor(obs)
-      
+    
     n_nodes, n_features = graph_dims[0:2]
     batch_size = observations.shape[0]
         
     # extract node features F
-    F = tf.reshape(obs[:, :n_nodes * n_features], [-1, n_nodes, n_features])
+    F = tf.reshape(obs[:, :n_nodes * n_features], [batch_size, n_nodes, n_features])
 
     # extract adjacency matrix A
     adj_start_idx = n_nodes * n_features
     adj_end_idx = adj_start_idx + n_nodes ** 2
-    # print(observations, adj_start_idx, adj_end_idx)
-    
-    A = tf.cast(tf.reshape(obs[:, adj_start_idx:adj_end_idx], [-1, n_nodes, n_nodes]), dtype=tf.int32)
+    A = tf.reshape(obs[:, adj_start_idx:adj_end_idx], [batch_size, n_nodes, n_nodes])
 
   
     if dense:
@@ -190,11 +189,12 @@ class GraphObserver(StateObserver):
       # feature vectors of the whole batch.
       # the assignment to graphs is handled by the
       # node_to_graph_map.
-      F = tf.reshape(F, [-1, n_features])
+      F = tf.reshape(F, [batch_size * n_nodes, n_features])
 
       # find non-zero elements in the adjacency matrix (edges)
       # and collect their indices
       A = tf.where(tf.greater(A, 0))
+
       # we need the indices of the source and target nodes to
       # be represented as their indices in the whole batch,
       # in other words: each node index must be the index
@@ -211,7 +211,7 @@ class GraphObserver(StateObserver):
       
       A = A[:, 1:] + graph_indices
       A = tf.cast(A, tf.int32)
-      
+
       # since the node feature vectors are all stored in a 2D array,
       # we need to map them to the graphs that they belong to.
 
@@ -220,15 +220,15 @@ class GraphObserver(StateObserver):
       # contains the index of the graph that the feature vector at
       # the same index in F belongs to, e.g. if each graph contains
       # two nodes, then the node_to_graph_map is [0, 0, 1, 1, 2, 2, ...]
-      # node_to_graph_map = tf.reshape(tf.range(batch_size), [-1, 1])
-      # node_to_graph_map = tf.tile(node_to_graph_map, [1, n_nodes])
-      # node_to_graph_map = tf.reshape(node_to_graph_map, [-1])
+      node_to_graph_map = tf.reshape(tf.range(batch_size), [-1, 1])
+      node_to_graph_map = tf.tile(node_to_graph_map, [1, n_nodes])
+      node_to_graph_map = tf.reshape(node_to_graph_map, [-1])
       
       # extract edge features
       n_edge_features = graph_dims[2]
       E_shape = [-1, n_edge_features]
       E = tf.reshape(obs[:, adj_end_idx:], E_shape)
-      return F, A, None, E
+      return F, A, node_to_graph_map, E
 
     # extract edge features
     n_edge_features = graph_dims[2]
@@ -423,9 +423,9 @@ class GraphObserver(StateObserver):
     If the `value` is outside the given range, it's clamped 
     to the bound of [-1, 1]
     """
-    normed = (value - range[0]) / (range[1] - range[0])
-    # normed = max(-1, normed) # values lower -1 clipped
-    # normed = min(1, normed) # values bigger 1 clipped
+    normed = 2 * (value - range[0]) / (range[1] - range[0]) - 1
+    normed = max(-1, normed) # values lower -1 clipped
+    normed = min(1, normed) # values bigger 1 clipped
     return normed
 
   def reset(self, world):

@@ -133,6 +133,7 @@ class GSNTWrapper(GNNWrapper):
     self._decoder = MLPGraphIndependent()
   
   
+  @tf.function
   def _init_call_func(self, observations, training=False):
     """Graph nets implementation"""
     
@@ -142,7 +143,7 @@ class GSNTWrapper(GNNWrapper):
       dense=True)
     batch_size = tf.shape(observations)[0]
     
-    tf.print(edge_indices)
+    # tf.print(edge_indices)
     input_graph = GraphsTuple(
       nodes=tf.cast(node_vals, tf.float32),  # validate
       edges=tf.cast(edge_vals, tf.float32),  # validate
@@ -152,13 +153,13 @@ class GSNTWrapper(GNNWrapper):
       n_node=tf.tile([5], [batch_size]),  # change
       n_edge=tf.tile([25], [batch_size]))  
 
-    print(input_graph)
+    # print(input_graph)
     # encoding
     latent = self._encoder(input_graph)
     latent0 = latent
     
     # message passing
-    for _ in range(0, 2):
+    for _ in range(0, 5):
       core_input = utils_tf.concat([latent0, latent], axis=1)
       latent = self._gnn_core(core_input)
       
