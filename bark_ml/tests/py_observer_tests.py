@@ -97,6 +97,7 @@ class PyObserverTests(unittest.TestCase):
     
     ob2 = GraphObserver.graph(gobserved_state, graph_dims=gobserver.graph_dimensions, dense=True)
     print(ob, ob2)
+    
     # batch
     # batch_observation = tf.concat([observed_state, observed_state], axis=0)
     # node_vals, edge_indices, node_lens, edge_lens, globals, edge_vals = GraphObserverV2.graph(batch_observation)

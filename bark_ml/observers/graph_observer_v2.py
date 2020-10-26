@@ -29,7 +29,7 @@ class GraphObserverV2(StateObserver):
                            int(StateDefinition.THETA_POSITION),
                             int(StateDefinition.VEL_POSITION)]
 
-    self._self_con = True
+    self._self_con = False
     self._state_definition = 250
     self.graph_dimensions = None
 
