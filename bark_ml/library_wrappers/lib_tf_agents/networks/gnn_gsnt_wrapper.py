@@ -35,7 +35,8 @@ def make_mlp_model(layer_config=None):
     w_init=tf.keras.initializers.GlorotUniform(),
     b_init=tf.keras.initializers.Constant(0.001),
     activation=tf.keras.activations.relu,
-    activate_final=True)
+    activate_final=True),
+    snt.LayerNorm(axis=-1, create_offset=True, create_scale=True)
   ])
   
 
@@ -159,7 +160,7 @@ class GSNTWrapper(GNNWrapper):
     latent0 = latent
     
     # message passing
-    for _ in range(0, 5):
+    for _ in range(0, 2):
       core_input = utils_tf.concat([latent0, latent], axis=1)
       latent = self._gnn_core(core_input)
       

@@ -189,9 +189,9 @@
             ],
             "ActorLearningRate": 0.0003,
             "CriticLearningRate": 0.0003,
-            "AlphaLearningRate": 0.00001,
-            "TargetUpdateTau": 1.0,
-            "TargetUpdatePeriod": 1,
+            "AlphaLearningRate": 0.0003,
+            "TargetUpdateTau": 0.05,
+            "TargetUpdatePeriod": 3,
             "Gamma": 0.995,
             "RewardScaleFactor": 1.0,
             "AgentName": "gnn_sac_agent",
@@ -204,7 +204,7 @@
         },
         "SACRunner": {
             "NumberOfCollections": 250000,
-            "EvaluateEveryNSteps": 100
+            "EvaluateEveryNSteps": 500
         }
     },
     "BehaviorDynamicModel": {
