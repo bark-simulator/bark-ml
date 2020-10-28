@@ -14,8 +14,9 @@ def LoadModule(module_name, dict_items):
   return eval("{}(**dict_items)".format(module_name))
 
 class Experiment:
-  def __init__(self, json_file, params=None):
+  def __init__(self, json_file, params=None, mode=None):
     self._params = params
+    self._mode = mode
     self.InitJson(json_file)
   
   def InitJson(self, json_file):
@@ -33,6 +34,10 @@ class Experiment:
     module_name = self._exp_params["Blueprint"]["ModuleName"]
     items = self._exp_params["Blueprint"]["Config"].ConvertToDict()
     items["params"] = self._params
+    if self._mode == "evaluate":
+      items["num_scenarios"] = self._exp_params["NumEvaluationEpisodes"]
+    if self._mode == "visualize":
+      items["num_scenarios"] = self._exp_params["NumVisualizationEpisodes"]
     blueprint = LoadModule(module_name, items)
     # NOTE: this should be configurable also
     blueprint._ml_behavior = BehaviorContinuousML(params=self._params)
@@ -44,7 +49,7 @@ class Experiment:
     items["params"] = self._params
     return LoadModule(module_name, items)
   
-  def InitEvaluator(self):
+  def InitEvaluator(self):Fhash
     module_name = self._exp_params["Evaluator"]["ModuleName"]
     items = self._exp_params["Evaluator"]["Config"].ConvertToDict()
     items["params"] = self._params

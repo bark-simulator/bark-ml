@@ -115,10 +115,12 @@ class TFARunner:
       action = self.ReshapeActionIfRequired(action_step)
       env_data = self._environment.step(action)
       self._tracer.Trace(env_data, **kwargs)
-      state, is_terminal = env_data[0], env_data[2]
+      state, reward, info, is_terminal = env_data[0], env_data[1], env_data[2]
       if render:
-        self._logger.info(f"Ego agent's action is {action}.")
+        self._logger.info(f"Ego agent's action is {action} and a reward of {reward}.")
         self._environment.render()
+      if is_terminal and info["goal_reached"]:
+        self._logger.info("\033[92m Ego agent reached its goal. \033[0m")
 
   def Run(self, num_episodes=10, render=False, mode="not_training", **kwargs):
     for i in range(0, num_episodes):

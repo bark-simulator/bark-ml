@@ -29,7 +29,7 @@ class ExperimentRunner:
     self._experiment_folder, self._json_name = \
       self.GetExperimentsFolder(json_file)
     self.SetCkptsAndSummaries()
-    self._experiment = self.BuildExperiment(json_file)
+    self._experiment = self.BuildExperiment(json_file, mode)
     self.Visitor(mode)
 
   def Visitor(self, mode):
@@ -44,8 +44,8 @@ class ExperimentRunner:
     if mode == "save":
       self.SaveExperiment(FLAGS.save_path)
       
-  def BuildExperiment(self, json_file):
-    return Experiment(json_file, self._params)
+  def BuildExperiment(self, json_file, mode):
+    return Experiment(json_file, self._params, mode)
   
   def GetExperimentsFolder(self, json_file):
     dir_name = Path(json_file).parent.parent
