@@ -176,16 +176,16 @@
         },
         "BehaviorGraphSACAgent": {
             "ActorFcLayerParams": [
-                128,
-                128
+                256,
+                256
             ],
             "CriticObservationFcLayerParams": [
                 128
             ],
             "CriticActionFcLayerParams": null,
             "CriticJointFcLayerParams": [
-                128,
-                128
+                256,
+                1256
             ],
             "ActorLearningRate": 0.0003,
             "CriticLearningRate": 0.0003,

@@ -119,8 +119,8 @@ class GSNTWrapper(GNNWrapper):
   def _init_network(self):
     edge_block_opt = {
       "use_edges": True,
-      "use_receiver_nodes": True,
-      "use_sender_nodes": True,
+      "use_receiver_nodes": False,
+      "use_sender_nodes": False,
       "use_globals": False
     }
     node_block_opt = {
@@ -157,16 +157,16 @@ class GSNTWrapper(GNNWrapper):
     # print(input_graph)
     # encoding
     latent = self._encoder(input_graph)
-    latent0 = latent
+    # latent0 = latent
     
     # message passing
-    for _ in range(0, 2):
-      core_input = utils_tf.concat([latent0, latent], axis=1)
-      latent = self._gnn_core(core_input)
+    #for _ in range(0, 1):
+    latent = self._gnn_core(latent)
       
     # decoder
-    out = self._decoder(latent)
+    # core_input = utils_tf.concat([latent0, latent], axis=1)
+    # out = self._decoder(latent)
 
-    node_values = tf.reshape(out.nodes, [batch_size, -1, self._embedding_size])
+    node_values = tf.reshape(latent.nodes, [batch_size, -1, self._embedding_size])
     return node_values
 
