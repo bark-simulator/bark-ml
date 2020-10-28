@@ -115,7 +115,7 @@ class TFARunner:
       action = self.ReshapeActionIfRequired(action_step)
       env_data = self._environment.step(action)
       self._tracer.Trace(env_data, **kwargs)
-      state, reward, info, is_terminal = env_data[0], env_data[1], env_data[2]
+      state, reward, info, is_terminal = env_data
       if render:
         self._logger.info(f"Ego agent's action is {action} and a reward of {reward}.")
         self._environment.render()
