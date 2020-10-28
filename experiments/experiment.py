@@ -49,7 +49,7 @@ class Experiment:
     items["params"] = self._params
     return LoadModule(module_name, items)
   
-  def InitEvaluator(self):Fhash
+  def InitEvaluator(self):
     module_name = self._exp_params["Evaluator"]["ModuleName"]
     items = self._exp_params["Evaluator"]["Config"].ConvertToDict()
     items["params"] = self._params
