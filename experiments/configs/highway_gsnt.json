@@ -162,10 +162,7 @@
                 "x",
                 "y",
                 "theta",
-                "vel",
-                "goal_theta",
-                "goal_d",
-                "goal_vel"
+                "vel"
             ],
             "EnabledEdgeFeatures": [
                 "dx",

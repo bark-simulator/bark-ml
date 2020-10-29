@@ -512,9 +512,9 @@ class GraphObserver(StateObserver):
     # 0 ... 1   for the edge attributes
     return spaces.Box(
       low=np.concatenate((
-        np.zeros(self._num_agents*self.feature_len, -1),
+        np.zeros(self._num_agents*self.feature_len),
         np.zeros(self._num_agents**2),
-        np.zeros((self._num_agents**2)*self.edge_feature_len, -1))),
+        np.zeros(self._num_agents**2*self.edge_feature_len))),
       high=np.ones(self._len_state))
 
   @property
