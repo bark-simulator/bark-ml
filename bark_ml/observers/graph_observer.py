@@ -423,9 +423,9 @@ class GraphObserver(StateObserver):
     If the `value` is outside the given range, it's clamped 
     to the bound of [-1, 1]
     """
-    normed = 2 * (value - range[0]) / (range[1] - range[0]) - 1
-    normed = max(-1, normed) # values lower -1 clipped
-    normed = min(1, normed) # values bigger 1 clipped
+    normed = (value - range[0]) / (range[1] - range[0])
+    # normed = max(-1, normed) # values lower -1 clipped
+    # normed = min(1, normed) # values bigger 1 clipped
     return normed
 
   def reset(self, world):
@@ -507,14 +507,14 @@ class GraphObserver(StateObserver):
 
   @property
   def observation_space(self):    
-    # -1 ... 1   for all node attributes
-    #  0 ... 1   for the adjacency list
-    # -1 ... 1   for the edge attributes
+    # 0 ... 1   for all node attributes
+    # 0 ... 1   for the adjacency list
+    # 0 ... 1   for the edge attributes
     return spaces.Box(
       low=np.concatenate((
-        np.full(self._num_agents*self.feature_len, -1),
+        np.zeros(self._num_agents*self.feature_len, -1),
         np.zeros(self._num_agents**2),
-        np.full((self._num_agents**2)*self.edge_feature_len, -1))),
+        np.zeros((self._num_agents**2)*self.edge_feature_len, -1))),
       high=np.ones(self._len_state))
 
   @property

@@ -107,7 +107,8 @@ class PyObserverTests(unittest.TestCase):
     ref_node_vals, ref_edge_indices, ref_node_lens, ref_edge_lens, ref_globals, ref_edge_vals = graph_ref
     node_vals, edge_indices, _, edge_vals = graph
     
-    # print(ref_node_vals, node_vals)
+    # TODO: assert this
+    print(ref_node_vals, node_vals)
     # print(ref_edge_vals, edge_vals)
     # print(ref_edge_indices, ref_edge_vals)
     # print(edge_indices, edge_vals)

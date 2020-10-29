@@ -29,14 +29,13 @@ def make_mlp_model(layer_config=None):
   Returns:
     A Sonnet module which contains the MLP and LayerNorm.
   """
-  layer_config = layer_config or [128, 128]
+  layer_config = layer_config or [80, 40]
   return snt.Sequential([
     snt.nets.MLP(layer_config,
-    w_init=tf.keras.initializers.GlorotUniform(),
-    b_init=tf.keras.initializers.Constant(0.001),
-    activation=tf.keras.activations.relu,
+    # w_init=tf.keras.initializers.GlorotUniform(),
+    # b_init=tf.keras.initializers.Constant(0.001),
     activate_final=True),
-    snt.LayerNorm(axis=-1, create_offset=True, create_scale=True)
+    # snt.LayerNorm(axis=-1, create_offset=True, create_scale=True)
   ])
   
 
@@ -104,7 +103,7 @@ class GSNTWrapper(GNNWrapper):
     self._num_message_passing_layers = params["ML"]["GSNT"][
       "NumMessagePassingLayers", "Number of message passing layers", 2]
     self._embedding_size = params["ML"]["GSNT"][
-      "EmbeddingSize", "Embedding size of nodes", 128]
+      "EmbeddingSize", "Embedding size of nodes", 40]
     # self._activation_func = params["ML"]["GAT"][
     #   "Activation", "Activation function", "elu"]
     # self._num_attn_heads = params["ML"]["GAT"][
