@@ -147,7 +147,7 @@
                 100
             ],
             "ThetaRange": [
-                0,
+                -6.283185307179586,
                 6.283185307179586
             ],
             "NormalizationEnabled": true,
@@ -173,6 +173,7 @@
         },
         "BehaviorGraphSACAgent": {
             "ActorFcLayerParams": [
+                512,
                 256,
                 256
             ],
@@ -181,8 +182,9 @@
             ],
             "CriticActionFcLayerParams": null,
             "CriticJointFcLayerParams": [
+                512,
                 256,
-                1256
+                256
             ],
             "ActorLearningRate": 0.0003,
             "CriticLearningRate": 0.0003,

@@ -22,7 +22,7 @@ class StateObserver(ABC):
     self._theta_range = \
       self._params["ML"]["StateObserver"]["ThetaRange",
       "Boundaries for min and max theta for normalization",
-      [0, 2*math.pi]]
+      [-2*math.pi, 2*math.pi]]
     self._normalization_enabled = \
       self._params["ML"]["StateObserver"]["NormalizationEnabled",
       "Whether normalization should be performed",

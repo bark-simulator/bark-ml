@@ -169,7 +169,7 @@ class GraphObserverV2(StateObserver):
 
   def _norm(self, agent_state):
     if not self._normalization_enabled:
-        return agent_state
+      return agent_state
     agent_state[int(StateDefinition.X_POSITION)] = \
       self._norm_to_range(agent_state[int(StateDefinition.X_POSITION)],
                           self._world_x_range)
@@ -182,6 +182,7 @@ class GraphObserverV2(StateObserver):
     agent_state[int(StateDefinition.VEL_POSITION)] = \
       self._norm_to_range(agent_state[int(StateDefinition.VEL_POSITION)],
                           self._velocity_range)
+    print(agent_state)
     return agent_state
 
   def _norm_to_range(self, value, range):

@@ -172,8 +172,8 @@ class GraphObserver(StateObserver):
       obs = tf.convert_to_tensor(obs)
     
     n_nodes, n_features = graph_dims[0:2]
-    batch_size = observations.shape[0]
-        
+    batch_size = tf.shape(observations)[0]
+    
     # extract node features F
     F = tf.reshape(obs[:, :n_nodes * n_features], [batch_size, n_nodes, n_features])
 
