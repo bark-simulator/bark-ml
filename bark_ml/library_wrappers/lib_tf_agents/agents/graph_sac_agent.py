@@ -102,7 +102,7 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
       output_tensor_spec=env.action_spec(),
       gnn=self._init_gnn,
       fc_layer_params=self._gnn_sac_params[
-        "ActorFcLayerParams", "", [128, 64]],
+        "ActorFcLayerParams", "", [256, 256]],
       params=params
     )
 
@@ -111,11 +111,11 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
       (env.observation_spec(), env.action_spec()),
       gnn=self._init_gnn,
       observation_fc_layer_params=self._gnn_sac_params[
-        "CriticObservationFcLayerParams", "", [128]],
+        "CriticObservationFcLayerParams", "", [256]],
       action_fc_layer_params=self._gnn_sac_params[
         "CriticActionFcLayerParams", "", None],
       joint_fc_layer_params=self._gnn_sac_params[
-        "CriticJointFcLayerParams", "", [128, 128]],
+        "CriticJointFcLayerParams", "", [256, 256]],
       params=params
     )
     
@@ -126,11 +126,11 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
       actor_network=actor_net,
       critic_network=critic_net,
       actor_optimizer=tf.compat.v1.train.AdamOptimizer(
-          learning_rate=self._gnn_sac_params["ActorLearningRate", "", 3e-4]),
+          learning_rate=self._gnn_sac_params["ActorLearningRate", "", 1e-4]),
       critic_optimizer=tf.compat.v1.train.AdamOptimizer(
-          learning_rate=self._gnn_sac_params["CriticLearningRate", "", 3e-4]),
+          learning_rate=self._gnn_sac_params["CriticLearningRate", "", 1e-4]),
       alpha_optimizer=tf.compat.v1.train.AdamOptimizer(
-          learning_rate=self._gnn_sac_params["AlphaLearningRate", "", 3e-4]),
+          learning_rate=self._gnn_sac_params["AlphaLearningRate", "", 0.]),
       target_update_tau=self._gnn_sac_params["TargetUpdateTau", "", 1.],
       target_update_period=self._gnn_sac_params["TargetUpdatePeriod", "", 1],
       td_errors_loss_fn=tf.math.squared_difference,
@@ -138,8 +138,7 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
       reward_scale_factor=self._gnn_sac_params["RewardScaleFactor", "", 1.],
       train_step_counter=self._ckpt.step,
       name=self._gnn_sac_params["AgentName", "", "gnn_sac_agent"],
-      debug_summaries=self._gnn_sac_params["DebugSummaries", "", True],
-      use_log_alpha_in_alpha_loss=False)
+      debug_summaries=self._gnn_sac_params["DebugSummaries", "", True])
     tf_agent.initialize()
     return tf_agent
 

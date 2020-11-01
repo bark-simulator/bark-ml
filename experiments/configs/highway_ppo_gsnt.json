@@ -5,7 +5,7 @@
             "Config": {}
         },
         "Evaluator": {
-            "ModuleName": "GoalReached",
+            "ModuleName": "GoalReachedGuiding",
             "Config": {}
         },
         "Runtime": {
@@ -156,7 +156,7 @@
         "GraphObserver": {
             "NormalizationEnabled": true,
             "AgentLimit": 5,
-            "VisibilityRadius": 150,
+            "VisibilityRadius": 550,
             "SelfLoops": true,
             "EnabledNodeFeatures": [
                 "x",

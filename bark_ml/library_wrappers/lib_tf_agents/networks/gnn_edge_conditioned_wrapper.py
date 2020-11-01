@@ -39,9 +39,11 @@ class GEdgeCondWrapper(GNNWrapper):
       name=name,
       output_dtype=output_dtype)
     self._num_message_passing_layers = params["ML"]["EdgeCond"][
-      "NumMessagePassingLayers", "Number of message passing layers", 3]
+      "NumMessagePassingLayers", "Number of message passing layers", 2]
     self._embedding_size = params["ML"]["EdgeCond"][
       "EmbeddingSize", "Embedding size of nodes", 80]
+    self._edge_layer_size = params["ML"]["EdgeCond"][
+      "EdgeLayerSize", "Embedding size of nodes", [128, 64]]
     self._activation_func = params["ML"]["EdgeCond"][
       "Activation", "Activation function", "relu"]
     self._layers = []
@@ -53,8 +55,7 @@ class GEdgeCondWrapper(GNNWrapper):
     for _ in range(self._num_message_passing_layers):
       layer = EdgeConditionedConv(
         channels=self._embedding_size,
-        kernel_network=self._params["ML"]["EdgeCond"][
-          "EdgeMLPLayers", "edge mpl", [128, 64]],
+        kernel_network=self._edge_layer_size,
         activation=self._params["ML"][
           "MPLActivationFunction", "", "relu"])
       self._layers.append(layer)

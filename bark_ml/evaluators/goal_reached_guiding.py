@@ -34,7 +34,7 @@ class GoalReachedGuiding(StateEvaluator):
     self._act_penalty = \
       self._params["ML"]["GoalReachedGuiding"]["ActionPenalty",
         "Weight factor for penalizing actions",
-        0.01]
+        0.001]
     self._goal_dist = \
       self._params["ML"]["GoalReachedGuiding"]["GoalDistance",
         "Weight factor for distance to goal",
@@ -107,7 +107,7 @@ class GoalReachedGuiding(StateEvaluator):
     guiding_reward = self.CalculateGuidingReward(observed_world, action)
     # calculate reward
     reward = collision * self._col_penalty + \
-      success * self._goal_reward + guiding_reward
+      success * self._goal_reward + self._goal_dist*guiding_reward
     return reward, done, eval_results
     
   def Reset(self, world):
