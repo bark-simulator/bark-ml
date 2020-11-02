@@ -50,7 +50,7 @@ class GraphObserver(StateObserver):
     self._visibility_radius =\
       params["ML"]["GraphObserver"]["VisibilityRadius",
       "The radius in which agent can 'see', i.e. detect other agents.", 
-      150]
+      550]
     self._add_self_loops =\
       params["ML"]["GraphObserver"]["SelfLoops", 
       "Whether nodes have self connections.", 

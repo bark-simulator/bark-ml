@@ -155,14 +155,17 @@
         },
         "GraphObserver": {
             "NormalizationEnabled": true,
-            "AgentLimit": 5,
-            "VisibilityRadius": 150,
+            "AgentLimit": 4,
+            "VisibilityRadius": 1500,
             "SelfLoops": true,
             "EnabledNodeFeatures": [
                 "x",
                 "y",
                 "theta",
-                "vel"
+                "vel",
+                "goal_dx",
+                "goal_dy",
+                "goal_vel"
             ],
             "EnabledEdgeFeatures": [
                 "dx",
@@ -186,18 +189,18 @@
                 256,
                 256
             ],
-            "ActorLearningRate": 0.0003,
-            "CriticLearningRate": 0.0003,
-            "AlphaLearningRate": 0.0003,
+            "ActorLearningRate": 0.0001,
+            "CriticLearningRate": 0.0001,
+            "AlphaLearningRate": 0.0001,
             "TargetUpdateTau": 0.05,
             "TargetUpdatePeriod": 3,
-            "Gamma": 0.995,
+            "Gamma": 0.997,
             "RewardScaleFactor": 3.0,
             "AgentName": "gnn_sac_agent",
             "DebugSummaries": true,
             "ReplayBufferCapacity": 10000,
             "ParallelBufferCalls": 1,
-            "BatchSize": 512,
+            "BatchSize": 256,
             "BufferNumSteps": 2,
             "BufferPrefetch": 3
         },

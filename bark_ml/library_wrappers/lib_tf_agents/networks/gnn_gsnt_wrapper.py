@@ -51,29 +51,35 @@ class GSNTWrapper(GNNWrapper):
     self._num_message_passing_layers = params["ML"]["GSNT"][
       "NumMessagePassingLayers", "Number of message passing layers", 2]
     self._embedding_size = params["ML"]["GSNT"][
-      "EmbeddingSize", "Embedding size of nodes", 20]
-    # self._activation_func = params["ML"]["GAT"][
-    #   "Activation", "Activation function", "elu"]
-    # self._num_attn_heads = params["ML"]["GAT"][
-    #   "NumAttnHeads", "Number of attention heads to be used", 4]
-    # self._dropout_rate = params["ML"]["GAT"][
-    #   "DropoutRate", "", 0.]
+      "EmbeddingSize", "Embedding size of nodes", 4]
     self._layers = []
     # initialize network & call func
     self._init_network()
     self._call_func = self._init_call_func
     
   def _init_network(self):
-    self._gnn_core = modules.InteractionNetwork(
+    self._gnn_core_0 = modules.InteractionNetwork(
       edge_model_fn=lambda: snt.Sequential([
-        snt.nets.MLP([80, 40], activate_final=True),
-        snt.LayerNorm(axis=-1, create_offset=False, create_scale=False)
+        snt.nets.MLP([128, 128], activation=tf.keras.activations.linear, activate_final=True),
+        tf.nn.relu,
+        snt.Linear(self._embedding_size)
       ]),
       node_model_fn=lambda: snt.Sequential([
-        snt.nets.MLP([80, 40], activate_final=True),
-        snt.LayerNorm(axis=-1, create_offset=False, create_scale=False)
+        snt.nets.MLP([128, 128], activation=tf.keras.activations.linear, activate_final=True),
+        tf.nn.relu,
+        snt.Linear(self._embedding_size)
       ]))
-  
+    self._gnn_core_1 = modules.InteractionNetwork(
+      edge_model_fn=lambda: snt.Sequential([
+        snt.nets.MLP([128, 128], activation=tf.keras.activations.linear, activate_final=True),
+        tf.nn.relu,
+        snt.Linear(self._embedding_size)
+      ]),
+      node_model_fn=lambda: snt.Sequential([
+        snt.nets.MLP([128, 128], activation=tf.keras.activations.linear, activate_final=True),
+        tf.nn.relu,
+        snt.Linear(self._embedding_size)
+      ]))
   
   @tf.function
   def _init_call_func(self, observations, training=False):
@@ -87,7 +93,7 @@ class GSNTWrapper(GNNWrapper):
     _, _, node_counts = tf.unique_with_counts(node_to_graph)
     edge_counts = tf.math.square(node_counts)
 
-    print(edge_indices)
+    # tf.print(edge_indices)
     input_graph = GraphsTuple(
       nodes=tf.cast(node_vals, tf.float32),  # validate
       edges=tf.cast(edge_vals, tf.float32),  # validate
@@ -96,9 +102,10 @@ class GSNTWrapper(GNNWrapper):
       senders=tf.cast(edge_indices[:, 0], tf.int32),  # validate
       n_node=node_counts,  # change
       n_edge=edge_counts)  
-
-
-    latent = self._gnn_core(input_graph)
+    
+    latent = self._gnn_core_0(input_graph)
+    latent = self._gnn_core_1(latent)
+    
     node_values = tf.reshape(latent.nodes, [batch_size, -1, self._embedding_size])
     return node_values
 
