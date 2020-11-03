@@ -108,10 +108,10 @@ class PyObserverTests(unittest.TestCase):
     node_vals, edge_indices, _, edge_vals = graph
     
     # TODO: assert this
-    print(ref_node_vals, node_vals)
+    # print(ref_node_vals, node_vals)
     # print(ref_edge_vals, edge_vals)
-    # print(ref_edge_indices, ref_edge_vals)
-    # print(edge_indices, edge_vals)
+    print(ref_edge_indices, ref_edge_vals)
+    print(edge_indices, edge_vals)
 
 
 if __name__ == '__main__':

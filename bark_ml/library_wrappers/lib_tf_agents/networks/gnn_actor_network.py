@@ -109,7 +109,7 @@ class GNNActorNetwork(network.Network):
 
     if len(observations.shape) == 1:
       observations = tf.expand_dims(observations, axis=0)
-    batch_size = observations.shape[0]
+    batch_size = tf.shape(observations)[0]
     embeddings = self._gnn(observations, training=training)
 
     # extract ego state (node 0)

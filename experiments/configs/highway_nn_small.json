@@ -245,7 +245,7 @@
     "Gamma": 0.995,
     "RewardScaleFactor": 1.0,
     "AgentName": "sac_agent",
-    "DebugSummaries": false,
+    "DebugSummaries": true,
     "ReplayBufferCapacity": 10000,
     "ParallelBufferCalls": 1,
     "BatchSize": 512,

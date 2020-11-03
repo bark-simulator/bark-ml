@@ -152,21 +152,19 @@ class GNNCriticNetwork(network.Network):
     del step_type # unused.
 
     observations, actions = inputs
-    batch_size = observations.shape[0]
+    batch_size = tf.shape(observations)[0]
     embeddings = self._gnn(observations, training=training)
     
     if batch_size > 0:
       embeddings = embeddings[:, 0] # extract ego state
       actions = tf.reshape(actions, [batch_size, -1])
-    else:
-      actions = tf.zeros([0, actions.shape[-1]])
 
     with tf.name_scope("GNNCriticEmbeddings"):
       tf.summary.histogram("critic_gnn_output", embeddings)
       
-    embeddings = tf.cast(tf.nest.flatten(embeddings)[0], tf.float32)
-    for layer in self._observation_layers:
-      embeddings = layer(embeddings, training=training)
+    # embeddings = tf.cast(tf.nest.flatten(embeddings)[0], tf.float32)
+    # for layer in self._observation_layers:
+    #   embeddings = layer(embeddings, training=training)
 
     actions = tf.cast(tf.nest.flatten(actions)[0], tf.float32)
     for layer in self._action_layers:

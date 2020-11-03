@@ -193,7 +193,7 @@
             "TargetUpdateTau": 0.05,
             "TargetUpdatePeriod": 3,
             "Gamma": 0.995,
-            "RewardScaleFactor": 0.0,
+            "RewardScaleFactor": 1.0,
             "AgentName": "gnn_sac_agent",
             "DebugSummaries": true,
             "ReplayBufferCapacity": 10000,

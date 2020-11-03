@@ -80,7 +80,6 @@ class GATWrapper(GNNWrapper):
       attn_kernel_regularizer=l2(l2_reg))
     self._layers.append(layer)
 
-  @tf.function
   def _init_call_func(self, observations, training=False):
     embeddings, adj_matrix, edge_features = GraphObserver.graph(
       observations=observations, 
