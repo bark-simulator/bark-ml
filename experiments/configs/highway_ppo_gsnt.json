@@ -30,7 +30,7 @@
             }
         },
         "NumEvaluationEpisodes": 500,
-        "NumVisualizationEpisodes": 10
+        "NumVisualizationEpisodes": 25
     },
     "Visualization": {
         "Agents": {

@@ -21,8 +21,6 @@ from bark_ml.observers.graph_observer import GraphObserver
 from bark_ml.observers.graph_observer_v2 import GraphObserverV2
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_wrapper import GNNWrapper
 
-NUM_LAYERS = 2  # Hard-code number of layers in the edge/node/global models.
-LATENT_SIZE = 16  # Hard-code latent layer sizes for demos.
 
 def make_mlp():
   return tf.keras.Sequential([
@@ -35,7 +33,7 @@ def make_mlp():
       bias_initializer=tf.keras.initializers.Constant(value=0.),
       kernel_regularizer='l2', activity_regularizer='l2'),
     tf.keras.layers.Dense(
-      4, activation='relu', kernel_initializer='glorot_uniform',
+      80, activation='relu', kernel_initializer='glorot_uniform',
       bias_initializer=tf.keras.initializers.Constant(value=0.),
       kernel_regularizer='l2', activity_regularizer='l2')
   ])
@@ -74,7 +72,7 @@ class GSNTWrapper(GNNWrapper):
     self._num_message_passing_layers = params["ML"]["GSNT"][
       "NumMessagePassingLayers", "Number of message passing layers", 2]
     self._embedding_size = params["ML"]["GSNT"][
-      "EmbeddingSize", "Embedding size of nodes", 4]
+      "EmbeddingSize", "Embedding size of nodes", 80]
     self._layers = []
     # initialize network & call func
     self._init_network()
