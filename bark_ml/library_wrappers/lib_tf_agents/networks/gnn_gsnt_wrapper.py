@@ -25,20 +25,25 @@ NUM_LAYERS = 2  # Hard-code number of layers in the edge/node/global models.
 LATENT_SIZE = 16  # Hard-code latent layer sizes for demos.
 
 def make_mlp():
-  # return tf.keras.Sequential([
-  #   tf.keras.layers.Dense(
-  #     150, activation='relu', kernel_initializer='glorot_uniform',
-  #     bias_initializer=tf.keras.initializers.Constant(value=0.)),
-  #   tf.keras.layers.Dense(
-  #     150, activation='relu', kernel_initializer='glorot_uniform',
-  #     bias_initializer=tf.keras.initializers.Constant(value=0.)),
-  # ])
-  return snt.Sequential([
-      snt.nets.MLP([LATENT_SIZE] * NUM_LAYERS, activate_final=True),
-      snt.LayerNorm(axis=-1, create_offset=True, create_scale=True)
+  return tf.keras.Sequential([
+    tf.keras.layers.Dense(
+      150, activation='relu', kernel_initializer='glorot_uniform',
+      bias_initializer=tf.keras.initializers.Constant(value=0.),
+      kernel_regularizer='l2', activity_regularizer='l2'),
+    tf.keras.layers.Dense(
+      150, activation='relu', kernel_initializer='glorot_uniform',
+      bias_initializer=tf.keras.initializers.Constant(value=0.),
+      kernel_regularizer='l2', activity_regularizer='l2'),
+    tf.keras.layers.Dense(
+      4, activation='relu', kernel_initializer='glorot_uniform',
+      bias_initializer=tf.keras.initializers.Constant(value=0.),
+      kernel_regularizer='l2', activity_regularizer='l2')
   ])
-
-  # kernel_regularizer='l2', bias_regularizer='l2', activity_regularizer='l2'
+  # return snt.Sequential([
+  #     snt.nets.MLP([LATENT_SIZE] * NUM_LAYERS, activate_final=True),
+  #     snt.LayerNorm(axis=-1, create_offset=True, create_scale=True)
+  # ])
+  # 
 
 class GSNTWrapper(GNNWrapper):
   """
@@ -69,7 +74,7 @@ class GSNTWrapper(GNNWrapper):
     self._num_message_passing_layers = params["ML"]["GSNT"][
       "NumMessagePassingLayers", "Number of message passing layers", 2]
     self._embedding_size = params["ML"]["GSNT"][
-      "EmbeddingSize", "Embedding size of nodes", 16]
+      "EmbeddingSize", "Embedding size of nodes", 4]
     self._layers = []
     # initialize network & call func
     self._init_network()
@@ -87,19 +92,19 @@ class GSNTWrapper(GNNWrapper):
   def _init_call_func(self, observations, training=False):
     """Graph nets implementation"""
     
-    node_vals, edge_indices, node_to_graph, edge_vals = GraphObserver.graph(
+    node_vals, edge_indices, node_counts, edge_counts, globals, edge_vals = GraphObserverV2.graph(
       observations=observations, 
       graph_dims=self._graph_dims,
       dense=True)
     batch_size = tf.shape(observations)[0]
-    _, _, node_counts = tf.unique_with_counts(node_to_graph)
-    edge_counts = tf.math.square(node_counts)
+    # _, _, node_counts = tf.unique_with_counts(node_to_graph)
+    # edge_counts = tf.math.square(node_counts)
 
     # tf.print(edge_indices)
     input_graph = GraphsTuple(
       nodes=tf.cast(node_vals, tf.float32),  # validate
       edges=tf.cast(edge_vals, tf.float32),  # validate
-      globals=tf.tile([[0.]], [batch_size, 1]),
+      globals=globals,
       receivers=tf.cast(edge_indices[:, 1], tf.int32),  # validate
       senders=tf.cast(edge_indices[:, 0], tf.int32),  # validate
       n_node=node_counts,  # change

@@ -113,12 +113,12 @@ class GNNValueNetwork(network.Network):
     with tf.name_scope("PPOCriticNetwork"):
       tf.summary.histogram("embedding", embeddings)
 
-    # state, network_state = self._encoder(
-    #   embeddings,
-    #   step_type=step_type,
-    #   network_state=network_state,
-    #   training=training)
-    state = embeddings
+    state, network_state = self._encoder(
+      embeddings,
+      step_type=step_type,
+      network_state=network_state,
+      training=training)
+    # state = embeddings
     value = self._postprocessing_layers(state, training=training)
     value = tf.expand_dims(value, axis=0)
     return tf.squeeze(value, -1), network_state
