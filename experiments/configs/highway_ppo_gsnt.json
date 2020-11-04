@@ -5,7 +5,7 @@
             "Config": {}
         },
         "Evaluator": {
-            "ModuleName": "GoalReachedGuiding",
+            "ModuleName": "GoalReached",
             "Config": {}
         },
         "Runtime": {
@@ -117,7 +117,7 @@
             "SummaryPath": "/Users/hart/Development/bark-ml/experiments/runs/gcn_three_layers/summ/",
             "EvaluationSteps": 25,
             "InitialCollectionEpisodes": 50,
-            "CollectionEpisodesPerStep": 1
+            "CollectionEpisodesPerStep": 30
         },
         "GoalReachedEvaluator": {
             "GoalReward": 1.0,

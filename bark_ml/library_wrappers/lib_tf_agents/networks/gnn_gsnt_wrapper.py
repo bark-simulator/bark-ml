@@ -92,23 +92,23 @@ class GSNTWrapper(GNNWrapper):
   def _init_call_func(self, observations, training=False):
     """Graph nets implementation"""
     
-    node_vals, edge_indices, node_counts, edge_counts, globals, edge_vals = GraphObserverV2.graph(
+    node_vals, edge_indices, node_to_graph, edge_vals = GraphObserver.graph(
       observations=observations, 
       graph_dims=self._graph_dims,
       dense=True)
     batch_size = tf.shape(observations)[0]
-    # _, _, node_counts = tf.unique_with_counts(node_to_graph)
-    # edge_counts = tf.math.square(node_counts)
+    _, _, node_counts = tf.unique_with_counts(node_to_graph)
+    edge_counts = tf.math.square(node_counts)
 
     # tf.print(edge_indices)
     input_graph = GraphsTuple(
       nodes=tf.cast(node_vals, tf.float32),  # validate
       edges=tf.cast(edge_vals, tf.float32),  # validate
-      globals=globals,
+      globals=tf.tile([[0.]], [batch_size, 1]),
       receivers=tf.cast(edge_indices[:, 1], tf.int32),  # validate
       senders=tf.cast(edge_indices[:, 0], tf.int32),  # validate
       n_node=node_counts,  # change
-      n_edge=edge_counts)  
+      n_edge=edge_counts) 
     
     latent = self._gnn_core_0(input_graph)
     # latent = self._gnn_core_1(latent)
