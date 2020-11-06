@@ -24,93 +24,145 @@ from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
 from bark.core.models.behavior import BehaviorModel
 import logging
 
+def to_pickle(obj, dir, file):
+  path = os.path.join(dir, file)
+  with open(path, 'wb') as handle:
+    pickle.dump(obj, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+def from_pickle(dir, file):
+  path = os.path.join(dir, file)
+  with open(path, 'wb') as handle:
+    obj = pickle.load(obj, handle, protocol=pickle.HIGHEST_PROTOCOL)
+  return obj
+
 
 class BaseAgent(BehaviorModel):
-  def __init__(self, env, test_env, params, bark_behavior=None):
+  def __init__(self, env=None, params=None, benchmark_configuration=None, save_dir=None ):
     BehaviorModel.__init__(self, params)
     self._params = params
-    self.env = env
-    self.test_env = test_env
-    self._bark_behavior_model = bark_behavior or self.env._ml_behavior
+    self._env = env
+    
+    if not save_dir:
+      if not env:
+        raise ValueError("Environment must be passed for initialization")
+      self.reset_params(self._params["ML"]["BaseAgent"])
+      self.reset_action_observer(env)
+      self.init_always()
+      self.reset_training_variables()
+    else:
+      self.load_pickable_members(save_dir)
+      self.init_always()
+      self.load_models(save_dir)
 
-    self.device = torch.device("cuda" if self._params["ML"]["BaseAgent"][
-        "Cuda", "", True] and torch.cuda.is_available() else "cpu")
 
-    self.online_net = None
-    self.target_net = None
+  def init_always(self):
+    self.device = torch.device("cuda" if (self.use_cuda and torch.cuda.is_available()) else "cpu")
 
-    self.steps = 0
-    self.learning_steps = 0
-    self.episodes = 0
-    self.best_eval_score = -np.inf
-    self.num_actions = self.env.action_space.n
-    self.num_steps = self._params["ML"]["BaseAgent"]["NumSteps", "", 5000000]
-    self.batch_size = self._params["ML"]["BaseAgent"]["BatchSize", "", 32]
-
-    self.double_q_learning = self._params["ML"]["BaseAgent"][
-        "Double_q_learning", "", False]
-    self.dueling_net = self._params["ML"]["BaseAgent"]["DuelingNet", "", False]
-    self.noisy_net = self._params["ML"]["BaseAgent"]["NoisyNet", "", False]
-    self.use_per = self._params["ML"]["BaseAgent"]["Use_per", "", False]
-
-    self.reward_log_interval = self._params["ML"]["BaseAgent"]["RewardLogInterval", "", 5]
-    self.summary_log_interval = self._params["ML"]["BaseAgent"]["SummaryLogInterval", "", 100]
-    self.eval_interval = self._params["ML"]["BaseAgent"]["EvalInterval", "",
-                                                         25000]
-    self.num_eval_steps = self._params["ML"]["BaseAgent"]["NumEvalSteps", "",
-                                                          12500]
-    self.gamma_n = \
-     self._params["ML"]["BaseAgent"]["Gamma", "", 0.99] ** \
-     self._params["ML"]["BaseAgent"]["Multi_step", "", 1]
-
-    self.start_steps = self._params["ML"]["BaseAgent"]["StartSteps", "", 5000]
-    self.epsilon_train = LinearAnneaer(
-        1.0, self._params["ML"]["BaseAgent"]["EpsilonTrain", "", 0.01],
-        self._params["ML"]["BaseAgent"]["EpsilonDecaySteps", "", 25000])
-    self.epsilon_eval = self._params["ML"]["BaseAgent"]["EpsilonEval", "",
-                                                        0.001]
-    self.update_interval = \
-     self._params["ML"]["BaseAgent"]["Update_interval", "", 4]
-    self.target_update_interval = self._params["ML"]["BaseAgent"][
-        "TargetUpdateInterval", "", 5000]
-    self.max_episode_steps = \
-     self._params["ML"]["BaseAgent"]["MaxEpisodeSteps",  "", 10000]
-    self.grad_cliping = self._params["ML"]["BaseAgent"]["GradCliping", "", 5.0]
-
-    self.summary_dir = \
-     self._params["ML"]["BaseAgent"]["SummaryPath", "", ""]
-    self.model_dir = \
-     self._params["ML"]["BaseAgent"]["CheckpointPath", "", ""]
+    self.writer = SummaryWriter(log_dir=self.summary_dir)
+    self.train_return = RunningMeanStats(self.summary_log_interval)
 
     if not os.path.exists(self.model_dir) and self.model_dir:
       os.makedirs(self.model_dir)
     if not os.path.exists(self.summary_dir) and self.summary_dir:
       os.makedirs(self.summary_dir)
 
-    self.writer = SummaryWriter(log_dir=self.summary_dir)
-    self.train_return = RunningMeanStats(self.summary_log_interval)
-
     # NOTE: by default we do not want the action to be set externally
     #       as this enables the agents to be plug and played in BARK.
     self._set_action_externally = False
 
+  def reset_action_observer(self, env):
+    self._observer = self._env._observer
+    self._ml_behavior = self._env._ml_behavior
+
+  def save_pickable_members(self, save_dir):
+    pickables = dict(self.__dict__)
+    del pickables["online_net"]
+    del pickables["target_net"]
+    del pickables["env"]
+    to_pickle(pickables, save_dir, "base_agent_pickables")
+
+  def load_pickable_members(self, save_dir):
+    pickables = from_pickle(save_dir, "base_agent_pickables")
+    self.__dict__.update(pickables)
+
+  def reset_training_variables(self):
     # Replay memory which is memory-efficient to store stacked frames.
     if self.use_per:
       beta_steps = (self.num_steps - self.start_steps) / \
              self.update_interval
       self.memory = LazyPrioritizedMultiStepMemory(
-          self._params["ML"]["BaseAgent"]["MemorySize", "", 10**6],
-          self.env.observation_space.shape,
+          self.memory_size,
+          self.observer.observation_space.shape,
           self.device,
-          self._params["ML"]["BaseAgent"]["Gamma", "", 0.99],
-          self._params["ML"]["BaseAgent"]["Multi_step", "", 1],
+          self.gamma,
+          self.multi_step,
           beta_steps=beta_steps)
     else:
       self.memory = LazyMultiStepMemory(
-          self._params["ML"]["BaseAgent"]["MemorySize", "", 10**6],
-          self.env.observation_space.shape, self.device,
-          self._params["ML"]["BaseAgent"]["Gamma", "", 0.99],
-          self._params["ML"]["BaseAgent"]["Multi_step", "", 1])
+          self.memory_size,
+          self.observer.observation_space.shape,
+          self.device,
+          self.gamma,
+          self.multi_step)
+
+    self.online_net = None
+    self.target_net = None
+    self.memory = None
+
+    self.steps = 0
+    self.learning_steps = 0
+    self.episodes = 0
+    self.best_eval_score = -np.inf
+
+  def reset_params(self, params):
+    self.num_steps = params["NumSteps", "", 5000000]
+    self.batch_size = params["BatchSize", "", 32]
+
+    self.double_q_learning = params["Double_q_learning", "", False]
+    self.dueling_net = params["DuelingNet", "", False]
+    self.noisy_net = params["NoisyNet", "", False]
+    self.use_per = params["Use_per", "", False]
+
+    self.reward_log_interval = params["RewardLogInterval", "", 5]
+    self.summary_log_interval = params["SummaryLogInterval", "", 100]
+    self.eval_interval = params["EvalInterval", "",
+                                                         25000]
+    self.num_eval_steps = params["NumEvalSteps", "",
+                                                          12500]
+    self.gamma_n = params["Gamma", "", 0.99] ** \
+        params["Multi_step", "", 1]
+
+    self.start_steps = params["StartSteps", "", 5000]
+    self.epsilon_train = LinearAnneaer(
+        1.0, params["EpsilonTrain", "", 0.01],
+        params["EpsilonDecaySteps", "", 25000])
+    self.epsilon_eval = params["EpsilonEval", "",
+                                                        0.001]
+    self.update_interval = params["Update_interval", "", 4]
+    self.target_update_interval = params["TargetUpdateInterval", "", 5000]
+    self.max_episode_steps = params["MaxEpisodeSteps",  "", 10000]
+    self.grad_cliping = params["GradCliping", "", 5.0]
+
+    self.summary_dir = params["SummaryPath", "", ""]
+    self.model_dir = params["CheckpointPath", "", ""]
+
+    self.memory_size = params["MemorySize", "", 10**6]
+    self.gamma = params["Gamma", "", 0.99]
+    self.multi_step = params["Multi_step", "", 1]
+
+    self.use_cuda = params["Cuda", "", False] 
+
+  @property
+  def observer(self):
+      return self._observer
+
+  @property 
+  def env(self):
+    return self._env
+
+  @property
+  def ml_behavior(self):
+    return self._ml_behavior
 
   def run(self):
     while True:
@@ -138,7 +190,7 @@ class BaseAgent(BehaviorModel):
 
   def explore(self):
     # Act with randomness.
-    action = self.env.action_space.sample()
+    action = self.ml_behavior.action_space.sample()
     return action
 
   @property
@@ -169,7 +221,7 @@ class BaseAgent(BehaviorModel):
   def Plan(self, dt, observed_world):
     # NOTE: if training is enabled the action is set externally
     if not self._set_action_externally:
-      observed_state = self.env._observer.Observe(observed_world)
+      observed_state = self.observer.Observe(observed_world)
       action = self.Act(observed_state)
       self._action = action
 
@@ -202,13 +254,27 @@ class BaseAgent(BehaviorModel):
     online_net_script = torch.jit.script(self.online_net)
     online_net_script.save(os.path.join(save_dir, 'online_net_script.pt'))
 
+  def save(self, save_dir):
+    self.save_models(save_dir)
+    self.save_pickable_members(save_dir)
+
   def load_models(self, save_dir):
-    self.online_net.load_state_dict(
+    try: 
+      self._online_net.load_state_dict(
         torch.load(os.path.join(save_dir, 'online_net.pth')))
-    self.target_net.load_state_dict(
+    except RuntimeError:
+      self._online_net.load_state_dict(
+        torch.load(os.path.join(save_dir, 'online_net.pth'), map_location=torch.device('cpu')))
+    try: 
+      self._target_net.load_state_dict(
         torch.load(os.path.join(save_dir, 'target_net.pth')))
+    except RuntimeError:
+      self._target_net.load_state_dict(
+        torch.load(os.path.join(save_dir, 'target_net.pth'), map_location=torch.device('cpu')))
 
   def visualize(self, num_episodes=5):
+    if not self.env:
+      raise ValueError("No environment available for visualization. Was agent reloaded?")
     for _ in range(0, num_episodes):
       state = self.env.reset()
       done = False
