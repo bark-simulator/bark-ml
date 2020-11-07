@@ -44,8 +44,8 @@ class GoalReached(StateEvaluator):
     """
     done = False
     success = eval_results["goal_reached"]
-    collision = eval_results["collision"] or eval_results["drivable_area"]
     step_count = eval_results["step_count"]
+    collision = eval_results["collision"] or eval_results["drivable_area"] or (step_count > self._max_steps)
     # for agent_id, agent in observed_world.agents.items():
     #   eval_results[agent_id] = agent.state
     # determine whether the simulation should terminate

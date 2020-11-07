@@ -12,6 +12,7 @@ import tensorflow as tf
 
 from tf_agents.policies import greedy_policy
 from tf_agents.agents.ppo import ppo_agent
+from tf_agents.agents.ppo import ppo_clip_agent
 from tf_agents.replay_buffers import tf_uniform_replay_buffer
 from tf_agents.utils.common import Checkpointer
 from tf_agents.trajectories import time_step as ts
@@ -21,6 +22,7 @@ from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAA
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_wrapper import GNNWrapper
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_gsnt_wrapper import GSNTWrapper
+from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_gsnt_wrapper_example import GSNTWrapperExample
 
 
 def init_snt(name, params):
@@ -28,6 +30,10 @@ def init_snt(name, params):
     params=params, 
     name=name + "_GSNT")
 
+def init_gsnt_example(name, params):
+  return GSNTWrapperExample(
+    params=params, 
+    name=name + "_GSNT")
 
 class BehaviorGraphPPOAgent(BehaviorTFAAgent):
   """
@@ -92,8 +98,21 @@ class BehaviorGraphPPOAgent(BehaviorTFAAgent):
       normalize_rewards=False,
       use_gae=False,
       debug_summaries=True,
-      summarize_grads_and_vars=True,
+      summarize_grads_and_vars=False,
       train_step_counter=self._ckpt.step)
+    # tf_agent = ppo_clip_agent.PPOClipAgent(
+    #   env.time_step_spec(),
+    #   env.action_spec(),
+    #   optimizer=tf.compat.v1.train.AdamOptimizer(learning_rate=3e-4),
+    #   actor_net=actor_net,
+    #   value_net=value_net,
+    #   normalize_observations=False,
+    #   normalize_rewards=False,
+    #   importance_ratio_clipping=0.2,
+    #   use_gae=False,
+    #   num_epochs=25,
+    #   debug_summaries=True,
+    #   train_step_counter=self._ckpt.step)
     
     tf_agent.initialize()
     return tf_agent
