@@ -19,7 +19,7 @@
         "Agent": {
             "ModuleName": "BehaviorGraphSACAgent",
             "Config": {
-                "init_gnn": "init_gsnt_example"
+                "init_gnn": "init_tf2_edge_mlp"
             }
         },
         "Blueprint": {

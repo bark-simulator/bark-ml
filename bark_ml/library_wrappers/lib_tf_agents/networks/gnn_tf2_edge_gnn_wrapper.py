@@ -8,10 +8,7 @@
 import logging
 import tensorflow as tf
 from enum import Enum
-from graph_nets import modules
-from graph_nets import utils_tf
-from graph_nets import utils_np
-from graph_nets.graphs import GraphsTuple
+from tf2_gnn.layers import GNN, GNNInput
 import sonnet as snt
 import tensorflow_addons as tfa
 
@@ -25,16 +22,25 @@ from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_wrapper import GNNWrapp
 def make_mlp():
   return tf.keras.Sequential([
     tf.keras.layers.Dense(
-      512, activation='relu'),
+      150, activation='relu', kernel_initializer='glorot_uniform',
+      bias_initializer=tf.keras.initializers.Constant(value=0.),
+      kernel_regularizer='l2', activity_regularizer='l2'),
     tf.keras.layers.Dense(
-      256, activation='relu'),
+      150, activation='relu', kernel_initializer='glorot_uniform',
+      bias_initializer=tf.keras.initializers.Constant(value=0.),
+      kernel_regularizer='l2', activity_regularizer='l2'),
     tf.keras.layers.Dense(
-      256, activation='relu'),
-    tf.keras.layers.LayerNormalization()
+      80, activation='tanh', kernel_initializer='glorot_uniform',
+      bias_initializer=tf.keras.initializers.Constant(value=0.),
+      kernel_regularizer='l2', activity_regularizer='l2')
   ])
-  
+  # return snt.Sequential([
+  #     snt.nets.MLP([LATENT_SIZE] * NUM_LAYERS, activate_final=True),
+  #     snt.LayerNorm(axis=-1, create_offset=True, create_scale=True)
+  # ])
+  # 
 
-class GSNTWrapperExample(GNNWrapper):
+class TF2GNNEdgeMLPWrapper(GNNWrapper):
   """
   Implements a graph lib.
   """
@@ -56,52 +62,45 @@ class GSNTWrapperExample(GNNWrapper):
     name: Name of the instance.
     output_dtype: The dtype to which the GNN output is casted.
     """
-    super(GSNTWrapperExample, self).__init__(
+    super(TF2GNNEdgeMLPWrapper, self).__init__(
       params=params,
       name=name,
       output_dtype=output_dtype)
-    self._num_message_passing_layers = params["ML"]["GSNT"][
+    self._num_message_passing_layers = params["ML"]["TF2Wrapper"][
       "NumMessagePassingLayers", "Number of message passing layers", 2]
-    self._embedding_size = params["ML"]["GSNT"][
-      "EmbeddingSize", "Embedding size of nodes", 256]
+    self._embedding_size = params["ML"]["TF2Wrapper"][
+      "EmbeddingSize", "Embedding size of nodes", 80]
     self._layers = []
     # initialize network & call func
     self._init_network()
     self._call_func = self._init_call_func
     
   def _init_network(self):
-    self._gnn_core_0 = modules.InteractionNetwork(
-      edge_model_fn=make_mlp,
-      node_model_fn=make_mlp)
-    self._gnn_core_1 = modules.InteractionNetwork(
-      edge_model_fn=make_mlp,
-      node_model_fn=make_mlp)
+    # map bark-ml parameter keys to tf2_gnn parameter keys
+    gnn_params = GNN.get_default_hyperparameters()
+    print(gnn_params)
+    self._gnn = GNN(gnn_params)
   
   # @tf.function
   def _init_call_func(self, observations, training=False):
     """Graph nets implementation"""
-    
-    node_vals, edge_indices, node_to_graph, edge_vals = GraphObserver.graph(
+    batch_size = tf.constant(observations.shape[0])
+
+    embeddings, adj_list, node_to_graph_map = GraphObserver.graph(
       observations=observations, 
-      graph_dims=self._graph_dims,
+      graph_dims=self._graph_dims, 
       dense=True)
-    batch_size = tf.shape(observations)[0]
-    _, _, node_counts = tf.unique_with_counts(node_to_graph)
-    edge_counts = tf.math.square(node_counts)
 
-    # tf.print(edge_indices)
-    input_graph = GraphsTuple(
-      nodes=tf.cast(node_vals, tf.float32),  # validate
-      edges=tf.cast(edge_vals, tf.float32),  # validate
-      globals=tf.tile([[0.]], [batch_size, 1]),
-      receivers=tf.cast(edge_indices[:, 1], tf.int32),  # validate
-      senders=tf.cast(edge_indices[:, 0], tf.int32),  # validate
-      n_node=node_counts,  # change
-      n_edge=edge_counts) 
-    
-    latent = self._gnn_core_0(input_graph)
-    # latent = self._gnn_core_1(latent)
-    
-    node_values = tf.reshape(latent.nodes, [batch_size, -1, self._embedding_size])
-    return node_values
+    gnn_input = GNNInput(
+      node_features=embeddings,
+      adjacency_lists=(adj_list,),
+      node_to_graph_map=node_to_graph_map,
+      num_graphs=batch_size,
+    )
 
+    # tf2_gnn outputs a flattened node embeddings vector, so we 
+    # reshape it to have the embeddings of each node seperately.
+    flat_output = self._gnn(gnn_input, training=training)
+    output = tf.reshape(flat_output, [batch_size, -1, self.num_units])
+
+    return output

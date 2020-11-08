@@ -41,7 +41,10 @@ class GNNWrapper(tf.keras.Model):
     super(GNNWrapper, self).__init__(name=name)
     self.output_dtype = output_dtype
     self._params = params
-    self._graph_dims = self._validated_graph_dims(params["ML"]["GraphDims"])
+    try:
+      self._graph_dims = self._validated_graph_dims(params["ML"]["GraphDims"])
+    except:
+      pass
     
     # logging.info(
     #   f'"{name}" configured with `spektral` for input graphs with ' +

@@ -17,6 +17,7 @@ py_library(
             "gnn_wrapper.py",
             "gnn_gcn_wrapper.py",
             "gnn_gsnt_wrapper.py",
+            "gnn_tf2_edge_gnn_wrapper.py",
             "gnn_gsnt_wrapper_example.py",
             "gnn_edge_conditioned_wrapper.py",
             "gnn_gat_wrapper.py"],

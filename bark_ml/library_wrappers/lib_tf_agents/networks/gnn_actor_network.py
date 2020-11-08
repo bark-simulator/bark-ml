@@ -119,8 +119,9 @@ class GNNActorNetwork(network.Network):
     with tf.name_scope("GNNActorNetwork"):
       tf.summary.histogram("actor_gnn_output", embeddings)
     
-    output, network_state = self._encoder(embeddings, training=training)
-      
+    # output, network_state = self._encoder(embeddings, training=training)
+    output = embeddings
+    
     outer_rank = nest_utils.get_outer_rank(
       observations, 
       self.input_tensor_spec)

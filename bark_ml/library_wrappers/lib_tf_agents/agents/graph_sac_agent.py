@@ -23,6 +23,8 @@ from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_gat_wrapper import GATW
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_gcn_wrapper import GCNWrapper
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_edge_conditioned_wrapper import GEdgeCondWrapper
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_gsnt_wrapper import GSNTWrapper
+from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_gsnt_wrapper_example import GSNTWrapperExample
+from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_tf2_edge_gnn_wrapper import TF2GNNEdgeMLPWrapper
 
 
 def init_snt(name, params):
@@ -34,6 +36,16 @@ def init_gnn_edge_cond(name, params):
   return GEdgeCondWrapper(
     params=params, 
     name=name + "_GEdgeCond")
+
+def init_gsnt_example(name, params):
+  return GSNTWrapperExample(
+    params=params, 
+    name=name + "_GSNT")
+
+def init_tf2_edge_mlp(name, params):
+  return GSNTWrapperExample(
+    params=params, 
+    name=name + "_GSNT")
   
 def init_gat(name, params):
   """
@@ -126,9 +138,9 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
       actor_network=actor_net,
       critic_network=critic_net,
       actor_optimizer=tf.compat.v1.train.AdamOptimizer(
-          learning_rate=self._gnn_sac_params["ActorLearningRate", "", 1e-4]),
+          learning_rate=self._gnn_sac_params["ActorLearningRate", "", 3e-4]),
       critic_optimizer=tf.compat.v1.train.AdamOptimizer(
-          learning_rate=self._gnn_sac_params["CriticLearningRate", "", 1e-4]),
+          learning_rate=self._gnn_sac_params["CriticLearningRate", "", 3e-4]),
       alpha_optimizer=tf.compat.v1.train.AdamOptimizer(
           learning_rate=self._gnn_sac_params["AlphaLearningRate", "", 0.]),
       target_update_tau=self._gnn_sac_params["TargetUpdateTau", "", 1.],

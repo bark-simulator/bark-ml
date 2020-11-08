@@ -43,11 +43,11 @@ class BehaviorPPOAgent(BehaviorTFAAgent):
       env.observation_spec(),
       env.action_spec(),
       fc_layer_params=tuple(self._ppo_params[
-        "ActorFcLayerParams", "", [256, 256]]))
+        "ActorFcLayerParams", "", [512, 256, 256]]))
     value_net = value_network.ValueNetwork(
       env.observation_spec(),
       fc_layer_params=tuple(self._ppo_params[
-        "CriticFcLayerParams", "", [256, 256]]))
+        "CriticFcLayerParams", "", [512, 256, 256]]))
 
     tf_agent = ppo_agent.PPOAgent(
       env.time_step_spec(),
@@ -60,7 +60,7 @@ class BehaviorPPOAgent(BehaviorTFAAgent):
       optimizer=tf.compat.v1.train.AdamOptimizer(
         learning_rate=self._ppo_params["LearningRate", "", 3e-4]),
       train_step_counter=self._ckpt.step,
-      num_epochs=self._ppo_params["NumEpochs", "", 1],
+      num_epochs=self._ppo_params["NumEpochs", "", 25],
       name=self._ppo_params["AgentName", "", "ppo_agent"],
       debug_summaries=self._ppo_params["DebugSummaries", "", False])
     tf_agent.initialize()
