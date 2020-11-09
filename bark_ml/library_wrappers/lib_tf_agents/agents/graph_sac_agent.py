@@ -20,14 +20,11 @@ from bark_ml.library_wrappers.lib_tf_agents.networks import GNNActorNetwork, GNN
 from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAAgent
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_gat_wrapper import GATWrapper
-from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_gcn_wrapper import GCNWrapper
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_edge_conditioned_wrapper import GEdgeCondWrapper
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_gsnt_wrapper import GSNTWrapper
-from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_gsnt_wrapper_example import GSNTWrapperExample
-from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_tf2_edge_gnn_wrapper import TF2GNNEdgeMLPWrapper
 
 
-def init_snt(name, params):
+def init_gsnt(name, params):
   return GSNTWrapper(
     params=params, 
     name=name + "_GSNT")
@@ -37,16 +34,6 @@ def init_gnn_edge_cond(name, params):
     params=params, 
     name=name + "_GEdgeCond")
 
-def init_gsnt_example(name, params):
-  return GSNTWrapperExample(
-    params=params, 
-    name=name + "_GSNT")
-
-def init_tf2_edge_mlp(name, params):
-  return GSNTWrapperExample(
-    params=params, 
-    name=name + "_GSNT")
-  
 def init_gat(name, params):
   """
   Returns a new `GATdWrapper`instance with the given `name`.
@@ -59,17 +46,6 @@ def init_gat(name, params):
     params=params, 
     name=name + "_GAT")
   
-def init_gcn(name, params):
-  """
-  Returns a new `GCNWrapper`instance with the given `name`.
-  We need this function to be able to prefix the variable
-  names with the names of the parent actor or critic network,
-  by passing in this function and initializing the instance in 
-  the parent network.
-  """
-  return GCNWrapper(
-    params=params, 
-    name=name + "_GCN")
 
 
 class BehaviorGraphSACAgent(BehaviorTFAAgent):

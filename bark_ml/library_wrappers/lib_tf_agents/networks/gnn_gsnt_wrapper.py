@@ -33,7 +33,7 @@ def make_mlp():
       bias_initializer=tf.keras.initializers.Constant(value=0.),
       kernel_regularizer='l2', activity_regularizer='l2'),
     tf.keras.layers.Dense(
-      80, activation='relu', kernel_initializer='glorot_uniform',
+      80, activation='tanh', kernel_initializer='glorot_uniform',
       bias_initializer=tf.keras.initializers.Constant(value=0.),
       kernel_regularizer='l2', activity_regularizer='l2')
   ])

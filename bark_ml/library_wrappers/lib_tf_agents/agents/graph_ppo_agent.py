@@ -22,7 +22,6 @@ from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAA
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_wrapper import GNNWrapper
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_gsnt_wrapper import GSNTWrapper
-from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_gsnt_wrapper_example import GSNTWrapperExample
 
 
 def init_snt(name, params):
@@ -34,6 +33,7 @@ def init_gsnt_example(name, params):
   return GSNTWrapperExample(
     params=params, 
     name=name + "_GSNT")
+
 
 class BehaviorGraphPPOAgent(BehaviorTFAAgent):
   """
