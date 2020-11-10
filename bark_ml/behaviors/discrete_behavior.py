@@ -51,6 +51,13 @@ class BehaviorDiscreteMacroActionsML(BehaviorMPMacroActions):
     default_model = BehaviorMacroActionsFromParamServer(self._macro_action_params)
     super().__init__(self._macro_action_params, default_model.GetMotionPrimitives())
 
+  def __setstate__(self, macro_params):
+    default_model = BehaviorMacroActionsFromParamServer(macro_params)
+    super().__init__(macro_params, default_model.GetMotionPrimitives())
+  
+  def __getstate__(self):
+    return self._macro_action_params
+
   @property
   def action_space(self):
     return Discrete(len(self.GetMotionPrimitives()))

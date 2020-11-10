@@ -1,6 +1,6 @@
 py_test(
-    name = "base_agent_test",
-    srcs = ["base_agent_test.py"],
+    name = "save_load_test",
+    srcs = ["save_load_test.py"],
     data = [
             "@bark_project//bark/python_wrapper:core.so"
             ],

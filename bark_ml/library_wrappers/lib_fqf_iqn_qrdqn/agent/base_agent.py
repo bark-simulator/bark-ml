@@ -12,6 +12,7 @@
 from torch.utils.tensorboard import SummaryWriter
 import torch
 import numpy as np
+import pickle
 import os
 from abc import ABC, abstractmethod
 
@@ -31,8 +32,8 @@ def to_pickle(obj, dir, file):
 
 def from_pickle(dir, file):
   path = os.path.join(dir, file)
-  with open(path, 'wb') as handle:
-    obj = pickle.load(obj, handle, protocol=pickle.HIGHEST_PROTOCOL)
+  with open(path, 'rb') as handle:
+    obj = pickle.load(handle)
   return obj
 
 
@@ -74,11 +75,16 @@ class BaseAgent(BehaviorModel):
     self._observer = self._env._observer
     self._ml_behavior = self._env._ml_behavior
 
-  def save_pickable_members(self, save_dir):
-    pickables = dict(self.__dict__)
+  def clean_pickables(self, pickables):
     del pickables["online_net"]
     del pickables["target_net"]
-    del pickables["env"]
+    del pickables["_env"]
+    del pickables["device"]
+    del pickables["writer"]
+
+  def save_pickable_members(self, save_dir):
+    pickables = dict(self.__dict__)
+    self.clean_pickables(pickables)
     to_pickle(pickables, save_dir, "base_agent_pickables")
 
   def load_pickable_members(self, save_dir):
@@ -104,10 +110,6 @@ class BaseAgent(BehaviorModel):
           self.device,
           self.gamma,
           self.multi_step)
-
-    self.online_net = None
-    self.target_net = None
-    self.memory = None
 
     self.steps = 0
     self.learning_steps = 0
@@ -163,6 +165,10 @@ class BaseAgent(BehaviorModel):
   @property
   def ml_behavior(self):
     return self._ml_behavior
+
+  @property
+  def num_actions(self):
+    return self.ml_behavior.action_space.n
 
   def run(self):
     while True:
@@ -227,10 +233,12 @@ class BaseAgent(BehaviorModel):
 
     action = self._action
     # set action to be executed
-    self._bark_behavior_model.ActionToBehavior(action)
-    trajectory = self._bark_behavior_model.Plan(dt, observed_world)
+    self._ml_behavior.ActionToBehavior(action)
+    trajectory = self._ml_behavior.Plan(dt, observed_world)
+    dynamic_action = self._ml_behavior.GetLastAction()
     # NOTE: BARK requires models to have trajectories of the past
     BehaviorModel.SetLastTrajectory(self, trajectory)
+    BehaviorModel.SetLastAction(self, dynamic_action)
     return trajectory
 
   @abstractmethod
@@ -260,16 +268,16 @@ class BaseAgent(BehaviorModel):
 
   def load_models(self, save_dir):
     try: 
-      self._online_net.load_state_dict(
+      self.online_net.load_state_dict(
         torch.load(os.path.join(save_dir, 'online_net.pth')))
     except RuntimeError:
-      self._online_net.load_state_dict(
+      self.online_net.load_state_dict(
         torch.load(os.path.join(save_dir, 'online_net.pth'), map_location=torch.device('cpu')))
     try: 
-      self._target_net.load_state_dict(
+      self.target_net.load_state_dict(
         torch.load(os.path.join(save_dir, 'target_net.pth')))
     except RuntimeError:
-      self._target_net.load_state_dict(
+      self.target_net.load_state_dict(
         torch.load(os.path.join(save_dir, 'target_net.pth'), map_location=torch.device('cpu')))
 
   def visualize(self, num_episodes=5):
