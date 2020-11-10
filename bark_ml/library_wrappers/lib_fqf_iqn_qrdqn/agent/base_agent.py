@@ -36,12 +36,61 @@ def from_pickle(dir, file):
     obj = pickle.load(handle)
   return obj
 
+class TrainingBenchmark:
+  def __init__(self):
+    self.training_env = None
+    self.num_episodes = None
+    self.max_episode_steps = None
+    self.agent = None
+
+  def reset(self, training_env, num_episodes, max_episode_steps, agent):
+    self.training_env = training_env
+    self.num_episodes = num_episodes
+    self.max_episode_steps = max_episode_steps
+    self.agent = agent
+
+  def run(self):
+    # returns dict with evaluated metrics
+    num_episodes = 0
+    total_return = 0.0
+
+    while True:
+      state = self.training_env.reset()
+      episode_steps = 0
+      episode_return = 0.0
+      done = False
+      while (not done) and episode_steps <= self.max_episode_steps:
+        if self.agent.is_random(eval=True):
+          action = self.agent.explore()
+        else:
+          action = self.agent.Act(state)
+
+        next_state, reward, done, _ = self.training_env.step(action)
+        episode_steps += 1
+        episode_return += reward
+        state = next_state
+
+      num_episodes += 1
+      total_return += episode_return
+
+      if num_episodes > self.num_episodes:
+        break
+
+    mean_return = total_return / num_episodes
+    return {"mean_return" : mean_return}, f"Mean return: {mean_return}"
+
+  def is_better(self, eval_result1, than_eval_result2):
+    return eval_result1["mean_return"] > than_eval_result2["mean_return"]
+
+
+
 
 class BaseAgent(BehaviorModel):
-  def __init__(self, env=None, params=None, benchmark_configuration=None, save_dir=None ):
+  def __init__(self, env=None, params=None, training_benchmark=None, save_dir=None ):
     BehaviorModel.__init__(self, params)
     self._params = params
     self._env = env
+    self._training_benchmark = training_benchmark or TrainingBenchmark()
     
     if not save_dir:
       if not env:
@@ -70,6 +119,8 @@ class BaseAgent(BehaviorModel):
     # NOTE: by default we do not want the action to be set externally
     #       as this enables the agents to be plug and played in BARK.
     self._set_action_externally = False
+    self._training_benchmark.reset(self._env, \
+        self.num_eval_episodes, self.max_episode_steps, self)
 
   def reset_action_observer(self, env):
     self._observer = self._env._observer
@@ -79,6 +130,7 @@ class BaseAgent(BehaviorModel):
     del pickables["online_net"]
     del pickables["target_net"]
     del pickables["_env"]
+    del pickables["_training_benchmark"]
     del pickables["device"]
     del pickables["writer"]
 
@@ -114,7 +166,7 @@ class BaseAgent(BehaviorModel):
     self.steps = 0
     self.learning_steps = 0
     self.episodes = 0
-    self.best_eval_score = -np.inf
+    self.best_eval_results = None
 
   def reset_params(self, params):
     self.num_steps = params["NumSteps", "", 5000000]
@@ -129,7 +181,7 @@ class BaseAgent(BehaviorModel):
     self.summary_log_interval = params["SummaryLogInterval", "", 100]
     self.eval_interval = params["EvalInterval", "",
                                                          25000]
-    self.num_eval_steps = params["NumEvalSteps", "",
+    self.num_eval_episodes = params["NumEvalEpisodes", "",
                                                           12500]
     self.gamma_n = params["Gamma", "", 0.99] ** \
         params["Multi_step", "", 1]
@@ -356,44 +408,22 @@ class BaseAgent(BehaviorModel):
       self.online_net.train()
 
   def evaluate(self):
+    if not self._training_benchmark:
+      logging.info("No evaluation performed since no training benchmark available.")
     self.online_net.eval()
-    num_episodes = 0
-    num_steps = 0
-    total_return = 0.0
+    
+    eval_results, formatted_result = self._training_benchmark.run()
 
-    while True:
-      state = self.test_env.reset()
-      episode_steps = 0
-      episode_return = 0.0
-      done = False
-      while (not done) and episode_steps <= self.max_episode_steps:
-        if self.is_random(eval=True):
-          action = self.explore()
-        else:
-          action = self.Act(state)
-
-        next_state, reward, done, _ = self.test_env.step(action)
-        num_steps += 1
-        episode_steps += 1
-        episode_return += reward
-        state = next_state
-
-      num_episodes += 1
-      total_return += episode_return
-
-      if num_steps > self.num_eval_steps:
-        break
-
-    mean_return = total_return / num_episodes
-
-    if mean_return > self.best_eval_score:
-      self.best_eval_score = mean_return
+    if not self.best_eval_results or \
+        self._training_benchmark.is_better(eval_results, self.best_eval_results):
+      self.best_eval_results = eval_results
       self.save_models(os.path.join(self.model_dir, 'best'))
 
     # We log evaluation results along with training frames = 4 * steps.
-    self.writer.add_scalar('return/test', mean_return, 4 * self.steps)
+    for eval_result_name, eval_result in eval_results.items():
+      self.writer.add_scalar(eval_result_name, eval_result, 4 * self.steps)
     logging.info('-' * 60)
-    logging.info(f'Num steps: {self.steps:<5}  ' f'return: {mean_return:<5.1f}')
+    logging.info('Evaluation result: {}'.format(formatted_result))
     logging.info('-' * 60)
 
   def __del__(self):
