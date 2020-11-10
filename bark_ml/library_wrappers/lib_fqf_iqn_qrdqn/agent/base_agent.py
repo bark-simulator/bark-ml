@@ -250,7 +250,7 @@ class BaseAgent(BehaviorModel):
 
   @property
   def action_space(self):
-    return self._bark_behavior_model.action_space
+    return self._ml_behavior.action_space
 
   def save_models(self, save_dir):
     if not os.path.exists(save_dir):
