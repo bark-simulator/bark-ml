@@ -83,38 +83,38 @@ class TrainingBenchmark:
     return eval_result1["mean_return"] > than_eval_result2["mean_return"]
 
 
-
-
 class BaseAgent(BehaviorModel):
-  def __init__(self, env=None, params=None, training_benchmark=None, save_dir=None ):
+  def __init__(self, agent_save_dir=None, env=None, params=None, training_benchmark=None, checkpoint_load=None):
     BehaviorModel.__init__(self, params)
     self._params = params
     self._env = env
     self._training_benchmark = training_benchmark or TrainingBenchmark()
+    self._agent_save_dir = agent_save_dir
     
-    if not save_dir:
+    if not checkpoint_load and params:
       if not env:
         raise ValueError("Environment must be passed for initialization")
       self.reset_params(self._params["ML"]["BaseAgent"])
       self.reset_action_observer(env)
       self.init_always()
       self.reset_training_variables()
-    else:
-      self.load_pickable_members(save_dir)
+    elif checkpoint_load:
+      self.load_pickable_members(agent_save_dir)
       self.init_always()
-      self.load_models(save_dir)
+      self.load_models(BaseAgent.check_point_directory(agent_save_dir, checkpoint_load) \
+                    if checkpoint_load=="best" else BaseAgent.check_point_directory(agent_save_dir, checkpoint_load) )
+    else:
+      raise ValueError("Unusual param combination for agent initialization.")
 
 
   def init_always(self):
     self.device = torch.device("cuda" if (self.use_cuda and torch.cuda.is_available()) else "cpu")
 
-    self.writer = SummaryWriter(log_dir=self.summary_dir)
+    self.writer = SummaryWriter(log_dir=BaseAgent.summary_dir(self.agent_save_dir))
     self.train_return = RunningMeanStats(self.summary_log_interval)
 
-    if not os.path.exists(self.model_dir) and self.model_dir:
-      os.makedirs(self.model_dir)
-    if not os.path.exists(self.summary_dir) and self.summary_dir:
-      os.makedirs(self.summary_dir)
+    if not os.path.exists(BaseAgent.summary_dir(self.agent_save_dir)):
+      os.makedirs(BaseAgent.summary_dir(self.agent_save_dir))
 
     # NOTE: by default we do not want the action to be set externally
     #       as this enables the agents to be plug and played in BARK.
@@ -134,13 +134,16 @@ class BaseAgent(BehaviorModel):
     del pickables["device"]
     del pickables["writer"]
 
-  def save_pickable_members(self, save_dir):
+
+  def save_pickable_members(self, pickable_dir):
+    if not os.path.exists(pickable_dir):
+      os.makedirs(pickable_dir)
     pickables = dict(self.__dict__)
     self.clean_pickables(pickables)
-    to_pickle(pickables, save_dir, "base_agent_pickables")
+    to_pickle(pickables, pickable_dir, "agent_pickables")
 
-  def load_pickable_members(self, save_dir):
-    pickables = from_pickle(save_dir, "base_agent_pickables")
+  def load_pickable_members(self, agent_save_dir):
+    pickables = from_pickle(BaseAgent.pickable_directory(agent_save_dir), "agent_pickables")
     self.__dict__.update(pickables)
 
   def reset_training_variables(self):
@@ -197,9 +200,6 @@ class BaseAgent(BehaviorModel):
     self.max_episode_steps = params["MaxEpisodeSteps",  "", 10000]
     self.grad_cliping = params["GradCliping", "", 5.0]
 
-    self.summary_dir = params["SummaryPath", "", ""]
-    self.model_dir = params["CheckpointPath", "", ""]
-
     self.memory_size = params["MemorySize", "", 10**6]
     self.gamma = params["Gamma", "", 0.99]
     self.multi_step = params["Multi_step", "", 1]
@@ -221,6 +221,11 @@ class BaseAgent(BehaviorModel):
   @property
   def num_actions(self):
     return self.ml_behavior.action_space.n
+  
+  @property
+  def agent_save_dir(self):
+    return self._agent_save_dir
+
 
   def run(self):
     while True:
@@ -304,33 +309,45 @@ class BaseAgent(BehaviorModel):
   def action_space(self):
     return self._ml_behavior.action_space
 
-  def save_models(self, save_dir):
-    if not os.path.exists(save_dir):
-      os.makedirs(save_dir)
+  @staticmethod
+  def check_point_directory(agent_save_dir, checkpoint_type):
+    return os.path.join(agent_save_dir, "checkpoints/", checkpoint_type)
+
+  @staticmethod
+  def pickable_directory(agent_save_dir):
+    return os.path.join(agent_save_dir, "pickable/")
+
+  @staticmethod
+  def summary_dir(agent_save_dir):
+    return os.path.join(agent_save_dir, "summaries")
+
+  def save_models(self, checkpoint_dir):
+    if not os.path.exists(checkpoint_dir):
+      os.makedirs(checkpoint_dir)
     torch.save(self.online_net.state_dict(),
-               os.path.join(save_dir, 'online_net.pth'))
+               os.path.join(checkpoint_dir, 'online_net.pth'))
     torch.save(self.target_net.state_dict(),
-               os.path.join(save_dir, 'target_net.pth'))
+               os.path.join(checkpoint_dir, 'target_net.pth'))
     online_net_script = torch.jit.script(self.online_net)
-    online_net_script.save(os.path.join(save_dir, 'online_net_script.pt'))
+    online_net_script.save(os.path.join(checkpoint_dir, 'online_net_script.pt'))
 
-  def save(self, save_dir):
-    self.save_models(save_dir)
-    self.save_pickable_members(save_dir)
+  def save(self, checkpoint_type="last"):
+    self.save_models(BaseAgent.check_point_directory(self.agent_save_dir, checkpoint_type))
+    self.save_pickable_members(BaseAgent.pickable_directory(self.agent_save_dir))
 
-  def load_models(self, save_dir):
+  def load_models(self, checkpoint_dir):
     try: 
       self.online_net.load_state_dict(
-        torch.load(os.path.join(save_dir, 'online_net.pth')))
+        torch.load(os.path.join(checkpoint_dir, 'online_net.pth')))
     except RuntimeError:
       self.online_net.load_state_dict(
-        torch.load(os.path.join(save_dir, 'online_net.pth'), map_location=torch.device('cpu')))
+        torch.load(os.path.join(checkpoint_dir, 'online_net.pth'), map_location=torch.device('cpu')))
     try: 
       self.target_net.load_state_dict(
-        torch.load(os.path.join(save_dir, 'target_net.pth')))
+        torch.load(os.path.join(checkpoint_dir, 'target_net.pth')))
     except RuntimeError:
       self.target_net.load_state_dict(
-        torch.load(os.path.join(save_dir, 'target_net.pth'), map_location=torch.device('cpu')))
+        torch.load(os.path.join(checkpoint_dir, 'target_net.pth'), map_location=torch.device('cpu')))
 
   def visualize(self, num_episodes=5):
     if not self.env:
@@ -404,7 +421,7 @@ class BaseAgent(BehaviorModel):
 
     if self.steps % self.eval_interval == 0:
       self.evaluate()
-      self.save_models(os.path.join(self.model_dir, 'final'))
+      self.save(os.path.join(self.model_dir, 'final'))
       self.online_net.train()
 
   def evaluate(self):
@@ -417,7 +434,7 @@ class BaseAgent(BehaviorModel):
     if not self.best_eval_results or \
         self._training_benchmark.is_better(eval_results, self.best_eval_results):
       self.best_eval_results = eval_results
-      self.save_models(os.path.join(self.model_dir, 'best'))
+      self.save(os.path.join(self.model_dir, 'best'))
 
     # We log evaluation results along with training frames = 4 * steps.
     for eval_result_name, eval_result in eval_results.items():

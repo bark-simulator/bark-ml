@@ -42,14 +42,16 @@ class BaseAgentTests(unittest.TestCase):
     env._observer = NearestAgentsObserver(params)
     env._action_wrapper = BehaviorDiscreteMacroActionsML(params)
 
-    fqf_agent = FQFAgent(env=env, params=params)
+    fqf_agent = FQFAgent(agent_save_dir="./save_dir", env=env, params=params)
     fqf_agent.train_episode()
 
-    fqf_agent.save("./save_dir")
+    fqf_agent.save(checkpoint_type="best")
+    fqf_agent.save(checkpoint_type="last")
 
-    loaded_agent = FQFAgent(save_dir="./save_dir")
+    loaded_agent = FQFAgent(agent_save_dir="./save_dir", checkpoint_load="best")
+    loaded_agent2 = FQFAgent(agent_save_dir="./save_dir", checkpoint_load="last")
     
-    loaded_agent_with_env = FQFAgent(env=env, save_dir="./save_dir")
+    loaded_agent_with_env = FQFAgent(env=env, agent_save_dir="./save_dir", checkpoint_load="last")
     loaded_agent_with_env.train_episode()
 
     self.assertEqual(loaded_agent.ml_behavior.action_space.n, fqf_agent.ml_behavior.action_space.n)
