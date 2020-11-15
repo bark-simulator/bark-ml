@@ -25,13 +25,14 @@ from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_wrapper import GNNWrapp
 def make_mlp(name):
   return tf.keras.Sequential([
     tf.keras.layers.Dense(
-      150, activation='relu',
-      bias_initializer='glorot_uniform',
+      80, activation='relu',
+      bias_initializer=tf.constant_initializer(0.001),
       name=name+"_0"),
     tf.keras.layers.Dense(
-      40, activation='tanh',
-      bias_initializer='glorot_uniform',
-      name=name+"_1")
+      80, activation='tanh',
+      bias_initializer=tf.constant_initializer(0.001),
+      name=name+"_1"),
+    tf.keras.layers.LayerNormalization()
   ])
 
 
