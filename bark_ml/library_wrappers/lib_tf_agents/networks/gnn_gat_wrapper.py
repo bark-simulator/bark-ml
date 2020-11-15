@@ -64,20 +64,25 @@ class GATWrapper(GNNWrapper):
       layer = GraphAttention(
         8,  # 8 heads x 8 features
         attn_heads=self._num_attn_heads,
-        activation="elu",
+        activation="relu",
+        dropout_rate=0.,
         concat_heads=True)
       self._layers.append(layer)
     layer = GraphAttention(
       self._embedding_size,
       attn_heads=1,
-      activation="relu")
+      dropout_rate=0.,
+      activation="relu",
+      concat_heads=True)
     self._layers.append(layer)
 
+  @tf.function
   def _init_call_func(self, observations, training=False):
     embeddings, adj_matrix, edge_features = GraphObserver.graph(
       observations=observations, 
       graph_dims=self._graph_dims)
-    for layer in self._layers: 
+    for i, layer in enumerate(self._layers):
       embeddings = layer([embeddings, adj_matrix])
+      
     return embeddings
 

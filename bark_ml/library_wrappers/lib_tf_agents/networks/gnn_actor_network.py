@@ -12,6 +12,8 @@ from tf_agents.agents.sac import sac_agent
 from tf_agents.networks import network, normal_projection_network, encoding_network
 from tf_agents.utils import nest_utils
 from bark.runtime.commons.parameters import ParameterServer
+from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_gsnt_wrapper import GSNTWrapper
+
 
 def projection_net(spec):
   return normal_projection_network.NormalProjectionNetwork(
@@ -82,7 +84,10 @@ class GNNActorNetwork(network.Network):
     if gnn is None:
       raise ValueError('`gnn` must not be `None`.')
 
-    self._gnn = gnn(name=name, params=params)
+    # self._gnn = gnn(name=name, params=params)
+    self._gnn = GSNTWrapper(
+      params=params, 
+      name=name + "_GSNT")
     
     self._encoder = encoding_network.EncodingNetwork(
       input_tensor_spec=tf.TensorSpec([None, self._gnn._embedding_size]),

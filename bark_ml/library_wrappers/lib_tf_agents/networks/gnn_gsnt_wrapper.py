@@ -22,26 +22,19 @@ from bark_ml.observers.graph_observer_v2 import GraphObserverV2
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_wrapper import GNNWrapper
 
 
-def make_mlp():
+def make_mlp(name):
   return tf.keras.Sequential([
     tf.keras.layers.Dense(
-      150, activation='relu', kernel_initializer='glorot_uniform',
-      bias_initializer=tf.keras.initializers.Constant(value=0.),
-      kernel_regularizer='l2', activity_regularizer='l2'),
+      150, activation='relu',
+      bias_initializer='glorot_uniform',
+      name=name+"_0"),
     tf.keras.layers.Dense(
-      150, activation='relu', kernel_initializer='glorot_uniform',
-      bias_initializer=tf.keras.initializers.Constant(value=0.),
-      kernel_regularizer='l2', activity_regularizer='l2'),
-    tf.keras.layers.Dense(
-      80, activation='tanh', kernel_initializer='glorot_uniform',
-      bias_initializer=tf.keras.initializers.Constant(value=0.),
-      kernel_regularizer='l2', activity_regularizer='l2')
+      40, activation='tanh',
+      bias_initializer='glorot_uniform',
+      name=name+"_1")
   ])
-  # return snt.Sequential([
-  #     snt.nets.MLP([LATENT_SIZE] * NUM_LAYERS, activate_final=True),
-  #     snt.LayerNorm(axis=-1, create_offset=True, create_scale=True)
-  # ])
-  # 
+
+
 
 class GSNTWrapper(GNNWrapper):
   """
@@ -72,21 +65,24 @@ class GSNTWrapper(GNNWrapper):
     self._num_message_passing_layers = params["ML"]["GSNT"][
       "NumMessagePassingLayers", "Number of message passing layers", 2]
     self._embedding_size = params["ML"]["GSNT"][
-      "EmbeddingSize", "Embedding size of nodes", 80]
+      "EmbeddingSize", "Embedding size of nodes", 40]
     self._layers = []
+    self._node_mlp = make_mlp(name+"_node")
+    self._edge_mlp = make_mlp(name+"_edge")
     # initialize network & call func
-    self._init_network()
+    self._init_network(name)
     self._call_func = self._init_call_func
     
-  def _init_network(self):
+  def _init_network(self, name=None):
+    # TODO: this might not be clonable
     self._gnn_core_0 = modules.InteractionNetwork(
-      edge_model_fn=make_mlp,
-      node_model_fn=make_mlp)
+      edge_model_fn=lambda: self._node_mlp,
+      node_model_fn=lambda: self._edge_mlp)
     # self._gnn_core_1 = modules.InteractionNetwork(
     #   edge_model_fn=make_mlp,
     #   node_model_fn=make_mlp)
   
-  # @tf.function
+  @tf.function
   def _init_call_func(self, observations, training=False):
     """Graph nets implementation"""
     
@@ -98,14 +94,20 @@ class GSNTWrapper(GNNWrapper):
     _, _, node_counts = tf.unique_with_counts(node_to_graph)
     edge_counts = tf.math.square(node_counts)
 
+    # reshape node vals and edge vals
+    # TODO: change
+    # node_vals = tf.reshape(node_vals, [-1, 1, 7])
+    # edge_vals = tf.reshape(edge_vals, [-1, 1, 4])
+    # tf.print(tf.shape(node_vals))
+    
     # tf.print(edge_indices)
     input_graph = GraphsTuple(
-      nodes=tf.cast(node_vals, tf.float32),  # validate
-      edges=tf.cast(edge_vals, tf.float32),  # validate
+      nodes=tf.cast(node_vals, tf.float32),
+      edges=tf.cast(edge_vals, tf.float32),
       globals=tf.tile([[0.]], [batch_size, 1]),
-      receivers=tf.cast(edge_indices[:, 1], tf.int32),  # validate
-      senders=tf.cast(edge_indices[:, 0], tf.int32),  # validate
-      n_node=node_counts,  # change
+      receivers=tf.cast(edge_indices[:, 1], tf.int32),
+      senders=tf.cast(edge_indices[:, 0], tf.int32),
+      n_node=node_counts,
       n_edge=edge_counts) 
     
     latent = self._gnn_core_0(input_graph)

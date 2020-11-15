@@ -196,7 +196,7 @@
             "RewardScaleFactor": 1.0,
             "AgentName": "gnn_sac_agent",
             "DebugSummaries": true,
-            "ReplayBufferCapacity": 10000,
+            "ReplayBufferCapacity": 100000,
             "ParallelBufferCalls": 1,
             "BatchSize": 512,
             "BufferNumSteps": 2,
@@ -204,7 +204,7 @@
         },
         "GAT": {
             "NumMessagePassingLayers": 1,
-            "Activation": "elu",
+            "Activation": "relu",
             "NumAttnHeads": 8,
             "EmbeddingSize": 64
         },

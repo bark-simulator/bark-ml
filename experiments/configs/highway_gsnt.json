@@ -162,10 +162,7 @@
                 "x",
                 "y",
                 "theta",
-                "vel",
-                "goal_dx",
-                "goal_dy",
-                "goal_vel"
+                "vel"
             ],
             "EnabledEdgeFeatures": [
                 "dx",
@@ -176,16 +173,12 @@
         },
         "BehaviorGraphSACAgent": {
             "ActorFcLayerParams": [
-                512,
                 256,
                 256
             ],
-            "CriticObservationFcLayerParams": [
-                128
-            ],
+            "CriticObservationFcLayerParams": null,
             "CriticActionFcLayerParams": null,
             "CriticJointFcLayerParams": [
-                512,
                 256,
                 256
             ],
@@ -200,7 +193,7 @@
             "DebugSummaries": true,
             "ReplayBufferCapacity": 10000,
             "ParallelBufferCalls": 1,
-            "BatchSize": 256,
+            "BatchSize": 512,
             "BufferNumSteps": 2,
             "BufferPrefetch": 3
         },

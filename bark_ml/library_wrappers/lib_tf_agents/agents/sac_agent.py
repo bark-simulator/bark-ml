@@ -100,7 +100,7 @@ class BehaviorSACAgent(BehaviorTFAAgent):
     return tf_uniform_replay_buffer.TFUniformReplayBuffer(
       data_spec=self._agent.collect_data_spec,
       batch_size=self._wrapped_env.batch_size,
-      max_length=self._sac_params["ReplayBufferCapacity", "", 10000])
+      max_length=self._sac_params["ReplayBufferCapacity", "", 100000])
 
   def GetDataset(self):
     dataset = self._replay_buffer.as_dataset(
