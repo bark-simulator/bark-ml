@@ -40,13 +40,17 @@ class Tracer:
       eval_dict[key] = value
     if self._trace_history:
       self._states.append(eval_dict)
-    if eval_dict["is_terminal"]:
-      self._total_episodes += 1
-    if eval_dict["drivable_area"] or eval_dict["collision"]:
-      self._total_collisions += 1
-    if eval_dict["goal_reached"]:
-      self._total_goals_reached += 1
-    self._total_reward += eval_dict["reward"] 
+    if "is_terminal" in eval_dict:
+      if eval_dict["is_terminal"]:
+        self._total_episodes += 1
+    if "drivable_area" in eval_dict and "collision" in eval_dict:
+      if eval_dict["drivable_area"] or eval_dict["collision"]:
+        self._total_collisions += 1
+    if "goal_reached" in eval_dict:
+      if eval_dict["goal_reached"]:
+        self._total_goals_reached += 1
+    if "reward" in eval_dict:
+      self._total_reward += eval_dict["reward"] 
     self._total_steps += 1
   
   @property

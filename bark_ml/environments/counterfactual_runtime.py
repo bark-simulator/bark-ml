@@ -133,9 +133,6 @@ class CounterfactualRuntime(SingleAgentRuntime):
       eval_state = observed_world.Evaluate()
       agent_states = CaptureAgentStates(observed_world)
       eval_state = {**eval_state, **agent_states}
-      eval_state["is_terminal"] = eval_state["collision"] or \
-        eval_state["drivable_area"] or eval_state["goal_reached"]
-      eval_state["reward"] = 0
       local_tracer.Trace(eval_state, **kwargs)
       world.Step(self._step_time)
     self.ml_behavior.set_action_externally = True
@@ -239,15 +236,7 @@ class CounterfactualRuntime(SingleAgentRuntime):
     if trace["collision"] > self._max_col_rate:
       executed_learned_policy = 0
       self._world.agents[eval_id].behavior_model = self._ego_rule_based
-    trace["executed_learned_policy"] = executed_learned_policy
-    
-    # dummy trace
-    trace["is_terminal"] = 0
-    trace["collision"] = 0
-    trace["drivable_area"] = 0
-    trace["goal_reached"] = 0
-    trace["reward"] = 0
-    
+    trace["executed_learned_policy"] = executed_learned_policy  
     self._tracer.Trace(trace)
     self._count += 1
     return SingleAgentRuntime.step(self, action)

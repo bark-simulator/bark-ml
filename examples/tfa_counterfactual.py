@@ -38,6 +38,7 @@ flags.DEFINE_enum("mode",
                   "Mode the configuration should be executed in.")
 
 def run_configuration(argv):
+  params = ParameterServer()
   # NOTE: Modify these paths to specify your preferred path for checkpoints and summaries
   # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/checkpoints/"
   # params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/checkpoints/"
