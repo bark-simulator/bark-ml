@@ -5,7 +5,10 @@ test_suite(
     "//bark_ml/tests:py_observer_tests",
     "//bark_ml/tests:py_evaluator_tests",
     "//bark_ml/tests:py_behavior_tests",
-    "//bark_ml/tests:py_library_tfa_tests"
+    "//bark_ml/tests:py_library_tfa_tests",
+    "//bark_ml/tests:py_bark_behavior_model_tests",
+    "//bark_ml/tests:py_benchmark_runner_tests",
+    "//bark_ml/tests:py_tracer_tests",
   ]
 )
 
@@ -14,6 +17,7 @@ test_suite(
   tests = [
     "//bark_ml/tests:py_graph_observer_tests",
     "//bark_ml/tests:py_graph_network_tests",
+    "//bark_ml/tests:py_gnn_wrapper_tests",
     "//bark_ml/tests/capability_gnn_actor:py_gnn_actor_tests",
   ]
 )

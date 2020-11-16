@@ -91,7 +91,8 @@ class DatabaseRunnerTests(unittest.TestCase):
                                        evaluators=evaluators,
                                        terminal_when=terminal_when,
                                        behaviors=behaviors_tested,
-                                       log_eval_avg_every=5)
+                                       log_eval_avg_every=5,
+                                       deepcopy=False)
 
     result = benchmark_runner.run()
     df = result.get_data_frame()

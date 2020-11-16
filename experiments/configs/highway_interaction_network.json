@@ -19,7 +19,7 @@
         "Agent": {
             "ModuleName": "BehaviorGraphSACAgent",
             "Config": {
-                "init_gnn": "init_gsnt"
+                "init_gnn": "init_interaction_network"
             }
         },
         "Blueprint": {

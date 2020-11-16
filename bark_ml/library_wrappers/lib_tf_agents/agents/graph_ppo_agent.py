@@ -20,7 +20,7 @@ from tf_agents.trajectories import time_step as ts
 from bark_ml.library_wrappers.lib_tf_agents.networks import GNNActorDistributionNetwork, GNNValueNetwork
 from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAAgent
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
-from bark_ml.library_wrappers.lib_tf_agents.agents.gnn_initializers import init_gsnt, init_gnn_edge_cond
+from bark_ml.library_wrappers.lib_tf_agents.agents.gnn_initializers import init_interaction_network, init_gnn_edge_cond
 
 
 class BehaviorGraphPPOAgent(BehaviorTFAAgent):
