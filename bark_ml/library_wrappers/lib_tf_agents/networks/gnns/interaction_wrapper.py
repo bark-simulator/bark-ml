@@ -65,24 +65,27 @@ class InteractionWrapper(GraphNetwork):
       "NumMessagePassingLayers", "Number of message passing layers", 2]
     self._embedding_size = params["ML"]["InteractionNetwork"][
       "EmbeddingSize", "Embedding size of nodes", 40]
-    self._node_mlps = [
-      make_mlp(name+"_node_0", self._embedding_size),
-      make_mlp(name+"_node_1", self._embedding_size)]
-    self._edge_mlps = [
-      make_mlp(name+"_edge_0", self._embedding_size),
-      make_mlp(name+"_edge_1", self._embedding_size)]
+    
+    self._node_mlps = []
+    self._edge_mlps = []
+    for i in range(0, self._num_message_passing_layers):
+      self._node_mlps.append(
+        make_mlp(name+"_node_"+str(i), self._embedding_size))
+      self._edge_mlps.append(
+        make_mlp(name+"_edge_"+str(i), self._embedding_size))
     
     # initialize network & call func
     self._init_network(name)
     self._call_func = self._init_call_func
     
   def _init_network(self, name=None):
-    self._gnn_core_0 = modules.InteractionNetwork(
-      edge_model_fn=lambda: self._edge_mlps[0],
-      node_model_fn=lambda: self._node_mlps[0])
-    self._gnn_core_1 = modules.InteractionNetwork(
-      edge_model_fn=lambda: self._edge_mlps[1],
-      node_model_fn=lambda: self._node_mlps[1])
+    self._graph_blocks = []
+    for i in range(0, self._num_message_passing_layers):
+      self._graph_blocks.append(
+        modules.InteractionNetwork(
+          edge_model_fn=lambda: self._edge_mlps[i],
+          node_model_fn=lambda: self._node_mlps[i])
+      )
   
   @tf.function
   def _init_call_func(self, observations, training=False):
@@ -95,7 +98,6 @@ class InteractionWrapper(GraphNetwork):
     node_counts = tf.unique_with_counts(node_to_graph)[2]
     edge_counts = tf.math.square(node_counts)
     
-    # tf.print(edge_indices)
     input_graph = GraphsTuple(
       nodes=tf.cast(node_vals, tf.float32),
       edges=tf.cast(edge_vals, tf.float32),
@@ -105,8 +107,9 @@ class InteractionWrapper(GraphNetwork):
       n_node=node_counts,
       n_edge=edge_counts) 
     
-    latent = self._gnn_core_0(input_graph)
-    latent = self._gnn_core_1(latent)
+    latent = input_graph
+    for gb in self._graph_blocks:
+      latent = gb(latent)
     
     node_values = tf.reshape(latent.nodes, [batch_size, -1, self._embedding_size])
     return node_values
