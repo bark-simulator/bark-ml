@@ -10,7 +10,8 @@ import tensorflow as tf  # pylint: disable=g-explicit-tensorflow-version-import
 
 from tf_agents.networks import network, utils
 from bark.runtime.commons.parameters import ParameterServer
-from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_gsnt_wrapper import GSNTWrapper
+from bark_ml.library_wrappers.lib_tf_agents.networks.gnns.interaction_wrapper import InteractionWrapper
+
 
 @gin.configurable
 class GNNCriticNetwork(network.Network):
@@ -113,9 +114,9 @@ class GNNCriticNetwork(network.Network):
       raise ValueError('`gnn` must not be `None`.')
 
     # self._gnn = gnn(name=name, params=params)
-    self._gnn = GSNTWrapper(
+    self._gnn = InteractionWrapper(
       params=params, 
-      name=name + "_GSNT")
+      name=name + "_InteractionNetwork")
     
     self._observation_layers = utils.mlp_layers(
       observation_conv_layer_params,

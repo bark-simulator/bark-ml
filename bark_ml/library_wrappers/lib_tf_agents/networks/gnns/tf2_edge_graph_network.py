@@ -16,7 +16,7 @@ import tensorflow_addons as tfa
 from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.observers.graph_observer import GraphObserver
 from bark_ml.observers.graph_observer_v2 import GraphObserverV2
-from bark_ml.library_wrappers.lib_tf_agents.networks.graph_network import GraphNetwork
+from bark_ml.library_wrappers.lib_tf_agents.networks.gnns.graph_network import GraphNetwork
 
 
 def make_mlp():
@@ -47,10 +47,10 @@ class TF2GNNEdgeMLPWrapper(GraphNetwork):
 
   def __init__(self,
                params=ParameterServer(),
-               name='GNST',
+               name='InteractionNetwork',
                output_dtype=tf.float32):
     """
-    Initializes a GSNTWrapper instance.
+    Initializes a InteractionWrapper instance.
 
     Args:
     params: A `ParameterServer` instance containing the parameters

@@ -19,7 +19,7 @@ import tensorflow_addons as tfa
 from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.observers.graph_observer import GraphObserver
 from bark_ml.observers.graph_observer_v2 import GraphObserverV2
-from bark_ml.library_wrappers.lib_tf_agents.networks.graph_network import GraphNetwork
+from bark_ml.library_wrappers.lib_tf_agents.networks.gnns.graph_network import GraphNetwork
 
 
 def make_mlp(name):
@@ -35,17 +35,17 @@ def make_mlp(name):
     tf.keras.layers.LayerNormalization()
   ])
 
-class GSNTWrapper(GraphNetwork):
+class InteractionWrapper(GraphNetwork):
   """
   Implements a graph lib.
   """
 
   def __init__(self,
                params=ParameterServer(),
-               name='GNST',
+               name='InteractionNetwork',
                output_dtype=tf.float32):
     """
-    Initializes a GSNTWrapper instance.
+    Initializes a InteractionWrapper instance.
 
     Args:
     params: A `ParameterServer` instance containing the parameters
@@ -57,13 +57,13 @@ class GSNTWrapper(GraphNetwork):
     name: Name of the instance.
     output_dtype: The dtype to which the GNN output is casted.
     """
-    super(GSNTWrapper, self).__init__(
+    super(InteractionWrapper, self).__init__(
       params=params,
       name=name,
       output_dtype=output_dtype)
-    self._num_message_passing_layers = params["ML"]["GSNT"][
+    self._num_message_passing_layers = params["ML"]["InteractionNetwork"][
       "NumMessagePassingLayers", "Number of message passing layers", 2]
-    self._embedding_size = params["ML"]["GSNT"][
+    self._embedding_size = params["ML"]["InteractionNetwork"][
       "EmbeddingSize", "Embedding size of nodes", 40]
     
     self._layers = []

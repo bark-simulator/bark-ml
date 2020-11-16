@@ -1,11 +1,11 @@
-from bark_ml.library_wrappers.lib_tf_agents.networks.graph_network import GraphNetwork
-from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_gsnt_wrapper import GSNTWrapper
+from bark_ml.library_wrappers.lib_tf_agents.networks.gnns.graph_network import GraphNetwork
+from bark_ml.library_wrappers.lib_tf_agents.networks.gnns.interaction_wrapper import InteractionWrapper
 
 
 def init_gsnt(name, params):
-  return GSNTWrapper(
+  return InteractionWrapper(
     params=params, 
-    name=name + "_GSNT")
+    name=name + "_InteractionNetwork")
   
 def init_gnn_edge_cond(name, params):
   return GEdgeCondWrapper(
