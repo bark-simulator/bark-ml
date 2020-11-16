@@ -18,3 +18,4 @@ spektral>=0.6.0
 notebook 
 torch>=1.5.0
 graph-nets==1.1.0
+tensorflow-addons==0.11.2
