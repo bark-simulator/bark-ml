@@ -28,11 +28,10 @@ class ContinuousHighwayGym(SingleAgentRuntime, gym.Env):
       blueprint=cont_highway_bp, render=True)
 
 class DiscreteHighwayGym(SingleAgentRuntime, gym.Env):
-  def __init__(self):
-    params = ParameterServer()
+  def __init__(self, params = ParameterServer(), render=False):
     discrete_highway_bp = DiscreteHighwayBlueprint(params)
     SingleAgentRuntime.__init__(self,
-      blueprint=discrete_highway_bp, render=True)
+      blueprint=discrete_highway_bp, render=render)
 
 # merging
 class ContinuousMergingGym(SingleAgentRuntime, gym.Env):
@@ -43,11 +42,10 @@ class ContinuousMergingGym(SingleAgentRuntime, gym.Env):
       blueprint=cont_merging_bp, render=True)
 
 class DiscreteMergingGym(SingleAgentRuntime, gym.Env):
-  def __init__(self):
-    params = ParameterServer()
+  def __init__(self, params = ParameterServer(), render=False):
     discrete_merging_bp = DiscreteMergingBlueprint(params)
     SingleAgentRuntime.__init__(self,
-      blueprint=discrete_merging_bp, render=True)
+      blueprint=discrete_merging_bp, render=render)
 
 # intersection
 class ContinuousIntersectionGym(SingleAgentRuntime, gym.Env):
@@ -58,11 +56,14 @@ class ContinuousIntersectionGym(SingleAgentRuntime, gym.Env):
       blueprint=cont_merging_bp, render=True)
 
 class DiscreteIntersectionGym(SingleAgentRuntime, gym.Env):
-  def __init__(self):
-    params = ParameterServer()
+  def __init__(self, params = ParameterServer(), render=False):
     discrete_merging_bp = DiscreteIntersectionBlueprint(params)
     SingleAgentRuntime.__init__(self,
-      blueprint=discrete_merging_bp, render=True)
+      blueprint=discrete_merging_bp, render=render)
+
+class GymSingleAgentRuntime(SingleAgentRuntime, gym.Wrapper):
+    def __init__(self, *args, **kwargs):
+        SingleAgentRuntime.__init__(self, *args, **kwargs)
 
 
 # register gym envs
