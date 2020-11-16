@@ -12,7 +12,7 @@ class Tracer:
   def __init__(self):
     self._states = []
     self._trace_history = True
-    self._total_episodes = 1  # increases with terminal count
+    self._total_episodes = 0  # increases with terminal count
     self._total_collisions = 0
     self._total_goals_reached = 0
     self._total_reward = 0
@@ -55,18 +55,26 @@ class Tracer:
   
   @property
   def collision_rate(self):
+    if self._total_episodes == 0:
+      return 0
     return self._total_collisions/self._total_episodes
   
   @property
   def success_rate(self):
+    if self._total_episodes == 0:
+      return 0
     return self._total_goals_reached/self._total_episodes
   
   @property
   def mean_steps(self):
+    if self._total_episodes == 0:
+      return 0
     return self._total_steps/self._total_episodes
 
   @property
   def mean_reward(self):
+    if self._total_episodes == 0:
+      return 0
     return self._total_reward/self._total_episodes
   
   @property
