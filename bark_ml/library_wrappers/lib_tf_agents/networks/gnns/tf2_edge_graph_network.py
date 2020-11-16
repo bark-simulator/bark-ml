@@ -19,27 +19,6 @@ from bark_ml.observers.graph_observer_v2 import GraphObserverV2
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnns.graph_network import GraphNetwork
 
 
-def make_mlp():
-  return tf.keras.Sequential([
-    tf.keras.layers.Dense(
-      150, activation='relu', kernel_initializer='glorot_uniform',
-      bias_initializer=tf.keras.initializers.Constant(value=0.),
-      kernel_regularizer='l2', activity_regularizer='l2'),
-    tf.keras.layers.Dense(
-      150, activation='relu', kernel_initializer='glorot_uniform',
-      bias_initializer=tf.keras.initializers.Constant(value=0.),
-      kernel_regularizer='l2', activity_regularizer='l2'),
-    tf.keras.layers.Dense(
-      80, activation='tanh', kernel_initializer='glorot_uniform',
-      bias_initializer=tf.keras.initializers.Constant(value=0.),
-      kernel_regularizer='l2', activity_regularizer='l2')
-  ])
-  # return snt.Sequential([
-  #     snt.nets.MLP([LATENT_SIZE] * NUM_LAYERS, activate_final=True),
-  #     snt.LayerNorm(axis=-1, create_offset=True, create_scale=True)
-  # ])
-  # 
-
 class TF2GNNEdgeMLPWrapper(GraphNetwork):
   """
   Implements a graph lib.

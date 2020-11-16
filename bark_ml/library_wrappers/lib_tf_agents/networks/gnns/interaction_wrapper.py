@@ -22,7 +22,7 @@ from bark_ml.observers.graph_observer_v2 import GraphObserverV2
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnns.graph_network import GraphNetwork
 
 
-def make_mlp(name, embedding_size):
+def make_mlp(name, embedding_size=80):
   return tf.keras.Sequential([
     tf.keras.layers.Dense(
       80, activation='relu',
@@ -66,11 +66,11 @@ class InteractionWrapper(GraphNetwork):
     self._embedding_size = params["ML"]["InteractionNetwork"][
       "EmbeddingSize", "Embedding size of nodes", 40]
     self._node_mlps = [
-      make_mlp(name+"_node", self._embedding_size),
-      make_mlp(name+"_node", self._embedding_size)]
+      make_mlp(name+"_node_0", self._embedding_size),
+      make_mlp(name+"_node_1", self._embedding_size)]
     self._edge_mlps = [
-      make_mlp(name+"_edge", self._embedding_size),
-      make_mlp(name+"_edge", self._embedding_size)]
+      make_mlp(name+"_edge_0", self._embedding_size),
+      make_mlp(name+"_edge_1", self._embedding_size)]
     
     # initialize network & call func
     self._init_network(name)
@@ -78,11 +78,11 @@ class InteractionWrapper(GraphNetwork):
     
   def _init_network(self, name=None):
     self._gnn_core_0 = modules.InteractionNetwork(
-      edge_model_fn=lambda: self._node_mlps[0],
-      node_model_fn=lambda: self._edge_mlps[1])
+      edge_model_fn=lambda: self._edge_mlps[0],
+      node_model_fn=lambda: self._node_mlps[0])
     self._gnn_core_1 = modules.InteractionNetwork(
-      edge_model_fn=lambda: self._node_mlps[0],
-      node_model_fn=lambda: self._edge_mlps[1])
+      edge_model_fn=lambda: self._edge_mlps[1],
+      node_model_fn=lambda: self._node_mlps[1])
   
   @tf.function
   def _init_call_func(self, observations, training=False):
