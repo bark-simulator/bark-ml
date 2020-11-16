@@ -113,10 +113,10 @@ class GNNCriticNetwork(network.Network):
     if gnn is None:
       raise ValueError('`gnn` must not be `None`.')
 
-    # self._gnn = gnn(name=name, params=params)
-    self._gnn = InteractionWrapper(
-      params=params, 
-      name=name + "_InteractionNetwork")
+    self._gnn = gnn(name=name, params=params)
+    # self._gnn = InteractionWrapper(
+    #   params=params, 
+    #   name=name + "_InteractionNetwork")
     
     self._observation_layers = utils.mlp_layers(
       observation_conv_layer_params,

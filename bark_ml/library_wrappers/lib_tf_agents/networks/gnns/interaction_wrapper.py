@@ -22,14 +22,14 @@ from bark_ml.observers.graph_observer_v2 import GraphObserverV2
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnns.graph_network import GraphNetwork
 
 
-def make_mlp(name):
+def make_mlp(name, embedding_size):
   return tf.keras.Sequential([
     tf.keras.layers.Dense(
       80, activation='relu',
       bias_initializer=tf.constant_initializer(0.001),
       name=name+"_0"),
     tf.keras.layers.Dense(
-      80, activation='tanh',
+      embedding_size, activation='tanh',
       bias_initializer=tf.constant_initializer(0.001),
       name=name+"_1"),
     tf.keras.layers.LayerNormalization()
@@ -65,22 +65,24 @@ class InteractionWrapper(GraphNetwork):
       "NumMessagePassingLayers", "Number of message passing layers", 2]
     self._embedding_size = params["ML"]["InteractionNetwork"][
       "EmbeddingSize", "Embedding size of nodes", 40]
+    self._node_mlps = [
+      make_mlp(name+"_node", self._embedding_size),
+      make_mlp(name+"_node", self._embedding_size)]
+    self._edge_mlps = [
+      make_mlp(name+"_edge", self._embedding_size),
+      make_mlp(name+"_edge", self._embedding_size)]
     
-    self._layers = []
-    self._node_mlp = make_mlp(name+"_node")
-    self._edge_mlp = make_mlp(name+"_edge")
     # initialize network & call func
     self._init_network(name)
     self._call_func = self._init_call_func
     
   def _init_network(self, name=None):
-    # TODO: this might not be clonable
     self._gnn_core_0 = modules.InteractionNetwork(
-      edge_model_fn=lambda: self._node_mlp,
-      node_model_fn=lambda: self._edge_mlp)
-    # self._gnn_core_1 = modules.InteractionNetwork(
-    #   edge_model_fn=make_mlp,
-    #   node_model_fn=make_mlp)
+      edge_model_fn=lambda: self._node_mlps[0],
+      node_model_fn=lambda: self._edge_mlps[1])
+    self._gnn_core_1 = modules.InteractionNetwork(
+      edge_model_fn=lambda: self._node_mlps[0],
+      node_model_fn=lambda: self._edge_mlps[1])
   
   @tf.function
   def _init_call_func(self, observations, training=False):
@@ -90,7 +92,7 @@ class InteractionWrapper(GraphNetwork):
       graph_dims=self._graph_dims,
       dense=True)
     batch_size = tf.shape(observations)[0]
-    _, _, node_counts = tf.unique_with_counts(node_to_graph)
+    node_counts = tf.unique_with_counts(node_to_graph)[2]
     edge_counts = tf.math.square(node_counts)
     
     # tf.print(edge_indices)
@@ -104,7 +106,7 @@ class InteractionWrapper(GraphNetwork):
       n_edge=edge_counts) 
     
     latent = self._gnn_core_0(input_graph)
-    # latent = self._gnn_core_1(latent)
+    latent = self._gnn_core_1(latent)
     
     node_values = tf.reshape(latent.nodes, [batch_size, -1, self._embedding_size])
     return node_values
