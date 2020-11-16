@@ -25,7 +25,8 @@ test_suite(
     "//examples:continuous_env",
     "//examples:discrete_env",
     "//examples:tfa",
-    "//examples:tfa_gnn"
+    "//examples:tfa_gnn",
+    "//examples:tfa_counterfactual"
   ]
 )
 

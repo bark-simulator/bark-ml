@@ -12,7 +12,7 @@ class Tracer:
   def __init__(self):
     self._states = []
     self._trace_history = True
-    self._total_episodes = 0  # increases with terminal count
+    self._total_episodes = 1  # increases with terminal count
     self._total_collisions = 0
     self._total_goals_reached = 0
     self._total_reward = 0
@@ -40,7 +40,6 @@ class Tracer:
       eval_dict[key] = value
     if self._trace_history:
       self._states.append(eval_dict)
-    
     if eval_dict["is_terminal"]:
       self._total_episodes += 1
     if eval_dict["drivable_area"] or eval_dict["collision"]:

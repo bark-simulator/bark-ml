@@ -1,6 +1,3 @@
-
-
-
 py_test(
   name = "continuous_env",
   srcs = ["continuous_env.py"],
@@ -71,8 +68,8 @@ py_test(
 )
 
 py_test(
-  name = "tfa_gnn_counterfactual",
-  srcs = ["tfa_gnn_counterfactual.py"],
+  name = "tfa_counterfactual",
+  srcs = ["tfa_counterfactual.py"],
   data = ["@bark_project//bark/python_wrapper:core.so",
           "//bark_ml:generate_core",
           "//examples/example_params:example_params"],
