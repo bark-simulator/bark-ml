@@ -23,9 +23,8 @@ from bark_ml.evaluators.goal_reached import GoalReached
 from bark_ml.evaluators.goal_reached_guiding import GoalReachedGuiding
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
-from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteML
+from bark_ml.behaviors.discrete_behavior import *
 from bark_ml.core.observers import NearestObserver
-
 
 
 class ConfigurableScenarioBlueprint(Blueprint):
