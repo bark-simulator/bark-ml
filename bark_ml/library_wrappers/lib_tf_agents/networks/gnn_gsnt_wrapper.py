@@ -35,8 +35,6 @@ def make_mlp(name):
     tf.keras.layers.LayerNormalization()
   ])
 
-
-
 class GSNTWrapper(GNNWrapper):
   """
   Implements a graph lib.
@@ -67,6 +65,7 @@ class GSNTWrapper(GNNWrapper):
       "NumMessagePassingLayers", "Number of message passing layers", 2]
     self._embedding_size = params["ML"]["GSNT"][
       "EmbeddingSize", "Embedding size of nodes", 40]
+    
     self._layers = []
     self._node_mlp = make_mlp(name+"_node")
     self._edge_mlp = make_mlp(name+"_edge")
@@ -86,7 +85,6 @@ class GSNTWrapper(GNNWrapper):
   @tf.function
   def _init_call_func(self, observations, training=False):
     """Graph nets implementation"""
-    
     node_vals, edge_indices, node_to_graph, edge_vals = GraphObserver.graph(
       observations=observations, 
       graph_dims=self._graph_dims,
@@ -94,12 +92,6 @@ class GSNTWrapper(GNNWrapper):
     batch_size = tf.shape(observations)[0]
     _, _, node_counts = tf.unique_with_counts(node_to_graph)
     edge_counts = tf.math.square(node_counts)
-
-    # reshape node vals and edge vals
-    # TODO: change
-    # node_vals = tf.reshape(node_vals, [-1, 1, 7])
-    # edge_vals = tf.reshape(edge_vals, [-1, 1, 4])
-    # tf.print(tf.shape(node_vals))
     
     # tf.print(edge_indices)
     input_graph = GraphsTuple(

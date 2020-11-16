@@ -76,9 +76,8 @@ class TF2GNNEdgeMLPWrapper(GNNWrapper):
     self._call_func = self._init_call_func
     
   def _init_network(self):
-    # map bark-ml parameter keys to tf2_gnn parameter keys
+    # TODO: to make this work we need to create and store the layers here
     gnn_params = GNN.get_default_hyperparameters()
-    print(gnn_params)
     self._gnn = GNN(gnn_params)
   
   # @tf.function

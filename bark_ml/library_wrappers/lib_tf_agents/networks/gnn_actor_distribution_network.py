@@ -192,12 +192,11 @@ class GNNActorDistributionNetwork(network.DistributionNetwork):
       tf.summary.histogram("embedding", embeddings)
     
 
-    # state, network_state = self._encoder(
-    #   embeddings,
-    #   step_type=step_type,
-    #   network_state=network_state,
-    #   training=training)
-    state = embeddings
+    state, network_state = self._encoder(
+      embeddings,
+      step_type=step_type,
+      network_state=network_state,
+      training=training)
     
     outer_rank = nest_utils.get_outer_rank(observations, self.input_tensor_spec)
 
