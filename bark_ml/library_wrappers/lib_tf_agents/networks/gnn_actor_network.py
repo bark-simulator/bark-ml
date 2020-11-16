@@ -85,9 +85,6 @@ class GNNActorNetwork(network.Network):
       raise ValueError('`gnn` must not be `None`.')
 
     self._gnn = gnn(name=name, params=params)
-    # self._gnn = InteractionWrapper(
-    #   params=params, 
-    #   name=name + "_InteractionNetwork")
     
     self._encoder = encoding_network.EncodingNetwork(
       input_tensor_spec=tf.TensorSpec([None, self._gnn._embedding_size]),

@@ -42,6 +42,12 @@ TF-Agents SAC-example: `bazel run //examples:tfa`:
 <img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/bark-ml.gif" alt="BARK-ML Highway" />
 </p>
 
+
+## Experiment Runner
+
+The experiment runner provides a convenient way of running configurations in a reproducible way.
+For a more elaborate documentation have look [here](experiments/Readme.md).
+
 ## License
 
 BARK-ML specific code is distributed under MIT License.

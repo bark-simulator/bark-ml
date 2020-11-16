@@ -45,15 +45,11 @@ class InteractionWrapper(GraphNetwork):
                name='InteractionNetwork',
                output_dtype=tf.float32):
     """
-    Initializes a InteractionWrapper instance.
+    Initializes a InteractionNetwork-Wrapper instance.
 
     Args:
     params: A `ParameterServer` instance containing the parameters
       to configure the GNN.
-    graph_dims: A tuple containing the three elements
-      (num_nodes, len_node_features, len_edge_features) of the input graph.
-      Needed to properly convert observations back into a graph structure 
-      that can be processed by the GNN.
     name: Name of the instance.
     output_dtype: The dtype to which the GNN output is casted.
     """
@@ -84,8 +80,7 @@ class InteractionWrapper(GraphNetwork):
       self._graph_blocks.append(
         modules.InteractionNetwork(
           edge_model_fn=lambda: self._edge_mlps[i],
-          node_model_fn=lambda: self._node_mlps[i])
-      )
+          node_model_fn=lambda: self._node_mlps[i]))
   
   @tf.function
   def _init_call_func(self, observations, training=False):
