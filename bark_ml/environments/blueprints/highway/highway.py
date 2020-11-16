@@ -113,7 +113,7 @@ class ContinuousHighwayBlueprint(HighwayBlueprint):
 class DiscreteHighwayBlueprint(HighwayBlueprint):
   def __init__(self,
                params=None,
-               number_of_senarios=25,
+               num_scenarios=25,
                random_seed=0):
     ml_behavior = BehaviorDiscreteMacroActionsML(params)
     HighwayBlueprint.__init__(self,

@@ -22,10 +22,10 @@ from bark_ml.evaluators.goal_reached import GoalReached
 # from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML, \
-    BehaviorDiscreteMotionPrimitivesML
+  BehaviorDiscreteMotionPrimitivesML
 
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML, \
-    BehaviorDiscreteMotionPrimitivesML
+  BehaviorDiscreteMotionPrimitivesML
 from bark_ml.core.observers import NearestObserver
 
 
@@ -134,7 +134,7 @@ class ContinuousIntersectionBlueprint(IntersectionBlueprint):
 class DiscreteIntersectionBlueprint(IntersectionBlueprint):
   def __init__(self,
                params=None,
-               number_of_senarios=25,
+               num_scenarios=25,
                random_seed=0):
     ml_behavior = BehaviorDiscreteMacroActionsML(params)
     IntersectionBlueprint.__init__(self,

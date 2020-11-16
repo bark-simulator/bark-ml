@@ -39,7 +39,7 @@ class PyLibraryWrappersPyTorchAgentTests(unittest.TestCase):
   def test_behavior_wrapping(self):
     # create scenario
     params = ParameterServer()
-    bp = DiscreteHighwayBlueprint(params, number_of_senarios=10, random_seed=0)
+    bp = DiscreteHighwayBlueprint(params, num_scenarios=10, random_seed=0)
     env = SingleAgentRuntime(blueprint=bp, render=False)
     #env = gym.make("highway-v1", params=params)
     ml_behaviors = []
@@ -94,7 +94,7 @@ class PyLibraryWrappersPyTorchAgentTests(unittest.TestCase):
     params["ML"]["BaseAgent"]["NumSteps"] = 2
     params["ML"]["BaseAgent"]["MaxEpisodeSteps"] = 2
 
-    bp = DiscreteHighwayBlueprint(params, number_of_senarios=10, random_seed=0)
+    bp = DiscreteHighwayBlueprint(params, num_scenarios=10, random_seed=0)
     env = SingleAgentRuntime(blueprint=bp, render=False)
 
     # IQN Agent

@@ -126,7 +126,7 @@ class ContinuousMergingBlueprint(MergingBlueprint):
 class DiscreteMergingBlueprint(MergingBlueprint):
   def __init__(self,
                params=None,
-               number_of_senarios=25,
+               num_scenarios=25,
                random_seed=0):
     ml_behavior = BehaviorDiscreteMacroActionsML(params)
     MergingBlueprint.__init__(self,

@@ -49,7 +49,7 @@ if not os.path.exists("examples"):
 
 bark_params = ParameterServer(filename="examples/example_params/diadem_params.json")
 bp = DiscreteMergingBlueprint(bark_params,
-                                number_of_senarios=100,
+                                num_scenarios=100,
                                 random_seed=0)
 
 observer = NearestAgentsObserver(bark_params)
