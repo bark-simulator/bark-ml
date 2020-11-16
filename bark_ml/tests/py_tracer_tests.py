@@ -89,6 +89,9 @@ class PyTracerTests(unittest.TestCase):
       for i in range(0, 5):
         bark_world.Step(0.2)
         eval_dict = bark_world.Evaluate()
+        eval_dict["is_terminal"] = eval_dict["collision"] or \
+          eval_dict["goal_reached"] or eval_dict["drivable_area"]
+        eval_dict["reward"] = 0
         tracer.Trace(eval_dict, num_episode=j)
     self.assertEqual(len(tracer._states), 10)
     # print(tracer._states)

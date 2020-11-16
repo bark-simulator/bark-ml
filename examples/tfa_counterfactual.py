@@ -49,14 +49,14 @@ def run_configuration(argv):
   params = ParameterServer(filename=param_filename)
 
   # NOTE: Modify these paths to specify your preferred path for checkpoints and summaries
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/checkpoints/"
-  params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/checkpoints/"
+  # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/checkpoints/"
+  # params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/checkpoints/"
   params["Visualization"]["Agents"]["Alpha"]["Other"] = 0.2
   params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
   params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
   params["ML"]["VisualizeCfWorlds"] = False
   params["ML"]["VisualizeCfHeatmap"] = False
-  params["ML"]["ResultsFolder"] = "/Users/hart/Development/bark-ml/results/data/"
+  # params["ML"]["ResultsFolder"] = "/Users/hart/Development/bark-ml/results/data/"
   
   # viewer = MPViewer(
   #   params=params,
@@ -108,7 +108,6 @@ def run_configuration(argv):
     goal_reached = runner._tracer.success_rate
     runner._tracer.Save(
       params["ML"]["ResultsFolder"] + "evaluation_results_runner.pckl")
-    
     
   # store all used params of the training
   # params.Save("your_path_here/tfa_sac_gnn_params.json")

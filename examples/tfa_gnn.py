@@ -37,27 +37,17 @@ flags.DEFINE_enum("mode",
                   "Mode the configuration should be executed in.")
 
 def run_configuration(argv):
-  # Uncomment one of the following default parameter filename definitions,
-  # depending on which GNN library you'd like to use.
-
-  # File with standard parameters for tf2_gnn use:
-  # param_filename = "examples/example_params/tfa_sac_gnn_tf2_gnn_default.json"
-  
-  # File with standard parameters for spektral use:
-  param_filename = "examples/example_params/tfa_sac_gnn_spektral_default.json"
-  params = ParameterServer(filename=param_filename)
+  params = ParameterServer()
 
   # NOTE: Modify these paths to specify your preferred path for checkpoints and summaries
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/checkpoints_merge_spektral_att2/"
-  params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/checkpoints_merge_spektral_att2/"
+  # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/checkpoints_merge_spektral_att2/"
+  # params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/checkpoints_merge_spektral_att2/"
 
-  
   #viewer = MPViewer(
   #  params=params,
   #  x_range=[-35, 35],
   #  y_range=[-35, 35],
   #  follow_agent_id=True)
-  
   #viewer = VideoRenderer(
   #  renderer=viewer,
   #  world_step_time=0.2,
@@ -77,7 +67,7 @@ def run_configuration(argv):
   sac_agent = BehaviorGraphSACAgent(environment=env,
                                     observer=observer,
                                     params=params,
-                                    init_gnn='init_gat')
+                                    init_gnn='init_interaction_network')
   env.ml_behavior = sac_agent
   runner = SACRunner(params=params,
                      environment=env,

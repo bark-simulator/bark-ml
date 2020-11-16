@@ -42,25 +42,24 @@ def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/tfa_params.json")
   # params = ParameterServer()
   # NOTE: Modify these paths in order to save the checkpoints and summaries
-  params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/checkpoints_merging_nn/"
-  params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/checkpoints_merging_nn/"
+  # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/checkpoints_merging_nn/"
+  # params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/checkpoints_merging_nn/"
   params["Visualization"]["Agents"]["Alpha"]["Other"] = 0.2
   params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
   params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
   params["ML"]["VisualizeCfWorlds"] = False
   params["ML"]["VisualizeCfHeatmap"] = True
   params["World"]["remove_agents_out_of_map"] = False
-  params["ML"]["ResultsFolder"] = "/Users/hart/Development/bark-ml/results/data/"
 
   viewer = MPViewer(
    params=params,
    x_range=[-35, 35],
    y_range=[-35, 35],
    follow_agent_id=True)
-  viewer = VideoRenderer(
-   renderer=viewer,
-   world_step_time=0.2,
-   fig_path="/Users/hart/Development/bark-ml/videos/normal")
+  # viewer = VideoRenderer(
+  #  renderer=viewer,
+  #  world_step_time=0.2,
+  #  fig_path="/Users/hart/Development/bark-ml/videos/normal")
 
   # create environment
   bp = ContinuousMergingBlueprint(params,
@@ -69,18 +68,6 @@ def run_configuration(argv):
   env = SingleAgentRuntime(blueprint=bp,
                            render=False,
                            viewer=viewer)
-
-  # behavior_model_pool = []
-  # for count, a in enumerate([-2., 0., 2.]):
-  #   local_params = params.AddChild("local_"+str(count))
-  #   local_params["BehaviorConstantAcceleration"]["ConstAcceleration"] = a
-  #   behavior = BehaviorConstantAcceleration(local_params)
-  #   behavior_model_pool.append(behavior)
-  # env = CounterfactualRuntime(
-  #   blueprint=bp,
-  #   render=False,
-  #   params=params,
-  #   behavior_model_pool=behavior_model_pool)
   
   # PPO-agent
   # ppo_agent = BehaviorPPOAgent(environment=env,
