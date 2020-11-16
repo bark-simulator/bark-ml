@@ -22,6 +22,14 @@ flags.DEFINE_string("save_path",
                     "Path to the experiment json.")
 
 class ExperimentRunner:
+  """
+  The ExperimentRunner-Class provides an easy-to-use interface to
+  train, visualize, evaluate, and manage experiments.
+  
+  Additionally, it creates an Experiment only from a json that is
+  hashes before training. Thus, trained results can be matched to executions
+  and evaluations.
+  """
   def __init__(self, json_file, mode):
     self._logger = logging.getLogger()
     self._experiment_json = json_file
