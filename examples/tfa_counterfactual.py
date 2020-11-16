@@ -38,16 +38,6 @@ flags.DEFINE_enum("mode",
                   "Mode the configuration should be executed in.")
 
 def run_configuration(argv):
-  # Uncomment one of the following default parameter filename definitions,
-  # depending on which GNN library you'd like to use.
-
-  # File with standard parameters for tf2_gnn use:
-  # param_filename = "examples/example_params/tfa_sac_gnn_tf2_gnn_default.json"
-  
-  # File with standard parameters for spektral use:
-  param_filename = "examples/example_params/tfa_sac_gnn_spektral_default.json"
-  params = ParameterServer(filename=param_filename)
-
   # NOTE: Modify these paths to specify your preferred path for checkpoints and summaries
   # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/checkpoints/"
   # params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/checkpoints/"
@@ -98,7 +88,7 @@ def run_configuration(argv):
     runner.Train()
   elif FLAGS.mode == "visualize":
     runner._environment._max_col_rate = 0.
-    runner.Run(num_episodes=5, render=True)
+    runner.Run(num_episodes=1, render=True)
   elif FLAGS.mode == "evaluate":
     for cr in np.arange(0, 1, 0.1):
       runner._environment._max_col_rate = cr
