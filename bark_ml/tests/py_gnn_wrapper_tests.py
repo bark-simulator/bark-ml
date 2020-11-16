@@ -15,11 +15,11 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.observers.graph_observer import GraphObserver
-from bark_ml.library_wrappers.lib_tf_agents.networks import GNNWrapper
+from bark_ml.library_wrappers.lib_tf_agents.networks import GraphNetwork
 from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorGraphSACAgent
 from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner
 
-class PyGNNWrapperTests(unittest.TestCase):
+class PyGraphNetworkTests(unittest.TestCase):
   def test_gnn_parameters(self):
     params = ParameterServer()
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["NumMpLayers"] = 4
@@ -27,7 +27,7 @@ class PyGNNWrapperTests(unittest.TestCase):
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["message_calculation_class"] = "gnn_edge_mlp"
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["global_exchange_mode"] = "mean"
     
-    gnn_library = GNNWrapper.SupportedLibrary.spektral
+    gnn_library = GraphNetwork.SupportedLibrary.spektral
     params["ML"]["BehaviorGraphSACAgent"]["GNN"]["Library"] = gnn_library
 
     
@@ -49,7 +49,7 @@ class PyGNNWrapperTests(unittest.TestCase):
 
   def _test_graph_dim_validation_accepts_observer_dims(self):
     observer = GraphObserver()
-    gnn = GNNWrapper(graph_dims=observer.graph_dimensions)
+    gnn = GraphNetwork(graph_dims=observer.graph_dimensions)
 
     # verify no exception is raised and the dims are applied
     self.assertEqual(gnn._graph_dims, observer.graph_dimensions)
@@ -60,7 +60,7 @@ class PyGNNWrapperTests(unittest.TestCase):
 
     for dims in invalid_dim_sets:
       with self.assertRaises(ValueError):
-        GNNWrapper(graph_dims=dims)
+        GraphNetwork(graph_dims=dims)
       
   def test_gnn_library_validation(self):
     params = ParameterServer()
@@ -68,23 +68,23 @@ class PyGNNWrapperTests(unittest.TestCase):
 
     with self.assertRaises(ValueError):
       params["Library"] = "cool_but_unsupported_lib"
-      GNNWrapper(params, graph_dims)
+      GraphNetwork(params, graph_dims)
 
     # assert no exception
-    params["Library"] = GNNWrapper.SupportedLibrary.spektral
-    GNNWrapper(params, graph_dims)
+    params["Library"] = GraphNetwork.SupportedLibrary.spektral
+    GraphNetwork(params, graph_dims)
 
     # assert no exception
-    params["Library"] = GNNWrapper.SupportedLibrary.tf2_gnn
-    GNNWrapper(params, graph_dims)
+    params["Library"] = GraphNetwork.SupportedLibrary.tf2_gnn
+    GraphNetwork(params, graph_dims)
 
     # assert no exception when using the string value
     params["Library"] = "spektral"
-    GNNWrapper(params, graph_dims)
+    GraphNetwork(params, graph_dims)
 
     # assert no exception
     params["Library"] = "tf2_gnn"
-    GNNWrapper(params, graph_dims)
+    GraphNetwork(params, graph_dims)
 
 if __name__ == '__main__':
   unittest.main()

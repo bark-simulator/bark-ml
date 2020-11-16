@@ -7,16 +7,16 @@ py_library(
             "gnn_critic_network.py"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
     imports = ["../external/bark_project/bark/python_wrapper/"],
-    deps = [":gnn_wrappers"],
+    deps = [":graph_networks"],
     visibility = ["//visibility:public"],
 )
 
 py_library(
-    name = "gnn_wrappers",
+    name = "graph_networks",
     srcs = ["__init__.py",
-            "gnn_wrapper.py",
+            "graph_network.py",
             "gnn_gsnt_wrapper.py",
-            "gnn_tf2_edge_gnn_wrapper.py",
+            "gnn_tf2_edge_graph_network.py",
             "gnn_edge_conditioned_wrapper.py"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
     imports = ["../external/bark_project/bark/python_wrapper/"],

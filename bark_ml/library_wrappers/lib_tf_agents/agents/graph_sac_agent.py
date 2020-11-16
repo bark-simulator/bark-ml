@@ -19,34 +19,8 @@ from tf_agents.trajectories import time_step as ts
 from bark_ml.library_wrappers.lib_tf_agents.networks import GNNActorNetwork, GNNCriticNetwork
 from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAAgent
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
-from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_gat_wrapper import GATWrapper
-from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_edge_conditioned_wrapper import GEdgeCondWrapper
-from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_gsnt_wrapper import GSNTWrapper
-
-
-def init_gsnt(name, params):
-  return GSNTWrapper(
-    params=params, 
-    name=name + "_GSNT")
+from bark_ml.library_wrappers.lib_tf_agents.agents.gnn_initializers import init_gsnt, init_gnn_edge_cond
   
-def init_gnn_edge_cond(name, params):
-  return GEdgeCondWrapper(
-    params=params, 
-    name=name + "_GEdgeCond")
-
-def init_gat(name, params):
-  """
-  Returns a new `GATdWrapper`instance with the given `name`.
-  We need this function to be able to prefix the variable
-  names with the names of the parent actor or critic network,
-  by passing in this function and initializing the instance in 
-  the parent network.
-  """
-  return GATWrapper(
-    params=params, 
-    name=name + "_GAT")
-  
-
 
 class BehaviorGraphSACAgent(BehaviorTFAAgent):
   """
@@ -82,7 +56,6 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
 
   def GetAgent(self, env, params):
     self._params["ML"]["GraphDims"] = self._observer.graph_dimensions
-    # NOTE: MIGHT NOT HAVE THE ENV!
     
     # actor network
     actor_net = GNNActorNetwork(

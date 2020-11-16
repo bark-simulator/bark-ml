@@ -13,7 +13,7 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.observers.graph_observer import GraphObserver
 
 
-class GNNWrapper(tf.keras.Model):
+class GraphNetwork(tf.keras.Model):
   """
   Implements a graph neural network.
 
@@ -26,7 +26,7 @@ class GNNWrapper(tf.keras.Model):
                name='GNN',
                output_dtype=tf.float32):
     """
-    Initializes a GNNWrapper instance.
+    Initializes a GraphNetwork instance.
 
     Args:
     params: A `ParameterServer` instance containing the parameters
@@ -38,7 +38,7 @@ class GNNWrapper(tf.keras.Model):
     name: Name of the instance.
     output_dtype: The dtype to which the GNN output is casted.
     """
-    super(GNNWrapper, self).__init__(name=name)
+    super(GraphNetwork, self).__init__(name=name)
     self.output_dtype = output_dtype
     self._params = params
     try:

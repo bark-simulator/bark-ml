@@ -13,10 +13,10 @@ from spektral.layers import EdgeConditionedConv
 # bark-ml
 from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.observers.graph_observer import GraphObserver
-from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_wrapper import GNNWrapper
+from bark_ml.library_wrappers.lib_tf_agents.networks.graph_network import GraphNetwork
 
 
-class GEdgeCondWrapper(GNNWrapper):
+class GEdgeCondWrapper(GraphNetwork):
   """
   Implements a Edge Conditioned Graph Neural Network (ECGNN)
   """
@@ -26,7 +26,7 @@ class GEdgeCondWrapper(GNNWrapper):
                name='EdgeCond',
                output_dtype=tf.float32):
     """
-    Initializes a GNNWrapper instance.
+    Initializes a GraphNetwork instance.
 
     Args:
     params: A `ParameterServer` instance containing the parameters

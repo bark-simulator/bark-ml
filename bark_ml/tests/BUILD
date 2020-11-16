@@ -95,8 +95,8 @@ py_test(
 )
 
 py_test(
-    name = "py_gnn_wrapper_tests",
-    srcs = ["py_gnn_wrapper_tests.py"],
+    name = "py_graph_network_tests",
+    srcs = ["py_graph_network_tests.py"],
     data = ["@bark_project//bark/python_wrapper:core.so",
             "//bark_ml:generate_core"],
     imports = ["../external/bark_project/bark/python_wrapper/"],

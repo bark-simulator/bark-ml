@@ -13,7 +13,7 @@ test_suite(
   name = "graph_tests",
   tests = [
     "//bark_ml/tests:py_graph_observer_tests",
-    "//bark_ml/tests:py_gnn_wrapper_tests",
+    "//bark_ml/tests:py_graph_network_tests",
     "//bark_ml/tests/capability_gnn_actor:py_gnn_actor_tests",
   ]
 )

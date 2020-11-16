@@ -26,7 +26,7 @@ from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent,\
   BehaviorPPOAgent, BehaviorGraphSACAgent
 from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner
 from bark_ml.observers.graph_observer import GraphObserver
-from bark_ml.library_wrappers.lib_tf_agents.networks.gnn_wrapper import GNNWrapper 
+from bark_ml.library_wrappers.lib_tf_agents.networks.graph_network import GraphNetwork 
 
 # Supervised specific imports
 from bark_ml.tests.capability_gnn_actor.data_generation import DataGenerator
