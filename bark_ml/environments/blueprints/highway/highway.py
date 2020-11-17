@@ -27,7 +27,6 @@ from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMotionPrimitives
 from bark_ml.core.observers import NearestObserver
 
 
-
 class HighwayLaneCorridorConfig(LaneCorridorConfig):
   def __init__(self,
                params=None,

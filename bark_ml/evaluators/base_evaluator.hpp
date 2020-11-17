@@ -48,7 +48,7 @@ using bark::models::dynamic::StateDefinition::X_POSITION;
 using bark::models::dynamic::StateDefinition::Y_POSITION;
 using bark::models::dynamic::StateDefinition::THETA_POSITION;
 using bark::models::dynamic::StateDefinition::VEL_POSITION;
-using ObservedState = Eigen::Matrix<double, 1, Eigen::Dynamic>;
+using ObservedState = Eigen::Matrix<float, 1, Eigen::Dynamic>;
 using bark::commons::transformation::FrenetPosition;
 using State = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 

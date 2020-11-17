@@ -32,7 +32,7 @@ using bark::commons::ParamsPtr;
 using spaces::Box;
 using bark::world::WorldPtr;
 using bark::world::ObservedWorldPtr;
-using ObservedState = Eigen::Matrix<double, 1, Eigen::Dynamic>;
+using ObservedState = Eigen::Matrix<float, 1, Eigen::Dynamic>;
 
 class BaseObserver {
  public:

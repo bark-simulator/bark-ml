@@ -79,7 +79,6 @@ class SingleAgentRuntime(Runtime):
     reward, done, info = self._evaluator.Evaluate(
       observed_world=observed_world,
       action=action)
-    
 
     return observed_next_state, reward, done, info
 
