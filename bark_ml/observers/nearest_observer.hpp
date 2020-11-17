@@ -46,9 +46,9 @@ using bark::models::dynamic::StateDefinition::X_POSITION;
 using bark::models::dynamic::StateDefinition::Y_POSITION;
 using bark::models::dynamic::StateDefinition::THETA_POSITION;
 using bark::models::dynamic::StateDefinition::VEL_POSITION;
-using ObservedState = Eigen::Matrix<float, 1, Eigen::Dynamic>;
+using ObservedState = Eigen::Matrix<double, 1, Eigen::Dynamic>;
 using bark::commons::transformation::FrenetPosition;
-using State = Eigen::Matrix<float, Eigen::Dynamic, 1>;
+using State = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 
 
 class NearestObserver : public BaseObserver {
@@ -68,13 +68,13 @@ class NearestObserver : public BaseObserver {
       observation_len_ = nearest_agent_num_ * state_size_;
   }
 
-  float Norm(const float val, const float mi, const float ma) const {
+  double Norm(const double val, const double mi, const double ma) const {
     return (val - mi)/(ma - mi);
   }
 
   ObservedState FilterState(const State& state) const {
     ObservedState ret_state(1, state_size_);
-    const float normalized_angle = Norm0To2PI(state(THETA_POSITION));
+    const double normalized_angle = Norm0To2PI(state(THETA_POSITION));
     ret_state << Norm(state(X_POSITION), min_x_, max_x_),
                  Norm(state(Y_POSITION), min_y_, max_y_),
                  Norm(normalized_angle, min_theta_, max_theta_),
@@ -92,10 +92,10 @@ class NearestObserver : public BaseObserver {
       observed_world->CurrentEgoPosition(), nearest_agent_num_);
 
     // sort agents by distance and distance < max_dist_
-    std::map<float, AgentPtr, std::greater<float>> distance_agent_map;
+    std::map<double, AgentPtr, std::greater<double>> distance_agent_map;
     for (const auto& agent : nearest_agents) {
       const auto& agent_state = agent.second->GetCurrentPosition();
-      float distance = Distance(
+      double distance = Distance(
         observed_world->CurrentEgoPosition(), agent_state);
       if (distance < max_dist_)
         distance_agent_map[distance] = agent.second;
@@ -130,18 +130,18 @@ class NearestObserver : public BaseObserver {
     return world;
   }
 
-  Box<float> ObservationSpace() const {
-    Matrix_t<float> low(1, observation_len_);
+  Box<double> ObservationSpace() const {
+    Matrix_t<double> low(1, observation_len_);
     low.setZero();
-    Matrix_t<float> high(1, observation_len_);
+    Matrix_t<double> high(1, observation_len_);
     high.setOnes();
     std::tuple<int> shape{observation_len_};
-    return Box<float>(low, high, shape);
+    return Box<double>(low, high, shape);
   }
 
  private:
   int state_size_, nearest_agent_num_, observation_len_;
-  float min_theta_, max_theta_, min_vel_, max_vel_, max_dist_,
+  double min_theta_, max_theta_, min_vel_, max_vel_, max_dist_,
          min_x_, max_x_, min_y_, max_y_;
 };
 

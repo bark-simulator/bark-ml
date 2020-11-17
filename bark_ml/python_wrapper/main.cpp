@@ -64,13 +64,13 @@ void python_evaluators(py::module m) {
 }
 
 void python_spaces(py::module m) {
-  py::class_<Box<float>, std::shared_ptr<Box<float>>>(m, "Box")
-    .def(py::init<const Matrix_t<float>&,
-                  const Matrix_t<float>&,
+  py::class_<Box<double>, std::shared_ptr<Box<double>>>(m, "Box")
+    .def(py::init<const Matrix_t<double>&,
+                  const Matrix_t<double>&,
                   const std::tuple<int>&>())
-    .def_property_readonly("low", &Box<float>::low)
-    .def_property_readonly("high", &Box<float>::high)
-    .def_property_readonly("shape", &Box<float>::shape);
+    .def_property_readonly("low", &Box<double>::low)
+    .def_property_readonly("high", &Box<double>::high)
+    .def_property_readonly("shape", &Box<double>::shape);
 }
 
 PYBIND11_MODULE(core, m) {

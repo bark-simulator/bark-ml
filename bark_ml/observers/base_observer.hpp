@@ -32,7 +32,7 @@ using bark::commons::ParamsPtr;
 using spaces::Box;
 using bark::world::WorldPtr;
 using bark::world::ObservedWorldPtr;
-using ObservedState = Eigen::Matrix<float, 1, Eigen::Dynamic>;
+using ObservedState = Eigen::Matrix<double, 1, Eigen::Dynamic>;
 
 class BaseObserver {
  public:
@@ -42,7 +42,7 @@ class BaseObserver {
   virtual ObservedState Observe(
     const ObservedWorldPtr& observed_world) const = 0;
   virtual WorldPtr Reset(const WorldPtr& world) = 0;
-  virtual Box<float> ObservationSpace() const = 0;
+  virtual Box<double> ObservationSpace() const = 0;
 
  private:
   ParamsPtr params_;

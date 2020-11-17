@@ -44,8 +44,8 @@ class ModelLoader {
     return module_loaded_;
   }
 
-  std::vector<float> Inference(std::vector<float> state) {
-    std::vector<float> actions(action_space_);
+  std::vector<double> Inference(std::vector<double> state) {
+    std::vector<double> actions(action_space_);
 
     if (!module_loaded_)
       throw std::runtime_error("Model not loaded!");

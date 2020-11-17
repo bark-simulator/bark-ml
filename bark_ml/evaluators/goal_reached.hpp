@@ -52,12 +52,12 @@ using bark::models::dynamic::StateDefinition::X_POSITION;
 using bark::models::dynamic::StateDefinition::Y_POSITION;
 using bark::models::dynamic::StateDefinition::THETA_POSITION;
 using bark::models::dynamic::StateDefinition::VEL_POSITION;
-using ObservedState = Eigen::Matrix<float, 1, Eigen::Dynamic>;
+using ObservedState = Eigen::Matrix<double, 1, Eigen::Dynamic>;
 using bark::commons::transformation::FrenetPosition;
-using State = Eigen::Matrix<float, Eigen::Dynamic, 1>;
+using State = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 using bark_ml::evaluators::BaseEvaluator;
 
-using Reward = float;
+using Reward = double;
 using Done = bool;
 using EvalResults = std::map<std::string, EvaluationReturn>;
 
@@ -96,7 +96,7 @@ class GoalReachedEvaluator : public BaseEvaluator {
       int step_count = boost::get<int>(eval_results["step_count"]);
       if (success || collision || step_count > max_steps_)
         is_terminal = true;
-      float reward = collision * col_penalty_ + success * goal_reward_;
+      double reward = collision * col_penalty_ + success * goal_reward_;
       return {reward, is_terminal, eval_results};
     }
 
@@ -107,7 +107,7 @@ class GoalReachedEvaluator : public BaseEvaluator {
   }
 
  private:
-  float col_penalty_, goal_reward_;
+  double col_penalty_, goal_reward_;
   int max_steps_;
 };
 
