@@ -104,6 +104,8 @@ class GoalReachedGuiding(StateEvaluator):
     # determine whether the simulation should terminate
     if success or collision or step_count > self._max_steps:
       done = True
+    if collision:
+      success = 0
     guiding_reward = self.CalculateGuidingReward(observed_world, action)
     # calculate reward
     reward = collision * self._col_penalty + \

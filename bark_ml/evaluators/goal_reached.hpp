@@ -96,6 +96,8 @@ class GoalReachedEvaluator : public BaseEvaluator {
       int step_count = boost::get<int>(eval_results["step_count"]);
       if (success || collision || step_count > max_steps_)
         is_terminal = true;
+      if (collision)
+        success = 0;
       double reward = collision * col_penalty_ + success * goal_reward_;
       return {reward, is_terminal, eval_results};
     }

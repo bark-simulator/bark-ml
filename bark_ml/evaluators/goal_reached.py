@@ -51,6 +51,8 @@ class GoalReached(StateEvaluator):
     # determine whether the simulation should terminate
     if success or collision or step_count > self._max_steps:
       done = True
+    if collision:
+      success = 0
     # calculate reward
     reward = collision * self._col_penalty + \
       success * self._goal_reward

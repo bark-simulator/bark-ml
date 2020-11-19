@@ -110,11 +110,9 @@
     },
     "ML": {
         "BehaviorTFAAgents": {
-            "CheckpointPath": "/Users/hart/Development/bark-ml/experiments/runs/gcn_three_layers/ckpts/",
             "NumCheckpointsToKeep": 3
         },
         "TFARunner": {
-            "SummaryPath": "/Users/hart/Development/bark-ml/experiments/runs/gcn_three_layers/summ/",
             "EvaluationSteps": 25,
             "InitialCollectionEpisodes": 50,
             "CollectionEpisodesPerStep": 1

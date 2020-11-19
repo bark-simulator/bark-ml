@@ -61,7 +61,7 @@ class MergingBlueprint(Blueprint):
     left_lane = MergingLaneCorridorConfig(
       params=params,
       road_ids=[0, 1],
-      ds_min=5.,
+      ds_min=8.,
       ds_max=15.,
       min_vel=9.,
       max_vel=11.,
@@ -73,7 +73,7 @@ class MergingBlueprint(Blueprint):
       params=params,
       road_ids=[0, 1],
       lane_corridor_id=1,
-      ds_min=5.,
+      ds_min=8.,
       ds_max=15.,
       s_min=5.,
       s_max=25.,
