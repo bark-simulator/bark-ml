@@ -30,11 +30,8 @@ from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent.demonstrations import Demo
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
 
-from bark.world.tests.python_behavior_model import PythonDistanceBehavior
+import bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.tests.test_demo_behavior
 
-class TestDemoBehavior(PythonDistanceBehavior):
-  def GetLastMacroAction(self):
-    return 22
 
 class DemonstrationCollectorTests(unittest.TestCase):
   def test_collect_demonstrations(self):
@@ -44,9 +41,13 @@ class DemonstrationCollectorTests(unittest.TestCase):
     env._observer = NearestAgentsObserver(params)
     env._action_wrapper = BehaviorDiscreteMacroActionsML(params)
     
-    demo_behavior = TestDemoBehavior(params)
+    demo_behavior = bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.\
+            tests.test_demo_behavior.TestDemoBehavior(params)
     collector = DemonstrationCollector()
-    collector.CollectDemonstrations(env, demo_behavior, 2, 10, "./test_demo_creation")
+    collection_result = collector.CollectDemonstrations(env, demo_behavior, 2, 10, "./test_demo_collected", \
+           use_mp_runner=False, runner_init_params={"deepcopy" : False})
+    self.assertTrue(os.path.exists("./test_demo_collected"))
+    print(collection_result.get_data_frame().to_string())
 
 if __name__ == '__main__':
   unittest.main()

@@ -14,9 +14,16 @@ py_test(
     visibility = ["//visibility:public"],
 )
 
+py_library(
+   name = "test_demo_behavior",
+   srcs = ["test_demo_behavior.py"]
+)
+
 py_test(
     name = "demonstration_collector_test",
-    srcs = ["demonstration_collector_test.py"],
+    srcs = [
+            "demonstration_collector_test.py"
+            ],
     data = [
             "@bark_project//bark:generate_core"
             ],
@@ -28,6 +35,7 @@ py_test(
             "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent/demonstrations:demonstrations",
             "//bark_ml/commons:py_spaces",
             "@bark_project//bark/world/tests:python_behavior_model",
+            ":test_demo_behavior"
            ],
     visibility = ["//visibility:public"],
 )
