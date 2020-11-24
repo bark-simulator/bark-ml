@@ -19,10 +19,9 @@ from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.training_benchmark_database \
 
 
 class DemonstrationEvaluator(BaseEvaluator):
-  def __init__(self, demo_behavior, observer):
+  def __init__(self, nn_observer):
     super(DemonstrationEvaluator, self).__init__()
-    self._demo_behavior = demo_behavior
-    self._observer = observer
+    self._nn_observer = observer
     self._agent_id = None
     self._last_nn_state = None
     self.episode_experiences = []
@@ -30,18 +29,20 @@ class DemonstrationEvaluator(BaseEvaluator):
   def SetAgentId(self, agent_id):
     self._agent_id = agent_id
 
-  def GetNNInputState(self, observed_world):
-    pass
+  def GetNNInputState(self, world):
+    observed_world = world.Observe([self._agent_id])[0]
+    return self._nn_observer.Observe(observed_world)
 
-  def GetAction(self, observed_world):
-    pass
+  def GetAction(self, world):
+    return world.agents[self._agent_id].behavior.GetLastMacroAction()
 
-  def Evaluate(self, observed_world):
-    if isinstance(observed_world, World):
-
-    experience = self.GetExperience(observed_world)
-    self.episode_experiences.append(experience)
-    return self.episode_experiences
+  def Evaluate(self, world):
+    if isinstance(world, World):
+      experience = self.GetExperience(world)
+      self.episode_experiences.append(experience)
+      return self.episode_experiences
+    else:
+      raise NotImplementedError()
 
   def MakeExperienceTuple(self, nn_state, action, next_nn_state):
     demo = True
@@ -55,18 +56,45 @@ class DemonstrationEvaluator(BaseEvaluator):
     self._last_nn_state = current_nn_state
 
 
-def CreateDemonstrations(env, num_episodes, max_episode_steps, demo_eval_type, params, **kwargs):
-  evaluators = {**default_training_evaluators() ,"demonstrations" : {"type" : demo_eval_type, "params" : params}}
-  terminal_when = default_terminal_criteria(max_episode_steps)
-  benchmark = BenchmarkRunnerMP(evaluators=evaluators,
-                                terminal_when=terminal_when,
-                                behaviors=behaviors_tested,
-                                log_eval_avg_every=10,
-                                num_cpus=4,
-                                checkpoint_dir="checkpoints2/",
-                                merge_existing=False)
+class DemonstrationCollector:
+  def __init__(self):
+    self.collection_result = None
+
+  @staticmethod
+  def load(filename):
+    pass
+
+  def _GetDefaultRunnerInitParams():
+    return {"log_eval_avg_every" : 5}
+
+  def _GetDefaultRunnerRunParams():
+    return {"maintain_history" : false, "checkpoint_every" : 10}
+
+  def CollectDemonstrations(env, demo_behavior, num_episodes, max_episode_steps, filename, runner_init_params = None,
+      runner_run_params=None):
+    demo_evaluator = DemonstrationEvaluator(env._observer)
+    evaluators = {**default_training_evaluators(), "demo_evaluator" : demo_evaluator}
+    terminal_when = default_terminal_criteria(max_episode_steps)
+
+    runner_init_params = self._GetDefaultRunnerInitParams()
+    runner_init_params.update(runner_init_params)
+    runner = BenchmarkRunnerMP(evaluators=evaluators,
+                                  terminal_when=terminal_when,
+                                  behaviors={"demo_behavior" : demo_behavior},
+                                  num_scenarios = num_episodes,
+                                  **runner_init_params)
+    runner_run_params = self._GetDefaultRunnerRunParams()
+    runner_run_params.update(runner_run_params)
+    self.collection_result = runner.run(runner_run_params)
+    self.collection_result.dump(filename, dump_histories=False, dump_configs=False)
+
+  def ProcessCollectionResult(self):
+    pass
 
 
+
+  def GetDemonstrationExperiences(self):
+    pass
   
    
 

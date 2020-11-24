@@ -5,8 +5,7 @@ py_library(
         ":base_agent",
         ":fqf_agent",
         ":iqn_agent",
-        ":qrdqn_agent",
-        ":training_benchmark_database"
+        ":qrdqn_agent"
     ],
     visibility = ["//visibility:public"],
 )
@@ -21,7 +20,7 @@ py_library(
     ],
     deps = [
         "@bark_project//bark/benchmark:benchmark_runner",
-        "@bark_ml_project//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent:agents",
+        "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent:agents",
     ],
     visibility = ["//visibility:public"],
 )

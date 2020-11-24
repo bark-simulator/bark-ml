@@ -2,7 +2,7 @@ py_test(
     name = "save_load_test",
     srcs = ["save_load_test.py"],
     data = [
-            "@bark_project//bark/python_wrapper:core.so"
+            "@bark_project//bark:generate_core"
             ],
     imports = ["../external/bark_project/bark/python_wrapper/",
               ],
@@ -10,6 +10,24 @@ py_test(
             "//bark_ml/environments:gym",
             "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent:agents",
             "//bark_ml/commons:py_spaces"
+           ],
+    visibility = ["//visibility:public"],
+)
+
+py_test(
+    name = "demonstration_collector_test",
+    srcs = ["demonstration_collector_test.py"],
+    data = [
+            "@bark_project//bark:generate_core"
+            ],
+    imports = ["../external/bark_project/bark/python_wrapper/",
+              ],
+    deps = ["//bark_ml/environments:single_agent_runtime",
+            "//bark_ml/environments:gym",
+            "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent:agents",
+            "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent/demonstrations:demonstrations",
+            "//bark_ml/commons:py_spaces",
+            "@bark_project//bark/world/tests:python_behavior_model",
            ],
     visibility = ["//visibility:public"],
 )
