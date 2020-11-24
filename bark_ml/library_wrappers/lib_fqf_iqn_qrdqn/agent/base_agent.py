@@ -83,8 +83,11 @@ class TrainingBenchmark:
     return eval_result1["mean_return"] > than_eval_result2["mean_return"]
 
 
+
+
 class BaseAgent(BehaviorModel):
-  def __init__(self, agent_save_dir=None, env=None, params=None, training_benchmark=None, checkpoint_load=None):
+  def __init__(self, agent_save_dir=None, env=None, params=None, training_benchmark=None, checkpoint_load=None, 
+              demonstrations = None):
     BehaviorModel.__init__(self, params)
     self._params = params
     self._env = env

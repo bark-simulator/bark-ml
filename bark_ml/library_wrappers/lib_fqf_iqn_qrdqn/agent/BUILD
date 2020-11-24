@@ -6,6 +6,22 @@ py_library(
         ":fqf_agent",
         ":iqn_agent",
         ":qrdqn_agent",
+        ":training_benchmark_database"
+    ],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "training_benchmark_database",
+    srcs = [
+        "training_benchmark_database.py"
+    ],
+    data = [
+        "@bark_project//bark:generate_core",
+    ],
+    deps = [
+        "@bark_project//bark/benchmark:benchmark_runner",
+        "@bark_ml_project//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent:agents",
     ],
     visibility = ["//visibility:public"],
 )
@@ -13,8 +29,11 @@ py_library(
 
 py_library(
     name = "base_agent",
-    srcs = ["base_agent.py"],
-    data = ["@bark_project//bark/python_wrapper:core.so"],
+    srcs = ["base_agent.py"
+    ],
+    data = [
+        "@bark_project//bark:generate_core"
+        ],
     deps = [
         "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/memory:init",
     ],

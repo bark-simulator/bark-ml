@@ -13,3 +13,27 @@ py_test(
            ],
     visibility = ["//visibility:public"],
 )
+
+py_test(
+    name = "test_training_benchmark",
+    srcs = ["test_training_benchmark.py"],
+    data = [
+        "//configuration/database",
+        "@bark_ml_project//bark_ml:generate_core",
+        "@bark_project//bark:generate_core",
+    ],
+    deps = [
+        "@bark_ml_project//bark_ml/environments:blueprints",
+        "@bark_ml_project//bark_ml/environments:gym",
+        "@bark_ml_project//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent:agents",
+        "@bark_project//bark/runtime/viewer:py_viewer",
+        "@benchmark_database//load:benchmark_database",
+        "@benchmark_database//serialization:database_serializer",
+        "@hythe//libs/blueprint",
+        "@hythe//libs/environments:gym",
+        "@hythe//libs/experiments:experiment",
+        "@hythe//libs/evaluation:evaluation",
+        "@planner_uct//bark_mcts/runtime/scenario:config_readers",
+        "@planner_uct//bark_mcts/runtime/scenario:scenario_set_generation",
+    ],
+)
