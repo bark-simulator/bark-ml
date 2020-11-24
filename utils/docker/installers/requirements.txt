@@ -17,3 +17,4 @@ tf2_gnn>=2.4.0
 spektral>=0.6.0
 notebook 
 torch>=1.5.0
+ray==0.8.5

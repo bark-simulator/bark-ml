@@ -26,7 +26,7 @@ from bark_ml.environments.blueprints import \
   DiscreteHighwayBlueprint, DiscreteMergingBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 import bark_ml.environments.gym
-from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.demonstrations import DemonstrationCollector
+from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent.demonstrations import DemonstrationCollector
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
 
@@ -38,11 +38,13 @@ class TestDemoBehavior(PythonDistanceBehavior):
 
 class DemonstrationCollectorTests(unittest.TestCase):
   def test_collect_demonstrations(self):
+    params = ParameterServer()
     bp = DiscreteHighwayBlueprint(params, number_of_senarios=10, random_seed=0)
     env = SingleAgentRuntime(blueprint=bp, render=False)
     env._observer = NearestAgentsObserver(params)
     env._action_wrapper = BehaviorDiscreteMacroActionsML(params)
     
+    demo_behavior = TestDemoBehavior(params)
     collector = DemonstrationCollector()
     collector.CollectDemonstrations(env, demo_behavior, 2, 10, "./test_demo_creation")
 

@@ -14,14 +14,14 @@ from bark.core.world import *
 from bark.benchmark.benchmark_runner import BenchmarkRunner, BehaviorConfig
 from bark.benchmark.benchmark_runner_mp import BenchmarkRunnerMP
 
-from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.training_benchmark_database \
+from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent.training_benchmark_database \
        import default_training_evaluators, default_terminal_criteria
 
 
 class DemonstrationEvaluator(BaseEvaluator):
   def __init__(self, nn_observer):
     super(DemonstrationEvaluator, self).__init__()
-    self._nn_observer = observer
+    self._nn_observer = nn_observer
     self._agent_id = None
     self._last_nn_state = None
     self.episode_experiences = []
@@ -55,6 +55,12 @@ class DemonstrationEvaluator(BaseEvaluator):
     experience = self.MakeExperienceTuple(self._last_nn_state, action, current_nn_state)
     self._last_nn_state = current_nn_state
 
+  def __setstate__(self, d):
+    self._nn_observer = d["observer"]
+
+  def __getstate__(self):
+    return {"observer" : self._nn_observer}
+
 
 class DemonstrationCollector:
   def __init__(self):
@@ -64,13 +70,13 @@ class DemonstrationCollector:
   def load(filename):
     pass
 
-  def _GetDefaultRunnerInitParams():
+  def _GetDefaultRunnerInitParams(self):
     return {"log_eval_avg_every" : 5}
 
-  def _GetDefaultRunnerRunParams():
-    return {"maintain_history" : false, "checkpoint_every" : 10}
+  def _GetDefaultRunnerRunParams(sel):
+    return {"maintain_history" : False, "checkpoint_every" : 10}
 
-  def CollectDemonstrations(env, demo_behavior, num_episodes, max_episode_steps, filename, runner_init_params = None,
+  def CollectDemonstrations(self, env, demo_behavior, num_episodes, max_episode_steps, filename, runner_init_params = None,
       runner_run_params=None):
     demo_evaluator = DemonstrationEvaluator(env._observer)
     evaluators = {**default_training_evaluators(), "demo_evaluator" : demo_evaluator}
