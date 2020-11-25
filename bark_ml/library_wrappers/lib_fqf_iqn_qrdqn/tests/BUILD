@@ -34,7 +34,6 @@ py_test(
             "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent:agents",
             "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent/demonstrations:demonstrations",
             "//bark_ml/commons:py_spaces",
-            "@bark_project//bark/world/tests:python_behavior_model",
             ":test_demo_behavior"
            ],
     visibility = ["//visibility:public"],
