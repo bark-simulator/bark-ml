@@ -89,6 +89,48 @@ class DemonstrationEvaluator(BaseEvaluator):
     return {"observer" : self._nn_observer, \
           "reward_evaluator" : self._reward_evaluator}
 
+class ActionValueEvaluator(BaseEvaluator):
+  def __init__(self, nn_observer):
+    self._agent_id = None
+    self._nn_observer = nn_observer
+
+  def SetAgentId(self, agent_id):
+    self._agent_id = agent_id
+
+  def GetExperience(self, world):
+    observed_world = world.Observe([self._agent_id])[0]
+    current_nn_state = self._nn_observer.Observe(observed_world)
+    action_values = self.GetActionValues(observed_world)
+    return current_nn_state, action_values
+
+  def GetActionValues(self, observed_world):
+    behavior = observed_world.agents[self._agent_id].behavior_model
+    cost_envelope_values = []
+    cost_collision_values = []
+    if "envelope" in behavior.last_cost_values:
+      cost_envelope_values = behavior.last_cost_values["envelope"]
+    if "collision" in behavior.last_cost_values:
+      cost_collision_values = behavior.last_cost_values["collision"]
+    return_values = behavior.last_return_values
+    action_values = []
+    action_values.extend(cost_envelope_values)
+    action_values.extend(cost_collision_values)
+    action_values.extend(return_values)
+    return action_values
+
+  def Evaluate(self, world):
+    if isinstance(world, World):
+      return self.GetExperience(world)
+    else:
+      raise NotImplementedError()
+
+  def __setstate__(self, d):
+    self._nn_observer = d["observer"]
+    self._agent_id = None
+
+  def __getstate__(self):
+    return {"observer" : self._nn_observer}
+
 
 class DemonstrationCollector:
   def __init__(self):
@@ -102,26 +144,47 @@ class DemonstrationCollector:
   def _GetDefaultRunnerRunParams(self):
     return {"maintain_history" : False, "checkpoint_every" : 10, "viewer" : None}
 
-  def CollectDemonstrations(self, env, demo_behavior, num_episodes, directory, use_mp_runner=True, runner_init_params = None,
+  def CollectDemonstrations(self, num_episodes, directory,
+       env=None, nn_observer=None, reward_evaluator=None, demo_behavior=None, benchmark_configs=None,
+       use_mp_runner=True, runner_init_params = None,
       runner_run_params=None):
-    demo_evaluator = DemonstrationEvaluator(env._observer, env._evaluator)
+
+    if env:
+      nn_observer = env._observer
+      reward_evaluator = env._evaluator
+      scenario_generator = env._scenario_generator
+    else:
+      scenario_generator = None
+    if demo_behavior and env:
+      behaviors = {"demo_behavior" : demo_behavior}
+    else:
+      behaviors = None
+    demo_evaluator = self.GetEvaluators(nn_observer, reward_evaluator)
     evaluators = {**default_training_evaluators(), "demo_evaluator" : demo_evaluator}
-    terminal_when = {"demo_evaluator" : lambda x : x[1] == True} # second index in evaluation result is done
+    terminal_when = self.GetTerminalCriteria()
 
     runner_init_params_def = self._GetDefaultRunnerInitParams()
     runner_init_params_def.update(runner_init_params or {})
     runner_type = BenchmarkRunnerMP if use_mp_runner else BenchmarkRunner
     runner = runner_type(evaluators=evaluators,
-                                  scenario_generation=env._scenario_generator,
+                                  scenario_generation=scenario_generator,
+                                  benchmark_configs = benchmark_configs,
                                   terminal_when=terminal_when,
-                                  behaviors={"demo_behavior" : demo_behavior},
+                                  behaviors=behaviors,
                                   num_scenarios = num_episodes,
                                   **runner_init_params_def)
+    runner.clear_checkpoint_dir()
     runner_run_params_def = self._GetDefaultRunnerRunParams()
     runner_run_params_def.update(runner_run_params or {})
     self._collection_result = runner.run(**runner_run_params_def)
     self.dump(directory)
     return self._collection_result
+
+  def GetEvaluators(self, nn_observer, reward_evaluator):
+    return DemonstrationEvaluator(nn_observer, reward_evaluator)
+
+  def GetTerminalCriteria(self, *args):
+    return {"demo_evaluator" : lambda x : x[1] == True} # second index in evaluation result is done
 
   def dump(self, directory):
     self._directory = directory
@@ -152,7 +215,18 @@ class DemonstrationCollector:
   def demonstrations_filename():
     return "demonstrations"
 
-  def ProcessCollectionResult(self, eval_criteria):
+  def UseCollectedRow(self, row, eval_criteria):
+    demo_eval_result, done, info = row["demo_evaluator"]
+    use_scenario = True
+    for crit, func in eval_criteria.items():
+      use_scenario = use_scenario and func(info[crit])
+    return use_scenario
+
+  def GetDemonstrations(self, row):
+    demo_eval_result, done, info = row["demo_evaluator"]
+    return demo_eval_result[1:]
+
+  def ProcessCollectionResult(self, eval_criteria = None):
     if not self._collection_result:
       logging.error("Collection results not created yet. Call CollectDemonstrations first.")
       return
@@ -160,13 +234,8 @@ class DemonstrationCollector:
     data_frame = self._collection_result.get_data_frame()
     self._demonstrations = []
     for index, row in data_frame.iterrows():
-      demo_eval_result, done, info = row["demo_evaluator"]
-      use_scenario = True
-      for crit, func in eval_criteria.items():
-        use_scenario = use_scenario and func(info[crit])
-      if not use_scenario:
-        continue
-      self._demonstrations.extend(demo_eval_result[1:])
+      if not eval_criteria or self.UseCollectedRow(row, eval_criteria):
+        self._demonstrations.extend(self.GetDemonstrations(row))
     self.dump(self._directory)
     return self._demonstrations
 
@@ -176,6 +245,23 @@ class DemonstrationCollector:
   def GetCollectionResult(self):
     return self._collection_result
   
-   
 
-      
+class ActionValuesCollector(DemonstrationCollector):
+  def __init__(self, terminal_criteria):
+    super(ActionValuesCollector, self).__init__()
+    self.terminal_criteria = terminal_criteria
+
+  def UseCollectedRow(self, row, eval_criteria):
+    use_scenario = True
+    for crit, func in eval_criteria.items():
+      use_scenario = use_scenario and func(row[crit])
+    return use_scenario
+
+  def GetDemonstrations(self, row):
+    return row["demo_evaluator"]
+
+  def GetEvaluators(self, nn_observer, reward_evaluator):
+    return ActionValueEvaluator(nn_observer)
+
+  def GetTerminalCriteria(self, *args):
+    return self.terminal_criteria

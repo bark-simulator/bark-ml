@@ -1,2 +1,3 @@
 
 from .demonstration_collector import DemonstrationCollector
+from .demonstration_collector import ActionValuesCollector

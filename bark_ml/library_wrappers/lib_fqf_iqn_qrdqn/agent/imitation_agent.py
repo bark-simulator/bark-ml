@@ -9,6 +9,8 @@
 # The code is adapted from opensource implementation - https://github.com/ku2482/fqf-iqn-qrdqn.pytorch
 # MIT License -Copyright (c) 2020 Toshiki Watanabe
 
+from collections import deque
+
 import torch
 from torch import nn
 from torch.optim import Adam, RMSprop
@@ -31,6 +33,8 @@ class ImitationAgent(BaseAgent):
     self.batch_size = params["BatchSize", "", 32]
     self.grad_cliping = params["GradCliping", "", 5.0]
     self.use_cuda = params["Cuda", "", False] 
+    self.running_loss_length = params["RunningLossLength", "", 1000]
+    self.learning_rate = params["LearningRate", 0.001]
 
     self.summary_log_interval = params["SummaryLogInterval", "", 100]
 
@@ -80,7 +84,7 @@ class ImitationAgent(BaseAgent):
 
   def run(self):
     update_steps = 0
-    running_loss = 0.0
+    running_loss = deque(maxlen=self.running_loss_length)
     for epoch in range(self.num_epochs):
         states, action_values_desired = self.sample_batch(self.demonstrations_train, self.batch_size)
 
@@ -92,11 +96,11 @@ class ImitationAgent(BaseAgent):
         loss = criterion(action_values_current, action_values_desired)
 
         self.optim.step()
-        running_loss += self.optim.item()
+        running_loss.append(self.optim.item())
         # We log evaluation results along with training frames = 4 * steps.
         if i % self.summary_log_interval == 0:
-            self.writer.add_scalar('mse_loss', 
-                                    4 * self.steps)
+            self.writer.add_scalar('mse_loss', sum(running_loss)/len(running_loss),
+                                    update_steps)
     
 
     
