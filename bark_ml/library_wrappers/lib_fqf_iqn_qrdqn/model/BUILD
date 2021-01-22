@@ -6,6 +6,7 @@ py_library(
         ":fqf",
         ":iqn",
         ":qrdqn",
+        ":imitation"
     ],
     visibility = ["//visibility:public"],
 )
@@ -23,6 +24,11 @@ py_library(
     srcs = ["fqf.py"],
     deps = [":base_model",
     ],
+)
+
+py_library(
+    name = "imitation",
+    srcs = ["imitation.py"]
 )
 
 py_library(

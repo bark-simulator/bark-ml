@@ -93,6 +93,7 @@ class BaseAgent(BehaviorModel):
     self._env = env
     self._training_benchmark = training_benchmark or TrainingBenchmark()
     self._agent_save_dir = agent_save_dir
+    self._demonstrations = demonstrations
     
     if not checkpoint_load and params:
       if not env:
