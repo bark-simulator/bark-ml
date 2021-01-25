@@ -53,9 +53,15 @@ cc_library(
     build_file_content = """
 cc_library(
     name = "lib",
-    srcs = ["torch/lib/libc10.so", "torch/lib/libtorch_cpu.so"],
+    srcs = ["torch/lib/libtorch.so",
+                 "torch/lib/libc10.so", "torch/lib/libtorch_cpu.so"],
     hdrs = glob(["torch/include/**/*.h", "torch/include/*.h"]),
     visibility = ["//visibility:public"],
+    linkopts = [
+        "-ltorch",
+        "-ltorch_cpu",
+        "-lc10",
+    ],
 )
     """)
   _maybe(
