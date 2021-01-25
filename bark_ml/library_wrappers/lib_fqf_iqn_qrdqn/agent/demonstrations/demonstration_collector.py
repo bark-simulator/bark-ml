@@ -9,6 +9,7 @@
 import logging
 import pickle
 import os
+import numpy as np
 
 from bark.runtime.commons.parameters import ParameterServer
 
@@ -103,15 +104,29 @@ class ActionValueEvaluator(BaseEvaluator):
     action_values = self.GetActionValues(observed_world)
     return current_nn_state, action_values
 
+  def AddMissingActionsValues(self, value_dict, num_actions):
+    values = []
+    assert(num_actions >= len(value_dict))
+    for idx in  range(0, num_actions):
+      if idx in value_dict:
+        values.append(value_dict[idx])
+      else:
+        values.append(np.nan)
+    return values
+
   def GetActionValues(self, observed_world):
     behavior = observed_world.agents[self._agent_id].behavior_model
+    num_actions = len(behavior.ego_behavior.GetMotionPrimitives())
     cost_envelope_values = []
     cost_collision_values = []
     if "envelope" in behavior.last_cost_values:
-      cost_envelope_values = behavior.last_cost_values["envelope"]
+      cost_envelope_values = \
+           self.AddMissingActionsValues(behavior.last_cost_values["envelope"], num_actions)
+    cost_collision_values = []
     if "collision" in behavior.last_cost_values:
-      cost_collision_values = behavior.last_cost_values["collision"]
-    return_values = behavior.last_return_values
+      cost_collision_values = \
+        self.AddMissingActionsValues(behavior.last_cost_values["collision"], num_actions)
+    return_values = self.AddMissingActionsValues(behavior.last_return_values, num_actions)
     action_values = []
     action_values.extend(cost_envelope_values)
     action_values.extend(cost_collision_values)
@@ -258,7 +273,7 @@ class ActionValuesCollector(DemonstrationCollector):
     return use_scenario
 
   def GetDemonstrations(self, row):
-    return row["demo_evaluator"]
+    return row["demo_evaluator"][1:]
 
   def GetEvaluators(self, nn_observer, reward_evaluator):
     return ActionValueEvaluator(nn_observer)

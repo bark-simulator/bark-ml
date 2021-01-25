@@ -43,8 +43,7 @@ py_test(
     name = "test_training_benchmark",
     srcs = ["test_training_benchmark.py"],
     data = [
-        "//configuration/database",
-        "@bark_ml_project//bark_ml:generate_core",
+        "//bark_ml:generate_core",
         "@bark_project//bark:generate_core",
     ],
     deps = [
@@ -53,8 +52,24 @@ py_test(
         "@bark_ml_project//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent:agents",
         "@bark_project//bark/runtime/viewer:py_viewer",
         "@benchmark_database//load:benchmark_database",
-        "@benchmark_database//serialization:database_serializer",
-        "@planner_uct//bark_mcts/runtime/scenario:config_readers",
-        "@planner_uct//bark_mcts/runtime/scenario:scenario_set_generation",
+        "@benchmark_database//serialization:database_serializer"
+    ],
+)
+
+py_test(
+    name = "test_imitation_agent",
+    srcs = ["test_imitation_agent.py"],
+    data = [
+        "//bark_ml:generate_core",
+        "@bark_project//bark:generate_core",
+    ],
+    deps = [
+        "//bark_ml/environments:blueprints",
+        "//bark_ml/environments:gym",
+        "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent:agents",
+        "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent/demonstrations:demonstrations",
+        "@bark_project//bark/runtime/viewer:py_viewer",
+        "@benchmark_database//load:benchmark_database",
+        "@benchmark_database//serialization:database_serializer"
     ],
 )
