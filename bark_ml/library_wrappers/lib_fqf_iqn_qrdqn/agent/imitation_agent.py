@@ -12,7 +12,7 @@
 from collections import deque
 import numpy as np
 import logging
-
+import os
 
 import torch
 from torch import nn
@@ -22,46 +22,53 @@ from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.model import Imitation
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.utils \
  import disable_gradients, update_params, \
  calculate_quantile_huber_loss, evaluate_quantile_at_action
-from .base_agent import BaseAgent
+from .base_agent import BaseAgent, TrainingBenchmark
 
+class BenchmarkSupervisedLoss(TrainingBenchmark):
+    def __init__(self, demonstrations_test):
+      self.demonstrations_test = demonstrations_test
+
+    def run(self):
+      with torch.no_grad():
+          states, action_values_desired = self.agent.sample_batch( \
+                  self.demonstrations_test, self.agent.num_eval_episodes)
+          action_values_current = self.agent.online_net(states)
+          loss = self.agent.calculate_loss(action_values_desired, action_values_current)
+
+          return {"mse_loss/test" : loss.item()}, f"Loss = {loss.item()}"
+
+    def is_better(self, eval_result1, than_eval_result2):
+        return eval_result1["mse_loss/test"] < than_eval_result2["mse_loss/test"]
 
 class ImitationAgent(BaseAgent):
   def __init__(self, demonstrations_train, demonstrations_test, *args, **kwargs):
     super(ImitationAgent, self).__init__(*args, **kwargs)
+    self._training_benchmark = BenchmarkSupervisedLoss(demonstrations_test)
+    self._training_benchmark.reset(None, self.num_eval_episodes, None, self)
     self.demonstrations_train = demonstrations_train
-    self.demonstrations_test = demonstrations_test
-
+    
   def reset_params(self, params):
-    self.num_train_episodes = params["NumTrainEpisodes", "", 1000]
-    self.batch_size = params["BatchSize", "", 32]
-    self.eval_batch_size = params["EvalBatchSize", "", 1024]
-    self.eval_every_updates = params["EvalEveryUpdates", "", 4000]
-    self.max_episode_steps = params["NotUsed", "", 30]
-    self.grad_cliping = params["GradCliping", "", 5.0]
-    self.use_cuda = params["Cuda", "", False] 
+    super(ImitationAgent, self).reset_params(params)
     self.running_loss_length = params["RunningLossLength", "", 1000]
-    self.learning_rate = params["LearningRate", "", 0.001]
     self.num_value_functions = params["NumValueFunctions", "", 3]
-    self.num_eval_episodes = params["NotUsed", "", 3]
-
-    self.summary_log_interval = params["SummaryLogInterval", "", 100]
+    self.learning_rate = params["LearningRate", "", 0.001]
 
   def reset_training_variables(self):
     # Replay memory which is memory-efficient to store stacked frames.
-    self.update_steps = 0
     self.running_loss = deque(maxlen=self.running_loss_length)
+    self.steps = 0
     self.best_eval_results = None
   
   def init_always(self):
     super(ImitationAgent, self).init_always()
     
     # Target network.
-    self.imitation_net = Imitation(num_channels=self.observer.observation_space.shape[0],
+    self.online_net = Imitation(num_channels=self.observer.observation_space.shape[0],
                           num_actions=self.num_actions,
                           num_value_functions=self.num_value_functions,
                           params=self._params).to(self.device)
     self.optim = RMSprop(
-        self.imitation_net.parameters(),
+        self.online_net.parameters(),
         lr=self.learning_rate,
         alpha=0.95,
         eps=0.00001)
@@ -71,10 +78,9 @@ class ImitationAgent(BaseAgent):
     del pickables["_training_benchmark"]
     del pickables["device"]
     del pickables["writer"]
-    del pickables["imitation_net"]
+    del pickables["online_net"]
     del pickables["optim"]
     del pickables["demonstrations_train"]
-    del pickables["demonstrations_test"]
 
   def sample_batch(self, demonstrations_list, batch_size):
     state_size = len(demonstrations_list[0][0])
@@ -105,47 +111,37 @@ class ImitationAgent(BaseAgent):
   def save_models(self, checkpoint_dir):
     if not os.path.exists(checkpoint_dir):
       os.makedirs(checkpoint_dir)
-    torch.save(self.imitation_net.state_dict(),
-               os.path.join(checkpoint_dir, 'imitation_net.pth'))
+    torch.save(self.online_net.state_dict(),
+               os.path.join(checkpoint_dir, 'online_net.pth'))
 
   def load_models(self, checkpoint_dir):
     try: 
-      self.imitation_net.load_state_dict(
-        torch.load(os.path.join(checkpoint_dir, 'imitation_net.pth')))
+      self.online_net.load_state_dict(
+        torch.load(os.path.join(checkpoint_dir, 'online_net.pth')))
     except RuntimeError:
-      self.imitation_net.load_state_dict(
-        torch.load(os.path.join(checkpoint_dir, 'imitation_net.pth'), map_location=torch.device('cpu')))
+      self.online_net.load_state_dict(
+        torch.load(os.path.join(checkpoint_dir, 'online_net.pth'), map_location=torch.device('cpu')))
 
-  def run(self, num_episodes=None):
-    for epoch in range(num_episodes or self.num_train_episodes):
-        states, action_values_desired = self.sample_batch(self.demonstrations_train, self.batch_size)
+  def train_episode(self):
+    states, action_values_desired = self.sample_batch(self.demonstrations_train, self.batch_size)
 
-        self.optim.zero_grad()
-        action_values_current = self.imitation_net(states)
-        loss = self.calculate_loss(action_values_desired, action_values_current)
-        loss.backward()
-        self.optim.step()
+    self.optim.zero_grad()
+    action_values_current = self.online_net(states)
+    loss = self.calculate_loss(action_values_desired, action_values_current)
+    loss.backward()
+    self.optim.step()
 
-        self.running_loss.append(loss.item())
-        # We log evaluation results along with training frames = 4 * steps.
-        if self.update_steps % self.summary_log_interval == 0:
-            self.writer.add_scalar('mse_loss/train', sum(self.running_loss)/len(self.running_loss),
-                                    self.update_steps)
-            logging.info(f"Training: Loss(i={self.update_steps}={sum(self.running_loss)/len(self.running_loss)}")
-        if self.update_steps % self.eval_every_updates == 0:
-            self.eval()
-        self.update_steps += 1
-
-  def eval(self, eval_batch_size=None):
-    with torch.no_grad():
-          states, action_values_desired = self.sample_batch(self.demonstrations_test, self.eval_batch_size)
-          action_values_current = self.imitation_net(states)
-          loss = self.calculate_loss(action_values_desired, action_values_current)
-
-          self.writer.add_scalar('mse_loss/test', loss.item(),
-                                  self.update_steps)
-          logging.info(f"Test: Loss(i={self.update_steps}={loss.item()}")
-    
+    self.running_loss.append(loss.item())
+    # We log evaluation results along with training frames = 4 * steps.
+    if self.steps % self.summary_log_interval == 0:
+        self.writer.add_scalar('mse_loss/train', sum(self.running_loss)/len(self.running_loss),
+                                self.steps)
+        logging.info(f"Training: Loss(i={self.steps}={sum(self.running_loss)/len(self.running_loss)})")
+    if self.steps % self.eval_interval == 0:
+      self.evaluate()
+      self.save("final")
+      self.online_net.train() 
+    self.steps += 1
 
     
 

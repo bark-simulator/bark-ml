@@ -72,14 +72,14 @@ class EvaluationTests(unittest.TestCase):
     env._observer = TestObserver()
     env._ml_behavior = TestActionWrapper()
     params["ML"]["BaseAgent"]["MaxEpisodeSteps"] = 2
-    params["ML"]["BaseAgent"]["NumEvalEpisodes"] = 2
+    params["ML"]["BaseAgent"]["EvalInterval"] = 1000
     data = create_data(10000)
     demo_train = data[0:7000]
     demo_test = data[7001:]
     agent = ImitationAgent(agent_save_dir="./save_dir", demonstrations_train=demo_train,
                            demonstrations_test=demo_test,
                            env=env, params=params)
-    agent.run(1000000)
+    agent.run()
 
 
 if __name__ == '__main__':

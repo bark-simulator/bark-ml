@@ -105,8 +105,7 @@ class BaseAgent(BehaviorModel):
     elif checkpoint_load:
       self.load_pickable_members(agent_save_dir)
       self.init_always()
-      self.load_models(BaseAgent.check_point_directory(agent_save_dir, checkpoint_load) \
-                    if checkpoint_load=="best" else BaseAgent.check_point_directory(agent_save_dir, checkpoint_load) )
+      self.load_models(BaseAgent.check_point_directory(agent_save_dir, checkpoint_load))
     else:
       raise ValueError("Unusual param combination for agent initialization.")
 
@@ -186,8 +185,7 @@ class BaseAgent(BehaviorModel):
 
     self.reward_log_interval = params["RewardLogInterval", "", 5]
     self.summary_log_interval = params["SummaryLogInterval", "", 100]
-    self.eval_interval = params["EvalInterval", "",
-                                                         25000]
+    self.eval_interval = params["EvalInterval", "", 25000]
     self.num_eval_episodes = params["NumEvalEpisodes", "",
                                                           12500]
     self.gamma_n = params["Gamma", "", 0.99] ** \
@@ -425,12 +423,13 @@ class BaseAgent(BehaviorModel):
 
     if self.steps % self.eval_interval == 0:
       self.evaluate()
-      self.save(os.path.join(self.model_dir, 'final'))
+      self.save("final")
       self.online_net.train()
 
   def evaluate(self):
     if not self._training_benchmark:
       logging.info("No evaluation performed since no training benchmark available.")
+      return
     self.online_net.eval()
     
     eval_results, formatted_result = self._training_benchmark.run()
@@ -438,7 +437,7 @@ class BaseAgent(BehaviorModel):
     if not self.best_eval_results or \
         self._training_benchmark.is_better(eval_results, self.best_eval_results):
       self.best_eval_results = eval_results
-      self.save(os.path.join(self.model_dir, 'best'))
+      self.save("best")
 
     # We log evaluation results along with training frames = 4 * steps.
     for eval_result_name, eval_result in eval_results.items():
