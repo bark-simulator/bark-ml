@@ -113,6 +113,7 @@ class BaseAgent(BehaviorModel):
   def init_always(self):
     self.device = torch.device("cuda" if (self.use_cuda and torch.cuda.is_available()) else "cpu")
 
+    logging.info(f"Summary writer directory: {os.path.abspath(BaseAgent.summary_dir(self.agent_save_dir))}")
     self.writer = SummaryWriter(log_dir=BaseAgent.summary_dir(self.agent_save_dir))
     self.train_return = RunningMeanStats(self.summary_log_interval)
 
