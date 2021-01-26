@@ -16,7 +16,7 @@ class Imitation(nn.Module):
     self.num_channels = num_channels
     self.num_actions = num_actions
     self.num_value_functions = num_value_functions
-    self.layer_dims = params["ML"]["FQFModel"]["EmbeddingDims", "", [256, 256, 256]]
+    self.layer_dims = params["ML"]["ImitationModel"]["EmbeddingDims", "", [256, 256, 256]]
 
     self.net = nn.Sequential(self.make_ordered_layer_dict(self.layer_dims))
     self.net.apply(init_weights)
@@ -33,8 +33,6 @@ class Imitation(nn.Module):
       return OrderedDict(tuple_list)
 
   def forward(self, states):
-    batch_size = states.shape[0]
-
     action_values = self.net(states)
     return action_values
 

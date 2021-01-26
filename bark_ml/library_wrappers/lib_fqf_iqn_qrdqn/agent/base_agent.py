@@ -94,6 +94,7 @@ class BaseAgent(BehaviorModel):
     self._training_benchmark = training_benchmark or TrainingBenchmark()
     self._agent_save_dir = agent_save_dir
     self._demonstrations = demonstrations
+    self._checkpoint_load = checkpoint_load
     
     if not checkpoint_load and params:
       if not env:
@@ -333,6 +334,10 @@ class BaseAgent(BehaviorModel):
                os.path.join(checkpoint_dir, 'target_net.pth'))
     online_net_script = torch.jit.script(self.online_net)
     online_net_script.save(os.path.join(checkpoint_dir, 'online_net_script.pt'))
+
+  def get_script_filename(self, checkpoint_load):
+    checkpoint_dir = BaseAgent.check_point_directory(self._agent_save_dir, checkpoint_load)
+    return os.path.join(checkpoint_dir, 'online_net_script.pt')
 
   def save(self, checkpoint_type="last"):
     self.save_models(BaseAgent.check_point_directory(self.agent_save_dir, checkpoint_type))

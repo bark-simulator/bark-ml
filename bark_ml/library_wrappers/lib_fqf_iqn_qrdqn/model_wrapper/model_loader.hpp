@@ -12,6 +12,7 @@
 
 #include <torch/script.h>
 
+#include <chrono>
 #include <iostream>
 #include <memory>
 
@@ -22,41 +23,37 @@ namespace lib_fqf_iqn_qrdqn {
 // python and perform an inference
 class ModelLoader {
  public:
-  ModelLoader(const std::string& model_filename, const long action_space, const long state_space) 
-    : model_filename_(model_filename), module_loaded_(false), action_space_(action_space),
-     state_space_(state_space) {
+  ModelLoader() 
+    : module_loaded_(false) {
   }
 
-  bool LoadModel() {
+  bool LoadModel(const std::string& model_filename) {
     if (module_loaded_) {
-      return true; // module already loaded
+      return true; 
     }
-
-    // load the torch script module saved from python
+    std::cout << "Trying to load model from file: " << model_filename << "\n";
     try {
-      module_ = torch::jit::load(model_filename_);
+      module_ = torch::jit::load(model_filename);
       module_loaded_ = true;
     }
     catch (const c10::Error& e) {
-      std::cerr << "Error loading the model\n";
+      std::cerr << "Error loading the model: " << e.msg();
     }
 
     return module_loaded_;
   }
 
   std::vector<float> Inference(std::vector<float> state) {
-    std::vector<float> actions(action_space_);
-
     if (!module_loaded_)
       throw std::runtime_error("Model not loaded!");
 
     std::vector<torch::jit::IValue> inputs;
-    inputs.push_back(torch::tensor(state).view({1, state_space_}));
+    inputs.push_back(torch::tensor(state).view({1, state.size()}));
 
-    at::Tensor predicted_actions;
+    at::Tensor torch_output;
     try {
       // run the inference
-      predicted_actions = module_.forward(inputs).toTensor();
+      torch_output = module_.forward(inputs).toTensor();
 
     } catch (const c10::Error& e) {
       std::cerr << e.msg();
@@ -64,17 +61,11 @@ class ModelLoader {
     }
 
     //copy the data from torch tensor to std vector
-    auto options = torch::TensorOptions().dtype(torch::kFloat32);
-    torch::Tensor tharray = torch::from_blob(actions.data(), {1, action_space_}, options);
-    tharray.copy_(predicted_actions);
-
-    return actions;
+    std::vector<float> output(torch_output.data_ptr<float>(), torch_output.data_ptr<float>() + torch_output.numel());
+    return output;
   }
 
  private:
-  std::string model_filename_;
-  long action_space_;
-  long state_space_;
   bool module_loaded_;
   torch::jit::script::Module module_;
 

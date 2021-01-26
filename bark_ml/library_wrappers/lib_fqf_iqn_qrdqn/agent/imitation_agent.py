@@ -108,11 +108,19 @@ class ImitationAgent(BaseAgent):
 
     return loss
 
+  def calculate_actions(self, state):
+    with torch.no_grad():
+        state_torch = torch.FloatTensor(state).to(self.device)
+        action_values = self.online_net(state_torch)
+    return action_values.tolist()
+
   def save_models(self, checkpoint_dir):
     if not os.path.exists(checkpoint_dir):
       os.makedirs(checkpoint_dir)
     torch.save(self.online_net.state_dict(),
                os.path.join(checkpoint_dir, 'online_net.pth'))
+    online_net_script = torch.jit.script(self.online_net)
+    online_net_script.save(os.path.join(checkpoint_dir, 'online_net_script.pt'))
 
   def load_models(self, checkpoint_dir):
     try: 

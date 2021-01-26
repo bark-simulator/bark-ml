@@ -11,7 +11,7 @@ using bark_ml::lib_fqf_iqn_qrdqn::ModelLoader;
 
 PYBIND11_MODULE(pytorch_script_wrapper, m) {
     py::class_<ModelLoader>(m, "ModelLoader")
-        .def(py::init<const std::string &, const long, const long>())
+        .def(py::init<>())
         .def("Inference", &ModelLoader::Inference, "Perform the inference for a given state")
         .def("LoadModel", &ModelLoader::LoadModel, "Loads the torch cpp script model");
 }

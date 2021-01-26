@@ -58,7 +58,9 @@ py_test(
 
 py_test(
     name = "model_loader_tests",
-    srcs = ["model_loader_tests.py"],
+    srcs = ["model_loader_tests.py",
+            "test_imitation_agent.py"
+            ],
     data = ["@torchcpp//:lib",
             "@bark_project//bark/python_wrapper:core.so",
             "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/tests/lib_fqf_iqn_qrdqn_test_data:weights",
@@ -71,6 +73,7 @@ py_test(
     deps = ["//bark_ml/environments:single_agent_runtime",
             "//bark_ml/environments:gym",
             "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent:agents",
+            "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent/demonstrations:demonstrations",
             "//bark_ml/commons:py_spaces"
            ],
     visibility = ["//visibility:public"],

@@ -16,6 +16,7 @@ import os
 import gym
 import matplotlib
 import time
+import logging
 
 # BARK imports
 from bark.runtime.commons.parameters import ParameterServer
@@ -28,68 +29,64 @@ import bark_ml.environments.gym
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.model_wrapper \
  import pytorch_script_wrapper
 
+from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.tests.test_imitation_agent import TestActionWrapper, \
+        TestObserver, create_data
+
+from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent import ImitationAgent
+
+def imitation_agent(layer_dims):
+    params = ParameterServer()
+    env = gym.make("highway-v1", params=params)
+    env._observer = TestObserver()
+    env._ml_behavior = TestActionWrapper()
+    params["ML"]["BaseAgent"]["NumSteps"] = 2
+    params["ML"]["BaseAgent"]["EvalInterval"] = 1
+    params["ML"]["ImitationModel"]["EmbeddingDims"] = layer_dims
+    data = create_data(1000)
+    demo_train = data[0:1000]
+    demo_test = data[51:]
+    agent = ImitationAgent(agent_save_dir="./save_dir", demonstrations_train=demo_train,
+                           demonstrations_test=demo_test,
+                           env=env, params=params)
+    agent.run()
+    return agent, demo_train, demo_test
+
+
 class ModelLoaderTests(unittest.TestCase):
-  def test_model_loader(self):
-    # env using default params
-    env = gym.make("highway-v1")
+  def test_model_loader_imitation(self):
+    agent, demo_train, demo_test = imitation_agent([200, 200, 100])
+    agent.save(checkpoint_type="last")
+    script_file = agent.get_script_filename("last")
+    # test all network
+    model = pytorch_script_wrapper.ModelLoader()
+    model.LoadModel(os.path.abspath(script_file))
 
-    networks = ["iqn", "fqf", "qrdqn"]
+    num_iters = 1000  # Number of times to repeat experiment to calcualte runtime
 
-    action_space_size = env.action_space.n
-    state_space_size = env.observation_space.shape[0]
+    # Time num_iters iterations for inference using C++ model
+    start = time.time()
+    output_cpp = []
+    for idx in range(num_iters):
+      output_cpp.append(model.Inference(list(demo_train[idx][0])))
+    end = time.time()
+    time_cpp = end - start  # todo - how to analyze python vs cpp test time in tests?
+    logging.info(f"C++ time: {time_cpp/num_iters}")
 
-    # a sample random state [0-1] to evaluate actions
-    random_state = np.random.rand(state_space_size).tolist()
+    #Time num_iters iterations for inference using python model
+    start = time.time()
+    output_py = []
+    for idx in range(num_iters):
+      output_py.append(agent.calculate_actions(demo_train[idx][0]))
 
-    # test all networks
-    for network in networks:
-      # Do inference using C++ wrapped model
-      model = pytorch_script_wrapper.ModelLoader(
-          os.path.join(
-              os.path.dirname(__file__),
-              "lib_fqf_iqn_qrdqn_test_data/{}/online_net_script.pt"
-              .format(network)), action_space_size, state_space_size)
-      model.LoadModel()
+    end = time.time()
+    time_py = end - start
+    logging.info(f"Python time: {time_py/num_iters}")
 
-      num_iters = 1000  # Number of times to repeat experiment to calcualte runtime
-
-      # Time num_iters iterations for inference using C++ model
-      start = time.time()
-      for _ in range(num_iters):
-        actions_cpp = model.Inference(random_state)
-      end = time.time()
-      time_cpp = end - start  # todo - how to analyze python vs cpp test time in tests?
-
-      # Load and perform inference using python model
-      if network == "iqn":
-        agent = IQNAgent(env=env, test_env=env, params=ParameterServer())
-
-      elif network == "fqf":
-        agent = FQFAgent(env=env, test_env=env, params=ParameterServer())
-
-      elif network == "qrdqn":
-        agent = QRDQNAgent(env=env, test_env=env, params=ParameterServer())
-
-      agent.load_models(
-          os.path.join(
-              os.path.dirname(__file__),
-              "lib_fqf_iqn_qrdqn_test_data",
-              network))
-
-      # Time num_iters iterations for inference using python model
-      start = time.time()
-      for _ in range(num_iters):
-        actions_py = agent.calculate_actions(random_state)
-
-      end = time.time()
-      time_py = end - start
-
-      # assert that Python and Cpp models are close enough to 6 decimal places
-      np.testing.assert_array_almost_equal(
-          actions_py.flatten().numpy(),
-          np.asarray(actions_cpp),
-          decimal=6,
-          err_msg="C++ and python models don't match")
+    np.testing.assert_array_almost_equal(
+        np.asarray(output_cpp),
+        np.asarray(output_py),
+        decimal=6,
+        err_msg="C++ and python models don't match")
 
 
 if __name__ == '__main__':
