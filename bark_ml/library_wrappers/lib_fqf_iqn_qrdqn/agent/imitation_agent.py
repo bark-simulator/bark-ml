@@ -34,8 +34,11 @@ class BenchmarkSupervisedLoss(TrainingBenchmark):
                   self.demonstrations_test, self.agent.num_eval_episodes)
           action_values_current = self.agent.online_net(states)
           loss = self.agent.calculate_loss(action_values_desired, action_values_current)
+          pair_wise_diff = action_values_current - action_values_desired
+          mean_value_diffs = torch.mean(pair_wise_diff**2, dim = 0).tolist()
 
-          return {"mse_loss/test" : loss.item()}, f"Loss = {loss.item()}"
+          return {"mse_loss/test" : loss.item()},\
+               f"Loss = {loss.item()}\n Mean Diff: {mean_value_diffs}"
 
     def is_better(self, eval_result1, than_eval_result2):
         return eval_result1["mse_loss/test"] < than_eval_result2["mse_loss/test"]

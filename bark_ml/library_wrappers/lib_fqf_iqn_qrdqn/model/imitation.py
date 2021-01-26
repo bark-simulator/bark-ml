@@ -17,6 +17,7 @@ class Imitation(nn.Module):
     self.num_actions = num_actions
     self.num_value_functions = num_value_functions
     self.layer_dims = params["ML"]["ImitationModel"]["EmbeddingDims", "", [256, 256, 256]]
+    self.droput_p = params["ML"]["ImitationModel"]["DropoutProbability", "", 0]
 
     self.net = nn.Sequential(self.make_ordered_layer_dict(self.layer_dims))
     self.net.apply(init_weights)
@@ -28,6 +29,8 @@ class Imitation(nn.Module):
           current_dim = layer
           tuple_list.append((f"layer{idx}", nn.Linear(last_dim, current_dim)))
           tuple_list.append((f"relu{idx}", nn.ReLU()))
+          if self.droput_p != 0:
+            tuple_list.append((f"relu{idx}", nn.Dropout(p=self.droput_p)))
           last_dim = current_dim
       tuple_list.append(("output", nn.Linear(last_dim, self.num_actions*self.num_value_functions)))
       return OrderedDict(tuple_list)

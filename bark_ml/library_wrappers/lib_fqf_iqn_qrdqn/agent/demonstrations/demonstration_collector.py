@@ -94,6 +94,7 @@ class ActionValueEvaluator(BaseEvaluator):
   def __init__(self, nn_observer):
     self._agent_id = None
     self._nn_observer = nn_observer
+    self._episode_experiences = []
 
   def SetAgentId(self, agent_id):
     self._agent_id = agent_id
@@ -135,7 +136,8 @@ class ActionValueEvaluator(BaseEvaluator):
 
   def Evaluate(self, world):
     if isinstance(world, World):
-      return self.GetExperience(world)
+      self._episode_experiences.append(experience)
+      return self._episode_experiences
     else:
       raise NotImplementedError()
 
@@ -211,16 +213,24 @@ class DemonstrationCollector:
       to_pickle(self._demonstrations, directory, DemonstrationCollector.demonstrations_filename())
 
   @staticmethod
-  def load(directory):
-    collector = DemonstrationCollector()
+  def _load(collector, directory):
     collection_result_fullname = os.path.join(directory, DemonstrationCollector.collection_result_filename())
     if os.path.exists(collection_result_fullname):
       collector._collection_result = BenchmarkResult.load(collection_result_fullname)
+    else:
+      logging.warning("Collection result not existing.")
     demonstration_fullname = os.path.join(directory, DemonstrationCollector.demonstrations_filename())
     if os.path.exists(demonstration_fullname):
       collector._demonstrations = from_pickle(directory, DemonstrationCollector.demonstrations_filename())
+    else:
+      logging.warning("Demonstrations not existing.")
     collector._directory = directory
     return collector
+
+  @classmethod
+  def load(cls, directory):
+    collector = DemonstrationCollector()
+    return DemonstrationCollector._load(collector, directory)
 
   @staticmethod
   def collection_result_filename():
@@ -280,3 +290,8 @@ class ActionValuesCollector(DemonstrationCollector):
 
   def GetTerminalCriteria(self, *args):
     return self.terminal_criteria
+
+  @classmethod
+  def load(cls, directory):
+    collector = ActionValuesCollector(terminal_criteria=None)
+    return DemonstrationCollector._load(collector, directory)

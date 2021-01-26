@@ -96,7 +96,7 @@ class BaseAgent(BehaviorModel):
     self._demonstrations = demonstrations
     self._checkpoint_load = checkpoint_load
     
-    if not checkpoint_load and params:
+    if (not checkpoint_load) and params is not None:
       if not env:
         raise ValueError("Environment must be passed for initialization")
       self.reset_params(self._params["ML"]["BaseAgent"])
