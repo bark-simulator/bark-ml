@@ -20,11 +20,6 @@ cc_library(
   name = "model_loader",
   hdrs = ["model_loader.hpp"],
   deps = ["@torchcpp//:lib"],
-  copts = ["-Iexternal/torchcpp/torch/include",
-           "-Lexternal/torchcpp/torch/lib",
-           "-D_GLIBCXX_USE_CXX11_ABI=0"],
-
-  linkopts = ["-ltorch_cpu","-lc10"],
   linkstatic=False,
   visibility = ["//visibility:public"],
 )
