@@ -15,3 +15,19 @@ cc_binary(
   linkshared = 1,
   linkstatic = 1
 )
+
+cc_library(
+  name = "polymorphic_conversion",
+  hdrs = [
+    "polymorphic_conversion.hpp",
+  ],
+  srcs=[
+    "polymorphic_conversion.cpp"
+  ],
+  deps = [
+    "@bark_project//bark/python_wrapper:common",
+    "@pybind11//:pybind11",
+    "//bark_ml/observers:cpp_observers",
+  ],
+  visibility = ["//visibility:public"],
+)

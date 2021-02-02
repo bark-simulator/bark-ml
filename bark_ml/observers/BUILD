@@ -14,10 +14,23 @@ cc_library(
   name = "cpp_observers",
   hdrs = [
     "base_observer.hpp",
-    "nearest_observer.hpp"
+    "nearest_observer.hpp",
   ],
   deps = [
     "@bark_project//bark/world:world",
+    "//bark_ml/commons:spaces",
+    "//bark_ml/commons:commons"
+  ],
+  visibility = ["//visibility:public"],
+)
+
+cc_library(
+  name = "include",
+  hdrs = [
+    "base_observer.hpp",
+    "nearest_observer.hpp",
+  ],
+  deps=[
     "//bark_ml/commons:spaces",
     "//bark_ml/commons:commons"
   ],

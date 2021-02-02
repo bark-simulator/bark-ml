@@ -48,6 +48,8 @@ class BaseObserver {
   ParamsPtr params_;
 };
 
+typedef std::shared_ptr<bark_ml::observers::BaseObserver> ObserverPtr;
+
 }  // namespace observers
 }  // namespace bark_ml
 

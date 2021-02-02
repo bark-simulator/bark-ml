@@ -92,6 +92,7 @@ class DemonstrationEvaluator(BaseEvaluator):
 
 class ActionValueEvaluator(BaseEvaluator):
   def __init__(self, nn_observer):
+    super(ActionValueEvaluator, self).__init__()
     self._agent_id = None
     self._nn_observer = nn_observer
     self._episode_experiences = []
@@ -136,6 +137,7 @@ class ActionValueEvaluator(BaseEvaluator):
 
   def Evaluate(self, world):
     if isinstance(world, World):
+      experience = self.GetExperience(world)
       self._episode_experiences.append(experience)
       return self._episode_experiences
     else:
@@ -144,6 +146,7 @@ class ActionValueEvaluator(BaseEvaluator):
   def __setstate__(self, d):
     self._nn_observer = d["observer"]
     self._agent_id = None
+    self._episode_experiences = []
 
   def __getstate__(self):
     return {"observer" : self._nn_observer}
@@ -283,7 +286,7 @@ class ActionValuesCollector(DemonstrationCollector):
     return use_scenario
 
   def GetDemonstrations(self, row):
-    return row["demo_evaluator"][1:]
+    return [[list(tp[0]), list(tp[1])] for tp in list(row["demo_evaluator"][1:])]
 
   def GetEvaluators(self, nn_observer, reward_evaluator):
     return ActionValueEvaluator(nn_observer)

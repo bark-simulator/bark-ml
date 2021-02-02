@@ -15,6 +15,15 @@
 #include <chrono>
 #include <iostream>
 #include <memory>
+// Logging based on availability of glog
+#ifdef GOOGLE_STRIP_LOG
+#define LOG_INFO VLOG(4)
+#define LOG_ERROR LOG(ERROR)
+#else
+#define LOG 
+#define LOG_INFO std::cout
+#define LOG_ERROR std::cerr
+#endif
 
 namespace bark_ml {
 namespace lib_fqf_iqn_qrdqn {
@@ -31,13 +40,13 @@ class ModelLoader {
     if (module_loaded_) {
       return true; 
     }
-    std::cout << "Trying to load model from file: " << model_filename << "\n";
+    LOG_INFO << "Trying to load model from file: " << model_filename << "\n";
     try {
       module_ = torch::jit::load(model_filename);
       module_loaded_ = true;
     }
     catch (const c10::Error& e) {
-      std::cerr << "Error loading the model: " << e.msg();
+      LOG_ERROR << "Error loading the model: " << e.msg();
     }
 
     return module_loaded_;

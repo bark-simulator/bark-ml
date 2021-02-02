@@ -26,4 +26,5 @@ cc_library(
 
   linkopts = ["-ltorch_cpu","-lc10"],
   linkstatic=False,
+  visibility = ["//visibility:public"],
 )
