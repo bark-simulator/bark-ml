@@ -2,11 +2,12 @@ package(default_visibility = ["//visibility:public"])
 
 cc_binary(
   name = "core.so",
-  srcs = glob(["*.cpp", "*.hpp"]),
+  srcs = ["main.cpp", "pyobserver.hpp"],
   deps = [
     "//bark_ml/observers:cpp_observers",
     "//bark_ml/evaluators:cpp_evaluators",
     "//bark_ml/commons:spaces",
+    "@bark_project//bark/commons/params:params",
     # external
     "@python_linux//:python-lib",
     "@pybind11//:pybind11",

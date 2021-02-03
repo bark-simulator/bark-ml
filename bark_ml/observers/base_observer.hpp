@@ -43,6 +43,7 @@ class BaseObserver {
     const ObservedWorldPtr& observed_world) const = 0;
   virtual WorldPtr Reset(const WorldPtr& world) = 0;
   virtual Box<float> ObservationSpace() const = 0;
+  ParamsPtr GetParams() const { return params_; }
 
  private:
   ParamsPtr params_;

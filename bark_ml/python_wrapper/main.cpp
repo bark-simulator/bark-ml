@@ -15,20 +15,32 @@
 #include "boost/variant.hpp"
 
 #include "bark/commons/params/params.hpp"
+#include "bark/commons/params/setter_params.hpp"
 #include "bark_ml/evaluators/base_evaluator.hpp"
 #include "bark_ml/evaluators/goal_reached.hpp"
 #include "bark_ml/observers/nearest_observer.hpp"
 #include "bark_ml/evaluators/goal_reached.hpp"
 #include "bark_ml/commons/spaces.hpp"
+#include "bark_ml/python_wrapper/pyobserver.hpp"
 
 PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
 
 namespace py = pybind11;
 using bark::commons::ParamsPtr;
+using bark::commons::SetterParams;
 using bark_ml::observers::NearestObserver;
 using bark_ml::evaluators::GoalReachedEvaluator;
 using bark_ml::spaces::Box;
 using bark_ml::spaces::Matrix_t;
+
+py::tuple ParamsToPython(const ParamsPtr& params) {
+  return py::make_tuple(params->GetCondensedParamList());
+}
+
+ParamsPtr PythonToParams(py::tuple t) {
+  const auto param_list = t[0].cast<bark::commons::CondensedParamList>();
+  return std::make_shared<SetterParams>(true, param_list);
+}
 
 
 namespace pybind11 { namespace detail {
@@ -46,13 +58,27 @@ namespace pybind11 { namespace detail {
 }}
 
 void python_observers(py::module m) {
-  py::class_<NearestObserver,
+  py::class_<BaseObserver, PyObserver,
+             std::shared_ptr<BaseObserver>>(m, "BaseObserver")
+      .def(py::init<const bark::commons::ParamsPtr&>());
+
+  py::class_<NearestObserver, BaseObserver,
               std::shared_ptr<NearestObserver>>(m, "NearestObserver")
     .def(py::init<ParamsPtr>())
     .def("Observe", &NearestObserver::Observe)
     .def("Reset", &NearestObserver::Reset)
     .def_property_readonly(
-      "observation_space", &NearestObserver::ObservationSpace);
+      "observation_space", &NearestObserver::ObservationSpace)
+    .def(py::pickle(
+      [](const NearestObserver& o) {
+        // We throw away other information such as last trajectories
+        return py::make_tuple(ParamsToPython(o.GetParams()));
+      },
+      [](py::tuple t) {
+        if (t.size() != 1)
+          throw std::runtime_error("Invalid behavior model state!");
+        return new NearestObserver(PythonToParams(t[0].cast<py::tuple>()));
+      }));
 }
 
 void python_evaluators(py::module m) {
