@@ -106,6 +106,8 @@ class GoalReachedGuiding(StateEvaluator):
       done = True
     if collision:
       success = 0
+      eval_results["goal_reached"] = 0
+    
     guiding_reward = self.CalculateGuidingReward(observed_world, action)
     # calculate reward
     reward = collision * self._col_penalty + \

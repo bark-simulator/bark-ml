@@ -53,6 +53,8 @@ class GoalReached(StateEvaluator):
       done = True
     if collision:
       success = 0
+      eval_results["goal_reached"] = 0
+      
     # calculate reward
     reward = collision * self._col_penalty + \
       success * self._goal_reward

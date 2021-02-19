@@ -25,7 +25,7 @@ from bark_ml.library_wrappers.lib_tf_agents.networks.gnns.graph_network import G
 def make_mlp(name, embedding_size=80):
   return tf.keras.Sequential([
     tf.keras.layers.Dense(
-      80, activation='relu',
+      embedding_size, activation='relu',
       bias_initializer=tf.constant_initializer(0.001),
       name=name+"_0"),
     tf.keras.layers.Dense(
