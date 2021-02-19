@@ -7,7 +7,3 @@ def init_interaction_network(name, params):
     params=params, 
     name=name + "_InteractionNetwork")
   
-def init_gnn_edge_cond(name, params):
-  return GEdgeCondWrapper(
-    params=params, 
-    name=name + "_GEdgeCond")

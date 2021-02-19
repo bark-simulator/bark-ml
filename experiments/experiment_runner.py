@@ -14,6 +14,7 @@ flags.DEFINE_enum("mode",
                   "visualize",
                   ["train", "visualize", "evaluate", "print", "save"],
                   "Mode the configuration should be executed in.")
+# NOTE: absolute paths are required
 flags.DEFINE_string("exp_json",
                     "/Users/hart/Development/bark-ml/experiments/configs/highway_gat_small.json",
                     "Path to the experiment json.")
