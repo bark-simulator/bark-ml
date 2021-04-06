@@ -9,9 +9,9 @@ import pickle
 from enum import Enum
 
 class Tracer:
-  def __init__(self):
+  def __init__(self, trace_history=True):
     self._states = []
-    self._trace_history = True
+    self._trace_history = trace_history
     self._total_episodes = 0  # increases with terminal count
     self._total_collisions = 0
     self._total_goals_reached = 0
@@ -50,31 +50,32 @@ class Tracer:
       if eval_dict["goal_reached"]:
         self._total_goals_reached += 1
     if "reward" in eval_dict:
-      self._total_reward += eval_dict["reward"] 
-    self._total_steps += 1
+      self._total_reward += eval_dict["reward"]
+    if not "magnitude" in eval_dict:
+      self._total_steps += 1
   
   @property
   def collision_rate(self):
     if self._total_episodes == 0:
-      return 0
+      return self._total_collisions
     return self._total_collisions/self._total_episodes
   
   @property
   def success_rate(self):
     if self._total_episodes == 0:
-      return 0
+      return self._total_goals_reached
     return self._total_goals_reached/self._total_episodes
   
   @property
   def mean_steps(self):
     if self._total_episodes == 0:
-      return 0
+      return self._total_steps
     return self._total_steps/self._total_episodes
 
   @property
   def mean_reward(self):
     if self._total_episodes == 0:
-      return 0
+      return self._total_reward
     return self._total_reward/self._total_episodes
   
   @property
@@ -99,3 +100,6 @@ class Tracer:
     self._total_goals_reached = 0
     self._total_steps = 0
     self._total_reward = 0
+    
+    
+    

@@ -5,7 +5,7 @@
             "Config": {}
         },
         "Evaluator": {
-            "ModuleName": "GoalReached",
+            "ModuleName": "RewardShapingEvaluator",
             "Config": {}
         },
         "Runtime": {
@@ -24,7 +24,8 @@
             "ModuleName": "ContinuousHighwayBlueprint",
             "Config": {
                 "num_scenarios": 10000,
-                "viewer": true
+                "viewer": true,
+                "mode": "medium"
             }
         },
         "NumEvaluationEpisodes": 500,
@@ -108,11 +109,9 @@
     },
     "ML": {
         "BehaviorTFAAgents": {
-            "CheckpointPath": "experiments/runs/highway_nn_small/ckpts/",
             "NumCheckpointsToKeep": 3
         },
         "TFARunner": {
-            "SummaryPath": "experiments/runs/highway_nn_small/summ/",
             "EvaluationSteps": 25,
             "InitialCollectionEpisodes": 50,
             "CollectionEpisodesPerStep": 1
@@ -121,13 +120,6 @@
             "GoalReward": 1.0,
             "CollisionPenalty": -1.0,
             "MaxSteps": 60
-        },
-        "NearestObserver": {
-            "NNearestAgents": 5,
-            "MinVel": 0.0,
-            "MaxVel": 50.0,
-            "MaxDist": 75.0,
-            "StateSize": 4
         },
         "BehaviorContinuousML": {
             "ActionsLowerBound": [
@@ -149,7 +141,7 @@
                 6.283185307179586
             ],
             "NormalizationEnabled": true,
-            "MaxNumAgents": 2
+            "MaxNumAgents": 5
         },
         "BehaviorSACAgent": {
             "ActorFcLayerParams": [
@@ -179,7 +171,7 @@
         },
         "SACRunner": {
             "NumberOfCollections": 250000,
-            "EvaluateEveryNSteps": 1000
+            "EvaluateEveryNSteps": 2000
         },
         "GoalReachedGuiding": {
             "GoalReward": 1.0,
@@ -195,60 +187,7 @@
     "BehaviorDynamicModel": {
         "IntegrationTimeDelta": 0.05000000074505806
     },
-    "EmbeddingSize": 128,
-    "DropoutRate": 0.0,
-    "BehaviorIDMClassic": {
-        "DesiredVelocity": 30.0,
-        "MinimumSpacing": 2.0,
-        "DesiredTimeHeadway": 1.5,
-        "MaxAcceleration": 1.7000000476837158,
-        "AccelerationLowerBound": -5.0,
-        "AccelerationUpperBound": 8.0,
-        "ComfortableBrakingAcceleration": 1.6699999570846558,
-        "MinVelocity": 0.0,
-        "MaxVelocity": 50.0,
-        "Exponent": 4,
-        "BrakeForLaneEnd": false,
-        "BrakeForLaneEndEnabledDistance": 60.0,
-        "BrakeForLaneEndDistanceOffset": 15.0,
-        "NumTrajectoryTimePoints": 11,
-        "CoolnessFactor": 0.0
-    },
     "World": {
-        "remove_agents_out_of_map": false
-    },
-    "DynamicModel": {
-        "wheel_base": 2.700000047683716,
-        "delta_max": 0.20000000298023224,
-        "lat_acc_max": 4.0,
-        "lon_acceleration_max": 4.0,
-        "lon_acceleration_min": -8.0
-    },
-    "agent": {
-        "MaxHistoryLength": 50
-    },
-    "ActorFcLayerParams": [
-        512,
-        256,
-        256
-    ],
-    "CriticJointFcLayerParams": [
-        512,
-        256,
-        256
-    ],
-    "ActorLearningRate": 0.0003,
-    "CriticLearningRate": 0.0003,
-    "AlphaLearningRate": 0.0003,
-    "TargetUpdateTau": 0.05,
-    "TargetUpdatePeriod": 3,
-    "Gamma": 0.995,
-    "RewardScaleFactor": 1.0,
-    "AgentName": "sac_agent",
-    "DebugSummaries": true,
-    "ReplayBufferCapacity": 10000,
-    "ParallelBufferCalls": 1,
-    "BatchSize": 512,
-    "BufferNumSteps": 2,
-    "BufferPrefetch": 3
+        "remove_agents_out_of_map": true
+    }
 }

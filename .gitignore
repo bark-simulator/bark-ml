@@ -168,3 +168,9 @@ tests/data/database_maps_DR_DEU_Merging_MT_shifted.xodr
 
 /experiments/runs/**
 /experiments/runs/**/**
+*.index
+*.txt
+checkpoint
+ckpt-*
+events.out.*
+params.json
