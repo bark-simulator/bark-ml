@@ -45,8 +45,10 @@ class SACRunner(TFARunner):
   def _train(self):
     iterator = iter(self._agent._dataset)
     iteration_start_time = time.time()
+    global_iteration = self._agent._agent._train_step_counter.numpy()
 
-    for i in range(1, self._number_of_collections):
+    for i in range(int(global_iteration), self._number_of_collections):
+      tf.keras.backend.clear_session()
       global_iteration = self._agent._agent._train_step_counter.numpy()
       tf.summary.experimental.set_step(global_iteration)
 

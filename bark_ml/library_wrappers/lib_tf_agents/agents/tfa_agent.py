@@ -24,7 +24,7 @@ from tf_agents.utils.common import Checkpointer
 from tf_agents.trajectories import time_step as ts
 
 # BARK-ML imports
-from bark_ml.library_wrappers.lib_tf_agents.tfa_wrapper import TFAWrapper
+from bark_ml.library_wrappers.lib_tf_agents.py_bark_environment import PyBARKEnvironment
 from bark_ml.commons.py_spaces import BoundedContinuous
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 
@@ -40,7 +40,7 @@ class BehaviorTFAAgent(BehaviorModel):
     self._observer = observer
     self._environment = environment
     self._wrapped_env = tf_py_environment.TFPyEnvironment(
-      TFAWrapper(self._environment))
+      PyBARKEnvironment(self._environment))
     self._ckpt = tf.train.Checkpoint(step=tf.Variable(0, dtype=tf.int64))
     self._agent = self.GetAgent(self._wrapped_env, params)
     self._ckpt = tf.train.Checkpoint(step=tf.Variable(0, dtype=tf.int64),

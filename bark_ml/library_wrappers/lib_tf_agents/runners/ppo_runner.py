@@ -37,6 +37,7 @@ class PPORunner(TFARunner):
   def _train(self):
     global_iteration = self._agent._agent._train_step_counter.numpy()
     for i in range(1, self._params["ML"]["PPORunner"]["NumberOfCollections", "", 10000]):
+      tf.keras.backend.clear_session()
       print(f"Collection {i}")
       global_iteration = self._agent._agent._train_step_counter.numpy()
       tf.summary.experimental.set_step(global_iteration)

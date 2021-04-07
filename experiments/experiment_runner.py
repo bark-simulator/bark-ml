@@ -5,7 +5,8 @@ import logging
 from pathlib import Path
 from absl import app
 from absl import flags
-
+import tensorflow as tf
+import numpy as np
 from bark.runtime.commons.parameters import ParameterServer
 from experiments.experiment import Experiment
 
@@ -21,6 +22,9 @@ flags.DEFINE_string("exp_json",
 flags.DEFINE_string("save_path",
                     "/Users/hart/Development/bark-ml/experiments/configs/new_exp.json",
                     "Path to the experiment json.")
+flags.DEFINE_integer("random_seed",
+                     0,
+                     "Random seed to be used.")
 
 class ExperimentRunner:
   """
@@ -31,18 +35,23 @@ class ExperimentRunner:
   hashes before training. Thus, trained results can be matched to executions
   and evaluations.
   """
-  def __init__(self, json_file, mode):
+  def __init__(self, json_file, mode="visualize", random_seed=0):
     self._logger = logging.getLogger()
     self._experiment_json = json_file
     self._params = ParameterServer(filename=json_file)
     self._experiment_folder, self._json_name = \
       self.GetExperimentsFolder(json_file)
+    # set random seeds
+    self._random_seed = random_seed
+    np.random.seed(random_seed)
+    tf.random.set_seed(random_seed)
     self.SetCkptsAndSummaries()
     self._experiment = self.BuildExperiment(json_file, mode)
     self.Visitor(mode)
 
   def Visitor(self, mode):
     if mode == "train":
+      self._experiment._params.Save(self._runs_folder+"params.json")
       self.Train()
     if mode == "visualize":
       self.Visualize()
@@ -57,7 +66,7 @@ class ExperimentRunner:
     return Experiment(json_file, self._params, mode)
   
   def GetExperimentsFolder(self, json_file):
-    dir_name = Path(json_file).parent.parent
+    dir_name = Path(json_file).parent
     if not os.path.isdir(dir_name):
       assert f"{dir_name} does not exist."
     base_name = os.path.basename(json_file)
@@ -82,7 +91,7 @@ class ExperimentRunner:
   
   def SetCkptsAndSummaries(self):
     self._runs_folder = \
-      str(self._experiment_folder) + "/runs/" + self._json_name + "/"
+      str(self._experiment_folder) + "/" + self._json_name + "/" + str(self._random_seed) + "/"
     ckpt_folder = self._runs_folder + "ckpts/"
     summ_folder = self._runs_folder + "summ/"
     self._logger.info(f"Run folder of the agent {self._runs_folder}.")
@@ -100,7 +109,6 @@ class ExperimentRunner:
       file.close()
     else:
       self.CompareHashes()
-      
     self._experiment.runner.SetupSummaryWriter()
     self._experiment.runner.Train()
   
@@ -108,7 +116,8 @@ class ExperimentRunner:
     self.CompareHashes()
     num_episodes = \
       self._params["Experiment"]["NumEvaluationEpisodes"]
-    self._experiment.runner.Run(num_episodes=num_episodes, render=False)
+    return self._experiment.runner.Run(
+      num_episodes=num_episodes, render=False, trace_colliding_ids=True)
   
   def Visualize(self):
     self.CompareHashes()
@@ -126,7 +135,8 @@ class ExperimentRunner:
 def run_experiment(argv):
   exp_runner = ExperimentRunner(
     json_file=FLAGS.exp_json,
-    mode=FLAGS.mode)
+    mode=FLAGS.mode,
+    random_seed=FLAGS.random_seed)
 
 if __name__ == '__main__':
   app.run(run_experiment)    

@@ -9,7 +9,7 @@ py_library(
             "gnn_initializers.py"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
     imports = ["../external/bark_project/bark/python_wrapper/"],
-    deps = ["//bark_ml/library_wrappers/lib_tf_agents:tfa_wrapper",
+    deps = ["//bark_ml/library_wrappers/lib_tf_agents:py_bark_environment",
             "//bark_ml/commons:py_spaces",
             "//bark_ml/library_wrappers/lib_tf_agents/networks:networks"],
     visibility = ["//visibility:public"],

@@ -85,7 +85,7 @@ class GNNActorNetwork(network.Network):
       raise ValueError('`gnn` must not be `None`.')
 
     self._gnn = gnn(name=name, params=params)
-    
+    self._latent_trace = None
     self._encoder = encoding_network.EncodingNetwork(
       input_tensor_spec=tf.TensorSpec([None, self._gnn._embedding_size]),
       preprocessing_layers=None,
@@ -113,13 +113,14 @@ class GNNActorNetwork(network.Network):
       observations = tf.expand_dims(observations, axis=0)
     batch_size = tf.shape(observations)[0]
     embeddings = self._gnn(observations, training=training)
+    self._latent_trace = self._gnn._latent_trace
 
     # extract ego state (node 0)
     if batch_size > 0: 
       embeddings = embeddings[:, 0]
 
-    with tf.name_scope("GNNActorNetwork"):
-      tf.summary.histogram("actor_gnn_output", embeddings)
+    # with tf.name_scope("GNNActorNetwork"):
+    #   tf.summary.histogram("actor_gnn_output", embeddings)
     
     output, network_state = self._encoder(embeddings, training=training)
     output = embeddings

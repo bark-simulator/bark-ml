@@ -40,7 +40,7 @@ class HighwayLaneCorridorConfig(LaneCorridorConfig):
     return GoalDefinitionStateLimitsFrenet(lane_corr.center_line,
                                            (0.4, 0.4),
                                            (0.1, 0.1),
-                                           (25., 35.))
+                                           (12.5, 17.5))
 
 
 class HighwayBlueprint(Blueprint):
@@ -49,24 +49,35 @@ class HighwayBlueprint(Blueprint):
                num_scenarios=250,
                random_seed=0,
                ml_behavior=None,
-               viewer=True):
-    params["BehaviorIDMClassic"]["DesiredVelocity"] = 30.
+               viewer=True,
+               mode="dense"):
+    if mode == "dense":
+      ds_min = 10.
+      ds_max = 20.
+    if mode == "medium":
+      ds_min = 20.
+      ds_max = 35.
+    params["BehaviorIDMClassic"]["DesiredVelocity"] = 15.
     params["World"]["remove_agents_out_of_map"] = False
     left_lane = HighwayLaneCorridorConfig(params=params,
                                           road_ids=[16],
                                           lane_corridor_id=0,
-                                          min_vel=28.0,
-                                          max_vel=32.0,
-                                          ds_min=10.,
-                                          ds_max=15.,
+                                          min_vel=12.5,
+                                          max_vel=17.5,
+                                          ds_min=ds_min,
+                                          ds_max=ds_max,
+                                          s_min=5.,
+                                          s_max=200.,
                                           controlled_ids=None)
     right_lane = HighwayLaneCorridorConfig(params=params,
                                            road_ids=[16],
                                            lane_corridor_id=1,
-                                           min_vel=28.0,
-                                           max_vel=32.0,
-                                           ds_min=10.,
-                                           ds_max=15.,
+                                           min_vel=12.5,
+                                           max_vel=17.5,
+                                           s_min=5.,
+                                           s_max=200.,
+                                           ds_min=ds_min,
+                                           ds_max=ds_max,
                                            controlled_ids=True)
     scenario_generation = \
       ConfigWithEase(
@@ -77,8 +88,8 @@ class HighwayBlueprint(Blueprint):
         lane_corridor_configs=[left_lane, right_lane])
     if viewer:
       viewer = MPViewer(params=params,
-                        x_range=[-35, 35],
-                        y_range=[-35, 35],
+                        x_range=[-50, 50],
+                        y_range=[-50, 50],
                         follow_agent_id=True)
     dt = 0.2
     evaluator = GoalReached(params)
@@ -99,25 +110,29 @@ class ContinuousHighwayBlueprint(HighwayBlueprint):
                params=None,
                num_scenarios=25,
                random_seed=0,
-               viewer=True):
+               viewer=True,
+               mode="dense"):
     ml_behavior = BehaviorContinuousML(params)
     HighwayBlueprint.__init__(self,
                               params=params,
                               num_scenarios=num_scenarios,
                               random_seed=random_seed,
                               ml_behavior=ml_behavior,
-                              viewer=True)
+                              viewer=True,
+                              mode=mode)
 
 
 class DiscreteHighwayBlueprint(HighwayBlueprint):
   def __init__(self,
                params=None,
                num_scenarios=25,
-               random_seed=0):
+               random_seed=0,
+               mode="dense"):
     ml_behavior = BehaviorDiscreteMacroActionsML(params)
     HighwayBlueprint.__init__(self,
                               params=params,
                               num_scenarios=num_scenarios,
                               random_seed=random_seed,
                               ml_behavior=ml_behavior,
-                              viewer=True)
+                              viewer=True,
+                              mode=mode)

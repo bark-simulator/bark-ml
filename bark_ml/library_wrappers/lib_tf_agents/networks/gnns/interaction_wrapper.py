@@ -22,17 +22,17 @@ from bark_ml.observers.graph_observer_v2 import GraphObserverV2
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnns.graph_network import GraphNetwork
 
 
-def make_mlp(name, embedding_size=80):
+def make_mlp(name, layer_size=150, embedding_size=80):
   return tf.keras.Sequential([
     tf.keras.layers.Dense(
-      embedding_size, activation='relu',
+      layer_size, activation='relu',
       bias_initializer=tf.constant_initializer(0.001),
       name=name+"_0"),
     tf.keras.layers.Dense(
-      embedding_size, activation='tanh',
+      embedding_size, activation='relu',
       bias_initializer=tf.constant_initializer(0.001),
       name=name+"_1"),
-    tf.keras.layers.LayerNormalization()
+    # tf.keras.layers.LayerNormalization()
   ])
 
 class InteractionWrapper(GraphNetwork):
@@ -60,16 +60,17 @@ class InteractionWrapper(GraphNetwork):
     self._num_message_passing_layers = params["ML"]["InteractionNetwork"][
       "NumMessagePassingLayers", "Number of message passing layers", 2]
     self._embedding_size = params["ML"]["InteractionNetwork"][
-      "EmbeddingSize", "Embedding size of nodes", 40]
+      "EmbeddingSize", "Embedding size of nodes", 20]
     
     self._node_mlps = []
     self._edge_mlps = []
     for i in range(0, self._num_message_passing_layers):
       self._node_mlps.append(
-        make_mlp(name+"_node_"+str(i), self._embedding_size))
+        make_mlp(name+"_node_"+str(i), embedding_size=self._embedding_size))
       self._edge_mlps.append(
-        make_mlp(name+"_edge_"+str(i), self._embedding_size))
-    
+        make_mlp(name+"_edge_"+str(i), embedding_size=self._embedding_size))
+
+    self._latent_trace = None
     # initialize network & call func
     self._init_network(name)
     self._call_func = self._init_call_func
@@ -82,7 +83,7 @@ class InteractionWrapper(GraphNetwork):
           edge_model_fn=lambda: self._edge_mlps[i],
           node_model_fn=lambda: self._node_mlps[i]))
   
-  @tf.function
+  # @tf.function
   def _init_call_func(self, observations, training=False):
     """Graph nets implementation"""
     node_vals, edge_indices, node_to_graph, edge_vals = GraphObserver.graph(
@@ -102,10 +103,11 @@ class InteractionWrapper(GraphNetwork):
       n_node=node_counts,
       n_edge=edge_counts) 
     
+    self._latent_trace = []
     latent = input_graph
     for gb in self._graph_blocks:
       latent = gb(latent)
-    
+      self._latent_trace.append(latent)
     node_values = tf.reshape(latent.nodes, [batch_size, -1, self._embedding_size])
     return node_values
 
