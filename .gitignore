@@ -166,5 +166,7 @@ tests/data/database_maps_DR_DEU_Merging_MT_shifted.xodr
 *.png
 *.p
 
-/experiments/runs/**
+/experiments/configs/**
+/experiments/configs/**/**
+/experiments/runs/**/**
 /experiments/runs/**/**
