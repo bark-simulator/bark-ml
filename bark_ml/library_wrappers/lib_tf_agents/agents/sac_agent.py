@@ -34,7 +34,7 @@ class BehaviorSACAgent(BehaviorTFAAgent):
                environment=None,
                params=None,
                observer=None):
-    self._sac_params = params
+    self._sac_params = params["ML"]["BehaviorSACAgent"]
     BehaviorTFAAgent.__init__(
       self,
       environment=environment,

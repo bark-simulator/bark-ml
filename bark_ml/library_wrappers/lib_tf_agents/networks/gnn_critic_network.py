@@ -161,8 +161,8 @@ class GNNCriticNetwork(network.Network):
       embeddings = embeddings[:, 0] # extract ego state
       actions = tf.reshape(actions, [batch_size, -1])
 
-    with tf.name_scope("GNNCriticEmbeddings"):
-      tf.summary.histogram("critic_gnn_output", embeddings)
+    # with tf.name_scope("GNNCriticEmbeddings"):
+    #   tf.summary.histogram("critic_gnn_output", embeddings)
       
     embeddings = tf.cast(tf.nest.flatten(embeddings)[0], tf.float32)
     for layer in self._observation_layers:
@@ -176,7 +176,7 @@ class GNNCriticNetwork(network.Network):
     for layer in self._joint_layers:
       joint = layer(joint, training=training)
 
-    with tf.name_scope("GNNCriticNetwork"):
-      tf.summary.histogram("critic_output_value", joint)
+    # with tf.name_scope("GNNCriticNetwork"):
+    #   tf.summary.histogram("critic_output_value", joint)
 
     return tf.reshape(joint, [-1]), network_state

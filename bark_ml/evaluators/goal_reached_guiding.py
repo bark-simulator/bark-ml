@@ -70,10 +70,10 @@ class GoalReachedGuiding(StateEvaluator):
     goal_center_line = goal_lane_corr.center_line
     ego_agent = observed_world.ego_agent
     ego_agent_state = ego_agent.state
-    distance_to_gaol = Distance(
+    distance_to_goal = Distance(
       goal_center_line,
       Point2d(ego_agent_state[1], ego_agent_state[2]))
-    return distance_to_gaol
+    return distance_to_goal
 
   def CalculateGuidingReward(self, observed_world, action):
     """Returns a guiding reward using the dist. to goal and penalized acts."""
@@ -96,21 +96,24 @@ class GoalReachedGuiding(StateEvaluator):
     """Returns information about the current world state
     """
     done = False
-    success = eval_results["goal_reached"]
-    collision = eval_results["collision"] or eval_results["drivable_area"]
+    ego_agent = observed_world.ego_agent
+    ego_agent_state = ego_agent.state
     step_count = eval_results["step_count"]
+    success = eval_results["goal_reached"]
+    bad_state = eval_results["collision"] or eval_results["drivable_area"] \
+      or (step_count > self._max_steps) or (ego_agent_state[4] < 0)
     # for agent_id, agent in observed_world.agents.items():
     #   eval_results[agent_id] = agent.state
     # determine whether the simulation should terminate
-    if success or collision or step_count > self._max_steps:
+    if success or bad_state or step_count > self._max_steps:
       done = True
-    if collision:
+    if bad_state:
       success = 0
       eval_results["goal_reached"] = 0
     
     guiding_reward = self.CalculateGuidingReward(observed_world, action)
     # calculate reward
-    reward = collision * self._col_penalty + \
+    reward = bad_state * self._col_penalty + \
       success * self._goal_reward + self._goal_dist*guiding_reward
     return reward, done, eval_results
     

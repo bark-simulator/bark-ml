@@ -47,6 +47,15 @@ class DiscreteMergingGym(SingleAgentRuntime, gym.Env):
     SingleAgentRuntime.__init__(self,
       blueprint=discrete_merging_bp, render=render)
 
+# merging
+class MediumContinuousMergingGym(SingleAgentRuntime, gym.Env):
+  def __init__(self):
+    params = ParameterServer()
+    cont_merging_bp = ContinuousMergingBlueprint(params, mode="medium")
+    SingleAgentRuntime.__init__(self,
+      blueprint=cont_merging_bp,
+      render=True)
+
 # intersection
 class ContinuousIntersectionGym(SingleAgentRuntime, gym.Env):
   def __init__(self):
@@ -78,6 +87,10 @@ register(
 register(
   id='merging-v0',
   entry_point='bark_ml.environments.gym:ContinuousMergingGym'
+)
+register(
+  id='merging-medium-v0',
+  entry_point='bark_ml.environments.gym:MediumContinuousMergingGym'
 )
 register(
   id='merging-v1',

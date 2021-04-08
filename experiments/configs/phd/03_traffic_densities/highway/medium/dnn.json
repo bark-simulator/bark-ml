@@ -5,7 +5,7 @@
             "Config": {}
         },
         "Evaluator": {
-            "ModuleName": "GoalReached",
+            "ModuleName": "RewardShapingEvaluator",
             "Config": {}
         },
         "Runtime": {
@@ -13,18 +13,19 @@
             "Config": {}
         },
         "Runner": {
-            "ModuleName": "PPORunner",
+            "ModuleName": "SACRunner",
             "Config": {}
         },
         "Agent": {
-            "ModuleName": "BehaviorPPOAgent",
+            "ModuleName": "BehaviorSACAgent",
             "Config": {}
         },
         "Blueprint": {
             "ModuleName": "ContinuousHighwayBlueprint",
             "Config": {
-                "num_scenarios": 100,
-                "viewer": true
+                "num_scenarios": 10000,
+                "viewer": true,
+                "mode": "medium"
             }
         },
         "NumEvaluationEpisodes": 500,
@@ -107,12 +108,20 @@
         }
     },
     "ML": {
+        "RewardShapingEvaluator": {
+            "RewardShapingPotentials": {
+                "VelocityPotential" : {
+                    "desired_vel": 10.0, "vel_dev_max": 10.0, "exponent": 0.4, "type": "positive"
+                  },
+                  "DistancePotential": {
+                    "exponent": 0.4, "d_max": 10.0, "type": "positive"
+                  }
+            }
+        },
         "BehaviorTFAAgents": {
-            "CheckpointPath": "/Users/hart/Development/bark-ml/experiments/runs/gcn_three_layers/ckpts/",
             "NumCheckpointsToKeep": 3
         },
         "TFARunner": {
-            "SummaryPath": "/Users/hart/Development/bark-ml/experiments/runs/gcn_three_layers/summ/",
             "EvaluationSteps": 25,
             "InitialCollectionEpisodes": 50,
             "CollectionEpisodesPerStep": 1
@@ -121,13 +130,6 @@
             "GoalReward": 1.0,
             "CollisionPenalty": -1.0,
             "MaxSteps": 60
-        },
-        "NearestObserver": {
-            "NNearestAgents": 4,
-            "MinVel": 0.0,
-            "MaxVel": 50.0,
-            "MaxDist": 75.0,
-            "StateSize": 4
         },
         "BehaviorContinuousML": {
             "ActionsLowerBound": [
@@ -149,63 +151,53 @@
                 6.283185307179586
             ],
             "NormalizationEnabled": true,
-            "MaxNumAgents": 2
+            "MaxNumAgents": 5
         },
-        "GraphObserver": {
-            "NormalizationEnabled": true,
-            "AgentLimit": 5,
-            "VisibilityRadius": 150,
-            "SelfLoops": true,
-            "EnabledNodeFeatures": [
-                "x",
-                "y",
-                "theta",
-                "vel",
-                "goal_theta",
-                "goal_d",
-                "goal_vel"
-            ],
-            "EnabledEdgeFeatures": [
-                "dx",
-                "dy",
-                "dvel",
-                "dtheta"
-            ]
-        },
-        "BehaviorGraphSACAgent": {
+        "BehaviorSACAgent": {
             "ActorFcLayerParams": [
-                128,
-                128
+                512,
+                512,
+                512
             ],
-            "CriticObservationFcLayerParams": [
-                128
-            ],
-            "CriticActionFcLayerParams": null,
             "CriticJointFcLayerParams": [
-                128,
-                128
+                512,
+                512,
+                512
             ],
             "ActorLearningRate": 0.0003,
             "CriticLearningRate": 0.0003,
-            "AlphaLearningRate": 0.00001,
-            "TargetUpdateTau": 1.0,
-            "TargetUpdatePeriod": 1,
+            "AlphaLearningRate": 0.0003,
+            "TargetUpdateTau": 0.05,
+            "TargetUpdatePeriod": 3,
             "Gamma": 0.995,
             "RewardScaleFactor": 1.0,
-            "AgentName": "gnn_sac_agent",
-            "DebugSummaries": true,
+            "AgentName": "sac_agent",
+            "DebugSummaries": false,
             "ReplayBufferCapacity": 10000,
             "ParallelBufferCalls": 1,
             "BatchSize": 512,
             "BufferNumSteps": 2,
             "BufferPrefetch": 3
         },
-        "PPORunner": {
+        "SACRunner": {
             "NumberOfCollections": 250000,
-            "EvaluateEveryNSteps": 1000
+            "EvaluateEveryNSteps": 2000
+        },
+        "GoalReachedGuiding": {
+            "GoalReward": 1.0,
+            "CollisionPenalty": -1.0,
+            "MaxSteps": 50,
+            "ActionPenalty": 0.01,
+            "GoalDistance": 0.01
+        },
+        "NearestAgentsObserver": {
+            "MaxOtherDistance": 100
         }
     },
     "BehaviorDynamicModel": {
         "IntegrationTimeDelta": 0.05000000074505806
+    },
+    "World": {
+        "remove_agents_out_of_map": true
     }
 }

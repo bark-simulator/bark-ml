@@ -5,7 +5,7 @@
             "Config": {}
         },
         "Evaluator": {
-            "ModuleName": "GoalReachedGuiding",
+            "ModuleName": "RewardShapingEvaluator",
             "Config": {}
         },
         "Runtime": {
@@ -26,7 +26,8 @@
             "ModuleName": "ContinuousHighwayBlueprint",
             "Config": {
                 "num_scenarios": 10000,
-                "viewer": true
+                "viewer": true,
+                "mode": "dense"
             }
         },
         "NumEvaluationEpisodes": 500,
@@ -117,18 +118,6 @@
             "InitialCollectionEpisodes": 50,
             "CollectionEpisodesPerStep": 1
         },
-        "GoalReachedEvaluator": {
-            "GoalReward": 1.0,
-            "CollisionPenalty": -1.0,
-            "MaxSteps": 60
-        },
-        "NearestObserver": {
-            "NNearestAgents": 4,
-            "MinVel": 0.0,
-            "MaxVel": 50.0,
-            "MaxDist": 75.0,
-            "StateSize": 4
-        },
         "BehaviorContinuousML": {
             "ActionsLowerBound": [
                 -5.0,
@@ -139,21 +128,9 @@
                 0.2
             ]
         },
-        "StateObserver": {
-            "VelocityRange": [
-                0,
-                100
-            ],
-            "ThetaRange": [
-                -6.283185307179586,
-                6.283185307179586
-            ],
-            "NormalizationEnabled": true,
-            "MaxNumAgents": 2
-        },
         "GraphObserver": {
             "NormalizationEnabled": true,
-            "AgentLimit": 4,
+            "AgentLimit": 5,
             "VisibilityRadius": 1500,
             "SelfLoops": true,
             "EnabledNodeFeatures": [
@@ -186,7 +163,7 @@
             "Gamma": 0.995,
             "RewardScaleFactor": 1.0,
             "AgentName": "gnn_sac_agent",
-            "DebugSummaries": true,
+            "DebugSummaries": false,
             "ReplayBufferCapacity": 10000,
             "ParallelBufferCalls": 1,
             "BatchSize": 512,
@@ -195,7 +172,7 @@
         },
         "SACRunner": {
             "NumberOfCollections": 250000,
-            "EvaluateEveryNSteps": 500
+            "EvaluateEveryNSteps": 2000
         }
     },
     "BehaviorDynamicModel": {

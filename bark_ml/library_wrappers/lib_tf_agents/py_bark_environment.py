@@ -17,7 +17,7 @@ from collections import OrderedDict
 tf.compat.v1.enable_v2_behavior()
 
 
-class TFAWrapper(py_environment.PyEnvironment):
+class PyBARKEnvironment(py_environment.PyEnvironment):
   """Wrapper for TensorFlow Agents (https://github.com/tensorflow/agents)
 
   Arguments:

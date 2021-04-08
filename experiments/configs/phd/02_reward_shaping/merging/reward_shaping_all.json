@@ -1,0 +1,201 @@
+{
+    "Experiment": {
+        "Observer": {
+            "ModuleName": "GraphObserver",
+            "Config": {}
+        },
+        "Evaluator": {
+            "ModuleName": "RewardShapingEvaluator",
+            "Config": {}
+        },
+        "Runtime": {
+            "ModuleName": "SingleAgentRuntime",
+            "Config": {}
+        },
+        "Runner": {
+            "ModuleName": "SACRunner",
+            "Config": {}
+        },
+        "Agent": {
+            "ModuleName": "BehaviorGraphSACAgent",
+            "Config": {
+                "init_gnn": "init_interaction_network"
+            }
+        },
+        "Blueprint": {
+            "ModuleName": "ContinuousMergingBlueprint",
+            "Config": {
+                "num_scenarios": 10000,
+                "viewer": true,
+                "mode": "dense"
+            }
+        },
+        "NumEvaluationEpisodes": 500,
+        "NumVisualizationEpisodes": 10
+    },
+    "Visualization": {
+        "Agents": {
+            "Color": {
+                "Other": {
+                    "Lines": [
+                        0.7,
+                        0.7,
+                        0.7
+                    ],
+                    "Face": [
+                        0.7,
+                        0.7,
+                        0.7
+                    ]
+                },
+                "Controlled": {
+                    "Lines": [
+                        0.0,
+                        0.27,
+                        0.58
+                    ],
+                    "Face": [
+                        0.49,
+                        0.63,
+                        0.83
+                    ]
+                },
+                "UseColormapForOtherAgents": false,
+                "IfColormapUseLineColorOthers": true
+            },
+            "Alpha": {
+                "Controlled": 1.0,
+                "Other": 1
+            },
+            "ColorRoute": [
+                0.2,
+                0.2,
+                0.2
+            ],
+            "DrawRoute": false,
+            "DrawAgentId": true,
+            "DrawEvalGoals": true,
+            "EvalGoalColor": [
+                0.49,
+                0.63,
+                0.83
+            ],
+            "DrawHistory": false,
+            "DrawHistoryDrawFace": true
+        },
+        "Map": {
+            "XodrLanes": {
+                "Boundaries": {
+                    "Color": [
+                        0.7,
+                        0.7,
+                        0.7
+                    ],
+                    "Alpha": 1.0,
+                    "Linewidth": 1.0
+                }
+            },
+            "Plane": {
+                "Color": [
+                    1,
+                    1,
+                    1,
+                    1
+                ],
+                "Alpha": 1.0
+            }
+        },
+        "Evaluation": {
+            "DrawLTLDebugInfo": false
+        }
+    },
+    "ML": {
+        "RewardShapingEvaluator": {
+            "RewardShapingPotentials": {
+                "VelocityPotential" : {
+                    "desired_vel": 10.0, "vel_dev_max": 10.0, "exponent": 0.4, "type": "positive"
+                  },
+                  "DistancePotential": {
+                    "exponent": 0.4, "d_max": 10.0, "type": "positive"
+                  },
+                  "DistanceOtherPotential": {
+                    "exponent": 0.4, "d_max": 20.0, "type": "negative"
+                  }
+            }
+        },
+        "InteractionNetwork": {
+            "NumMessagePassingLayers": 2,
+            "EmbeddingSize": 20
+        },
+        "BehaviorTFAAgents": {
+            "NumCheckpointsToKeep": 3
+        },
+        "TFARunner": {
+            "EvaluationSteps": 25,
+            "InitialCollectionEpisodes": 50,
+            "CollectionEpisodesPerStep": 1
+        },
+        "BehaviorContinuousML": {
+            "ActionsLowerBound": [
+                -5.0,
+                -0.2
+            ],
+            "ActionsUpperBound": [
+                4.0,
+                0.2
+            ]
+        },
+        "GraphObserver": {
+            "NormalizationEnabled": true,
+            "AgentLimit": 5,
+            "VisibilityRadius": 1500,
+            "SelfLoops": true,
+            "EnabledNodeFeatures": [
+                "x",
+                "y",
+                "theta",
+                "vel"
+            ],
+            "EnabledEdgeFeatures": [
+                "dx",
+                "dy"
+            ]
+        },
+        "BehaviorGraphSACAgent": {
+            "ActorFcLayerParams": [
+                256,
+                256
+            ],
+            "CriticObservationFcLayerParams": null,
+            "CriticActionFcLayerParams": null,
+            "CriticJointFcLayerParams": [
+                256,
+                256
+            ],
+            "ActorLearningRate": 0.0003,
+            "CriticLearningRate": 0.0003,
+            "AlphaLearningRate": 0.0003,
+            "TargetUpdateTau": 0.05,
+            "TargetUpdatePeriod": 3,
+            "Gamma": 0.995,
+            "RewardScaleFactor": 1.0,
+            "AgentName": "gnn_sac_agent",
+            "DebugSummaries": false,
+            "ReplayBufferCapacity": 10000,
+            "ParallelBufferCalls": 1,
+            "BatchSize": 512,
+            "BufferNumSteps": 2,
+            "BufferPrefetch": 3
+        },
+        "SACRunner": {
+            "NumberOfCollections": 250000,
+            "EvaluateEveryNSteps": 2000
+        }
+    },
+    "BehaviorDynamicModel": {
+        "IntegrationTimeDelta": 0.05000000074505806
+    },
+    "World": {
+        "remove_agents_out_of_map": true
+    }
+}
