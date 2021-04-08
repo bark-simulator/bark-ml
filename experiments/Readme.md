@@ -14,26 +14,8 @@ And to evaluate the performance of the agent, use:
 
 
 ## Notes
-TODO: run with mult. seeds; not for first eval though
-
-### architecture search
+e.g.:
 sbatch run_experiment_normal.sh --exp_json=experiments/experiment_runner.runfiles/bark_ml/experiments/configs/phd/01_hyperparams/dnns/merging_large_network.json --mode=train
 sbatch run_experiment_lowprio.sh --exp_json=experiments/experiment_runner.runfiles/bark_ml/experiments/configs/phd/01_hyperparams/dnns/merging_small_network.json --mode=train
 sbatch run_experiment_normal.sh --exp_json=experiments/experiment_runner.runfiles/bark_ml/experiments/configs/phd/01_hyperparams/gnns/merging_large_embedding.json --mode=train
 sbatch run_experiment_lowprio.sh --exp_json=experiments/experiment_runner.runfiles/bark_ml/experiments/configs/phd/01_hyperparams/gnns/merging_small_embedding.json --mode=train
-
-### reward shaping
-sbatch run_experiment_lowprio.sh --exp_json=experiments/experiment_runner.runfiles/bark_ml/experiments/configs/phd/02_reward_shaping/merging/reward_shaping_vel.json --mode=train
-sbatch run_experiment_lowprio.sh --exp_json=experiments/experiment_runner.runfiles/bark_ml/experiments/configs/phd/02_reward_shaping/merging/reward_shaping_dist.json --mode=train
-sbatch run_experiment_lowprio.sh --exp_json=experiments/experiment_runner.runfiles/bark_ml/experiments/configs/phd/02_reward_shaping/merging/reward_shaping_dist_vel.json --mode=train
-sbatch run_experiment_lowprio.sh --exp_json=experiments/experiment_runner.runfiles/bark_ml/experiments/configs/phd/02_reward_shaping/merging/reward_shaping_all.json --mode=train
-
-TODO: before training comment in tf-functions!!!
-
-### traffic densities
-sbatch run_experiment_normal.sh --exp_json=experiments/experiment_runner.runfiles/bark_ml/experiments/configs/phd/03_traffic_densities/highway/dense/dnn.json --mode=train
-sbatch run_experiment_normal.sh --exp_json=experiments/experiment_runner.runfiles/bark_ml/experiments/configs/phd/03_traffic_densities/highway/dense/gnn.json --mode=train
-sbatch run_experiment_lowprio.sh --exp_json=experiments/experiment_runner.runfiles/bark_ml/experiments/configs/phd/03_traffic_densities/highway/medium/dnn.json --mode=train
-sbatch run_experiment_lowprio.sh --exp_json=experiments/experiment_runner.runfiles/bark_ml/experiments/configs/phd/03_traffic_densities/highway/medium/gnn.json --mode=train
-sbatch run_experiment_lowprio.sh --exp_json=experiments/experiment_runner.runfiles/bark_ml/experiments/configs/phd/03_traffic_densities/merging/medium/dnn.json --mode=train
-sbatch run_experiment_lowprio.sh --exp_json=experiments/experiment_runner.runfiles/bark_ml/experiments/configs/phd/03_traffic_densities/merging/medium/gnn.json --mode=train
