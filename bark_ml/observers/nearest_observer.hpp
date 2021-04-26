@@ -46,9 +46,9 @@ using bark::models::dynamic::StateDefinition::X_POSITION;
 using bark::models::dynamic::StateDefinition::Y_POSITION;
 using bark::models::dynamic::StateDefinition::THETA_POSITION;
 using bark::models::dynamic::StateDefinition::VEL_POSITION;
-using ObservedState = Eigen::Matrix<float, 1, Eigen::Dynamic>;
+using ObservedState = Eigen::Matrix<double, 1, Eigen::Dynamic>;
 using bark::commons::transformation::FrenetPosition;
-using State = Eigen::Matrix<float, Eigen::Dynamic, 1>;
+using State = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 
 
 class NearestObserver : public BaseObserver {
@@ -130,13 +130,13 @@ class NearestObserver : public BaseObserver {
     return world;
   }
 
-  Box<float> ObservationSpace() const {
-    Matrix_t<float> low(1, observation_len_);
+  Box<double> ObservationSpace() const {
+    Matrix_t<double> low(1, observation_len_);
     low.setZero();
-    Matrix_t<float> high(1, observation_len_);
+    Matrix_t<double> high(1, observation_len_);
     high.setOnes();
     std::tuple<int> shape{observation_len_};
-    return Box<float>(low, high, shape);
+    return Box<double>(low, high, shape);
   }
 
  private:
