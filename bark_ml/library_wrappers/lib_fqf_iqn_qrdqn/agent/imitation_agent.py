@@ -50,14 +50,14 @@ class ImitationAgent(BaseAgent):
     self.define_training_test_data()
     self._training_benchmark = BenchmarkSupervisedLoss(self.demonstrations_test)
     self._training_benchmark.reset(None, self.num_eval_episodes, None, self)
-
+    self.select_loss_function(self._params)
 
   def define_training_test_data(self):
     demonstrations = self.demonstration_collector.GetDemonstrationExperiences()
     random.shuffle(demonstrations)
     self.demonstrations_train = demonstrations[0:math.floor(len(demonstrations)*self.train_test_ratio)]
     self.demonstrations_test = demonstrations[math.ceil(len(demonstrations)*self.train_test_ratio):]
-    
+
   def reset_params(self, params):
     super(ImitationAgent, self).reset_params(params)
     self.running_loss_length = params["RunningLossLength", "", 1000]
@@ -85,10 +85,10 @@ class ImitationAgent(BaseAgent):
   @property
   def num_actions(self):
     return len(self.motion_primitive_behavior.GetMotionPrimitives())
-  
+
   def init_always(self):
     super(ImitationAgent, self).init_always()
-    
+
     # Target network.
     self.online_net = Imitation(num_channels=self.observer.observation_space.shape[0],
                           num_actions=self.num_actions,
@@ -110,6 +110,7 @@ class ImitationAgent(BaseAgent):
     del pickables["optim"]
     del pickables["demonstrations_train"]
     del pickables["demonstration_collector"]
+    del pickables["selected_loss"]  # TODO: add back when reading from pickle
 
   def sample_batch(self, demonstrations_list, batch_size):
     state_size = len(demonstrations_list[0][0])
@@ -132,8 +133,11 @@ class ImitationAgent(BaseAgent):
     # they should influence the loss and are thus set to current nn output
     nans_desired = torch.isnan(action_values_desired).nonzero()
     action_values_desired[nans_desired] = action_values_current[nans_desired]
-    criterion = nn.MSELoss()
-    loss = criterion(action_values_current, action_values_desired)
+
+    converted_desired_values = self.convert_values(action_values_desired)
+    converted_current_values = self.convert_values(action_values_current)
+
+    loss = self.selected_loss(converted_desired_values, converted_current_values)
 
     return loss
 
@@ -163,7 +167,7 @@ class ImitationAgent(BaseAgent):
     return self.online_net.nn_to_value_converter
 
   def load_models(self, checkpoint_dir):
-    try: 
+    try:
       self.online_net.load_state_dict(
         torch.load(os.path.join(checkpoint_dir, 'online_net.pth')))
     except RuntimeError:
@@ -179,6 +183,20 @@ class ImitationAgent(BaseAgent):
     loss.backward()
     self.optim.step()
 
+    self.training_log(loss)
+
+  def mse_loss(self, desired_values, current_values):
+    criterion = nn.MSELoss()
+    loss = 1/3 * criterion(desired_values["Return"], current_values["Return"]) + \
+        1/3 * criterion(desired_values["Envelope"], current_values["Envelope"]) + \
+        1/3 * criterion(desired_values["Collision"], current_values["Collision"])
+    return loss
+
+  def cross_entropy_loss(self, desired_values, current_values):
+    # TODO
+    return
+
+  def training_log(self, loss):
     self.running_loss.append(loss.item())
     # We log evaluation results along with training frames = 4 * steps.
     if self.steps % self.summary_log_interval == 0:
@@ -188,9 +206,23 @@ class ImitationAgent(BaseAgent):
     if self.steps % self.eval_interval == 0:
       self.evaluate()
       self.save("final")
-      self.online_net.train() 
+      self.online_net.train()
     self.steps += 1
 
+  def select_loss_function(self, params):
+    if params["ML"]["ImitationModel"]["UseCrossEntropy"]:
+      self.selected_loss = self.cross_entropy_loss
+    else:
+      self.selected_loss = self.mse_loss
 
-
-
+  def convert_values(self, raw_values):
+    """
+    Convert a tensor of size (batch size, 3 * number of actions) to a
+    dictionary with an entry for each of the 3 value.
+    """
+    num_actions = raw_values.shape[1] // 3
+    return {
+        "Return": raw_values[:, 0:num_actions],
+        "Envelope": raw_values[:, num_actions:2*num_actions],
+        "Collision": raw_values[:, 2*num_actions:]
+    }
