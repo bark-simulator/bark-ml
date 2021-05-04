@@ -43,6 +43,39 @@ class BenchmarkSupervisedLoss(TrainingBenchmark):
     def is_better(self, eval_result1, than_eval_result2):
         return eval_result1["mse_loss/test"] < than_eval_result2["mse_loss/test"]
 
+class BenchmarkSplitSupervisedLoss(TrainingBenchmark):
+  def __init__(self, demonstrations_test):
+    self.demonstrations_test = demonstrations_test
+
+  def run(self):
+    with torch.no_grad():
+      states, action_values_desired = self.agent.sample_batch( \
+              self.demonstrations_test, self.agent.num_eval_episodes)
+      action_values_current = self.agent.online_net(states)
+      loss = self.agent.calculate_loss(action_values_desired, action_values_current)
+
+      converted_desired_values = self.agent.convert_values(action_values_desired)
+      converted_current_values = self.agent.convert_values(action_values_current)
+
+      result = {"loss/test": loss.item()}
+      formatted_result = f"Loss = {loss.item()}\n          | Mean SE | Var SE\n"
+
+      for key in converted_desired_values.keys():
+        pair_wise_diff = converted_desired_values[key] - converted_current_values[key]
+        pair_wise_diff_squared = pair_wise_diff**2
+        error_var, error_mean = torch.var_mean(pair_wise_diff_squared)
+        error_var = error_var.item()
+        error_mean = error_mean.item()
+
+        result[f"error_mean/{key}/test"] = error_mean
+        result[f"error_var/{key}/test"] = error_var
+
+        formatted_result += f"{key:10}| {error_mean:7.3f} | {error_var:7.3f}\n"
+      return result, formatted_result
+
+  def is_better(self, eval_result1, than_eval_result2):
+    return eval_result1["loss/test"] < than_eval_result2["loss/test"]
+
 class ImitationAgent(BaseAgent):
   def __init__(self, demonstration_collector = None, *args, **kwargs):
     self.demonstration_collector = demonstration_collector
