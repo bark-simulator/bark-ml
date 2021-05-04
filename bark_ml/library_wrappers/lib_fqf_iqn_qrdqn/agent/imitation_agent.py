@@ -225,6 +225,17 @@ class ImitationAgent(BaseAgent):
         1/3 * criterion(desired_values["Collision"], current_values["Collision"])
     return loss
 
+  def weighted_mse_loss(self, desired_values, current_values):
+    w_return = self.loss_weights["Return", "", 1/3]
+    w_envelope = self.loss_weights["Envelope", "", 1/3]
+    w_collision = self.loss_weights["Collision", "", 1/3]
+
+    criterion = nn.MSELoss()
+    loss = w_return * criterion(desired_values["Return"], current_values["Return"]) + \
+        w_envelope * criterion(desired_values["Envelope"], current_values["Envelope"]) + \
+        w_collision * criterion(desired_values["Collision"], current_values["Collision"])
+    return loss
+
   def cross_entropy_loss(self, desired_values, current_values):
     # TODO
     return
@@ -243,8 +254,12 @@ class ImitationAgent(BaseAgent):
     self.steps += 1
 
   def select_loss_function(self, params):
-    if params["ML"]["ImitationModel"]["UseCrossEntropy"]:
+    loss_params = params["ML"]["ImitationModel"]["Loss"]
+    if loss_params["CrossEntropy"]:
       self.selected_loss = self.cross_entropy_loss
+    elif loss_params["WeightedMseLoss"]:
+      self.selected_loss = self.weighted_mse_loss
+      self.loss_weights = loss_params["WeightedMseLoss"]
     else:
       self.selected_loss = self.mse_loss
 
