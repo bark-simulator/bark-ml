@@ -33,7 +33,13 @@ class BenchmarkSupervisedLoss(TrainingBenchmark):
           states, action_values_desired = self.agent.sample_batch( \
                   self.demonstrations_test, self.agent.num_eval_episodes)
           action_values_current = self.agent.online_net(states)
-          loss = self.agent.calculate_loss(action_values_desired, action_values_current)
+
+          converted_desired_values = self.agent.convert_values(action_values_desired)
+          converted_current_values = self.agent.convert_values(action_values_current)
+
+          loss = self.agent.calculate_loss(converted_desired_values,
+                                           converted_current_values)
+
           pair_wise_diff = action_values_current - action_values_desired
           mean_value_diffs = torch.mean(pair_wise_diff**2, dim = 0).tolist()
 
@@ -52,10 +58,12 @@ class BenchmarkSplitSupervisedLoss(TrainingBenchmark):
       states, action_values_desired = self.agent.sample_batch( \
               self.demonstrations_test, self.agent.num_eval_episodes)
       action_values_current = self.agent.online_net(states)
-      loss = self.agent.calculate_loss(action_values_desired, action_values_current)
 
       converted_desired_values = self.agent.convert_values(action_values_desired)
       converted_current_values = self.agent.convert_values(action_values_current)
+
+      loss = self.agent.calculate_loss(converted_desired_values,
+                                       converted_current_values)
 
       result = {"loss/test": loss.item()}
       formatted_result = f"Loss = {loss.item()}\n          | Mean SE | Var SE\n"
@@ -164,14 +172,11 @@ class ImitationAgent(BaseAgent):
   def calculate_loss(self, action_values_desired, action_values_current):
     # if we have missing actions during demo collections these become nan values
     # they should influence the loss and are thus set to current nn output
-    nans_desired = torch.isnan(action_values_desired).nonzero()
-    action_values_desired[nans_desired] = action_values_current[nans_desired]
+    for key in action_values_desired.keys():
+      nans_desired = torch.isnan(action_values_desired[key]).nonzero()
+      action_values_desired[key][nans_desired] = action_values_current[key][nans_desired].detach().clone()
 
-    converted_desired_values = self.convert_values(action_values_desired)
-    converted_current_values = self.convert_values(action_values_current)
-
-    loss = self.selected_loss(converted_desired_values, converted_current_values)
-
+    loss = self.selected_loss(action_values_desired, action_values_current)
     return loss
 
   def calculate_actions(self, state):
@@ -212,11 +217,15 @@ class ImitationAgent(BaseAgent):
 
     self.optim.zero_grad()
     action_values_current = self.online_net(states)
-    loss = self.calculate_loss(action_values_desired, action_values_current)
+
+    converted_desired_values = self.convert_values(action_values_desired)
+    converted_current_values = self.convert_values(action_values_current)
+
+    loss = self.calculate_loss(converted_desired_values, converted_current_values)
     loss.backward()
     self.optim.step()
 
-    self.training_log(loss)
+    self.training_log(loss, converted_desired_values, converted_current_values)
 
   def mse_loss(self, desired_values, current_values):
     criterion = nn.MSELoss()
@@ -240,7 +249,7 @@ class ImitationAgent(BaseAgent):
     # TODO
     return
 
-  def training_log(self, loss):
+  def training_log(self, loss, desired_values, current_values):
     self.running_loss.append(loss.item())
     # We log evaluation results along with training frames = 4 * steps.
     if self.steps % self.summary_log_interval == 0:
