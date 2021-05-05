@@ -40,11 +40,17 @@ class BenchmarkSupervisedLoss(TrainingBenchmark):
           loss = self.agent.calculate_loss(converted_desired_values,
                                            converted_current_values)
 
-          pair_wise_diff = action_values_current - action_values_desired
-          mean_value_diffs = torch.mean(pair_wise_diff**2, dim = 0).tolist()
+          return self.evaluate_loss(loss.item(), converted_desired_values, converted_current_values)
 
-          return {"mse_loss/test" : loss.item()},\
-               f"Loss = {loss.item()}\n Mean Diff: {mean_value_diffs}"
+    def evaluate_loss(self, scalar_loss, converted_desired_values, converted_current_values, phase="test"):
+      mean_values_formatted = ""
+      for key in converted_desired_values.keys():
+        pair_wise_diff = converted_current_values[key] - converted_desired_values[key]
+        mean_value_diffs = torch.mean(pair_wise_diff**2, dim = 0).tolist()
+        mean_values_formatted += f"-> {key:10} {mean_value_diffs}\n"
+
+      return {f"mse_loss/{phase}" : scalar_loss},\
+             f"Loss = {scalar_loss}\n Mean Diff: \n{mean_values_formatted}"
 
     def is_better(self, eval_result1, than_eval_result2):
         return eval_result1["mse_loss/test"] < than_eval_result2["mse_loss/test"]
@@ -63,23 +69,26 @@ class BenchmarkSplitSupervisedLoss(TrainingBenchmark):
       converted_current_values = self.agent.convert_values(action_values_current)
 
       loss = self.agent.calculate_loss(converted_desired_values,
-                                       converted_current_values)
+                                     converted_current_values)
 
-      result = {"loss/test": loss.item()}
-      formatted_result = f"Loss = {loss.item()}\n          | Mean SE | Var SE\n"
+      return self.evaluate_loss(loss.item(), converted_desired_values, converted_current_values)
 
-      for key in converted_desired_values.keys():
-        pair_wise_diff = converted_desired_values[key] - converted_current_values[key]
-        pair_wise_diff_squared = pair_wise_diff**2
-        error_var, error_mean = torch.var_mean(pair_wise_diff_squared)
-        error_var = error_var.item()
-        error_mean = error_mean.item()
+  def evaluate_loss(self, scalar_loss, converted_desired_values, converted_current_values, phase="test"):
+    result = {f"loss/{phase}": scalar_loss}
+    formatted_result = f"Loss = {scalar_loss}\n          | Mean SE | Var SE\n"
 
-        result[f"error_mean/{key}/test"] = error_mean
-        result[f"error_var/{key}/test"] = error_var
+    for key in converted_desired_values.keys():
+      pair_wise_diff = converted_desired_values[key] - converted_current_values[key]
+      pair_wise_diff_squared = pair_wise_diff**2
+      error_var, error_mean = torch.var_mean(pair_wise_diff_squared)
+      error_var = error_var.item()
+      error_mean = error_mean.item()
 
-        formatted_result += f"{key:10}| {error_mean:7.3f} | {error_var:7.3f}\n"
-      return result, formatted_result
+      result[f"squared_error_mean/{key}/{phase}"] = error_mean
+      result[f"squared_error_var/{key}/{phase}"] = error_var
+
+      formatted_result += f"{key:10}| {error_mean:7.3f} | {error_var:7.3f}\n"
+    return result, formatted_result
 
   def is_better(self, eval_result1, than_eval_result2):
     return eval_result1["loss/test"] < than_eval_result2["loss/test"]
@@ -253,9 +262,14 @@ class ImitationAgent(BaseAgent):
     self.running_loss.append(loss.item())
     # We log evaluation results along with training frames = 4 * steps.
     if self.steps % self.summary_log_interval == 0:
-        self.writer.add_scalar('mse_loss/train', sum(self.running_loss)/len(self.running_loss),
-                                self.steps)
-        logging.info(f"Training: Loss(i={self.steps}={sum(self.running_loss)/len(self.running_loss)})")
+        running_loss_avg = sum(self.running_loss)/len(self.running_loss)
+
+        logging.info(f"Training: Loss(i={self.steps}={running_loss_avg})")
+        eval_results, _ = self._training_benchmark.evaluate_loss(
+          running_loss_avg, desired_values, current_values, phase="train")
+
+        for eval_result_name, eval_result in eval_results.items():
+          self.writer.add_scalar(eval_result_name, eval_result, self.steps)
     if self.steps % self.eval_interval == 0:
       self.evaluate()
       self.save("final")
