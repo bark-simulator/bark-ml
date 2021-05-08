@@ -32,7 +32,7 @@ class Imitation(nn.Module):
           tuple_list.append((f"layer{idx}", nn.Linear(last_dim, current_dim)))
           tuple_list.append((f"relu{idx}", nn.ReLU()))
           if self.droput_p != 0:
-            tuple_list.append((f"relu{idx}", nn.Dropout(p=self.droput_p)))
+            tuple_list.append((f"dropout{idx}", nn.Dropout(p=self.droput_p)))
           last_dim = current_dim
       tuple_list.append(("output", nn.Linear(last_dim, self.num_actions*self.num_value_functions)))
       return OrderedDict(tuple_list)
