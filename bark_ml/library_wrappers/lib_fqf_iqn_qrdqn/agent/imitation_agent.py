@@ -22,6 +22,8 @@ from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent.demonstrations import Acti
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.utils \
  import disable_gradients, update_params, \
  calculate_quantile_huber_loss, evaluate_quantile_at_action
+from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent.loss.loss_function \
+  import apply_sigmoid_to_dict, LossMSE, LossBCE
 from .base_agent import BaseAgent, TrainingBenchmark
 
 class BenchmarkSupervisedLoss(TrainingBenchmark):
@@ -47,7 +49,7 @@ class BenchmarkSupervisedLoss(TrainingBenchmark):
       mean_values_formatted = ""
 
       if logits:
-        converted_current_values = self.agent.apply_sigmoid_to_dict(converted_current_values)
+        converted_current_values = apply_sigmoid_to_dict(converted_current_values)
 
       for key in converted_desired_values.keys():
         pair_wise_diff = converted_current_values[key] - converted_desired_values[key]
@@ -84,7 +86,7 @@ class BenchmarkSplitSupervisedLoss(TrainingBenchmark):
     formatted_result = f"Loss = {scalar_loss}\n          | Mean SE | Var SE\n"
 
     if logits:
-      converted_current_values = self.agent.apply_sigmoid_to_dict(converted_current_values)
+      converted_current_values = apply_sigmoid_to_dict(converted_current_values)
 
     for key in converted_desired_values.keys():
       pair_wise_diff = converted_desired_values[key] - converted_current_values[key]
@@ -169,7 +171,6 @@ class ImitationAgent(BaseAgent):
     del pickables["optim"]
     del pickables["demonstrations_train"]
     del pickables["demonstration_collector"]
-    del pickables["selected_loss"]  # TODO: add back when reading from pickle
 
   def sample_batch(self, demonstrations_list, batch_size):
     state_size = len(demonstrations_list[0][0])
@@ -251,48 +252,6 @@ class ImitationAgent(BaseAgent):
 
     self.training_log(loss, converted_current_values, converted_desired_values)
 
-  def mse_loss(self, current_values, desired_values, logits):
-    criterion = nn.MSELoss()
-
-    if logits:
-      current_values = self.apply_sigmoid_to_dict(current_values)
-
-    loss = 1/3 * criterion(current_values["Return"], desired_values["Return"]) + \
-        1/3 * criterion(current_values["Envelope"], desired_values["Envelope"]) + \
-        1/3 * criterion(current_values["Collision"], desired_values["Collision"])
-    return loss
-
-  def weighted_mse_loss(self, current_values, desired_values, logits):
-    w_return = self.loss_weights["Return", "", 1/3]
-    w_envelope = self.loss_weights["Envelope", "", 1/3]
-    w_collision = self.loss_weights["Collision", "", 1/3]
-
-    if logits:
-      current_values = self.apply_sigmoid_to_dict(current_values)
-
-    criterion = nn.MSELoss()
-    loss = w_return * criterion(current_values["Return"], desired_values["Return"]) + \
-        w_envelope * criterion(current_values["Envelope"], desired_values["Envelope"]) + \
-        w_collision * criterion(current_values["Collision"], desired_values["Collision"])
-    return loss
-
-  def weighted_cross_entropy_loss(self, current_values, desired_values, logits):
-    if logits:
-      # Performs sigmoid and computes BCE loss (improved numerical stability)
-      criterion = nn.BCEWithLogitsLoss()
-    else:
-      # Computes only BCE loss
-      criterion = nn.BCELoss()
-
-    w_return = self.loss_weights["Return", "", 1/3]
-    w_envelope = self.loss_weights["Envelope", "", 1/3]
-    w_collision = self.loss_weights["Collision", "", 1/3]
-
-    loss = w_return * criterion(current_values["Return"], desired_values["Return"]) + \
-        w_envelope * criterion(current_values["Envelope"], desired_values["Envelope"]) + \
-        w_collision * criterion(current_values["Collision"], desired_values["Collision"])
-    return loss
-
   def training_log(self, loss, current_values, desired_values):
     self.running_loss.append(loss.item())
     # We log evaluation results along with training frames = 4 * steps.
@@ -316,14 +275,23 @@ class ImitationAgent(BaseAgent):
 
   def select_loss_function(self, params):
     loss_params = params["ML"]["ImitationModel"]["Loss"]
-    if loss_params["WeightedBinaryCrossEntropyLoss"]:
-      self.selected_loss = self.weighted_cross_entropy_loss
-      self.loss_weights = loss_params["WeightedBinaryCrossEntropyLoss"]
-    elif loss_params["WeightedMseLoss"]:
-      self.selected_loss = self.weighted_mse_loss
-      self.loss_weights = loss_params["WeightedMseLoss"]
+    if loss_params["BinaryCrossEntropyLoss"]:
+      if loss_params["BinaryCrossEntropyLoss"]["Weights"]:
+        weights = loss_params["BinaryCrossEntropyLoss"]["Weights"]
+      else:
+        weights = None
+      self.selected_loss = LossBCE(weights)
+
+    elif loss_params["MeanSquaredErrorLoss"]:
+      if loss_params["MeanSquaredErrorLoss"]["Weights"]:
+        weights = loss_params["MeanSquaredErrorLoss"]["Weights"]
+      else:
+        weights = None
+      self.selected_loss = LossMSE(weights)
+
     else:
-      self.selected_loss = self.mse_loss
+      logging.warning("Loss not specified. Using MSE.")
+      self.selected_loss = LossMSE()
 
   def convert_values(self, raw_values):
     """
@@ -336,12 +304,3 @@ class ImitationAgent(BaseAgent):
         "Envelope": raw_values[:, num_actions:2*num_actions],
         "Collision": raw_values[:, 2*num_actions:]
     }
-
-  def apply_sigmoid_to_dict(self, dict_values):
-    """
-    Returns a new dictionary.
-    """
-    sigmoid_values = dict()
-    for key in dict_values.keys():
-      sigmoid_values[key] = torch.sigmoid(dict_values[key])
-    return sigmoid_values

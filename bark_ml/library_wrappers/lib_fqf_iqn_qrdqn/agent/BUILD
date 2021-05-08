@@ -54,6 +54,7 @@ py_library(
     name = "imitation_agent",
     srcs = ["imitation_agent.py"],
     deps = [":base_agent",
+            "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent/loss:loss_function",
             "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/model:model",
             "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn:utils",
     ],
@@ -90,4 +91,3 @@ py_library(
     ],
     visibility = ["//visibility:public"],
 )
-
