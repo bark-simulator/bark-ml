@@ -42,8 +42,13 @@ class BenchmarkSupervisedLoss(TrainingBenchmark):
 
           return self.evaluate_loss(loss.item(), converted_desired_values, converted_current_values)
 
-    def evaluate_loss(self, scalar_loss, converted_desired_values, converted_current_values, phase="test"):
+    def evaluate_loss(self, scalar_loss, converted_desired_values, converted_current_values,
+                      phase="test", logits=False):
       mean_values_formatted = ""
+
+      if logits:
+        converted_current_values = self.agent.apply_sigmoid_to_dict(converted_current_values)
+
       for key in converted_desired_values.keys():
         pair_wise_diff = converted_current_values[key] - converted_desired_values[key]
         mean_value_diffs = torch.mean(pair_wise_diff**2, dim = 0).tolist()
@@ -73,9 +78,13 @@ class BenchmarkSplitSupervisedLoss(TrainingBenchmark):
 
       return self.evaluate_loss(loss.item(), converted_desired_values, converted_current_values)
 
-  def evaluate_loss(self, scalar_loss, converted_desired_values, converted_current_values, phase="test"):
+  def evaluate_loss(self, scalar_loss, converted_desired_values, converted_current_values,
+                    phase="test", logits=False):
     result = {f"loss/{phase}": scalar_loss}
     formatted_result = f"Loss = {scalar_loss}\n          | Mean SE | Var SE\n"
+
+    if logits:
+      converted_current_values = self.agent.apply_sigmoid_to_dict(converted_current_values)
 
     for key in converted_desired_values.keys():
       pair_wise_diff = converted_desired_values[key] - converted_current_values[key]
@@ -178,14 +187,20 @@ class ImitationAgent(BaseAgent):
 
     return states, action_values
 
-  def calculate_loss(self, action_values_desired, action_values_current):
+  def calculate_loss(self, action_values_desired, action_values_current, logits=False):
+    """
+    If logits=True, the loss must use the sigmoid function before comparing
+    current values to the desired values.
+    Some loss functions (e.g., BCE) need logits for a better numerical
+    stability while training.
+    """
     # if we have missing actions during demo collections these become nan values
     # they should influence the loss and are thus set to current nn output
     for key in action_values_desired.keys():
       nans_desired = torch.isnan(action_values_desired[key]).nonzero()
       action_values_desired[key][nans_desired] = action_values_current[key][nans_desired].detach().clone()
 
-    loss = self.selected_loss(action_values_desired, action_values_current)
+    loss = self.selected_loss(action_values_desired, action_values_current, logits)
     return loss
 
   def calculate_actions(self, state):
@@ -230,23 +245,30 @@ class ImitationAgent(BaseAgent):
     converted_desired_values = self.convert_values(action_values_desired)
     converted_current_values = self.convert_values(action_values_current)
 
-    loss = self.calculate_loss(converted_desired_values, converted_current_values)
+    loss = self.calculate_loss(converted_desired_values, converted_current_values, logits=True)
     loss.backward()
     self.optim.step()
 
     self.training_log(loss, converted_desired_values, converted_current_values)
 
-  def mse_loss(self, desired_values, current_values):
+  def mse_loss(self, desired_values, current_values, logits):
     criterion = nn.MSELoss()
+
+    if logits:
+      current_values = self.apply_sigmoid_to_dict(current_values)
+
     loss = 1/3 * criterion(desired_values["Return"], current_values["Return"]) + \
         1/3 * criterion(desired_values["Envelope"], current_values["Envelope"]) + \
         1/3 * criterion(desired_values["Collision"], current_values["Collision"])
     return loss
 
-  def weighted_mse_loss(self, desired_values, current_values):
+  def weighted_mse_loss(self, desired_values, current_values, logits):
     w_return = self.loss_weights["Return", "", 1/3]
     w_envelope = self.loss_weights["Envelope", "", 1/3]
     w_collision = self.loss_weights["Collision", "", 1/3]
+
+    if logits:
+      current_values = self.apply_sigmoid_to_dict(current_values)
 
     criterion = nn.MSELoss()
     loss = w_return * criterion(desired_values["Return"], current_values["Return"]) + \
@@ -262,14 +284,17 @@ class ImitationAgent(BaseAgent):
     self.running_loss.append(loss.item())
     # We log evaluation results along with training frames = 4 * steps.
     if self.steps % self.summary_log_interval == 0:
+        self.online_net.eval()
         running_loss_avg = sum(self.running_loss)/len(self.running_loss)
 
         logging.info(f"Training: Loss(i={self.steps}={running_loss_avg})")
         eval_results, _ = self._training_benchmark.evaluate_loss(
-          running_loss_avg, desired_values, current_values, phase="train")
+          running_loss_avg, desired_values, current_values, phase="train", logits=True)
 
         for eval_result_name, eval_result in eval_results.items():
           self.writer.add_scalar(eval_result_name, eval_result, self.steps)
+
+        self.online_net.train()
     if self.steps % self.eval_interval == 0:
       self.evaluate()
       self.save("final")
@@ -297,3 +322,12 @@ class ImitationAgent(BaseAgent):
         "Envelope": raw_values[:, num_actions:2*num_actions],
         "Collision": raw_values[:, 2*num_actions:]
     }
+
+  def apply_sigmoid_to_dict(self, dict_values):
+    """
+    Returns a new dictionary.
+    """
+    sigmoid_values = dict()
+    for key in dict_values.keys():
+      sigmoid_values[key] = torch.sigmoid(dict_values[key])
+    return sigmoid_values
