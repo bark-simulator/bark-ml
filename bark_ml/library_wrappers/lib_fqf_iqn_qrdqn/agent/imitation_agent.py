@@ -37,12 +37,12 @@ class BenchmarkSupervisedLoss(TrainingBenchmark):
           converted_desired_values = self.agent.convert_values(action_values_desired)
           converted_current_values = self.agent.convert_values(action_values_current)
 
-          loss = self.agent.calculate_loss(converted_desired_values,
-                                           converted_current_values)
+          loss = self.agent.calculate_loss(converted_current_values,
+                                           converted_desired_values)
 
-          return self.evaluate_loss(loss.item(), converted_desired_values, converted_current_values)
+          return self.evaluate_loss(loss.item(), converted_current_values, converted_desired_values)
 
-    def evaluate_loss(self, scalar_loss, converted_desired_values, converted_current_values,
+    def evaluate_loss(self, scalar_loss, converted_current_values, converted_desired_values,
                       phase="test", logits=False):
       mean_values_formatted = ""
 
@@ -73,12 +73,12 @@ class BenchmarkSplitSupervisedLoss(TrainingBenchmark):
       converted_desired_values = self.agent.convert_values(action_values_desired)
       converted_current_values = self.agent.convert_values(action_values_current)
 
-      loss = self.agent.calculate_loss(converted_desired_values,
-                                     converted_current_values)
+      loss = self.agent.calculate_loss(converted_current_values,
+                                       converted_desired_values)
 
-      return self.evaluate_loss(loss.item(), converted_desired_values, converted_current_values)
+      return self.evaluate_loss(loss.item(), converted_current_values, converted_desired_values)
 
-  def evaluate_loss(self, scalar_loss, converted_desired_values, converted_current_values,
+  def evaluate_loss(self, scalar_loss, converted_current_values, converted_desired_values,
                     phase="test", logits=False):
     result = {f"loss/{phase}": scalar_loss}
     formatted_result = f"Loss = {scalar_loss}\n          | Mean SE | Var SE\n"
@@ -187,7 +187,7 @@ class ImitationAgent(BaseAgent):
 
     return states, action_values
 
-  def calculate_loss(self, action_values_desired, action_values_current, logits=False):
+  def calculate_loss(self, action_values_current, action_values_desired, logits=False):
     """
     If logits=True, the loss must use the sigmoid function before comparing
     current values to the desired values.
@@ -200,7 +200,7 @@ class ImitationAgent(BaseAgent):
       nans_desired = torch.isnan(action_values_desired[key]).nonzero()
       action_values_desired[key][nans_desired] = action_values_current[key][nans_desired].detach().clone()
 
-    loss = self.selected_loss(action_values_desired, action_values_current, logits)
+    loss = self.selected_loss(action_values_current, action_values_desired, logits)
     return loss
 
   def calculate_actions(self, state):
@@ -245,24 +245,24 @@ class ImitationAgent(BaseAgent):
     converted_desired_values = self.convert_values(action_values_desired)
     converted_current_values = self.convert_values(action_values_current)
 
-    loss = self.calculate_loss(converted_desired_values, converted_current_values, logits=True)
+    loss = self.calculate_loss(converted_current_values, converted_desired_values, logits=True)
     loss.backward()
     self.optim.step()
 
-    self.training_log(loss, converted_desired_values, converted_current_values)
+    self.training_log(loss, converted_current_values, converted_desired_values)
 
-  def mse_loss(self, desired_values, current_values, logits):
+  def mse_loss(self, current_values, desired_values, logits):
     criterion = nn.MSELoss()
 
     if logits:
       current_values = self.apply_sigmoid_to_dict(current_values)
 
-    loss = 1/3 * criterion(desired_values["Return"], current_values["Return"]) + \
-        1/3 * criterion(desired_values["Envelope"], current_values["Envelope"]) + \
-        1/3 * criterion(desired_values["Collision"], current_values["Collision"])
+    loss = 1/3 * criterion(current_values["Return"], desired_values["Return"]) + \
+        1/3 * criterion(current_values["Envelope"], desired_values["Envelope"]) + \
+        1/3 * criterion(current_values["Collision"], desired_values["Collision"])
     return loss
 
-  def weighted_mse_loss(self, desired_values, current_values, logits):
+  def weighted_mse_loss(self, current_values, desired_values, logits):
     w_return = self.loss_weights["Return", "", 1/3]
     w_envelope = self.loss_weights["Envelope", "", 1/3]
     w_collision = self.loss_weights["Collision", "", 1/3]
@@ -271,12 +271,12 @@ class ImitationAgent(BaseAgent):
       current_values = self.apply_sigmoid_to_dict(current_values)
 
     criterion = nn.MSELoss()
-    loss = w_return * criterion(desired_values["Return"], current_values["Return"]) + \
-        w_envelope * criterion(desired_values["Envelope"], current_values["Envelope"]) + \
-        w_collision * criterion(desired_values["Collision"], current_values["Collision"])
+    loss = w_return * criterion(current_values["Return"], desired_values["Return"]) + \
+        w_envelope * criterion(current_values["Envelope"], desired_values["Envelope"]) + \
+        w_collision * criterion(current_values["Collision"], desired_values["Collision"])
     return loss
 
-  def weighted_cross_entropy_loss(self, desired_values, current_values, logits):
+  def weighted_cross_entropy_loss(self, current_values, desired_values, logits):
     if logits:
       # Performs sigmoid and computes BCE loss (improved numerical stability)
       criterion = nn.BCEWithLogitsLoss()
@@ -293,7 +293,7 @@ class ImitationAgent(BaseAgent):
         w_collision * criterion(current_values["Collision"], desired_values["Collision"])
     return loss
 
-  def training_log(self, loss, desired_values, current_values):
+  def training_log(self, loss, current_values, desired_values):
     self.running_loss.append(loss.item())
     # We log evaluation results along with training frames = 4 * steps.
     if self.steps % self.summary_log_interval == 0:
@@ -302,7 +302,7 @@ class ImitationAgent(BaseAgent):
 
         logging.info(f"Training: Loss(i={self.steps}={running_loss_avg})")
         eval_results, _ = self._training_benchmark.evaluate_loss(
-          running_loss_avg, desired_values, current_values, phase="train", logits=True)
+          running_loss_avg, current_values, desired_values, phase="train", logits=True)
 
         for eval_result_name, eval_result in eval_results.items():
           self.writer.add_scalar(eval_result_name, eval_result, self.steps)
