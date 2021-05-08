@@ -276,9 +276,22 @@ class ImitationAgent(BaseAgent):
         w_collision * criterion(desired_values["Collision"], current_values["Collision"])
     return loss
 
-  def cross_entropy_loss(self, desired_values, current_values):
-    # TODO
-    return
+  def weighted_cross_entropy_loss(self, desired_values, current_values, logits):
+    if logits:
+      # Performs sigmoid and computes BCE loss (improved numerical stability)
+      criterion = nn.BCEWithLogitsLoss()
+    else:
+      # Computes only BCE loss
+      criterion = nn.BCELoss()
+
+    w_return = self.loss_weights["Return", "", 1/3]
+    w_envelope = self.loss_weights["Envelope", "", 1/3]
+    w_collision = self.loss_weights["Collision", "", 1/3]
+
+    loss = w_return * criterion(current_values["Return"], desired_values["Return"]) + \
+        w_envelope * criterion(current_values["Envelope"], desired_values["Envelope"]) + \
+        w_collision * criterion(current_values["Collision"], desired_values["Collision"])
+    return loss
 
   def training_log(self, loss, desired_values, current_values):
     self.running_loss.append(loss.item())
@@ -303,8 +316,9 @@ class ImitationAgent(BaseAgent):
 
   def select_loss_function(self, params):
     loss_params = params["ML"]["ImitationModel"]["Loss"]
-    if loss_params["CrossEntropy"]:
-      self.selected_loss = self.cross_entropy_loss
+    if loss_params["WeightedBinaryCrossEntropyLoss"]:
+      self.selected_loss = self.weighted_cross_entropy_loss
+      self.loss_weights = loss_params["WeightedBinaryCrossEntropyLoss"]
     elif loss_params["WeightedMseLoss"]:
       self.selected_loss = self.weighted_mse_loss
       self.loss_weights = loss_params["WeightedMseLoss"]
