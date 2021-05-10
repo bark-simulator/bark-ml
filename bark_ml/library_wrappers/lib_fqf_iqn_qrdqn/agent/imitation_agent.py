@@ -149,7 +149,9 @@ class ImitationAgent(BaseAgent):
 
   def init_always(self):
     super(ImitationAgent, self).init_always()
+    self.init_network()
 
+  def init_network(self):
     # Target network.
     self.online_net = Imitation(num_channels=self.observer.observation_space.shape[0],
                           num_actions=self.num_actions,
