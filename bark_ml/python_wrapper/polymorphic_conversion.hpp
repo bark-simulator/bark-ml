@@ -17,4 +17,7 @@ namespace py = pybind11;
 py::tuple ObserverToPython(bark_ml::observers::ObserverPtr observer);
 bark_ml::observers::ObserverPtr PythonToObserver(py::tuple t);
 
+py::tuple NNToValueConverterToPython(bark_ml::lib_fqf_iqn_qrdqn::NNToValueConverterPtr converter);
+bark_ml::lib_fqf_iqn_qrdqn::NNToValueConverterPtr PythonToNNToValueConverter(py::tuple t);
+
 #endif  // BARK_OBSERVERS_POLYMORPHIC_CONVERSION_HPP_

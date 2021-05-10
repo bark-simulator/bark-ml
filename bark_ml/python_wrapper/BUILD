@@ -2,10 +2,11 @@ package(default_visibility = ["//visibility:public"])
 
 cc_binary(
   name = "core.so",
-  srcs = ["main.cpp", "pyobserver.hpp"],
+  srcs = ["main.cpp", "pyobserver.hpp", "pynn_to_value_converter.hpp"],
   deps = [
     "//bark_ml/observers:cpp_observers",
     "//bark_ml/evaluators:cpp_evaluators",
+    "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/model/nn_to_value_converter:nn_to_value_converter",
     "//bark_ml/commons:spaces",
     "@bark_project//bark/commons/params:params",
     # external

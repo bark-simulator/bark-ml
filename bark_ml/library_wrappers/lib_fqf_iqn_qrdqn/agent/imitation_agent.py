@@ -6,9 +6,6 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-# The code is adapted from opensource implementation - https://github.com/ku2482/fqf-iqn-qrdqn.pytorch
-# MIT License -Copyright (c) 2020 Toshiki Watanabe
-
 from collections import deque
 import numpy as np
 import logging
@@ -124,6 +121,10 @@ class ImitationAgent(BaseAgent):
                os.path.join(checkpoint_dir, 'online_net.pth'))
     online_net_script = torch.jit.script(self.online_net)
     online_net_script.save(os.path.join(checkpoint_dir, 'online_net_script.pt'))
+
+  @property
+  def script_model_file_name(self):
+    return os.path.join(checkpoint_dir, 'online_net_script.pt')
 
   def load_models(self, checkpoint_dir):
     try: 
