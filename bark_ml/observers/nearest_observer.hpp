@@ -39,6 +39,7 @@ using bark::world::WorldPtr;
 using bark::world::goal_definition::GoalDefinitionStateLimitsFrenet;
 using bark::world::ObservedWorldPtr;
 using bark::geometry::Point2d;
+using bark::geometry::B_2PI;
 using bark::geometry::Line;
 using bark::geometry::Distance;
 using bark::geometry::Norm0To2PI;
@@ -57,7 +58,7 @@ class NearestObserver : public BaseObserver {
     BaseObserver(params),
     min_x_(0.), max_x_(100.),
     min_y_(0.), max_y_(100.),
-    min_theta_(0.), max_theta_(2*3.14) {
+    min_theta_(0.), max_theta_(B_2PI) {
       nearest_agent_num_ =
         params->GetInt(
           "ML::NearestObserver::NNearestAgents", "Nearest agents number", 4);
