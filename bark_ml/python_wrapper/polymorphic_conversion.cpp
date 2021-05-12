@@ -12,7 +12,7 @@
 namespace py = pybind11;
 
 using namespace bark_ml::observers;
-using bark_ml::lib_fqf_iqn_qrdqn;
+using namespace bark_ml::lib_fqf_iqn_qrdqn;
 
 py::tuple ObserverToPython(ObserverPtr observer) {
   std::string observer_name;
@@ -37,7 +37,7 @@ ObserverPtr PythonToObserver(py::tuple t) {
 }
 
 
-py::tuple NNToValueConverterToPython(bark_ml::lib_fqf_iqn_qrdqn::NNToValueConverterPtr converter) {
+py::tuple NNToValueConverterToPython(NNToValueConverterPtr converter) {
   std::string converter_name;
   if (typeid(*converter) == typeid(NNToValueConverterSequential)) {
     converter_name = "NNToValueConverterSequential";
@@ -47,7 +47,7 @@ py::tuple NNToValueConverterToPython(bark_ml::lib_fqf_iqn_qrdqn::NNToValueConver
   }
   return py::make_tuple(converter, converter_name);
 }
-bark_ml::lib_fqf_iqn_qrdqn::NNToValueConverterPtr PythonToNNToValueConverter(py::tuple t) {
+NNToValueConverterPtr PythonToNNToValueConverter(py::tuple t) {
   std::string converter_name = t[1].cast<std::string>();
   if (converter_name.compare("NNToValueConverterSequential") == 0) {
     return std::make_shared<NNToValueConverterSequential>(

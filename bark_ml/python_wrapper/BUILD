@@ -30,6 +30,7 @@ cc_library(
     "@bark_project//bark/python_wrapper:common",
     "@pybind11//:pybind11",
     "//bark_ml/observers:cpp_observers",
+    "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/model/nn_to_value_converter:nn_to_value_converter",
   ],
   visibility = ["//visibility:public"],
 )

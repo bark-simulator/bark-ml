@@ -8,6 +8,7 @@
 
 #include "bark/python_wrapper/common.hpp"
 #include "bark_ml/observers/base_observer.hpp"
+#include "bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/model/nn_to_value_converter/nn_to_value_converter.hpp"
 
 namespace py = pybind11;
 
