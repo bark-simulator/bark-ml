@@ -97,8 +97,6 @@ class BaseAgent(BehaviorModel):
     self._checkpoint_load = checkpoint_load
     
     if (not checkpoint_load) and params is not None:
-      if not env:
-        raise ValueError("Environment must be passed for initialization")
       self.reset_params(self._params["ML"]["BaseAgent"])
       self.reset_action_observer(env)
       self.init_always()
@@ -107,6 +105,7 @@ class BaseAgent(BehaviorModel):
       self.load_pickable_members(agent_save_dir)
       self.init_always()
       self.load_models(BaseAgent.check_point_directory(agent_save_dir, checkpoint_load))
+      self.load_other()
     else:
       raise ValueError("Unusual param combination for agent initialization.")
 
@@ -150,6 +149,9 @@ class BaseAgent(BehaviorModel):
   def load_pickable_members(self, agent_save_dir):
     pickables = from_pickle(BaseAgent.pickable_directory(agent_save_dir), "agent_pickables")
     self.__dict__.update(pickables)
+
+  def load_other(self):
+    pass
 
   def reset_training_variables(self):
     # Replay memory which is memory-efficient to store stacked frames.

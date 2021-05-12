@@ -28,8 +28,8 @@ class NNToValueConverterSequential : public NNToValueConverter {
   virtual std::unordered_map<ValueType, std::vector<double>> ConvertToValueMap(const std::vector<float>&  nn_output) const {
     std::unordered_map<ValueType, std::vector<double>> value_map;
 
-    if(nn_output.size()*3 != num_actions_*3) {
-      LOG_FATAL << "Invalid nnouput size of " << nn_output.size() << " for num_actions = " << num_actions_;
+    if(nn_output.size() != num_actions_*3) {
+      LOG_FATAL << "Invalid neural network output with size of " << nn_output.size() << " for num_actions = " << num_actions_;
     }
     // Convention that first num_actions elements are return 
     value_map[ValueType::Return] = std::vector<double>(nn_output.begin(), nn_output.begin()+num_actions_);
@@ -40,8 +40,6 @@ class NNToValueConverterSequential : public NNToValueConverter {
 
     return value_map;
   };
-private:
- unsigned num_actions_;
 
 };
 

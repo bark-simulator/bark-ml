@@ -22,6 +22,8 @@
 #include "bark_ml/evaluators/goal_reached.hpp"
 #include "bark_ml/commons/spaces.hpp"
 #include "bark_ml/python_wrapper/pyobserver.hpp"
+#include "bark_ml/python_wrapper/pynn_to_value_converter.hpp"
+#include "bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/model/nn_to_value_converter/nn_to_value_converter_sequential.hpp"
 
 PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
 
@@ -32,6 +34,7 @@ using bark_ml::observers::NearestObserver;
 using bark_ml::evaluators::GoalReachedEvaluator;
 using bark_ml::spaces::Box;
 using bark_ml::spaces::Matrix_t;
+using namespace bark_ml::lib_fqf_iqn_qrdqn;
 
 py::tuple ParamsToPython(const ParamsPtr& params) {
   return py::make_tuple(params->GetCondensedParamList());
@@ -90,13 +93,33 @@ void python_evaluators(py::module m) {
 }
 
 void python_spaces(py::module m) {
-  py::class_<Box<float>, std::shared_ptr<Box<float>>>(m, "Box")
-    .def(py::init<const Matrix_t<float>&,
-                  const Matrix_t<float>&,
+  py::class_<Box<double>, std::shared_ptr<Box<double>>>(m, "Box")
+    .def(py::init<const Matrix_t<double>&,
+                  const Matrix_t<double>&,
                   const std::tuple<int>&>())
-    .def_property_readonly("low", &Box<float>::low)
-    .def_property_readonly("high", &Box<float>::high)
-    .def_property_readonly("shape", &Box<float>::shape);
+    .def_property_readonly("low", &Box<double>::low)
+    .def_property_readonly("high", &Box<double>::high)
+    .def_property_readonly("shape", &Box<double>::shape);
+}
+
+void python_value_converters(py::module m) {
+  py::class_<NNToValueConverter, PyNNToValueConverter,
+             std::shared_ptr<NNToValueConverter>>(m, "NNToValueConverter")
+      .def(py::init<const unsigned&>());
+
+  py::class_<NNToValueConverterSequential, NNToValueConverter,
+            std::shared_ptr<NNToValueConverterSequential>>(m, "NNToValueConverterSequential")
+  .def(py::init<const unsigned&>())
+  .def(py::pickle(
+    [](const NNToValueConverterSequential& nn) {
+      // We throw away other information such as last trajectories
+      return py::make_tuple(nn.GetNumActions());
+    },
+    [](py::tuple t) {
+      if (t.size() != 1)
+        throw std::runtime_error("Invalid NNToValueConverterSequential state!");
+      return new NNToValueConverterSequential(t[0].cast<unsigned>());
+    }));
 }
 
 PYBIND11_MODULE(core, m) {
@@ -107,4 +130,6 @@ PYBIND11_MODULE(core, m) {
     m.def_submodule("evaluators", "c++ evaluators"));
   python_spaces(
     m.def_submodule("spaces", "c++ spaces"));
+  python_value_converters(
+    m.def_submodule("value_converters", "value conversion"));
 }

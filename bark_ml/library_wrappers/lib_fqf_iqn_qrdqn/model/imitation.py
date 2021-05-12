@@ -1,5 +1,6 @@
 from torch import nn
 from collections import OrderedDict
+from bark_ml.core.value_converters import *
 
 def init_weights(m):
     if type(m) == nn.Linear:
@@ -16,6 +17,7 @@ class Imitation(nn.Module):
     self.num_channels = num_channels
     self.num_actions = num_actions
     self.num_value_functions = num_value_functions
+    self.value_converter = NNToValueConverterSequential(self.num_actions)
     self.layer_dims = params["ML"]["ImitationModel"]["EmbeddingDims", "", [256, 256, 256]]
     self.droput_p = params["ML"]["ImitationModel"]["DropoutProbability", "", 0]
 
@@ -34,6 +36,10 @@ class Imitation(nn.Module):
           last_dim = current_dim
       tuple_list.append(("output", nn.Linear(last_dim, self.num_actions*self.num_value_functions)))
       return OrderedDict(tuple_list)
+
+  @property
+  def nn_to_value_converter(self):
+    return self.value_converter
 
   def forward(self, states):
     action_values = self.net(states)

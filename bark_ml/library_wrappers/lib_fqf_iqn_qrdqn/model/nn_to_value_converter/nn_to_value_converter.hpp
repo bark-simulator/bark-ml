@@ -47,7 +47,7 @@ class NNToValueConverter {
   virtual std::unordered_map<ValueType, std::vector<double>> ConvertToValueMap(const std::vector<float>& nn_output) const = 0;
 
   unsigned GetNumActions() const { return num_actions_; }
-private:
+protected:
  unsigned num_actions_;
 };
 

@@ -44,7 +44,6 @@ class TestActionWrapper():
   def action_space(self):
     return spaces.Discrete(num_actions)
 
-
 def action_values_at_state(state):
   envelope_costs = []
   collision_costs = []
@@ -64,21 +63,37 @@ def create_data(num):
   action_values_data = np.apply_along_axis(action_values_at_state, 1, observations)
   return action_values_data
 
+class TestDemonstrationCollector():
+  def __init__(self):
+    self.data = data = create_data(10000)
+    self._observer = TestObserver()
+    self._ml_behavior =  TestActionWrapper()
+
+  def GetDemonstrationExperiences(self):
+    return self.data
+
+  @property
+  def observer(self):
+    return self._observer
+
+  @property
+  def ml_behavior(self):
+    return self._ml_behavior
+
+
 class EvaluationTests(unittest.TestCase):
   # make sure the agent works
   def test_agent_wrapping(self):
     params = ParameterServer()
-    env = gym.make("highway-v1", params=params)
-    env._observer = TestObserver()
-    env._ml_behavior = TestActionWrapper()
     params["ML"]["BaseAgent"]["MaxEpisodeSteps"] = 2
     params["ML"]["BaseAgent"]["EvalInterval"] = 1000
-    data = create_data(10000)
-    demo_train = data[0:7000]
-    demo_test = data[7001:]
-    agent = ImitationAgent(agent_save_dir="./save_dir", demonstrations_train=demo_train,
-                           demonstrations_test=demo_test,
-                           env=env, params=params)
+    params["ML"]["BaseAgent"]["TrainTestRatio"] = 0.2
+    
+    demonstration_collector = TestDemonstrationCollector()
+
+    agent = ImitationAgent(agent_save_dir="./save_dir", 
+                           demonstration_collector=demonstration_collector,
+                           params=params)
     agent.run()
 
 

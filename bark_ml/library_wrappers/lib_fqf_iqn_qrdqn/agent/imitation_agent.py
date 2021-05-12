@@ -10,6 +10,7 @@ from collections import deque
 import numpy as np
 import logging
 import os
+import random
 
 import torch
 from torch import nn
@@ -41,23 +42,42 @@ class BenchmarkSupervisedLoss(TrainingBenchmark):
         return eval_result1["mse_loss/test"] < than_eval_result2["mse_loss/test"]
 
 class ImitationAgent(BaseAgent):
-  def __init__(self, demonstrations_train, demonstrations_test, *args, **kwargs):
+  def __init__(self, demonstration_collector, *args, **kwargs):
     super(ImitationAgent, self).__init__(*args, **kwargs)
     self._training_benchmark = BenchmarkSupervisedLoss(demonstrations_test)
     self._training_benchmark.reset(None, self.num_eval_episodes, None, self)
-    self.demonstrations_train = demonstrations_train
+    self.demonstration_collector = demonstration_collector
+    self.define_training_test_data()
+
+  def define_training_test_data(self):
+    demonstrations = demonstration_collector.GetDemonstrationExperiences()
+    random.shuffle(demonstrations)
+    self.demonstrations_train = demonstrations[0:math.floor(len(experiences_loaded)*self.train_test_ratio)]
+    self.demonstrations_test = demonstrations[math.ceil(len(experiences_loaded)*self.train_test_ratio):]
     
   def reset_params(self, params):
     super(ImitationAgent, self).reset_params(params)
     self.running_loss_length = params["RunningLossLength", "", 1000]
     self.num_value_functions = params["NumValueFunctions", "", 3]
     self.learning_rate = params["LearningRate", "", 0.001]
+    self.train_test_ratio = params["TrainTestRatio", "", 0.2]
 
   def reset_training_variables(self):
     # Replay memory which is memory-efficient to store stacked frames.
     self.running_loss = deque(maxlen=self.running_loss_length)
     self.steps = 0
     self.best_eval_results = None
+
+  def reset_action_observer(self, env):
+    pass
+
+  @property
+  def observer(self):
+    return self.demonstration_collector.observer
+
+  @property
+  def motion_primitive_behavior(self):
+    return self.demonstration_collector.motion_primitive_behavior
   
   def init_always(self):
     super(ImitationAgent, self).init_always()
@@ -81,6 +101,7 @@ class ImitationAgent(BaseAgent):
     del pickables["online_net"]
     del pickables["optim"]
     del pickables["demonstrations_train"]
+    del pickables["demonstration_collector"]
 
   def sample_batch(self, demonstrations_list, batch_size):
     state_size = len(demonstrations_list[0][0])
@@ -122,9 +143,20 @@ class ImitationAgent(BaseAgent):
     online_net_script = torch.jit.script(self.online_net)
     online_net_script.save(os.path.join(checkpoint_dir, 'online_net_script.pt'))
 
+  def save(self, checkpoint_type="last"):
+    self.demonstration_collector_dir = self.demonstration_collector.GetDirectory()
+    super(ImitationAgent, self).save(checkpoint_type)
+
+  def load_other(self):
+    self.demonstration_collector = ActionValuesCollector.load(self.demonstration_collector_dir)
+
   @property
   def script_model_file_name(self):
     return os.path.join(checkpoint_dir, 'online_net_script.pt')
+
+  @property
+  def nn_to_value_converter(self):
+    return self.online_net.nn_to_value_converter
 
   def load_models(self, checkpoint_dir):
     try: 
@@ -155,5 +187,6 @@ class ImitationAgent(BaseAgent):
       self.online_net.train() 
     self.steps += 1
 
-    
+
+
 

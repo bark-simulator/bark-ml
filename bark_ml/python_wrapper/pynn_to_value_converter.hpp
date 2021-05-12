@@ -14,14 +14,16 @@
 
 namespace py = pybind11;
 using bark_ml::lib_fqf_iqn_qrdqn::NNToValueConverter;
+using bark_ml::lib_fqf_iqn_qrdqn::ValueType;
+using ValueMap = std::unordered_map<ValueType, std::vector<double>>;
 
 class PyNNToValueConverter : public NNToValueConverter {
  public:
   using NNToValueConverter::NNToValueConverter;
 
-  std::unordered_map<ValueType, std::vector<double>> ConvertToValueMap(
+  ValueMap ConvertToValueMap(
                 const std::vector<float>& nn_output) const {
-  PYBIND11_OVERLOAD_PURE(std::unordered_map<ValueType, std::vector<double>>, NNToValueConverter, ConvertToValueMap,
+  PYBIND11_OVERLOAD_PURE(ValueMap, NNToValueConverter, ConvertToValueMap,
                            nn_output); }
 
 };

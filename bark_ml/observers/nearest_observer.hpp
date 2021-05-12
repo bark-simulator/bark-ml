@@ -68,13 +68,13 @@ class NearestObserver : public BaseObserver {
       observation_len_ = nearest_agent_num_ * state_size_;
   }
 
-  float Norm(const float val, const float mi, const float ma) const {
+  double Norm(const double val, const double mi, const double ma) const {
     return (val - mi)/(ma - mi);
   }
 
   ObservedState FilterState(const State& state) const {
     ObservedState ret_state(1, state_size_);
-    const float normalized_angle = Norm0To2PI(state(THETA_POSITION));
+    const double normalized_angle = Norm0To2PI(state(THETA_POSITION));
     ret_state << Norm(state(X_POSITION), min_x_, max_x_),
                  Norm(state(Y_POSITION), min_y_, max_y_),
                  Norm(normalized_angle, min_theta_, max_theta_),
@@ -92,10 +92,10 @@ class NearestObserver : public BaseObserver {
       observed_world.CurrentEgoPosition(), nearest_agent_num_);
 
     // sort agents by distance and distance < max_dist_
-    std::map<float, AgentPtr, std::greater<float>> distance_agent_map;
+    std::map<double, AgentPtr, std::greater<double>> distance_agent_map;
     for (const auto& agent : nearest_agents) {
       const auto& agent_state = agent.second->GetCurrentPosition();
-      float distance = Distance(
+      double distance = Distance(
         observed_world.CurrentEgoPosition(), agent_state);
       if (distance < max_dist_)
         distance_agent_map[distance] = agent.second;
@@ -141,7 +141,7 @@ class NearestObserver : public BaseObserver {
 
  private:
   int state_size_, nearest_agent_num_, observation_len_;
-  float min_theta_, max_theta_, min_vel_, max_vel_, max_dist_,
+  double min_theta_, max_theta_, min_vel_, max_vel_, max_dist_,
          min_x_, max_x_, min_y_, max_y_;
 };
 

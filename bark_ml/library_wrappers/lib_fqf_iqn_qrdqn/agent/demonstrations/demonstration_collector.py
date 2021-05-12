@@ -36,9 +36,9 @@ def from_pickle(dir, file):
 
 
 class DemonstrationEvaluator(BaseEvaluator):
-  def __init__(self, nn_observer, reward_evaluator):
+  def __init__(self, observer, reward_evaluator):
     super(DemonstrationEvaluator, self).__init__()
-    self._nn_observer = nn_observer
+    self._observer = observer
     self._reward_evaluator = reward_evaluator
     self._agent_id = None
     self._last_nn_state = None
@@ -48,7 +48,7 @@ class DemonstrationEvaluator(BaseEvaluator):
     self._agent_id = agent_id
 
   def GetNNInputState(self, observed_world):
-    return self._nn_observer.Observe(observed_world)
+    return self._observer.Observe(observed_world)
 
   def GetAction(self, observed_world):
     return observed_world.agents[self._agent_id].behavior_model.GetLastMacroAction()
@@ -80,21 +80,21 @@ class DemonstrationEvaluator(BaseEvaluator):
     return experience, done, info
 
   def __setstate__(self, d):
-    self._nn_observer = d["observer"]
+    self._observer = d["observer"]
     self._reward_evaluator = d["reward_evaluator"]
     self._agent_id = None
     self._last_nn_state = None
     self._episode_experiences = []
 
   def __getstate__(self):
-    return {"observer" : self._nn_observer, \
+    return {"observer" : self._observer, \
           "reward_evaluator" : self._reward_evaluator}
 
 class ActionValueEvaluator(BaseEvaluator):
-  def __init__(self, nn_observer):
+  def __init__(self, observer):
     super(ActionValueEvaluator, self).__init__()
     self._agent_id = None
-    self._nn_observer = nn_observer
+    self._observer = observer
     self._episode_experiences = []
 
   def SetAgentId(self, agent_id):
@@ -102,7 +102,7 @@ class ActionValueEvaluator(BaseEvaluator):
 
   def GetExperience(self, world):
     observed_world = world.Observe([self._agent_id])[0]
-    current_nn_state = self._nn_observer.Observe(observed_world)
+    current_nn_state = self._observer.Observe(observed_world)
     action_values = self.GetActionValues(observed_world)
     return current_nn_state, action_values
 
@@ -144,12 +144,12 @@ class ActionValueEvaluator(BaseEvaluator):
       raise NotImplementedError()
 
   def __setstate__(self, d):
-    self._nn_observer = d["observer"]
+    self._observer = d["observer"]
     self._agent_id = None
     self._episode_experiences = []
 
   def __getstate__(self):
-    return {"observer" : self._nn_observer}
+    return {"observer" : self._observer}
 
 
 class DemonstrationCollector:
@@ -157,6 +157,8 @@ class DemonstrationCollector:
     self._collection_result = None
     self._demonstrations = None
     self._directory = None
+    self._observer = None
+    self._motion_primitive_behavior = None
 
   def _GetDefaultRunnerInitParams(self):
     return {"log_eval_avg_every" : 5}
@@ -164,22 +166,24 @@ class DemonstrationCollector:
   def _GetDefaultRunnerRunParams(self):
     return {"maintain_history" : False, "checkpoint_every" : 10, "viewer" : None}
 
-  def CollectDemonstrations(self, num_episodes, directory,
-       env=None, nn_observer=None, reward_evaluator=None, demo_behavior=None, benchmark_configs=None,
+  def CollectDemonstrations(self, num_episodes, directory, motion_primitive_behavior, 
+       env=None, observer=None, reward_evaluator=None, benchmark_configs=None,
        use_mp_runner=True, runner_init_params = None,
       runner_run_params=None):
 
     if env:
-      nn_observer = env._observer
+      observer = env._observer
       reward_evaluator = env._evaluator
       scenario_generator = env._scenario_generator
     else:
       scenario_generator = None
-    if demo_behavior and env:
-      behaviors = {"demo_behavior" : demo_behavior}
+    if env:
+      behaviors = {"demo_behavior" : motion_primitive_behavior}
     else:
       behaviors = None
-    demo_evaluator = self.GetEvaluators(nn_observer, reward_evaluator)
+    self._observer = observer
+    self._motion_primitive_behavior = motion_primitive_behavior
+    demo_evaluator = self.GetEvaluators(observer, reward_evaluator)
     evaluators = {**default_training_evaluators(), "demo_evaluator" : demo_evaluator}
     terminal_when = self.GetTerminalCriteria()
 
@@ -200,8 +204,8 @@ class DemonstrationCollector:
     self.dump(directory)
     return self._collection_result
 
-  def GetEvaluators(self, nn_observer, reward_evaluator):
-    return DemonstrationEvaluator(nn_observer, reward_evaluator)
+  def GetEvaluators(self, observer, reward_evaluator):
+    return DemonstrationEvaluator(observer, reward_evaluator)
 
   def GetTerminalCriteria(self, *args):
     return {"demo_evaluator" : lambda x : x[1] == True} # second index in evaluation result is done
@@ -210,10 +214,15 @@ class DemonstrationCollector:
     self._directory = directory
     if not os.path.exists(directory):
       os.makedirs(directory)
+    to_pickle(self._observer, directory, DemonstrationCollector.observer_filename())
+    to_pickle(self._motion_primitive_behavior, directory, DemonstrationCollector.motion_primitive_behavior_filename())
     if self._collection_result:
       self._collection_result.dump(os.path.join(directory, DemonstrationCollector.collection_result_filename()), dump_histories=False, dump_configs=False)
     if self._demonstrations:
       to_pickle(self._demonstrations, directory, DemonstrationCollector.demonstrations_filename())
+
+  def GetDirectory(self):
+    return self._directory
 
   @staticmethod
   def _load(collector, directory):
@@ -228,6 +237,8 @@ class DemonstrationCollector:
     else:
       logging.warning("Demonstrations not existing.")
     collector._directory = directory
+    collector._observer = from_pickle(directory, DemonstrationCollector.observer_filename())
+    collector._motion_primitive_behavior = from_pickle(directory, DemonstrationCollector.motion_primitive_behavior_filename())
     return collector
 
   @classmethod
@@ -242,6 +253,14 @@ class DemonstrationCollector:
   @staticmethod
   def demonstrations_filename():
     return "demonstrations"
+
+  @staticmethod
+  def observer_filename():
+    return "demonstrations"
+
+  @staticmethod
+  def motion_primitive_behavior_filename():
+    return "motion_primitive_behavior"
 
   def UseCollectedRow(self, row, eval_criteria):
     demo_eval_result, done, info = row["demo_evaluator"]
@@ -288,8 +307,8 @@ class ActionValuesCollector(DemonstrationCollector):
   def GetDemonstrations(self, row):
     return [[list(tp[0]), list(tp[1])] for tp in list(row["demo_evaluator"][1:])]
 
-  def GetEvaluators(self, nn_observer, reward_evaluator):
-    return ActionValueEvaluator(nn_observer)
+  def GetEvaluators(self, observer, reward_evaluator):
+    return ActionValueEvaluator(observer)
 
   def GetTerminalCriteria(self, *args):
     return self.terminal_criteria

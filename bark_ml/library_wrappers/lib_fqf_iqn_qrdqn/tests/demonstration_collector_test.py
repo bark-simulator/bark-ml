@@ -72,7 +72,7 @@ class DemonstrationCollectorTests(unittest.TestCase):
     demo_behavior = bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.\
             tests.test_demo_behavior.TestDemoBehavior(params)
     collector = DemonstrationCollector()
-    collection_result = collector.CollectDemonstrations(4, "./test_demo_collected", env=env, demo_behavior=demo_behavior, \
+    collection_result = collector.CollectDemonstrations(4, "./test_demo_collected", env=env, motion_primitive_behavior=demo_behavior, \
            use_mp_runner=False, runner_init_params={"deepcopy" : False})
     self.assertTrue(os.path.exists("./test_demo_collected/collection_result"))
     print(collection_result.get_data_frame().to_string())
