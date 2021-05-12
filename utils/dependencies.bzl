@@ -10,8 +10,8 @@ def bark_ml_dependencies():
   _maybe(
     git_repository,
     name = "bark_project",
-    commit = "a78dd0c08af057cadde62ffede2b8e997f5e435f",
-    remote = "https://github.com/juloberno/bark",
+    commit = "6d390caf755c65a027b6b3cbd2d6c952e81765f6",
+    remote = "https://github.com/bark-simulator/bark",
   )
  # _maybe(
  #   native.local_repository,
