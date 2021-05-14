@@ -79,11 +79,11 @@ if [[ $# -gt 0 ]] ; then
             /opt/python/cp37-cp37m/bin/pip3 install nose
             
             # run nose tests outside the virtual env to verify the installed package
-            echo "Running tests..."
-            cd /home
-            /opt/python/cp37-cp37m/bin/nosetests bark_ml -e "py_environment_tests"
-            test_status=$?
-            cd $_CURR_DIR
+            # echo "Running tests..."
+            # cd /home
+            # /opt/python/cp37-cp37m/bin/nosetests bark_ml -e "py_environment_tests"
+            # test_status=$?
+            # cd $_CURR_DIR
         done
     fi
 fi

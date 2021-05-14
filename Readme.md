@@ -100,7 +100,7 @@ while done is False:
 
 ## Graph Neural Network Actor-Critic
 
-To run the graph neural network actor-critic architecture proposed in the paper "Graph Neural Networks and Reinforcement Learning for Behavior Generation in Semantic Environments", you first need to clone the repository `git clone https://github.com/bark-simulator/bark-ml`.
+To run the graph neural network actor-critic architecture proposed in the paper "[Graph Neural Networks and Reinforcement Learning for Behavior Generation in Semantic Environments](https://arxiv.org/abs/2006.12576)", you first need to clone the repository `git clone https://github.com/bark-simulator/bark-ml`.
 
 Next, install and enter the virtual environment using:
 
@@ -109,13 +109,13 @@ bash utils/install.sh
 source utils/dev_into.sh
 ```
 
-Once you are in the virtual environment, you can run the graph soft-actor-critic using the [Bazel](https://bazel.build/) build tool: 
+Once you are in the virtual environment, you can run the graph soft actor-critic agent using the [Bazel](https://bazel.build/) build tool: 
 
 ```bash
 bazel run //experiments:experiment_runner -- --exp_json=/ABSOLUTE_PATH/bark-ml/experiments/configs/phd/01_hyperparams/gnns/merging_large_embedding.json
 ```
 
-The graph soft-actor agent can be trained using the following command:
+The graph soft actor-critic agent can be trained using the following command:
 
 ```bash
 bazel run //experiments:experiment_runner -- --exp_json=/ABSOLUTE_PATH/bark-ml/experiments/configs/phd/01_hyperparams/gnns/merging_large_embedding.json --mode=train
@@ -135,7 +135,7 @@ If you use BARK-ML and build upon the graph neural network architecture, please 
     title = {Graph Neural Networks and Reinforcement Learning for Behavior Generation in Semantic Environments},
     author = {Patrick Hart and Alois Knoll},
     booktitle = {2020 IEEE Intelligent Vehicles Symposium (IV)},
-    url = {https://arxiv.org/abs/2006.12576},
+    url = {https://ieeexplore.ieee.org/document/9304738},
     year = {2020}
 }
 ```
