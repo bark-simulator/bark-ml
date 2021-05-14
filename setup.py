@@ -4,20 +4,20 @@ import sys, os
 with open("Readme.md", "r") as fh:
     long_description = fh.read()
 
+# A dummy native extension to mark module as platform specific
 ext_modules= []
-if sys.platform != 'linux':
-    try:
-        os.mkdir('build')
-    except FileExistsError:
-        # directory already exists - is already created by earlier run
-        pass
-    open('build/temp.c','w').close()
-    temp_ext = Extension('_temp', sources=['build/temp.c'])
-    ext_modules.append(temp_ext)
+try:
+    os.mkdir('build')
+except FileExistsError:
+    # directory already exists - is already created by earlier run
+    pass
+open('build/temp.c','w').close()
+temp_ext = Extension('_temp', sources=['build/temp.c'])
+ext_modules.append(temp_ext)
 
 setup(
     name = "bark-ml",
-    version = "0.2.3",
+    version = "0.2.4",
     description = "Machine Learning Applied to Autonomous Driving",
     long_description=long_description,
     long_description_content_type="text/markdown",
