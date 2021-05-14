@@ -2,12 +2,11 @@ from setuptools import setup, find_packages, Extension
 import sys, os
 
 
-long_description = """BARK - Machine Learning"""
-try:
-    with open("Readme.md", "r") as fh:
-        long_description = fh.read()
-except:
-    pass
+# read the contents of your README file
+from os import path
+this_directory = path.abspath(path.dirname(__file__))
+with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
 
 # A dummy native extension to mark module as platform specific
 ext_modules= []
