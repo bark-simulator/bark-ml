@@ -13,12 +13,13 @@ Additionally, BARK-ML integrates <i>state-of-the-art</i> machine learning librar
 BARK-ML supported machine learning libraries:
 
 * [TF-Agents](https://github.com/tensorflow/agents)
-* [Baselines](https://github.com/openai/baselines) (Planned)
 * [Diadem](https://github.com/juloberno/diadem)
 
-## Gym Environments
+## Gym Environment
 
-Before running the examples, install the virtual python environment (`bash utils/install.sh`) and enter it (`source utils/dev_into.sh`).
+BARK-ML offers an easy to use OpenAI-Gym interface having various scenarios -- ranging from highway driving, over merging to intersections.
+To get started install the last release of BARK-ML using `pip install bark-ml`.
+
 
 Continuous environments: `bazel run //examples:continuous_env`
 <p align="center">
@@ -34,7 +35,10 @@ Available environments:
 * `intersection-v0`: Continuous intersection environment
 * `intersection-v1`: Discrete intersection environment
 
+
 ## TF-Agents
+
+Before running the examples, install the virtual python environment (`bash utils/install.sh`) and enter it (`source utils/dev_into.sh`).
 
 TF-Agents SAC-example: `bazel run //examples:tfa`:
 

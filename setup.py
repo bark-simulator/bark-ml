@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages, Extension
 import sys, os
 
-with open("README.md", "r") as fh:
+with open("Readme.md", "r") as fh:
     long_description = fh.read()
 
 ext_modules= []
@@ -17,7 +17,7 @@ if sys.platform != 'linux':
 
 setup(
     name = "bark-ml",
-    version = "0.2.2",
+    version = "0.2.3",
     description = "Machine Learning Applied to Autonomous Driving",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -39,7 +39,7 @@ setup(
         'tensorboard>=2.2.2',
         'tf-agents>=0.5.0',
         'tensorflow-probability>=0.10.0',
-        'bark-simulator>=0.1.0',
+        'bark-simulator>=1.0.0',
         'tf2_gnn>=2.4.0',
         'spektral>0.6.0'
     ],
