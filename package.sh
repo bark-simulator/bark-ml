@@ -25,7 +25,7 @@ cp setup.py $build_dir/$workspace_name
 
 echo "Copying README.md to project directory at $build_dir/$workspace_name"
 # copy READEME.md file to build directory
-cp Readme.md $build_dir/$workspace_name
+cp README.md $build_dir/$workspace_name
 
 # copy LICENSE file to build directory
 cp LICENSE $build_dir/$workspace_name
