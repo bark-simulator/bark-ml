@@ -56,6 +56,38 @@ python3.7 setup.py clean
 python3.7 setup.py sdist bdist_wheel
 python3.7 setup.py test
 
+
+# check if manylinux argument passed. if so build
+# a manylinux wheel. https://github.com/pypa/manylinux
+wheeldir='dist'
+# alternate: use platform instead of argument
+#plat=$(python -c "import distutils.util; print(distutils.util.get_platform())")
+test_status=1
+if [[ $# -gt 0 ]] ; then
+    if [[ $1 -eq 'manylinux' ]] ; then
+        _CURR_DIR=$(pwd)
+        wheeldir='wheelhouse'
+        for whl in dist/*.whl; do
+            if ! auditwheel show "$whl"; then
+                echo "Skipping non-platform wheel $whl"
+            else
+                auditwheel repair "$whl"
+            fi
+            
+            # install the package outside virtual environment
+            /opt/python/cp37-cp37m/bin/pip install $whl
+            /opt/python/cp37-cp37m/bin/pip3 install nose
+            
+            # run nose tests outside the virtual env to verify the installed package
+            echo "Running tests..."
+            cd /home
+            /opt/python/cp37-cp37m/bin/nosetests bark_ml -e "py_environment_tests"
+            test_status=$?
+            cd $_CURR_DIR
+        done
+    fi
+fi
+
 if [ $? -eq 0 ]; then
     echo "Tests passed!"
 else
