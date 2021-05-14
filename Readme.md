@@ -33,7 +33,7 @@ The highway scenario can use discrete or continuous actions:
 
 
 <p align="center">
-<img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/bark_ml_highway.gif" alt="BARK-ML Highway" />
+<img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/bark_ml_highway.gif" alt="BARK-ML Highway Scenario" />
 </p>
 
 
@@ -53,7 +53,7 @@ The merging scenario can use discrete or continuous actions:
 
 
 <p align="center">
-<img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/bark-ml.gif" alt="BARK-ML Highway" />
+<img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/bark-ml.gif" alt="BARK-ML Merging Scenario" />
 </p>
 
 
@@ -121,9 +121,14 @@ The graph soft-actor agent can be trained using the following command:
 bazel run //experiments:experiment_runner -- --exp_json=/ABSOLUTE_PATH/bark-ml/experiments/configs/phd/01_hyperparams/gnns/merging_large_embedding.json --mode=train
 ```
 
-Make sure to replace `ABSOLUTE_PATH` with your BARK-ML base directory.  
-If you use BARK-ML and build upon the graph neural network architecture, please cite the following [paper](https://arxiv.org/abs/2006.12576):
+Make sure to replace `ABSOLUTE_PATH` with your BARK-ML base directory!
 
+<p align="center">
+<img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/graph_neural_network.gif" alt="Actor-Critic Graph Neural Network Architecture" />
+</p
+
+
+If you use BARK-ML and build upon the graph neural network architecture, please cite the following [paper](https://arxiv.org/abs/2006.12576):
 
 ```bibtex
 @inproceedings{Hart2020,
