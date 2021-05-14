@@ -109,16 +109,10 @@ bash utils/install.sh
 source utils/dev_into.sh
 ```
 
-Once you are in the virtual environment, you can run the graph soft actor-critic agent using the [Bazel](https://bazel.build/) build tool: 
+Once you are in the virtual environment, you can either visualize (`--mode=visualize`) or train (`--mode=train`) the graph soft actor-critic agent using the [Bazel](https://bazel.build/) build tool: 
 
 ```bash
-bazel run //experiments:experiment_runner -- --exp_json=/ABSOLUTE_PATH/bark-ml/experiments/configs/phd/01_hyperparams/gnns/merging_large_embedding.json
-```
-
-The graph soft actor-critic agent can be trained using the following command:
-
-```bash
-bazel run //experiments:experiment_runner -- --exp_json=/ABSOLUTE_PATH/bark-ml/experiments/configs/phd/01_hyperparams/gnns/merging_large_embedding.json --mode=train
+bazel run //experiments:experiment_runner -- --exp_json=/ABSOLUTE_PATH/bark-ml/experiments/configs/phd/01_hyperparams/gnns/merging_large_embedding.json --mode=visualize
 ```
 
 Make sure to replace `ABSOLUTE_PATH` with your BARK-ML base directory!
@@ -126,6 +120,7 @@ Make sure to replace `ABSOLUTE_PATH` with your BARK-ML base directory!
 <p align="center">
 <img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/graph_neural_network.gif" alt="Actor-Critic Graph Neural Network Architecture" />
 </p>
+
 The merging scenario above is visualized using [BARKSCAPE](https://github.com/bark-simulator/barkscape/).
 If you are interested in using a 3D-visualization have a look at [this](https://github.com/bark-simulator/barkscape/blob/master/examples/bark_ml_runner_example.py)  example.
 

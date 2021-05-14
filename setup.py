@@ -31,7 +31,7 @@ setup(
                    "License :: OSI Approved :: MIT License",
                    "Operating System :: OS Independent",
                    "Programming Language :: Python :: 3.7"],
-    keywords = "simulator autonomous driving machine learning",
+    keywords = "simulator, autonomous, driving, machine learning",
     url = "https://github.com/bark-simulator/bark-ml",
     author = "Patrick Hart, Julian Bernhard, Klemens Esterle, Tobias Kessler",
     author_email = "patrickhart.1990@gmail.com",
