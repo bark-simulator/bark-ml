@@ -20,7 +20,7 @@ Install the BARK-ML package using `pip install bark-ml`.
 
 ### Highway Scenario
 
-```
+```python
 env = gym.make("highway-v0")
 ```
 
@@ -40,7 +40,7 @@ The highway scenario can use discrete or continuous actions:
 
 ### Merging Scenario
 
-```
+```python
 env = gym.make("merging-v0")
 ```
 
@@ -60,7 +60,7 @@ The merging scenario can use discrete or continuous actions:
 
 ### Unprotected Left Turn
 
-```
+```python
 env = gym.make("intersection-v0")
 ```
 
@@ -80,7 +80,7 @@ The unprotected left turn scenario can use discrete or continuous actions:
 ## Getting Started
 
 A complete example using the [OpenAi-Gym](https://github.com/openai/gym) inteface can be found [here](https://github.com/bark-simulator/bark-ml/blob/master/examples/continuous_env.py):
-```
+```python
 import gym
 import numpy as np
 # registers bark-ml environments
@@ -91,6 +91,7 @@ env = gym.make("merging-v0")
 initial_state = env.reset()
 done = False
 while done is False:
+  # action = np.array([0., 0.]) # steering-rate and acceleration
   action = np.random.uniform(low=np.array([-0.5, -0.1]), high=np.array([0.5, 0.1]), size=(2, ))
   observed_state, reward, done, info = env.step(action)
   print(f"Observed state: {observed_state}, Action: {action}, Reward: {reward}, Done: {done}")
@@ -103,20 +104,20 @@ To run the graph neural network actor-critic architecture proposed in the paper 
 
 Next, install and enter the virtual environment using:
 
-```
+```bash
 bash utils/install.sh
 source utils/dev_into.sh
 ```
 
 Once you are in the virtual environment, you can run the graph soft-actor-critic using the [Bazel](https://bazel.build/) build tool: 
 
-```
+```bash
 bazel run //experiments:experiment_runner -- --exp_json=/ABSOLUTE_PATH/bark-ml/experiments/configs/phd/01_hyperparams/gnns/merging_large_embedding.json
 ```
 
 The graph soft-actor agent can be trained using the following command:
 
-```
+```bash
 bazel run //experiments:experiment_runner -- --exp_json=/ABSOLUTE_PATH/bark-ml/experiments/configs/phd/01_hyperparams/gnns/merging_large_embedding.json --mode=train
 ```
 
@@ -124,7 +125,7 @@ Make sure to replace `ABSOLUTE_PATH` with your BARK-ML base directory.
 If you use BARK-ML and build upon the graph neural network architecture, please cite the following [paper](https://arxiv.org/abs/2006.12576):
 
 
-```
+```bibtex
 @inproceedings{Hart2020,
     title = {Graph Neural Networks and Reinforcement Learning for Behavior Generation in Semantic Environments},
     author = {Patrick Hart and Alois Knoll},
