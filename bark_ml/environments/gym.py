@@ -6,6 +6,7 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 import gym
+import os
 from gym.envs.registration import register
 
 from bark.runtime.commons.parameters import ParameterServer
@@ -22,13 +23,19 @@ from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 # highway
 class ContinuousHighwayGym(SingleAgentRuntime, gym.Env):
   def __init__(self):
-    params = ParameterServer()
+    params = ParameterServer(filename=
+      os.path.join(os.path.dirname(__file__),
+      "../environments/blueprints/visualization_params.json"))
     cont_highway_bp = ContinuousHighwayBlueprint(params)
     SingleAgentRuntime.__init__(self,
       blueprint=cont_highway_bp, render=True)
 
 class DiscreteHighwayGym(SingleAgentRuntime, gym.Env):
-  def __init__(self, params = ParameterServer(), render=False):
+  def __init__(self,
+    params = ParameterServer(filename= \
+      os.path.join(os.path.dirname(__file__),
+      "../environments/blueprints/visualization_params.json")),
+    render=False):
     discrete_highway_bp = DiscreteHighwayBlueprint(params)
     SingleAgentRuntime.__init__(self,
       blueprint=discrete_highway_bp, render=render)
@@ -36,13 +43,19 @@ class DiscreteHighwayGym(SingleAgentRuntime, gym.Env):
 # merging
 class ContinuousMergingGym(SingleAgentRuntime, gym.Env):
   def __init__(self):
-    params = ParameterServer()
+    params = ParameterServer(filename= \
+      os.path.join(os.path.dirname(__file__),
+      "../environments/blueprints/visualization_params.json"))
     cont_merging_bp = ContinuousMergingBlueprint(params)
     SingleAgentRuntime.__init__(self,
       blueprint=cont_merging_bp, render=True)
 
 class DiscreteMergingGym(SingleAgentRuntime, gym.Env):
-  def __init__(self, params = ParameterServer(), render=False):
+  def __init__(self,
+    params = ParameterServer(filename= \
+      os.path.join(os.path.dirname(__file__),
+      "../environments/blueprints/visualization_params.json")),
+    render=False):
     discrete_merging_bp = DiscreteMergingBlueprint(params)
     SingleAgentRuntime.__init__(self,
       blueprint=discrete_merging_bp, render=render)
@@ -50,7 +63,9 @@ class DiscreteMergingGym(SingleAgentRuntime, gym.Env):
 # merging
 class MediumContinuousMergingGym(SingleAgentRuntime, gym.Env):
   def __init__(self):
-    params = ParameterServer()
+    params = ParameterServer(filename= \
+      os.path.join(os.path.dirname(__file__),
+      "../environments/blueprints/visualization_params.json"))
     cont_merging_bp = ContinuousMergingBlueprint(params, mode="medium")
     SingleAgentRuntime.__init__(self,
       blueprint=cont_merging_bp,
@@ -59,13 +74,19 @@ class MediumContinuousMergingGym(SingleAgentRuntime, gym.Env):
 # intersection
 class ContinuousIntersectionGym(SingleAgentRuntime, gym.Env):
   def __init__(self):
-    params = ParameterServer()
+    params = ParameterServer(filename= \
+      os.path.join(os.path.dirname(__file__),
+      "../environments/blueprints/visualization_params.json"))
     cont_merging_bp = ContinuousIntersectionBlueprint(params)
     SingleAgentRuntime.__init__(self,
       blueprint=cont_merging_bp, render=True)
 
 class DiscreteIntersectionGym(SingleAgentRuntime, gym.Env):
-  def __init__(self, params = ParameterServer(), render=False):
+  def __init__(self,
+    params = ParameterServer(filename= \
+      os.path.join(os.path.dirname(__file__),
+      "../environments/blueprints/visualization_params.json")),
+    render=False):
     discrete_merging_bp = DiscreteIntersectionBlueprint(params)
     SingleAgentRuntime.__init__(self,
       blueprint=discrete_merging_bp, render=render)
