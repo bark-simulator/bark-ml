@@ -125,8 +125,9 @@ Make sure to replace `ABSOLUTE_PATH` with your BARK-ML base directory!
 
 <p align="center">
 <img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/graph_neural_network.gif" alt="Actor-Critic Graph Neural Network Architecture" />
-</p
-
+</p>
+The merging scenario above is visualized using [BARKSCAPE](https://github.com/bark-simulator/barkscape/).
+If you are interested in using a 3D-visualization have a look at [this](https://github.com/bark-simulator/barkscape/blob/master/examples/bark_ml_runner_example.py)  example.
 
 If you use BARK-ML and build upon the graph neural network architecture, please cite the following [paper](https://arxiv.org/abs/2006.12576):
 
