@@ -63,8 +63,9 @@ class BenchmarkSupervisedLoss(TrainingBenchmark):
         return eval_result1["mse_loss/test"] < than_eval_result2["mse_loss/test"]
 
 class BenchmarkSplitSupervisedLoss(TrainingBenchmark):
-  def __init__(self, demonstrations_test):
+  def __init__(self, demonstrations_test, plot_gradients=False):
     self.demonstrations_test = demonstrations_test
+    self.plot_gradients = plot_gradients
 
   def run(self):
     with torch.no_grad():
@@ -99,6 +100,21 @@ class BenchmarkSplitSupervisedLoss(TrainingBenchmark):
       result[f"squared_error_var/{key}/{phase}"] = error_var
 
       formatted_result += f"{key:10}| {error_mean:7.3f} | {error_var:7.3f}\n"
+
+    if self.plot_gradients:
+      # Plot all gradients on the same plots
+      net = self.agent.online_net
+      gradients_max = dict()
+      gradients_mean = dict()
+      for n, p in net.named_parameters():
+        if p.requires_grad and "bias" not in n:
+          gradients_mean[n] = p.grad.abs().mean()
+          gradients_max[n] = p.grad.abs().max()
+      self.agent.writer.add_scalars(f"gradients_max/{phase}", gradients_max,
+                                    self.agent.steps)
+      self.agent.writer.add_scalars(f"gradients_mean/{phase}", gradients_mean,
+                                    self.agent.steps)
+
     return result, formatted_result
 
   def is_better(self, eval_result1, than_eval_result2):
@@ -109,7 +125,8 @@ class ImitationAgent(BaseAgent):
     self.demonstration_collector = demonstration_collector
     super(ImitationAgent, self).__init__(*args, **kwargs)
     self.define_training_test_data()
-    self._training_benchmark = BenchmarkSupervisedLoss(self.demonstrations_test)
+    plot_gradients = self._params["ML"]["ImitationModel"]["PlotGradients", "", False]
+    self._training_benchmark = BenchmarkSplitSupervisedLoss(self.demonstrations_test, plot_gradients=plot_gradients)
     self._training_benchmark.reset(None, self.num_eval_episodes, None, self)
     self.select_loss_function(self._params)
 
