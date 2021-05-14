@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-from torch import nn, sigmoid, cat
+from torch import nn, sigmoid, cat, unsqueeze, flatten
 from torch.optim import Adam, RMSprop
 
 from .imitation_agent import ImitationAgent
@@ -32,26 +32,40 @@ class CarinAgent(ImitationAgent):
 class Carin(nn.Module):
   """
   CARIN = Custom ARchitecture ImitatioN
+
+  Usage of CNN layers inspired by:
+    'Combining Planning and Deep Reinforcement Learning in Tactical
+    Decision Making for Autonomous Driving' (Hoel et al., 2019)
   """
   def __init__(self, num_channels, num_actions, num_value_functions, params):
     super(Carin, self).__init__()
     self.num_channels = num_channels
     self.num_actions = num_actions
     self.num_value_functions = num_value_functions
+    self.num_agents = params["ML"]["CarinModel"]["NumAgents", "", 5]
+    self.dropout_p = params["ML"]["ImitationModel"]["DropoutProbability", "",
+                                                    0]
+
+    self.input_conv_dims = params["ML"]["CarinModel"]["InputConvDims", "", []]
     self.shared_layer_dims = params["ML"]["ImitationModel"]["EmbeddingDims",
                                                             "",
                                                             [256, 256, 256]]
     self.head_networks_dims = params["ML"]["CarinModel"][
         "MultitaskLearningEmbeddingDims", "", []]
-    self.dropout_p = params["ML"]["ImitationModel"]["DropoutProbability", "",
-                                                    0]
 
-    shared_layers, last_layer_dim = self.make_shared_layers()
-    head_layers = self.make_head_layers(last_layer_dim)
+    # CNN layers (transform input features of each agent separately).
+    input_conv_layers, last_input_layer_dim = self.make_input_conv_layers()
+    self.input_conv_net = nn.Sequential(input_conv_layers)
+    self.input_conv_net.apply(init_weights)
 
+    # Shared FC layers
+    shared_layers, last_shared_layer_dim = self.make_shared_layers(
+        last_input_layer_dim)
     self.shared_network = nn.Sequential(shared_layers)
     self.shared_network.apply(init_weights)
 
+    # Multitask learning (separate FC networks for each value function)
+    head_layers = self.make_head_layers(last_shared_layer_dim)
     self.head_networks = nn.ModuleList()
     for hl in head_layers:
       net = nn.Sequential(hl)
@@ -59,7 +73,19 @@ class Carin(nn.Module):
       self.head_networks.append(net)
 
   def forward(self, states):
-    shared_features = self.shared_network(states)
+    # Convert input tensor from 2D to 3D (needed for convolution afterwards)
+    states = unsqueeze(states, 1)
+
+    # Use CNN to transform features of each agent separately
+    transformed_input = self.input_conv_net(states)
+
+    # Transform back to 2D
+    transformed_input = flatten(transformed_input, start_dim=1, end_dim=2)
+
+    # Fully connected layers
+    shared_features = self.shared_network(transformed_input)
+
+    # Compute output for each value function, then concat them
     outputs = [head(shared_features) for head in self.head_networks]
     action_values = cat(outputs, 1)
 
@@ -68,12 +94,37 @@ class Carin(nn.Module):
       action_values = sigmoid(action_values)
     return action_values
 
-  def make_shared_layers(self):
+  def make_input_conv_layers(self):
+    tuple_list = []
+    in_channels = 1
+    kernel_size = self.num_channels // self.num_agents
+    stride = kernel_size
+    for idx, layer in enumerate(self.input_conv_dims):
+      out_channels = layer
+      tuple_list.append((f"conv_layer{idx}",
+                         nn.Conv1d(in_channels,
+                                   out_channels,
+                                   kernel_size=kernel_size,
+                                   stride=stride)))
+      in_channels = out_channels
+      kernel_size = 1
+      stride = 1
+
+    if len(self.input_conv_dims) > 0:
+      tuple_list.append(
+          ("maxpool", nn.MaxPool2d(kernel_size=(1, self.num_agents))))
+      last_dimension = in_channels
+    else:
+      last_dimension = self.num_channels
+
+    return OrderedDict(tuple_list), last_dimension
+
+  def make_shared_layers(self, start_layer_dim):
     """
     Creates layers that are shared among all predictions
     """
     tuple_list = []
-    last_dim = self.num_channels
+    last_dim = start_layer_dim
     for idx, layer in enumerate(self.shared_layer_dims):
       current_dim = layer
       tuple_list.append((f"layer{idx}", nn.Linear(last_dim, current_dim)))
