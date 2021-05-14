@@ -25,6 +25,6 @@ py_test (
 py_test(
   name = "pip_package",
   srcs = ["pip_package.py", "__init__.py"],
-  data = [":generate_core"],
+  data = [":generate_core", "//:readme"],
   deps = [":py_tests"]
 )

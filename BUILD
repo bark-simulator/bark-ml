@@ -32,3 +32,9 @@ test_suite(
     "//examples:diadem_dqn",
   ]
 )
+
+filegroup(
+   name="readme",
+   srcs=glob(["README.md"]),
+   visibility = ["//visibility:public"],
+)
