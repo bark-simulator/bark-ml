@@ -1,8 +1,9 @@
 from setuptools import setup, find_packages, Extension
 import sys, os
 
-with open('README.md', encoding='utf-8') as f:
-    long_description = f.read()
+long_description = "BARK - Machine Learning"
+# with open('README.md', encoding='utf-8') as f:
+#     long_description = f.read()
 
 # A dummy native extension to mark module as platform specific
 ext_modules= []
@@ -20,7 +21,7 @@ setup(
     version = "0.2.9",
     description = "Machine Learning Applied to Autonomous Driving",
     long_description=long_description,
-    long_description_content_type="text/markdown",
+    long_description_content_type="text/plain",
     classifiers = ["Development Status :: 4 - Beta",
                    "Intended Audience :: Science/Research",
                    "License :: OSI Approved :: MIT License",
