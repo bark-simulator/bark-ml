@@ -2,7 +2,7 @@ from setuptools import setup, find_packages, Extension
 import sys, os
 
 
-long_description = "BARK - Machine Learning"
+long_description = """BARK - Machine Learning"""
 try:
     with open("Readme.md", "r") as fh:
         long_description = fh.read()
