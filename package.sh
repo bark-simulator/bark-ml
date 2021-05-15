@@ -84,6 +84,10 @@ if [[ $# -gt 0 ]] ; then
             # /opt/python/cp37-cp37m/bin/nosetests bark_ml -e "py_environment_tests"
             # test_status=$?
             # cd $_CURR_DIR
+
+            echo "Uploading package to PyPi..."
+            python3 -m twine upload --skip-existing wheelhouse/*
+            exit 0
         done
     fi
 fi
@@ -96,4 +100,4 @@ else
 fi
 
 echo "Uploading package to PyPi..."
-python3 -m twine upload dist/*.tar.gz
+python3 -m twine upload --skip-existing dist/*
