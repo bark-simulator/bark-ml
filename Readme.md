@@ -8,6 +8,7 @@
 </p>
 
 
+## [Try it on Google Colab! ![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1jA5QPEHadvIU6GsCy4cFdAv3giS7QvDQ?usp=sharing)
 
 
 Discrete and continuous environments for autonomous driving —
