@@ -96,4 +96,4 @@ else
 fi
 
 echo "Uploading package to PyPi..."
-python3 -m twine upload --skip-existing dist/*.tar.gz
+python3 -m twine upload --skip-existing dist/*
