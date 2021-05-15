@@ -1,11 +1,13 @@
 
+# BARK-ML - Machine Learning for Autonomous Driving
+
+[![CI Build](https://github.com/bark-simulator/bark-ml/workflows/CI/badge.svg)](https://github.com/bark-simulator/bark-ml/actions)
+[![Github Contributors](https://img.shields.io/github/contributors/bark-simulator/bark-ml)](https://github.com/bark-simulator/bark-ml/graphs/contributors)
 <p align="center">
 <img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/bark_ml_logo.png" width="65%" alt="BARK-ML" />
 </p>
 
-# BARK-ML - Machine Learning for Autonomous Driving
 
-![CI Build](https://github.com/bark-simulator/bark-ml/workflows/CI/badge.svg)
 
 
 Discrete and continuous environments for autonomous driving —
