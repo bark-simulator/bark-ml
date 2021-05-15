@@ -83,7 +83,7 @@ The unprotected left turn scenario can use discrete or continuous actions:
 
 ## Getting Started
 
-A complete example using the [OpenAi-Gym](https://github.com/openai/gym) inteface can be found [here](https://github.com/bark-simulator/bark-ml/blob/master/examples/continuous_env.py):
+A complete example using the [OpenAi-Gym](https://github.com/openai/gym) interface can be found [here](https://github.com/bark-simulator/bark-ml/blob/master/examples/continuous_env.py):
 ```python
 import gym
 import numpy as np
@@ -112,7 +112,7 @@ bash utils/install.sh
 source utils/dev_into.sh
 ```
 
-Now - once in the virtualenv - you can build any of the libraries or execute binaries within BARK-ML using [Bazel](https://bazel.build/).
+Now - once in the virtual python environment - you can build any of the libraries or execute binaries within BARK-ML using [Bazel](https://bazel.build/).
 To run the getting started example from above, use the following command: `bazel run //examples:continuous_env`.
 
 
@@ -131,7 +131,7 @@ Make sure to replace `ABSOLUTE_PATH` with your BARK-ML base directory!
 </p>
 
 The merging scenario above is visualized using [BARKSCAPE](https://github.com/bark-simulator/barkscape/).
-If you are interested in using a 3D-visualization have a look at [this](https://github.com/bark-simulator/barkscape/blob/master/examples/bark_ml_runner_example.py)  example.
+If you are interested in using a 3D-visualization, have a look at [this](https://github.com/bark-simulator/barkscape/blob/master/examples/bark_ml_runner_example.py)  example.
 
 If your work builds upon the graph neural network architecture, please cite the following [paper](https://arxiv.org/abs/2006.12576):
 
@@ -154,4 +154,4 @@ If your work builds upon the graph neural network architecture, please cite the 
 
 ## License
 
-BARK-ML specific code is distributed under MIT License.
+BARK-ML code is distributed under MIT License.
