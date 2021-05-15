@@ -11,11 +11,10 @@
 Discrete and continuous environments for autonomous driving —
  ranging from highway, over merging, to intersection scenarios.
 
+The BARK-ML package can be installed using `pip install bark-ml`.
+
 
 ## Gym Environments
-
-Install the BARK-ML package using `pip install bark-ml`.
-
 
 
 ### Highway Scenario
@@ -24,7 +23,7 @@ Install the BARK-ML package using `pip install bark-ml`.
 env = gym.make("highway-v0")
 ```
 
-In the highway scenario, the ego agent's goal is a `StateLimitGoal` on the left lane that is reached once the states are in a pre-defined range (velocity range of `[12.5m/s, 17.5m/s]`, polygonal area on the left lane, and theta range of `[-0.1rad, 0.1rad]`).
+In the highway scenario, the ego agent's goal is a `StateLimitGoal` on the left lane that is reached once its states are in a pre-defined range (velocity range of `[12.5m/s, 17.5m/s]`, polygonal area on the left lane, and theta range of `[-0.1rad, 0.1rad]`).
 A positive reward (`+1`) is given for reaching the goal and a negative reward for having a collision or leaving the drivable area (`-1`).
 
 The highway scenario can use discrete or continuous actions:
@@ -44,7 +43,7 @@ The highway scenario can use discrete or continuous actions:
 env = gym.make("merging-v0")
 ```
 
-In the merging scenario, the ego agent's goal is a `StateLimitGoal` on the left lane that is reached once the states are in a pre-defined range (velocity range of `[5m/s, 15m/s]`, polygonal area on the left lane, and theta range of `[-0.15rad, 0.15rad]`).
+In the merging scenario, the ego agent's goal is a `StateLimitGoal` on the left lane that is reached once its states are in a pre-defined range (velocity range of `[5m/s, 15m/s]`, polygonal area on the left lane, and theta range of `[-0.15rad, 0.15rad]`).
 A positive reward (`+1`) is given for reaching the goal and a negative reward for having a collision or leaving the drivable area (`-1`).
 
 The merging scenario can use discrete or continuous actions:
@@ -98,18 +97,23 @@ while done is False:
 
 ```
 
-## Graph Neural Network Actor-Critic
+## Building From Source
 
-To run the graph neural network actor-critic architecture proposed in the paper "[Graph Neural Networks and Reinforcement Learning for Behavior Generation in Semantic Environments](https://arxiv.org/abs/2006.12576)", you first need to clone the repository `git clone https://github.com/bark-simulator/bark-ml`.
-
-Next, install and enter the virtual environment using:
+BARK-ML can alternatively also be built from source.
+Clone the repository using `git clone https://github.com/bark-simulator/bark-ml`, install the virtual python environment and activate it afterwards using:
 
 ```bash
 bash utils/install.sh
 source utils/dev_into.sh
 ```
 
-Once you are in the virtual environment, you can either visualize (`--mode=visualize`) or train (`--mode=train`) the graph soft actor-critic agent using the [Bazel](https://bazel.build/) build tool: 
+Now - once in the virtualenv - you can build any of the libraries or execute binaries within BARK-ML using [Bazel](https://bazel.build/).
+To run the getting started example from above, use the following command: `bazel run //examples:continuous_env`.
+
+
+## Graph Neural Network Soft Actor-Critic
+
+You can visualize  (`--mode=visualize`) or train (`--mode=train`) the graph neural network soft actor-critic architecture proposed in the paper "[Graph Neural Networks and Reinforcement Learning for Behavior Generation in Semantic Environments](https://arxiv.org/abs/2006.12576)" using:
 
 ```bash
 bazel run //experiments:experiment_runner -- --exp_json=/ABSOLUTE_PATH/bark-ml/experiments/configs/phd/01_hyperparams/gnns/merging_large_embedding.json --mode=visualize
@@ -124,7 +128,7 @@ Make sure to replace `ABSOLUTE_PATH` with your BARK-ML base directory!
 The merging scenario above is visualized using [BARKSCAPE](https://github.com/bark-simulator/barkscape/).
 If you are interested in using a 3D-visualization have a look at [this](https://github.com/bark-simulator/barkscape/blob/master/examples/bark_ml_runner_example.py)  example.
 
-If you use BARK-ML and build upon the graph neural network architecture, please cite the following [paper](https://arxiv.org/abs/2006.12576):
+If your work builds upon the graph neural network architecture, please cite the following [paper](https://arxiv.org/abs/2006.12576):
 
 ```bibtex
 @inproceedings{Hart2020,
@@ -135,6 +139,12 @@ If you use BARK-ML and build upon the graph neural network architecture, please 
     year = {2020}
 }
 ```
+
+## Publications
+
+* [Graph Neural Networks and Reinforcement Learning for Behavior Generation in Semantic Environments](https://arxiv.org/abs/2006.12576) (IV 2020)
+* [BARK: Open Behavior Benchmarking in Multi-Agent Environments](https://arxiv.org/abs/2003.02604) (IROS 2020)
+* [Counterfactual Policy Evaluation for Decision-Making in Autonomous Driving](https://arxiv.org/abs/2003.11919) (IROS 2020,  PLC Workshop)
 
 
 ## License
