@@ -3,6 +3,8 @@
 
 [![CI Build](https://github.com/bark-simulator/bark-ml/workflows/CI/badge.svg)](https://github.com/bark-simulator/bark-ml/actions)
 [![Github Contributors](https://img.shields.io/github/contributors/bark-simulator/bark-ml)](https://github.com/bark-simulator/bark-ml/graphs/contributors)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/6e2c0ba1291249de9c54cb73c697b62c)](https://www.codacy.com/gh/bark-simulator/bark-ml/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bark-simulator/bark-ml&amp;utm_campaign=Badge_Grade)
+
 <p align="center">
 <img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/bark_ml_logo.png" width="65%" alt="BARK-ML" />
 </p>
