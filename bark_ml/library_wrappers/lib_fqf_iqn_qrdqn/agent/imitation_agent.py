@@ -63,9 +63,9 @@ class BenchmarkSupervisedLoss(TrainingBenchmark):
         return eval_result1["mse_loss/test"] < than_eval_result2["mse_loss/test"]
 
 class BenchmarkSplitSupervisedLoss(TrainingBenchmark):
-  def __init__(self, demonstrations_test, plot_gradients=False):
+  def __init__(self, demonstrations_test, gradients_and_weights_dir=None):
     self.demonstrations_test = demonstrations_test
-    self.plot_gradients = plot_gradients
+    self.gradients_and_weights_dir = gradients_and_weights_dir
 
   def run(self):
     with torch.no_grad():
@@ -101,33 +101,53 @@ class BenchmarkSplitSupervisedLoss(TrainingBenchmark):
 
       formatted_result += f"{key:10}| {error_mean:7.3f} | {error_var:7.3f}\n"
 
-    if self.plot_gradients:
-      # Plot all gradients on the same plots
-      net = self.agent.online_net
-      gradients_max = dict()
-      gradients_mean = dict()
-      for n, p in net.named_parameters():
-        if p.requires_grad and "bias" not in n:
-          gradients_mean[n] = p.grad.abs().mean()
-          gradients_max[n] = p.grad.abs().max()
-      self.agent.writer.add_scalars(f"gradients_max/{phase}", gradients_max,
-                                    self.agent.steps)
-      self.agent.writer.add_scalars(f"gradients_mean/{phase}", gradients_mean,
-                                    self.agent.steps)
+    if self.gradients_and_weights_dir:
+      self.save_gradients_and_weights_to_file(
+          self.agent.online_net.named_parameters(), self.agent.steps, phase)
 
     return result, formatted_result
 
   def is_better(self, eval_result1, than_eval_result2):
     return eval_result1["loss/test"] < than_eval_result2["loss/test"]
 
+  def save_gradients_and_weights_to_file(self, named_parameters, steps, phase):
+    weights = dict()
+    gradients = dict()
+
+    for name, param in named_parameters:
+      if "bias" in name:
+        continue
+      weights[name] = param.cpu().detach().numpy()
+      gradients[name] = param.grad.cpu().detach().numpy()
+
+    with open(f"{self.gradients_and_weights_dir}/weights_{phase}_{steps}.npz",
+              "wb") as outfile:
+      np.savez(outfile, **weights)
+    with open(
+        f"{self.gradients_and_weights_dir}/gradients_{phase}_{steps}.npz",
+        "wb") as outfile:
+      np.savez(outfile, **gradients)
+
+
 class ImitationAgent(BaseAgent):
   def __init__(self, demonstration_collector = None, *args, **kwargs):
     self.demonstration_collector = demonstration_collector
     super(ImitationAgent, self).__init__(*args, **kwargs)
     self.define_training_test_data()
-    plot_gradients = self._params["ML"]["ImitationModel"]["PlotGradients", "", False]
-    self._training_benchmark = BenchmarkSplitSupervisedLoss(self.demonstrations_test, plot_gradients=plot_gradients)
+
+    if self._params["ML"]["ImitationModel"]["SaveGradientsWeights", "", False]:
+      gradients_and_weights_dir = f"{self.agent_save_dir}/gradients_weights"
+      if not os.path.exists(gradients_and_weights_dir):
+        os.mkdir(gradients_and_weights_dir)
+      logging.info("Saving gradients and weights to {}".format(
+          os.path.abspath(gradients_and_weights_dir)))
+    else:
+      gradients_and_weights_dir = None
+
+    self._training_benchmark = BenchmarkSplitSupervisedLoss(
+      self.demonstrations_test, gradients_and_weights_dir=gradients_and_weights_dir)
     self._training_benchmark.reset(None, self.num_eval_episodes, None, self)
+
     self.select_loss_function(self._params)
 
   def define_training_test_data(self):
