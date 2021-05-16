@@ -8,7 +8,7 @@
 import gin
 import tensorflow as tf  # pylint: disable=g-explicit-tensorflow-version-import
 
-from tf_agents.networks import network, utils, encoding_network
+from tf_agents.networks import network, encoding_network
 from bark.runtime.commons.parameters import ParameterServer
 
 
@@ -30,7 +30,8 @@ class GNNValueNetwork(network.Network):
                dtype=tf.float32,
                name='ValueNetwork',
                params=ParameterServer()):
-    """Creates an instance of `ValueNetwork`.
+    """
+    Creates an instance of `ValueNetwork`.
     Network supports calls with shape outer_rank + observation_spec.shape. Note
     outer_rank must be at least 1.
     Args:

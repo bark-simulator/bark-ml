@@ -26,7 +26,7 @@ from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent,\
   BehaviorPPOAgent, BehaviorGraphSACAgent
 from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner
 from bark_ml.observers.graph_observer import GraphObserver
-from bark_ml.library_wrappers.lib_tf_agents.networks.graph_network import GraphNetwork 
+from bark_ml.library_wrappers.lib_tf_agents.networks.graph_network import GraphNetwork
 
 # Supervised specific imports
 from bark_ml.tests.capability_gnn_actor.data_generation import DataGenerator
@@ -60,12 +60,13 @@ def explain_observation(observation, graph_dims):
           ") (number of edges x edge attributes):\n",edge_attributes)
 
 def configurable_setup(params, num_scenarios, graph_sac=True):
-  """Configurable GNN setup depending on a given filename.
+  """
+  Configurable GNN setup depending on a given filename.
 
   Args:
     params: ParameterServer instance
 
-  Returns: 
+  Returns:
     observer: GraphObserver instance
     actor: ActorNetwork of BehaviorGraphSACAgent
   """
@@ -86,7 +87,7 @@ def configurable_setup(params, num_scenarios, graph_sac=True):
   return observer, actor
 
 def benchmark_actor(actor, dataset, epochs, log_dir=None):
-  """Benchmarks an actor on a dataset"""
+  """Benchmarks an actor on a dataset."""
   train_dataset = dataset._train_dataset
   test_dataset = dataset._test_dataset
   learner = Learner(actor, train_dataset, test_dataset,
@@ -159,13 +160,13 @@ def get_sample_observations():
   observation = np.append(observation, adjacency_list)
   observation = np.append(observation, edge_features)
   observation = observation.reshape(-1)
-    
+
   return tf.cast(tf.stack([observation, observation]), tf.float32)
 
 def prepare_agent(agent, params, env):
   env.ml_behavior = agent
   runner = SACRunner(params=params, environment=env, agent=agent)
-  
+
   iterator = iter(agent._dataset)
   runner._collection_driver.run()
   experience, _ = next(iterator)
@@ -179,7 +180,7 @@ def summarize_agent(agent):
     agent._agent._target_critic_network_1,
     agent._agent._target_critic_network_2,
   ]
-    
+
   print(f"\n\033[1mAGENT SUMMARY\033[0m\n")
   print('{:<30} {}'.format("Network", "Parameters"))
   print("==========================================")
@@ -188,7 +189,7 @@ def summarize_agent(agent):
     n = np.sum([np.prod(v.get_shape().as_list()) for v in net.trainable_variables])
     total_params += n
     print('{:.<34} {:,}'.format(net.name, n).replace(',','.'))
-  
+
   print("------------------------------------------")
   print('{:<32} {:,}'.format("Total parameters", total_params).replace(',','.'))
 
@@ -206,4 +207,3 @@ def run_rl_example(env, agent, params, mode="visualize"):
     runner.Run(num_episodes=10, render=True)
   elif mode == "evaluate":
     runner.Run(num_episodes=10, render=False)
-    

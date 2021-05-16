@@ -38,7 +38,9 @@ class GNNActorNetwork(network.Network):
                activation_fn=tf.nn.relu,
                name='ActorNetwork',
                params=ParameterServer()):
-    """Creates an instance of `ActorNetwork`.
+    """
+    Creates an instance of `ActorNetwork`.
+
     Args:
       input_tensor_spec: A nest of `tensor_spec.TensorSpec` representing the
         inputs.

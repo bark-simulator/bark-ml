@@ -11,7 +11,8 @@ from bark_ml.core.evaluators import *
 
 
 def LoadModule(module_name, dict_items):
-  """Helper function to load dictionaries.
+  """
+  Helper function to load dictionaries.
 
   Args:
       module_name (string): Name of the module
@@ -28,7 +29,8 @@ class Experiment:
   train, or evaluate an agent.
   """
   def __init__(self, json_file, params=None, mode=None):
-    """Initialized the Experiment using a json file and a ParameterServer()
+    """
+    Initialized the Experiment using a json file and a ParameterServer()
 
     Args:
         json_file (json): Configuration of the experiment
@@ -52,7 +54,8 @@ class Experiment:
     self._runner = self.InitRunner()
 
   def InitBlueprint(self):
-    """Initialized the scenario blueprint.
+    """
+    Initialized the scenario blueprint.
 
     Returns:
         Blueprint: Contains a set of N-scenarios
@@ -70,7 +73,8 @@ class Experiment:
     return blueprint
 
   def InitObserver(self):
-    """Creates the observer for the Experiment
+    """
+    Creates the observer for the Experiment
 
     Returns:
         Observer: Converts the environment's state for RL
@@ -81,7 +85,8 @@ class Experiment:
     return LoadModule(module_name, items)
 
   def InitEvaluator(self):
-    """Initialized the Evaluator.
+    """
+    Initialized the Evaluator.
 
     Returns:
         Evaluator: Computes the reward and whether an episode is terminal
@@ -92,7 +97,8 @@ class Experiment:
     return LoadModule(module_name, items)
 
   def InitAgent(self):
-    """Initializes the RL-Agent.
+    """
+    Initializes the RL-Agent.
 
     Returns:
         Agent: RL-Agent
@@ -107,7 +113,8 @@ class Experiment:
     return agent
 
   def InitRuntime(self):
-    """Initializes the Runtime.
+    """
+    Initializes the Runtime.
 
     Returns:
         Runtime: Implements the basic OpenAI-Gym interface.
@@ -120,7 +127,8 @@ class Experiment:
     return LoadModule(module_name, items)
 
   def InitRunner(self):
-    """The Runner runs the training, visualization, and evaluation.
+    """
+    The Runner runs the training, visualization, and evaluation.
 
     Returns:
         Runner: Collects episodes.

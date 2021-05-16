@@ -11,8 +11,7 @@ import unittest
 import numpy as np
 
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
-from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMotionPrimitivesML, \
-  BehaviorDiscreteMacroActionsML
+from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
 from bark.runtime.commons.parameters import ParameterServer
 
 

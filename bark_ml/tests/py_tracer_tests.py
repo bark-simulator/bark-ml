@@ -15,7 +15,7 @@ from bark.runtime.commons.parameters import ParameterServer
 
 # BARK-ML
 from bark_ml.library_wrappers.lib_tf_agents.agents.sac_agent import BehaviorSACAgent
-from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, ContinuousMergingBlueprint
+from bark_ml.environments.blueprints import ContinuousHighwayBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.commons.tracer import Tracer
 

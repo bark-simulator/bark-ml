@@ -17,7 +17,7 @@ from bark.runtime.commons.parameters import ParameterServer
 
 # BARK-ML imports
 from bark_ml.environments.blueprints import \
-  DiscreteHighwayBlueprint, DiscreteMergingBlueprint
+  DiscreteHighwayBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 import bark_ml.environments.gym
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.model_wrapper \

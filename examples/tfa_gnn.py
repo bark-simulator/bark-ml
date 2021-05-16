@@ -18,9 +18,6 @@ import tensorflow as tf
 
 # BARK imports
 from bark.runtime.commons.parameters import ParameterServer
-from bark.runtime.viewer.matplotlib_viewer import MPViewer
-from bark.runtime.viewer.video_renderer import VideoRenderer
-from bark.core.models.behavior import BehaviorConstantAcceleration
 
 # BARK-ML imports
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, ContinuousMergingBlueprint

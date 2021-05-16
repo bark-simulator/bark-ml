@@ -6,13 +6,14 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-from abc import ABC, abstractmethod
+from abc import ABC
 from bark.runtime.commons.parameters import ParameterServer
 
 
 class StateEvaluator(ABC):
-  """Evaluates the state of the environment
-     e.g., if a collision has happend.
+  """
+    Evaluates the state of the environment
+    e.g., if a collision has happend.
   """
   def __init__(self,
                params=ParameterServer()):

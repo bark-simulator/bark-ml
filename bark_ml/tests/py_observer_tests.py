@@ -15,7 +15,7 @@ import tensorflow as tf
 from bark.runtime.commons.parameters import ParameterServer
 
 # Bark-ml imports
-from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, DiscreteHighwayBlueprint
+from bark_ml.environments.blueprints import ContinuousHighwayBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.core.observers import NearestObserver

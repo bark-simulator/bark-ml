@@ -16,11 +16,8 @@ from bark.core.world.goal_definition import GoalDefinitionStateLimitsFrenet
 from bark_ml.environments.blueprints.blueprint import Blueprint
 from bark_ml.evaluators.goal_reached import GoalReached
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
-from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMotionPrimitivesML, \
-        BehaviorDiscreteMacroActionsML
+from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
 
-from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMotionPrimitivesML, \
-        BehaviorDiscreteMacroActionsML
 from bark_ml.core.observers import NearestObserver
 
 

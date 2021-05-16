@@ -34,7 +34,8 @@ class GNNCriticNetwork(network.Network):
                output_activation_fn=None,
                name='CriticNetwork',
                params=ParameterServer()):
-    """Creates an instance of `GNNCriticNetwork`.
+    """
+    Creates an instance of `GNNCriticNetwork`.
 
     Args:
       input_tensor_spec: A tuple of (observation, action) each a nest of

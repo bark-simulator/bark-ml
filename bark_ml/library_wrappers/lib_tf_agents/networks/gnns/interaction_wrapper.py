@@ -78,7 +78,7 @@ class InteractionWrapper(GraphNetwork):
 
   # @tf.function
   def _init_call_func(self, observations, training=False):
-    """Graph nets implementation"""
+    """Graph nets implementation."""
     node_vals, edge_indices, node_to_graph, edge_vals = GraphObserver.graph(
       observations=observations,
       graph_dims=self._graph_dims,

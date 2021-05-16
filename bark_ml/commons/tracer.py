@@ -6,7 +6,6 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 import pickle
-from enum import Enum
 
 class Tracer:
   def __init__(self, trace_history=True):
@@ -34,7 +33,7 @@ class Tracer:
     return eval_dict
 
   def Trace(self, eval_state, **kwargs):
-    """Traces and stores a state"""
+    """Traces and stores a state."""
     eval_dict = self.EvalStateToDict(eval_state)
     for key, value in kwargs.items():
       eval_dict[key] = value
@@ -100,6 +99,3 @@ class Tracer:
     self._total_goals_reached = 0
     self._total_steps = 0
     self._total_reward = 0
-
-
-

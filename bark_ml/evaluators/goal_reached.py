@@ -6,7 +6,7 @@
 
 from bark.core.world.evaluation import \
   EvaluatorGoalReached, EvaluatorCollisionEgoAgent, \
-  EvaluatorStepCount, EvaluatorDrivableArea, CaptureAgentStates
+  EvaluatorStepCount, EvaluatorDrivableArea
 from bark.runtime.commons.parameters import ParameterServer
 
 from bark_ml.evaluators.evaluator import StateEvaluator

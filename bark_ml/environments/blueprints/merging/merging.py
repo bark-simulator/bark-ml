@@ -12,15 +12,13 @@ from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
 from bark.core.world.opendrive import XodrDrivingDirection
 from bark.core.world.goal_definition import GoalDefinitionStateLimitsFrenet
-from bark.core.models.behavior import BehaviorLaneChangeRuleBased, BehaviorIDMClassic, \
-  BehaviorMobilRuleBased
+from bark.core.models.behavior import BehaviorMobilRuleBased
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
 from bark_ml.evaluators.goal_reached import GoalReached
 
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
-from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML, \
-  BehaviorDiscreteMotionPrimitivesML
+from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
 from bark_ml.core.observers import NearestObserver
 
 

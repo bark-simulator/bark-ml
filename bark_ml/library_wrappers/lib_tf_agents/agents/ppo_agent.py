@@ -15,7 +15,6 @@ from tf_agents.agents.ppo import ppo_agent
 from tf_agents.replay_buffers import tf_uniform_replay_buffer
 
 from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAAgent
-from bark_ml.commons.py_spaces import BoundedContinuous
 
 
 class BehaviorPPOAgent(BehaviorTFAAgent):

@@ -6,10 +6,7 @@
 
 import gym
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent import IQNAgent
-from bark_ml.environments.gym import DiscreteHighwayGym, DiscreteIntersectionGym, DiscreteMergingGym
 from bark.runtime.commons.parameters import ParameterServer
-from bark_ml.environments.blueprints import DiscreteHighwayBlueprint
-from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from absl import app
 from absl import flags
 # this will disable all BARK log messages
