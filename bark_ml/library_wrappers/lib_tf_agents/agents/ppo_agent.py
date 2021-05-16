@@ -9,17 +9,12 @@ import tensorflow as tf
 
 # tfa
 from tf_agents.networks import actor_distribution_network
-from tf_agents.networks import actor_distribution_rnn_network
 from tf_agents.networks import value_network
-from tf_agents.networks import value_rnn_network
-from tf_agents.policies import greedy_policy
 
 from tf_agents.agents.ppo import ppo_agent
 from tf_agents.replay_buffers import tf_uniform_replay_buffer
-from tf_agents.trajectories import time_step as ts
 
 from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAAgent
-from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.commons.py_spaces import BoundedContinuous
 
 

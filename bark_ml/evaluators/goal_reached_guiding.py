@@ -3,7 +3,6 @@
 # 
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
-import numpy as np
 # BARK
 from bark.core.world.evaluation import \
   EvaluatorGoalReached, EvaluatorCollisionEgoAgent, \

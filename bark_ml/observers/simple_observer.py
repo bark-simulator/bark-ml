@@ -8,11 +8,8 @@
 
 from gym import spaces
 import numpy as np
-import math
-import operator
 
 from bark.core.models.dynamic import StateDefinition
-from bark.core.world import ObservedWorld
 from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.observers.observer import StateObserver
 

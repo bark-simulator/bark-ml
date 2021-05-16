@@ -8,9 +8,7 @@
 import time
 import numpy as np
 import logging
-import copy
 import matplotlib.pyplot as plt
-from matplotlib.colors import LogNorm
 
 # bark
 from bark.runtime.commons.parameters import ParameterServer
@@ -21,8 +19,6 @@ from bark.runtime.viewer.matplotlib_viewer import MPViewer
 # bark-ml
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.commons.tracer import Tracer
-
-from matplotlib.colors import LinearSegmentedColormap
 
 
 class CounterfactualRuntime(SingleAgentRuntime):

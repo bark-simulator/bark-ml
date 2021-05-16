@@ -39,7 +39,7 @@ To run existing unit-tests, use the command:
 
 
 ```shell
-bazel test //...
+   bazel test //...
 ```
 
 from the root of the `BARK-ML` repository and inside the BARK-ML specific virtualenv.

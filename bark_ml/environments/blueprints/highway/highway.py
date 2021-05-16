@@ -7,17 +7,14 @@
 # https://opensource.org/licenses/MIT
 
 import os
-from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
-from bark.core.models.dynamic import SingleTrackModel
 from bark.core.world.opendrive import XodrDrivingDirection
 from bark.core.world.goal_definition import GoalDefinitionStateLimitsFrenet
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
 from bark_ml.evaluators.goal_reached import GoalReached
-from bark_ml.evaluators.goal_reached_guiding import GoalReachedGuiding
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMotionPrimitivesML, \
         BehaviorDiscreteMacroActionsML
