@@ -7,6 +7,7 @@
 # https://opensource.org/licenses/MIT
 
 import os
+import numpy as np
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
@@ -33,6 +34,7 @@ class HighwayLaneCorridorConfig(LaneCorridorConfig):
     super(HighwayLaneCorridorConfig, self).__init__(params, **kwargs)
 
   def goal(self, world):
+    # TODO: max steps goal?
     road_corr = world.map.GetRoadCorridor(
       self._road_ids, XodrDrivingDirection.forward)
     lane_corr = self._road_corridor.lane_corridors[0]
@@ -65,37 +67,41 @@ class HighwayBlueprint(Blueprint):
       ds_max = 35.
     params["BehaviorIDMClassic"]["DesiredVelocity"] = 15.
     params["World"]["remove_agents_out_of_map"] = False
-    left_lane = HighwayLaneCorridorConfig(params=params,
-                                          road_ids=[16],
-                                          lane_corridor_id=0,
-                                          min_vel=12.5,
-                                          max_vel=17.5,
-                                          ds_min=ds_min,
-                                          ds_max=ds_max,
-                                          s_min=5.,
-                                          s_max=200.,
-                                          controlled_ids=None)
-    right_lane = HighwayLaneCorridorConfig(params=params,
-                                           road_ids=[16],
-                                           lane_corridor_id=1,
-                                           min_vel=12.5,
-                                           max_vel=17.5,
-                                           s_min=5.,
-                                           s_max=200.,
-                                           ds_min=ds_min,
-                                           ds_max=ds_max,
-                                           controlled_ids=True)
+
+    ego_lane_id = np.random.randint(0, 4)
+    lane_configs = []
+    for i in range(0, 4):
+      is_controlled = True if (ego_lane_id == i) else None
+      s_min = 0
+      s_max = 250
+      if is_controlled == True:
+        s_min = 20.
+        s_max = 50.
+      lane_conf = HighwayLaneCorridorConfig(params=params,
+                                            road_ids=[16],
+                                            lane_corridor_id=i,
+                                            min_vel=12.5,
+                                            max_vel=17.5,
+                                            ds_min=ds_min,
+                                            ds_max=ds_max,
+                                            s_min=s_min,
+                                            s_max=s_max,
+                                            controlled_ids=is_controlled)
+      lane_configs.append(lane_conf)
+
     scenario_generation = \
       ConfigWithEase(
         num_scenarios=num_scenarios,
-        map_file_name=os.path.join(os.path.dirname(__file__), "../../../environments/blueprints/highway/city_highway_straight.xodr"),  # NOLINT
+        map_file_name=os.path.join(os.path.dirname(__file__), "../../../environments/blueprints/highway/round_highway.xodr"),  # NOLINT
         random_seed=random_seed,
         params=params,
-        lane_corridor_configs=[left_lane, right_lane])
+        lane_corridor_configs=lane_configs)
     if viewer:
+      # viewer = MPViewer(params=params,
+      #                   use_world_bounds=True)
       viewer = MPViewer(params=params,
-                        x_range=[-50, 50],
-                        y_range=[-50, 50],
+                        x_range=[-40, 40],
+                        y_range=[-40, 40],
                         follow_agent_id=True)
     dt = 0.2
     evaluator = GoalReached(params)
