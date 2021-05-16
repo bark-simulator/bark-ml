@@ -8,9 +8,6 @@
 
 
 import unittest
-import numpy as np
-import os
-import matplotlib
 import time
 import tensorflow as tf
 
@@ -24,8 +21,6 @@ from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.observers.graph_observer_v2 import GraphObserverV2
 from bark_ml.observers.graph_observer import GraphObserver
 from bark_ml.core.observers import NearestObserver
-
-from graph_nets import utils_np
 
 
 class PyObserverTests(unittest.TestCase):

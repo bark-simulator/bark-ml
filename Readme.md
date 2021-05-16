@@ -32,8 +32,8 @@ In the highway scenario, the ego agent's goal is a `StateLimitGoal` on the left 
 A positive reward (`+1`) is given for reaching the goal and a negative reward for having a collision or leaving the drivable area (`-1`).
 
 The highway scenario can use discrete or continuous actions:
-* `highway-v0`: Continuous highway environment
-* `highway-v1`: Discrete highway environment
+*  `highway-v0`: Continuous highway environment
+*  `highway-v1`: Discrete highway environment
 
 
 <p align="center">
@@ -52,8 +52,8 @@ In the merging scenario, the ego agent's goal is a `StateLimitGoal` on the left 
 A positive reward (`+1`) is given for reaching the goal and a negative reward for having a collision or leaving the drivable area (`-1`).
 
 The merging scenario can use discrete or continuous actions:
-* `merging-v0`: Continuous merging environment
-* `merging-v1`: Discrete merging environment
+*  `merging-v0`: Continuous merging environment
+*  `merging-v1`: Discrete merging environment
 
 
 <p align="center">
@@ -72,8 +72,8 @@ In the unprotected left turn scenario, the ego agent's goal is a `StateLimitGoal
 A positive reward (`+1`) is given for reaching the goal lane and a negative reward for having a collision or leaving the drivable area (`-1`).
 
 The unprotected left turn scenario can use discrete or continuous actions:
-* `intersection-v0`: Continuous intersection environment
-* `intersection-v1`: Discrete intersection environment
+*  `intersection-v0`: Continuous intersection environment
+*  `intersection-v1`: Discrete intersection environment
 
 
 <!-- <p align="center">
@@ -147,9 +147,9 @@ If your work builds upon the graph neural network architecture, please cite the 
 
 ## Publications
 
-* [Graph Neural Networks and Reinforcement Learning for Behavior Generation in Semantic Environments](https://arxiv.org/abs/2006.12576) (IV 2020)
-* [BARK: Open Behavior Benchmarking in Multi-Agent Environments](https://arxiv.org/abs/2003.02604) (IROS 2020)
-* [Counterfactual Policy Evaluation for Decision-Making in Autonomous Driving](https://arxiv.org/abs/2003.11919) (IROS 2020,  PLC Workshop)
+*  [Graph Neural Networks and Reinforcement Learning for Behavior Generation in Semantic Environments](https://arxiv.org/abs/2006.12576) (IV 2020)
+*  [BARK: Open Behavior Benchmarking in Multi-Agent Environments](https://arxiv.org/abs/2003.02604) (IROS 2020)
+*  [Counterfactual Policy Evaluation for Decision-Making in Autonomous Driving](https://arxiv.org/abs/2003.11919) (IROS 2020,  PLC Workshop)
 
 
 ## License

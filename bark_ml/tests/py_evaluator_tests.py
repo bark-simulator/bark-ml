@@ -9,11 +9,8 @@
 
 import unittest
 import numpy as np
-import os
-import matplotlib
 import time
 
-from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, DiscreteHighwayBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime

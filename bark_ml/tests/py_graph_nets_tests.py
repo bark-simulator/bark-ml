@@ -9,12 +9,7 @@
 
 import unittest
 import numpy as np
-import os
-import matplotlib
-import time
-import tensorflow as tf
 from graph_nets import utils_tf
-from graph_nets.graphs import GraphsTuple
 from bark.runtime.commons.parameters import ParameterServer
 
 from bark_ml.observers.graph_observer import GraphObserver

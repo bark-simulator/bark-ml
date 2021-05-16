@@ -7,10 +7,7 @@
 
 import unittest
 import numpy as np
-import os
 import gym
-import matplotlib
-import time
 
 # BARK imports
 from bark.runtime.commons.parameters import ParameterServer
