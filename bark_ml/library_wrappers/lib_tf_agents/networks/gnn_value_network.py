@@ -14,6 +14,7 @@ from bark.runtime.commons.parameters import ParameterServer
 
 @gin.configurable
 class GNNValueNetwork(network.Network):
+
   """Feed Forward value network. Reduces to 1 value output per batch item."""
 
   def __init__(self,

@@ -18,6 +18,7 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.observers.observer import StateObserver
 
 class GraphObserver(StateObserver):
+
   """
   This observer converts an `ObservsedWorld` instance into
   a graph-structured observation, consisting of nodes (with

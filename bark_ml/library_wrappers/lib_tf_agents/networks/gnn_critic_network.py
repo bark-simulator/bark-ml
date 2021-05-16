@@ -15,6 +15,7 @@ from bark_ml.library_wrappers.lib_tf_agents.networks.gnns.interaction_wrapper im
 
 @gin.configurable
 class GNNCriticNetwork(network.Network):
+
   """Creates a critic network."""
 
   def __init__(self,

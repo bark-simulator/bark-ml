@@ -9,6 +9,11 @@ from bark.runtime.runtime import Runtime
 
 
 class SingleAgentRuntime(Runtime):
+
+  """
+  Single agent runtime where action is passed to the
+  ego agent.
+  """
   def __init__(self,
                blueprint=None,
                ml_behavior=None,
