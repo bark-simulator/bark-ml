@@ -11,7 +11,6 @@ import numpy as np
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
-from bark.core.world.opendrive import XodrDrivingDirection
 from bark.core.world.goal_definition import GoalDefinitionPolygon
 from bark.core.geometry import Polygon2d, Point2d
 
@@ -58,7 +57,7 @@ class HighwayBlueprint(Blueprint):
                mode="medium"):
     if mode == "dense":
       ds_min = 15.
-      ds_max = 20.
+      ds_max = 30.
     if mode == "medium":
       ds_min = 20.
       ds_max = 35.
@@ -71,8 +70,8 @@ class HighwayBlueprint(Blueprint):
       s_min = 0
       s_max = 250
       if is_controlled == True:
-        s_min = 20.
-        s_max = 50.
+        s_min = 40.
+        s_max = 80.
       local_params = params.clone()
       local_params["BehaviorIDMClassic"]["DesiredVelocity"] = np.random.uniform(12, 17)
       lane_conf = HighwayLaneCorridorConfig(params=local_params,
@@ -98,8 +97,8 @@ class HighwayBlueprint(Blueprint):
       # viewer = MPViewer(params=params,
       #                   use_world_bounds=True)
       viewer = MPViewer(params=params,
-                        x_range=[-40, 40],
-                        y_range=[-40, 40],
+                        x_range=[-35, 35],
+                        y_range=[-35, 35],
                         follow_agent_id=True)
     dt = 0.2
     params["ML"]["RewardShapingEvaluator"]["RewardShapingPotentials",

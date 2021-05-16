@@ -35,7 +35,7 @@ The highway scenario can use discrete or continuous actions:
 *   `highway-v1`: Discrete highway environment
 
 <p align="center">
-<img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/bark_ml_highway.gif" alt="BARK-ML Highway Scenario" /><br/>
+<img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/bark_ml_highway_round.gif" alt="BARK-ML Highway Scenario" /><br/>
 <em>The highway-v0 environment.</em>
 </p>
 
