@@ -89,9 +89,9 @@ class IntersectionBlueprint(Blueprint):
                                      min_vel=5.,
                                      max_vel=10.,
                                      ds_min=10.,
-                                     ds_max=15.,
-                                     s_min=10.,
-                                     s_max=25.,
+                                     ds_max=20.,
+                                     s_min=40.,
+                                     s_max=51.,
                                      controlled_ids=True))
 
     scenario_generation = \

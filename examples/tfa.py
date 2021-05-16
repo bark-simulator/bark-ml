@@ -52,10 +52,6 @@ def run_configuration(argv):
    x_range=[-35, 35],
    y_range=[-35, 35],
    follow_agent_id=True)
-  # viewer = VideoRenderer(
-  #  renderer=viewer,
-  #  world_step_time=0.2,
-  #  fig_path="/Users/hart/Development/bark-ml/videos/normal")
 
   # create environment
   bp = ContinuousMergingBlueprint(params,

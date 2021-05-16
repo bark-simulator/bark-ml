@@ -4,9 +4,9 @@
             "Color": {
                 "Other": {
                     "Lines": [
-                        0.7,
-                        0.7,
-                        0.7
+                        0.5,
+                        0.5,
+                        0.5
                     ],
                     "Face": [
                         0.7,
@@ -39,7 +39,7 @@
                 0.2
             ],
             "DrawRoute": false,
-            "DrawAgentId": true,
+            "DrawAgentId": false,
             "DrawEvalGoals": true,
             "EvalGoalColor": [
                 0.49,

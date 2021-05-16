@@ -7,14 +7,15 @@
 # https://opensource.org/licenses/MIT
 
 import os
+import numpy as np
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
-from bark.core.world.opendrive import XodrDrivingDirection
-from bark.core.world.goal_definition import GoalDefinitionStateLimitsFrenet
+from bark.core.world.goal_definition import GoalDefinitionPolygon
+from bark.core.geometry import Polygon2d, Point2d
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
-from bark_ml.evaluators.goal_reached import GoalReached
+from bark_ml.evaluators.reward_shaping_max_steps import RewardShapingEvaluatorMaxSteps
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
 
@@ -33,13 +34,10 @@ class HighwayLaneCorridorConfig(LaneCorridorConfig):
     super(HighwayLaneCorridorConfig, self).__init__(params, **kwargs)
 
   def goal(self, world):
-    road_corr = world.map.GetRoadCorridor(
-      self._road_ids, XodrDrivingDirection.forward)
-    lane_corr = self._road_corridor.lane_corridors[0]
-    return GoalDefinitionStateLimitsFrenet(lane_corr.center_line,
-                                           (0.4, 0.4),
-                                           (0.1, 0.1),
-                                           (12.5, 17.5))
+    goal_polygon = Polygon2d(
+      [-1000, -1000, -1000],
+      [Point2d(-1, -1), Point2d(-1, 1), Point2d(1, 1), Point2d(1, -1)])
+    return GoalDefinitionPolygon(goal_polygon)
 
 
 class HighwayBlueprint(Blueprint):
@@ -56,49 +54,60 @@ class HighwayBlueprint(Blueprint):
                random_seed=0,
                ml_behavior=None,
                viewer=True,
-               mode="dense"):
+               mode="medium"):
     if mode == "dense":
-      ds_min = 10.
-      ds_max = 20.
+      ds_min = 15.
+      ds_max = 30.
     if mode == "medium":
       ds_min = 20.
       ds_max = 35.
-    params["BehaviorIDMClassic"]["DesiredVelocity"] = 15.
     params["World"]["remove_agents_out_of_map"] = False
-    left_lane = HighwayLaneCorridorConfig(params=params,
-                                          road_ids=[16],
-                                          lane_corridor_id=0,
-                                          min_vel=12.5,
-                                          max_vel=17.5,
-                                          ds_min=ds_min,
-                                          ds_max=ds_max,
-                                          s_min=5.,
-                                          s_max=200.,
-                                          controlled_ids=None)
-    right_lane = HighwayLaneCorridorConfig(params=params,
-                                           road_ids=[16],
-                                           lane_corridor_id=1,
-                                           min_vel=12.5,
-                                           max_vel=17.5,
-                                           s_min=5.,
-                                           s_max=200.,
-                                           ds_min=ds_min,
-                                           ds_max=ds_max,
-                                           controlled_ids=True)
+
+    ego_lane_id = 2
+    lane_configs = []
+    for i in range(0, 4):
+      is_controlled = True if (ego_lane_id == i) else None
+      s_min = 0
+      s_max = 250
+      if is_controlled == True:
+        s_min = 40.
+        s_max = 80.
+      local_params = params.clone()
+      local_params["BehaviorIDMClassic"]["DesiredVelocity"] = np.random.uniform(12, 17)
+      lane_conf = HighwayLaneCorridorConfig(params=local_params,
+                                            road_ids=[16],
+                                            lane_corridor_id=i,
+                                            min_vel=12.5,
+                                            max_vel=17.5,
+                                            ds_min=ds_min,
+                                            ds_max=ds_max,
+                                            s_min=s_min,
+                                            s_max=s_max,
+                                            controlled_ids=is_controlled)
+      lane_configs.append(lane_conf)
+
     scenario_generation = \
       ConfigWithEase(
         num_scenarios=num_scenarios,
-        map_file_name=os.path.join(os.path.dirname(__file__), "../../../environments/blueprints/highway/city_highway_straight.xodr"),  # NOLINT
+        map_file_name=os.path.join(os.path.dirname(__file__), "../../../environments/blueprints/highway/round_highway.xodr"),  # NOLINT
         random_seed=random_seed,
         params=params,
-        lane_corridor_configs=[left_lane, right_lane])
+        lane_corridor_configs=lane_configs)
     if viewer:
+      # viewer = MPViewer(params=params,
+      #                   use_world_bounds=True)
       viewer = MPViewer(params=params,
-                        x_range=[-50, 50],
-                        y_range=[-50, 50],
+                        x_range=[-35, 35],
+                        y_range=[-35, 35],
                         follow_agent_id=True)
     dt = 0.2
-    evaluator = GoalReached(params)
+    params["ML"]["RewardShapingEvaluator"]["RewardShapingPotentials",
+      "Reward shaping functions.", {
+        "VelocityPotential" : {
+          "desired_vel": 20., "vel_dev_max": 20., "exponent": 0.2, "type": "positive"
+        }
+    }]
+    evaluator = RewardShapingEvaluatorMaxSteps(params)
     observer = NearestObserver(params)
     ml_behavior = ml_behavior
 
