@@ -56,7 +56,9 @@ using Reward = double;
 using Done = bool;
 using EvalResults = std::map<std::string, EvaluationReturn>;
 
-
+/**
+ * @brief  BaseEvaluator for evaluating a BARK world
+ */
 class BaseEvaluator {
  public:
   explicit BaseEvaluator(const ParamsPtr& params) :

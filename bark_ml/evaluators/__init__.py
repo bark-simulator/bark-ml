@@ -1,3 +1,2 @@
 from bark_ml.evaluators.goal_reached import GoalReached
-from bark_ml.evaluators.goal_reached_guiding import GoalReachedGuiding
 from bark_ml.evaluators.reward_shaping import RewardShapingEvaluator

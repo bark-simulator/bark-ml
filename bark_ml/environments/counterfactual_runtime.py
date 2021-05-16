@@ -22,6 +22,15 @@ from bark_ml.commons.tracer import Tracer
 
 
 class CounterfactualRuntime(SingleAgentRuntime):
+
+  """
+  Counterfactual runtime for evaluating behavior policies.
+
+  Based on the publication "Counterfactual Policy Evaluation for
+  Decision-Making in Autonomous Driving"
+  (https://arxiv.org/abs/2003.11919)
+  """
+
   def __init__(self,
                blueprint=None,
                ml_behavior=None,

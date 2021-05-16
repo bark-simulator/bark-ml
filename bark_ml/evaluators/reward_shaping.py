@@ -24,6 +24,19 @@ def ObjectPotential(d, d_max, c=0.4):
 
 
 class RewardShapingEvaluator(StateEvaluator):
+
+  """
+  Reward shaping evaluator using potential functions.
+
+  Implemented are potential functions fot the distance to
+  the goal $\phi(d)$, velocity $\phi(v)$, and distance to
+  other agents $\phi(d_i)$.
+
+  Reward signal: $r(s_t, a_t, s_{t+1}) + F(s_t, a_t, s_{t+1})$
+
+  with the shaping function $F = \gamma*\phi(s_{t+1}) - \phi(s_t)$
+  """
+
   def __init__(self,
                params=ParameterServer(),
                eval_agent=None):

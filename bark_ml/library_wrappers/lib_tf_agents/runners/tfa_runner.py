@@ -27,6 +27,11 @@ from bark_ml.commons.tracer import Tracer
 
 
 class TFARunner:
+
+  """
+  Used to train, evaluate and visualize a BARK-ML agent.
+  """
+
   def __init__(self,
                environment=None,
                agent=None,

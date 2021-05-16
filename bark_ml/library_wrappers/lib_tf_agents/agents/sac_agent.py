@@ -29,6 +29,7 @@ class BehaviorSACAgent(BehaviorTFAAgent):
 
   Agent based on the tf-agents library.
   """
+
   def __init__(self,
                environment=None,
                params=None,

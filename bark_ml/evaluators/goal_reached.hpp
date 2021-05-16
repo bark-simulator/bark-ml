@@ -61,7 +61,10 @@ using Reward = double;
 using Done = bool;
 using EvalResults = std::map<std::string, EvaluationReturn>;
 
-
+/**
+ * @brief Sparse reward evaluator returning +1 for reaching the goal,
+  -1 for having a collision or leaving the drivable area.
+ */
 class GoalReachedEvaluator : public BaseEvaluator {
  public:
   explicit GoalReachedEvaluator(const ParamsPtr& params) :

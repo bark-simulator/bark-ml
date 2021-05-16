@@ -8,6 +8,12 @@
 
 
 class Blueprint:
+
+  """
+  Blueprints define the used scenario generation, the observer
+  the evaluator, and which machine learning model shall be used.
+  """
+
   def __init__(self,
                scenario_generation=None,
                viewer=None,

@@ -20,7 +20,7 @@ import tensorflow as tf
 from bark.runtime.commons.parameters import ParameterServer
 
 # BARK-ML imports
-from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, ContinuousMergingBlueprint
+from bark_ml.environments.blueprints import ContinuousMergingBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorGraphSACAgent
 from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner

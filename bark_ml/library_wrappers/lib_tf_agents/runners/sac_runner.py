@@ -14,6 +14,11 @@ from bark_ml.library_wrappers.lib_tf_agents.runners.tfa_runner import TFARunner
 
 
 class SACRunner(TFARunner):
+
+  """
+  Used to train, evaluate and visualize a soft actor-critic agent.
+  """
+
   def __init__(self,
                environment=None,
                agent=None,

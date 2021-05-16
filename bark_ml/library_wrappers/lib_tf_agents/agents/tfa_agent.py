@@ -24,6 +24,11 @@ from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 
 
 class BehaviorTFAAgent(BehaviorModel):
+
+  """
+  TF-Agents agent for BARK.
+  """
+
   def __init__(self,
                environment=None,
                params=None,

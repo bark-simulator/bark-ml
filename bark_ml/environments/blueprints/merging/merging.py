@@ -24,6 +24,11 @@ from bark_ml.core.observers import NearestObserver
 
 
 class MergingLaneCorridorConfig(LaneCorridorConfig):
+
+  """
+  Configures the a single lane, e.g., the goal.
+  """
+
   def __init__(self,
                params=None,
                **kwargs):
@@ -41,6 +46,12 @@ class MergingLaneCorridorConfig(LaneCorridorConfig):
 
 
 class MergingBlueprint(Blueprint):
+
+  """
+  The merging blueprint sets up a merging scenario with initial
+  conditions.
+  """
+
   def __init__(self,
                params=None,
                num_scenarios=250,
@@ -97,7 +108,6 @@ class MergingBlueprint(Blueprint):
                         y_range=[-20, 20],
                         follow_agent_id=True)
     dt = 0.2
-    # evaluator = GoalReachedGuiding(params)
     evaluator = GoalReached(params)
     observer = NearestObserver(params)
     ml_behavior = ml_behavior

@@ -24,6 +24,11 @@ from bark_ml.core.observers import NearestObserver
 
 
 class IntersectionLaneCorridorConfig(LaneCorridorConfig):
+
+  """
+  Configures the a single lane, e.g., the goal.
+  """
+
   def __init__(self,
                params=None,
                **kwargs):
@@ -40,6 +45,12 @@ class IntersectionLaneCorridorConfig(LaneCorridorConfig):
 
 
 class IntersectionBlueprint(Blueprint):
+
+  """
+  The intersection blueprint sets up a merging scenario with initial
+  conditions.
+  """
+
   def __init__(self,
                params=None,
                num_scenarios=250,
