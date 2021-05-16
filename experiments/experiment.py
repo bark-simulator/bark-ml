@@ -11,7 +11,7 @@ from bark_ml.core.evaluators import *
 
 
 def LoadModule(module_name, dict_items):
-  """Helper function to load dictionaries
+  """Helper function to load dictionaries.
 
   Args:
       module_name (string): Name of the module
