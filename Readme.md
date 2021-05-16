@@ -35,7 +35,7 @@ The highway scenario can use discrete or continuous actions:
 *   `highway-v1`: Discrete highway environment
 
 <p align="center">
-<img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/bark_ml_highway.gif" alt="BARK-ML Highway Scenario" />
+<img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/bark_ml_highway.gif" alt="BARK-ML Highway Scenario" /><br/>
 <em>The highway-v0 environment.</em>
 </p>
 
@@ -54,7 +54,7 @@ The merging scenario can use discrete or continuous actions:
 *   `merging-v1`: Discrete merging environment
 
 <p align="center">
-<img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/bark-ml.gif" alt="BARK-ML Merging Scenario" />
+<img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/bark-ml.gif" alt="BARK-ML Merging Scenario" /><br/>
 <em>The merging-v0 environment.</em>
 </p>
 
