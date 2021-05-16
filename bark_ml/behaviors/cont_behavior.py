@@ -13,7 +13,6 @@ from bark_ml.commons.py_spaces import BoundedContinuous
 
 
 class BehaviorContinuousML(BehaviorDynamicModel):
-
   """
   Single-track behavior model.
 

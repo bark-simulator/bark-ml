@@ -15,10 +15,7 @@ from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.network import DQNBase, CosineEm
 
 
 class FQF(BaseModel):
-
-  """
-  FQF Model
-  """
+  """FQF Model."""
 
   def __init__(self,
                num_channels,

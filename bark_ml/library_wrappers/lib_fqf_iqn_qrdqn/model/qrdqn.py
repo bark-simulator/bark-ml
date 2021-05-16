@@ -16,10 +16,7 @@ from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.network import DQNBase, NoisyLin
 
 
 class QRDQN(BaseModel):
-
-  """
-  QRDQN model
-  """
+  """QRDQN model."""
 
   def __init__(self,
                num_channels,

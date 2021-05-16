@@ -20,10 +20,7 @@ from .base_agent import BaseAgent
 
 
 class FQFAgent(BaseAgent):
-
-  """
-  FQFAgent that can be used in BARK and BARK-ML.
-  """
+  """FQFAgent that can be used in BARK and BARK-ML."""
 
   def __init__(self, env, test_env, params):
     super(FQFAgent, self).__init__(env, test_env, params)

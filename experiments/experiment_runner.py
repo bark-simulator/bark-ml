@@ -27,7 +27,6 @@ flags.DEFINE_integer("random_seed",
                      "Random seed to be used.")
 
 class ExperimentRunner:
-
   """
   The ExperimentRunner-Class provides an easy-to-use interface to
   train, visualize, evaluate, and manage experiments.

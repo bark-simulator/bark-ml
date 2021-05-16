@@ -24,7 +24,6 @@ def LoadModule(module_name, dict_items):
   return eval("{}(**dict_items)".format(module_name))
 
 class Experiment:
-
   """
   The Experiment-class contains all entities in order to run,
   train, or evaluate an agent.

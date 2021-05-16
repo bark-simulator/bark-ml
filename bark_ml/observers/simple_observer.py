@@ -15,6 +15,10 @@ from bark_ml.observers.observer import StateObserver
 
 
 class SimpleObserver(StateObserver):
+  """
+  Simple implementation of an state observer.
+  """
+
   def __init__(self,
                normalize_observations=True,
                params=ParameterServer()):

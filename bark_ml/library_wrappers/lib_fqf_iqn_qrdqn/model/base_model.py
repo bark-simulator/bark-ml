@@ -6,10 +6,7 @@ from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.network import NoisyLinear
 
 
 class BaseModel(nn.Module):
-
-  """
-  Base Model
-  """
+  """Base model."""
 
   def __init__(self):
     super().__init__()
