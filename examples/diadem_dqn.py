@@ -19,14 +19,13 @@ except:
 import tensorflow as tf
 from tensorflow.python.util import deprecation
 deprecation._PRINT_DEPRECATION_WARNINGS = False
-import sys
 import os
 import logging
 logging.getLogger().setLevel(logging.INFO)
-import matplotlib as mpl
-#if os.environ.get('DISPLAY', '') == '':
-#  print('no display found. Using non-interactive Agg backend')
-#mpl.use('Agg')
+# import matplotlib as mpl
+# if os.environ.get('DISPLAY', '') == '':
+#   print('no display found. Using non-interactive Agg backend')
+# mpl.use('Agg')
 
 from diadem.agents import AgentContext, AgentManager
 from diadem.experiment import Experiment

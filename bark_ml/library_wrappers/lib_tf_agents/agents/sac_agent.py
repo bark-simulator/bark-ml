@@ -6,7 +6,6 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 import tensorflow as tf
-import numpy as np
 
 # BARK
 from bark.core.models.behavior import BehaviorModel
@@ -24,8 +23,10 @@ from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAA
 
 
 class BehaviorSACAgent(BehaviorTFAAgent):
-  """SAC-Agent
-     This agent is based on the tf-agents library.
+  """
+  SAC-Agent
+
+  Agent based on the tf-agents library.
   """
   def __init__(self,
                environment=None,

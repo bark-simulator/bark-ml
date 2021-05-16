@@ -26,7 +26,7 @@ class PyGraphObserverTests(unittest.TestCase):
     return observation, observed_world
 
   def setUp(self):
-    """Setting up the test-case"""
+    """Setting up the test-case."""
     params = ParameterServer()
     bp = ContinuousHighwayBlueprint(params, random_seed=0)
     self.env = SingleAgentRuntime(blueprint=bp, render=False)

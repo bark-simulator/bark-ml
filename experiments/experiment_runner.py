@@ -74,8 +74,10 @@ class ExperimentRunner:
     return dir_name, file_name
 
   def GenerateHash(self, params):
-    """Hash-function to indicate whether the same json is used
-       as during training."""
+    """
+    Hash-function to indicate whether the same json is used
+    as during training.
+    """
     exp_params = params.ConvertToDict()
     return hashlib.sha1(
       repr(sorted(exp_params.items())).encode('utf-8')).hexdigest()

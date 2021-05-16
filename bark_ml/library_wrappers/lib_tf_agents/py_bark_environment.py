@@ -17,7 +17,8 @@ tf.compat.v1.enable_v2_behavior()
 
 
 class PyBARKEnvironment(py_environment.PyEnvironment):
-  """Wrapper for TensorFlow Agents (https://github.com/tensorflow/agents)
+  """
+  Wrapper for TensorFlow Agents (https://github.com/tensorflow/agents)
 
   Arguments:
     py_environment -- Base class for environment from tf_agents
@@ -47,20 +48,17 @@ class PyBARKEnvironment(py_environment.PyEnvironment):
     return self._observation_spec
 
   def render(self):
-    """Renders the enviornment
-    """
+    """Renders the enviornment."""
     return self._env.render()
 
   def _reset(self):
-    """Resets the wrapper
-    """
+    """Resets the wrapper."""
     self._state = np.array(self._env.reset(), dtype=np.float32)
     self._episode_ended = False
     return ts.restart(self._state)
 
   def _step(self, action):
-    """Steps the world for a given dt
-    """
+    """Steps the world for a given dt."""
     if self._episode_ended:
       return self.reset()
     state, reward, self._episode_ended, _ = self._env.step(action)

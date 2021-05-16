@@ -30,8 +30,7 @@ class NearestAgentsObserver(StateObserver):
       100]
 
   def Observe(self, observed_world):
-    """see base class
-    """
+    """See base class."""
     ego_observed_world = observed_world
     num_other_agents = len(ego_observed_world.other_agents)
     ego_state = ego_observed_world.ego_agent.state

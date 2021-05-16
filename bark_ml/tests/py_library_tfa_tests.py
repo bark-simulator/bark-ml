@@ -13,8 +13,7 @@ import gym
 from bark.runtime.commons.parameters import ParameterServer
 
 # BARK-ML imports
-from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
-  DiscreteHighwayBlueprint, ContinuousMergingBlueprint, DiscreteMergingBlueprint
+from bark_ml.environments.blueprints import ContinuousHighwayBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 import bark_ml.environments.gym
 from bark_ml.library_wrappers.lib_tf_agents.agents.ppo_agent import BehaviorPPOAgent

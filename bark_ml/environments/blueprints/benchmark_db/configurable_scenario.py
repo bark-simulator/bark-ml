@@ -15,7 +15,6 @@ from bark_ml.evaluators.goal_reached import GoalReached
 from bark_ml.core.observers import NearestObserver
 
 
-
 class ConfigurableScenarioBlueprint(Blueprint):
   def __init__(self,
                params=None,

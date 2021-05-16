@@ -88,8 +88,7 @@ class TFARunner:
       self._train()
 
   def _train(self):
-    """Agent specific
-    """
+    """Agent specific."""
     pass
 
   def ReshapeActionIfRequired(self, action_step):

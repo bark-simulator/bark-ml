@@ -36,7 +36,8 @@ class StateObserver(ABC):
 
   @abstractmethod
   def Observe(self, observed_world):
-    """Observes the world
+    """
+    Observes the world
 
     Arguments:
         world {bark.ObservedWorld} -- observed BARK world

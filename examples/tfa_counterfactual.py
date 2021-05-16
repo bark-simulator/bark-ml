@@ -10,7 +10,6 @@ import gym
 import numpy as np
 from absl import app
 from absl import flags
-import tensorflow as tf
 
 # this will disable all BARK log messages
 # import os
