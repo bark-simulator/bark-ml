@@ -1,11 +1,10 @@
-# Copyright (c) 2020 The diadem authors 
-# 
+# Copyright (c) 2020 The diadem authors
+#
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 # ========================================================
 #
 
-import os
 from diadem.environments import Environment
 
 class DiademBarkEnvironment(Environment):

@@ -91,9 +91,9 @@ class GraphObserver(StateObserver):
     # the number of features of an edge between two nodes
     self.edge_feature_len = len(self._enabled_edge_attribute_keys)
 
-  def Observe(self, world):
-    """see base class"""
-    agents = self._preprocess_agents(world)
+  def Observe(self, observed_world):
+    """See base class."""
+    agents = self._preprocess_agents(observed_world)
 
     # placeholder for the output observation
     obs = np.zeros(self._len_state)
@@ -416,14 +416,14 @@ class GraphObserver(StateObserver):
 
     return valid_keys
 
-  def _normalize_value(self, value, range):
+  def _normalize_value(self, value, vrange):
     """
     Normalizes the `value` with can take on values in
     into the range of [-1, 1].
     If the `value` is outside the given range, it's clamped
     to the bound of [-1, 1]
     """
-    normed = (value - range[0]) / (range[1] - range[0])
+    normed = (value - vrange[0]) / (vrange[1] - vrange[0])
     # normed = max(-1, normed) # values lower -1 clipped
     # normed = min(1, normed) # values bigger 1 clipped
     return normed

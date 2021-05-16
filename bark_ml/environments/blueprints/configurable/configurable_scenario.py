@@ -6,7 +6,6 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-import os
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.scenario.scenario_generation.configurable_scenario_generation import \
   ConfigurableScenarioGeneration

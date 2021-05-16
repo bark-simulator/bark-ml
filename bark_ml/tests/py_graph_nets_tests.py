@@ -72,7 +72,7 @@ class PyGraphNetsTests(unittest.TestCase):
     graph_observer.feature_len = 2
     graph_observer.edge_feature_len = 3
 
-    nodes, _, _ = graph_observer.graph(obs, graph_dims=graph_dims)
+    _, _, _ = graph_observer.graph(obs, graph_dims=graph_dims)
 
     print(input_graph)
     # gnn = MLPGraphNetwork()
