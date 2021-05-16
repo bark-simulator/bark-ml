@@ -3,7 +3,9 @@
 
 [![CI Build](https://github.com/bark-simulator/bark-ml/workflows/CI/badge.svg)](https://github.com/bark-simulator/bark-ml/actions)
 [![Github Contributors](https://img.shields.io/github/contributors/bark-simulator/bark-ml)](https://github.com/bark-simulator/bark-ml/graphs/contributors)
+[![Downloads](https://img.shields.io/pypi/dm/bark-ml)](https://pypi.org/project/bark-ml/)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/6e2c0ba1291249de9c54cb73c697b62c)](https://www.codacy.com/gh/bark-simulator/bark-ml/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bark-simulator/bark-ml&amp;utm_campaign=Badge_Grade)
+[![Environments](https://img.shields.io/badge/Environments-3-informational)](#gym-environments)
 
 <p align="center">
 <img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/bark_ml_logo.png" width="65%" alt="BARK-ML" />
@@ -24,8 +26,9 @@ The BARK-ML package can be installed using `pip install bark-ml`.
 env = gym.make("highway-v0")
 ```
 
-In the highway scenario, the ego agent's goal is a `StateLimitGoal` on the left lane that is reached once its states are in a pre-defined range (velocity range of `[12.5m/s, 17.5m/s]`, polygonal area on the left lane, and theta range of `[-0.1rad, 0.1rad]`).
-A positive reward (`+1`) is given for reaching the goal and a negative reward for having a collision or leaving the drivable area (`-1`).
+The highway scenario is a curved road with four lanes.
+A potential-based reward signal for the desired velocity is used and the episode is terminal once the maximum number of steps (`60`) has been reached or a collision (`reward -= 1`) has occured or the drivable area (`reward -= 1`) has been left.
+The other vehicles in the scenario are controlled by the intelligent driver model (IDM).
 
 The highway scenario can use discrete or continuous actions:
 *   `highway-v0`: Continuous highway environment
@@ -33,6 +36,7 @@ The highway scenario can use discrete or continuous actions:
 
 <p align="center">
 <img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/bark_ml_highway.gif" alt="BARK-ML Highway Scenario" />
+<em>The highway-v0 environment.</em>
 </p>
 
 ### Merging Scenario
@@ -41,8 +45,9 @@ The highway scenario can use discrete or continuous actions:
 env = gym.make("merging-v0")
 ```
 
-In the merging scenario, the ego agent's goal is a `StateLimitGoal` on the left lane that is reached once its states are in a pre-defined range (velocity range of `[5m/s, 15m/s]`, polygonal area on the left lane, and theta range of `[-0.15rad, 0.15rad]`).
+In the merging scenario, the ego agent's goal is a `StateLimitsGoal` on the left lane that is reached once its states are in a pre-defined range (velocity range of `[5m/s, 15m/s]`, polygonal area on the left lane, and theta range of `[-0.15rad, 0.15rad]`).
 A positive reward (`+1`) is given for reaching the goal and a negative reward for having a collision or leaving the drivable area (`-1`).
+The other vehicles on the left lane are controlled by the intelligent driver model (IDM) and the ones on the right by the MOBIL model.
 
 The merging scenario can use discrete or continuous actions:
 *   `merging-v0`: Continuous merging environment
@@ -50,6 +55,7 @@ The merging scenario can use discrete or continuous actions:
 
 <p align="center">
 <img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/bark-ml.gif" alt="BARK-ML Merging Scenario" />
+<em>The merging-v0 environment.</em>
 </p>
 
 ### Unprotected Left Turn
@@ -58,7 +64,7 @@ The merging scenario can use discrete or continuous actions:
 env = gym.make("intersection-v0")
 ```
 
-In the unprotected left turn scenario, the ego agent's goal is a `StateLimitGoal` placed on the top-left lane.
+In the unprotected left turn scenario, the ego agent's goal is a `StateLimitsGoal` placed on the top-left lane.
 A positive reward (`+1`) is given for reaching the goal lane and a negative reward for having a collision or leaving the drivable area (`-1`).
 
 The unprotected left turn scenario can use discrete or continuous actions:
@@ -79,7 +85,7 @@ env = gym.make("merging-v0")
 initial_state = env.reset()
 done = False
 while done is False:
-  # action = np.array([0., 0.]) # steering-rate and acceleration
+  # action = np.array([0., 0.]) # acceleration and steering-rate
   action = np.random.uniform(low=np.array([-0.5, -0.1]), high=np.array([0.5, 0.1]), size=(2, ))
   observed_state, reward, done, info = env.step(action)
   print(f"Observed state: {observed_state}, Action: {action}, Reward: {reward}, Done: {done}")
@@ -98,6 +104,10 @@ source utils/dev_into.sh
 
 Now - once in the virtual python environment - you can build any of the libraries or execute binaries within BARK-ML using [Bazel](https://bazel.build/).
 To run the getting started example from above, use the following command: `bazel run //examples:continuous_env`.
+
+## Documentation
+
+Read the [documentation online](https://bark-simulator.github.io/tutorials/bark_ml_getting_started/).
 
 ## Graph Neural Network Soft Actor-Critic
 
