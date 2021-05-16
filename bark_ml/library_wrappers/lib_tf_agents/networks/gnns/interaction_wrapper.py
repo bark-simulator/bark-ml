@@ -29,6 +29,7 @@ def make_mlp(name, layer_size=150, embedding_size=80):
   ])
 
 class InteractionWrapper(GraphNetwork):
+
   """
   Implements a graph lib.
   """

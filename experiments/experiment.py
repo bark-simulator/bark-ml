@@ -24,10 +24,12 @@ def LoadModule(module_name, dict_items):
   return eval("{}(**dict_items)".format(module_name))
 
 class Experiment:
+
   """
   The Experiment-class contains all entities in order to run,
   train, or evaluate an agent.
   """
+
   def __init__(self, json_file, params=None, mode=None):
     """
     Initialized the Experiment using a json file and a ParameterServer()

@@ -27,6 +27,7 @@ flags.DEFINE_integer("random_seed",
                      "Random seed to be used.")
 
 class ExperimentRunner:
+
   """
   The ExperimentRunner-Class provides an easy-to-use interface to
   train, visualize, evaluate, and manage experiments.
@@ -35,6 +36,7 @@ class ExperimentRunner:
   hashes before training. Thus, trained results can be matched to executions
   and evaluations.
   """
+
   def __init__(self, json_file, mode="visualize", random_seed=0):
     self._logger = logging.getLogger()
     self._experiment_json = json_file
