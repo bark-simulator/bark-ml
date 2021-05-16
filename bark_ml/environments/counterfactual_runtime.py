@@ -71,12 +71,12 @@ class CounterfactualRuntime(SingleAgentRuntime):
     self._cf_axs = {}
     
   def reset(self, scenario=None):
-    """resets the runtime and its objects"""
+    """Resets the runtime and its objects."""
     self._count = 0
     return SingleAgentRuntime.reset(self, scenario=scenario)
 
   def ReplaceBehaviorModel(self, agent_id=None, behavior=None):
-    """clones the world and replaced the behavior of an agent"""
+    """Clones the world and replaced the behavior of an agent."""
     cloned_world = self._world.Copy()
     evaluators = self._evaluator._add_evaluators()
     for eval_key, eval in evaluators.items():
@@ -86,7 +86,7 @@ class CounterfactualRuntime(SingleAgentRuntime):
     return cloned_world
   
   def GetAgentIds(self):
-    """returns a list of the other agent's ids"""
+    """Returns a list of the other agent's ids."""
     # NOTE: only use nearby agents
     agent_ids = list(self._world.agents.keys())
     # eval_id = self._scenario._eval_agent_ids[0]
@@ -94,7 +94,7 @@ class CounterfactualRuntime(SingleAgentRuntime):
     return agent_ids
 
   def GenerateCounterfactualWorlds(self):
-    """generates (len(agents) - 1) x M-behavior counterfactual worlds"""
+    """Generates (len(agents) - 1) x M-behavior counterfactual worlds."""
     cf_worlds = []
     agent_ids = self.GetAgentIds()
     for agent_id in agent_ids:
@@ -105,7 +105,7 @@ class CounterfactualRuntime(SingleAgentRuntime):
     return cf_worlds
 
   def SimulateWorld(self, world, local_tracer, N=5, **kwargs):
-    """simulates the world for N steps"""
+    """Simulates the world for N steps."""
     self.ml_behavior.set_action_externally = False
     eval_id = self._scenario._eval_agent_ids[0]
     self._world.agents[eval_id].behavior_model = self.ml_behavior

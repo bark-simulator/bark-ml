@@ -12,7 +12,7 @@ import numpy as np
 import time
 
 from bark.runtime.commons.parameters import ParameterServer
-from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, DiscreteHighwayBlueprint
+from bark_ml.environments.blueprints import ContinuousHighwayBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.evaluators.goal_reached import GoalReached
 from bark_ml.core.evaluators import GoalReachedEvaluator

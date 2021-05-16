@@ -48,7 +48,7 @@ class PyTracerTests(unittest.TestCase):
     self.assertEqual(len(tracer._states), 0)
 
   def test_trace_dict(self):
-    """make sure tracing of dictionaries works as well"""
+    """Make sure tracing of dictionaries works as well."""
     tracer = Tracer()
     for j in range(0, 5):
       for i in range(0, 10):

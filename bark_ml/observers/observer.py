@@ -48,7 +48,7 @@ class StateObserver(ABC):
     pass
   
   def _select_state_by_index(self, state):
-    """selects a subset of an array using the state definition
+    """Selects a subset of an array using the state definition.
     
     Arguments:
         state {np.array} -- full state space

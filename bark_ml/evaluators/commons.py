@@ -1,7 +1,7 @@
 from bark.core.geometry import *
 
 def GetGoalLaneCorridorForGoal(observed_world):
-  """Returns the lanecorridor the goal is in"""
+  """Returns the lanecorridor the goal is in."""
   ego_agent = observed_world.ego_agent
   goal_def = ego_agent.goal_definition
   goal_shape = goal_def.goal_shape
@@ -13,7 +13,7 @@ def GetGoalLaneCorridorForGoal(observed_world):
   return lane_corr
 
 def CalculateDistanceToGoal(observed_world):
-  """Calculates the distance to the goal of the ego_agent"""
+  """Calculates the distance to the goal of the ego_agent."""
   goal_lane_corr = GetGoalLaneCorridorForGoal(observed_world)
   goal_center_line = goal_lane_corr.center_line
   ego_agent = observed_world.ego_agent

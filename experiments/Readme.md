@@ -14,7 +14,6 @@ To visualize the current checkpoint, run:
 And to evaluate the performance of the agent, use:
 `bazel run //experiments:experiment_runner -- --exp_json=/ABSOLUTE_PATH/bark-ml/experiments/configs/highway_interaction_network.json --mode=evaluate`
 
-
 ## Cluster Usage
 
 sbatch run_experiment_normal.sh --exp_json=experiments/experiment_runner.runfiles/bark_ml/experiments/configs/phd/01_hyperparams/dnns/merging_large_network.json --mode=train

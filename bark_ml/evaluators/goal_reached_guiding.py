@@ -42,7 +42,7 @@ class GoalReachedGuiding(StateEvaluator):
     self._goal_lane_corr = None
 
   def _add_evaluators(self):
-    """Evaluators that will be set in the BARK world"""
+    """Evaluators that will be set in the BARK world."""
     evaluators = {}
     evaluators["goal_reached"] = EvaluatorGoalReached()
     evaluators["collision"] = EvaluatorCollisionEgoAgent()
@@ -51,7 +51,7 @@ class GoalReachedGuiding(StateEvaluator):
     return evaluators
 
   def GetGoalLaneCorridorForGoal(self, observed_world):
-    """Returns the lanecorridor the goal is in"""
+    """Returns the lanecorridor the goal is in."""
     if self._goal_lane_corr is not None:
       return self._goal_lane_corr
     ego_agent = observed_world.ego_agent
@@ -65,7 +65,7 @@ class GoalReachedGuiding(StateEvaluator):
     return lane_corr
 
   def CalculateDistanceToGoal(self, observed_world, goal_lane_corr):
-    """Calculates the distance to the goal of the ego_agent"""
+    """Calculates the distance to the goal of the ego_agent."""
     goal_center_line = goal_lane_corr.center_line
     ego_agent = observed_world.ego_agent
     ego_agent_state = ego_agent.state
@@ -92,8 +92,7 @@ class GoalReachedGuiding(StateEvaluator):
     return guiding_reward
 
   def _evaluate(self, observed_world, eval_results, action):
-    """Returns information about the current world state
-    """
+    """Returns information about the current world state."""
     done = False
     ego_agent = observed_world.ego_agent
     ego_agent_state = ego_agent.state
