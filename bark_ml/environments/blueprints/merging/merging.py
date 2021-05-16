@@ -102,8 +102,8 @@ class MergingBlueprint(Blueprint):
         lane_corridor_configs=[left_lane, right_lane])
     if viewer:
       viewer = MPViewer(params=params,
-                        x_range=[-20, 20],
-                        y_range=[-20, 20],
+                        x_range=[-25, 25],
+                        y_range=[-25, 25],
                         follow_agent_id=True)
     dt = 0.2
     evaluator = GoalReached(params)
