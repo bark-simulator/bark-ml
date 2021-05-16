@@ -28,8 +28,7 @@ class SimpleObserver(StateObserver):
     self._normalize_observations = normalize_observations
 
   def Observe(self, world):
-    """see base class
-    """
+    """See base class."""
     concatenated_state = np.zeros(self._observation_len, dtype=np.float32)
     for i, (_, agent) in enumerate(world.agents.items()):
       state = agent.state
