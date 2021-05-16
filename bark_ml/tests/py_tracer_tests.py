@@ -8,29 +8,16 @@
 
 import unittest
 import numpy as np
-import os
-import matplotlib
-import time
-import gym
-import matplotlib.pyplot as plt
 
 
 # BARK
 from bark.runtime.commons.parameters import ParameterServer
-from bark.core.models.dynamic import SingleTrackModel
-from bark.core.world import World, MakeTestWorldHighway
-from bark.runtime.viewer.matplotlib_viewer import MPViewer
 
 # BARK-ML
 from bark_ml.library_wrappers.lib_tf_agents.agents.sac_agent import BehaviorSACAgent
-from bark_ml.library_wrappers.lib_tf_agents.agents.ppo_agent import BehaviorPPOAgent
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, ContinuousMergingBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorGraphSACAgent
-from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner
-from bark_ml.observers.graph_observer import GraphObserver
 from bark_ml.commons.tracer import Tracer
-import bark_ml.environments.gym
 
 
 class PyTracerTests(unittest.TestCase):

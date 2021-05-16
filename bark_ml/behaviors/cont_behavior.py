@@ -8,7 +8,7 @@
 
 import numpy as np
 
-from bark.core.models.behavior import BehaviorModel, BehaviorDynamicModel
+from bark.core.models.behavior import BehaviorDynamicModel
 from bark_ml.commons.py_spaces import BoundedContinuous
 
 

@@ -5,23 +5,9 @@
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
-import sys
-import logging
 import time
 import tensorflow as tf
-import numpy as np
 tf.compat.v1.enable_v2_behavior()
-
-# BARK imports
-from bark.runtime.commons.parameters import ParameterServer
-
-# tf agent imports
-from tf_agents.drivers import dynamic_step_driver
-from tf_agents.drivers import dynamic_episode_driver
-from tf_agents.metrics import tf_metrics
-from tf_agents.eval import metric_utils
-from tf_agents.utils import common
-from tf_agents.trajectories import time_step as ts
 
 # BARK-ML imports
 from bark_ml.library_wrappers.lib_tf_agents.runners.tfa_runner import TFARunner

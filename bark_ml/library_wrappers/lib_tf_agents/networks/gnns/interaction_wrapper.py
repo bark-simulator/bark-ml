@@ -5,20 +5,13 @@
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
-import logging
 import tensorflow as tf
-from enum import Enum
 from graph_nets import modules
-from graph_nets import utils_tf
-from graph_nets import utils_np
 from graph_nets.graphs import GraphsTuple
-import sonnet as snt
-import tensorflow_addons as tfa
 
 # bark-ml
 from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.observers.graph_observer import GraphObserver
-from bark_ml.observers.graph_observer_v2 import GraphObserverV2
 from bark_ml.library_wrappers.lib_tf_agents.networks.gnns.graph_network import GraphNetwork
 
 

@@ -9,11 +9,7 @@
 
 import unittest
 import numpy as np
-import os
 import gym
-import matplotlib
-# matplotlib.use('PS')
-import time
 import pprint
 
 from bark.core.models.behavior import BehaviorConstantAcceleration
@@ -25,8 +21,8 @@ from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.environments.counterfactual_runtime import CounterfactualRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents.sac_agent import BehaviorSACAgent
 import bark_ml.environments.gym
-from bark_ml.commons.py_spaces import BoundedContinuous
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
+
 
 class PyEnvironmentTests(unittest.TestCase):
   def test_envs_cont_rl(self):

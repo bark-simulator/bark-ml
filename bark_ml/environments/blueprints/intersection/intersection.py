@@ -7,11 +7,9 @@
 # https://opensource.org/licenses/MIT
 
 import os
-from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
-from bark.core.models.dynamic import SingleTrackModel
 from bark.core.world.opendrive import XodrDrivingDirection
 from bark.core.world.goal_definition import GoalDefinitionPolygon
 from bark.core.models.behavior import BehaviorIntersectionRuleBased

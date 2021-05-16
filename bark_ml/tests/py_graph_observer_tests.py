@@ -7,14 +7,11 @@
 
 import numpy as np
 import unittest
-from tf_agents.environments import tf_py_environment
 import tensorflow as tf
-import networkx as nx
 
 # BARK imports
 from bark.runtime.commons.parameters import ParameterServer
 from bark.core.geometry import Distance, Point2d
-from bark.core.models.dynamic import StateDefinition
 
 # BARK-ML imports
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime

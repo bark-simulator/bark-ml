@@ -5,11 +5,7 @@
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
-import numpy as np
 from bark.runtime.runtime import Runtime
-from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
-from bark.runtime.commons.parameters import ParameterServer
-from bark.core.models.behavior import BehaviorModel, BehaviorDynamicModel
 
 
 class SingleAgentRuntime(Runtime):

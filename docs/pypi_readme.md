@@ -13,9 +13,9 @@ Additionally, BARK-ML integrates <i>state-of-the-art</i> machine learning librar
 
 BARK-ML supported machine learning libraries:
 
-* [TF-Agents](https://github.com/tensorflow/agents)
-* [Baselines](https://github.com/openai/baselines) (Planned)
-* [Diadem](https://github.com/juloberno/diadem)
+*  [TF-Agents](https://github.com/tensorflow/agents)
+*  [Baselines](https://github.com/openai/baselines) (Planned)
+*  [Diadem](https://github.com/juloberno/diadem)
 
 Install BARK-ML using `pip install bark-ml`.
 
@@ -46,12 +46,12 @@ while done is False:
 
 Available environments:
 
-* `highway-v0`: Continuous highway environment
-* `highway-v1`: Discrete highway environment
-* `merging-v0`: Continuous merging environment
-* `merging-v1`: Discrete merging environment
-* `intersection-v0`: Continuous intersection environment
-* `intersection-v1`: Discrete intersection environment
+*  `highway-v0`: Continuous highway environment
+*  `highway-v1`: Discrete highway environment
+*  `merging-v0`: Continuous merging environment
+*  `merging-v1`: Discrete merging environment
+*  `intersection-v0`: Continuous intersection environment
+*  `intersection-v1`: Discrete intersection environment
 
 ## TF-Agents
 

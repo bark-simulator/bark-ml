@@ -14,11 +14,11 @@ minor, then feel free to make them without discussion.
 
 Want to contribute but not sure of what? Here are a few suggestions:
 
-1. Add new blueprints, examples, and more. These are a great way to familiarize
+1.  Add new blueprints, examples, and more. These are a great way to familiarize
    yourself and others with BARK-ML.
 
 
-2. Solve an [existing issue](https://github.com/bark-simulator/bark-ml/issues).
+2.  Solve an [existing issue](https://github.com/bark-simulator/bark-ml/issues).
    These range from low-level software bugs to higher-level design problems.
 
 All submissions, including submissions by project members, require review. After
@@ -39,7 +39,7 @@ To run existing unit-tests, use the command:
 
 
 ```shell
-bazel test //...
+   bazel test //...
 ```
 
 from the root of the `BARK-ML` repository and inside the BARK-ML specific virtualenv.
