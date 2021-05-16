@@ -9,18 +9,14 @@
 <img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/bark_ml_logo.png" width="65%" alt="BARK-ML" />
 </p>
 
-
 ## [Try it on Google Colab! ![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1jA5QPEHadvIU6GsCy4cFdAv3giS7QvDQ?usp=sharing)
-
 
 Discrete and continuous environments for autonomous driving —
  ranging from highway, over merging, to intersection scenarios.
 
 The BARK-ML package can be installed using `pip install bark-ml`.
 
-
 ## Gym Environments
-
 
 ### Highway Scenario
 
@@ -35,12 +31,9 @@ The highway scenario can use discrete or continuous actions:
 *  `highway-v0`: Continuous highway environment
 *  `highway-v1`: Discrete highway environment
 
-
 <p align="center">
 <img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/bark_ml_highway.gif" alt="BARK-ML Highway Scenario" />
 </p>
-
-
 
 ### Merging Scenario
 
@@ -55,12 +48,9 @@ The merging scenario can use discrete or continuous actions:
 *  `merging-v0`: Continuous merging environment
 *  `merging-v1`: Discrete merging environment
 
-
 <p align="center">
 <img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/bark-ml.gif" alt="BARK-ML Merging Scenario" />
 </p>
-
-
 
 ### Unprotected Left Turn
 
@@ -74,12 +64,6 @@ A positive reward (`+1`) is given for reaching the goal lane and a negative rewa
 The unprotected left turn scenario can use discrete or continuous actions:
 *  `intersection-v0`: Continuous intersection environment
 *  `intersection-v1`: Discrete intersection environment
-
-
-<!-- <p align="center">
-<img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/bark_ml_highway.gif" alt="BARK-ML Highway" />
-</p> -->
-
 
 ## Getting Started
 
@@ -115,7 +99,6 @@ source utils/dev_into.sh
 Now - once in the virtual python environment - you can build any of the libraries or execute binaries within BARK-ML using [Bazel](https://bazel.build/).
 To run the getting started example from above, use the following command: `bazel run //examples:continuous_env`.
 
-
 ## Graph Neural Network Soft Actor-Critic
 
 You can visualize  (`--mode=visualize`) or train (`--mode=train`) the graph neural network soft actor-critic architecture proposed in the paper "[Graph Neural Networks and Reinforcement Learning for Behavior Generation in Semantic Environments](https://arxiv.org/abs/2006.12576)" using:
@@ -150,7 +133,6 @@ If your work builds upon the graph neural network architecture, please cite the 
 *  [Graph Neural Networks and Reinforcement Learning for Behavior Generation in Semantic Environments](https://arxiv.org/abs/2006.12576) (IV 2020)
 *  [BARK: Open Behavior Benchmarking in Multi-Agent Environments](https://arxiv.org/abs/2003.02604) (IROS 2020)
 *  [Counterfactual Policy Evaluation for Decision-Making in Autonomous Driving](https://arxiv.org/abs/2003.11919) (IROS 2020,  PLC Workshop)
-
 
 ## License
 

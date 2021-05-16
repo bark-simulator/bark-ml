@@ -9,16 +9,11 @@
 
 import unittest
 import numpy as np
-import os
-import matplotlib
-import time
 
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMotionPrimitivesML, \
-        BehaviorDiscreteMacroActionsML
+  BehaviorDiscreteMacroActionsML
 from bark.runtime.commons.parameters import ParameterServer
-from bark.core.models.dynamic import SingleTrackModel
-from bark.core.world import World, MakeTestWorldHighway
 
 
 class PyBehaviorTests(unittest.TestCase):

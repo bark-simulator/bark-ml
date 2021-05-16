@@ -19,7 +19,7 @@ class Tracer:
     self._total_steps = 0
 
   def EvalStateToDict(self, eval_state):
-    """Converts an eval_state to a flat eval_dict"""
+    """Converts an eval_state to a flat eval_dict."""
     eval_dict = {}
     if type(eval_state) is tuple:
       (state, reward, is_terminal, info) = eval_state
@@ -83,7 +83,7 @@ class Tracer:
     return self._total_episodes
 
   def Save(self, filepath="./"):
-    """Saves trace as pandas dataframe"""
+    """Saves trace as pandas dataframe."""
     filehandler = open(filepath, "wb")
     pickle.dump(self.__dict__, file=filehandler)
     filehandler.close()

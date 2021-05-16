@@ -128,8 +128,7 @@ class RewardShapingEvaluator(StateEvaluator):
     return reward_shaping_value
   
   def _evaluate(self, observed_world, eval_results, action):
-    """Returns information about the current world state
-    """
+    """Returns information about the current world state."""
     done = False
     success = eval_results["goal_reached"]
     step_count = eval_results["step_count"]

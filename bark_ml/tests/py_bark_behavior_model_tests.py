@@ -8,18 +8,11 @@
 
 import unittest
 import numpy as np
-import os
-import matplotlib
-import time
 import gym
-import matplotlib.pyplot as plt
 
 
 # BARK
 from bark.runtime.commons.parameters import ParameterServer
-from bark.core.models.dynamic import SingleTrackModel
-from bark.core.world import World, MakeTestWorldHighway
-from bark.runtime.viewer.matplotlib_viewer import MPViewer
 
 # BARK-ML
 from bark_ml.library_wrappers.lib_tf_agents.agents.sac_agent import BehaviorSACAgent

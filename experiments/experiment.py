@@ -81,7 +81,7 @@ class Experiment:
     return LoadModule(module_name, items)
   
   def InitEvaluator(self):
-    """Initialized the Evaluator
+    """Initialized the Evaluator.
 
     Returns:
         Evaluator: Computes the reward and whether an episode is terminal
@@ -92,7 +92,7 @@ class Experiment:
     return LoadModule(module_name, items)
   
   def InitAgent(self):
-    """Initializes the RL-Agent
+    """Initializes the RL-Agent.
 
     Returns:
         Agent: RL-Agent
@@ -107,7 +107,7 @@ class Experiment:
     return agent
   
   def InitRuntime(self):
-    """Initializes the Runtime
+    """Initializes the Runtime.
 
     Returns:
         Runtime: Implements the basic OpenAI-Gym interface.

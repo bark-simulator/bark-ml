@@ -36,8 +36,7 @@ class SingleAgentRuntime(Runtime):
     self._evaluator = evaluator or self._evaluator
 
   def reset(self, scenario=None):
-    """Resets the runtime and its objects
-    """
+    """Resets the runtime and its objects."""
     super().reset(scenario=scenario)
     assert len(self._scenario._eval_agent_ids) == 1, \
       "This runtime only supports a single agent!"
@@ -80,14 +79,12 @@ class SingleAgentRuntime(Runtime):
 
   @property
   def action_space(self):
-    """Action space of the agent
-    """
+    """Action space of the agent."""
     return self._ml_behavior.action_space
 
   @property
   def observation_space(self):
-    """Observation space of the agent
-    """
+    """Observation space of the agent."""
     return self._observer.observation_space
 
   @property

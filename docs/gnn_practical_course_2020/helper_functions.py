@@ -60,7 +60,7 @@ def explain_observation(observation, graph_dims):
           ") (number of edges x edge attributes):\n",edge_attributes)
 
 def configurable_setup(params, num_scenarios, graph_sac=True):
-  """Configurable GNN setup depending on a given filename
+  """Configurable GNN setup depending on a given filename.
 
   Args:
     params: ParameterServer instance
