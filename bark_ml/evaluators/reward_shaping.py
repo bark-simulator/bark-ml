@@ -24,8 +24,7 @@ def ObjectPotential(d, d_max, c=0.4):
 
 
 class RewardShapingEvaluator(StateEvaluator):
-  """
-  Reward shaping evaluator using potential functions.
+  """Reward shaping evaluator using potential functions.
 
   Implemented are potential functions fot the distance to
   the goal $\phi(d)$, velocity $\phi(v)$, and distance to

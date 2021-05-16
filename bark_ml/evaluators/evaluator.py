@@ -11,10 +11,8 @@ from bark.runtime.commons.parameters import ParameterServer
 
 
 class StateEvaluator(ABC):
-  """
-    Evaluates the state of the environment
-    e.g., if a collision has happend.
-  """
+  """Evaluates the state of the environment, e.g., if
+  a collision has occured."""
 
   def __init__(self,
                params=ParameterServer()):

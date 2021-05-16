@@ -19,13 +19,15 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.environments.blueprints import \
   DiscreteHighwayBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-import bark_ml.environments.gym
+import bark_ml.environments.gym  # NOLINT
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.model_wrapper \
  import pytorch_script_wrapper
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent import IQNAgent, FQFAgent, QRDQNAgent
 
 
 class PyLibraryWrappersPyTorchAgentTests(unittest.TestCase):
+  """TorchAgentTests tests."""
+
   # make sure the agent works
   def test_agent_wrapping(self):
     params = ParameterServer()

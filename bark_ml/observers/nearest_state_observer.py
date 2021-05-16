@@ -17,9 +17,7 @@ from bark_ml.observers.observer import StateObserver
 
 
 class NearestAgentsObserver(StateObserver):
-  """
-  Concatenates the n-nearest states of vehicles
-  """
+  """Concatenates the n-nearest states of vehicles."""
 
   def __init__(self, params=ParameterServer()):
     StateObserver.__init__(self, params)

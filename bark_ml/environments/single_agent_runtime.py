@@ -9,9 +9,12 @@ from bark.runtime.runtime import Runtime
 
 
 class SingleAgentRuntime(Runtime):
-  """
-  Single agent runtime where action is passed to the
+  """Single agent runtime where action is passed to the
   ego agent.
+
+  Can either be initialized using a blueprint or by passing the
+  `evaluator`, `observer`, `scenario_generation`, `step_time`, `viewer`
+  and ml_behavior.
   """
 
   def __init__(self,

@@ -17,8 +17,7 @@ tf.compat.v1.enable_v2_behavior()
 
 
 class PyBARKEnvironment(py_environment.PyEnvironment):
-  """
-  Wrapper for TensorFlow Agents (https://github.com/tensorflow/agents)
+  """Wrapper for TensorFlow Agents (https://github.com/tensorflow/agents)
 
   Arguments:
     py_environment -- Base class for environment from tf_agents

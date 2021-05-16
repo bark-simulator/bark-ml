@@ -43,10 +43,11 @@ class HighwayLaneCorridorConfig(LaneCorridorConfig):
 
 
 class HighwayBlueprint(Blueprint):
-
-  """
-  The highway blueprint sets up a merging scenario with initial
+  """The highway blueprint sets up a merging scenario with initial
   conditions.
+
+  Two lane highway, with the ego vehicle being placed on the right lane
+  and the ego vehicle's goal on the left lane.
   """
 
   def __init__(self,

@@ -8,10 +8,7 @@
 from diadem.environments import Environment
 
 class DiademBarkEnvironment(Environment):
-
-    """
-    BARK environment for the diadem library.
-    """
+    """BARK environment for the diadem library."""
 
     def __init__(self, runtime,  params=None):
         super().__init__()

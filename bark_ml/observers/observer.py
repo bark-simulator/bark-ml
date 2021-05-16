@@ -12,7 +12,8 @@ from abc import ABC, abstractmethod
 
 
 class StateObserver(ABC):
-  """
+  """State Observer
+
   The observer creates the observed state that then can be, e.g.,
   used by a deep neural network.
   """
