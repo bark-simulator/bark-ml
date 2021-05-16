@@ -70,7 +70,7 @@ class BehaviorTFAAgent(BehaviorModel):
     return checkpointer
 
   def Save(self):
-    save_path = self._ckpt_manager.save(
+    self._ckpt_manager.save(
       global_step=self._agent._train_step_counter)
     self._logger.info("Saved checkpoint for step {}.".format(
       int(self._agent._train_step_counter.numpy())))

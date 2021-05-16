@@ -34,6 +34,7 @@ class SingleAgentRuntime(Runtime):
     self._ml_behavior = ml_behavior or self._ml_behavior
     self._observer = observer or self._observer
     self._evaluator = evaluator or self._evaluator
+    self._world = None
 
   def reset(self, scenario=None):
     """Resets the runtime and its objects."""

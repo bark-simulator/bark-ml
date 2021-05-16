@@ -27,10 +27,10 @@ class SimpleObserver(StateObserver):
       self._max_num_vehicles*self._len_state
     self._normalize_observations = normalize_observations
 
-  def Observe(self, world):
+  def Observe(self, observed_world):
     """See base class."""
     concatenated_state = np.zeros(self._observation_len, dtype=np.float32)
-    for i, (_, agent) in enumerate(world.agents.items()):
+    for i, (_, agent) in enumerate(observed_world.agents.items()):
       state = agent.state
       if self._normalize_observations:
         state = self._normalize(state)
@@ -69,7 +69,7 @@ class SimpleObserver(StateObserver):
                  self._velocity_range)
     return agent_state
 
-  def Reset(self, world, controlled_agent_ids):
+  def Reset(self, world):
     return world
 
   @property
