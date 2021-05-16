@@ -12,10 +12,11 @@ from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
 from bark.core.world.opendrive import XodrDrivingDirection
-from bark.core.world.goal_definition import GoalDefinitionStateLimitsFrenet
+from bark.core.world.goal_definition import GoalDefinitionPolygon
+from bark.core.geometry import Polygon2d, Point2d
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
-from bark_ml.evaluators.goal_reached import GoalReached
+from bark_ml.evaluators.reward_shaping_max_steps import RewardShapingEvaluatorMaxSteps
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
 
@@ -34,14 +35,10 @@ class HighwayLaneCorridorConfig(LaneCorridorConfig):
     super(HighwayLaneCorridorConfig, self).__init__(params, **kwargs)
 
   def goal(self, world):
-    # TODO: max steps goal?
-    road_corr = world.map.GetRoadCorridor(
-      self._road_ids, XodrDrivingDirection.forward)
-    lane_corr = self._road_corridor.lane_corridors[0]
-    return GoalDefinitionStateLimitsFrenet(lane_corr.center_line,
-                                           (0.4, 0.4),
-                                           (0.1, 0.1),
-                                           (12.5, 17.5))
+    goal_polygon = Polygon2d(
+      [-1000, -1000, -1000],
+      [Point2d(-1, -1), Point2d(-1, 1), Point2d(1, 1), Point2d(1, -1)])
+    return GoalDefinitionPolygon(goal_polygon)
 
 
 class HighwayBlueprint(Blueprint):
@@ -104,7 +101,13 @@ class HighwayBlueprint(Blueprint):
                         y_range=[-40, 40],
                         follow_agent_id=True)
     dt = 0.2
-    evaluator = GoalReached(params)
+    params["ML"]["RewardShapingEvaluator"]["RewardShapingPotentials",
+      "Reward shaping functions.", {
+        "VelocityPotential" : {
+          "desired_vel": 20., "vel_dev_max": 20., "exponent": 0.2, "type": "positive"
+        }
+    }]
+    evaluator = RewardShapingEvaluatorMaxSteps(params)
     observer = NearestObserver(params)
     ml_behavior = ml_behavior
 

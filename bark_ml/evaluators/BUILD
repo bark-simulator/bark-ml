@@ -6,6 +6,7 @@ py_library(
     srcs = ["__init__.py",
             "goal_reached.py",
             "reward_shaping.py",
+            "reward_shaping_max_steps.py",
             "commons.py",
             "evaluator.py"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
