@@ -69,7 +69,7 @@ class CounterfactualRuntime(SingleAgentRuntime):
       _, self._axs_heatmap = plt.subplots(1, 1, constrained_layout=True)
     self._count = 0
     self._cf_axs = {}
-    
+
   def reset(self, scenario=None):
     """Resets the runtime and its objects."""
     self._count = 0
@@ -84,7 +84,7 @@ class CounterfactualRuntime(SingleAgentRuntime):
     if behavior is not None:
       cloned_world.agents[agent_id].behavior_model = behavior
     return cloned_world
-  
+
   def GetAgentIds(self):
     """Returns a list of the other agent's ids."""
     # NOTE: only use nearby agents
@@ -145,7 +145,7 @@ class CounterfactualRuntime(SingleAgentRuntime):
         break
       world.Step(self._step_time)
     self.ml_behavior.set_action_externally = True
-  
+
   def St(self):
     self._start_time = time.time()
 
@@ -157,7 +157,7 @@ class CounterfactualRuntime(SingleAgentRuntime):
   @property
   def tracer(self):
     return self._tracer
-  
+
   def TraceCounterfactualWorldStats(self, local_tracer):
     collision_rate = local_tracer.collision_rate
     goal_reached = local_tracer.success_rate
@@ -197,14 +197,14 @@ class CounterfactualRuntime(SingleAgentRuntime):
         mean += v
     mean /= len(extracted_states)
     return mean
-      
+
   def DrawHeatmap(self, local_tracer, filename="./"):
     eval_id = self._scenario._eval_agent_ids[0]
     base_states = self.FilterStates(local_tracer._states, replaced_agent="None")
     extracted_base_states = self.ExtractStatesPerWorld(base_states)
     extracted_base_states_np = extracted_base_states[
       list(extracted_base_states.keys())[0]]
-    
+
     # loop through all agents
     all_keys = list(local_tracer._states[0].keys())
     all_agent_ids = []
@@ -218,7 +218,7 @@ class CounterfactualRuntime(SingleAgentRuntime):
       mean = self.GetMeanForAgent(local_tracer, agent_id)
       row_from = np.sum((extracted_base_states_np - mean)**2, axis=1)
       arr[i, :] = row_from
-    
+
     np.fill_diagonal(arr, 0.)
     self._axs_heatmap.imshow(arr, cmap=plt.get_cmap('Blues'))
     self._axs_heatmap.set_yticks(np.arange(len(all_agent_ids)))
@@ -226,10 +226,10 @@ class CounterfactualRuntime(SingleAgentRuntime):
     self._axs_heatmap.set_yticklabels(["$W^{v_"+str(agent_id)+"}$" for agent_id in all_agent_ids])
     self._axs_heatmap.set_xticklabels(["$\Delta_{v_"+str(agent_id)+"}$" for agent_id in all_agent_ids])
     self._axs_heatmap.set_rasterized(True)
-    
+
     self._axs_heatmap.get_figure().savefig(filename+".png")
     self._axs_heatmap.get_figure().savefig(filename+".pgf")
-    
+
   def step(self, action):
     """perform the cf evaluation"""
     # simulate counterfactual worlds
@@ -245,7 +245,7 @@ class CounterfactualRuntime(SingleAgentRuntime):
         cf_world[cf_key], local_tracer, N=self._cf_simulation_steps,
         replaced_agent=cf_key, num_virtual_world=i)
     self.Et()
-    
+
     # NOTE: this world would actually have the predicted traj.
     gt_world = self.ReplaceBehaviorModel()
     self.SimulateWorld(
@@ -255,12 +255,12 @@ class CounterfactualRuntime(SingleAgentRuntime):
     hist = gt_world.agents[eval_id].history
     traj = np.stack([x[0] for x in hist])
     self._viewer.drawTrajectory(traj, color='blue')
-    
+
     if self._visualize_heatmap:
       self.DrawHeatmap(
         local_tracer,
         filename=self._results_folder + "cf_%03d" % self._count + "_heatmap")
-  
+
     # evaluate counterfactual worlds
     trace = self.TraceCounterfactualWorldStats(local_tracer)
     collision_rate = trace['collision']/len(self._behavior_model_pool)
@@ -276,10 +276,10 @@ class CounterfactualRuntime(SingleAgentRuntime):
       self._logger.info(
         f"Executing fallback model.")
       self._world.agents[eval_id].behavior_model = self._ego_rule_based
-    trace["executed_learned_policy"] = executed_learned_policy  
+    trace["executed_learned_policy"] = executed_learned_policy
     self._tracer.Trace(trace)
     self._count += 1
     for fig in self._cf_axs.values():
-      for sub_ax in fig["ax"]: 
+      for sub_ax in fig["ax"]:
         sub_ax.clear()
     return SingleAgentRuntime.step(self, action)

@@ -43,15 +43,15 @@ def run_configuration(argv):
   if FLAGS.load and params["ML"]["BaseAgent"]["CheckpointPath"]:
     agent.load_models(os.path.join(params["ML"]["BaseAgent"]["CheckpointPath"],"best"))
 
-  if FLAGS.mode == "train": 
+  if FLAGS.mode == "train":
     agent.run()
 
   elif FLAGS.mode == "visualize":
     agent.visualize()
-    
+
   elif FLAGS.mode == "evaluate":
     # writes evaluaion data using summary writer in summary path
-    agent.evaluate() 
+    agent.evaluate()
 
   else:
     raise Exception("Invalid argument for --mode")

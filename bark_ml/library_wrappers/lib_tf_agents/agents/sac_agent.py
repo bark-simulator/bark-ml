@@ -68,7 +68,7 @@ class BehaviorSACAgent(BehaviorTFAAgent):
       action_fc_layer_params=None,
       joint_fc_layer_params=tuple(
         self._sac_params["CriticJointFcLayerParams", "", [512, 256, 256]]))
-    
+
     # agent
     tf_agent = sac_agent.SacAgent(
       env.time_step_spec(),
@@ -89,7 +89,7 @@ class BehaviorSACAgent(BehaviorTFAAgent):
       train_step_counter=self._ckpt.step,
       name=self._sac_params["AgentName", "", "sac_agent"],
       debug_summaries=self._sac_params["DebugSummaries", "", False])
-    
+
     tf_agent.initialize()
     return tf_agent
 
@@ -115,7 +115,7 @@ class BehaviorSACAgent(BehaviorTFAAgent):
 
   def Reset(self):
     pass
-  
+
   @property
   def collect_policy(self):
     return self._collect_policy

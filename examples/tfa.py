@@ -13,7 +13,7 @@ from absl import flags
 
 # this will disable all BARK log messages
 import os
-os.environ['GLOG_minloglevel'] = '3' 
+os.environ['GLOG_minloglevel'] = '3'
 
 # BARK imports
 from bark.runtime.commons.parameters import ParameterServer
@@ -68,7 +68,7 @@ def run_configuration(argv):
   env = SingleAgentRuntime(blueprint=bp,
                            render=False,
                            viewer=viewer)
-  
+
   # PPO-agent
   # ppo_agent = BehaviorPPOAgent(environment=env,
   #                              params=params)
@@ -91,7 +91,7 @@ def run_configuration(argv):
     runner.Run(num_episodes=50, render=True)
   elif FLAGS.mode == "evaluate":
     runner.Run(num_episodes=100, render=False)
-  
+
   # store all used params of the training
   # params.Save("YOUR_PATH")
 

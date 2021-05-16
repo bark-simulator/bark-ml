@@ -14,7 +14,7 @@ import tensorflow as tf
 
 # this will disable all BARK log messages
 # import os
-# os.environ['GLOG_minloglevel'] = '3' 
+# os.environ['GLOG_minloglevel'] = '3'
 
 # BARK imports
 from bark.runtime.commons.parameters import ParameterServer
@@ -59,7 +59,7 @@ def run_configuration(argv):
                                   random_seed=0)
 
   observer = GraphObserver(params=params)
-  
+
   env = SingleAgentRuntime(
     blueprint=bp,
     observer=observer,

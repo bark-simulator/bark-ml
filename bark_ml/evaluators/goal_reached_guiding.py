@@ -1,6 +1,6 @@
 # Copyright (c) 2020 Patrick Hart, Julian Bernhard,
 # Klemens Esterle, Tobias Kessler
-# 
+#
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 # BARK
@@ -80,10 +80,10 @@ class GoalReachedGuiding(StateEvaluator):
     goal_lane_corr = self.GetGoalLaneCorridorForGoal(observed_world)
     distance_to_goal = self.CalculateDistanceToGoal(observed_world, goal_lane_corr)
     guiding_reward -= self._goal_dist*distance_to_goal
-    
+
     # NOTE: hack
     # desired_velocity = 10
-    
+
     # NOTE: this will only work for cont. actions
     if action is not None and type(action) is not int:
       accs = action[0]
@@ -108,13 +108,13 @@ class GoalReachedGuiding(StateEvaluator):
     if bad_state:
       success = 0
       eval_results["goal_reached"] = 0
-    
+
     guiding_reward = self.CalculateGuidingReward(observed_world, action)
     # calculate reward
     reward = bad_state * self._col_penalty + \
       success * self._goal_reward + self._goal_dist*guiding_reward
     return reward, done, eval_results
-    
+
   def Reset(self, world):
     self._goal_lane_corr = None
     return super(GoalReachedGuiding, self).Reset(world)

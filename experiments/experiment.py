@@ -11,7 +11,7 @@ from bark_ml.core.evaluators import *
 
 
 def LoadModule(module_name, dict_items):
-  """Helper function to load dictionaries
+  """Helper function to load dictionaries.
 
   Args:
       module_name (string): Name of the module
@@ -39,7 +39,7 @@ class Experiment:
     self._params = params
     self._mode = mode
     self.InitJson(json_file)
-  
+
   def InitJson(self, json_file):
     if self._params is None:
       self._params = ParameterServer(filename=json_file)
@@ -49,7 +49,7 @@ class Experiment:
     self._evaluator = self.InitEvaluator()
     self._runtime = self.InitRuntime()
     self._agent = self.InitAgent()
-    self._runner = self.InitRunner() 
+    self._runner = self.InitRunner()
 
   def InitBlueprint(self):
     """Initialized the scenario blueprint.
@@ -68,7 +68,7 @@ class Experiment:
     # NOTE: this should be configurable also
     blueprint._ml_behavior = BehaviorContinuousML(params=self._params)
     return blueprint
-  
+
   def InitObserver(self):
     """Creates the observer for the Experiment
 
@@ -79,7 +79,7 @@ class Experiment:
     items = self._exp_params["Observer"]["Config"].ConvertToDict()
     items["params"] = self._params
     return LoadModule(module_name, items)
-  
+
   def InitEvaluator(self):
     """Initialized the Evaluator.
 
@@ -90,7 +90,7 @@ class Experiment:
     items = self._exp_params["Evaluator"]["Config"].ConvertToDict()
     items["params"] = self._params
     return LoadModule(module_name, items)
-  
+
   def InitAgent(self):
     """Initializes the RL-Agent.
 
@@ -105,7 +105,7 @@ class Experiment:
     agent = LoadModule(module_name, items)
     self._runtime.ml_behavior = agent
     return agent
-  
+
   def InitRuntime(self):
     """Initializes the Runtime.
 
@@ -118,7 +118,7 @@ class Experiment:
     items["observer"] = self._observer
     items["blueprint"] = self._blueprint
     return LoadModule(module_name, items)
-  
+
   def InitRunner(self):
     """The Runner runs the training, visualization, and evaluation.
 
@@ -131,19 +131,19 @@ class Experiment:
     items["params"] = self._params
     items["agent"] = self._agent
     return LoadModule(module_name, items)
-  
+
   @property
   def agent(self):
     return self._agent
-  
+
   @property
   def runtime(self):
     return self._runtime
-  
+
   @property
   def runner(self):
     return self._runner
-  
+
   @property
   def params(self):
     return self._params

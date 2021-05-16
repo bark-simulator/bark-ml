@@ -22,11 +22,11 @@ class SACRunner(TFARunner):
                        environment=environment,
                        agent=agent,
                        params=params)
-    
+
     self._number_of_collections =\
       self._params["ML"]["SACRunner"]["NumberOfCollections", "", 40000]
     self._evaluation_interval =\
-      self._params["ML"]["SACRunner"]["EvaluateEveryNSteps", "", 100] 
+      self._params["ML"]["SACRunner"]["EvaluateEveryNSteps", "", 100]
 
   def _train(self):
     iterator = iter(self._agent._dataset)
@@ -41,16 +41,16 @@ class SACRunner(TFARunner):
       t0 = time.time()
       self._collection_driver.run()
       self._log_collection_duration(start_time=t0, iteration=global_iteration)
- 
+
       experience, _ = next(iterator)
 
-      t0 = time.time()      
+      t0 = time.time()
       self._agent._agent.train(experience)
       self._log_training_duration(start_time=t0, iteration=global_iteration)
-            
+
       if global_iteration % self._evaluation_interval == 0:
         self._log_evaluation_interval_duration(
-          start_time=iteration_start_time, 
+          start_time=iteration_start_time,
           iteration=global_iteration)
         iteration_start_time = time.time()
         self._tracer.Reset()
@@ -69,7 +69,7 @@ class SACRunner(TFARunner):
       tf.summary.scalar("training_duration", time.time() - start_time, iteration)
 
   def _log_evaluation_interval_duration(self, start_time, iteration):
-    if iteration == 0: 
+    if iteration == 0:
       return
 
     iterations = f'{iteration-self._evaluation_interval}-{iteration}'

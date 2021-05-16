@@ -59,7 +59,7 @@ class PyGraphObserverTests(unittest.TestCase):
     observer = GraphObserver(params=params)
 
     self.assertEqual(
-      observer._enabled_node_attribute_keys, 
+      observer._enabled_node_attribute_keys,
       requested_features)
 
   def test_request_subset_of_available_edge_features(self):
@@ -70,7 +70,7 @@ class PyGraphObserverTests(unittest.TestCase):
     observer = GraphObserver(params=params)
 
     self.assertEqual(
-      observer._enabled_edge_attribute_keys, 
+      observer._enabled_edge_attribute_keys,
       requested_features)
 
   def test_request_partially_invalid_node_features(self):
@@ -83,9 +83,9 @@ class PyGraphObserverTests(unittest.TestCase):
 
     # remove invalid feature from expected list
     requested_features.pop(-1)
-    
+
     self.assertEqual(
-      observer._enabled_node_attribute_keys, 
+      observer._enabled_node_attribute_keys,
       requested_features)
 
   def test_request_partially_invalid_edge_features(self):
@@ -98,9 +98,9 @@ class PyGraphObserverTests(unittest.TestCase):
 
     # remove invalid feature from expected list
     requested_features.pop(-1)
-    
+
     self.assertEqual(
-      observer._enabled_edge_attribute_keys, 
+      observer._enabled_edge_attribute_keys,
       requested_features)
 
   def test_observe_with_self_loops(self):
@@ -168,8 +168,8 @@ class PyGraphObserverTests(unittest.TestCase):
     obs = tf.expand_dims(obs, 0) # add a batch dimension
 
     nodes, _, _ = GraphObserver.graph(obs, graph_dims=observer.graph_dimensions)
-    nodes = nodes[0] # remove batch dim    
-    
+    nodes = nodes[0] # remove batch dim
+
     ego_node = nodes[0]
     ego_node_pos = Point2d(
       ego_node[0].numpy(), # x coordinate
@@ -184,17 +184,17 @@ class PyGraphObserverTests(unittest.TestCase):
         node[1].numpy()) # y coordinate
       distance_to_ego = Distance(pos, ego_node_pos)
 
-      self.assertGreaterEqual(distance_to_ego, max_distance_to_ego, 
+      self.assertGreaterEqual(distance_to_ego, max_distance_to_ego,
         msg='Nodes are not sorted by distance relative to '\
           + 'the ego node in ascending order.')
-      
+
       max_distance_to_ego = distance_to_ego
 
   def test_observation_to_graph_conversion(self):
     params = ParameterServer()
     params["ML"]["GraphObserver"]["SelfLoops"] = False
     graph_observer = GraphObserver(params=params)
-    
+
     num_nodes = 5
     num_features = 5
     num_edge_features = 4
@@ -203,7 +203,7 @@ class PyGraphObserverTests(unittest.TestCase):
     edge_features = np.random.random_sample((num_nodes, num_nodes, num_edge_features))
 
     # note that edges are bidirectional, the
-    # the matrix is symmetric 
+    # the matrix is symmetric
     adjacency_list = [
       [0, 1, 1, 1, 0], # 1 connects with 2, 3, 4
       [1, 0, 1, 1, 0], # 2 connects with 3, 4
@@ -217,7 +217,7 @@ class PyGraphObserverTests(unittest.TestCase):
     observation = np.append(observation, edge_features)
     observation = observation.reshape(-1)
     observations = np.array([observation, observation])
-    
+
     self.assertEqual(observations.shape, (2, 150))
 
     expected_nodes = tf.constant([node_features, node_features])
@@ -256,7 +256,7 @@ class PyGraphObserverTests(unittest.TestCase):
 
     expected_node_to_graph_map = tf.constant([
       0, 0, 0, 0, 0,
-      1, 1, 1, 1, 1, 
+      1, 1, 1, 1, 1,
       2, 2, 2, 2, 2
     ])
 
@@ -264,7 +264,7 @@ class PyGraphObserverTests(unittest.TestCase):
     print(observations)
     nodes, edges, node_to_graph_map, E =\
       GraphObserver.graph(observations, graph_dims, dense=True)
-    
+
     self.assertTrue(tf.reduce_all(tf.equal(nodes, expected_nodes)))
     self.assertTrue(tf.reduce_all(tf.equal(edges, expected_dense_edges)))
     # self.assertTrue(tf.reduce_all(
@@ -274,8 +274,8 @@ class PyGraphObserverTests(unittest.TestCase):
     """
     Verify that the observer correctly handles the case where
     there are less agents in the world than set as the limit.
-    tl;dr: check that all entries of the node features, 
-    adjacency matrix, and edge features not corresponding to 
+    tl;dr: check that all entries of the node features,
+    adjacency matrix, and edge features not corresponding to
     actually existing agents are zeros.
     """
     num_agents = 25
@@ -286,9 +286,9 @@ class PyGraphObserverTests(unittest.TestCase):
     obs = tf.expand_dims(obs, 0) # add a batch dimension
 
     nodes, adjacency_matrix, edge_features = GraphObserver.graph(
-      observations=obs, 
+      observations=obs,
       graph_dims=observer.graph_dimensions)
-    
+
     self.assertEqual(nodes.shape, [1, num_agents, observer.feature_len])
 
     expected_num_agents = len(world.agents)
@@ -297,7 +297,7 @@ class PyGraphObserverTests(unittest.TestCase):
     # to fill up the required observation space.
     expected_n_fill_up_nodes = num_agents - expected_num_agents
     fill_up_nodes = nodes[0, expected_num_agents:]
-    
+
     self.assertEqual(
       fill_up_nodes.shape,
       [expected_n_fill_up_nodes, observer.feature_len])
@@ -313,13 +313,13 @@ class PyGraphObserverTests(unittest.TestCase):
     edge_feature_len = observer.graph_dimensions[2]
     zero_edge_feature_vectors = tf.zeros(
       [zero_indices.shape[0], edge_feature_len])
-    
+
     self.assertTrue(tf.reduce_all(tf.equal(
-      fill_up_edge_features, 
+      fill_up_edge_features,
       zero_edge_feature_vectors)))
 
 
-    
+
 if __name__ == '__main__':
   suite = unittest.TestLoader().loadTestsFromTestCase(PyGraphObserverTests)
   unittest.TextTestRunner(verbosity=2).run(suite)

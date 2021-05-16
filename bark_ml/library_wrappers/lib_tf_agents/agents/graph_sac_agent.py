@@ -14,14 +14,14 @@ from tf_agents.replay_buffers import tf_uniform_replay_buffer
 from bark_ml.library_wrappers.lib_tf_agents.networks import GNNActorNetwork, GNNCriticNetwork
 from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAAgent
 from bark_ml.library_wrappers.lib_tf_agents.agents.gnn_initializers import init_interaction_network
-  
+
 
 class BehaviorGraphSACAgent(BehaviorTFAAgent):
   """
   SAC-Agent with graph neural networks.
   This agent is based on the tf-agents library.
   """
-  
+
   def __init__(self,
                environment=None,
                observer=None,
@@ -50,7 +50,7 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
 
   def GetAgent(self, env, params):
     self._params["ML"]["GraphDims"] = self._observer.graph_dimensions
-    
+
     # actor network
     actor_net = GNNActorNetwork(
       input_tensor_spec=env.observation_spec(),
@@ -73,7 +73,7 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
         "CriticJointFcLayerParams", "", [256, 256]],
       params=params
     )
-    
+
     # agent
     tf_agent = sac_agent.SacAgent(
       env.time_step_spec(),
@@ -127,4 +127,4 @@ class BehaviorGraphSACAgent(BehaviorTFAAgent):
   @property
   def eval_policy(self):
     return self._eval_policy
-  
+

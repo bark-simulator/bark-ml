@@ -48,17 +48,17 @@ class BehaviorTFAAgent(BehaviorModel):
 
   def Reset(self):
     pass
-  
+
   @property
   def set_action_externally(self):
     return self._set_action_externally
-  
+
   @set_action_externally.setter
   def set_action_externally(self, externally):
     # if externally:
     #   self._logger.info("Actions are now set externally.")
     self._set_action_externally = externally
-  
+
   def GetCheckpointer(self):
     checkpointer = Checkpointer(
         self._params["ML"]["BehaviorTFAAgents"]["CheckpointPath", "", ""],
@@ -120,4 +120,3 @@ class BehaviorTFAAgent(BehaviorModel):
 
   def Clone(self):
     return self
-  

@@ -37,22 +37,22 @@ class StateObserver(ABC):
   @abstractmethod
   def Observe(self, observed_world):
     """Observes the world
-    
+
     Arguments:
         world {bark.ObservedWorld} -- observed BARK world
         agents_to_observe {list(int)} -- ids of agents to observe
-    
+
     Returns:
         np.array -- concatenated state array
     """
     pass
-  
+
   def _select_state_by_index(self, state):
     """Selects a subset of an array using the state definition.
-    
+
     Arguments:
         state {np.array} -- full state space
-    
+
     Returns:
         np.array -- reduced state space
     """

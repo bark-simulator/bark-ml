@@ -90,7 +90,7 @@ class PyEnvironmentTests(unittest.TestCase):
       behavior = BehaviorConstantAcceleration(local_params)
       behavior_model_pool.append(behavior)
       count += 1
-    
+
     env = CounterfactualRuntime(
       blueprint=bp,
       render=True,
@@ -124,7 +124,7 @@ class PyEnvironmentTests(unittest.TestCase):
     for _ in range(0, 10):
       action = np.random.randint(low=0, high=3)
       observed_next_state, reward, done, info = env.step(action)
-  
+
 
 if __name__ == '__main__':
   unittest.main()

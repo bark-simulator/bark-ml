@@ -1,4 +1,4 @@
-# Copyright (c) 2020 Patrick Hart, Julian Bernhard, 
+# Copyright (c) 2020 Patrick Hart, Julian Bernhard,
 # Klemens Esterle, Tobias Kessler
 #
 # This software is released under the MIT License.
@@ -19,7 +19,7 @@ class Discrete(gym.spaces.Discrete):
 
     @property
     def low(self):
-        return 0 
+        return 0
 
     @property
     def high(self):

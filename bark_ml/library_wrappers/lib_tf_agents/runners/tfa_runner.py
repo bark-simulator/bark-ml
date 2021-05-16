@@ -50,7 +50,7 @@ class TFARunner:
     self._logger = logging.getLogger()
     self._tracer = tracer or Tracer()
     self._colliding_scenario_ids = []
-    
+
   def SetupSummaryWriter(self):
     if self._params["ML"]["TFARunner"]["SummaryPath"] is not None:
       try:
@@ -103,11 +103,11 @@ class TFARunner:
       action = np.reshape(action, expected_shape)
       # logging.info(action)
     return action
-  
+
   @staticmethod
   def _id_to_idx(id_agent_id_map, aid):
     return list(id_agent_id_map.keys())[list(id_agent_id_map.values()).index(aid)]
-  
+
   @staticmethod
   def _id_agent_map(world, obs, ego_id):
     ego_agent = world.agents[ego_id]
@@ -125,12 +125,12 @@ class TFARunner:
   def _get_agent_pos(world, aid):
     agent = world.agents[aid]
     return [agent.state[1], agent.state[2]]
-    
+
   def ProcessGraphTuple(self, env, graph_tuple, ego_id, render=False):
     senders = graph_tuple.senders.numpy()
     receivers = graph_tuple.receivers.numpy()
     edges = graph_tuple.edges.numpy()
-    
+
     # sorted list
     id_agent_id_map = self._id_agent_map(env._world, env._observer, ego_id)
     # get idx
@@ -176,12 +176,12 @@ class TFARunner:
             line_primitive.Add("stroke_width", max(5*magnitude, .1))
             env._world.renderer.Add("LINES", line_primitive)
           else:
-            ax = env._viewer.axes      
+            ax = env._viewer.axes
             ax.plot(
               [from_pos[0], to_pos[0]],
               [from_pos[1], to_pos[1]],
               color=color, marker="o", linewidth=max(min(50*magnitude, 5.), 0.5), zorder=zorder, alpha=alpha)
-    
+
     if render:
       for idx, agent_id in id_agent_id_map.items():
         agent_pos = self._get_agent_pos(env._world, agent_id)
@@ -199,7 +199,7 @@ class TFARunner:
           ax = env._viewer.axes
           ax.plot(
             agent_pos[0], agent_pos[1], marker='o', color=color, markersize=6)
-      
+
   def RunEpisode(self, render=True, trace_colliding_ids=None, **kwargs):
     state = self._environment.reset()
     is_terminal = False
@@ -233,7 +233,7 @@ class TFARunner:
           self._environment._scenario_idx)
       if is_terminal and info["goal_reached"]:
         self._logger.info("\033[92mThe ego agent reached its goal. \033[0m")
-      
+
   def Run(
     self, num_episodes=10, render=False, mode="not_training",
     trace_colliding_ids=None, **kwargs):
@@ -246,7 +246,7 @@ class TFARunner:
     goal_reached = self._tracer.success_rate
     mean_reward = self._tracer.mean_reward
     mean_steps = self._tracer.mean_steps
-  
+
     if mode == "training":
       global_iteration = self._agent._agent._train_step_counter.numpy()
       tf.summary.scalar("mean_reward", mean_reward, step=global_iteration)
@@ -258,7 +258,7 @@ class TFARunner:
     print(
       f"The agent achieved an average reward of {mean_reward:.3f}," +
       f" collision-rate of {mean_col_rate:.5f}, took on average" +
-      f" {mean_steps:.3f} steps, and reached the goal " + 
+      f" {mean_steps:.3f} steps, and reached the goal " +
       f" {goal_reached:.3f} (evaluated over {num_episodes} episodes).")
     if trace_colliding_ids:
       return self._colliding_scenario_ids

@@ -50,7 +50,7 @@ class PyLibraryWrappersTFAgentTests(unittest.TestCase):
     ml_behaviors.append(
       BehaviorSACAgent(environment=env,
                        params=params))
-    
+
     for ml_behavior in ml_behaviors:
       # set agent
       env.ml_behavior = ml_behavior
@@ -60,7 +60,7 @@ class PyLibraryWrappersTFAgentTests(unittest.TestCase):
         action = np.random.uniform(low=-0.1, high=0.1, size=(2, ))
         observed_next_state, reward, done, info = env.step(action)
         print(f"Observed state: {observed_next_state}, Reward: {reward}, Done: {done}")
-      
+
       # action is set externally
       ml_behavior._set_action_externally = True
       agent_id = list(env._world.agents.keys())[0]
@@ -87,7 +87,7 @@ class PyLibraryWrappersTFAgentTests(unittest.TestCase):
                                     random_seed=0)
     env = SingleAgentRuntime(blueprint=bp, render=False)
     agent = BehaviorPPOAgent(environment=env, params=params)
-    
+
     # set agent
     params["ML"]["PPORunner"]["NumberOfCollections"] = 2
     params["ML"]["SACRunner"]["NumberOfCollections"] = 2

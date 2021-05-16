@@ -30,7 +30,7 @@ class ExperimentRunner:
   """
   The ExperimentRunner-Class provides an easy-to-use interface to
   train, visualize, evaluate, and manage experiments.
-  
+
   Additionally, it creates an Experiment only from a json that is
   hashes before training. Thus, trained results can be matched to executions
   and evaluations.
@@ -61,10 +61,10 @@ class ExperimentRunner:
       self.PrintExperiment()
     if mode == "save":
       self.SaveExperiment(FLAGS.save_path)
-      
+
   def BuildExperiment(self, json_file, mode):
     return Experiment(json_file, self._params, mode)
-  
+
   def GetExperimentsFolder(self, json_file):
     dir_name = Path(json_file).parent
     if not os.path.isdir(dir_name):
@@ -72,7 +72,7 @@ class ExperimentRunner:
     base_name = os.path.basename(json_file)
     file_name = os.path.splitext(base_name)[0]
     return dir_name, file_name
-  
+
   def GenerateHash(self, params):
     """Hash-function to indicate whether the same json is used
        as during training."""
@@ -88,7 +88,7 @@ class ExperimentRunner:
       file.close()
       if experiment_hash != old_experiment_hash:
         self._logger.warning("\033[31m Trained experiment hash does not match \033[0m")
-  
+
   def SetCkptsAndSummaries(self):
     self._runs_folder = \
       str(self._experiment_folder) + "/" + self._json_name + "/" + str(self._random_seed) + "/"
@@ -111,20 +111,20 @@ class ExperimentRunner:
       self.CompareHashes()
     self._experiment.runner.SetupSummaryWriter()
     self._experiment.runner.Train()
-  
+
   def Evaluate(self):
     self.CompareHashes()
     num_episodes = \
       self._params["Experiment"]["NumEvaluationEpisodes"]
     return self._experiment.runner.Run(
       num_episodes=num_episodes, render=False, trace_colliding_ids=True)
-  
+
   def Visualize(self):
     self.CompareHashes()
     num_episodes = \
       self._params["Experiment"]["NumVisualizationEpisodes"]
     self._experiment.runner.Run(num_episodes=num_episodes, render=True)
-    
+
   def PrintExperiment(self):
     pprint.pprint(self._experiment.params.ConvertToDict())
 
@@ -139,4 +139,4 @@ def run_experiment(argv):
     random_seed=FLAGS.random_seed)
 
 if __name__ == '__main__':
-  app.run(run_experiment)    
+  app.run(run_experiment)

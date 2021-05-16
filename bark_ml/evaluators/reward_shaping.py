@@ -1,6 +1,6 @@
 # Copyright (c) 2020 Patrick Hart, Julian Bernhard,
 # Klemens Esterle, Tobias Kessler
-# 
+#
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 import numpy as np
@@ -17,12 +17,12 @@ def VelocityPotential(v, v_des, v_dev_max=10., a=0.4):
   return 1. - (np.sqrt((v-v_des)**2)/v_dev_max)**a
 
 def DistancePotential(d, d_max, b=0.4):
-  return 1. - (d/d_max)**b 
+  return 1. - (d/d_max)**b
 
 def ObjectPotential(d, d_max, c=0.4):
   return -1. + (d/d_max)**c
-  
-  
+
+
 class RewardShapingEvaluator(StateEvaluator):
   def __init__(self,
                params=ParameterServer(),
@@ -107,10 +107,10 @@ class RewardShapingEvaluator(StateEvaluator):
           c=params_obj["exponent"]) for state in [
             (last_state, other_last_state), (current_state, other_current_state)]]
         negative_potentials.append(goal_potentials)
-    
+
     number_pos_potentials = len(positive_potentials)
     number_neg_potentials = len(negative_potentials)
-    
+
     # normalize
     for i in range(0, number_pos_potentials):
       positive_potentials[i][0] /= number_pos_potentials
@@ -118,7 +118,7 @@ class RewardShapingEvaluator(StateEvaluator):
     for i in range(0, number_neg_potentials):
       negative_potentials[i][0] /= number_neg_potentials
       negative_potentials[i][1] /= number_neg_potentials
-    
+
     # reward shaping function gamma*p_{t+1} - p_t
     reward_shaping_value = 0.
     for potential_values in positive_potentials:
@@ -126,7 +126,7 @@ class RewardShapingEvaluator(StateEvaluator):
     for potential_values in negative_potentials:
       reward_shaping_value += gamma*potential_values[1] - potential_values[0]
     return reward_shaping_value
-  
+
   def _evaluate(self, observed_world, eval_results, action):
     """Returns information about the current world state."""
     done = False
@@ -137,16 +137,16 @@ class RewardShapingEvaluator(StateEvaluator):
     reward_shaping_signal = self.RewardShapingFunction(observed_world)
     if success or collision or step_count > self._max_steps:
       done = True
-    
+
     if collision:
       success = 0
       # TODO: needs to be for logging
       eval_results["goal_reached"] = False
-      
+
     # for now it is only collision and success
     reward = collision * self._col_penalty + \
       success * self._goal_reward + reward_shaping_signal
     return reward, done, eval_results
-    
+
   def Reset(self, world):
     return super(RewardShapingEvaluator, self).Reset(world)

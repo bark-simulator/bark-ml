@@ -30,7 +30,7 @@ class GraphNetwork(tf.keras.Model):
       to configure the GNN.
     graph_dims: A tuple containing the three elements
       (num_nodes, len_node_features, len_edge_features) of the input graph.
-      Needed to properly convert observations back into a graph structure 
+      Needed to properly convert observations back into a graph structure
       that can be processed by the GNN.
     name: Name of the instance.
     output_dtype: The dtype to which the GNN output is casted.
@@ -42,10 +42,10 @@ class GraphNetwork(tf.keras.Model):
       self._graph_dims = self._validated_graph_dims(params["ML"]["GraphDims"])
     except:
       pass
-    
+
     # logging.info(
     #   f'"{name}" configured with `spektral` for input graphs with ' +
-    #   f'{self._graph_dims[0]} nodes, {self._graph_dims[1]} node features, ' + 
+    #   f'{self._graph_dims[0]} nodes, {self._graph_dims[1]} node features, ' +
     #   f'and {self._graph_dims[2]} edge features.')
 
 
@@ -61,11 +61,11 @@ class GraphNetwork(tf.keras.Model):
 
   def _init_network(self):
     pass
-  
+
   # @tf.function
   def _init_call_func(self, observations, training=False):
     pass
-  
+
   # relax shapes due to varying batch sizes
   # @tf.function(experimental_relax_shapes=True)
   def call(self, observations, training=False):

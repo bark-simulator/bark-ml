@@ -76,12 +76,12 @@ class GNNValueNetwork(network.Network):
 
     if not kernel_initializer:
       kernel_initializer = tf.compat.v1.keras.initializers.glorot_uniform()
-      
+
     if gnn is None:
       raise ValueError('`gnn` must not be `None`.')
 
     self._gnn = gnn(name=name + "_GNN", params=params)
-    
+
     self._encoder = encoding_network.EncodingNetwork(
       input_tensor_spec=tf.TensorSpec([None, self._gnn._embedding_size]),
       preprocessing_layers=None,
@@ -106,10 +106,10 @@ class GNNValueNetwork(network.Network):
       observations = tf.squeeze(observations, axis=0)
 
     embeddings = self._gnn(observations, training=training)
-    
+
     if tf.shape(embeddings)[0] > 0:
       embeddings = embeddings[:, 0] # extract ego state
-    
+
     with tf.name_scope("PPOCriticNetwork"):
       tf.summary.histogram("embedding", embeddings)
 

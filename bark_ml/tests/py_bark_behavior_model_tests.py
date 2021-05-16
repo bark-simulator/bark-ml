@@ -47,7 +47,7 @@ class PyBarkBehaviorModelTests(unittest.TestCase):
                                      cloned_world.agents.values()):
         # NOTE: should be the same as mean is taken from the agents
         np.testing.assert_array_equal(cloned_agent.state, agent.state)
-  
+
   def test_sac_graph_agent(self):
     params = ParameterServer()
     bp = ContinuousMergingBlueprint(params,

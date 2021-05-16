@@ -32,6 +32,6 @@ class BehaviorContinuousML(BehaviorDynamicModel):
       2,  # acceleration and steering-rate
       low=np.array(self._lower_bounds, dtype=np.float32),
       high=np.array(self._upper_bounds, dtype=np.float32))
-  
+
   def Clone(self):
     return self
