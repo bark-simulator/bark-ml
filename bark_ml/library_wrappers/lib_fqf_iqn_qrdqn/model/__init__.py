@@ -1,3 +1,3 @@
-from .fqf import FQF
-from .iqn import IQN
-from .qrdqn import QRDQN
+from .fqf import FQF  # NOLINT
+from .iqn import IQN  # NOLINT
+from .qrdqn import QRDQN  # NOLINT

@@ -8,7 +8,7 @@
 
 import gym
 import numpy as np
-import bark_ml.environments.gym
+import bark_ml.environments.gym  # NOLINT
 
 # cont. highway env
 # env = gym.make("highway-v0")

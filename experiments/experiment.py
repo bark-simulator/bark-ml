@@ -11,8 +11,7 @@ from bark_ml.core.evaluators import *
 
 
 def LoadModule(module_name, dict_items):
-  """
-  Helper function to load dictionaries.
+  """Helper function to load dictionaries.
 
   Args:
       module_name (string): Name of the module
@@ -24,10 +23,8 @@ def LoadModule(module_name, dict_items):
   return eval("{}(**dict_items)".format(module_name))
 
 class Experiment:
-  """
-  The Experiment-class contains all entities in order to run,
-  train, or evaluate an agent.
-  """
+  """The Experiment-class contains all entities in order to run,
+  train, or evaluate an agent."""
 
   def __init__(self, json_file, params=None, mode=None):
     """

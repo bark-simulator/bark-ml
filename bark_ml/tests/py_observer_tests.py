@@ -22,6 +22,7 @@ from bark_ml.core.observers import NearestObserver
 
 
 class PyObserverTests(unittest.TestCase):
+  """Observer tests."""
 
   def test_nearest_observer(self):
     params = ParameterServer()

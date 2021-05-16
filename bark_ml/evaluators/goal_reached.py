@@ -13,10 +13,8 @@ from bark_ml.evaluators.evaluator import StateEvaluator
 
 
 class GoalReached(StateEvaluator):
-  """
-  Sparse reward evaluator returning +1 for reaching the goal,
-  -1 for having a collision or leaving the drivable area.
-  """
+  """Sparse reward evaluator returning +1 for reaching the goal,
+  -1 for having a collision or leaving the drivable area."""
 
   def __init__(self,
                params=ParameterServer(),

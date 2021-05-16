@@ -22,8 +22,8 @@ from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 
 # highway
 class ContinuousHighwayGym(SingleAgentRuntime, gym.Env):
-  """
-  Highway scenario with continuous behavior model.
+  """Highway scenario with continuous behavior model.
+
   Behavior model takes the steering-rate and acceleration.
   """
 
@@ -36,8 +36,8 @@ class ContinuousHighwayGym(SingleAgentRuntime, gym.Env):
       blueprint=cont_highway_bp, render=True)
 
 class DiscreteHighwayGym(SingleAgentRuntime, gym.Env):
-  """
-  Highway scenario with discrete behavior model.
+  """Highway scenario with discrete behavior model.
+
   Behavior model takes integers [0, 1, 2] as specified in the
   discrete behavior model.
   """
@@ -53,8 +53,8 @@ class DiscreteHighwayGym(SingleAgentRuntime, gym.Env):
 
 # merging
 class ContinuousMergingGym(SingleAgentRuntime, gym.Env):
-  """
-  Merging scenario with continuous behavior model.
+  """Merging scenario with continuous behavior model.
+
   Behavior model takes the steering-rate and acceleration.
   """
 
@@ -84,8 +84,8 @@ class DiscreteMergingGym(SingleAgentRuntime, gym.Env):
 
 # merging
 class MediumContinuousMergingGym(SingleAgentRuntime, gym.Env):
-  """
-  Merging scenario (medium dense traffic) with continuous behavior model.
+  """Merging scenario (medium dense traffic) with continuous behavior model.
+
   Behavior model takes the steering-rate and acceleration.
   """
 
@@ -100,8 +100,8 @@ class MediumContinuousMergingGym(SingleAgentRuntime, gym.Env):
 
 # intersection
 class ContinuousIntersectionGym(SingleAgentRuntime, gym.Env):
-  """
-  Intersection scenario with continuous behavior model.
+  """Intersection scenario with continuous behavior model.
+
   Behavior model takes the steering-rate and acceleration.
   """
 
@@ -114,8 +114,8 @@ class ContinuousIntersectionGym(SingleAgentRuntime, gym.Env):
       blueprint=cont_merging_bp, render=True)
 
 class DiscreteIntersectionGym(SingleAgentRuntime, gym.Env):
-  """
-  Intersection scenario with discrete behavior model.
+  """Intersection scenario with discrete behavior model.
+
   Behavior model takes integers [0, 1, 2] as specified in the
   discrete behavior model.
   """

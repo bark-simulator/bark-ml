@@ -21,6 +21,8 @@ from bark_ml.commons.tracer import Tracer
 
 
 class PyTracerTests(unittest.TestCase):
+  """Tracer tests."""
+
   def test_tracer(self):
     params = ParameterServer()
     bp = ContinuousHighwayBlueprint(params)

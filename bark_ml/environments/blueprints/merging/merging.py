@@ -24,11 +24,8 @@ from bark_ml.core.observers import NearestObserver
 
 
 class MergingLaneCorridorConfig(LaneCorridorConfig):
-
+  """Configures the a single lane, e.g., the goal.
   """
-  Configures the a single lane, e.g., the goal.
-  """
-
   def __init__(self,
                params=None,
                **kwargs):
@@ -46,10 +43,11 @@ class MergingLaneCorridorConfig(LaneCorridorConfig):
 
 
 class MergingBlueprint(Blueprint):
-
-  """
-  The merging blueprint sets up a merging scenario with initial
+  """The merging blueprint sets up a merging scenario with initial
   conditions.
+
+  The ego vehicle is placed on the right lane and its goal is placed
+  on the left lane.
   """
 
   def __init__(self,

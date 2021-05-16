@@ -19,6 +19,7 @@ from bark_ml.observers.graph_observer import GraphObserver
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint
 
 class PyGraphObserverTests(unittest.TestCase):
+  """Observer tests"""
 
   def _get_observation(self, observer, world, eval_id):
     observed_world = world.Observe([eval_id])[0]

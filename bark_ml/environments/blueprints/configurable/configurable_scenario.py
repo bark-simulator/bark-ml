@@ -17,10 +17,9 @@ from bark_ml.core.observers import NearestObserver
 
 
 class ConfigurableScenarioBlueprint(Blueprint):
+  """Blueprint using the configurable scenario generation of BARK.
 
-  """
-  Blueprint using the configurable scenario generation of
-  BARK. Can be an arbitrary scenario.
+     Can be an arbitrary scenario.
   """
   def __init__(self,
                params=None,

@@ -17,8 +17,8 @@ from bark_ml.library_wrappers.lib_tf_agents.agents.gnn_initializers import init_
 
 
 class BehaviorGraphSACAgent(BehaviorTFAAgent):
-  """
-  SAC-Agent with graph neural networks.
+  """SAC-Agent with graph neural networks.
+
   This agent is based on the tf-agents library.
 
   Build upon the paper "Graph Neural Networks and Reinforcement Learning
