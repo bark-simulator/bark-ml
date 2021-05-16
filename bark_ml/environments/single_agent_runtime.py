@@ -9,7 +9,6 @@ from bark.runtime.runtime import Runtime
 
 
 class SingleAgentRuntime(Runtime):
-
   """
   Single agent runtime where action is passed to the
   ego agent.

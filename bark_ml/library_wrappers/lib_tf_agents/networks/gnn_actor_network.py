@@ -26,7 +26,6 @@ def projection_net(spec):
 
 @gin.configurable
 class GNNActorNetwork(network.Network):
-
   """Creates an actor GNN."""
 
   def __init__(self,

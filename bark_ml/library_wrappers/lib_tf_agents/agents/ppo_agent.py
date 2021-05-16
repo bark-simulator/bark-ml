@@ -18,7 +18,6 @@ from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAA
 
 
 class BehaviorPPOAgent(BehaviorTFAAgent):
-
   """
   BARK PPO agent.
   """

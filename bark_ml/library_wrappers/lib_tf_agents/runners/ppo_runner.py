@@ -12,7 +12,6 @@ from bark_ml.library_wrappers.lib_tf_agents.runners.tfa_runner import TFARunner
 
 
 class PPORunner(TFARunner):
-
   """
   Used to train, evaluate and visualize a proximal policy optimization (PPO)
   agent.

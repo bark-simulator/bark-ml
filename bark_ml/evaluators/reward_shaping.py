@@ -24,7 +24,6 @@ def ObjectPotential(d, d_max, c=0.4):
 
 
 class RewardShapingEvaluator(StateEvaluator):
-
   """
   Reward shaping evaluator using potential functions.
 

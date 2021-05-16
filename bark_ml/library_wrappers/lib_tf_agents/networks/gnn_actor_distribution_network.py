@@ -52,7 +52,6 @@ def _normal_projection_net(action_spec,
 
 @gin.configurable
 class GNNActorDistributionNetwork(network.DistributionNetwork):
-
   """
   Creates an actor producing either Normal or Categorical distribution.
 

@@ -8,10 +8,7 @@
 import pickle
 
 class Tracer:
-
-  """
-  The tracer can be used to log certain values during episodes.
-  """
+  """The tracer can be used to log certain values during episodes."""
 
   def __init__(self, trace_history=True):
     self._states = []

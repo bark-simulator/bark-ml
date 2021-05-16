@@ -17,10 +17,7 @@ from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.network import DQNBase, CosineEm
 
 
 class IQN(BaseModel):
-
-  """
-  IQN Model
-  """
+  """IQN Model."""
 
   def __init__(self, num_channels, num_actions, params, num_cosines,
                dueling_net, noisy_net):
