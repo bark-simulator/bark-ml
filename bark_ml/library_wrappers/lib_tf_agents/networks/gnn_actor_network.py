@@ -44,7 +44,7 @@ class GNNActorNetwork(network.Network):
         inputs.
       output_tensor_spec: A nest of `tensor_spec.BoundedTensorSpec` representing
         the outputs.
-      gnn: The function that initializes a graph neural network that 
+      gnn: The function that initializes a graph neural network that
         accepts the input observations and computes node embeddings.
       fc_layer_params: Optional list of fully_connected parameters, where each
         item is the number of units in the layer.
@@ -72,15 +72,15 @@ class GNNActorNetwork(network.Network):
 
     if len(tf.nest.flatten(input_tensor_spec)) > 1:
       raise ValueError('Only a single observation is supported by this network')
-    
+
     flat_action_spec = tf.nest.flatten(output_tensor_spec)
-    
+
     if len(flat_action_spec) > 1:
       raise ValueError('Only a single action is supported by this network')
-    
+
     if flat_action_spec[0].dtype not in [tf.float32, tf.float64]:
       raise ValueError('Only float actions are supported by this network.')
-    
+
     if gnn is None:
       raise ValueError('`gnn` must not be `None`.')
 
@@ -102,7 +102,7 @@ class GNNActorNetwork(network.Network):
     self._output_tensor_spec = tf.nest.map_structure(lambda proj_net: proj_net.output_spec,
                                         self._projection_nets)
 
-  @property  
+  @property
   def output_tensor_spec(self):
     return self._output_tensor_spec
 
@@ -116,17 +116,17 @@ class GNNActorNetwork(network.Network):
     self._latent_trace = self._gnn._latent_trace
 
     # extract ego state (node 0)
-    if batch_size > 0: 
+    if batch_size > 0:
       embeddings = embeddings[:, 0]
 
     # with tf.name_scope("GNNActorNetwork"):
     #   tf.summary.histogram("actor_gnn_output", embeddings)
-    
+
     output, network_state = self._encoder(embeddings, training=training)
     output = embeddings
-    
+
     outer_rank = nest_utils.get_outer_rank(
-      observations, 
+      observations,
       self.input_tensor_spec)
 
     def call_projection_net(net):

@@ -40,7 +40,7 @@ class PyObserverTests(unittest.TestCase):
     end_time = time.time()
     print(f"It took {end_time-start_time} seconds.")
     print(observed_state, observer.observation_space.shape)
-    
+
   def test_nearest_observer_cpp(self):
     params = ParameterServer()
     bp = ContinuousHighwayBlueprint(params)
@@ -51,7 +51,7 @@ class PyObserverTests(unittest.TestCase):
     # under test
     observer = NearestObserver(params)
     observer.Reset(world)
-    
+
     eval_id = env._scenario._eval_agent_ids[0]
     observed_world = world.Observe([eval_id])[0]
     start_time = time.time()

@@ -39,7 +39,7 @@ class GNNCriticNetwork(network.Network):
     Args:
       input_tensor_spec: A tuple of (observation, action) each a nest of
         `tensor_spec.TensorSpec` representing the inputs.
-      gnn: The function that initializes a graph neural network that 
+      gnn: The function that initializes a graph neural network that
         accepts the input observations and computes node embeddings.
       observation_fc_layer_params: Optional list of fully connected parameters
         for observations, where each item is the number of units in the layer.
@@ -55,7 +55,7 @@ class GNNCriticNetwork(network.Network):
       observation_conv_layer_params: Optional list of convolution layer
         parameters for observations, where each item is a length-three tuple
         indicating (embedding_size, kernel_size, stride).
-      observation_activation_fn: Activation function applied to the observation 
+      observation_activation_fn: Activation function applied to the observation
         layers, e.g. tf.nn.relu, slim.leaky_relu, ...
       action_fc_layer_params: Optional list of fully connected parameters for
         actions, where each item is the number of units in the layer.
@@ -109,12 +109,12 @@ class GNNCriticNetwork(network.Network):
 
     if len(tf.nest.flatten(action_spec)) > 1:
       raise ValueError('Only a single action is supported by this network')
-    
+
     if gnn is None:
       raise ValueError('`gnn` must not be `None`.')
 
     self._gnn = gnn(name=name, params=params)
-    
+
     self._observation_layers = utils.mlp_layers(
       observation_conv_layer_params,
       observation_fc_layer_params,
@@ -156,14 +156,14 @@ class GNNCriticNetwork(network.Network):
     observations, actions = inputs
     batch_size = tf.shape(observations)[0]
     embeddings = self._gnn(observations, training=training)
-    
+
     if batch_size > 0:
       embeddings = embeddings[:, 0] # extract ego state
       actions = tf.reshape(actions, [batch_size, -1])
 
     # with tf.name_scope("GNNCriticEmbeddings"):
     #   tf.summary.histogram("critic_gnn_output", embeddings)
-      
+
     embeddings = tf.cast(tf.nest.flatten(embeddings)[0], tf.float32)
     for layer in self._observation_layers:
       embeddings = layer(embeddings, training=training)

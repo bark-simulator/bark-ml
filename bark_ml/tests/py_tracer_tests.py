@@ -58,7 +58,7 @@ class PyTracerTests(unittest.TestCase):
     for i in range(0, 50):
       self.assertEqual("step_count" in tracer._states[i].keys(), True)
       self.assertEqual("num_episode" in tracer._states[i].keys(), True)
-    
+
   def test_tracing_bark_world(self):
     params = ParameterServer()
     bp = ContinuousHighwayBlueprint(params)

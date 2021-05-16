@@ -21,7 +21,7 @@ class BehaviorGraphPPOAgent(BehaviorTFAAgent):
   ppo-Agent with graph neural networks.
   This agent is based on the tf-agents library.
   """
-  
+
   def __init__(self,
                environment=None,
                observer=None,
@@ -67,7 +67,7 @@ class BehaviorGraphPPOAgent(BehaviorTFAAgent):
         "CriticFcLayerParams", "", [512, 256, 256]]),
       params=params
     )
-    
+
     # agent
     tf_agent = ppo_agent.PPOAgent(
       env.time_step_spec(),
@@ -81,7 +81,7 @@ class BehaviorGraphPPOAgent(BehaviorTFAAgent):
       debug_summaries=True,
       summarize_grads_and_vars=False,
       train_step_counter=self._ckpt.step)
-    
+
     tf_agent.initialize()
     return tf_agent
 

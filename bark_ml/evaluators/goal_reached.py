@@ -1,6 +1,6 @@
 # Copyright (c) 2020 Patrick Hart, Julian Bernhard,
 # Klemens Esterle, Tobias Kessler
-# 
+#
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
@@ -53,11 +53,11 @@ class GoalReached(StateEvaluator):
     if collision:
       success = 0
       eval_results["goal_reached"] = 0
-      
+
     # calculate reward
     reward = collision * self._col_penalty + \
       success * self._goal_reward
     return reward, done, eval_results
-    
+
   def Reset(self, world):
     return super(GoalReached, self).Reset(world)

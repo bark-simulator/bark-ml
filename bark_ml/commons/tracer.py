@@ -53,19 +53,19 @@ class Tracer:
       self._total_reward += eval_dict["reward"]
     if not "magnitude" in eval_dict:
       self._total_steps += 1
-  
+
   @property
   def collision_rate(self):
     if self._total_episodes == 0:
       return self._total_collisions
     return self._total_collisions/self._total_episodes
-  
+
   @property
   def success_rate(self):
     if self._total_episodes == 0:
       return self._total_goals_reached
     return self._total_goals_reached/self._total_episodes
-  
+
   @property
   def mean_steps(self):
     if self._total_episodes == 0:
@@ -77,7 +77,7 @@ class Tracer:
     if self._total_episodes == 0:
       return self._total_reward
     return self._total_reward/self._total_episodes
-  
+
   @property
   def episode_number(self):
     return self._total_episodes
@@ -100,6 +100,6 @@ class Tracer:
     self._total_goals_reached = 0
     self._total_steps = 0
     self._total_reward = 0
-    
-    
-    
+
+
+

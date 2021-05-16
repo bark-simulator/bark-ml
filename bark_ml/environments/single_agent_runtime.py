@@ -18,7 +18,7 @@ class SingleAgentRuntime(Runtime):
                viewer=None,
                scenario_generator=None,
                render=False):
-    
+
     if blueprint is not None:
       self._scenario_generator = blueprint._scenario_generation
       self._viewer = blueprint._viewer
@@ -45,7 +45,7 @@ class SingleAgentRuntime(Runtime):
     self._world = self._observer.Reset(self._world)
     self._world = self._evaluator.Reset(self._world)
     self._world.agents[eval_id].behavior_model = self._ml_behavior
-        
+
     # observe
     observed_world = self._world.Observe([eval_id])[0]
     return self._observer.Observe(observed_world)
@@ -54,16 +54,16 @@ class SingleAgentRuntime(Runtime):
     # render
     if self._render:
       self.render()
-      
+
     # set actions
     eval_id = self._scenario._eval_agent_ids[0]
     if eval_id in self._world.agents:
       self._world.agents[eval_id].behavior_model.ActionToBehavior(action)
-    
+
     # step and observe
     self._world.Step(self._step_time)
     observed_world = self._world.Observe([eval_id])
-    
+
     if len(observed_world) > 0:
       observed_world = observed_world[0]
     else:
@@ -94,4 +94,4 @@ class SingleAgentRuntime(Runtime):
   @ml_behavior.setter
   def ml_behavior(self, ml_behavior):
     self._ml_behavior = ml_behavior
-    
+

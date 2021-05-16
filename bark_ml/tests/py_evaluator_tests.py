@@ -34,7 +34,7 @@ class PyEvaluatorTests(unittest.TestCase):
     print(evaluator.Evaluate(observed_world, action))
     end_time = time.time()
     print(f"It took {end_time-start_time} seconds.")
-    
+
 
   def test_goal_reached_cpp_evaluator(self):
     params = ParameterServer()
@@ -67,6 +67,6 @@ class PyEvaluatorTests(unittest.TestCase):
     print(evaluator.Evaluate(observed_world, action))
     end_time = time.time()
     print(f"It took {end_time-start_time} seconds.")
-  
+
 if __name__ == '__main__':
   unittest.main()

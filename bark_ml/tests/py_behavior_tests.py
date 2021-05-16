@@ -23,7 +23,7 @@ class PyBehaviorTests(unittest.TestCase):
     # sets 0-th motion primitive active
     discrete_behavior.ActionToBehavior(0)
     print(discrete_behavior.action_space)
-    
+
   def test_cont_behavior(self):
     params = ParameterServer()
     cont_behavior = BehaviorContinuousML(params)

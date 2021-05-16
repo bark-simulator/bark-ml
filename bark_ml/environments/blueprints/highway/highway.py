@@ -29,7 +29,7 @@ class HighwayLaneCorridorConfig(LaneCorridorConfig):
                params=None,
                **kwargs):
     super(HighwayLaneCorridorConfig, self).__init__(params, **kwargs)
-  
+
   def goal(self, world):
     road_corr = world.map.GetRoadCorridor(
       self._road_ids, XodrDrivingDirection.forward)

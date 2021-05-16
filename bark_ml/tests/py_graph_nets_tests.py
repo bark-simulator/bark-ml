@@ -53,7 +53,7 @@ class PyGraphNetsTests(unittest.TestCase):
       "senders": senders_0,
       "receivers": receivers_0
     }
-    
+
     input_graph = utils_tf.data_dicts_to_graphs_tuple(
       [data_dict_0, data_dict_0])
 
@@ -61,7 +61,7 @@ class PyGraphNetsTests(unittest.TestCase):
     num_features = 3
     num_edge_features = len(edges_0)
     graph_dims = (num_nodes, num_features, num_edge_features)
-    
+
     # 6 edges x 2
     # 5 nodes x 3
     # adj matrix 5x5
@@ -71,10 +71,10 @@ class PyGraphNetsTests(unittest.TestCase):
     graph_observer = GraphObserver(params)
     graph_observer.feature_len = 2
     graph_observer.edge_feature_len = 3
-    
+
     nodes, _, _ = graph_observer.graph(obs, graph_dims=graph_dims)
-    
-    print(input_graph)    
+
+    print(input_graph)
     # gnn = MLPGraphNetwork()
     # input_graph_1 = GraphsTuple(
     #   nodes=tf.convert_to_tensor(nodes_0, dtype=tf.float32),
@@ -84,11 +84,11 @@ class PyGraphNetsTests(unittest.TestCase):
     #   senders=tf.convert_to_tensor(senders_0, dtype=tf.int32),
     #   n_node=tf.tile([5], [1]),
     #   n_edge=tf.tile([6], [1]))
-    
+
     # tf.print(input_graph_1)
     # result = gnn(input_graph_1)
     # tf.print(result)
-    
+
 
 if __name__ == '__main__':
   unittest.main()

@@ -3,5 +3,5 @@ from bark_ml.library_wrappers.lib_tf_agents.networks.gnns.interaction_wrapper im
 
 def init_interaction_network(name, params):
   return InteractionWrapper(
-    params=params, 
+    params=params,
     name=name + "_InteractionNetwork")

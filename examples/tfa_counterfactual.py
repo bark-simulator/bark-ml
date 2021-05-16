@@ -14,7 +14,7 @@ import tensorflow as tf
 
 # this will disable all BARK log messages
 # import os
-# os.environ['GLOG_minloglevel'] = '3' 
+# os.environ['GLOG_minloglevel'] = '3'
 
 # BARK imports
 from bark.runtime.commons.parameters import ParameterServer
@@ -48,13 +48,13 @@ def run_configuration(argv):
   params["ML"]["VisualizeCfWorlds"] = False
   params["ML"]["VisualizeCfHeatmap"] = False
   # params["ML"]["ResultsFolder"] = "/Users/hart/Development/bark-ml/results/data/"
-  
+
   # viewer = MPViewer(
   #   params=params,
   #   x_range=[-35, 35],
   #   y_range=[-35, 35],
   #   follow_agent_id=True)
-  
+
 
   # create environment
   bp = ContinuousMergingBlueprint(params,
@@ -62,14 +62,14 @@ def run_configuration(argv):
                                   random_seed=0)
 
   observer = GraphObserver(params=params)
-  
+
   behavior_model_pool = []
   for count, a in enumerate([-5., 0., 5.]):
     local_params = params.AddChild("local_"+str(count))
     local_params["BehaviorConstantAcceleration"]["ConstAcceleration"] = a
     behavior = BehaviorConstantAcceleration(local_params)
     behavior_model_pool.append(behavior)
-  
+
   env = CounterfactualRuntime(
     blueprint=bp,
     observer=observer,
@@ -99,7 +99,7 @@ def run_configuration(argv):
     goal_reached = runner._tracer.success_rate
     runner._tracer.Save(
       params["ML"]["ResultsFolder"] + "evaluation_results_runner.pckl")
-    
+
   # store all used params of the training
   # params.Save("your_path_here/tfa_sac_gnn_params.json")
 

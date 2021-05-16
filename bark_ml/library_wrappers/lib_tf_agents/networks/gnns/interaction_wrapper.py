@@ -54,7 +54,7 @@ class InteractionWrapper(GraphNetwork):
       "NumMessagePassingLayers", "Number of message passing layers", 2]
     self._embedding_size = params["ML"]["InteractionNetwork"][
       "EmbeddingSize", "Embedding size of nodes", 20]
-    
+
     self._node_mlps = []
     self._edge_mlps = []
     for i in range(0, self._num_message_passing_layers):
@@ -67,7 +67,7 @@ class InteractionWrapper(GraphNetwork):
     # initialize network & call func
     self._init_network(name)
     self._call_func = self._init_call_func
-    
+
   def _init_network(self, name=None):
     self._graph_blocks = []
     for i in range(0, self._num_message_passing_layers):
@@ -75,18 +75,18 @@ class InteractionWrapper(GraphNetwork):
         modules.InteractionNetwork(
           edge_model_fn=lambda: self._edge_mlps[i],
           node_model_fn=lambda: self._node_mlps[i]))
-  
+
   # @tf.function
   def _init_call_func(self, observations, training=False):
     """Graph nets implementation"""
     node_vals, edge_indices, node_to_graph, edge_vals = GraphObserver.graph(
-      observations=observations, 
+      observations=observations,
       graph_dims=self._graph_dims,
       dense=True)
     batch_size = tf.shape(observations)[0]
     node_counts = tf.unique_with_counts(node_to_graph)[2]
     edge_counts = tf.math.square(node_counts)
-    
+
     input_graph = GraphsTuple(
       nodes=tf.cast(node_vals, tf.float32),
       edges=tf.cast(edge_vals, tf.float32),
@@ -94,8 +94,8 @@ class InteractionWrapper(GraphNetwork):
       receivers=tf.cast(edge_indices[:, 1], tf.int32),
       senders=tf.cast(edge_indices[:, 0], tf.int32),
       n_node=node_counts,
-      n_edge=edge_counts) 
-    
+      n_edge=edge_counts)
+
     self._latent_trace = []
     latent = input_graph
     for gb in self._graph_blocks:

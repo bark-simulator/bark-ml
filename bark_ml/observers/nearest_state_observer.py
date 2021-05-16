@@ -52,8 +52,8 @@ class NearestAgentsObserver(StateObserver):
     concatenated_state = np.zeros(self._len_ego_state + \
       self._max_num_vehicles*self._len_relative_agent_state, dtype=np.float32)
     concatenated_state[0:self._len_ego_state] = \
-      self._select_state_by_index(self._norm(ego_state)) 
-    
+      self._select_state_by_index(self._norm(ego_state))
+
     # add max number of agents to state concatenation vector
     concat_pos = self._len_relative_agent_state
     nearest_distances = sorted(nearest_distances.items(),
