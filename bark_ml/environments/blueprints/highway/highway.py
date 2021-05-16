@@ -55,17 +55,16 @@ class HighwayBlueprint(Blueprint):
                random_seed=0,
                ml_behavior=None,
                viewer=True,
-               mode="dense"):
+               mode="medium"):
     if mode == "dense":
-      ds_min = 10.
+      ds_min = 15.
       ds_max = 20.
     if mode == "medium":
       ds_min = 20.
       ds_max = 35.
-    params["BehaviorIDMClassic"]["DesiredVelocity"] = 15.
     params["World"]["remove_agents_out_of_map"] = False
 
-    ego_lane_id = np.random.randint(0, 4)
+    ego_lane_id = 2
     lane_configs = []
     for i in range(0, 4):
       is_controlled = True if (ego_lane_id == i) else None
@@ -74,7 +73,9 @@ class HighwayBlueprint(Blueprint):
       if is_controlled == True:
         s_min = 20.
         s_max = 50.
-      lane_conf = HighwayLaneCorridorConfig(params=params,
+      local_params = params.clone()
+      local_params["BehaviorIDMClassic"]["DesiredVelocity"] = np.random.uniform(12, 17)
+      lane_conf = HighwayLaneCorridorConfig(params=local_params,
                                             road_ids=[16],
                                             lane_corridor_id=i,
                                             min_vel=12.5,

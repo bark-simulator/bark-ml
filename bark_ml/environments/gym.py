@@ -26,7 +26,6 @@ class ContinuousHighwayGym(SingleAgentRuntime, gym.Env):
 
   Behavior model takes the steering-rate and acceleration.
   """
-
   def __init__(self):
     params = ParameterServer(filename=
       os.path.join(os.path.dirname(__file__),

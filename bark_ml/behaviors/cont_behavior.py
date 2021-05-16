@@ -16,7 +16,7 @@ class BehaviorContinuousML(BehaviorDynamicModel):
   """
   Single-track behavior model.
 
-  Input are the steering-rate $\delta$ and the acceleration $a$.
+  Input are the acceleration $a$ the steering-rate $\delta$.
 
   The state-space is comprised of [x,y,$\theta$,v] with $\theta$ being
   the vehicle angle and v the vehicles velocity.
