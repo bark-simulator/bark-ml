@@ -27,7 +27,7 @@ env = gym.make("highway-v0")
 ```
 
 The highway scenario is a curved road with four lanes.
-A potential-based reward signal for the desired velocity is used and the episode is terminal once the maximum number of steps (`60`) has been reached or a collision (`reward -= 1`) has occured or the drivable area (`reward -= 1`) has been left.
+A potential-based reward signal for the desired velocity is used and the episode is terminal once the maximum number of steps (`200`) has been reached or a collision (`reward -= 1`) has occured or the drivable area (`reward -= 1`) has been left.
 The other vehicles in the scenario are controlled by the intelligent driver model (IDM).
 
 The highway scenario can use discrete or continuous actions:
