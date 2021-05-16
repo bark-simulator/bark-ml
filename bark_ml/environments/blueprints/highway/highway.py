@@ -22,6 +22,11 @@ from bark_ml.core.observers import NearestObserver
 
 
 class HighwayLaneCorridorConfig(LaneCorridorConfig):
+
+  """
+  Configures the a single lane, e.g., the goal.
+  """
+
   def __init__(self,
                params=None,
                **kwargs):
@@ -38,6 +43,12 @@ class HighwayLaneCorridorConfig(LaneCorridorConfig):
 
 
 class HighwayBlueprint(Blueprint):
+
+  """
+  The highway blueprint sets up a merging scenario with initial
+  conditions.
+  """
+
   def __init__(self,
                params=None,
                num_scenarios=250,

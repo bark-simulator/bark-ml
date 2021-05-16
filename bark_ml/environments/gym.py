@@ -22,6 +22,12 @@ from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 
 # highway
 class ContinuousHighwayGym(SingleAgentRuntime, gym.Env):
+
+  """
+  Highway scenario with continuous behavior model.
+  Behavior model takes the steering-rate and acceleration.
+  """
+
   def __init__(self):
     params = ParameterServer(filename=
       os.path.join(os.path.dirname(__file__),
@@ -31,6 +37,13 @@ class ContinuousHighwayGym(SingleAgentRuntime, gym.Env):
       blueprint=cont_highway_bp, render=True)
 
 class DiscreteHighwayGym(SingleAgentRuntime, gym.Env):
+
+  """
+  Highway scenario with discrete behavior model.
+  Behavior model takes integers [0, 1, 2] as specified in the
+  discrete behavior model.
+  """
+
   def __init__(self,
     params = ParameterServer(filename= \
       os.path.join(os.path.dirname(__file__),
@@ -42,6 +55,12 @@ class DiscreteHighwayGym(SingleAgentRuntime, gym.Env):
 
 # merging
 class ContinuousMergingGym(SingleAgentRuntime, gym.Env):
+
+  """
+  Merging scenario with continuous behavior model.
+  Behavior model takes the steering-rate and acceleration.
+  """
+
   def __init__(self):
     params = ParameterServer(filename= \
       os.path.join(os.path.dirname(__file__),
@@ -51,6 +70,13 @@ class ContinuousMergingGym(SingleAgentRuntime, gym.Env):
       blueprint=cont_merging_bp, render=True)
 
 class DiscreteMergingGym(SingleAgentRuntime, gym.Env):
+
+  """
+  Merging scenario with discrete behavior model.
+  Behavior model takes integers [0, 1, 2] as specified in the
+  discrete behavior model.
+  """
+
   def __init__(self,
     params = ParameterServer(filename= \
       os.path.join(os.path.dirname(__file__),
@@ -62,6 +88,12 @@ class DiscreteMergingGym(SingleAgentRuntime, gym.Env):
 
 # merging
 class MediumContinuousMergingGym(SingleAgentRuntime, gym.Env):
+
+  """
+  Merging scenario (medium dense traffic) with continuous behavior model.
+  Behavior model takes the steering-rate and acceleration.
+  """
+
   def __init__(self):
     params = ParameterServer(filename= \
       os.path.join(os.path.dirname(__file__),
@@ -73,6 +105,12 @@ class MediumContinuousMergingGym(SingleAgentRuntime, gym.Env):
 
 # intersection
 class ContinuousIntersectionGym(SingleAgentRuntime, gym.Env):
+
+  """
+  Intersection scenario with continuous behavior model.
+  Behavior model takes the steering-rate and acceleration.
+  """
+
   def __init__(self):
     params = ParameterServer(filename= \
       os.path.join(os.path.dirname(__file__),
@@ -82,6 +120,13 @@ class ContinuousIntersectionGym(SingleAgentRuntime, gym.Env):
       blueprint=cont_merging_bp, render=True)
 
 class DiscreteIntersectionGym(SingleAgentRuntime, gym.Env):
+
+  """
+  Intersection scenario with discrete behavior model.
+  Behavior model takes integers [0, 1, 2] as specified in the
+  discrete behavior model.
+  """
+
   def __init__(self,
     params = ParameterServer(filename= \
       os.path.join(os.path.dirname(__file__),
@@ -92,8 +137,13 @@ class DiscreteIntersectionGym(SingleAgentRuntime, gym.Env):
       blueprint=discrete_merging_bp, render=render)
 
 class GymSingleAgentRuntime(SingleAgentRuntime, gym.Wrapper):
-    def __init__(self, *args, **kwargs):
-        SingleAgentRuntime.__init__(self, *args, **kwargs)
+
+  """
+  Wraps the BARK environment for OpenAI-Gym.
+  """
+
+  def __init__(self, *args, **kwargs):
+    SingleAgentRuntime.__init__(self, *args, **kwargs)
 
 
 # register gym envs

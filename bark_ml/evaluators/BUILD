@@ -5,7 +5,6 @@ py_library(
     name = "evaluators",
     srcs = ["__init__.py",
             "goal_reached.py",
-            "goal_reached_guiding.py",
             "reward_shaping.py",
             "commons.py",
             "evaluator.py"],

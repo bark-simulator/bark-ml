@@ -12,6 +12,12 @@ from abc import ABC, abstractmethod
 
 
 class StateObserver(ABC):
+
+  """
+  The observer creates the observed state that then can be, e.g.,
+  used by a deep neural network.
+  """
+
   def __init__(self,
                params):
     self._params = params

@@ -24,6 +24,7 @@ class PyBARKEnvironment(py_environment.PyEnvironment):
   Arguments:
     py_environment -- Base class for environment from tf_agents
   """
+
   def __init__(self, env):
     self._env = env
     self._action_spec = array_spec.BoundedArraySpec(

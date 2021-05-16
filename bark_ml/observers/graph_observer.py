@@ -26,6 +26,10 @@ class GraphObserver(StateObserver):
   connections between nodes in the graph, and edges (with
   features), expressing the relative information between
   the agents that constitute these connections.
+
+  Graph generation used in the paper "Graph Neural Networks and Reinforcement
+  Learning for Behavior Generation in Semantic Environments"
+  (https://arxiv.org/abs/2006.12576)
   """
 
   def __init__(self, params=ParameterServer()):

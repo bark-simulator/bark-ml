@@ -19,8 +19,12 @@ from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAA
 class BehaviorGraphPPOAgent(BehaviorTFAAgent):
 
   """
-  ppo-Agent with graph neural networks.
+  PPO-Agent with graph neural networks.
   This agent is based on the tf-agents library.
+
+  Build upon the paper "Graph Neural Networks and Reinforcement Learning
+  for Behavior Generation in Semantic Environments"
+  (https://arxiv.org/abs/2006.12576)
   """
 
   def __init__(self,

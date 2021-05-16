@@ -16,6 +16,7 @@ class StateEvaluator(ABC):
     Evaluates the state of the environment
     e.g., if a collision has happend.
   """
+
   def __init__(self,
                params=ParameterServer()):
     self._params = params

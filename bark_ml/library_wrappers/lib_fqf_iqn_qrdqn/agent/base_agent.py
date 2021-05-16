@@ -26,6 +26,11 @@ import logging
 
 
 class BaseAgent(BehaviorModel):
+
+  """
+  BaseAgent that can be used in BARK and BARK-ML.
+  """
+
   def __init__(self, env, test_env, params, bark_behavior=None):
     BehaviorModel.__init__(self, params)
     self._params = params

@@ -13,6 +13,16 @@ from bark_ml.commons.py_spaces import BoundedContinuous
 
 
 class BehaviorContinuousML(BehaviorDynamicModel):
+
+  """
+  Single-track behavior model.
+
+  Input are the steering-rate $\delta$ and the acceleration $a$.
+
+  The state-space is comprised of [x,y,$\theta$,v] with $\theta$ being
+  the vehicle angle and v the vehicles velocity.
+  """
+
   def __init__(self,
                params=None):
     BehaviorDynamicModel.__init__(self, params)

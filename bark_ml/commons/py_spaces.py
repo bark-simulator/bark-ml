@@ -10,6 +10,11 @@ import numpy as np
 
 
 class Discrete(gym.spaces.Discrete):
+
+    """
+    Gym discrete spaces.
+    """
+
     def __init__(self, n):
         self._n = n
         super(Discrete, self).__init__( n)
@@ -43,6 +48,11 @@ class Discrete(gym.spaces.Discrete):
 
 
 class BoundedContinuous(Space):
+
+  """
+  Gym continuous spaces.
+  """
+
   def __init__(self,
                n,
                low=None,
