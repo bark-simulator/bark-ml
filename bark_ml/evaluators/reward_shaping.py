@@ -9,6 +9,7 @@ from bark.core.world.evaluation import \
   EvaluatorStepCount, EvaluatorDrivableArea
 from bark.runtime.commons.parameters import ParameterServer
 from bark.core.models.dynamic import StateDefinition
+from bark.core.geometry import *
 
 from bark_ml.evaluators.evaluator import StateEvaluator
 from bark_ml.evaluators.commons import *
@@ -90,7 +91,7 @@ class RewardShapingEvaluator(StateEvaluator):
       positive_potentials.append(vel_potentials)
     if "DistancePotential" in self._active_shaping_functions:
       params_goal = self._active_shaping_functions["DistancePotential"]
-      goal_center_line =  ego_agent.goal_definition.center_line
+      goal_center_line = ego_agent.goal_definition.center_line
       if Distance(
           goal_center_line,
           Point2d(current_state[1], current_state[2])) < params_goal["d_max"]:

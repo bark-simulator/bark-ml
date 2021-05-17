@@ -7,6 +7,7 @@ py_library(
             "goal_reached.py",
             "reward_shaping.py",
             "reward_shaping_max_steps.py",
+            "reward_shaping_intersection.py",
             "commons.py",
             "evaluator.py"],
     data = ["@bark_project//bark/python_wrapper:core.so"],

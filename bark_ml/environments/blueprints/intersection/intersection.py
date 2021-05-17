@@ -15,7 +15,7 @@ from bark.core.world.goal_definition import GoalDefinitionPolygon
 from bark.core.models.behavior import BehaviorMobilRuleBased
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
-from bark_ml.evaluators.goal_reached import GoalReached
+from bark_ml.evaluators.reward_shaping_intersection import RewardShapingEvaluatorIntersection
 # from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
@@ -87,10 +87,10 @@ class IntersectionBlueprint(Blueprint):
                                      behavior_model=BehaviorMobilRuleBased(params),
                                      min_vel=5.,
                                      max_vel=10.,
-                                     ds_min=10.,
+                                     ds_min=40.,
                                      ds_max=40.,
-                                     s_min=35.,
-                                     s_max=45.,
+                                     s_min=30.,
+                                     s_max=40.,
                                      controlled_ids=True))
 
     scenario_generation = \
@@ -106,7 +106,8 @@ class IntersectionBlueprint(Blueprint):
                         y_range=[-30, 30],
                         follow_agent_id=True)
     dt = 0.2
-    evaluator = GoalReached(params)
+    params["ML"]["GoalReachedEvaluator"]["MaxSteps"] = 100
+    evaluator = RewardShapingEvaluatorIntersection(params)
     observer = NearestObserver(params)
     ml_behavior = ml_behavior
 
