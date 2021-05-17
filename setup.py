@@ -18,7 +18,7 @@ ext_modules.append(temp_ext)
 
 setup(
     name = "bark-ml",
-    version = "0.2.12",
+    version = "0.2.13",
     description = "Machine Learning Applied to Autonomous Driving",
     long_description=long_description,
     long_description_content_type="text/plain",
