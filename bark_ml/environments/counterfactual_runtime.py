@@ -86,8 +86,8 @@ class CounterfactualRuntime(SingleAgentRuntime):
     """Clones the world and replaced the behavior of an agent."""
     cloned_world = self._world.Copy()
     evaluators = self._evaluator._add_evaluators()
-    for eval_key, eval in evaluators.items():
-      cloned_world.AddEvaluator(eval_key, eval)
+    for eval_key, eval_v in evaluators.items():
+      cloned_world.AddEvaluator(eval_key, eval_v)
     if behavior is not None:
       cloned_world.agents[agent_id].behavior_model = behavior
     return cloned_world
@@ -182,7 +182,8 @@ class CounterfactualRuntime(SingleAgentRuntime):
             states_.append(state)
     return states_
 
-  def ExtractStatesPerWorld(self, states):
+  @staticmethod
+  def ExtractStatesPerWorld(states):
     pure_states_ = {}
     for state in states:
       world_idx = state["num_virtual_world"]
@@ -207,7 +208,6 @@ class CounterfactualRuntime(SingleAgentRuntime):
     return mean
 
   def DrawHeatmap(self, local_tracer, filename="./"):
-    eval_id = self._scenario._eval_agent_ids[0]
     base_states = self.FilterStates(local_tracer._states, replaced_agent="None")
     extracted_base_states = self.ExtractStatesPerWorld(base_states)
     extracted_base_states_np = extracted_base_states[

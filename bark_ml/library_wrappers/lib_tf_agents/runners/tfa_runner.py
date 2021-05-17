@@ -154,7 +154,6 @@ class TFARunner:
           color = (12/255, 44/255, 132/255, 1.)
           zorder = 10
           alpha = 0.8
-        length = np.sqrt((from_pos[0] - to_pos[0])**2 + (from_pos[1] - to_pos[1])**2)
         from_agent_state = env._world.agents[from_id].state
         to_agent_state = env._world.agents[to_id].state
         if to_id != agent_id:
@@ -241,7 +240,7 @@ class TFARunner:
     for i in range(0, num_episodes):
       if render:
         self._logger.info(f"Simulating episode {i}.")
-      trajectory = self.RunEpisode(
+      self.RunEpisode(
         render=render, num_episode=i, trace_colliding_ids=trace_colliding_ids, **kwargs)
     mean_col_rate = self._tracer.collision_rate
     goal_reached = self._tracer.success_rate

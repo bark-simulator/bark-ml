@@ -69,7 +69,7 @@ class InteractionWrapper(GraphNetwork):
     self._init_network(name)
     self._call_func = self._init_call_func
 
-  def _init_network(self):
+  def _init_network(self, name=None):
     self._graph_blocks = []
     for i in range(0, self._num_message_passing_layers):
       self._graph_blocks.append(

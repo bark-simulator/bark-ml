@@ -12,7 +12,7 @@ from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
 from bark.core.world.opendrive import XodrDrivingDirection
 from bark.core.world.goal_definition import GoalDefinitionPolygon
-from bark.core.models.behavior import BehaviorIntersectionRuleBased
+from bark.core.models.behavior import BehaviorMobilRuleBased
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
 from bark_ml.evaluators.goal_reached import GoalReached
@@ -60,11 +60,11 @@ class IntersectionBlueprint(Blueprint):
       IntersectionLaneCorridorConfig(params=params,
                                      source_pos=[-40, -3],
                                      sink_pos=[40, -3],
-                                     behavior_model=BehaviorIntersectionRuleBased(params),
+                                     behavior_model=BehaviorMobilRuleBased(params),
                                      min_vel=10.,
-                                     max_vel=15.,
+                                     max_vel=12.,
                                      ds_min=10.,
-                                     ds_max=15.,
+                                     ds_max=25.,
                                      s_min=5.,
                                      s_max=50.,
                                      controlled_ids=None))
@@ -72,11 +72,11 @@ class IntersectionBlueprint(Blueprint):
       IntersectionLaneCorridorConfig(params=params,
                                      source_pos=[40, 3],
                                      sink_pos=[-40, 3],
-                                     behavior_model=BehaviorIntersectionRuleBased(params),
+                                     behavior_model=BehaviorMobilRuleBased(params),
                                      min_vel=10.,
-                                     max_vel=15.,
+                                     max_vel=12.,
                                      ds_min=15.,
-                                     ds_max=15.,
+                                     ds_max=25.,
                                      s_min=5.,
                                      s_max=50.,
                                      controlled_ids=None))
@@ -84,13 +84,13 @@ class IntersectionBlueprint(Blueprint):
       IntersectionLaneCorridorConfig(params=params,
                                      source_pos=[3, -30],
                                      sink_pos=[-40, 3],
-                                     behavior_model=BehaviorIntersectionRuleBased(params),
+                                     behavior_model=BehaviorMobilRuleBased(params),
                                      min_vel=5.,
                                      max_vel=10.,
                                      ds_min=10.,
-                                     ds_max=20.,
-                                     s_min=40.,
-                                     s_max=51.,
+                                     ds_max=40.,
+                                     s_min=35.,
+                                     s_max=45.,
                                      controlled_ids=True))
 
     scenario_generation = \
