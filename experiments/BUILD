@@ -1,6 +1,6 @@
 filegroup(
     name = "data",
-    srcs = glob(["**/*.yaml", "**/*.json", "**/*.xodr", "**/*.py"]),
+    srcs = glob(["*.json", "**/*.yaml", "**/*.json", "**/*.xodr", "**/*.py"]),
     visibility = ["//visibility:public"],
 )
 

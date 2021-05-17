@@ -15,7 +15,7 @@ from bark.runtime.commons.parameters import ParameterServer
 # BARK-ML imports
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-import bark_ml.environments.gym  # NOLINT
+import bark_ml.environments.gym  # # pylint: disable=unused-import
 from bark_ml.library_wrappers.lib_tf_agents.agents.ppo_agent import BehaviorPPOAgent
 from bark_ml.library_wrappers.lib_tf_agents.agents.sac_agent import BehaviorSACAgent
 from bark_ml.library_wrappers.lib_tf_agents.runners.ppo_runner import PPORunner

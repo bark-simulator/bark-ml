@@ -6,13 +6,13 @@ To avoid mismatching training and execution runs, the experiment runner addition
 ## Usage
 
 For training, run the following command:
-`bazel run //experiments:experiment_runner -- --exp_json=/ABSOLUTE_PATH/bark-ml/experiments/configs/highway_interaction_network.json --mode=train`
+`bazel run //experiments:experiment_runner -- --exp_json=/ABSOLUTE_PATH/bark-ml/experiments/configs/highway_gnn.json --mode=train`
 
 To visualize the current checkpoint, run:
-`bazel run //experiments:experiment_runner -- --exp_json=/ABSOLUTE_PATH/bark-ml/experiments/configs/highway_interaction_network.json`
+`bazel run //experiments:experiment_runner -- --exp_json=/ABSOLUTE_PATH/bark-ml/experiments/configs/highway_gnn.json`
 
 And to evaluate the performance of the agent, use:
-`bazel run //experiments:experiment_runner -- --exp_json=/ABSOLUTE_PATH/bark-ml/experiments/configs/highway_interaction_network.json --mode=evaluate`
+`bazel run //experiments:experiment_runner -- --exp_json=/ABSOLUTE_PATH/bark-ml/experiments/configs/highway_gnn.json --mode=evaluate`
 
 ## Cluster Usage
 

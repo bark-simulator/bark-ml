@@ -112,7 +112,7 @@ class NearestObserver : public BaseObserver {
       if (agent.second->GetAgentId() != observed_world->GetEgoAgentId()) {
         ObservedState other_agent_state =
           FilterState(agent.second->GetCurrentState());
-        state.block(0, row_idx*state_size_, 1, state_size_) = other_agent_state;  // NOLINT
+        state.block(0, row_idx*state_size_, 1, state_size_) = other_agent_state;  // # pylint: disable=unused-import
         row_idx++;
       }
     }

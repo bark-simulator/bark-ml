@@ -78,7 +78,7 @@ A complete example using the [OpenAi-Gym](https://github.com/openai/gym) interfa
 import gym
 import numpy as np
 # registers bark-ml environments
-import bark_ml.environments.gym  # NOLINT
+import bark_ml.environments.gym  # # pylint: disable=unused-import
 
 env = gym.make("merging-v0")
 
