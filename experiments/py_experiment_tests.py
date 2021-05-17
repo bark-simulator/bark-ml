@@ -13,7 +13,7 @@ from experiments.experiment import Experiment
 
 class PyExperimentTests(unittest.TestCase):
   def test_experiment_class(self):
-    experiment = Experiment("experiments/configs/highway_interaction_network.json")
+    experiment = Experiment("experiments/configs/highway_gnn.json")
     # visualize/evaluate
     experiment.runner.Run(num_episodes=2, render=False)
     # experiment.params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = \
