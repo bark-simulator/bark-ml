@@ -32,10 +32,9 @@ class MergingLaneCorridorConfig(LaneCorridorConfig):
     super(MergingLaneCorridorConfig, self).__init__(params, **kwargs)
 
   def goal(self, world):
-    road_corr = world.map.GetRoadCorridor(
+    world.map.GetRoadCorridor(
       self._road_ids, XodrDrivingDirection.forward)
     lane_corr = self._road_corridor.lane_corridors[0]
-    lane_polygon = lane_corr.polygon
     return GoalDefinitionStateLimitsFrenet(lane_corr.center_line,
                                            (0.9, 0.9),
                                            (0.15, 0.15),
@@ -96,7 +95,7 @@ class MergingBlueprint(Blueprint):
     scenario_generation = \
       ConfigWithEase(
         num_scenarios=num_scenarios,
-        map_file_name=os.path.join(os.path.dirname(__file__), "../../../environments/blueprints/merging/DR_DEU_Merging_MT_v01_centered.xodr"),  # # pylint: disable=unused-import
+        map_file_name=os.path.join(os.path.dirname(__file__), "../../../environments/blueprints/merging/DR_DEU_Merging_MT_v01_centered.xodr"),  # pylint: disable=unused-import
         random_seed=random_seed,
         params=params,
         lane_corridor_configs=[left_lane, right_lane])

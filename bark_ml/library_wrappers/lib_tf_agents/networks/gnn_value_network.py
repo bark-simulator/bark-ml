@@ -6,7 +6,7 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 import gin
-import tensorflow as tf  # pylint: disable=g-explicit-tensorflow-version-import
+import tensorflow as tf  # pylint: disable=unused-import
 
 from tf_agents.networks import network, encoding_network
 from bark.runtime.commons.parameters import ParameterServer

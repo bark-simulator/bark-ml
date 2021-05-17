@@ -8,7 +8,7 @@
 
 import gym
 import numpy as np
-import bark_ml.environments.gym  # # pylint: disable=unused-import
+import bark_ml.environments.gym  # pylint: disable=unused-import
 
 # discrete highway env
 env = gym.make("highway-v1")

@@ -52,7 +52,6 @@ class StateObserver(ABC):
     Returns:
         np.array -- concatenated state array
     """
-    pass
 
   def _select_state_by_index(self, state):
     """Selects a subset of an array using the state definition.

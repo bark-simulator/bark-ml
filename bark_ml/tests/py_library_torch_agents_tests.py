@@ -19,7 +19,7 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.environments.blueprints import \
   DiscreteHighwayBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-import bark_ml.environments.gym  # # pylint: disable=unused-import
+import bark_ml.environments.gym  # pylint: disable=unused-import
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.model_wrapper \
  import pytorch_script_wrapper
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent import IQNAgent, FQFAgent, QRDQNAgent

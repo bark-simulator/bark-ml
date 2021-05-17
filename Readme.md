@@ -1,4 +1,3 @@
-
 # BARK-ML - Machine Learning for Autonomous Driving
 
 [![CI Build](https://github.com/bark-simulator/bark-ml/workflows/CI/badge.svg)](https://github.com/bark-simulator/bark-ml/actions)
@@ -78,7 +77,7 @@ A complete example using the [OpenAi-Gym](https://github.com/openai/gym) interfa
 import gym
 import numpy as np
 # registers bark-ml environments
-import bark_ml.environments.gym  # # pylint: disable=unused-import
+import bark_ml.environments.gym  # pylint: disable=unused-import
 
 env = gym.make("merging-v0")
 

@@ -135,7 +135,7 @@ class TFARunner:
     # sorted list
     id_agent_id_map = self._id_agent_map(env._world, env._observer, ego_id)
     # get idx
-    for idx, agent_id in id_agent_id_map.items():
+    for _, agent_id in id_agent_id_map.items():
       receiver_idx = np.where(
         receivers == self._id_to_idx(id_agent_id_map, ego_id))
       sender_idx = senders[receiver_idx]
@@ -184,7 +184,7 @@ class TFARunner:
               color=color, marker="o", linewidth=max(min(50*magnitude, 5.), 0.5), zorder=zorder, alpha=alpha)
 
     if render:
-      for idx, agent_id in id_agent_id_map.items():
+      for _, agent_id in id_agent_id_map.items():
         agent_pos = self._get_agent_pos(env._world, agent_id)
         color = "gray"
         if agent_id == ego_id:

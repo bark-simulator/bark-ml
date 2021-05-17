@@ -9,7 +9,6 @@
 
 import unittest
 import time
-import tensorflow as tf
 
 # Bark imports
 from bark.runtime.commons.parameters import ParameterServer

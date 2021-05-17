@@ -13,7 +13,6 @@ from bark.runtime.scenario.scenario_generation.config_with_ease import \
 from bark.core.world.opendrive import XodrDrivingDirection
 from bark.core.world.goal_definition import GoalDefinitionPolygon
 from bark.core.models.behavior import BehaviorIntersectionRuleBased
-from bark.core.world.goal_definition import GoalDefinitionPolygon
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
 from bark_ml.evaluators.goal_reached import GoalReached
@@ -33,7 +32,7 @@ class IntersectionLaneCorridorConfig(LaneCorridorConfig):
     super(IntersectionLaneCorridorConfig, self).__init__(params, **kwargs)
 
   def controlled_goal(self, world):
-    road_corr = world.map.GetRoadCorridor(
+    world.map.GetRoadCorridor(
       self._road_ids, XodrDrivingDirection.forward)
     lane_corr = self._road_corridor.lane_corridors[0]
     # lanes are sorted by their s-value
@@ -97,14 +96,14 @@ class IntersectionBlueprint(Blueprint):
     scenario_generation = \
       ConfigWithEase(
         num_scenarios=num_scenarios,
-        map_file_name=os.path.join(os.path.dirname(__file__), "../../../environments/blueprints/intersection/4way_intersection.xodr"),  # # pylint: disable=unused-import
+        map_file_name=os.path.join(os.path.dirname(__file__), "../../../environments/blueprints/intersection/4way_intersection.xodr"),  # pylint: disable=unused-import
         random_seed=random_seed,
         params=params,
         lane_corridor_configs=lane_corridors)
     if viewer:
       viewer = MPViewer(params=params,
-                        x_range=[-35, 35],
-                        y_range=[-35, 35],
+                        x_range=[-30, 30],
+                        y_range=[-30, 30],
                         follow_agent_id=True)
     dt = 0.2
     evaluator = GoalReached(params)

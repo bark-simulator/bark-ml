@@ -6,11 +6,9 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 # TensorFlow Agents (https://github.com/tensorflow/agents) example
-import gym
-import numpy as np
+import gym # pylint: disable=unused-import
 from absl import app
 from absl import flags
-import tensorflow as tf
 
 # this will disable all BARK log messages
 # import os

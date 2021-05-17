@@ -34,7 +34,8 @@ class GoalReached(StateEvaluator):
         60]
     self._eval_agent = eval_agent
 
-  def _add_evaluators(self):
+  @staticmethod
+  def _add_evaluators():
     evaluators = {}
     evaluators["goal_reached"] = EvaluatorGoalReached()
     evaluators["collision"] = EvaluatorCollisionEgoAgent()

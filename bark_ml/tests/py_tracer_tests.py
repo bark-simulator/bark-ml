@@ -75,7 +75,7 @@ class PyTracerTests(unittest.TestCase):
     env.reset()
     bark_world = env._world
     for j in range(0, 2):
-      for i in range(0, 5):
+      for _ in range(0, 5):
         bark_world.Step(0.2)
         eval_dict = bark_world.Evaluate()
         eval_dict["is_terminal"] = eval_dict["collision"] or \

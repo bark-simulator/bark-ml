@@ -172,7 +172,8 @@ class CounterfactualRuntime(SingleAgentRuntime):
             "goal_reached": goal_reached,
             "max_col_rate": self._max_col_rate}
 
-  def FilterStates(self, states, **kwargs):
+  @staticmethod
+  def FilterStates(states, **kwargs):
     states_ = []
     for state in states:
       for kwarg_key, kwarg_val in kwargs.items():
@@ -197,7 +198,7 @@ class CounterfactualRuntime(SingleAgentRuntime):
     extracted_states = self.ExtractStatesPerWorld(filtered_states)
     # print(extracted_states, agent_id)
     mean = None
-    for k, v in extracted_states.items():
+    for v in extracted_states.values():
       if mean is None:
         mean = v
       else:
