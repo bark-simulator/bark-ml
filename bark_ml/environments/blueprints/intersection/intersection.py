@@ -97,7 +97,7 @@ class IntersectionBlueprint(Blueprint):
     scenario_generation = \
       ConfigWithEase(
         num_scenarios=num_scenarios,
-        map_file_name=os.path.join(os.path.dirname(__file__), "../../../environments/blueprints/intersection/4way_intersection.xodr"),  # NOLINT
+        map_file_name=os.path.join(os.path.dirname(__file__), "../../../environments/blueprints/intersection/4way_intersection.xodr"),  # # pylint: disable=unused-import
         random_seed=random_seed,
         params=params,
         lane_corridor_configs=lane_corridors)

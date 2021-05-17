@@ -21,7 +21,7 @@ from bark_ml.environments.blueprints import ContinuousMergingBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorGraphSACAgent
 from bark_ml.observers.graph_observer import GraphObserver
-import bark_ml.environments.gym  # NOLINT
+import bark_ml.environments.gym  # # pylint: disable=unused-import
 
 
 class PyBarkBehaviorModelTests(unittest.TestCase):

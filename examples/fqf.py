@@ -6,7 +6,7 @@
 
 import gym
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent import FQFAgent
-import bark_ml.environments.gym  # NOLINT
+import bark_ml.environments.gym  # # pylint: disable=unused-import
 from bark.runtime.commons.parameters import ParameterServer
 from absl import app
 from absl import flags

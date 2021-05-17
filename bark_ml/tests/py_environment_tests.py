@@ -21,7 +21,7 @@ from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.environments.counterfactual_runtime import CounterfactualRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents.sac_agent import BehaviorSACAgent
-import bark_ml.environments.gym  # NOLINT
+import bark_ml.environments.gym  # # pylint: disable=unused-import
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 
 
@@ -59,7 +59,7 @@ class PyEnvironmentTests(unittest.TestCase):
     # highway-v1: discrete
     # merging-v0: continuous
     # merging-v1: discrete
-    # are registered here: import bark_ml.environments.gym  # NOLINT
+    # are registered here: import bark_ml.environments.gym  # # pylint: disable=unused-import
 
     cont_envs = [gym.make("highway-v0"), gym.make("merging-v0")]
     for env in cont_envs:

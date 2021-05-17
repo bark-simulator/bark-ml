@@ -77,7 +77,7 @@ class GoalReachedEvaluator : public BaseEvaluator {
       "ML::GoalReachedEvaluator::MaxSteps", "", 50);
   }
 
-  void AddEvaluators(WorldPtr& world) {  // NOLINT
+  void AddEvaluators(WorldPtr& world) {  // # pylint: disable=unused-import
     world->AddEvaluator("goal_reached",
       std::make_shared<EvaluatorGoalReached>());
     world->AddEvaluator("collision",
@@ -105,7 +105,7 @@ class GoalReachedEvaluator : public BaseEvaluator {
       return {reward, is_terminal, eval_results};
     }
 
-  WorldPtr Reset(WorldPtr& world) {  // NOLINT
+  WorldPtr Reset(WorldPtr& world) {  // # pylint: disable=unused-import
     world->ClearEvaluators();
     AddEvaluators(world);
     return world;

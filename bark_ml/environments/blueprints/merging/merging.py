@@ -96,7 +96,7 @@ class MergingBlueprint(Blueprint):
     scenario_generation = \
       ConfigWithEase(
         num_scenarios=num_scenarios,
-        map_file_name=os.path.join(os.path.dirname(__file__), "../../../environments/blueprints/merging/DR_DEU_Merging_MT_v01_centered.xodr"),  # NOLINT
+        map_file_name=os.path.join(os.path.dirname(__file__), "../../../environments/blueprints/merging/DR_DEU_Merging_MT_v01_centered.xodr"),  # # pylint: disable=unused-import
         random_seed=random_seed,
         params=params,
         lane_corridor_configs=[left_lane, right_lane])
