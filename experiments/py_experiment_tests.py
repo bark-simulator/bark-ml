@@ -16,7 +16,7 @@ class PyExperimentTests(unittest.TestCase):
   def test_experiment_class(self):
     experiment = Experiment(
       os.path.join(os.path.dirname(__file__),
-      "experiments/configs/highway_gnn.json"))
+      "configs/highway_gnn.json"))
     # visualize/evaluate
     experiment.runner.Run(num_episodes=1, render=False)
     # experiment.params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = \
