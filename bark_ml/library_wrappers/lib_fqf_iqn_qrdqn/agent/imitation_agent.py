@@ -10,6 +10,7 @@ from collections import deque
 import numpy as np
 import logging
 import os
+import math
 import random
 
 import torch
@@ -17,6 +18,7 @@ from torch import nn
 from torch.optim import Adam, RMSprop
 
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.model import Imitation
+from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent.demonstrations import ActionValuesCollector
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.utils \
  import disable_gradients, update_params, \
  calculate_quantile_huber_loss, evaluate_quantile_at_action
@@ -42,18 +44,19 @@ class BenchmarkSupervisedLoss(TrainingBenchmark):
         return eval_result1["mse_loss/test"] < than_eval_result2["mse_loss/test"]
 
 class ImitationAgent(BaseAgent):
-  def __init__(self, demonstration_collector, *args, **kwargs):
-    super(ImitationAgent, self).__init__(*args, **kwargs)
-    self._training_benchmark = BenchmarkSupervisedLoss(demonstrations_test)
-    self._training_benchmark.reset(None, self.num_eval_episodes, None, self)
+  def __init__(self, demonstration_collector = None, *args, **kwargs):
     self.demonstration_collector = demonstration_collector
+    super(ImitationAgent, self).__init__(*args, **kwargs)
     self.define_training_test_data()
+    self._training_benchmark = BenchmarkSupervisedLoss(self.demonstrations_test)
+    self._training_benchmark.reset(None, self.num_eval_episodes, None, self)
+
 
   def define_training_test_data(self):
-    demonstrations = demonstration_collector.GetDemonstrationExperiences()
+    demonstrations = self.demonstration_collector.GetDemonstrationExperiences()
     random.shuffle(demonstrations)
-    self.demonstrations_train = demonstrations[0:math.floor(len(experiences_loaded)*self.train_test_ratio)]
-    self.demonstrations_test = demonstrations[math.ceil(len(experiences_loaded)*self.train_test_ratio):]
+    self.demonstrations_train = demonstrations[0:math.floor(len(demonstrations)*self.train_test_ratio)]
+    self.demonstrations_test = demonstrations[math.ceil(len(demonstrations)*self.train_test_ratio):]
     
   def reset_params(self, params):
     super(ImitationAgent, self).reset_params(params)
@@ -78,6 +81,10 @@ class ImitationAgent(BaseAgent):
   @property
   def motion_primitive_behavior(self):
     return self.demonstration_collector.motion_primitive_behavior
+
+  @property
+  def num_actions(self):
+    return len(self.motion_primitive_behavior.GetMotionPrimitives())
   
   def init_always(self):
     super(ImitationAgent, self).init_always()
@@ -98,6 +105,7 @@ class ImitationAgent(BaseAgent):
     del pickables["_training_benchmark"]
     del pickables["device"]
     del pickables["writer"]
+    del pickables["_checkpoint_load"]
     del pickables["online_net"]
     del pickables["optim"]
     del pickables["demonstrations_train"]
@@ -149,10 +157,6 @@ class ImitationAgent(BaseAgent):
 
   def load_other(self):
     self.demonstration_collector = ActionValuesCollector.load(self.demonstration_collector_dir)
-
-  @property
-  def script_model_file_name(self):
-    return os.path.join(checkpoint_dir, 'online_net_script.pt')
 
   @property
   def nn_to_value_converter(self):

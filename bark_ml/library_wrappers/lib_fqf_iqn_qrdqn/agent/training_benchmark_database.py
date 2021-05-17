@@ -7,16 +7,7 @@
 from bark.benchmark.benchmark_result import BenchmarkConfig
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent import TrainingBenchmark
 from bark.benchmark.benchmark_runner import BenchmarkRunner, BehaviorConfig
-
-def default_training_evaluators():
-  default_config = {"success" : "EvaluatorGoalReached", "collision_other" : "EvaluatorCollisionEgoAgent",
-       "out_of_drivable" : "EvaluatorDrivableArea", "max_steps": "EvaluatorStepCount"}
-  return default_config
-
-def default_terminal_criteria(max_episode_steps):
-  terminal_when = {"collision_other" : lambda x: x, "out_of_drivable" : lambda x: x, \
-        "max_steps": lambda x : x>max_episode_steps, "success" : lambda x: x}
-  return terminal_when
+from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent.util import *
 
 class TrainingBenchmarkDatabase(TrainingBenchmark):
   def __init__(self, benchmark_database=None,
