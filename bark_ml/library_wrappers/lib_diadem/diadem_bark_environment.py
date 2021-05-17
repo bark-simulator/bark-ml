@@ -39,10 +39,12 @@ class DiademBarkEnvironment(Environment):
     def observationspace(self):
         return self.runtime.observation_space
 
-    def contains_training_data(self):
+    @staticmethod
+    def contains_training_data():
         return True
 
-    def state_as_string(self):
+    @staticmethod
+    def state_as_string():
         return "BarkEnvironment" #todo: maybe print scenario idx
 
     @property

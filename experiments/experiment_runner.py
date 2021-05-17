@@ -65,7 +65,8 @@ class ExperimentRunner:
   def BuildExperiment(self, json_file, mode):
     return Experiment(json_file, self._params, mode)
 
-  def GetExperimentsFolder(self, json_file):
+  @staticmethod
+  def GetExperimentsFolder(json_file):
     dir_name = Path(json_file).parent
     if not os.path.isdir(dir_name):
       assert f"{dir_name} does not exist."
@@ -73,7 +74,8 @@ class ExperimentRunner:
     file_name = os.path.splitext(base_name)[0]
     return dir_name, file_name
 
-  def GenerateHash(self, params):
+  @staticmethod
+  def GenerateHash(params):
     """
     Hash-function to indicate whether the same json is used
     as during training.

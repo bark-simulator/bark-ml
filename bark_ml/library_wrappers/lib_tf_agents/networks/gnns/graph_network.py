@@ -59,7 +59,7 @@ class GraphNetwork(tf.keras.Model):
       raise ValueError('Graph dimensions must be positive.')
     return int_dims
 
-  def _init_network(self):
+  def _init_network(self, name=None):
     pass
 
   # @tf.function

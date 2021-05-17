@@ -102,7 +102,8 @@ class NearestAgentsObserver(StateObserver):
                           self._velocity_range)
     return agent_state
 
-  def _norm_to_range(self, value, range):
+  @staticmethod
+  def _norm_to_range(value, range):
     return (value - range[0])/(range[1]-range[0])
 
   def _calculate_relative_agent_state(self, ego_agent_state, agent_state):

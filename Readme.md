@@ -1,4 +1,3 @@
-
 # BARK-ML - Machine Learning for Autonomous Driving
 
 [![CI Build](https://github.com/bark-simulator/bark-ml/workflows/CI/badge.svg)](https://github.com/bark-simulator/bark-ml/actions)
@@ -65,11 +64,16 @@ env = gym.make("intersection-v0")
 ```
 
 In the unprotected left turn scenario, the ego agent's goal is a `StateLimitsGoal` placed on the top-left lane.
-A positive reward (`+1`) is given for reaching the goal lane and a negative reward for having a collision or leaving the drivable area (`-1`).
+A potential-based reward signal for the distance to the lane centerline is used and the episode is terminal once the maximum number of steps (`100`) has been reached or a collision (`reward -= 1`) has occured or the drivable area (`reward -= 1`) has been left.
 
 The unprotected left turn scenario can use discrete or continuous actions:
 *   `intersection-v0`: Continuous intersection environment
 *   `intersection-v1`: Discrete intersection environment
+
+<p align="center">
+<img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/bark_ml_intersection.png" alt="BARK-ML Intersection Scenario" /><br/>
+<em>The intersection-v0 environment.</em>
+</p>
 
 ## Getting Started
 
@@ -78,7 +82,7 @@ A complete example using the [OpenAi-Gym](https://github.com/openai/gym) interfa
 import gym
 import numpy as np
 # registers bark-ml environments
-import bark_ml.environments.gym  # # pylint: disable=unused-import
+import bark_ml.environments.gym  # pylint: disable=unused-import
 
 env = gym.make("merging-v0")
 

@@ -13,7 +13,7 @@ from tf_agents.replay_buffers import tf_uniform_replay_buffer
 
 from bark_ml.library_wrappers.lib_tf_agents.networks import GNNActorNetwork, GNNCriticNetwork
 from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAAgent
-from bark_ml.library_wrappers.lib_tf_agents.agents.gnn_initializers import init_interaction_network
+from bark_ml.library_wrappers.lib_tf_agents.agents.gnn_initializers import init_interaction_network # pylint: disable=unused-import
 
 
 class BehaviorGraphSACAgent(BehaviorTFAAgent):

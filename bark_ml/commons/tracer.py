@@ -19,17 +19,18 @@ class Tracer:
     self._total_reward = 0
     self._total_steps = 0
 
-  def EvalStateToDict(self, eval_state):
+  @staticmethod
+  def EvalStateToDict(eval_state):
     """Converts an eval_state to a flat eval_dict."""
     eval_dict = {}
-    if type(eval_state) is tuple:
+    if isinstance(eval_state, tuple):
       (state, reward, is_terminal, info) = eval_state
       eval_dict["state"] = state
       eval_dict["reward"] = reward
       eval_dict["is_terminal"] = is_terminal
       for info_key, info_value in info.items():
         eval_dict[info_key] = info_value
-    if type(eval_state) is dict:
+    if isinstance(eval_state, dict):
       for info_key, info_value in eval_state.items():
         eval_dict[info_key] = info_value
     return eval_dict

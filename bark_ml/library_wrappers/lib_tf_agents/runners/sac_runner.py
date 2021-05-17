@@ -61,7 +61,8 @@ class SACRunner(TFARunner):
           mode="training")
         self._agent.Save()
 
-  def _log_collection_duration(self, start_time, iteration):
+  @staticmethod
+  def _log_collection_duration(start_time, iteration):
     with tf.name_scope("Durations"):
       tf.summary.scalar(
         "episode_collection_duration", time.time() - start_time, iteration)

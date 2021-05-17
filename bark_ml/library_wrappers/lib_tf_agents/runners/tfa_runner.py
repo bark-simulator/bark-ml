@@ -135,7 +135,7 @@ class TFARunner:
     # sorted list
     id_agent_id_map = self._id_agent_map(env._world, env._observer, ego_id)
     # get idx
-    for idx, agent_id in id_agent_id_map.items():
+    for _, agent_id in id_agent_id_map.items():
       receiver_idx = np.where(
         receivers == self._id_to_idx(id_agent_id_map, ego_id))
       sender_idx = senders[receiver_idx]
@@ -154,7 +154,6 @@ class TFARunner:
           color = (12/255, 44/255, 132/255, 1.)
           zorder = 10
           alpha = 0.8
-        length = np.sqrt((from_pos[0] - to_pos[0])**2 + (from_pos[1] - to_pos[1])**2)
         from_agent_state = env._world.agents[from_id].state
         to_agent_state = env._world.agents[to_id].state
         if to_id != agent_id:
@@ -184,7 +183,7 @@ class TFARunner:
               color=color, marker="o", linewidth=max(min(50*magnitude, 5.), 0.5), zorder=zorder, alpha=alpha)
 
     if render:
-      for idx, agent_id in id_agent_id_map.items():
+      for _, agent_id in id_agent_id_map.items():
         agent_pos = self._get_agent_pos(env._world, agent_id)
         color = "gray"
         if agent_id == ego_id:
@@ -241,7 +240,7 @@ class TFARunner:
     for i in range(0, num_episodes):
       if render:
         self._logger.info(f"Simulating episode {i}.")
-      trajectory = self.RunEpisode(
+      self.RunEpisode(
         render=render, num_episode=i, trace_colliding_ids=trace_colliding_ids, **kwargs)
     mean_col_rate = self._tracer.collision_rate
     goal_reached = self._tracer.success_rate

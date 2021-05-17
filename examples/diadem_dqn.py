@@ -12,7 +12,7 @@ Important sidemark: the Agent is defined in the parameters, not in the main file
 """
 
 try:
-  import debug_settings
+  import debug_settings # pylint: disable=unused-import
 except:
   pass
 

@@ -12,11 +12,10 @@ from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
 from bark.core.world.opendrive import XodrDrivingDirection
 from bark.core.world.goal_definition import GoalDefinitionPolygon
-from bark.core.models.behavior import BehaviorIntersectionRuleBased
-from bark.core.world.goal_definition import GoalDefinitionPolygon
+from bark.core.models.behavior import BehaviorMobilRuleBased
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
-from bark_ml.evaluators.goal_reached import GoalReached
+from bark_ml.evaluators.reward_shaping_intersection import RewardShapingEvaluatorIntersection
 # from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
@@ -33,7 +32,7 @@ class IntersectionLaneCorridorConfig(LaneCorridorConfig):
     super(IntersectionLaneCorridorConfig, self).__init__(params, **kwargs)
 
   def controlled_goal(self, world):
-    road_corr = world.map.GetRoadCorridor(
+    world.map.GetRoadCorridor(
       self._road_ids, XodrDrivingDirection.forward)
     lane_corr = self._road_corridor.lane_corridors[0]
     # lanes are sorted by their s-value
@@ -61,11 +60,11 @@ class IntersectionBlueprint(Blueprint):
       IntersectionLaneCorridorConfig(params=params,
                                      source_pos=[-40, -3],
                                      sink_pos=[40, -3],
-                                     behavior_model=BehaviorIntersectionRuleBased(params),
+                                     behavior_model=BehaviorMobilRuleBased(params),
                                      min_vel=10.,
-                                     max_vel=15.,
+                                     max_vel=12.,
                                      ds_min=10.,
-                                     ds_max=15.,
+                                     ds_max=25.,
                                      s_min=5.,
                                      s_max=50.,
                                      controlled_ids=None))
@@ -73,11 +72,11 @@ class IntersectionBlueprint(Blueprint):
       IntersectionLaneCorridorConfig(params=params,
                                      source_pos=[40, 3],
                                      sink_pos=[-40, 3],
-                                     behavior_model=BehaviorIntersectionRuleBased(params),
+                                     behavior_model=BehaviorMobilRuleBased(params),
                                      min_vel=10.,
-                                     max_vel=15.,
+                                     max_vel=12.,
                                      ds_min=15.,
-                                     ds_max=15.,
+                                     ds_max=25.,
                                      s_min=5.,
                                      s_max=50.,
                                      controlled_ids=None))
@@ -85,29 +84,30 @@ class IntersectionBlueprint(Blueprint):
       IntersectionLaneCorridorConfig(params=params,
                                      source_pos=[3, -30],
                                      sink_pos=[-40, 3],
-                                     behavior_model=BehaviorIntersectionRuleBased(params),
+                                     behavior_model=BehaviorMobilRuleBased(params),
                                      min_vel=5.,
                                      max_vel=10.,
-                                     ds_min=10.,
-                                     ds_max=20.,
-                                     s_min=40.,
-                                     s_max=51.,
+                                     ds_min=40.,
+                                     ds_max=40.,
+                                     s_min=30.,
+                                     s_max=40.,
                                      controlled_ids=True))
 
     scenario_generation = \
       ConfigWithEase(
         num_scenarios=num_scenarios,
-        map_file_name=os.path.join(os.path.dirname(__file__), "../../../environments/blueprints/intersection/4way_intersection.xodr"),  # # pylint: disable=unused-import
+        map_file_name=os.path.join(os.path.dirname(__file__), "../../../environments/blueprints/intersection/4way_intersection.xodr"),  # pylint: disable=unused-import
         random_seed=random_seed,
         params=params,
         lane_corridor_configs=lane_corridors)
     if viewer:
       viewer = MPViewer(params=params,
-                        x_range=[-35, 35],
-                        y_range=[-35, 35],
+                        x_range=[-30, 30],
+                        y_range=[-30, 30],
                         follow_agent_id=True)
     dt = 0.2
-    evaluator = GoalReached(params)
+    params["ML"]["GoalReachedEvaluator"]["MaxSteps"] = 100
+    evaluator = RewardShapingEvaluatorIntersection(params)
     observer = NearestObserver(params)
     ml_behavior = ml_behavior
 

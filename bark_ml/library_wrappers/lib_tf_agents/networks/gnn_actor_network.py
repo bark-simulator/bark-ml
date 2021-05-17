@@ -6,13 +6,13 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 import gin
-import tensorflow as tf # pylint: disable=g-explicit-tensorflow-version-import
+import tensorflow as tf # pylint: disable=unused-import
 
 from tf_agents.agents.sac import sac_agent
 from tf_agents.networks import network, normal_projection_network, encoding_network
 from tf_agents.utils import nest_utils
 from bark.runtime.commons.parameters import ParameterServer
-from bark_ml.library_wrappers.lib_tf_agents.networks.gnns.interaction_wrapper import InteractionWrapper
+from bark_ml.library_wrappers.lib_tf_agents.networks.gnns.interaction_wrapper import InteractionWrapper # pylint: disable=unused-import
 
 
 def projection_net(spec):
