@@ -3,7 +3,7 @@
 [![CI Build](https://github.com/bark-simulator/bark-ml/workflows/CI/badge.svg)](https://github.com/bark-simulator/bark-ml/actions)
 [![Github Contributors](https://img.shields.io/github/contributors/bark-simulator/bark-ml)](https://github.com/bark-simulator/bark-ml/graphs/contributors)
 [![Downloads](https://img.shields.io/pypi/dm/bark-ml)](https://pypi.org/project/bark-ml/)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/6e2c0ba1291249de9c54cb73c697b62c)](https://www.codacy.com/gh/bark-simulator/bark-ml/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bark-simulator/bark-ml&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/d1353db9e995441f87ab1a098226cf5f)](https://www.codacy.com/gh/bark-simulator/bark-ml/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bark-simulator/bark-ml&amp;utm_campaign=Badge_Grade)
 [![Environments](https://img.shields.io/badge/Environments-3-informational)](#gym-environments)
 
 <p align="center">
