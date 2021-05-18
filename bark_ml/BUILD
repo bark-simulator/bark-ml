@@ -3,7 +3,7 @@ genrule(
   srcs = [
     "//bark_ml/python_wrapper:core",
   ],
-  cmd = (" mv $(RULEDIR)/python_wrapper/libcore.so  $(location core.so)"),
+  cmd = ("mv $(RULEDIR)/python_wrapper/libcore.so  $(location core.so)"),
   outs = [
     "core.so",
   ],

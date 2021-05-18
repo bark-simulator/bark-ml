@@ -10,7 +10,7 @@ def bark_ml_dependencies():
   _maybe(
     git_repository,
     name = "bark_project",
-    branch = "renderer",
+    branch = "pybind_bazel",
     remote = "https://github.com/bark-simulator/bark",
   )
   # _maybe(
@@ -20,18 +20,11 @@ def bark_ml_dependencies():
   # )
 
   _maybe(
-    native.new_local_repository,
-    name = "python_linux",
-    path = "./bark_ml/python_wrapper/venv/",
-    build_file_content = """
-cc_library(
-    name = "python-lib",
-    srcs = glob(["lib/libpython3.*", "libs/python3.lib", "libs/python36.lib"]),
-    hdrs = glob(["include/**/*.h", "include/*.h"]),
-    includes = ["include/python3.6m", "include", "include/python3.7m", "include/python3.5m"],
-    visibility = ["//visibility:public"],
-)
-    """)
+    git_repository,
+    name = "pybind11_bazel",
+    commit="26973c0ff320cb4b39e45bc3e4297b82bc3a6c09",
+    remote = "https://github.com/pybind/pybind11_bazel"
+  )
 
   # alternative to torch api used from virtual env
   _maybe(
