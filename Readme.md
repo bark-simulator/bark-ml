@@ -12,7 +12,7 @@
 
 ## [Try it on Google Colab! ![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1jA5QPEHadvIU6GsCy4cFdAv3giS7QvDQ?usp=sharing)
 
-BARK-ML offers environments for autonomous driving (highway, merging, and intersection scenarios) as well as reinforcement learning agents for learning behavior policies. BARK-ML is built upon the fast, semantic C++ BARK backend and fully accessible in Python enabling to learn behavior policies quickly and without computational overhead.
+BARK-ML offers environments for autonomous driving (highway, merging, and intersection scenarios) and reinforcement learning agents for learning behavior policies. BARK-ML is built upon the fast, semantic C++ [BARK](https://github.com/bark-simulator/bark) back-end and fully accessible in Python, enabling learning behavior policies quickly and without any computational overhead.
 
 The BARK-ML package can be installed using `pip install bark-ml`.
 
