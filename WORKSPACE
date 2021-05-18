@@ -10,6 +10,14 @@ bark_dependencies()
 load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")
 boost_deps()
 
+git_repository(
+  name = "pybind11_bazel",
+  commit="26973c0ff320cb4b39e45bc3e4297b82bc3a6c09",
+  remote = "https://github.com/pybind/pybind11_bazel"
+)
+load("@pybind11_bazel//:python_configure.bzl", "python_configure")
+python_configure(name = "local_config_python")
+
 # -------- Benchmark Database -----------------------
 git_repository(
   name = "benchmark_database",
