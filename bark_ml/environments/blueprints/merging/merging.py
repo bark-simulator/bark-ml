@@ -15,7 +15,7 @@ from bark.core.world.goal_definition import GoalDefinitionStateLimitsFrenet
 from bark.core.models.behavior import BehaviorMobilRuleBased
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
-from bark_ml.evaluators.goal_reached import GoalReached
+from bark_ml.evaluators.reward_shaping_intersection import RewardShapingEvaluator
 
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
@@ -105,7 +105,13 @@ class MergingBlueprint(Blueprint):
                         y_range=[-25, 25],
                         follow_agent_id=True)
     dt = 0.2
-    evaluator = GoalReached(params)
+    params["ML"]["RewardShapingEvaluator"]["RewardShapingPotentials",
+      "Reward shaping functions.", {
+        "DistancePotential": {
+          "exponent": 0.4, "d_max": 10., "type": "positive"
+        }
+      }]
+    evaluator = RewardShapingEvaluator(params)
     observer = NearestObserver(params)
     ml_behavior = ml_behavior
 

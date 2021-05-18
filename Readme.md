@@ -12,8 +12,7 @@
 
 ## [Try it on Google Colab! ![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1jA5QPEHadvIU6GsCy4cFdAv3giS7QvDQ?usp=sharing)
 
-Discrete and continuous environments for autonomous driving —
- ranging from highway, over merging, to intersection scenarios.
+BARK-ML offers environments for autonomous driving (highway, merging, and intersection scenarios) and reinforcement learning agents for learning behavior policies. BARK-ML is built upon the fast, semantic C++ [BARK](https://github.com/bark-simulator/bark) back-end and fully accessible in Python, enabling learning behavior policies quickly and without any computational overhead.
 
 The BARK-ML package can be installed using `pip install bark-ml`.
 
@@ -46,6 +45,7 @@ env = gym.make("merging-v0")
 
 In the merging scenario, the ego agent's goal is a `StateLimitsGoal` on the left lane that is reached once its states are in a pre-defined range (velocity range of `[5m/s, 15m/s]`, polygonal area on the left lane, and theta range of `[-0.15rad, 0.15rad]`).
 A positive reward (`+1`) is given for reaching the goal and a negative reward for having a collision or leaving the drivable area (`-1`).
+Additionally, a distance potential-based reward shaping is used to the centerline of the ego vehicle's goal.
 The other vehicles on the left lane are controlled by the intelligent driver model (IDM) and the ones on the right by the MOBIL model.
 
 The merging scenario can use discrete or continuous actions:
