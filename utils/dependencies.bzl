@@ -20,10 +20,10 @@ def bark_ml_dependencies():
   # )
 
   _maybe(
-    git_repository,
-    name = "pybind11_bazel",
-    commit="26973c0ff320cb4b39e45bc3e4297b82bc3a6c09",
-    remote = "https://github.com/pybind/pybind11_bazel"
+      git_repository,
+      name = "pybind11_bazel",
+      commit="cf666a5d1276ad262aec9b9a1876935f627c27e1",
+      remote = "https://github.com/patrickhart/pybind11_bazel"
   )
 
   # alternative to torch api used from virtual env
