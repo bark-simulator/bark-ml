@@ -8,7 +8,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04, macOS-10.15]
+        os: [ubuntu-20.04, windows-2019, macOS-10.15]
 
     steps:
       - uses: actions/checkout@v2
@@ -32,13 +32,13 @@ jobs:
 
       # build bark-ml package
       - name: Build package
-        run: bazel run //bark_ml:pip_package
+        run: bazel build //bark_ml:pip_package
 
       # should be here now: bazel-bin/bark_ml/pip_package.runfiles
 
       # run buildwheel
       - name: Build wheels
-        run: cd ./bazel-bin/bark_ml/pip_package.runfiles && python -m cibuildwheel --output-dir wheelhouse
+        run: cd ./bazel-bin/bark_ml/pip_package.runfiles/bark_ml && python -m cibuildwheel --output-dir wheelhouse
         # to supply options, put them in 'env', like:
         # env:
         #   CIBW_SOME_OPTION: value
