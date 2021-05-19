@@ -1,9 +1,9 @@
 genrule(
   name = "generate_core",
   srcs = [
-    "//bark_ml/python_wrapper:core",
+    "//bark_ml/python_wrapper:core.so",
   ],
-  cmd = ("mv $(RULEDIR)/python_wrapper/libcore.so  $(location core.so)"),
+  cmd = ("mv $(RULEDIR)/python_wrapper/core.so  $(location core.so)"),
   outs = [
     "core.so",
   ],
