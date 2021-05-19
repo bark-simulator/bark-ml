@@ -6,9 +6,12 @@ jobs:
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-20.04, macOS-10.15]
+        os: [ubuntu-latest, macOS-latest]
+        python-version: [3.6, 3.7, 3.8]
 
     steps:
       - uses: actions/checkout@v2
@@ -47,8 +50,8 @@ jobs:
           TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
         run: >
           cd ./bazel-bin/bark_ml/pip_package.runfiles/bark_ml
-          python3.7 setup.py clean
-          python3.7 setup.py sdist bdist_wheel
-          python3.7 setup.py test
+          python setup.py clean
+          python setup.py sdist bdist_wheel
+          python setup.py test
           auditwheel repair dist/*.whl
-          python3 -m twine upload --skip-existing wheelhouse/*
+          python -m twine upload --skip-existing wheelhouse/*
