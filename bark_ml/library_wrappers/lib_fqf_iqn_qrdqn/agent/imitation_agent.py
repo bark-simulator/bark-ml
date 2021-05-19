@@ -237,7 +237,7 @@ class ImitationAgent(BaseAgent):
     # if we have missing actions during demo collections these become nan values
     # they should influence the loss and are thus set to current nn output
     for key in action_values_desired.keys():
-      nans_desired = torch.isnan(action_values_desired[key]).nonzero()
+      nans_desired = torch.isnan(action_values_desired[key]).nonzero(as_tuple=False)
       action_values_desired[key][nans_desired] = action_values_current[key][nans_desired].detach().clone()
 
     loss = self.selected_loss(action_values_current, action_values_desired, logits)
