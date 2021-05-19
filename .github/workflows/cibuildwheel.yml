@@ -28,9 +28,8 @@ jobs:
 
       # make sure it is installed
       - name: Use bazel
-        run: >
-          bazel --version
-          bazel clean --expunge
+        run: bazel --version
+        # run: bazel clean --expunge
 
       # build bark-ml package
       - name: Build package
