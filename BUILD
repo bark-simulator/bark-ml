@@ -34,6 +34,6 @@ test_suite(
 
 filegroup(
    name="readme",
-   srcs=glob(["README.md"]),
+   srcs=glob(["README.md", "LICENSE", "setup.py"]),
    visibility = ["//visibility:public"],
 )
