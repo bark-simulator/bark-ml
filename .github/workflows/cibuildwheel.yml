@@ -24,7 +24,7 @@ jobs:
 
 			# install requirements
 			- name: Install requirements
-				run: python -m pip install --trusted-host pypi.org -r ./utils/docker/installers/requirements.txt
+				run: python -m pip install -r ./utils/docker/installers/requirements.txt
 
       # install bazel
       - name: Setup bazel
