@@ -15,11 +15,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # Used to host cibuildwheel
-      - uses: actions/setup-python@v2
+      # # Used to host cibuildwheel
+      # - uses: actions/setup-python@v2
 
-      # install buildwheel
-      - name: Install cibuildwheel
+      # install tools
+      - name: Install tools
         run: python -m pip install twine wheel auditwheel
 
       # install requirements
