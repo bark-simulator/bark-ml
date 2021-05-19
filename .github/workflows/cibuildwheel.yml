@@ -32,7 +32,7 @@ jobs:
 
       # build bark-ml package
       - name: Build package
-        run: bazel run //bark_ml:$pkg_name
+        run: bazel run //bark_ml:pip_package
 
       # should be here now: bazel-bin/bark_ml/pip_package.runfiles
 
