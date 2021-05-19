@@ -22,7 +22,7 @@ def bark_ml_dependencies():
   _maybe(
       git_repository,
       name = "pybind11_bazel",
-      commit="cf666a5d1276ad262aec9b9a1876935f627c27e1",
+      commit="67cb28eed5827df885bb7b3d49a62465a4414547",
       remote = "https://github.com/patrickhart/pybind11_bazel"
   )
 
