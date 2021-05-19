@@ -1,4 +1,4 @@
- 
+
 aabbtree>=2.5.0
 absl-py>==0.9.0
 lxml>=4.5.1
@@ -13,7 +13,7 @@ pygame>=1.9.6
 tensorflow>=2.3.2
 tensorboard>=2.2.2
 tf-agents>=0.6.0
-notebook 
+notebook
 graph-nets==1.1.0
-tensorflow-addons==0.11.2
+tensorflow-addons>=0.11.2
 tensorflow-probability==0.11.0
