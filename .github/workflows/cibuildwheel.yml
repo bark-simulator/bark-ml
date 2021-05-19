@@ -47,7 +47,7 @@ jobs:
         env:
           TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-        run: |
+        run:	|
           cd ./bazel-bin/bark_ml/pip_package.runfiles/bark_ml
           python setup.py clean
           python setup.py sdist bdist_wheel
