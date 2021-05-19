@@ -40,7 +40,6 @@ setup(
         'tensorboard>=2.2.2',
         'tf-agents>=0.5.0',
         'tensorflow-probability>=0.10.0',
-        'bark-simulator>=1.0.0',
         'graph-nets>=1.1.0'
     ],
     ext_modules=ext_modules,
