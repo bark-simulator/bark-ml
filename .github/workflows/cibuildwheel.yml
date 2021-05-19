@@ -42,12 +42,12 @@ jobs:
       # should be here now: bazel-bin/bark_ml/pip_package.runfiles
 
       # run buildwheel
-      - name: Build wheels
-        # run: cd ./bazel-bin/bark_ml/pip_package.runfiles/bark_ml && python -m cibuildwheel --output-dir wheelhouse
-        run: >
-          cd ./bazel-bin/bark_ml/pip_package.runfiles/bark_ml
-          python3.7 setup.py clean
-          python3.7 setup.py sdist bdist_wheel
-          python3.7 setup.py test
-          auditwheel repair dist/*.whl
-          python3 -m twine upload --skip-existing wheelhouse/*
+      # - name: Build wheels
+      #   # run: cd ./bazel-bin/bark_ml/pip_package.runfiles/bark_ml && python -m cibuildwheel --output-dir wheelhouse
+      #   run: >
+      #     cd ./bazel-bin/bark_ml/pip_package.runfiles/bark_ml
+      #     python3.7 setup.py clean
+      #     python3.7 setup.py sdist bdist_wheel
+      #     python3.7 setup.py test
+      #     auditwheel repair dist/*.whl
+      #     python3 -m twine upload --skip-existing wheelhouse/*
