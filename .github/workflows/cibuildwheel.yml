@@ -49,5 +49,5 @@ jobs:
           python3.7 setup.py clean
           python3.7 setup.py sdist bdist_wheel
           python3.7 setup.py test
-          auditwheel repair "$whl"
+          auditwheel repair dist/*.whl
           python3 -m twine upload --skip-existing wheelhouse/*
