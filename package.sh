@@ -52,8 +52,8 @@ done <$bazel_manifest
 
 echo "Moving to build directory"
 cd $build_dir/$workspace_name
-python3.7 setup.py clean
-python3.7 setup.py sdist bdist_wheel
+python setup.py clean
+python setup.py sdist bdist_wheel
 # python3.7 setup.py test
 
 
@@ -75,8 +75,8 @@ if [[ $# -gt 0 ]] ; then
             fi
 
             # install the package outside virtual environment
-            /opt/python/cp37-cp37m/bin/pip install $whl
-            /opt/python/cp37-cp37m/bin/pip3 install nose
+            /opt/python/$1/bin/pip install $whl
+            /opt/python/$1/bin/pip3 install nose
 
             # run nose tests outside the virtual env to verify the installed package
             # echo "Running tests..."
