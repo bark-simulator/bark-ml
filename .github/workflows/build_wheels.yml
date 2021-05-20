@@ -43,7 +43,7 @@ jobs:
       - name: Build package
         env:
           BAZEL_USE_XCODE_TOOLCHAIN: 1
-        run: bazel build //bark_ml:pip_package
+        run: bazel build --action_env MACOSX_DEPLOYMENT_TARGET=10.15 //bark_ml:pip_package
 
       # should be here now: bazel-bin/bark_ml/pip_package.runfiles
 
