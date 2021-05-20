@@ -5,7 +5,7 @@ pkg_name='pip_package'
 workspace_name='bark_ml'
 
 # activate virtual environment
-source ./bark_ml/python_wrapper/venv/bin/activate 
+source ./bark_ml/python_wrapper/venv/bin/activate
 
 echo "Building package"
 bazel run //bark_ml:$pkg_name
@@ -54,7 +54,7 @@ echo "Moving to build directory"
 cd $build_dir/$workspace_name
 python3.7 setup.py clean
 python3.7 setup.py sdist bdist_wheel
-python3.7 setup.py test
+# python3.7 setup.py test
 
 
 # check if manylinux argument passed. if so build
@@ -73,11 +73,11 @@ if [[ $# -gt 0 ]] ; then
             else
                 auditwheel repair "$whl"
             fi
-            
+
             # install the package outside virtual environment
             /opt/python/cp37-cp37m/bin/pip install $whl
             /opt/python/cp37-cp37m/bin/pip3 install nose
-            
+
             # run nose tests outside the virtual env to verify the installed package
             # echo "Running tests..."
             # cd /home
