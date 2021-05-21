@@ -47,7 +47,7 @@ using bark::geometry::B_2PI;
 using bark::geometry::B_PI;
 using bark::geometry::Line;
 using bark::geometry::Distance;
-using bark::geometry::Norm0To2PI;
+using bark::geometry::NormToPI;
 using bark::models::dynamic::StateDefinition::X_POSITION;
 using bark::models::dynamic::StateDefinition::Y_POSITION;
 using bark::models::dynamic::StateDefinition::THETA_POSITION;
@@ -95,7 +95,7 @@ class NearestObserver : public BaseObserver {
     const unsigned corr_idx = corridor_and_idx.second;
     FrenetState current_ego_frenet(ego_state, ego_corridor->GetCenterLine());
     ObservedState ego_nn_state(1, 6);
-    const double normalized_angle = Norm0To2PI(current_ego_frenet.angle);
+    const double normalized_angle = NormToPI(current_ego_frenet.angle);
     ego_nn_state << Norm(current_ego_frenet.lon, min_s_, max_s_),
                  Norm(current_ego_frenet.lat, min_d_, max_d_),
                  Norm(normalized_angle, min_theta_, max_theta_),
@@ -132,7 +132,7 @@ class NearestObserver : public BaseObserver {
       observed_world.CurrentEgoPosition(), nearest_agent_num_ + 1);
 
     // sort agents by distance and distance < max_dist_
-    std::map<double, AgentPtr, std::greater<double>> distance_agent_map;
+    std::map<double, AgentPtr, std::less<double>> distance_agent_map;
     for (const auto& agent : nearest_agents) {
       if(agent.first == observed_world.GetEgoAgentId()) continue;
   
