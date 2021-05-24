@@ -43,6 +43,7 @@ class Carin(nn.Module):
     self.num_actions = num_actions
     self.num_value_functions = num_value_functions
     self.num_agents = params["ML"]["CarinModel"]["NumAgents", "", 5]
+    self.num_features_per_agent = self.num_channels // self.num_agents
     self.dropout_p = params["ML"]["ImitationModel"]["DropoutProbability", "",
                                                     0]
 
@@ -73,14 +74,24 @@ class Carin(nn.Module):
       self.head_networks.append(net)
 
   def forward(self, states):
+    # Treat ego features and features of other agents separately
+    num_ego_features = self.num_features_per_agent
+    ego_features = states[:, :num_ego_features]
+    other_agent_features = states[:, num_ego_features:]
+
     # Convert input tensor from 2D to 3D (needed for convolution afterwards)
-    states = unsqueeze(states, 1)
+    other_agent_features = unsqueeze(other_agent_features, 1)
 
     # Use CNN to transform features of each agent separately
-    transformed_input = self.input_conv_net(states)
+    other_agent_features = self.input_conv_net(other_agent_features)
 
     # Transform back to 2D
-    transformed_input = flatten(transformed_input, start_dim=1, end_dim=2)
+    other_agent_features = flatten(other_agent_features,
+                                   start_dim=1,
+                                   end_dim=2)
+
+    # Concatenate ego features with the features of other agents
+    transformed_input = cat([ego_features, other_agent_features], 1)
 
     # Fully connected layers
     shared_features = self.shared_network(transformed_input)
@@ -97,7 +108,7 @@ class Carin(nn.Module):
   def make_input_conv_layers(self):
     tuple_list = []
     in_channels = 1
-    kernel_size = self.num_channels // self.num_agents
+    kernel_size = self.num_features_per_agent
     stride = kernel_size
     for idx, layer in enumerate(self.input_conv_dims):
       out_channels = layer
@@ -112,8 +123,9 @@ class Carin(nn.Module):
 
     if len(self.input_conv_dims) > 0:
       tuple_list.append(
-          ("maxpool", nn.MaxPool2d(kernel_size=(1, self.num_agents))))
-      last_dimension = in_channels
+          ("maxpool", nn.MaxPool2d(kernel_size=(1, self.num_agents - 1))))
+      # Ego features are appended to the end of the output of CNN
+      last_dimension = in_channels + self.num_features_per_agent
     else:
       last_dimension = self.num_channels
 
