@@ -13,14 +13,14 @@ from bark.core.models.dynamic import StateDefinition
 from bark.runtime.commons.parameters import ParameterServer
 import operator
 
-from bark_ml.observers.observer import StateObserver
+from bark_ml.observers.observer import BaseObserver
 
 
-class NearestAgentsObserver(StateObserver):
+class NearestAgentsObserver(BaseObserver):
   """Concatenates the n-nearest states of vehicles."""
 
   def __init__(self, params=ParameterServer()):
-    StateObserver.__init__(self, params)
+    BaseObserver.__init__(self, params)
     self._state_definition = [int(StateDefinition.X_POSITION),
                               int(StateDefinition.Y_POSITION),
                               int(StateDefinition.THETA_POSITION),

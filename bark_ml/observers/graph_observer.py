@@ -15,9 +15,9 @@ from bark.core.models.dynamic import StateDefinition
 from bark.core.geometry import Distance, Point2d
 from bark.runtime.commons.parameters import ParameterServer
 
-from bark_ml.observers.observer import StateObserver
+from bark_ml.observers.observer import BaseObserver
 
-class GraphObserver(StateObserver):
+class GraphObserver(BaseObserver):
   """Graph observer
 
   This observer converts an `ObservsedWorld` instance into
@@ -40,7 +40,7 @@ class GraphObserver(StateObserver):
       params: A `ParameterServer` instance that enables further
         configuration of the observer. Defaults to a new instance.
     """
-    StateObserver.__init__(self, params)
+    BaseObserver.__init__(self, params)
     self._logger = logging.getLogger()
 
     self._normalize_observations = \

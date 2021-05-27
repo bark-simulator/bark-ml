@@ -11,7 +11,7 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark.core.models.dynamic import StateDefinition
 from bark.core.geometry import *
 
-from bark_ml.evaluators.evaluator import StateEvaluator
+from bark_ml.evaluators.evaluator import BaseEvaluator
 from bark_ml.evaluators.commons import *
 
 def VelocityPotential(v, v_des, v_dev_max=10., a=0.4):
@@ -24,7 +24,7 @@ def ObjectPotential(d, d_max, c=0.4):
   return -1. + (d/d_max)**c
 
 
-class RewardShapingEvaluator(StateEvaluator):
+class RewardShapingEvaluator(BaseEvaluator):
   """Reward shaping evaluator using potential functions.
 
   Implemented are potential functions fot the distance to
@@ -39,7 +39,7 @@ class RewardShapingEvaluator(StateEvaluator):
   def __init__(self,
                params=ParameterServer(),
                eval_agent=None):
-    StateEvaluator.__init__(self, params)
+    BaseEvaluator.__init__(self, params)
     self._goal_reward = \
       self._params["ML"]["RewardShapingEvaluator"]["GoalReward",
         "Reward for reaching the goal.",
