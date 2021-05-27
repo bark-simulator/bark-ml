@@ -12,7 +12,8 @@
 
 ## [Try it on Google Colab! ![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1jA5QPEHadvIU6GsCy4cFdAv3giS7QvDQ?usp=sharing)
 
-BARK-ML offers environments for autonomous driving (highway, merging, and intersection scenarios) and reinforcement learning agents for learning behavior policies. BARK-ML is built upon the fast, semantic C++ [BARK](https://github.com/bark-simulator/bark) back-end and fully accessible in Python, enabling learning behavior policies quickly and without any computational overhead.
+BARK-ML offers OpenAI-Gym environments for autonomous driving and reinforcement learning agents.
+BARK-ML is built upon a fast, semantic C++ back-end and fully wrapped to Python.
 
 The BARK-ML package can be installed using `pip install bark-ml`.
 
@@ -24,11 +25,10 @@ The BARK-ML package can be installed using `pip install bark-ml`.
 env = gym.make("highway-v0")
 ```
 
-The highway scenario is a curved road with four lanes.
-A potential-based reward signal for the desired velocity is used and the episode is terminal once the maximum number of steps (`200`) has been reached or a collision (`reward -= 1`) has occured or the drivable area (`reward -= 1`) has been left.
-The other vehicles in the scenario are controlled by the intelligent driver model (IDM).
+The highway scenario is a curved road with four lanes with all vehicles are controlled by the intelligent driver model (IDM).
+For more details have a look [here](https://bark-simulator.github.io/tutorials/bark_ml_environments/#highway).
 
-The highway scenario can use discrete or continuous actions:
+Available environments:
 *   `highway-v0`: Continuous highway environment
 *   `highway-v1`: Discrete highway environment
 
@@ -42,13 +42,11 @@ The highway scenario can use discrete or continuous actions:
 ```python
 env = gym.make("merging-v0")
 ```
+The ego agent is placed on the right lane and its goal on the left.
+All other vehicles are controlled by the MOBIL model.
+For more details have a look [here](https://bark-simulator.github.io/tutorials/bark_ml_environments/#merging).
 
-In the merging scenario, the ego agent's goal is a `StateLimitsGoal` on the left lane that is reached once its states are in a pre-defined range (velocity range of `[5m/s, 15m/s]`, polygonal area on the left lane, and theta range of `[-0.15rad, 0.15rad]`).
-A positive reward (`+1`) is given for reaching the goal and a negative reward for having a collision or leaving the drivable area (`-1`).
-Additionally, a distance potential-based reward shaping is used to the centerline of the ego vehicle's goal.
-The other vehicles on the left lane are controlled by the intelligent driver model (IDM) and the ones on the right by the MOBIL model.
-
-The merging scenario can use discrete or continuous actions:
+Available environments:
 *   `merging-v0`: Continuous merging environment
 *   `merging-v1`: Discrete merging environment
 
@@ -63,10 +61,10 @@ The merging scenario can use discrete or continuous actions:
 env = gym.make("intersection-v0")
 ```
 
-In the unprotected left turn scenario, the ego agent's goal is a `StateLimitsGoal` placed on the top-left lane.
-A potential-based reward signal for the distance to the lane centerline is used and the episode is terminal once the maximum number of steps (`100`) has been reached or a collision (`reward -= 1`) has occured or the drivable area (`reward -= 1`) has been left.
+The ego vehicle starts on the bottom-right lane and its goal is set on the top-left lane (unprotected left turn).
+For more details have a look [here](https://bark-simulator.github.io/tutorials/bark_ml_environments/#intersection).
 
-The unprotected left turn scenario can use discrete or continuous actions:
+Available environments:
 *   `intersection-v0`: Continuous intersection environment
 *   `intersection-v1`: Discrete intersection environment
 
@@ -98,7 +96,6 @@ while done is False:
 
 ## Building From Source
 
-BARK-ML can alternatively also be built from source.
 Clone the repository using `git clone https://github.com/bark-simulator/bark-ml`, install the virtual python environment and activate it afterwards using:
 
 ```bash
@@ -112,35 +109,6 @@ To run the getting started example from above, use the following command: `bazel
 ## Documentation
 
 Read the [documentation online](https://bark-simulator.github.io/tutorials/bark_ml_getting_started/).
-
-## Graph Neural Network Soft Actor-Critic
-
-You can visualize  (`--mode=visualize`) or train (`--mode=train`) the graph neural network soft actor-critic architecture proposed in the paper "[Graph Neural Networks and Reinforcement Learning for Behavior Generation in Semantic Environments](https://arxiv.org/abs/2006.12576)" using:
-
-```bash
-bazel run //experiments:experiment_runner -- --exp_json=/ABSOLUTE_PATH/bark-ml/experiments/configs/phd/01_hyperparams/gnns/merging_large_embedding.json --mode=visualize
-```
-
-Make sure to replace `ABSOLUTE_PATH` with your BARK-ML base directory!
-
-<p align="center">
-<img src="https://github.com/bark-simulator/bark-ml/raw/master/docs/images/graph_neural_network.gif" alt="Actor-Critic Graph Neural Network Architecture" />
-</p>
-
-The merging scenario above is visualized using [BARKSCAPE](https://github.com/bark-simulator/barkscape/).
-If you are interested in using a 3D-visualization, have a look at [this](https://github.com/bark-simulator/barkscape/blob/master/examples/bark_ml_runner_example.py)  example.
-
-If your work builds upon the graph neural network architecture, please cite the following [paper](https://arxiv.org/abs/2006.12576):
-
-```bibtex
-@inproceedings{Hart2020,
-    title = {Graph Neural Networks and Reinforcement Learning for Behavior Generation in Semantic Environments},
-    author = {Patrick Hart and Alois Knoll},
-    booktitle = {2020 IEEE Intelligent Vehicles Symposium (IV)},
-    url = {https://ieeexplore.ieee.org/document/9304738},
-    year = {2020}
-}
-```
 
 ## Publications
 
