@@ -15,10 +15,9 @@
 
 ## [Try it on Google Colab! ![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1jA5QPEHadvIU6GsCy4cFdAv3giS7QvDQ?usp=sharing)
 
-BARK-ML offers OpenAI-Gym environments for autonomous driving and reinforcement learning agents.
-BARK-ML is built upon a fast, semantic C++ back-end and fully wrapped to Python.
+BARK-ML offers various OpenAI-Gym environments and reinforcement learning agents for autonomous driving.
 
-The BARK-ML package can be installed using `pip install bark-ml`.
+Install BARK-ML using `pip install bark-ml`.
 
 ## Gym Environments
 
