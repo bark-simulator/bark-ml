@@ -18,7 +18,7 @@ import tempfile
 import pkg_resources
 from distutils.command.build import build
 
-with open("README.md", "r") as fh:
+with open("Readme.md", "r") as fh:
     long_description = fh.read()
 
 def _configure_macos_deployment_target():
@@ -129,7 +129,7 @@ setup(
     version = "0.2.13",
     description = "Machine Learning Applied to Autonomous Driving",
     long_description=long_description,
-    long_description_content_type="text/plain",
+    long_description_content_type="text/markdown",
     classifiers = ["Development Status :: 4 - Beta",
                    "Intended Audience :: Science/Research",
                    "License :: OSI Approved :: MIT License",
