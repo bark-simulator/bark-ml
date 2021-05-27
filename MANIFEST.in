@@ -1,7 +1,7 @@
 include ./bazel-bin/bark_ml/pip_package.runfiles/bark_ml/bark_ml/core.so bark_ml/core.so
 
-include ./bazel-bin/bark_ml/pip_package.runfiles/bark_ml/bark_ml/environments/* bark_ml/environments/*
-include ./bazel-bin/bark_ml/pip_package.runfiles/bark_ml/bark_ml/environments/merging/* bark_ml/environments/merging/*
-include ./bazel-bin/bark_ml/pip_package.runfiles/bark_ml/bark_ml/environments/highway/* bark_ml/environments/highway/*
-include ./bazel-bin/bark_ml/pip_package.runfiles/bark_ml/bark_ml/environments/intersection/* bark_ml/environments/intersection/*
-include ./bazel-bin/bark_ml/pip_package.runfiles/bark_ml/bark_ml/environments/configurable/* bark_ml/environments/configurable/*
+include ./bazel-bin/bark_ml/pip_package.runfiles/bark_ml/bark_ml/environments/blueprints/* bark_ml/environments/blueprints/*
+include ./bazel-bin/bark_ml/pip_package.runfiles/bark_ml/bark_ml/environments/blueprints/merging/* bark_ml/environments/blueprints/merging/*
+include ./bazel-bin/bark_ml/pip_package.runfiles/bark_ml/bark_ml/environments/blueprints/highway/* bark_ml/environments/blueprints/highway/*
+include ./bazel-bin/bark_ml/pip_package.runfiles/bark_ml/bark_ml/environments/blueprints/intersection/* bark_ml/environments/blueprints/intersection/*
+include ./bazel-bin/bark_ml/pip_package.runfiles/bark_ml/bark_ml/environments/blueprints/configurable/* bark_ml/environments/blueprints/configurable/*
