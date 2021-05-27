@@ -3,6 +3,9 @@
 [![CI Build](https://github.com/bark-simulator/bark-ml/workflows/CI/badge.svg)](https://github.com/bark-simulator/bark-ml/actions)
 [![Github Contributors](https://img.shields.io/github/contributors/bark-simulator/bark-ml)](https://github.com/bark-simulator/bark-ml/graphs/contributors)
 [![Downloads](https://img.shields.io/pypi/dm/bark-ml)](https://pypi.org/project/bark-ml/)
+[![Python Versions](https://img.shields.io/pypi/pyversions/bark-ml)](https://pypi.org/project/bark-ml/)
+[![Package Versions](https://img.shields.io/pypi/v/bark-ml)](https://pypi.org/project/bark-ml/)
+[![Package Versions](https://img.shields.io/github/license/bark-simulator/bark-ml)](LICENSE)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/d1353db9e995441f87ab1a098226cf5f)](https://www.codacy.com/gh/bark-simulator/bark-ml/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bark-simulator/bark-ml&amp;utm_campaign=Badge_Grade)
 [![Environments](https://img.shields.io/badge/Environments-3-informational)](#gym-environments)
 
@@ -87,10 +90,10 @@ env = gym.make("merging-v0")
 initial_state = env.reset()
 done = False
 while done is False:
-  # action = np.array([0., 0.]) # acceleration and steering-rate
-  action = np.random.uniform(low=np.array([-0.5, -0.1]), high=np.array([0.5, 0.1]), size=(2, ))
+  action = np.array([0., 0.]) # acceleration and steering-rate
   observed_state, reward, done, info = env.step(action)
-  print(f"Observed state: {observed_state}, Action: {action}, Reward: {reward}, Done: {done}")
+  print(f"Observed state: {observed_state}, "
+        f"Action: {action}, Reward: {reward}, Done: {done}")
 
 ```
 
