@@ -1,4 +1,4 @@
-# BARK-ML - Machine Learning for Autonomous Driving
+# Gym Environments and Agents for Autonomous Driving
 
 [![CI Build](https://github.com/bark-simulator/bark-ml/workflows/CI/badge.svg)](https://github.com/bark-simulator/bark-ml/actions)
 [![Github Contributors](https://img.shields.io/github/contributors/bark-simulator/bark-ml)](https://github.com/bark-simulator/bark-ml/graphs/contributors)
