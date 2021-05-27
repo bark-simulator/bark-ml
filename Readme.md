@@ -27,7 +27,7 @@ Install BARK-ML using `pip install bark-ml`.
 env = gym.make("highway-v0")
 ```
 
-The highway scenario is a curved road with four lanes with all vehicles are controlled by the intelligent driver model (IDM).
+The highway scenario is a curved road with four lanes where all vehicles are being controlled by the intelligent driver model (IDM).
 For more details have a look [here](https://bark-simulator.github.io/tutorials/bark_ml_environments/#highway).
 
 Available environments:
@@ -44,7 +44,7 @@ Available environments:
 ```python
 env = gym.make("merging-v0")
 ```
-The ego agent is placed on the right lane and its goal on the left.
+In the merging scenario, the ego vehicle is placed on the right and its goal is placed on the left lane.
 All other vehicles are controlled by the MOBIL model.
 For more details have a look [here](https://bark-simulator.github.io/tutorials/bark_ml_environments/#merging).
 
@@ -57,13 +57,13 @@ Available environments:
 <em>The merging-v0 environment.</em>
 </p>
 
-### Unprotected Left Turn
+### Intersection / Unprotected Left Turn
 
 ```python
 env = gym.make("intersection-v0")
 ```
 
-The ego vehicle starts on the bottom-right lane and its goal is set on the top-left lane (unprotected left turn).
+In the intersection scenario, the ego vehicle starts on the bottom-right lane and its goal is set on the top-left lane (unprotected left turn).
 For more details have a look [here](https://bark-simulator.github.io/tutorials/bark_ml_environments/#intersection).
 
 Available environments:
@@ -77,7 +77,7 @@ Available environments:
 
 ## Getting Started
 
-A complete example using the [OpenAi-Gym](https://github.com/openai/gym) interface can be found [here](https://github.com/bark-simulator/bark-ml/blob/master/examples/continuous_env.py):
+An example using the [OpenAi-Gym](https://github.com/openai/gym) interface can be found [here](https://github.com/bark-simulator/bark-ml/blob/master/examples/continuous_env.py):
 ```python
 import gym
 import numpy as np
