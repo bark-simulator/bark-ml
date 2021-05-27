@@ -17,5 +17,5 @@ jobs:
       - name: Installing additional Python packages..
         run: pip install tensorflow-addons==0.11.2 graph-nets==1.1.0 ray==1.0.0
       - name: Running tests
-        run: bazel test //:unit_tests
+        run: bazel test //bark_ml:unit_tests
 
