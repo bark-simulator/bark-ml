@@ -10,5 +10,6 @@ pybind_extension(
     "//bark_ml/evaluators:cpp_evaluators",
     "//bark_ml/commons:spaces",
     "@com_github_eigen_eigen//:eigen",
-  ]
+  ],
+  linkopts = ["-L/usr/local/lib/"]
 )
