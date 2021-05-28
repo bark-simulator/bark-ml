@@ -26,11 +26,11 @@ def bark_ml_dependencies():
       remote = "https://github.com/bark-simulator/pybind11_bazel"
   )
 
-  _maybe(
-    native.local_repository,
-    name = "pybind11_bazel",
-    path = "/Users/hart/Development/pybind11_bazel"
-  )
+  # _maybe(
+  #   native.local_repository,
+  #   name = "pybind11_bazel",
+  #   path = "/Users/hart/Development/pybind11_bazel"
+  # )
   # alternative to torch api used from virtual env
   _maybe(
     http_archive,
