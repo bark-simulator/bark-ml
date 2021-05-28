@@ -11,5 +11,6 @@ pybind_extension(
     "//bark_ml/commons:spaces",
     "@com_github_eigen_eigen//:eigen",
   ],
-  linkopts = ["-L/usr/local/lib/"]
+  linkopts = ["-L/usr/local/lib/"],
+  linkstatic = 0
 )
