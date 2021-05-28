@@ -2,6 +2,11 @@ package(default_visibility = ["//visibility:public"])
 
 load("@pybind11_bazel//:build_defs.bzl", "pybind_extension")
 
+config_setting(
+    name = "op_sys",
+    define_values = { "build_plattform": "macos" }
+)
+
 pybind_extension(
   name = "core",
   srcs = glob(["*.cpp", "*.hpp"]),
@@ -11,5 +16,12 @@ pybind_extension(
     "//bark_ml/commons:spaces",
     "@com_github_eigen_eigen//:eigen",
   ],
-  linkstatic=0
+  linkopts = select({
+    ":op_sys": [""],
+    "//conditions:default": ["-L/usr/local/lib/"],
+  }),
+  linkstatic= select({
+    ":op_sys": 0,
+    "//conditions:default": 1,
+  })
 )
