@@ -61,9 +61,15 @@ cc_library(
 
   # if we include glog twice, gflags are defined mult. times
   _maybe(
-    new_git_repository,
-    name = "com_github_google_glog",
-    commit = "195d416e3b1c8dc06980439f6acd3ebd40b6b820",
-    remote = "https://github.com/google/glog",
-    build_file="//:utils/glog.BUILD"
+    git_repository,
+    name = "com_github_gflags_gflags",
+    commit = "addd749114fab4f24b7ea1e0f2f837584389e52c",
+    remote = "https://github.com/gflags/gflags"
+  )
+
+  _maybe(
+  git_repository,
+  name = "com_github_glog_glog",
+  commit = "c5dcae830670bfaea9573fa7b700e862833d14ff",
+  remote = "https://github.com/google/glog.git"
   )
