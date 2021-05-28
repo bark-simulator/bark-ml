@@ -13,7 +13,7 @@ from bark.runtime.scenario.scenario_generation.configurable_scenario_generation 
 from bark_ml.environments.blueprints.blueprint import Blueprint
 from bark_ml.evaluators.goal_reached import GoalReached
 from bark_ml.behaviors.discrete_behavior import *
-from bark_ml.core.observers import NearestObserver
+from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 
 
 class ConfigurableScenarioBlueprint(Blueprint):
@@ -38,7 +38,7 @@ class ConfigurableScenarioBlueprint(Blueprint):
     dt = 0.2
     # NOTE: evaluator and observer could be overwritten
     evaluator = GoalReached(params)
-    observer = NearestObserver(params)
+    observer = NearestAgentsObserver(params)
     ml_behavior = ml_behavior
     super().__init__(
       scenario_generation=scenario_generation,
