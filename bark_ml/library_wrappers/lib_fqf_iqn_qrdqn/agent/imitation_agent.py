@@ -162,6 +162,7 @@ class ImitationAgent(BaseAgent):
     self.num_value_functions = params["NumValueFunctions", "", 3]
     self.learning_rate = params["LearningRate", "", 0.001]
     self.train_test_ratio = params["TrainTestRatio", "", 0.2]
+    self.weight_decay = params["WeightDecay", "", 0]
 
   def reset_training_variables(self):
     # Replay memory which is memory-efficient to store stacked frames.
@@ -197,6 +198,7 @@ class ImitationAgent(BaseAgent):
     self.optim = RMSprop(
         self.online_net.parameters(),
         lr=self.learning_rate,
+        weight_decay=self.weight_decay,
         alpha=0.95,
         eps=0.00001)
 
