@@ -1,3 +1,5 @@
+include ./bazel-bin/bark_ml/pip_package.runfiles/bark_ml/bark_ml/core.so bark_ml/core.so
+
 include ./bazel-bin/bark_ml/pip_package.runfiles/bark_ml/bark_ml/environments/blueprints/* bark_ml/environments/blueprints/*
 include ./bazel-bin/bark_ml/pip_package.runfiles/bark_ml/bark_ml/environments/blueprints/merging/* bark_ml/environments/blueprints/merging/*
 include ./bazel-bin/bark_ml/pip_package.runfiles/bark_ml/bark_ml/environments/blueprints/highway/* bark_ml/environments/blueprints/highway/*
