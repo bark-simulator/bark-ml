@@ -91,7 +91,7 @@ class NearestObserver : public BaseObserver {
     const auto ego_state = observed_world.CurrentEgoState();
     const auto ego_pos = observed_world.CurrentEgoPosition();
     const auto corridor_and_idx = observed_world.GetEgoAgent()
-      ->GetRoadCorridor()->GetCurrentLaneCorridorAndIndex(ego_pos);
+      ->GetRoadCorridor()->GetNearestLaneCorridorAndIndex(ego_pos);
     const auto& ego_corridor = corridor_and_idx.first;
     const unsigned corr_idx = corridor_and_idx.second;
     FrenetState current_ego_frenet(ego_state, ego_corridor->GetCenterLine());
@@ -111,7 +111,7 @@ class NearestObserver : public BaseObserver {
   ObservedState GetOtherAgentState(const AgentId& agent_id, const ObservedWorld& observed_world) const {
     const auto ego_pos = observed_world.CurrentEgoPosition();
     const auto corridor_and_idx = observed_world.GetEgoAgent()
-            ->GetRoadCorridor()->GetCurrentLaneCorridorAndIndex(ego_pos);
+            ->GetRoadCorridor()->GetNearestLaneCorridorAndIndex(ego_pos);
 
     const auto ego_state = observed_world.CurrentEgoState();
     FrenetState current_ego_frenet(ego_state, corridor_and_idx.first->GetCenterLine());
