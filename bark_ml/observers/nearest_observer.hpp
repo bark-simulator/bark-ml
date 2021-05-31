@@ -64,15 +64,16 @@ class NearestObserver : public BaseObserver {
       nearest_agent_num_ =
         params->GetInt(
           "ML::NearestObserver::NNearestAgents", "Nearest agents number", 4);
-      min_vel_lon_ = params->GetReal("ML::NearestObserver::MinVelLon", "", 0.0);
-      max_vel_lon_ = params->GetReal("ML::NearestObserver::MaxVelLon", "", 50.0);
-      min_vel_lat_ = params->GetReal("ML::NearestObserver::MinVelLat", "", 0.0);
-      max_vel_lat_ = params->GetReal("ML::NearestObserver::MaxVelLat", "", 50.0);
+      min_vel_lon_ = params->GetReal("ML::NearestObserver::MinVelLon", "", -30.0);
+      max_vel_lon_ = params->GetReal("ML::NearestObserver::MaxVelLon", "", 30.0);
+      min_vel_lat_ = params->GetReal("ML::NearestObserver::MinVelLat", "", -10.0);
+      max_vel_lat_ = params->GetReal("ML::NearestObserver::MaxVelLat", "", 10.0);
       max_dist_ = params->GetReal("ML::NearestObserver::MaxDist", "", 75.0);
-      min_s_ = params->GetReal("ML::NearestObserver::MinS", "", 0.0);
+      min_s_ = params->GetReal("ML::NearestObserver::MinS", "", -100.0);
+      min_abs_s_ = params->GetReal("ML::NearestObserver::MinAbsS", "", 0.0);
       max_s_ = params->GetReal("ML::NearestObserver::MaxS", "", 100.0);
-      min_d_ = params->GetReal("ML::NearestObserver::MinD", "", 0.0);
-      max_d_ = params->GetReal("ML::NearestObserver::MaxD", "", 100.0);
+      min_d_ = params->GetReal("ML::NearestObserver::MinD", "", -20.0);
+      max_d_ = params->GetReal("ML::NearestObserver::MaxD", "", 20.0);
       min_theta_ = params->GetReal("ML::NearestObserver::MinTheta", "", -B_PI);
       max_theta_ = params->GetReal("ML::NearestObserver::MaxTheta", "", B_PI);
       // Ego agent has s,d, vlat, vlon, theta, laneid other agents have del s, del d, del vlat, del vlon
@@ -96,7 +97,9 @@ class NearestObserver : public BaseObserver {
     FrenetState current_ego_frenet(ego_state, ego_corridor->GetCenterLine());
     ObservedState ego_nn_state(1, 6);
     const double normalized_angle = NormToPI(current_ego_frenet.angle);
-    ego_nn_state << Norm(current_ego_frenet.lon, min_s_, max_s_),
+    LOG_IF_EVERY_N(WARNING, (current_ego_frenet.lon < min_abs_s_), 100)
+         << "Sego=" << current_ego_frenet.lon << " < Min abs s=" << min_abs_s_;
+    ego_nn_state << Norm(current_ego_frenet.lon - min_abs_s_, min_s_, max_s_),
                  Norm(current_ego_frenet.lat, min_d_, max_d_),
                  Norm(normalized_angle, min_theta_, max_theta_),
                  Norm(current_ego_frenet.vlon, min_vel_lon_, max_vel_lon_),
@@ -176,7 +179,7 @@ class NearestObserver : public BaseObserver {
   double min_theta_, max_theta_, min_vel_lon_,
          max_vel_lon_, min_vel_lat_,
          max_vel_lat_, max_dist_,
-         min_d_, max_d_, min_s_, max_s_;
+         min_d_, max_d_, min_s_, max_s_, min_abs_s_;
 };
 
 }  // namespace observers
