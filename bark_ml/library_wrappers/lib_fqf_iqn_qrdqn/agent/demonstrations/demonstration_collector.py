@@ -20,8 +20,8 @@ from bark.benchmark.benchmark_result import BenchmarkResult
 from bark.benchmark.benchmark_runner import BenchmarkRunner, BehaviorConfig
 from bark.benchmark.benchmark_runner_mp import BenchmarkRunnerMP
 
-from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent.training_benchmark_database \
-       import default_training_evaluators, default_terminal_criteria
+from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent.util import *
+
 
 def to_pickle(obj, dir, file):
   path = os.path.join(dir, file)
@@ -246,6 +246,14 @@ class DemonstrationCollector:
     collector = DemonstrationCollector()
     return DemonstrationCollector._load(collector, directory)
 
+  @property
+  def observer(self):
+    return self._observer
+
+  @property
+  def motion_primitive_behavior(self):
+    return self._motion_primitive_behavior
+
   @staticmethod
   def collection_result_filename():
     return "collection_result"
@@ -256,7 +264,7 @@ class DemonstrationCollector:
 
   @staticmethod
   def observer_filename():
-    return "demonstrations"
+    return "observer"
 
   @staticmethod
   def motion_primitive_behavior_filename():

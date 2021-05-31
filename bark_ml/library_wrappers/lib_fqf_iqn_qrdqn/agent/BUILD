@@ -6,7 +6,8 @@ py_library(
         ":fqf_agent",
         ":iqn_agent",
         ":qrdqn_agent",
-        ":imitation_agent"
+        ":imitation_agent",
+        "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent:util"
     ],
     visibility = ["//visibility:public"],
 )
@@ -22,6 +23,15 @@ py_library(
     deps = [
         "@bark_project//bark/benchmark:benchmark_runner",
         "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent:agents",
+        "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent:util",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "util",
+    srcs = [
+        "util.py"
     ],
     visibility = ["//visibility:public"],
 )

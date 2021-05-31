@@ -103,9 +103,9 @@ class BaseAgent(BehaviorModel):
       self.reset_training_variables()
     elif checkpoint_load:
       self.load_pickable_members(agent_save_dir)
+      self.load_other()
       self.init_always()
       self.load_models(BaseAgent.check_point_directory(agent_save_dir, checkpoint_load))
-      self.load_other()
     else:
       raise ValueError("Unusual param combination for agent initialization.")
 
@@ -135,6 +135,7 @@ class BaseAgent(BehaviorModel):
     del pickables["target_net"]
     del pickables["_env"]
     del pickables["_training_benchmark"]
+    del pickables["_checkpoint_load"]
     del pickables["device"]
     del pickables["writer"]
 
@@ -337,7 +338,9 @@ class BaseAgent(BehaviorModel):
     online_net_script = torch.jit.script(self.online_net)
     online_net_script.save(os.path.join(checkpoint_dir, 'online_net_script.pt'))
 
-  def get_script_filename(self, checkpoint_load):
+  def get_script_filename(self, checkpoint_load=None):
+    if not checkpoint_load:
+      checkpoint_load = self._checkpoint_load
     checkpoint_dir = BaseAgent.check_point_directory(self._agent_save_dir, checkpoint_load)
     return os.path.join(checkpoint_dir, 'online_net_script.pt')
 
