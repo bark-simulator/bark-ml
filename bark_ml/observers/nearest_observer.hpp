@@ -131,18 +131,6 @@ class NearestObserver : public BaseObserver {
     AgentMap nearest_agents = observed_world.GetNearestAgents(
       observed_world.CurrentEgoPosition(), nearest_agent_num_ + 1);
 
-    // sort agents by distance and distance < max_dist_
-    std::map<double, AgentPtr, std::less<double>> distance_agent_map;
-    for (const auto& agent : nearest_agents) {
-      if(agent.first == observed_world.GetEgoAgentId()) continue;
-  
-      const auto& agent_state = agent.second->GetCurrentPosition();
-      double distance = Distance(
-        observed_world.CurrentEgoPosition(), agent_state);
-      if (distance <= max_dist_)
-        distance_agent_map[distance] = agent.second;
-    }
-
     // Build state
     int state_start_idx = 0;
     ObservedState state(1, observation_len_);
@@ -154,11 +142,18 @@ class NearestObserver : public BaseObserver {
     state_start_idx = obs_ego_agent_state.cols();
 
     // add other states
-    for (const auto& agent : distance_agent_map) {
-        ObservedState other_agent_state = GetOtherAgentState(agent.second->GetAgentId(),
-                        observed_world);
-        state.block(0, state_start_idx, 1, other_agent_state.cols()) = other_agent_state;  // NOLINT
-        state_start_idx += other_agent_state.cols();
+    for (const auto& agent : nearest_agents) {
+      if(agent.first == observed_world.GetEgoAgentId()) continue;
+
+      const auto& agent_state = agent.second->GetCurrentPosition();
+      double distance = Distance(
+        observed_world.CurrentEgoPosition(), agent_state);
+      if (distance > max_dist_) continue;
+
+      ObservedState other_agent_state = GetOtherAgentState(agent.second->GetAgentId(),
+                      observed_world);
+      state.block(0, state_start_idx, 1, other_agent_state.cols()) = other_agent_state;  // NOLINT
+      state_start_idx += other_agent_state.cols();
     }
     return state;
   }
