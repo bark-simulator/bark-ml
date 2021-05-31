@@ -45,36 +45,22 @@ cc_library(
 )
     """)
 
-  _maybe(
-    native.new_local_repository,
-    name = "torchcpp",
-    path = "./bark_ml/python_wrapper/venv/lib/python3.7/site-packages/",
-    build_file_content = """
-cc_library(
-    name = "lib",
-    srcs = ["torch/lib/libc10.so", "torch/lib/libtorch_cpu.so"],
-    hdrs = glob(["torch/include/**/*.h", "torch/include/*.h"]),
-    visibility = ["//visibility:public"],
-)
-    """)
-  _maybe(
-    git_repository,
-    name = "diadem_project",
-    commit = "64b2987fbdd69ad533f30b545568c691ad5afb00",
-    remote = "https://github.com/juloberno/diadem"
-  )
+#   _maybe(
+#     native.new_local_repository,
+#     name = "torchcpp",
+#     path = "./bark_ml/python_wrapper/venv/lib/python3.7/site-packages/",
+#     build_file_content = """
+# cc_library(
+#     name = "lib",
+#     srcs = ["torch/lib/libc10.so", "torch/lib/libtorch_cpu.so"],
+#     hdrs = glob(["torch/include/**/*.h", "torch/include/*.h"]),
+#     visibility = ["//visibility:public"],
+# )
+#     """)
 
-  # if we include glog twice, gflags are defined mult. times
-  _maybe(
-    git_repository,
-    name = "com_github_gflags_gflags",
-    commit = "addd749114fab4f24b7ea1e0f2f837584389e52c",
-    remote = "https://github.com/gflags/gflags"
-  )
-
-  _maybe(
-  git_repository,
-  name = "com_github_glog_glog",
-  commit = "c5dcae830670bfaea9573fa7b700e862833d14ff",
-  remote = "https://github.com/google/glog.git"
-  )
+#   _maybe(
+#     git_repository,
+#     name = "diadem_project",
+#     commit = "64b2987fbdd69ad533f30b545568c691ad5afb00",
+#     remote = "https://github.com/juloberno/diadem"
+#   )

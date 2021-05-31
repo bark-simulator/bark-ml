@@ -18,9 +18,9 @@ pybind_extension(
   ],
   linkopts = select({
     ":op_sys": [""],
-    "//conditions:default": ["-L/usr/local/lib/"],
+    "//conditions:default": ["-L/usr/local/lib/ -Wl,-Bsymbolic"],
   }),
-  linkstatic= select({
+  linkstatic = select({
     ":op_sys": 0,
     "//conditions:default": 1,
   })
