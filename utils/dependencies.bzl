@@ -10,7 +10,7 @@ def bark_ml_dependencies():
   _maybe(
     git_repository,
     name = "bark_project",
-    branch = "renderer",
+    branch = "pybind_bazel",
     remote = "https://github.com/bark-simulator/bark",
   )
   # _maybe(
@@ -20,19 +20,17 @@ def bark_ml_dependencies():
   # )
 
   _maybe(
-    native.new_local_repository,
-    name = "python_linux",
-    path = "./bark_ml/python_wrapper/venv/",
-    build_file_content = """
-cc_library(
-    name = "python-lib",
-    srcs = glob(["lib/libpython3.*", "libs/python3.lib", "libs/python36.lib"]),
-    hdrs = glob(["include/**/*.h", "include/*.h"]),
-    includes = ["include/python3.6m", "include", "include/python3.7m", "include/python3.5m"], 
-    visibility = ["//visibility:public"],
-)
-    """)
-    
+      git_repository,
+      name = "pybind11_bazel",
+      commit="c4a29062b77bf42836d995f6ce802f642cffb939",
+      remote = "https://github.com/bark-simulator/pybind11_bazel"
+  )
+
+  # _maybe(
+  #   native.local_repository,
+  #   name = "pybind11_bazel",
+  #   path = "/Users/hart/Development/pybind11_bazel"
+  # )
   # alternative to torch api used from virtual env
   _maybe(
     http_archive,
@@ -47,30 +45,22 @@ cc_library(
 )
     """)
 
-  _maybe(
-    native.new_local_repository,
-    name = "torchcpp",
-    path = "./bark_ml/python_wrapper/venv/lib/python3.7/site-packages/",
-    build_file_content = """
-cc_library(
-    name = "lib",
-    srcs = ["torch/lib/libc10.so", "torch/lib/libtorch_cpu.so"],
-    hdrs = glob(["torch/include/**/*.h", "torch/include/*.h"]),
-    visibility = ["//visibility:public"],
-)
-    """)
-  _maybe(
-    git_repository,
-    name = "diadem_project",
-    commit = "64b2987fbdd69ad533f30b545568c691ad5afb00",
-    remote = "https://github.com/juloberno/diadem"
-  )
+#   _maybe(
+#     native.new_local_repository,
+#     name = "torchcpp",
+#     path = "./bark_ml/python_wrapper/venv/lib/python3.7/site-packages/",
+#     build_file_content = """
+# cc_library(
+#     name = "lib",
+#     srcs = ["torch/lib/libc10.so", "torch/lib/libtorch_cpu.so"],
+#     hdrs = glob(["torch/include/**/*.h", "torch/include/*.h"]),
+#     visibility = ["//visibility:public"],
+# )
+#     """)
 
-  # if we include glog twice, gflags are defined mult. times
-  _maybe(
-    new_git_repository,
-    name = "com_github_google_glog",
-    commit = "195d416e3b1c8dc06980439f6acd3ebd40b6b820",
-    remote = "https://github.com/google/glog",
-    build_file="//:utils/glog.BUILD"
-  )
+#   _maybe(
+#     git_repository,
+#     name = "diadem_project",
+#     commit = "64b2987fbdd69ad533f30b545568c691ad5afb00",
+#     remote = "https://github.com/juloberno/diadem"
+#   )

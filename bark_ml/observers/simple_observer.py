@@ -11,16 +11,16 @@ import numpy as np
 
 from bark.core.models.dynamic import StateDefinition
 from bark.runtime.commons.parameters import ParameterServer
-from bark_ml.observers.observer import StateObserver
+from bark_ml.observers.observer import BaseObserver
 
 
-class SimpleObserver(StateObserver):
+class SimpleObserver(BaseObserver):
   """Simple implementation of an state observer."""
 
   def __init__(self,
                normalize_observations=True,
                params=ParameterServer()):
-    StateObserver.__init__(self, params)
+    BaseObserver.__init__(self, params)
     self._state_definition = [int(StateDefinition.X_POSITION),
                               int(StateDefinition.Y_POSITION),
                               int(StateDefinition.THETA_POSITION),

@@ -55,15 +55,15 @@ class SingleAgentRuntime(Runtime):
     self._world = self._evaluator.Reset(self._world)
     self._world.agents[eval_id].behavior_model = self._ml_behavior
 
+    # render
+    if self._render:
+      self.render()
+
     # observe
     observed_world = self._world.Observe([eval_id])[0]
     return self._observer.Observe(observed_world)
 
   def step(self, action):
-    # render
-    if self._render:
-      self.render()
-
     # set actions
     eval_id = self._scenario._eval_agent_ids[0]
     if eval_id in self._world.agents:
@@ -83,6 +83,10 @@ class SingleAgentRuntime(Runtime):
     reward, done, info = self._evaluator.Evaluate(
       observed_world=observed_world,
       action=action)
+
+    # render
+    if self._render:
+      self.render()
 
     return observed_next_state, reward, done, info
 

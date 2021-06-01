@@ -7,7 +7,7 @@
 # https://opensource.org/licenses/MIT
 
 import os
-from bark.runtime.viewer.matplotlib_viewer import MPViewer
+from bark.runtime.viewer.buffered_mp_viewer import BufferedMPViewer
 from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
 from bark.core.world.opendrive import XodrDrivingDirection
@@ -19,8 +19,7 @@ from bark_ml.evaluators.reward_shaping_intersection import RewardShapingEvaluato
 
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
-from bark_ml.core.observers import NearestObserver
-
+from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 
 
 class MergingLaneCorridorConfig(LaneCorridorConfig):
@@ -90,7 +89,6 @@ class MergingBlueprint(Blueprint):
       s_max=25.,
       min_vel=9.,
       max_vel=11.,
-      behavior_model=BehaviorMobilRuleBased(params),
       controlled_ids=True)
     scenario_generation = \
       ConfigWithEase(
@@ -100,10 +98,11 @@ class MergingBlueprint(Blueprint):
         params=params,
         lane_corridor_configs=[left_lane, right_lane])
     if viewer:
-      viewer = MPViewer(params=params,
-                        x_range=[-25, 25],
-                        y_range=[-25, 25],
-                        follow_agent_id=True)
+      viewer = BufferedMPViewer(
+        params=params,
+        x_range=[-25, 25],
+        y_range=[-25, 25],
+        follow_agent_id=True)
     dt = 0.2
     params["ML"]["RewardShapingEvaluator"]["RewardShapingPotentials",
       "Reward shaping functions.", {
@@ -112,7 +111,7 @@ class MergingBlueprint(Blueprint):
         }
       }]
     evaluator = RewardShapingEvaluator(params)
-    observer = NearestObserver(params)
+    observer = NearestAgentsObserver(params)
     ml_behavior = ml_behavior
 
     super().__init__(

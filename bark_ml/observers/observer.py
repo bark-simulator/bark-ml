@@ -11,7 +11,7 @@ import math
 from abc import ABC, abstractmethod
 
 
-class StateObserver(ABC):
+class BaseObserver(ABC):
   """State Observer
 
   The observer creates the observed state that then can be, e.g.,
@@ -22,19 +22,19 @@ class StateObserver(ABC):
                params):
     self._params = params
     self._velocity_range = \
-      self._params["ML"]["StateObserver"]["VelocityRange",
+      self._params["ML"]["BaseObserver"]["VelocityRange",
       "Boundaries for min and max velocity for normalization",
       [0, 100]]
     self._theta_range = \
-      self._params["ML"]["StateObserver"]["ThetaRange",
+      self._params["ML"]["BaseObserver"]["ThetaRange",
       "Boundaries for min and max theta for normalization",
       [-2*math.pi, 2*math.pi]]
     self._normalization_enabled = \
-      self._params["ML"]["StateObserver"]["NormalizationEnabled",
+      self._params["ML"]["BaseObserver"]["NormalizationEnabled",
       "Whether normalization should be performed",
       True]
     self._max_num_vehicles = \
-      self._params["ML"]["StateObserver"]["MaxNumAgents",
+      self._params["ML"]["BaseObserver"]["MaxNumAgents",
       "The concatenation state size is the ego agent plus max num other agents",
       2]
     self._world_x_range = [-10000, 10000]
