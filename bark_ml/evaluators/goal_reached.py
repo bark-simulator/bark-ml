@@ -9,17 +9,17 @@ from bark.core.world.evaluation import \
   EvaluatorStepCount, EvaluatorDrivableArea
 from bark.runtime.commons.parameters import ParameterServer
 
-from bark_ml.evaluators.evaluator import StateEvaluator
+from bark_ml.evaluators.evaluator import BaseEvaluator
 
 
-class GoalReached(StateEvaluator):
+class GoalReached(BaseEvaluator):
   """Sparse reward evaluator returning +1 for reaching the goal,
   -1 for having a collision or leaving the drivable area."""
 
   def __init__(self,
                params=ParameterServer(),
                eval_agent=None):
-    StateEvaluator.__init__(self, params)
+    BaseEvaluator.__init__(self, params)
     self._goal_reward = \
       self._params["ML"]["GoalReachedEvaluator"]["GoalReward",
         "Reward for reaching the goal.",

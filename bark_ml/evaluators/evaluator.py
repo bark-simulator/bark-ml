@@ -10,7 +10,7 @@ from abc import ABC
 from bark.runtime.commons.parameters import ParameterServer
 
 
-class StateEvaluator(ABC):
+class BaseEvaluator(ABC):
   """Evaluates the state of the environment, e.g., if
   a collision has occured."""
 

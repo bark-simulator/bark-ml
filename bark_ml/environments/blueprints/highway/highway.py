@@ -8,7 +8,7 @@
 
 import os
 import numpy as np
-from bark.runtime.viewer.matplotlib_viewer import MPViewer
+from bark.runtime.viewer.buffered_mp_viewer import BufferedMPViewer
 from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
 from bark.core.world.goal_definition import GoalDefinitionPolygon
@@ -19,6 +19,7 @@ from bark_ml.evaluators.reward_shaping_max_steps import RewardShapingEvaluatorMa
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
 
+# from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.core.observers import NearestObserver
 
 
@@ -96,10 +97,11 @@ class HighwayBlueprint(Blueprint):
     if viewer:
       # viewer = MPViewer(params=params,
       #                   use_world_bounds=True)
-      viewer = MPViewer(params=params,
-                        x_range=[-35, 35],
-                        y_range=[-35, 35],
-                        follow_agent_id=True)
+      viewer = BufferedMPViewer(
+        params=params,
+        x_range=[-55, 55],
+        y_range=[-55, 55],
+        follow_agent_id=True)
     dt = 0.2
     params["ML"]["RewardShapingEvaluator"]["RewardShapingPotentials",
       "Reward shaping functions.", {

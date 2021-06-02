@@ -15,7 +15,7 @@
             "CollisionPenalty": -10.0,
             "MaxSteps": 60
         },
-        "StateObserver": {
+        "BaseObserver": {
             "VelocityRange": [
                 0,
                 40

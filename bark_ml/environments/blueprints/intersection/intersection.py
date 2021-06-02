@@ -7,7 +7,7 @@
 # https://opensource.org/licenses/MIT
 
 import os
-from bark.runtime.viewer.matplotlib_viewer import MPViewer
+from bark.runtime.viewer.buffered_mp_viewer import BufferedMPViewer
 from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
 from bark.core.world.opendrive import XodrDrivingDirection
@@ -19,7 +19,7 @@ from bark_ml.evaluators.reward_shaping_intersection import RewardShapingEvaluato
 # from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
-from bark_ml.core.observers import NearestObserver
+from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 
 
 class IntersectionLaneCorridorConfig(LaneCorridorConfig):
@@ -101,14 +101,15 @@ class IntersectionBlueprint(Blueprint):
         params=params,
         lane_corridor_configs=lane_corridors)
     if viewer:
-      viewer = MPViewer(params=params,
-                        x_range=[-30, 30],
-                        y_range=[-30, 30],
-                        follow_agent_id=True)
+      viewer = BufferedMPViewer(
+        params=params,
+        x_range=[-30, 30],
+        y_range=[-30, 30],
+        follow_agent_id=True)
     dt = 0.2
     params["ML"]["GoalReachedEvaluator"]["MaxSteps"] = 100
     evaluator = RewardShapingEvaluatorIntersection(params)
-    observer = NearestObserver(params)
+    observer = NearestAgentsObserver(params)
     ml_behavior = ml_behavior
 
     super().__init__(

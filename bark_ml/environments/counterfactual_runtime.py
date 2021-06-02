@@ -262,7 +262,7 @@ class CounterfactualRuntime(SingleAgentRuntime):
     # NOTE: outsource
     hist = gt_world.agents[eval_id].history
     traj = np.stack([x[0] for x in hist])
-    self._viewer.drawTrajectory(traj, color='blue')
+    # self._viewer.drawTrajectory(traj, color='blue')
 
     if self._visualize_heatmap:
       self.DrawHeatmap(
