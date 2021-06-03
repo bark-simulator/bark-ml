@@ -126,8 +126,8 @@ class BuildExtCommand(setuptools.command.build_ext.build_ext):
 
 setup(
     name = "bark-ml",
-    version = "0.4.0",
-    description = "Machine Learning Applied to Autonomous Driving",
+    version = "0.4.1",
+    description = "Gym Environments and Agents for Autonomous Driving",
     long_description=long_description,
     long_description_content_type="text/markdown",
     classifiers = ["Development Status :: 4 - Beta",
@@ -136,7 +136,7 @@ setup(
                    "Operating System :: OS Independent",
                    "Programming Language :: Python :: 3.7",
                    "Programming Language :: Python :: 3.8"],
-    keywords = "simulator, autonomous, driving, machine learning",
+    keywords = "gym environments, reinforcement learning, autonomous driving, machine learning",
     url = "https://github.com/bark-simulator/bark-ml",
     author = "Patrick Hart, Julian Bernhard, Klemens Esterle, Tobias Kessler",
     author_email = "patrickhart.1990@gmail.com",
