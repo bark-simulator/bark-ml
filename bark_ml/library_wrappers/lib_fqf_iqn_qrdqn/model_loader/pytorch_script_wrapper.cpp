@@ -1,4 +1,4 @@
-#include "bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/model_wrapper/model_loader.hpp"
+#include "bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/model_loader/model_loader.hpp"
 #include <iostream>
 #include <memory>
 
@@ -13,5 +13,6 @@ PYBIND11_MODULE(pytorch_script_wrapper, m) {
     py::class_<ModelLoader>(m, "ModelLoader")
         .def(py::init<>())
         .def("Inference", &ModelLoader::Inference, "Perform the inference for a given state")
-        .def("LoadModel", &ModelLoader::LoadModel, "Loads the torch cpp script model");
+        .def("LoadModel", &ModelLoader::LoadModel, "Loads the torch cpp script model")
+        .def("TimeMeasuredInference", &ModelLoader::TimeMeasuredInference);
 }

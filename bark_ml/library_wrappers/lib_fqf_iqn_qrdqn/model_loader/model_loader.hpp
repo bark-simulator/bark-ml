@@ -71,7 +71,17 @@ class ModelLoader {
 
     //copy the data from torch tensor to std vector
     std::vector<float> output(torch_output.data_ptr<float>(), torch_output.data_ptr<float>() + torch_output.numel());
+
     return output;
+  }
+
+  double TimeMeasuredInference(std::vector<float> state) {
+    auto start = std::chrono::high_resolution_clock::now();
+    const auto result = Inference(state);
+    auto finish = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::micro> elapsed = finish - start;
+    double last_inference_time = elapsed.count();
+    return last_inference_time;
   }
 
  private:

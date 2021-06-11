@@ -64,7 +64,7 @@ py_test(
     data = ["@torchcpp//:lib",
             "@bark_project//bark/python_wrapper:core.so",
             "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/tests/lib_fqf_iqn_qrdqn_test_data:weights",
-            "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/model_wrapper:pytorch_script_wrapper.so"],
+            "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/model_loader:pytorch_script_wrapper.so"],
     imports = ["../external/bark_project/bark/python_wrapper/",
                "../external/torchcpp/torch/lib" # this path does not exist even after adding data dependency. Keeping it for further research. 
                                                 # and ../ should be ../../ for bark as well as pytorch as there is no external 
