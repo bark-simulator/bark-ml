@@ -132,6 +132,7 @@ class BaseAgent(BehaviorModel):
 
   def clean_pickables(self, pickables):
     del pickables["online_net"]
+    del pickables["_agent_save_dir"]
     del pickables["target_net"]
     del pickables["_env"]
     del pickables["_training_benchmark"]
@@ -149,6 +150,10 @@ class BaseAgent(BehaviorModel):
 
   def load_pickable_members(self, agent_save_dir):
     pickables = from_pickle(BaseAgent.pickable_directory(agent_save_dir), "agent_pickables")
+    try:
+      del pickables["_agent_save_dir"]
+    except:
+      pass
     self.__dict__.update(pickables)
 
   def load_other(self):

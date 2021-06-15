@@ -44,8 +44,9 @@ class BenchmarkSupervisedLoss(TrainingBenchmark):
         return eval_result1["mse_loss/test"] < than_eval_result2["mse_loss/test"]
 
 class ImitationAgent(BaseAgent):
-  def __init__(self, demonstration_collector = None, *args, **kwargs):
+  def __init__(self, demonstration_collector = None, base_demonstrations_dir=None, *args, **kwargs):
     self.demonstration_collector = demonstration_collector
+    self.base_demonstrations_dir = base_demonstrations_dir
     super(ImitationAgent, self).__init__(*args, **kwargs)
     self.define_training_test_data()
     self._training_benchmark = BenchmarkSupervisedLoss(self.demonstrations_test)
@@ -156,6 +157,13 @@ class ImitationAgent(BaseAgent):
     super(ImitationAgent, self).save(checkpoint_type)
 
   def load_other(self):
+    if not os.path.exists(self.demonstration_collector_dir) and self.base_demonstrations_dir:
+      demonstrations_folder_name = os.path.basename(self.demonstration_collector_dir)
+      self.demonstration_collector_dir = \
+           os.path.abspath(os.path.join(self.base_demonstrations_dir, demonstrations_folder_name))
+      logging.info(f"Resetting demonstration dir to {self.demonstration_collector_dir}")
+    if not os.path.exists(self.demonstration_collector_dir):
+      raise ValueError("Demonstration dir {} not existing".format(self.demonstration_collector_dir))
     self.demonstration_collector = ActionValuesCollector.load(self.demonstration_collector_dir)
 
   @property
@@ -169,6 +177,12 @@ class ImitationAgent(BaseAgent):
     except RuntimeError:
       self.online_net.load_state_dict(
         torch.load(os.path.join(checkpoint_dir, 'online_net.pth'), map_location=torch.device('cpu')))
+
+  def evaluate_experiences(self, demonstrations):
+    states, action_values_desired = self.sample_batch(demonstrations, len(demonstrations))
+    action_values_current = self.online_net(states)
+    return np.array(states), np.array(action_values_desired), np.array(action_values_current)
+
 
   def train_episode(self):
     states, action_values_desired = self.sample_batch(self.demonstrations_train, self.batch_size)
