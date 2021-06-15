@@ -199,7 +199,7 @@ class ImitationAgent(BaseAgent):
     self.optim = RMSprop(
         self.online_net.parameters(),
         lr=self.learning_rate,
-        weight_decay=self.weight_decay,
+#        weight_decay=self.weight_decay,
         alpha=0.95,
         eps=0.00001)
 
@@ -289,7 +289,7 @@ class ImitationAgent(BaseAgent):
   def evaluate_experiences(self, demonstrations):
     states, action_values_desired = self.sample_batch(demonstrations, len(demonstrations))
     action_values_current = self.online_net(states)
-    return np.array(states), np.array(action_values_desired), np.array(action_values_current)
+    return  states.detach().numpy(), action_values_desired.detach().numpy(), action_values_current.detach().numpy()
 
 
   def train_episode(self):
