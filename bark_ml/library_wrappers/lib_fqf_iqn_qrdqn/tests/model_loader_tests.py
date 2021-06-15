@@ -26,7 +26,7 @@ from bark_ml.environments.blueprints import \
   DiscreteHighwayBlueprint, DiscreteMergingBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 import bark_ml.environments.gym
-from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.model_wrapper \
+from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.model_loader \
  import pytorch_script_wrapper
 
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.tests.test_imitation_agent import TestActionWrapper, \

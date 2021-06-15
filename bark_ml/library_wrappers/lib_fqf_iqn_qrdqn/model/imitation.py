@@ -1,10 +1,10 @@
-from torch import nn
+from torch import nn, sigmoid
 from collections import OrderedDict
 from bark_ml.core.value_converters import *
 
 def init_weights(m):
     if type(m) == nn.Linear:
-        nn.init.xavier_uniform(m.weight)
+        nn.init.xavier_uniform_(m.weight)
         m.bias.data.fill_(0.01)
 
 class Imitation(nn.Module):
@@ -32,7 +32,7 @@ class Imitation(nn.Module):
           tuple_list.append((f"layer{idx}", nn.Linear(last_dim, current_dim)))
           tuple_list.append((f"relu{idx}", nn.ReLU()))
           if self.droput_p != 0:
-            tuple_list.append((f"relu{idx}", nn.Dropout(p=self.droput_p)))
+            tuple_list.append((f"dropout{idx}", nn.Dropout(p=self.droput_p)))
           last_dim = current_dim
       tuple_list.append(("output", nn.Linear(last_dim, self.num_actions*self.num_value_functions)))
       return OrderedDict(tuple_list)
@@ -43,5 +43,7 @@ class Imitation(nn.Module):
 
   def forward(self, states):
     action_values = self.net(states)
+    if not self.training:
+      # Evaluation phase, output values between 0 and 1
+      action_values = sigmoid(action_values)
     return action_values
-
