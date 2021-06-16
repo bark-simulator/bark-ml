@@ -349,9 +349,13 @@ class BaseAgent(BehaviorModel):
     checkpoint_dir = BaseAgent.check_point_directory(self._agent_save_dir, checkpoint_load)
     return os.path.join(checkpoint_dir, 'online_net_script.pt')
 
+  def save_in_dir(self, agent_save_dir, checkpoint_type):
+    self._agent_save_dir = agent_save_dir
+    self.save_models(BaseAgent.check_point_directory(agent_save_dir, checkpoint_type))
+    self.save_pickable_members(BaseAgent.pickable_directory(agent_save_dir))
+
   def save(self, checkpoint_type="last"):
-    self.save_models(BaseAgent.check_point_directory(self.agent_save_dir, checkpoint_type))
-    self.save_pickable_members(BaseAgent.pickable_directory(self.agent_save_dir))
+    self.save_in_dir(self.agent_save_dir, checkpoint_type)
 
   def load_models(self, checkpoint_dir):
     try: 
@@ -441,6 +445,12 @@ class BaseAgent(BehaviorModel):
       self.evaluate()
       self.save("final")
       self.online_net.train()
+
+  def raw_evaluation_score(self):
+    self.online_net.eval()
+    eval_results, _ = self._training_benchmark.run()
+    return eval_results
+
 
   def evaluate(self):
     if not self._training_benchmark:

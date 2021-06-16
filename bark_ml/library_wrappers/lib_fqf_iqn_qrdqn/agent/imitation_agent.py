@@ -199,7 +199,7 @@ class ImitationAgent(BaseAgent):
     self.optim = RMSprop(
         self.online_net.parameters(),
         lr=self.learning_rate,
-#        weight_decay=self.weight_decay,
+        weight_decay=self.weight_decay,
         alpha=0.95,
         eps=0.00001)
 
