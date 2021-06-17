@@ -164,6 +164,7 @@ class ImitationAgent(BaseAgent):
     self.learning_rate = params["LearningRate", "", 0.001]
     self.train_test_ratio = params["TrainTestRatio", "", 0.2]
     self.weight_decay = params["WeightDecay", "", 0]
+    self.do_logging = params["DoLogging", "", True]
 
   def reset_training_variables(self):
     # Replay memory which is memory-efficient to store stacked frames.
@@ -304,8 +305,8 @@ class ImitationAgent(BaseAgent):
     loss = self.calculate_loss(converted_current_values, converted_desired_values, logits=True)
     loss.backward()
     self.optim.step()
-
-    self.training_log(loss, converted_current_values, converted_desired_values)
+    if self.do_logging:
+      self.training_log(loss, converted_current_values, converted_desired_values)
 
   def training_log(self, loss, current_values, desired_values):
     self.running_loss.append(loss.item())
