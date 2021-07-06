@@ -162,7 +162,7 @@ class ImitationAgent(BaseAgent):
     self.running_loss_length = params["RunningLossLength", "", 1000]
     self.num_value_functions = params["NumValueFunctions", "", 3]
     self.learning_rate = params["LearningRate", "", 0.001]
-    self.train_test_ratio = params["TrainTestRatio", "", 0.2]
+    self.train_test_ratio = params["TrainTestRatio", "", 0.8]
     self.weight_decay = params["WeightDecay", "", 0]
     self.do_logging = params["DoLogging", "", True]
 
