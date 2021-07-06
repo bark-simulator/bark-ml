@@ -289,7 +289,9 @@ class ImitationAgent(BaseAgent):
 
   def evaluate_experiences(self, demonstrations):
     states, action_values_desired = self.sample_batch(demonstrations, len(demonstrations))
+    self.online_net.eval()  # Set to evaluation mode
     action_values_current = self.online_net(states)
+    self.online_net.train()  # Set back to training mode
     return  states.detach().numpy(), action_values_desired.detach().numpy(), action_values_current.detach().numpy()
 
 
