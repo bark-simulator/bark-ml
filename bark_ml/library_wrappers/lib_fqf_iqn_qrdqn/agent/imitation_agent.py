@@ -333,22 +333,17 @@ class ImitationAgent(BaseAgent):
 
   def select_loss_function(self, params):
     loss_params = params["ML"]["ImitationModel"]["Loss"]
-    if loss_params["BinaryCrossEntropyLoss"]:
-      if loss_params["BinaryCrossEntropyLoss"]["Weights"]:
-        weights = loss_params["BinaryCrossEntropyLoss"]["Weights"]
-      else:
-        weights = None
+    selected_loss = loss_params["SelectedLoss", "", "MeanSquaredErrorLoss"]
+    weights = loss_params["Weights", "", None]
+
+    if selected_loss == "BinaryCrossEntropyLoss":
       self.selected_loss = LossBCE(weights)
 
-    elif loss_params["MeanSquaredErrorLoss"]:
-      if loss_params["MeanSquaredErrorLoss"]["Weights"]:
-        weights = loss_params["MeanSquaredErrorLoss"]["Weights"]
-      else:
-        weights = None
+    elif selected_loss == "MeanSquaredErrorLoss":
       self.selected_loss = LossMSE(weights)
 
     else:
-      logging.warning("Loss not specified. Using MSE.")
+      logging.warning("Loss not specified or invalid. Using MSE.")
       self.selected_loss = LossMSE()
 
   def convert_values(self, raw_values):
