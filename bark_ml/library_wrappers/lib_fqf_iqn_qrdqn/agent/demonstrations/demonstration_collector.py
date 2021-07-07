@@ -104,7 +104,8 @@ class ActionValueEvaluator(BaseEvaluator):
     observed_world = world.Observe([self._agent_id])[0]
     current_nn_state = self._observer.Observe(observed_world)
     action_values = self.GetActionValues(observed_world)
-    return current_nn_state, action_values
+    policy = self.GetPolicy(observed_world)
+    return current_nn_state, action_values, policy
 
   def AddMissingActionsValues(self, value_dict, num_actions):
     values = []
@@ -115,6 +116,12 @@ class ActionValueEvaluator(BaseEvaluator):
       else:
         values.append(np.nan)
     return values
+
+  def GetPolicy(self, observed_world):
+    behavior = observed_world.agents[self._agent_id].behavior_model
+    num_actions = len(behavior.ego_behavior.GetMotionPrimitives())
+    policy = behavior.last_policy_sampled[1]
+    return self.AddMissingActionsValues(policy, num_actions)
 
   def GetActionValues(self, observed_world):
     behavior = observed_world.agents[self._agent_id].behavior_model
@@ -313,7 +320,7 @@ class ActionValuesCollector(DemonstrationCollector):
     return use_scenario
 
   def GetDemonstrations(self, row):
-    return [[list(tp[0]), list(tp[1])] for tp in list(row["demo_evaluator"][1:])]
+    return [[list(tp[0]), list(tp[1]), list(tp[2])] for tp in list(row["demo_evaluator"][1:])]
 
   def GetEvaluators(self, observer, reward_evaluator):
     return ActionValueEvaluator(observer)
