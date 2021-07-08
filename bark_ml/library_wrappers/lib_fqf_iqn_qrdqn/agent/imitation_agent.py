@@ -353,9 +353,9 @@ class ImitationAgent(BaseAgent):
     """
     num_actions = raw_values.shape[1] // 3
     return {
-        "Return": raw_values[:, 0:num_actions],
-        "Envelope": raw_values[:, num_actions:2*num_actions],
-        "Collision": raw_values[:, 2*num_actions:]
+        "Envelope": raw_values[:, 0:num_actions],
+        "Collision": raw_values[:, num_actions:2*num_actions],
+        "Return": raw_values[:, 2*num_actions:]
     }
 
 class PolicyImitationAgent(ImitationAgent):
