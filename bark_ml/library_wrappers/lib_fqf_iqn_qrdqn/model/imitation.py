@@ -47,3 +47,42 @@ class Imitation(nn.Module):
       # Evaluation phase, output values between 0 and 1
       action_values = sigmoid(action_values)
     return action_values
+
+class PolicyImitation(nn.Module):
+  def __init__(self,
+               num_channels,
+               num_actions,
+               params):
+    super(PolicyImitation, self).__init__()
+    self.num_channels = num_channels
+    self.num_actions = num_actions
+    self.value_converter = NNToValueConverterPolicy(self.num_actions)
+    self.layer_dims = params["ML"]["ImitationModel"]["EmbeddingDims", "", [256, 256, 256]]
+    self.droput_p = params["ML"]["ImitationModel"]["DropoutProbability", "", 0]
+
+    self.net = nn.Sequential(self.make_ordered_layer_dict(self.layer_dims))
+    self.net.apply(init_weights)
+
+  def make_ordered_layer_dict(self, layer_dims):
+      tuple_list = []
+      last_dim = self.num_channels
+      for idx, layer in enumerate(layer_dims):
+          current_dim = layer
+          tuple_list.append((f"layer{idx}", nn.Linear(last_dim, current_dim)))
+          tuple_list.append((f"relu{idx}", nn.ReLU()))
+          if self.droput_p != 0:
+            tuple_list.append((f"dropout{idx}", nn.Dropout(p=self.droput_p)))
+          last_dim = current_dim
+      tuple_list.append(("last_linear", nn.Linear(last_dim, self.num_actions)))
+      return OrderedDict(tuple_list)
+
+  @property
+  def nn_to_value_converter(self):
+    return self.value_converter
+
+  def forward(self, states):
+    action_values = self.net(states)
+    if not self.training:
+      # Evaluation phase, output values between 0 and 1
+      action_values = sigmoid(action_values)
+    return action_values

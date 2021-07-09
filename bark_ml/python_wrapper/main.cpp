@@ -24,6 +24,8 @@
 #include "bark_ml/python_wrapper/pyobserver.hpp"
 #include "bark_ml/python_wrapper/pynn_to_value_converter.hpp"
 #include "bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/model/nn_to_value_converter/nn_to_value_converter_sequential.hpp"
+#include "bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/model/nn_to_value_converter/nn_to_value_converter_policy.hpp"
+
 
 PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
 
@@ -119,6 +121,20 @@ void python_value_converters(py::module m) {
       if (t.size() != 1)
         throw std::runtime_error("Invalid NNToValueConverterSequential state!");
       return new NNToValueConverterSequential(t[0].cast<unsigned>());
+    }));
+
+  py::class_<NNToValueConverterPolicy, NNToValueConverter,
+            std::shared_ptr<NNToValueConverterPolicy>>(m, "NNToValueConverterPolicy")
+  .def(py::init<const unsigned&>())
+  .def(py::pickle(
+    [](const NNToValueConverterSequential& nn) {
+      // We throw away other information such as last trajectories
+      return py::make_tuple(nn.GetNumActions());
+    },
+    [](py::tuple t) {
+      if (t.size() != 1)
+        throw std::runtime_error("Invalid NNToValueConverterPolicy state!");
+      return new NNToValueConverterPolicy(t[0].cast<unsigned>());
     }));
 }
 

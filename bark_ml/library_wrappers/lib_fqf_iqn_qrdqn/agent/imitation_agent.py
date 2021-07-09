@@ -17,13 +17,13 @@ import torch
 from torch import nn
 from torch.optim import Adam, RMSprop
 
-from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.model import Imitation
+from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.model import Imitation, PolicyImitation
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent.demonstrations import ActionValuesCollector
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.utils \
  import disable_gradients, update_params, \
  calculate_quantile_huber_loss, evaluate_quantile_at_action
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent.loss.loss_function \
-  import apply_sigmoid_to_dict, LossMSE, LossBCE
+  import apply_sigmoid_to_dict, LossMSE, LossBCE, LossPolicyCrossEntropy
 from .base_agent import BaseAgent, TrainingBenchmark
 
 class BenchmarkSupervisedLoss(TrainingBenchmark):
@@ -239,7 +239,7 @@ class ImitationAgent(BaseAgent):
     stability while training.
     """
     # if we have missing actions during demo collections these become nan values
-    # they should influence the loss and are thus set to current nn output
+    # they should not influence the loss and are thus set to current nn output
     for key in action_values_desired.keys():
       nans_desired = torch.isnan(action_values_desired[key]).nonzero(as_tuple=False)
       action_values_desired[key][nans_desired] = action_values_current[key][nans_desired].detach().clone()
@@ -360,3 +360,46 @@ class ImitationAgent(BaseAgent):
         "Envelope": raw_values[:, num_actions:2*num_actions],
         "Collision": raw_values[:, 2*num_actions:]
     }
+
+class PolicyImitationAgent(ImitationAgent):
+  def select_loss_function(self, params):
+      loss_params = params["ML"]["ImitationModel"]["Loss"]
+      if loss_params["PolicyCrossEntropyLoss"]:
+        self.selected_loss = LossPolicyCrossEntropy()
+
+      else:
+        self.selected_loss = LossPolicyCrossEntropy()
+        logging.warning("Loss not specified. Using Cross Entropy Policy Loss.")
+
+  def convert_values(self, raw_values):
+    return {
+        "Policy": raw_values
+    }
+
+  def sample_batch(self, demonstrations_list, batch_size):
+    state_size = len(demonstrations_list[0][0])
+    num_actions = len(demonstrations_list[0][2])
+    states = np.empty((batch_size, state_size), dtype=np.float)
+    policy_values = np.empty((batch_size, num_actions), dtype=np.float)
+
+    indices = np.random.randint(low=0, high=len(demonstrations_list), size=batch_size)
+    for i, index in enumerate(indices):
+      states[i, ...] = demonstrations_list[index][0]
+      policy_values[i, ...] = demonstrations_list[index][2]
+
+    states = torch.FloatTensor(states).to(self.device)
+    policy_values = torch.FloatTensor(policy_values).to(self.device)
+
+    return states, policy_values
+
+  def init_network(self):
+    # Target network.
+    self.online_net = PolicyImitation(num_channels=self.observer.observation_space.shape[0],
+                          num_actions=self.num_actions,
+                          params=self._params).to(self.device)
+    self.optim = RMSprop(
+        self.online_net.parameters(),
+        lr=self.learning_rate,
+        weight_decay=self.weight_decay,
+        alpha=0.95,
+        eps=0.00001)

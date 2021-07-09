@@ -35,7 +35,8 @@ namespace lib_fqf_iqn_qrdqn {
 typedef enum ValueType {
     Return = 0,
     EnvelopeRisk = 1,
-    CollisionRisk = 2
+    CollisionRisk = 2,
+    Policy = 3
 } ValueType;
 
 class NNToValueConverter {

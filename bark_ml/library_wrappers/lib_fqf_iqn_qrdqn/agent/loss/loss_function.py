@@ -1,5 +1,5 @@
 from torch import sigmoid, nn
-
+import torch
 
 def apply_sigmoid_to_dict(dict_values):
   """
@@ -71,3 +71,13 @@ class LossBCE(Loss):
   def __call__(self, current_values, desired_values, logits):
     return self._calculate_weighted_loss(current_values, desired_values,
                                          logits)
+
+class LossPolicyCrossEntropy(Loss):
+  def __init__(self):
+    pass
+
+  def __call__(self, current_values, desired_values, logits):
+    logsoftmax = nn.LogSoftmax(dim=1)
+    target = desired_values["Policy"]
+    pred = current_values["Policy"]
+    return torch.mean(torch.sum(-target*logsoftmax(pred), 1))
