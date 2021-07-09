@@ -32,11 +32,11 @@ class NNToValueConverterSequential : public NNToValueConverter {
       LOG_FATAL << "Invalid neural network output with size of " << nn_output.size() << " for num_actions = " << num_actions_;
     }
     // Convention that first num_actions elements are return 
-    value_map[ValueType::Return] = std::vector<double>(nn_output.begin(), nn_output.begin()+num_actions_);
+    value_map[ValueType::EnvelopeRisk] = std::vector<double>(nn_output.begin(), nn_output.begin()+num_actions_);
     //... second num action elements are envelope risk
-    value_map[ValueType::EnvelopeRisk] = std::vector<double>(nn_output.begin()+num_actions_, nn_output.begin()+2*num_actions_);
+    value_map[ValueType::CollisionRisk] = std::vector<double>(nn_output.begin()+num_actions_, nn_output.begin()+2*num_actions_);
     // ... and third num action elements are collision risk
-    value_map[ValueType::CollisionRisk] = std::vector<double>(nn_output.begin()+2*num_actions_, nn_output.begin()+3*num_actions_);
+    value_map[ValueType::Return] = std::vector<double>(nn_output.begin()+2*num_actions_, nn_output.begin()+3*num_actions_);
 
     return value_map;
   };
