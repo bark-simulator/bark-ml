@@ -7,7 +7,10 @@ from .imitation_agent import ImitationAgent
 
 
 def init_weights(m):
-  if type(m) == nn.Linear:
+  if isinstance(m, nn.Linear):
+    nn.init.xavier_uniform_(m.weight)
+    m.bias.data.fill_(0.01)
+  elif isinstance(m, nn.Conv1d):
     nn.init.xavier_uniform_(m.weight)
     m.bias.data.fill_(0.01)
 
@@ -122,6 +125,7 @@ class Carin(nn.Module):
                                    out_channels,
                                    kernel_size=kernel_size,
                                    stride=stride)))
+      tuple_list.append((f"relu{idx}", nn.ReLU()))
       in_channels = out_channels
       kernel_size = 1
       stride = 1
