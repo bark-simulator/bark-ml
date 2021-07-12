@@ -43,6 +43,7 @@ class ModelLoader {
     LOG_INFO << "Trying to load model from file: " << model_filename << "\n";
     try {
       module_ = torch::jit::load(model_filename);
+      module_.eval();
       module_loaded_ = true;
     }
     catch (const c10::Error& e) {

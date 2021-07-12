@@ -1,4 +1,4 @@
-from torch import nn, sigmoid
+from torch import nn, sigmoid, softmax
 from collections import OrderedDict
 from bark_ml.core.value_converters import *
 
@@ -84,5 +84,5 @@ class PolicyImitation(nn.Module):
     action_values = self.net(states)
     if not self.training:
       # Evaluation phase, output values between 0 and 1
-      action_values = sigmoid(action_values)
+      action_values = softmax(action_values)
     return action_values

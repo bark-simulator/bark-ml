@@ -34,16 +34,7 @@ class NNToValueConverterPolicy : public NNToValueConverter {
     }
     // Only a policy output for this conversion type
     value_map[ValueType::Policy] = std::vector<double>(nn_output.begin(), nn_output.begin()+num_actions_);
-
-    // Additionally apply softmax, since not part of network due to only included in loss
-    double prob_sum = 0.0;
-    for(const auto val : value_map[ValueType::Policy]) {
-      prob_sum += exp(val);
-    }
-    for(auto& val : value_map[ValueType::Policy]) {
-      val = exp(val) / prob_sum;
-    }
-
+    
     return value_map;
   };
 
