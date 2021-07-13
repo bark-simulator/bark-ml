@@ -302,6 +302,8 @@ class DemonstrationCollector:
     return self._demonstrations
 
   def GetDemonstrationExperiences(self):
+    if not self._demonstrations:
+      self.ProcessCollectionResult()
     return self._demonstrations
 
   def GetCollectionResult(self):
@@ -320,7 +322,12 @@ class ActionValuesCollector(DemonstrationCollector):
     return use_scenario
 
   def GetDemonstrations(self, row):
-    return [[list(tp[0]), list(tp[1]), list(tp[2])] for tp in list(row["demo_evaluator"][1:])]
+    demos = None
+    try:
+      demos = [[list(tp[0]), list(tp[1]), list(tp[2])] for tp in list(row["demo_evaluator"][1:])]
+    except:
+      demos = [[list(tp[0]), list(tp[1])] for tp in list(row["demo_evaluator"][1:])]
+    return demos
 
   def GetEvaluators(self, observer, reward_evaluator):
     return ActionValueEvaluator(observer)
