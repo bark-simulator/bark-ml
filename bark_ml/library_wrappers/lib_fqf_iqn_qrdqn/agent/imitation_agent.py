@@ -162,7 +162,7 @@ class ImitationAgent(BaseAgent):
     self.running_loss_length = params["RunningLossLength", "", 1000]
     self.num_value_functions = params["NumValueFunctions", "", 3]
     self.learning_rate = params["LearningRate", "", 0.001]
-    self.train_test_ratio = params["TrainTestRatio", "", 0.2]
+    self.train_test_ratio = params["TrainTestRatio", "", 0.8]
     self.weight_decay = params["WeightDecay", "", 0]
     self.do_logging = params["DoLogging", "", True]
 
@@ -289,7 +289,9 @@ class ImitationAgent(BaseAgent):
 
   def evaluate_experiences(self, demonstrations):
     states, action_values_desired = self.sample_batch(demonstrations, len(demonstrations))
+    self.online_net.eval()  # Set to evaluation mode
     action_values_current = self.online_net(states)
+    self.online_net.train()  # Set back to training mode
     return  states.detach().numpy(), action_values_desired.detach().numpy(), action_values_current.detach().numpy()
 
 
@@ -331,22 +333,17 @@ class ImitationAgent(BaseAgent):
 
   def select_loss_function(self, params):
     loss_params = params["ML"]["ImitationModel"]["Loss"]
-    if loss_params["BinaryCrossEntropyLoss"]:
-      if loss_params["BinaryCrossEntropyLoss"]["Weights"]:
-        weights = loss_params["BinaryCrossEntropyLoss"]["Weights"]
-      else:
-        weights = None
+    selected_loss = loss_params["SelectedLoss", "", "MeanSquaredErrorLoss"]
+    weights = loss_params["Weights", "", None]
+
+    if selected_loss == "BinaryCrossEntropyLoss":
       self.selected_loss = LossBCE(weights)
 
-    elif loss_params["MeanSquaredErrorLoss"]:
-      if loss_params["MeanSquaredErrorLoss"]["Weights"]:
-        weights = loss_params["MeanSquaredErrorLoss"]["Weights"]
-      else:
-        weights = None
+    elif selected_loss == "MeanSquaredErrorLoss":
       self.selected_loss = LossMSE(weights)
 
     else:
-      logging.warning("Loss not specified. Using MSE.")
+      logging.warning("Loss not specified or invalid. Using MSE.")
       self.selected_loss = LossMSE()
 
   def convert_values(self, raw_values):
@@ -356,9 +353,9 @@ class ImitationAgent(BaseAgent):
     """
     num_actions = raw_values.shape[1] // 3
     return {
-        "Return": raw_values[:, 0:num_actions],
-        "Envelope": raw_values[:, num_actions:2*num_actions],
-        "Collision": raw_values[:, 2*num_actions:]
+        "Envelope": raw_values[:, 0:num_actions],
+        "Collision": raw_values[:, num_actions:2*num_actions],
+        "Return": raw_values[:, 2*num_actions:]
     }
 
 class PolicyImitationAgent(ImitationAgent):

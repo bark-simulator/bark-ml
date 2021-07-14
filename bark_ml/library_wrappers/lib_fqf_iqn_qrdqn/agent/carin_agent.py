@@ -7,7 +7,10 @@ from .imitation_agent import ImitationAgent
 
 
 def init_weights(m):
-  if type(m) == nn.Linear:
+  if isinstance(m, nn.Linear):
+    nn.init.xavier_uniform_(m.weight)
+    m.bias.data.fill_(0.01)
+  elif isinstance(m, nn.Conv1d):
     nn.init.xavier_uniform_(m.weight)
     m.bias.data.fill_(0.01)
 
@@ -43,8 +46,13 @@ class Carin(nn.Module):
     self.num_channels = num_channels
     self.num_actions = num_actions
     self.num_value_functions = num_value_functions
-    self.num_agents = params["ML"]["CarinModel"]["NumAgents", "", 5]
-    self.num_features_per_agent = self.num_channels // self.num_agents
+
+    self.num_features_ego = params["ML"]["CarinModel"]["NumFeaturesEgo", "", 6]
+    self.num_features_other_agent = params["ML"]["CarinModel"][
+        "NumFeaturesOtherAgent", "", 4]
+    self.num_other_agents = \
+      (self.num_channels - self.num_features_ego) // self.num_features_other_agent
+
     self.dropout_p = params["ML"]["ImitationModel"]["DropoutProbability", "",
                                                     0]
 
@@ -76,9 +84,8 @@ class Carin(nn.Module):
 
   def forward(self, states):
     # Treat ego features and features of other agents separately
-    num_ego_features = self.num_features_per_agent
-    ego_features = states[:, :num_ego_features]
-    other_agent_features = states[:, num_ego_features:]
+    ego_features = states[:, :self.num_features_ego]
+    other_agent_features = states[:, self.num_features_ego:]
 
     # Convert input tensor from 2D to 3D (needed for convolution afterwards)
     other_agent_features = unsqueeze(other_agent_features, 1)
@@ -109,7 +116,7 @@ class Carin(nn.Module):
   def make_input_conv_layers(self):
     tuple_list = []
     in_channels = 1
-    kernel_size = self.num_features_per_agent
+    kernel_size = self.num_features_other_agent
     stride = kernel_size
     for idx, layer in enumerate(self.input_conv_dims):
       out_channels = layer
@@ -118,15 +125,16 @@ class Carin(nn.Module):
                                    out_channels,
                                    kernel_size=kernel_size,
                                    stride=stride)))
+      tuple_list.append((f"relu{idx}", nn.ReLU()))
       in_channels = out_channels
       kernel_size = 1
       stride = 1
 
     if len(self.input_conv_dims) > 0:
       tuple_list.append(
-          ("maxpool", nn.MaxPool2d(kernel_size=(1, self.num_agents - 1))))
+          ("maxpool", nn.MaxPool2d(kernel_size=(1, self.num_other_agents))))
       # Ego features are appended to the end of the output of CNN
-      last_dimension = in_channels + self.num_features_per_agent
+      last_dimension = in_channels + self.num_features_ego
     else:
       last_dimension = self.num_channels
 
