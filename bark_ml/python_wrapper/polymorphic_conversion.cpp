@@ -7,7 +7,7 @@
 #include "bark_ml/observers/nearest_observer.hpp"
 #include "bark/commons/params/setter_params.hpp"
 #include "bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/model/nn_to_value_converter/nn_to_value_converter_sequential.hpp"
-
+#include "bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/model/nn_to_value_converter/nn_to_value_converter_policy.hpp"
 
 namespace py = pybind11;
 
@@ -41,6 +41,8 @@ py::tuple NNToValueConverterToPython(NNToValueConverterPtr converter) {
   std::string converter_name;
   if (typeid(*converter) == typeid(NNToValueConverterSequential)) {
     converter_name = "NNToValueConverterSequential";
+  } else if (typeid(*converter) == typeid(NNToValueConverterPolicy)) {
+    converter_name = "NNToValueConverterPolicy";
   } else {
     LOG(FATAL) << "Unknown Converter for polymorphic conversion to python: "
                << typeid(*converter).name();
@@ -52,7 +54,10 @@ NNToValueConverterPtr PythonToNNToValueConverter(py::tuple t) {
   if (converter_name.compare("NNToValueConverterSequential") == 0) {
     return std::make_shared<NNToValueConverterSequential>(
         t[0].cast<NNToValueConverterSequential>());
-  }  else {
+  } else if (converter_name.compare("NNToValueConverterPolicy") == 0) {
+    return std::make_shared<NNToValueConverterPolicy>(
+        t[0].cast<NNToValueConverterPolicy>());
+  } else {
        LOG(FATAL) << "Unknown Converter for polymorphic conversion to cpp: "
                << converter_name;
   }

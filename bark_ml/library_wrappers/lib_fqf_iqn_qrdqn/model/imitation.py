@@ -84,5 +84,5 @@ class PolicyImitation(nn.Module):
     action_values = self.net(states)
     if not self.training:
       # Evaluation phase, output values between 0 and 1
-      action_values = softmax(action_values)
+      action_values = softmax(action_values, dim=1)
     return action_values

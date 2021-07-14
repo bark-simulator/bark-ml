@@ -76,7 +76,6 @@ void python_observers(py::module m) {
       "observation_space", &NearestObserver::ObservationSpace)
     .def(py::pickle(
       [](const NearestObserver& o) {
-        // We throw away other information such as last trajectories
         return py::make_tuple(ParamsToPython(o.GetParams()));
       },
       [](py::tuple t) {
@@ -114,7 +113,6 @@ void python_value_converters(py::module m) {
   .def(py::init<const unsigned&>())
   .def(py::pickle(
     [](const NNToValueConverterSequential& nn) {
-      // We throw away other information such as last trajectories
       return py::make_tuple(nn.GetNumActions());
     },
     [](py::tuple t) {
@@ -127,8 +125,7 @@ void python_value_converters(py::module m) {
             std::shared_ptr<NNToValueConverterPolicy>>(m, "NNToValueConverterPolicy")
   .def(py::init<const unsigned&>())
   .def(py::pickle(
-    [](const NNToValueConverterSequential& nn) {
-      // We throw away other information such as last trajectories
+    [](const NNToValueConverterPolicy& nn) {
       return py::make_tuple(nn.GetNumActions());
     },
     [](py::tuple t) {
