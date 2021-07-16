@@ -4,7 +4,7 @@ from torch import nn, sigmoid, cat, unsqueeze, flatten
 from torch.optim import Adam, RMSprop
 
 from .imitation_agent import ImitationAgent
-
+from bark_ml.core.value_converters import *
 
 def init_weights(m):
   if isinstance(m, nn.Linear):
@@ -81,6 +81,12 @@ class Carin(nn.Module):
       net = nn.Sequential(hl)
       net.apply(init_weights)
       self.head_networks.append(net)
+    
+    self.value_converter = NNToValueConverterSequential(self.num_actions)
+
+  @property
+  def nn_to_value_converter(self):
+    return self.value_converter
 
   def forward(self, states):
     # Treat ego features and features of other agents separately
