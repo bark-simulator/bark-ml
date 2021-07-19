@@ -85,5 +85,5 @@ class RewardShapingEvaluatorIntersection(RewardShapingEvaluator):
       success * self._goal_reward + reward_shaping_signal
     return reward, done, eval_results
 
-  def Reset(self, world):
-    return super(RewardShapingEvaluator, self).Reset(world)
+  def Reset(self, world, eval_id):
+    return super(RewardShapingEvaluator, self).Reset(world, eval_id)

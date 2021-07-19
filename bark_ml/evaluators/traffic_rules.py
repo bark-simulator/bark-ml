@@ -3,16 +3,18 @@
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
-
+from typing import Tuple
+import numpy as np
+from bark.core.world import AgentId, World, ObservedWorld
 from bark.core.world.evaluation import \
   EvaluatorGoalReached, EvaluatorCollisionEgoAgent, \
   EvaluatorStepCount, EvaluatorDrivableArea
+from bark.core.world.evaluation.ltl import EvaluatorLTL, SafeDistanceLabelFunction
 from bark.runtime.commons.parameters import ParameterServer
-
 from bark_ml.evaluators.evaluator import BaseEvaluator
 
 
-class GoalReached(BaseEvaluator):
+class EvaluatorTrafficRules(BaseEvaluator):
   """Sparse reward evaluator returning +1 for reaching the goal,
   -1 for having a collision or leaving the drivable area."""
 
@@ -32,26 +34,40 @@ class GoalReached(BaseEvaluator):
       self._params["ML"]["GoalReachedEvaluator"]["MaxSteps",
         "Maximum steps per episode.",
         60]
+    self._rules = {
+      "ltl_formula": "G sd_front",
+      "label_functions": [
+        SafeDistanceLabelFunction(
+          "sd_front",
+          False, 1.0, 1.0, -7.84, -7.84, True, 4, False, 2.0, False)]
+      }
     self._eval_agent = eval_agent
 
-  @staticmethod
-  def _add_evaluators():
+  def _add_evaluators(self) -> dict:
     evaluators = {}
     evaluators["goal_reached"] = EvaluatorGoalReached()
     evaluators["collision"] = EvaluatorCollisionEgoAgent()
     evaluators["step_count"] = EvaluatorStepCount()
     evaluators["drivable_area"] = EvaluatorDrivableArea()
+    evaluators["evaluator_ltl"] = EvaluatorLTL(
+      agent_id=self._eval_id, **self._rules)
     return evaluators
 
-  def _evaluate(self, observed_world, eval_results, action):
+  def _evaluate(self,
+    observed_world: ObservedWorld,
+    eval_results: dict,
+    action: np.ndarray) -> Tuple(float, bool, dict):
     """Returns information about the current world state."""
     done = False
     success = eval_results["goal_reached"]
     step_count = eval_results["step_count"]
-    collision = eval_results["collision"] or eval_results["drivable_area"] or (step_count > self._max_steps)
-    # for agent_id, agent in observed_world.agents.items():
-    #   eval_results[agent_id] = agent.state
-    # determine whether the simulation should terminate
+    collision = eval_results["collision"] or \
+        eval_results["drivable_area"] or \
+        (step_count > self._max_steps)
+
+    # TODO: integrate traffic rule violation
+    traffic_rule_violation = eval_results["evaluator_ltl"]
+
     if success or collision or step_count > self._max_steps:
       done = True
     if collision:
@@ -63,5 +79,5 @@ class GoalReached(BaseEvaluator):
       success * self._goal_reward
     return reward, done, eval_results
 
-  def Reset(self, world, eval_id):
-    return super(GoalReached, self).Reset(world, eval_id)
+  def Reset(self, world: World, eval_id: AgentId):
+    return super(EvaluatorTrafficRules, self).Reset(world, eval_id)

@@ -18,6 +18,7 @@ class BaseEvaluator(ABC):
                params=ParameterServer()):
     self._params = params
     self._viewer = None
+    self._eval_id = None
 
   def Evaluate(self, observed_world, action):
     """Evaluates the observed world."""
@@ -27,7 +28,8 @@ class BaseEvaluator(ABC):
       observed_world, eval_results, action)
     return reward, done, eval_results
 
-  def Reset(self, world):
+  def Reset(self, world, eval_id):
+    self._eval_id = eval_id
     world.ClearEvaluators()
     evaluators = self._add_evaluators()
     for key, evaluator in evaluators.items():
