@@ -5,7 +5,7 @@
 # https://opensource.org/licenses/MIT
 from typing import Tuple
 import numpy as np
-from bark.core.world import AgentId, World, ObservedWorld
+from bark.core.world import World, ObservedWorld
 from bark.core.world.evaluation import \
   EvaluatorGoalReached, EvaluatorCollisionEgoAgent, \
   EvaluatorStepCount, EvaluatorDrivableArea
@@ -79,5 +79,5 @@ class EvaluatorTrafficRules(BaseEvaluator):
       success * self._goal_reward
     return reward, done, eval_results
 
-  def Reset(self, world: World, eval_id: AgentId):
+  def Reset(self, world: World, eval_id: int):
     return super(EvaluatorTrafficRules, self).Reset(world, eval_id)

@@ -25,3 +25,8 @@ load("@benchmark_database//load:load.bzl", "benchmark_database_release")
 benchmark_database_dependencies()
 benchmark_database_release()
 # --------------------------------------------------
+
+# ------------------- LTL RuleMonitor --------------
+load("@rule_monitor_project//util:deps.bzl", "rule_monitor_dependencies")
+rule_monitor_dependencies()
+# --------------------------------------------------

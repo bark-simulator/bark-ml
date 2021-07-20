@@ -70,6 +70,7 @@ class PyEvaluatorTests(unittest.TestCase):
     print(f"It took {end_time-start_time} seconds.")
 
   def test_traffic_rule_evaluator(self):
+    # run with --define ltl_rules=true
     params = ParameterServer()
     bp = ContinuousHighwayBlueprint(params)
     env = SingleAgentRuntime(blueprint=bp, render=True)

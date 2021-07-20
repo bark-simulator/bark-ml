@@ -26,6 +26,12 @@ def bark_ml_dependencies():
       remote = "https://github.com/bark-simulator/pybind11_bazel"
   )
 
+  _maybe(
+  git_repository,
+  name = "rule_monitor_project",
+  commit = "187c125a18979214d638ca771dd86e7934932b94",
+  remote = "https://github.com/bark-simulator/rule-monitoring.git",
+  )
   # _maybe(
   #   native.local_repository,
   #   name = "pybind11_bazel",
