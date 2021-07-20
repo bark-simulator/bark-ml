@@ -15,6 +15,7 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.evaluators.goal_reached import GoalReached
+from bark_ml.evaluators.traffic_rules import EvaluatorTrafficRules
 from bark_ml.core.evaluators import GoalReachedEvaluator
 
 
@@ -67,6 +68,24 @@ class PyEvaluatorTests(unittest.TestCase):
     print(evaluator.Evaluate(observed_world, action))
     end_time = time.time()
     print(f"It took {end_time-start_time} seconds.")
+
+  def test_traffic_rule_evaluator(self):
+    params = ParameterServer()
+    bp = ContinuousHighwayBlueprint(params)
+    env = SingleAgentRuntime(blueprint=bp, render=True)
+    env.reset()
+    world = env._world
+
+    eval_id = env._scenario._eval_agent_ids[0]
+    observed_world = world.Observe([eval_id])[0]
+    evaluator = EvaluatorTrafficRules(params)
+    # TODO: meaningful test
+
+    # action = np.array([0., 0.], dtype=np.float32)
+    # start_time = time.time()
+    # print(evaluator.Evaluate(observed_world, action))
+    # end_time = time.time()
+    # print(f"It took {end_time-start_time} seconds.")
 
 if __name__ == '__main__':
   unittest.main()
