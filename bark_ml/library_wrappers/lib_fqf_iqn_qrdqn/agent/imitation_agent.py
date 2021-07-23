@@ -76,15 +76,17 @@ class BenchmarkSplitSupervisedLoss(TrainingBenchmark):
       converted_desired_values = self.agent.convert_values(action_values_desired)
       converted_current_values = self.agent.convert_values(action_values_current)
 
-      loss = self.agent.calculate_loss(converted_current_values,
-                                       converted_desired_values)
+      loss, intermediate_losses = self.agent.calculate_loss(converted_current_values,
+                                                            converted_desired_values,
+                                                            return_intermediate_losses=True)
 
-      return self.evaluate_loss(loss.item(), converted_current_values, converted_desired_values)
+      return self.evaluate_loss(loss.item(), converted_current_values, converted_desired_values,
+                                intermediate_losses=intermediate_losses)
 
   def evaluate_loss(self, scalar_loss, converted_current_values, converted_desired_values,
-                    phase="test", logits=False):
+                    phase="test", logits=False, intermediate_losses=None):
     result = {f"loss/{phase}": scalar_loss}
-    formatted_result = f"Loss = {scalar_loss}\n          | Mean SE | Var SE\n"
+    formatted_result = f"Loss = {scalar_loss}\n          | Mean SE      | Var SE\n"
 
     if logits:
       converted_current_values = apply_sigmoid_to_dict(converted_current_values)
@@ -99,7 +101,13 @@ class BenchmarkSplitSupervisedLoss(TrainingBenchmark):
       result[f"squared_error_mean/{key}/{phase}"] = error_mean
       result[f"squared_error_var/{key}/{phase}"] = error_var
 
-      formatted_result += f"{key:10}| {error_mean:7.3f} | {error_var:7.3f}\n"
+      formatted_result += f"{key:10}| {error_mean:12.8f} | {error_var:12.8f}\n"
+
+    if intermediate_losses is not None:
+      formatted_result += "Intermediate losses:\n"
+      for value_function, intermediate_loss in intermediate_losses.items():
+        result[f"intermediate_loss/{value_function}/{phase}"] = intermediate_loss
+        formatted_result += f"{value_function:10}| {intermediate_loss:12.8f}\n"
 
     if self.gradients_and_weights_dir:
       self.save_gradients_and_weights_to_file(
@@ -231,7 +239,8 @@ class ImitationAgent(BaseAgent):
 
     return states, action_values
 
-  def calculate_loss(self, action_values_current, action_values_desired, logits=False):
+  def calculate_loss(self, action_values_current, action_values_desired, logits=False,
+                     return_intermediate_losses=False):
     """
     If logits=True, the loss must use the sigmoid function before comparing
     current values to the desired values.
@@ -244,7 +253,8 @@ class ImitationAgent(BaseAgent):
       nans_desired = torch.isnan(action_values_desired[key]).nonzero(as_tuple=False)
       action_values_desired[key][nans_desired] = action_values_current[key][nans_desired].detach().clone()
 
-    loss = self.selected_loss(action_values_current, action_values_desired, logits)
+    loss = self.selected_loss(action_values_current, action_values_desired, logits,
+                              return_intermediate_losses=return_intermediate_losses)
     return loss
 
   def calculate_actions(self, state):
