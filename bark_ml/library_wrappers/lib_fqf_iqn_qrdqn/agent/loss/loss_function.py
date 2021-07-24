@@ -37,21 +37,21 @@ class Loss:
     return self._calculate_weighted_loss(current_values, desired_values, logits,
                                          return_intermediate_losses=return_intermediate_losses)
 
-  def _select_criterion(self, _):
+  def _select_criterion(self, _logits, _value_func):
     return self._criterion
 
   def _calculate_weighted_loss(self, current_values, desired_values, logits,
                                return_intermediate_losses=False):
     losses = {}
     weights_sum = 0
-    criterion = self._select_criterion(logits)
 
-    for key in current_values.keys():
-      weight = self._weights[key] if self._weights is not None else 1
+    for value_func in current_values.keys():
+      criterion = self._select_criterion(logits, value_func)
+      weight = self._weights[value_func] if self._weights is not None else 1
       weights_sum += weight
 
-      loss = criterion(current_values[key], desired_values[key])
-      losses[key] = weight * loss
+      loss = criterion(current_values[value_func], desired_values[value_func])
+      losses[value_func] = weight * loss
 
     weighted_loss = sum(losses.values()) / weights_sum
 
@@ -73,7 +73,7 @@ class LossBCE(Loss):
     super(LossBCE, self).__init__(criterion, weights)
     self._criterion_logits = nn.BCEWithLogitsLoss()
 
-  def _select_criterion(self, logits):
+  def _select_criterion(self, logits, _):
     if logits:
       return self._criterion_logits
     return self._criterion
@@ -81,6 +81,32 @@ class LossBCE(Loss):
   def __call__(self, current_values, desired_values, logits, return_intermediate_losses=False):
     return self._calculate_weighted_loss(current_values, desired_values, logits,
                                          return_intermediate_losses=return_intermediate_losses)
+
+
+class LossHuber(Loss):
+  def __init__(self, weights=None, delta=None):
+    if delta is None:
+      criterion = nn.HuberLoss(delta=0.5)
+      super(LossHuber, self).__init__(criterion, weights)
+    else:
+      self._criterions = {
+          value_func: nn.HuberLoss(delta=d)
+          for value_func, d in delta.items()
+      }
+      if weights is None:
+        # "Normalize" the loss - make all losses equal to 1 when the absolute
+        # difference between target and prediction is 1
+        weights = {}
+        for value_func in delta.keys():
+          max_loss_with_this_delta = self._criterions[value_func](
+            torch.Tensor([1.0]), torch.Tensor([0.0]))
+          weights[value_func] = 1 / max_loss_with_this_delta
+      super(LossHuber, self).__init__(None, weights)
+
+  def _select_criterion(self, _, value_func):
+    if self._criterion is not None:
+      return self._criterion
+    return self._criterions[value_func]
 
 
 class LossPolicyCrossEntropy(Loss):
