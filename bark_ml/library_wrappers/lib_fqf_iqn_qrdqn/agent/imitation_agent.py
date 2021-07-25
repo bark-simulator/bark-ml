@@ -23,7 +23,7 @@ from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.utils \
  import disable_gradients, update_params, \
  calculate_quantile_huber_loss, evaluate_quantile_at_action
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent.loss.loss_function \
-  import apply_sigmoid_to_dict, LossMSE, LossBCE, LossPolicyCrossEntropy, LossHuber
+  import apply_sigmoid_to_dict, LossMSE, LossBCE, LossPolicyCrossEntropy, LossHuber, LossTukey
 from .base_agent import BaseAgent, TrainingBenchmark
 
 class BenchmarkSupervisedLoss(TrainingBenchmark):
@@ -357,6 +357,10 @@ class ImitationAgent(BaseAgent):
       if delta is not None:
         delta = delta.ConvertToDict()
       self.selected_loss = LossHuber(weights, delta)
+
+    elif selected_loss == "TukeyLoss":
+      c = loss_params["TukeyLossConstant", "", 0.5]
+      self.selected_loss = LossTukey(weights, c=c)
 
     else:
       logging.warning("Loss not specified or invalid. Using MSE.")

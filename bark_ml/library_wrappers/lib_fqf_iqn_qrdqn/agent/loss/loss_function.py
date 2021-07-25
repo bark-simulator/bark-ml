@@ -109,6 +109,21 @@ class LossHuber(Loss):
     return self._criterions[value_func]
 
 
+class LossTukey(Loss):
+  def __init__(self, weights=None, c=0.5):
+    criterion = self.loss_tukey
+    super().__init__(criterion, weights=weights)
+    self.c = c
+
+  def loss_tukey(self, current_values, desired_values):
+    error = current_values - desired_values
+    const = torch.ones_like(error) * self.c**2 / 6
+    loss = torch.where(error < self.c,
+                       self.c**2 / 6 * (1 - (1 - (error / self.c)**2)**3),
+                       const)
+    return loss.sum() / current_values.data.nelement()
+
+
 class LossPolicyCrossEntropy(Loss):
   def __init__(self):
     pass
