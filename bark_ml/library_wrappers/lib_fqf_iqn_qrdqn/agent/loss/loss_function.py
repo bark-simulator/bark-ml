@@ -84,13 +84,28 @@ class LossBCE(Loss):
 
 
 class LossHuber(Loss):
+
+  class HuberCriterion:
+    """
+    torch1.6 does not provide the Huber loss (only available in version 1.9)
+    """
+    def __init__(self, delta):
+      self.delta = delta
+
+    def __call__(self, current_values, desired_values):
+      error = current_values - desired_values
+      loss = torch.where(error < self.delta,
+                         error**2,
+                         self.delta * (torch.abs(error) - self.delta / 2))
+      return loss.sum() / current_values.data.nelement()
+
   def __init__(self, weights=None, delta=None):
     if delta is None:
-      criterion = nn.HuberLoss(delta=0.5)
+      criterion = self.HuberCriterion(delta=0.5)
       super(LossHuber, self).__init__(criterion, weights)
     else:
       self._criterions = {
-          value_func: nn.HuberLoss(delta=d)
+          value_func: self.HuberCriterion(delta=d)
           for value_func, d in delta.items()
       }
       if weights is None:
