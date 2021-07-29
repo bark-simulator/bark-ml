@@ -89,33 +89,37 @@ class LossHuber(Loss):
     """
     torch1.6 does not provide the Huber loss (only available in version 1.9)
     """
-    def __init__(self, delta):
+    def __init__(self, delta, normalize=False):
       self.delta = delta
+      if normalize:
+        # Make the loss equal to 1 if the absolute difference between target
+        # and prediction is 1
+        max_loss = self._unnormalized_loss(torch.Tensor([1.0]),
+                                           torch.Tensor([0.0]))
+        self.normalizing_factor = 1 / max_loss
+      else:
+        self.normalizing_factor = 1
 
-    def __call__(self, current_values, desired_values):
+    def _unnormalized_loss(self, current_values, desired_values):
       error = current_values - desired_values
       loss = torch.where(error < self.delta,
                          error**2,
                          self.delta * (torch.abs(error) - self.delta / 2))
       return loss.sum() / current_values.data.nelement()
 
-  def __init__(self, weights=None, delta=None):
+    def __call__(self, current_values, desired_values):
+      return self.normalizing_factor * self._unnormalized_loss(
+          current_values, desired_values)
+
+  def __init__(self, weights=None, delta=None, normalize=False):
     if delta is None:
-      criterion = self.HuberCriterion(delta=0.5)
+      criterion = self.HuberCriterion(delta=0.5, normalize=normalize)
       super(LossHuber, self).__init__(criterion, weights)
     else:
       self._criterions = {
-          value_func: self.HuberCriterion(delta=d)
+          value_func: self.HuberCriterion(delta=d, normalize=normalize)
           for value_func, d in delta.items()
       }
-      if weights is None:
-        # "Normalize" the loss - make all losses equal to 1 when the absolute
-        # difference between target and prediction is 1
-        weights = {}
-        for value_func in delta.keys():
-          max_loss_with_this_delta = self._criterions[value_func](
-            torch.Tensor([1.0]), torch.Tensor([0.0]))
-          weights[value_func] = 1 / max_loss_with_this_delta
       super(LossHuber, self).__init__(None, weights)
 
   def _select_criterion(self, _, value_func):
@@ -125,18 +129,34 @@ class LossHuber(Loss):
 
 
 class LossTukey(Loss):
-  def __init__(self, weights=None, c=0.5):
-    criterion = self.loss_tukey
-    super().__init__(criterion, weights=weights)
-    self.c = c
 
-  def loss_tukey(self, current_values, desired_values):
-    error = current_values - desired_values
-    const = torch.ones_like(error) * self.c**2 / 6
-    loss = torch.where(error < self.c,
-                       self.c**2 / 6 * (1 - (1 - (error / self.c)**2)**3),
-                       const)
-    return loss.sum() / current_values.data.nelement()
+  class TukeyCriterion:
+    def __init__(self, c, normalize=False):
+      self.c = c
+      if normalize:
+        # Make the loss equal to 1 if the absolute difference between target
+        # and prediction is 1
+        max_loss = self._unnormalized_loss(torch.Tensor([1.0]),
+                                           torch.Tensor([0.0]))
+        self.normalizing_factor = 1 / max_loss
+      else:
+        self.normalizing_factor = 1
+
+    def _unnormalized_loss(self, current_values, desired_values):
+      error = current_values - desired_values
+      const = torch.ones_like(error) * self.c**2 / 6
+      loss = torch.where(error < self.c,
+                         self.c**2 / 6 * (1 - (1 - (error / self.c)**2)**3),
+                         const)
+      return loss.sum() / current_values.data.nelement()
+
+    def __call__(self, current_values, desired_values):
+      return self.normalizing_factor * self._unnormalized_loss(
+          current_values, desired_values)
+
+  def __init__(self, weights=None, c=0.5, normalize=False):
+    criterion = self.TukeyCriterion(c, normalize=normalize)
+    super().__init__(criterion, weights=weights)
 
 
 class LossRelative(Loss):

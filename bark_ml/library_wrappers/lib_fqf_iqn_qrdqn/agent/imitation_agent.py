@@ -354,14 +354,16 @@ class ImitationAgent(BaseAgent):
       self.selected_loss = LossMSE(weights)
 
     elif selected_loss == "HuberLoss":
-      delta = loss_params["Delta", "", None]
+      delta = loss_params["HuberDelta", "", None]
       if delta is not None:
         delta = delta.ConvertToDict()
-      self.selected_loss = LossHuber(weights, delta)
+      normalize = loss_params["NormalizeHuberLoss", "", False]
+      self.selected_loss = LossHuber(weights, delta, normalize=normalize)
 
     elif selected_loss == "TukeyLoss":
       c = loss_params["TukeyLossConstant", "", 0.5]
-      self.selected_loss = LossTukey(weights, c=c)
+      normalize = loss_params["NormalizeTukeyLoss", "", False]
+      self.selected_loss = LossTukey(weights, c=c, normalize=normalize)
 
     elif selected_loss == "RelativeLoss":
       self.selected_loss = LossRelative(weights)
