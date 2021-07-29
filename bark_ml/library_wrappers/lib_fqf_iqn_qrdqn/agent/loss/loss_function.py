@@ -139,6 +139,18 @@ class LossTukey(Loss):
     return loss.sum() / current_values.data.nelement()
 
 
+class LossRelative(Loss):
+  def __init__(self, weights=None, eps=1e-6):
+    criterion = self._loss
+    self.eps = eps
+    super().__init__(criterion, weights=weights)
+
+  def _loss(self, current_values, desired_values):
+    error = current_values - desired_values
+    loss = torch.abs(error / (desired_values + self.eps))
+    return loss.sum() / current_values.data.nelement()
+
+
 class LossPolicyCrossEntropy(Loss):
   def __init__(self):
     pass
