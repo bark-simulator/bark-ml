@@ -24,7 +24,7 @@ from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.utils \
  calculate_quantile_huber_loss, evaluate_quantile_at_action
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent.loss.loss_function \
   import apply_sigmoid_to_dict, LossMSE, LossBCE, LossPolicyCrossEntropy, \
-  LossHuber, LossTukey, LossRelative
+  LossHuber, LossTukey, LossEpsInsensitiveHuber, LossRelative
 from .base_agent import BaseAgent, TrainingBenchmark
 
 class BenchmarkSupervisedLoss(TrainingBenchmark):
@@ -364,6 +364,13 @@ class ImitationAgent(BaseAgent):
       c = loss_params["TukeyLossConstant", "", 0.5]
       normalize = loss_params["NormalizeTukeyLoss", "", False]
       self.selected_loss = LossTukey(weights, c=c, normalize=normalize)
+
+    elif selected_loss == "EpsInsensitiveHuberLoss":
+      eps = loss_params["EpsInsensitiveHuberEps", "", 0.01]
+      delta = loss_params["EpsInsensitiveHuberDelta", "", 0.5]
+      normalize = loss_params["NormalizeEpsInsensitiveHuberLoss", "", False]
+      self.selected_loss = LossEpsInsensitiveHuber(weights, eps=eps, delta=delta,
+                                                   normalize=normalize)
 
     elif selected_loss == "RelativeLoss":
       self.selected_loss = LossRelative(weights)

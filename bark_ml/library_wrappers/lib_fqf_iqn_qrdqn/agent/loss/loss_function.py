@@ -95,7 +95,7 @@ class LossHuber(Loss):
         # Make the loss equal to 1 if the absolute difference between target
         # and prediction is 1
         max_loss = self._unnormalized_loss(torch.Tensor([1.0]),
-                                           torch.Tensor([0.0]))
+                                           torch.Tensor([0.0])).item()
         self.normalizing_factor = 1 / max_loss
       else:
         self.normalizing_factor = 1
@@ -137,7 +137,7 @@ class LossTukey(Loss):
         # Make the loss equal to 1 if the absolute difference between target
         # and prediction is 1
         max_loss = self._unnormalized_loss(torch.Tensor([1.0]),
-                                           torch.Tensor([0.0]))
+                                           torch.Tensor([0.0])).item()
         self.normalizing_factor = 1 / max_loss
       else:
         self.normalizing_factor = 1
@@ -156,6 +156,39 @@ class LossTukey(Loss):
 
   def __init__(self, weights=None, c=0.5, normalize=False):
     criterion = self.TukeyCriterion(c, normalize=normalize)
+    super().__init__(criterion, weights=weights)
+
+
+class LossEpsInsensitiveHuber(Loss):
+
+  class EpsInsensitiveHuberCriterion:
+    def __init__(self, eps, delta, normalize=False):
+      self.eps = eps
+      self.delta = delta
+      if normalize:
+        max_loss = self._unnormalized_loss(torch.Tensor([1.0]),
+                                           torch.Tensor([0.0])).item()
+        self.normalizing_factor = 1 / max_loss
+      else:
+        self.normalizing_factor = 1
+
+    def _unnormalized_loss(self, current_values, desired_values):
+      abs_error = torch.abs(current_values - desired_values)
+      loss = torch.where(
+          abs_error > self.delta,
+          2 * (self.delta - self.eps) * abs_error - self.delta**2 + self.eps**2,
+          torch.Tensor([0.0]))
+      loss = torch.where((abs_error <= self.delta) & (abs_error > self.eps),
+                         (abs_error - self.eps)**2,
+                         loss)
+      return loss.sum() / current_values.data.nelement()
+
+    def __call__(self, current_values, desired_values):
+      return self.normalizing_factor * self._unnormalized_loss(
+          current_values, desired_values)
+
+  def __init__(self, weights=None, eps=0.01, delta=0.5, normalize=False):
+    criterion = self.EpsInsensitiveHuberCriterion(eps, delta, normalize)
     super().__init__(criterion, weights=weights)
 
 
