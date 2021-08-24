@@ -61,8 +61,7 @@ class PyEnvironmentTests(unittest.TestCase):
     # merging-v1: discrete
     # are registered here: import bark_ml.environments.gym  # pylint: disable=unused-import
 
-    # cont_envs = [gym.make("highway-v0"), gym.make("merging-v0"), gym.make("singlelane-v0")]
-    cont_envs = [gym.make("singlelane-v0")]
+    cont_envs = [gym.make("highway-v0"), gym.make("merging-v0"), gym.make("singlelane-v0")]
     for env in cont_envs:
       env.reset()
       for _ in range(0, 25):
@@ -70,13 +69,13 @@ class PyEnvironmentTests(unittest.TestCase):
         observed_next_state, reward, done, info = env.step(action)
         print(f"Observed state: {observed_next_state}, Reward: {reward}, Done: {done}")
 
-    # cont_envs = [gym.make("highway-v1"), gym.make("merging-v1")]
-    # for env in cont_envs:
-    #   env.reset()
-    #   for _ in range(0, 5):
-    #     action = np.random.randint(low=0, high=3)
-    #     observed_next_state, reward, done, info = env.step(action)
-    #     print(f"Observed state: {observed_next_state}, Reward: {reward}, Done: {done}")
+    cont_envs = [gym.make("highway-v1"), gym.make("merging-v1")]
+    for env in cont_envs:
+      env.reset()
+      for _ in range(0, 5):
+        action = np.random.randint(low=0, high=3)
+        observed_next_state, reward, done, info = env.step(action)
+        print(f"Observed state: {observed_next_state}, Reward: {reward}, Done: {done}")
 
   def test_counterfactual_runtime(self):
     params = ParameterServer()
