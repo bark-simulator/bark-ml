@@ -7,3 +7,4 @@ from bark_ml.environments.blueprints.intersection.intersection import Continuous
 from bark_ml.environments.blueprints.intersection.intersection import DiscreteIntersectionBlueprint  # pylint: disable=unused-import
 from bark_ml.environments.blueprints.configurable.configurable_scenario import ConfigurableScenarioBlueprint  # pylint: disable=unused-import
 from bark_ml.environments.blueprints.single_lane.single_lane import SingleLaneBlueprint  # pylint: disable=unused-import
+from bark_ml.environments.blueprints.single_lane.single_lane import *

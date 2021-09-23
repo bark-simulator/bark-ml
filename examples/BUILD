@@ -21,6 +21,22 @@ py_test(
 )
 
 py_test(
+  name = "single_lane",
+  srcs = ["single_lane.py"],
+  data = ["@bark_project//bark/python_wrapper:core.so",
+          "//bark_ml:generate_core"],
+  imports = ["../bark_ml/python_wrapper/"],
+  deps = [
+    "//bark_ml/environments:single_agent_runtime",
+    "//bark_ml/environments:counterfactual_runtime",
+    "//bark_ml/environments:blueprints",
+    "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
+    "//bark_ml/library_wrappers/lib_tf_agents/runners:runners",
+    "//bark_ml/environments:gym",
+  ]
+)
+
+py_test(
   name = "blueprint_config",
   srcs = ["blueprint_config.py"],
   data = ["@bark_project//bark/python_wrapper:core.so",

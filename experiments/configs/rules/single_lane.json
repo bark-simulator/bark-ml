@@ -5,7 +5,7 @@
             "Config": {}
         },
         "Evaluator": {
-            "ModuleName": "EvaluatorLTL",
+            "ModuleName": "EvaluatorTrafficRules",
             "Config": {}
         },
         "Runtime": {

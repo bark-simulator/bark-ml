@@ -12,7 +12,7 @@ from bark.core.world.evaluation import \
 from bark.core.world.evaluation.ltl import EvaluatorLTL, SafeDistanceLabelFunction
 from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.evaluators.evaluator import BaseEvaluator
-
+from bark.core.world.evaluation.ltl import EvaluatorLTL
 
 class EvaluatorTrafficRules(BaseEvaluator):
   """Sparse reward evaluator returning +1 for reaching the goal,
@@ -43,7 +43,8 @@ class EvaluatorTrafficRules(BaseEvaluator):
       }
     self._eval_agent = eval_agent
 
-  def _add_evaluators(self) -> dict:
+  #def _add_evaluators(self) -> dict:
+  def _add_evaluators(self):
     evaluators = {}
     evaluators["goal_reached"] = EvaluatorGoalReached()
     evaluators["collision"] = EvaluatorCollisionEgoAgent()
@@ -56,7 +57,8 @@ class EvaluatorTrafficRules(BaseEvaluator):
   def _evaluate(self,
     observed_world: ObservedWorld,
     eval_results: dict,
-    action: np.ndarray) -> Tuple(float, bool, dict):
+    action: np.ndarray):
+    #action: np.ndarray) -> Tuple(float, bool, dict):
     """Returns information about the current world state."""
     done = False
     success = eval_results["goal_reached"]
@@ -67,6 +69,8 @@ class EvaluatorTrafficRules(BaseEvaluator):
 
     # TODO: integrate traffic rule violation
     traffic_rule_violation = eval_results["evaluator_ltl"]
+    print('Traffic rule violation:\n')
+    print(traffic_rule_violation)
 
     if success or collision or step_count > self._max_steps:
       done = True

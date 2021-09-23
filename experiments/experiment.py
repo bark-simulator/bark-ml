@@ -9,7 +9,6 @@ from bark_ml.library_wrappers.lib_tf_agents.runners import *
 from bark_ml.core.observers import *
 from bark_ml.core.evaluators import *
 
-
 def LoadModule(module_name, dict_items):
   """Helper function to load dictionaries.
 
@@ -20,6 +19,7 @@ def LoadModule(module_name, dict_items):
   Returns:
       Object: Object that has bene requested
   """
+  print("!!!!!!!!!!!!!!!!!!!\n")
   return eval("{}(**dict_items)".format(module_name))
 
 class Experiment:
