@@ -105,7 +105,10 @@
         },
         "Evaluation": {
             "DrawLTLDebugInfo": false
-        }
+        },
+        "AgentHeight": 2.0,
+        "dx": 40,
+        "dy": 40
     },
     "ML": {
         "BehaviorTFAAgents": {
@@ -113,13 +116,13 @@
         },
         "TFARunner": {
             "EvaluationSteps": 25,
-            "InitialCollectionEpisodes": 50,
+            "InitialCollectionEpisodes": 250,
             "CollectionEpisodesPerStep": 1
         },
         "GoalReachedEvaluator": {
             "GoalReward": 1.0,
             "CollisionPenalty": -1.0,
-            "MaxSteps": 60
+            "MaxSteps": 80
         },
         "BehaviorContinuousML": {
             "ActionsLowerBound": [

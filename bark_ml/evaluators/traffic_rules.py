@@ -42,6 +42,9 @@ class EvaluatorTrafficRules(BaseEvaluator):
           False, 1.0, 1.0, -7.84, -7.84, True, 4, False, 2.0, False)]
       }
     self._eval_agent = eval_agent
+    self.traffic_rule_violation_pre = 0
+    self.traffic_rule_violation_post = 0
+    self.traffic_rule_violations = 0
 
   #def _add_evaluators(self) -> dict:
   def _add_evaluators(self):
@@ -68,9 +71,16 @@ class EvaluatorTrafficRules(BaseEvaluator):
         (step_count > self._max_steps)
 
     # TODO: integrate traffic rule violation
-    traffic_rule_violation = eval_results["evaluator_ltl"]
-    print('Traffic rule violation:\n')
-    print(traffic_rule_violation)
+    self.traffic_rule_violation_post = eval_results["evaluator_ltl"]
+    if self.traffic_rule_violation_post < self.traffic_rule_violation_pre:
+        self.traffic_rule_violation_pre = self.traffic_rule_violation_post
+    self.current_traffic_rule_violations = self.traffic_rule_violation_post - self.traffic_rule_violation_pre
+    self.traffic_rule_violations = self.traffic_rule_violations + self.current_traffic_rule_violations
+    self.traffic_rule_violation_pre = self.traffic_rule_violation_post
+    #print('Traffic rule violations so far:\n')
+    #print(self.traffic_rule_violations)
+    #print('\nTraffic rule violation currently:\n')
+    #print(self.current_traffic_rule_violations)
 
     if success or collision or step_count > self._max_steps:
       done = True
@@ -80,7 +90,9 @@ class EvaluatorTrafficRules(BaseEvaluator):
 
     # calculate reward
     reward = collision * self._col_penalty + \
-      success * self._goal_reward
+      success * self._goal_reward - self.current_traffic_rule_violations
+    #print('\nReward:\n')
+    #print(reward)
     return reward, done, eval_results
 
   def Reset(self, world: World, eval_id: int):

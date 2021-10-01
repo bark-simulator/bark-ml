@@ -57,8 +57,8 @@ class SingleLaneBlueprint(Blueprint):
                viewer=True,
                mode="medium"):
     if mode == "dense":
-      ds_min = 15.
-      ds_max = 30.
+      ds_min = 10.
+      ds_max = 15.
     if mode == "medium":
       ds_min = 20.
       ds_max = 35.
