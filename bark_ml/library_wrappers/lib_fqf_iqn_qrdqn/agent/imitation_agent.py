@@ -46,8 +46,15 @@ class BenchmarkSupervisedLoss(TrainingBenchmark):
           formatted_result = f"Test-Loss = {scalar_loss}"
           return result, formatted_result
 
+    def evaluate_loss(self, scalar_loss, converted_current_values, converted_desired_values,
+                    phase="test", logits=False):
+      result = {f"loss/{phase}": scalar_loss}
+      formatted_result = f"Test-Loss = {scalar_loss}"
+
+      return result, formatted_result
+
     def is_better(self, eval_result1, than_eval_result2):
-        return eval_result1["mse_loss/test"] < than_eval_result2["mse_loss/test"]
+        return eval_result1["loss/test"] < than_eval_result2["loss/test"]
 
 class BenchmarkSplitSupervisedLoss(TrainingBenchmark):
   def __init__(self, demonstrations_test, gradients_and_weights_dir=None):
