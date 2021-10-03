@@ -41,23 +41,10 @@ class BenchmarkSupervisedLoss(TrainingBenchmark):
 
           loss = self.agent.calculate_loss(converted_current_values,
                                            converted_desired_values)
-
-          return self.evaluate_loss(loss.item(), converted_current_values, converted_desired_values)
-
-    def evaluate_loss(self, scalar_loss, converted_current_values, converted_desired_values,
-                      phase="test", logits=False):
-      mean_values_formatted = ""
-
-      if logits:
-        converted_current_values = apply_sigmoid_to_dict(converted_current_values)
-
-      for key in converted_desired_values.keys():
-        pair_wise_diff = converted_current_values[key] - converted_desired_values[key]
-        mean_value_diffs = torch.mean(pair_wise_diff**2, dim = 0).tolist()
-        mean_values_formatted += f"-> {key:10} {mean_value_diffs}\n"
-
-      return {f"mse_loss/{phase}" : scalar_loss},\
-             f"Loss = {scalar_loss}\n Mean Diff: \n{mean_values_formatted}"
+          scalar_loss = loss.item()
+          result = {f"loss/test": scalar_loss}
+          formatted_result = f"Test-Loss = {scalar_loss}"
+          return result, formatted_result
 
     def is_better(self, eval_result1, than_eval_result2):
         return eval_result1["mse_loss/test"] < than_eval_result2["mse_loss/test"]
@@ -359,6 +346,14 @@ class ImitationAgent(BaseAgent):
     }
 
 class PolicyImitationAgent(ImitationAgent):
+  def __init__(self, *args, **kwargs):
+    super(PolicyImitationAgent, self).__init__(*args, **kwargs)
+
+    self._training_benchmark = BenchmarkSupervisedLoss(self.demonstrations_test)
+    self._training_benchmark.reset(None, self.num_eval_episodes, None, self)
+
+    self.select_loss_function(self._params)
+
   def select_loss_function(self, params):
       loss_params = params["ML"]["ImitationModel"]["Loss"]
       if loss_params["PolicyCrossEntropyLoss"]:
