@@ -297,7 +297,7 @@ class DemonstrationCollector:
     self._demonstrations = []
     exceptions = data_frame[data_frame.Terminal == "exception_raised"]
     if (len(exceptions.index) > 0):
-      logging.warning("Removing {len(exceptions.index)} with raised exceptions")
+      logging.warning(f"Removing {len(exceptions.index)} with raised exceptions")
       data_frame = data_frame[~(data_frame.Terminal == "exception_raised")]
     for index, row in data_frame.iterrows():
       if not eval_criteria or self.UseCollectedRow(row, eval_criteria):
