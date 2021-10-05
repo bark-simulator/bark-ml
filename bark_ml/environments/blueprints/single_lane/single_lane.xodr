@@ -2,10 +2,10 @@
 <OpenDRIVE>
     <header revMajor="1" revMinor="4" name="" version="1.00" date="Thu Jun  6 10:01:32 2019" north="0.0000000000000000e+00" south="0.0000000000000000e+00" east="0.0000000000000000e+00" west="0.0000000000000000e+00">
     </header>
-    <road name="" length="1500" id="16" junction="-1">
+    <road name="" length="200" id="16" junction="-1">
         <type s="0.0000000000000000e+00" type="town"/>
         <planView>
-            <geometry s="0.0000000000000000e+00" x="5.1126832348793750e+03" y="5.0549844643744773e+03" hdg="1.5707963267948966e+00" length="1500">
+            <geometry s="0.0000000000000000e+00" x="5.1126832348793750e+03" y="5.0549844643744773e+03" hdg="1.5707963267948966e+00" length="200">
                 <arc curvature="2.0000000000000000e-3"/>
             </geometry>
         </planView>
