@@ -15,7 +15,7 @@ import random
 
 import torch
 from torch import nn
-from torch.optim import Adam, RMSprop
+from torch.optim import Adam, RMSprop, AdamW
 
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.model import Imitation, PolicyImitation
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent.demonstrations import ActionValuesCollector
@@ -124,9 +124,10 @@ class BenchmarkSplitSupervisedLoss(TrainingBenchmark):
 
 
 class ImitationAgent(BaseAgent):
-  def __init__(self, demonstration_collector = None, base_demonstrations_dir=None, *args, **kwargs):
+  def __init__(self, demonstration_collector = None, base_demonstrations_dir=None, demonstration_collector_dir=None, *args, **kwargs):
     self.demonstration_collector = demonstration_collector
     self.base_demonstrations_dir = base_demonstrations_dir
+    self.demonstration_collector_dir = demonstration_collector_dir
     super(ImitationAgent, self).__init__(*args, **kwargs)
     self.define_training_test_data()
 
@@ -191,12 +192,11 @@ class ImitationAgent(BaseAgent):
                           num_actions=self.num_actions,
                           num_value_functions=self.num_value_functions,
                           params=self._params).to(self.device)
-    self.optim = RMSprop(
+    self.optim = AdamW(
         self.online_net.parameters(),
         lr=self.learning_rate,
         weight_decay=self.weight_decay,
-        alpha=0.95,
-        eps=0.00001)
+        betas=(0.9, 0.999), eps=1e-08)
 
   def clean_pickables(self, pickables):
     del pickables["_env"]
@@ -260,7 +260,8 @@ class ImitationAgent(BaseAgent):
     super(ImitationAgent, self).save(checkpoint_type)
 
   def load_other(self):
-    if not os.path.exists(self.demonstration_collector_dir) and self.base_demonstrations_dir:
+    if not self.demonstration_collector_dir or (
+      not os.path.exists(self.demonstration_collector_dir) and self.base_demonstrations_dir):
       demonstrations_folder_name = os.path.basename(self.demonstration_collector_dir)
       self.demonstration_collector_dir = \
            os.path.abspath(os.path.join(self.base_demonstrations_dir, demonstrations_folder_name))
@@ -301,8 +302,7 @@ class ImitationAgent(BaseAgent):
     loss = self.calculate_loss(converted_current_values, converted_desired_values, logits=True)
     loss.backward()
     self.optim.step()
-    if self.do_logging:
-      self.training_log(loss, converted_current_values, converted_desired_values)
+    self.training_log(loss, converted_current_values, converted_desired_values)
 
   def training_log(self, loss, current_values, desired_values):
     self.running_loss.append(loss.item())
@@ -311,7 +311,8 @@ class ImitationAgent(BaseAgent):
         self.online_net.eval()
         running_loss_avg = sum(self.running_loss)/len(self.running_loss)
 
-        logging.info(f"Training: Loss(i={self.steps}={running_loss_avg})")
+        if self.do_logging:
+          logging.info(f"Training: Loss(i={self.steps}={running_loss_avg})")
         eval_results, _ = self._training_benchmark.evaluate_loss(
           running_loss_avg, current_values, desired_values, phase="train", logits=True)
 
@@ -320,6 +321,7 @@ class ImitationAgent(BaseAgent):
 
         self.online_net.train()
     if self.steps % self.eval_interval == 0:
+      self.online_net.eval()
       self.evaluate()
       self.save("final")
       self.online_net.train()

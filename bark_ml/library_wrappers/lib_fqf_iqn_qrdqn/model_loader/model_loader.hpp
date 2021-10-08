@@ -11,6 +11,7 @@
 #define BARK_ML_LIB_FQF_IQN_QRDQN_MODEL_LOADER_HPP_
 
 #include <torch/script.h>
+#include <ATen/Parallel.h>
 
 #include <chrono>
 #include <iostream>
@@ -49,7 +50,8 @@ class ModelLoader {
     catch (const c10::Error& e) {
       LOG_ERROR << "Error loading the model: " << e.msg();
     }
-
+    at::init_num_threads();
+    LOG_INFO << "ML: get_num_threads(): " << at::get_num_threads() << ", get_num_interop_threads(): " << at::get_num_interop_threads();
     return module_loaded_;
   }
 

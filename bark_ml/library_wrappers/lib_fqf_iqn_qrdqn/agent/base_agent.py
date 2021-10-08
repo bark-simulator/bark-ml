@@ -152,6 +152,7 @@ class BaseAgent(BehaviorModel):
     pickables = from_pickle(BaseAgent.pickable_directory(agent_save_dir), "agent_pickables")
     try:
       del pickables["_agent_save_dir"]
+      del pickables["base_demonstrations_dir"]
     except:
       pass
     self.__dict__.update(pickables)
