@@ -18,7 +18,7 @@ from bark.core.world.opendrive import *
 from bark.core.geometry import *
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
-from bark_ml.evaluators.reward_shaping_max_steps import RewardShapingEvaluatorMaxSteps
+from bark_ml.evaluators.reward_shaping import RewardShapingEvaluator
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
 
@@ -121,7 +121,8 @@ class SingleLaneBlueprint(Blueprint):
           "desired_vel": 5., "vel_dev_max": 10., "exponent": 0.2, "type": "positive"
         }
     }]
-    evaluator = RewardShapingEvaluatorMaxSteps(params)
+    params["ML"]["RewardShapingEvaluator"]["MaxSteps", "max. number of steps", 600]
+    evaluator = RewardShapingEvaluator(params)
     observer = FrenetObserver(params)
     ml_behavior = ml_behavior
 
