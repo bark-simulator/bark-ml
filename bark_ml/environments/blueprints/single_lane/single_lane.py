@@ -56,7 +56,7 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
       return None
     lane_corr = self._road_corridor.lane_corridors[self._lane_corridor_id]
     centerline = lane_corr.center_line
-    samplingRange = np.random.uniform(0, 10)
+    samplingRange = np.random.uniform(1, 10)
     xy_point =  GetPointAtS(centerline, samplingRange)
     angle = GetTangentAngleAtS(centerline, samplingRange)
     self._hasBeenCalled = True
@@ -121,7 +121,7 @@ class SingleLaneBlueprint(Blueprint):
           "desired_vel": 5., "vel_dev_max": 10., "exponent": 0.2, "type": "positive"
         }
     }]
-    params["ML"]["RewardShapingEvaluator"]["MaxSteps", "max. number of steps", 600]
+    params["ML"]["RewardShapingEvaluator"]["MaxSteps", "max. number of steps", 10]
     evaluator = RewardShapingEvaluator(params)
     observer = FrenetObserver(params)
     ml_behavior = ml_behavior

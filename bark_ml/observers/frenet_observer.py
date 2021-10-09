@@ -45,7 +45,12 @@ class FrenetObserver(BaseObserver):
     current_state = observed_world.ego_agent.state
     d = self.getD(observed_world, current_state)
     s = self.getS(observed_world, current_state)
-    state = np.array([d, s, current_state[4]])
+    # TODO(@hart): make more generic; for now hack
+    lc = self.getLaneCorr(observed_world)
+    s /= lc.center_line.Length()
+    d /= -4.
+    v = current_state[4]/15.
+    state = np.array([s, d, v])
     return state
 
   @property
