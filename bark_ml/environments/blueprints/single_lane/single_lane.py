@@ -121,7 +121,7 @@ class SingleLaneBlueprint(Blueprint):
           "desired_vel": 5., "vel_dev_max": 10., "exponent": 0.2, "type": "positive"
         }
     }]
-    params["ML"]["RewardShapingEvaluator"]["MaxSteps", "max. number of steps", 10]
+    params["ML"]["RewardShapingEvaluator"]["MaxSteps", "max. number of steps", 600]
     evaluator = RewardShapingEvaluator(params)
     observer = FrenetObserver(params)
     ml_behavior = ml_behavior
