@@ -1,7 +1,7 @@
 {
     "Experiment": {
         "Observer": {
-            "ModuleName": "NearestAgentsObserver",
+            "ModuleName": "FrenetObserver",
             "Config": {}
         },
         "Evaluator": {
@@ -152,14 +152,12 @@
         },
         "BehaviorSACAgent": {
             "ActorFcLayerParams": [
-                512,
-                512,
-                512
+                256,
+                256
             ],
             "CriticJointFcLayerParams": [
-                512,
-                512,
-                512
+                256,
+                256
             ],
             "ActorLearningRate": 0.0003,
             "CriticLearningRate": 0.0003,

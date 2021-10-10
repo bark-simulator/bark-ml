@@ -42,7 +42,7 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
   def goal(self, world):
     goal_polygon = Polygon2d(
       [0, 0, 0],
-      [Point2d(95, -4), Point2d(95, 0), Point2d(100, 0), Point2d(100, -4)])
+      [Point2d(90, -4), Point2d(90, 0), Point2d(100, 0), Point2d(100, -4)])
     return GoalDefinitionPolygon(goal_polygon)
 
   def position(self, world):
@@ -121,7 +121,7 @@ class SingleLaneBlueprint(Blueprint):
           "desired_vel": 5., "vel_dev_max": 10., "exponent": 0.2, "type": "positive"
         }
     }]
-    params["ML"]["RewardShapingEvaluator"]["MaxSteps", "max. number of steps", 600]
+    params["ML"]["RewardShapingEvaluator"]["MaxSteps", "max. number of steps", 100]
     evaluator = RewardShapingEvaluator(params)
     observer = FrenetObserver(params)
     ml_behavior = ml_behavior

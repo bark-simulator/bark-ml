@@ -147,8 +147,12 @@ class RewardShapingEvaluator(BaseEvaluator):
     step_count = eval_results["step_count"]
     collision = eval_results["collision"] or eval_results["drivable_area"]
 
+    # TERMINATE WITH NEGATIVE VEL.
+    ego_state = observed_world.ego_agent.state
+    ego_vel = ego_state[int(StateDefinition.VEL_POSITION)] < 0.
+
     reward_shaping_signal = self.RewardShapingFunction(observed_world)
-    if success or collision or step_count > self._max_steps:
+    if success or collision or step_count > self._max_steps or ego_vel:
       done = True
 
     if collision:
@@ -158,7 +162,8 @@ class RewardShapingEvaluator(BaseEvaluator):
 
     # for now it is only collision and success
     reward = collision * self._col_penalty + \
-      success * self._goal_reward + reward_shaping_signal
+      success * self._goal_reward + reward_shaping_signal + \
+      ego_vel * self._col_penalty
     return reward, done, eval_results
 
   def Reset(self, world):

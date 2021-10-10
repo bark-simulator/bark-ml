@@ -50,14 +50,15 @@ class FrenetObserver(BaseObserver):
     s /= lc.center_line.Length()
     d /= -4.
     v = current_state[4]/15.
-    state = np.array([s, d, v])
+    theta = (current_state[3])/6.28
+    state = np.array([s, d, theta, v], dtype=np.float32)
     return state
 
   @property
   def observation_space(self):
     return spaces.Box(
-      low=np.zeros(3),
-      high = np.ones(3))
+      low=np.zeros(4),
+      high = np.ones(4))
 
   @staticmethod
   def _norm_to_range(value, range):
