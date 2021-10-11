@@ -1,5 +1,5 @@
 from collections import OrderedDict
-
+import torch
 from torch import nn, sigmoid, cat, unsqueeze, flatten
 from torch.optim import Adam, RMSprop
 
@@ -84,6 +84,7 @@ class Carin(nn.Module):
     
     self.value_converter = NNToValueConverterSequential(self.num_actions)
 
+  @torch.jit.unused
   @property
   def nn_to_value_converter(self):
     return self.value_converter

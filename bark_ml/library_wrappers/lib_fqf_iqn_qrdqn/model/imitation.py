@@ -1,3 +1,4 @@
+import torch
 from torch import nn, sigmoid, softmax
 from collections import OrderedDict
 from bark_ml.core.value_converters import *
@@ -37,6 +38,7 @@ class Imitation(nn.Module):
       tuple_list.append(("output", nn.Linear(last_dim, self.num_actions*self.num_value_functions)))
       return OrderedDict(tuple_list)
 
+  @torch.jit.unused
   @property
   def nn_to_value_converter(self):
     return self.value_converter
