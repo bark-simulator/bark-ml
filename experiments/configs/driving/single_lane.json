@@ -36,14 +36,14 @@
             "Color": {
                 "Other": {
                     "Lines": [
-                        0.7,
-                        0.7,
-                        0.7
+                        0.0,
+                        0.27,
+                        0.58
                     ],
                     "Face": [
-                        0.7,
-                        0.7,
-                        0.7
+                        0.49,
+                        0.63,
+                        0.83
                     ]
                 },
                 "Controlled": {
@@ -130,12 +130,12 @@
         },
         "BehaviorContinuousML": {
             "ActionsLowerBound": [
-                -5.0,
-                -0.2
+                -4.0,
+                -0.1
             ],
             "ActionsUpperBound": [
-                4.0,
-                0.2
+                2.0,
+                0.1
             ]
         },
         "StateObserver": {

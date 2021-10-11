@@ -16,6 +16,7 @@ from bark.core.world.goal_definition import GoalDefinitionPolygon
 from bark.core.geometry import Polygon2d, Point2d
 from bark.core.world.opendrive import *
 from bark.core.geometry import *
+from bark.core.models.behavior import BehaviorIDMLaneTracking, BehaviorDynamicModel
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
 from bark_ml.evaluators.reward_shaping import RewardShapingEvaluator
@@ -34,10 +35,16 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
 
   def __init__(self,
                params=None,
+               samplingRange=[1., 10.],
+               yOffset=[[0., 0.]],
+               xOffset=[[0., 0.]],
                **kwargs):
     super(SingleLaneLaneCorridorConfig, self).__init__(
       params, **dict(kwargs, min_vel=0., max_vel=0.2))
     self._hasBeenCalled = False
+    self._samplingRange = samplingRange
+    self._yOffset = yOffset
+    self._xOffset = xOffset
 
   def goal(self, world):
     goal_polygon = Polygon2d(
@@ -56,11 +63,22 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
       return None
     lane_corr = self._road_corridor.lane_corridors[self._lane_corridor_id]
     centerline = lane_corr.center_line
-    samplingRange = np.random.uniform(1, 10)
+    samplingRange = np.random.uniform(
+      self._samplingRange[0], self._samplingRange[1])
     xy_point =  GetPointAtS(centerline, samplingRange)
     angle = GetTangentAngleAtS(centerline, samplingRange)
     self._hasBeenCalled = True
-    return (xy_point.x(), xy_point.y(), angle)
+    yOffsetBounds = self._yOffset[np.random.randint(0, len(self._yOffset))]
+    yOffset = np.random.uniform(yOffsetBounds[0], yOffsetBounds[1])
+    xOffsetBounds = self._xOffset[np.random.randint(0, len(self._xOffset))]
+    xOffset = np.random.uniform(xOffsetBounds[0], xOffsetBounds[1])
+    return (xy_point.x() + xOffset,
+            xy_point.y() + yOffset,
+            angle)
+
+  def behavior_model(self, world):
+    behavior_model = BehaviorDynamicModel(self._params)
+    return behavior_model
 
 class SingleLaneBlueprint(Blueprint):
   """The SingleLane blueprint sets up a merging scenario with initial
@@ -87,6 +105,7 @@ class SingleLaneBlueprint(Blueprint):
     s_min = 0
     s_max = 100
     local_params = params.clone()
+    # ego vehicle
     lane_conf = SingleLaneLaneCorridorConfig(params=local_params,
                                              road_ids=[16],
                                              lane_corridor_id=0,
@@ -99,6 +118,22 @@ class SingleLaneBlueprint(Blueprint):
                                              controlled_ids=True)
     lane_configs.append(lane_conf)
 
+    # other vehicle
+    lane_conf_other = SingleLaneLaneCorridorConfig(
+      params=local_params,
+      road_ids=[16],
+      lane_corridor_id=0,
+      min_vel=0.,
+      max_vel=0.,
+      ds_min=ds_min,
+      ds_max=ds_max,
+      s_min=s_min,
+      s_max=s_max,
+      controlled_ids=None,
+      yOffset=[[1.8, 1.9], [-1.8, -1.9]],
+      samplingRange=[40, 60])
+    lane_configs.append(lane_conf_other)
+
     scenario_generation = \
       ConfigWithEase(
         num_scenarios=num_scenarios,
@@ -109,8 +144,12 @@ class SingleLaneBlueprint(Blueprint):
         params=params,
         lane_corridor_configs=lane_configs)
     if viewer:
+      # viewer = MPViewer(params=params,
+      #                   use_world_bounds=True)
       viewer = MPViewer(params=params,
-                        use_world_bounds=True)
+                        x_range=[-50, 50],
+                        y_range=[-50, 50],
+                        follow_agent_id=True)
       # viewer = BufferedMPViewer(
       #   params=params,
       #   follow_agent_id=True)
