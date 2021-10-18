@@ -28,6 +28,14 @@ py_library(
 )
 
 py_library(
+    name = "external_runtime",
+    srcs = ["external_runtime.py"],
+    imports = ["../external/bark_project/bark/python_wrapper/"],
+    data = ["@bark_project//bark/python_wrapper:core.so"],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
     name = "counterfactual_runtime",
     srcs = ["counterfactual_runtime.py"],
     imports = ["../external/bark_project/bark/python_wrapper/"],

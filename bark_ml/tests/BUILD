@@ -20,6 +20,20 @@ py_test(
 )
 
 py_test(
+    name = "py_apollo_tests",
+    srcs = ["py_apollo_tests.py"],
+    data = ["@bark_project//bark/python_wrapper:core.so",
+            ":data"],
+    imports = ["../external/bark_project/bark/python_wrapper/",
+               "../python_wrapper/"],
+    deps = ["//bark_ml/environments:external_runtime",
+            "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
+            "//bark_ml/environments:single_agent_runtime",
+            "//bark_ml/commons:py_spaces"],
+    visibility = ["//visibility:public"],
+)
+
+py_test(
     name = "py_behavior_tests",
     srcs = ["py_behavior_tests.py"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
