@@ -6,6 +6,14 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
+from bark.core.world.agent import *
+from bark.core.models.behavior import *
+from bark.core.world import *
+from bark.core.world.goal_definition import *
+from bark.core.models.dynamic import *
+from bark.core.models.execution import *
+from bark.core.geometry import *
+from bark.core.geometry.standard_shapes import *
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML  # pylint: disable=unused-import
 
 
@@ -24,7 +32,7 @@ class ExternalRuntime:
                viewer=None,
                render=False):
 
-    self._map_interace = map_interface
+    self._map_interface = map_interface
     self._observer = observer
     self._viewer = viewer
     self._render = render
@@ -33,13 +41,13 @@ class ExternalRuntime:
     self._params = params
     self._ml_behavior = BehaviorContinuousML(self._params)
 
-  def __step(self, step_time):
+  def _step(self, step_time):
     # step and observe
-    self._world.Step(self.step_time)
+    self._world.Step(step_time)
 
     # render
     if self._render:
-      self.__render()
+      self.render()
 
     (action, state) = self.ego_agent.history[-1]
     return (action, state)
@@ -47,34 +55,54 @@ class ExternalRuntime:
   def generateTrajectory(self, step_time, num_steps):
     traj = []
     for i in range(0, num_steps):
-      (a, s) = self.__step(step_time)
+      (a, s) = self._step(step_time)
       traj.append(s)
+    return traj
 
   def setupWorld(self):
-    # TODO: create world from map interface
-    pass
+    world = World(self._params)
+    world.SetMap(self._map_interface)
+    self._world = world
 
   def addEgoAgent(self, state):
-    # TODO: create ego agent
-    self.__createAgent()
-    pass
+    agent = self._createAgent(state, self._ml_behavior)
+    self._world.AddAgent(agent)
+    self._ego_id = agent.id
+    return agent.id
 
-  def addObstacle(self, length, width, prediction):
+  def addObstacle(self, prediction, length, width):
+    behavior = None
     # TODO: create BehaviorStaticTrajectory model and add it to world
-    self.__createAgent()
+    agent = self._createAgent(prediction[0], behavior, wb=length, crad=width)
     # TODO fill agent
-    agent_id = 101
-    return agent_id
+    self._world.AddAgent(agent)
+    return agent.id
 
-  def __createAgent(self):
-    pass
+  def _createAgent(self, state, behavior, wb=2., crad=1.):
+    agent_behavior = behavior
+    agent_dyn = SingleTrackModel(self._params)
+    agent_exec = ExecutionModelInterpolate(self._params)
+    agent_polygon = GenerateCarRectangle(wb, crad)
+    agent_params = self._params.AddChild("agent")
+    # agent_goal = GoalDefinitionPolygon()
+    new_agent = Agent(
+      state,
+      agent_behavior,
+      agent_dyn,
+      agent_exec,
+      agent_polygon,
+      agent_params,
+      None,
+      self._map_interface)
+    return new_agent
 
   def clearAgents(self):
-    # TODO: delete all agents
-    pass
+    # TODO: implement in BARK
+    self._world.ClearAgents()
 
-  def __render(self):
+  def render(self):
     # TODO: call matplotviewer
+    # self._viewer.drawWorld()
     pass
 
   @property
