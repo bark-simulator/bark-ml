@@ -49,15 +49,15 @@ class ExternalRuntime:
     if self._render:
       self.render()
 
-    (action, state) = self.ego_agent.history[-1]
-    return (action, state)
+    state, action = self.ego_agent.history[-1]
+    return state, action
 
   def generateTrajectory(self, step_time, num_steps):
-    traj = []
-    for i in range(0, num_steps):
-      (a, s) = self._step(step_time)
-      traj.append(s)
-    return traj
+    state_action_traj = []
+    for _ in range(0, num_steps):
+      s, a = self._step(step_time)
+      state_action_traj.append([s, a])
+    return state_action_traj
 
   def setupWorld(self):
     world = World(self._params)
@@ -71,10 +71,10 @@ class ExternalRuntime:
     return agent.id
 
   def addObstacle(self, prediction, length, width):
-    behavior = None
-    # TODO: create BehaviorStaticTrajectory model and add it to world
+    behavior = BehaviorStaticTrajectory(
+      self._params,
+      prediction)
     agent = self._createAgent(prediction[0], behavior, wb=length, crad=width)
-    # TODO fill agent
     self._world.AddAgent(agent)
     return agent.id
 
@@ -84,6 +84,7 @@ class ExternalRuntime:
     agent_exec = ExecutionModelInterpolate(self._params)
     agent_polygon = GenerateCarRectangle(wb, crad)
     agent_params = self._params.AddChild("agent")
+    # TODO: set the goal
     # agent_goal = GoalDefinitionPolygon()
     new_agent = Agent(
       state,
@@ -97,13 +98,14 @@ class ExternalRuntime:
     return new_agent
 
   def clearAgents(self):
-    # TODO: implement in BARK
     self._world.ClearAgents()
 
   def render(self):
     # TODO: call matplotviewer
-    # self._viewer.drawWorld()
-    pass
+    self._viewer.drawWorld(
+      self._world,
+      self._ego_id)
+    self._viewer.clear()
 
   @property
   def action_space(self):

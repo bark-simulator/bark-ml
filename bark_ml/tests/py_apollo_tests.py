@@ -55,7 +55,7 @@ class PyEnvironmentTests(unittest.TestCase):
     env = self.create_runtime_and_setup_empty_world(params)
     state = np.array([0, 0, 0, 0, 0])
     env.addEgoAgent(state)
-    # self.assertEqual(env.ego_agent.state, state)
+    self.assertTrue(np.array_equal(env.ego_agent.state, state))
 
   def test_add_obstacle(self):
     params = ParameterServer()
@@ -64,7 +64,7 @@ class PyEnvironmentTests(unittest.TestCase):
     w = 2
     traj = np.array([[0, 0, 0, 0, 0]])
     obst_id = env.addObstacle(traj, l, w)
-    # self.assertEqual(env._world.agents[obst_id].state, traj[0])
+    self.assertTrue(np.array_equal(env._world.agents[obst_id].state, traj[0]))
     env.clearAgents()
     self.assertEqual(len(env._world.agents), 0)
 
@@ -79,9 +79,20 @@ class PyEnvironmentTests(unittest.TestCase):
     env.ml_behavior = sac_agent
     self.assertTrue(isinstance(env.ml_behavior, BehaviorSACAgent))
 
-  def test_generate_trajectory(self):
-     # TODO: test env.generateTrajectory
-     pass
+  def test_generate_ego_trajectory(self):
+    params = ParameterServer()
+    env = self.create_runtime_and_setup_empty_world(params)
+    sac_agent = BehaviorSACAgent(environment=env, params=params)
+    env.ml_behavior = sac_agent
+
+    # add ego
+    state = np.array([0, 0, 0, 0, 0])
+    env.addEgoAgent(state)
+
+    N = 10
+    state_action_traj = env.generateTrajectory(0.2, N)
+    print(state_action_traj)
+    self.assertEqual(len(state_action_traj), N)
 
 if __name__ == '__main__':
   unittest.main()
