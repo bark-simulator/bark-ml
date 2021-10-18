@@ -153,9 +153,11 @@
         "BehaviorSACAgent": {
             "ActorFcLayerParams": [
                 256,
+                256,
                 256
             ],
             "CriticJointFcLayerParams": [
+                256,
                 256,
                 256
             ],
