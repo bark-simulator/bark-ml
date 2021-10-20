@@ -61,15 +61,15 @@ class FrenetObserver(BaseObserver):
     d = self._norm_to_range(
       d, [-self._road_norm_width, self._road_norm_width])
     v = self._norm_to_range(
-      current_state[StateDefinition.VEL_POSITION], [0, self._max_vel])
+      current_state[int(StateDefinition.VEL_POSITION)], [0, self._max_vel])
     theta = self._norm_to_range(
-      current_state[StateDefinition.THETA_POSITION], [0, 6.3])
+      current_state[int(StateDefinition.THETA_POSITION)], [0, 6.3])
     return [s, d, theta, v]
 
   def getNearbyAgents(self, observed_world, state):
     ego_position = Point2d(
-      state[StateDefinition.X_POSITION],
-      state[StateDefinition.Y_POSITION])
+      state[int(StateDefinition.X_POSITION)],
+      state[int(StateDefinition.Y_POSITION)])
     return observed_world.GetNearestAgents(
       ego_position, self._num_other_agents + 1)
 
