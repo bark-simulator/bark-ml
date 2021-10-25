@@ -113,7 +113,10 @@
                 "VelocityPotential" : {
                     "desired_vel": 5.0, "vel_dev_max": 10.0, "exponent": 0.2, "type": "positive"
                   }
-            }
+            },
+            "MaxSteps": 200,
+            "GoalReward": 1.0,
+            "CollisionPenalty": -1.0
         },
         "BehaviorTFAAgents": {
             "NumCheckpointsToKeep": 3
@@ -126,7 +129,7 @@
         "GoalReachedEvaluator": {
             "GoalReward": 1.0,
             "CollisionPenalty": -1.0,
-            "MaxSteps": 60
+            "MaxSteps": 200
         },
         "BehaviorContinuousML": {
             "ActionsLowerBound": [
