@@ -69,7 +69,7 @@ class SingleLaneEvaluator(BaseEvaluator):
       success = 0
       eval_results["goal_reached"] = False
 
-    if success or collision or step_count > self._max_steps or ego_vel:
+    if success or collision or step_count > self._max_steps or ego_vel_is_neg:
       done = True
 
     # for now it is only collision and success
