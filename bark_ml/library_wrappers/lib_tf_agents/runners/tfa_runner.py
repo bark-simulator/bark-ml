@@ -213,6 +213,8 @@ class TFARunner:
       env_data = self._environment.step(action)
       self._tracer.Trace(env_data, **kwargs)
       state, reward, is_terminal, info = env_data
+      print("\n INFO: \n")
+      print(info)
       print(state)
       # graph stuff
       try:

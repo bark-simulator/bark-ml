@@ -13,15 +13,16 @@ from bark.core.world.evaluation.ltl import EvaluatorLTL, SafeDistanceLabelFuncti
 from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.evaluators.evaluator import BaseEvaluator
 from bark.core.world.evaluation.ltl import EvaluatorLTL
+from bark_ml.evaluators.reward_shaping import RewardShapingEvaluator
 
-class EvaluatorTrafficRules(BaseEvaluator):
+class EvaluatorTrafficRules(RewardShapingEvaluator):
   """Sparse reward evaluator returning +1 for reaching the goal,
   -1 for having a collision or leaving the drivable area."""
 
   def __init__(self,
                params=ParameterServer(),
                eval_agent=None):
-    BaseEvaluator.__init__(self, params)
+    RewardShapingEvaluator.__init__(self, params)
     self._goal_reward = \
       self._params["ML"]["GoalReachedEvaluator"]["GoalReward",
         "Reward for reaching the goal.",
@@ -63,6 +64,8 @@ class EvaluatorTrafficRules(BaseEvaluator):
     action: np.ndarray):
     #action: np.ndarray) -> Tuple(float, bool, dict):
     """Returns information about the current world state."""
+    # Todo
+    reward, _, _ = super()._evaluate(observed_world, eval_results, action)
     done = False
     success = eval_results["goal_reached"]
     step_count = eval_results["step_count"]
@@ -90,7 +93,9 @@ class EvaluatorTrafficRules(BaseEvaluator):
       success = 0
       eval_results["goal_reached"] = 0
     # calculate reward
-    reward = collision * self._col_penalty + \
+    print("\n Traffic Rule Violation: ")
+    print(self.current_traffic_rule_violations)
+    reward -= collision * self._col_penalty + \
       success * self._goal_reward - self.current_traffic_rule_violations
     #print('\nReward:\n')
     #print(reward)

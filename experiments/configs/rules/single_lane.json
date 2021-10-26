@@ -124,6 +124,13 @@
             "CollisionPenalty": -1.0,
             "MaxSteps": 80
         },
+        "RewardShapingEvaluator": {
+            "RewardShapingPotentials": {
+                "VelocityPotential" : {
+                    "desired_vel": 20.0, "vel_dev_max": 50.0, "exponent": 0.2, "type": "positive"
+                  }
+            }
+        },
         "BehaviorContinuousML": {
             "ActionsLowerBound": [
                 -5.0,
@@ -148,14 +155,14 @@
         },
         "BehaviorSACAgent": {
             "ActorFcLayerParams": [
-                512,
-                512,
-                512
+                256,
+                256,
+                256
             ],
             "CriticJointFcLayerParams": [
-                512,
-                512,
-                512
+                256,
+                256,
+                256
             ],
             "ActorLearningRate": 0.0003,
             "CriticLearningRate": 0.0003,
