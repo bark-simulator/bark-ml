@@ -1,7 +1,7 @@
 {
     "Experiment": {
         "Observer": {
-            "ModuleName": "NearestAgentsObserver",
+            "ModuleName": "FrenetObserver",
             "Config": {}
         },
         "Evaluator": {
@@ -113,10 +113,7 @@
                 "VelocityPotential" : {
                     "desired_vel": 5.0, "vel_dev_max": 10.0, "exponent": 0.2, "type": "positive"
                   }
-            },
-            "MaxSteps": 200,
-            "GoalReward": 1.0,
-            "CollisionPenalty": -1.0
+            }
         },
         "BehaviorTFAAgents": {
             "NumCheckpointsToKeep": 3
@@ -129,7 +126,7 @@
         "GoalReachedEvaluator": {
             "GoalReward": 1.0,
             "CollisionPenalty": -1.0,
-            "MaxSteps": 200
+            "MaxSteps": 60
         },
         "BehaviorContinuousML": {
             "ActionsLowerBound": [
@@ -155,14 +152,14 @@
         },
         "BehaviorSACAgent": {
             "ActorFcLayerParams": [
-                512,
-                512,
-                512
+                256,
+                256,
+                256
             ],
             "CriticJointFcLayerParams": [
-                512,
-                512,
-                512
+                256,
+                256,
+                256
             ],
             "ActorLearningRate": 0.0003,
             "CriticLearningRate": 0.0003,
@@ -199,6 +196,6 @@
     },
     "World": {
         "remove_agents_out_of_map": true,
-        "other_vehicle": true
+        "other_vehicle": false
     }
 }
