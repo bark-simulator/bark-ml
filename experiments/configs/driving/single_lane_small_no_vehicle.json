@@ -108,6 +108,9 @@
         }
     },
     "ML": {
+        "FrenetObserver": {
+            "NumOtherAgents": 0
+        },
         "RewardShapingEvaluator": {
             "RewardShapingPotentials": {
                 "VelocityPotential" : {
