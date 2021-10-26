@@ -49,7 +49,7 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
   def goal(self, world):
     goal_polygon = Polygon2d(
       [0, 0, 0],
-      [Point2d(90, -4), Point2d(90, 0), Point2d(100, 0), Point2d(100, -4)])
+      [Point2d(70, -4), Point2d(70, 0), Point2d(80, 0), Point2d(80, -4)])
     return GoalDefinitionPolygon(goal_polygon)
 
   def position(self, world):
@@ -119,20 +119,21 @@ class SingleLaneBlueprint(Blueprint):
     lane_configs.append(lane_conf)
 
     # other vehicle
-    lane_conf_other = SingleLaneLaneCorridorConfig(
-      params=local_params,
-      road_ids=[16],
-      lane_corridor_id=0,
-      min_vel=0.,
-      max_vel=0.,
-      ds_min=ds_min,
-      ds_max=ds_max,
-      s_min=s_min,
-      s_max=s_max,
-      controlled_ids=None,
-      yOffset=[[1.8, 1.9], [-1.8, -1.9]],
-      samplingRange=[40, 60])
-    lane_configs.append(lane_conf_other)
+    if params["World"]["other_vehicle", "Other Vehicle", True]:
+      lane_conf_other = SingleLaneLaneCorridorConfig(
+        params=local_params,
+        road_ids=[16],
+        lane_corridor_id=0,
+        min_vel=0.,
+        max_vel=0.,
+        ds_min=ds_min,
+        ds_max=ds_max,
+        s_min=s_min,
+        s_max=s_max,
+        controlled_ids=None,
+        yOffset=[[1.85, 1.9], [-1.85, -1.9]],
+        samplingRange=[30, 50])
+      lane_configs.append(lane_conf_other)
 
     scenario_generation = \
       ConfigWithEase(
@@ -144,8 +145,6 @@ class SingleLaneBlueprint(Blueprint):
         params=params,
         lane_corridor_configs=lane_configs)
     if viewer:
-      # viewer = MPViewer(params=params,
-      #                   use_world_bounds=True)
       viewer = MPViewer(params=params,
                         x_range=[-50, 50],
                         y_range=[-50, 50],
