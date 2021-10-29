@@ -10,7 +10,6 @@
 import unittest
 import gym
 import numpy as np
-import matplotlib.pyplot as plt
 
 from bark.core.world import World
 from bark.runtime.commons.parameters import ParameterServer
@@ -22,26 +21,26 @@ from bark_ml.environments.blueprints import ContinuousHighwayBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML  # pylint: disable=unused-import
 
+viewer = MPViewer(params=ParameterServer(),
+                  x_range=[-50, 50],
+                  y_range=[-50, 50],
+                  follow_agent_id=True)
+
 class PyEnvironmentTests(unittest.TestCase):
   def setUp(self):
     params = ParameterServer()
-    test_bp = ContinuousHighwayBlueprint(params)
-    test_env = SingleAgentRuntime(blueprint=test_bp, render=False)
+    test_bp = ContinuousHighwayBlueprint(params, viewer=False)
+    test_env = SingleAgentRuntime(
+      blueprint=test_bp, render=False, viewer=viewer)
     test_env.reset()
-    self.viewer = MPViewer(params=params,
-                           x_range=[-50, 50],
-                           y_range=[-50, 50],
-                           follow_agent_id=True)
     self.map_interface = test_env._world.map
     self.params = params
 
   def test_create_environment(self):
     map_interface = self.map_interface
     observer = NearestAgentsObserver()
-
     env = ExternalRuntime(
-      map_interface=map_interface, observer=observer, params=self.params,
-      viewer=self.viewer)
+      map_interface=map_interface, observer=observer, params=self.params)
     self.assertTrue(isinstance(env.observation_space, gym.spaces.box.Box))
 
   def create_runtime_and_setup_empty_world(self, params):
@@ -49,7 +48,7 @@ class PyEnvironmentTests(unittest.TestCase):
     observer = NearestAgentsObserver()
     env = ExternalRuntime(
       map_interface=map_interface, observer=observer, params=params,
-      viewer=self.viewer)
+      viewer=viewer)
     env.setupWorld()
     return env
 
@@ -99,9 +98,8 @@ class PyEnvironmentTests(unittest.TestCase):
 
     N = 10
     state_traj, action_traj = env.generateTrajectory(0.2, N)
-    # env.render()
     env._viewer.drawTrajectory(state_traj)
-    env._viewer.show(block=True)
+    env.render()
     self.assertEqual(len(state_traj), N)
 
 if __name__ == '__main__':
