@@ -10,9 +10,11 @@
 import unittest
 import gym
 import numpy as np
+import matplotlib.pyplot as plt
 
 from bark.core.world import World
 from bark.runtime.commons.parameters import ParameterServer
+from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark_ml.environments.external_runtime import ExternalRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents.sac_agent import BehaviorSACAgent
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
@@ -26,22 +28,28 @@ class PyEnvironmentTests(unittest.TestCase):
     test_bp = ContinuousHighwayBlueprint(params)
     test_env = SingleAgentRuntime(blueprint=test_bp, render=False)
     test_env.reset()
+    self.viewer = MPViewer(params=params,
+                           x_range=[-50, 50],
+                           y_range=[-50, 50],
+                           follow_agent_id=True)
     self.map_interface = test_env._world.map
     self.params = params
 
   def test_create_environment(self):
     map_interface = self.map_interface
     observer = NearestAgentsObserver()
+
     env = ExternalRuntime(
-      map_interface=map_interface, observer=observer, params=self.params)
-    # TODO: reset call
+      map_interface=map_interface, observer=observer, params=self.params,
+      viewer=self.viewer)
     self.assertTrue(isinstance(env.observation_space, gym.spaces.box.Box))
 
   def create_runtime_and_setup_empty_world(self, params):
     map_interface = self.map_interface
     observer = NearestAgentsObserver()
     env = ExternalRuntime(
-      map_interface=map_interface, observer=observer, params=params)
+      map_interface=map_interface, observer=observer, params=params,
+      viewer=self.viewer)
     env.setupWorld()
     return env
 
@@ -90,9 +98,11 @@ class PyEnvironmentTests(unittest.TestCase):
     env.addEgoAgent(state)
 
     N = 10
-    state_action_traj = env.generateTrajectory(0.2, N)
-    print(state_action_traj)
-    self.assertEqual(len(state_action_traj), N)
+    state_traj, action_traj = env.generateTrajectory(0.2, N)
+    # env.render()
+    env._viewer.drawTrajectory(state_traj)
+    env._viewer.show(block=True)
+    self.assertEqual(len(state_traj), N)
 
 if __name__ == '__main__':
   unittest.main()
