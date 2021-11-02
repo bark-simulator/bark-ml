@@ -4,6 +4,7 @@ py_library(
                  "blueprints/__init__.py",
                  "blueprints/*/*.py"]),
     data = glob(["blueprints/*/*.xodr",
+                 "blueprints/*/*.csv",
                  "blueprints/*/*.json",
                  "blueprints/*.json"]) +
                 ["@bark_project//bark/python_wrapper:core.so",

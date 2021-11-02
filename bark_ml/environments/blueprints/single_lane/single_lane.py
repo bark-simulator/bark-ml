@@ -17,6 +17,7 @@ from bark.core.geometry import Polygon2d, Point2d
 from bark.core.world.opendrive import *
 from bark.core.geometry import *
 from bark.core.models.behavior import BehaviorIDMLaneTracking, BehaviorDynamicModel
+from bark.core.world.map import MapInterface
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
 from bark_ml.evaluators.reward_shaping import RewardShapingEvaluator
@@ -28,7 +29,6 @@ from bark_ml.observers.frenet_observer import FrenetObserver
 
 
 class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
-
   """
   Configures the a single lane, e.g., the goal.
   """
@@ -47,6 +47,7 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
     self._xOffset = xOffset
 
   def goal(self, world):
+    # TODO: re-position the goal
     goal_polygon = Polygon2d(
       [0, 0, 0],
       [Point2d(70, -4), Point2d(70, 0), Point2d(80, 0), Point2d(80, -4)])
@@ -107,7 +108,7 @@ class SingleLaneBlueprint(Blueprint):
     local_params = params.clone()
     # ego vehicle
     lane_conf = SingleLaneLaneCorridorConfig(params=local_params,
-                                             road_ids=[16],
+                                             road_ids=[0],
                                              lane_corridor_id=0,
                                              min_vel=0.,
                                              max_vel=0.01,
@@ -115,14 +116,15 @@ class SingleLaneBlueprint(Blueprint):
                                              ds_max=ds_max,
                                              s_min=s_min,
                                              s_max=s_max,
-                                             controlled_ids=True)
+                                             controlled_ids=True,
+                                             yOffset=[[-0.1, 0.1]])
     lane_configs.append(lane_conf)
 
     # other vehicle
     if params["World"]["other_vehicle", "Other Vehicle", True]:
       lane_conf_other = SingleLaneLaneCorridorConfig(
         params=local_params,
-        road_ids=[16],
+        road_ids=[0],
         lane_corridor_id=0,
         min_vel=0.,
         max_vel=0.,
@@ -135,19 +137,29 @@ class SingleLaneBlueprint(Blueprint):
         samplingRange=[30, 50])
       lane_configs.append(lane_conf_other)
 
+    # Map Definition
+    csvfile = os.path.join(
+      os.path.dirname(__file__),
+      "../../../environments/blueprints/single_lane/base_map_lanes_guerickestr_assymetric_48.csv")
+    print(csvfile)
+    # csvfile = "/Users/hart/Development/bark-ml/environments/blueprints/single_lane/base_map_lanes_guerickestr_assymetric_48.csv"
+    map_interface = MapInterface()
+    map_interface.SetCsvMap(csvfile)
+
     scenario_generation = \
       ConfigWithEase(
         num_scenarios=num_scenarios,
-        map_file_name=os.path.join(
-          os.path.dirname(__file__),
-          "../../../environments/blueprints/single_lane/single_lane.xodr"),  # pylint: disable=unused-import
         random_seed=random_seed,
         params=params,
+        map_interface=map_interface,
         lane_corridor_configs=lane_configs)
+    # HACK: change
+    # scenario_generation._map_interface = map_interface
+
     if viewer:
       viewer = MPViewer(params=params,
-                        x_range=[-50, 50],
-                        y_range=[-50, 50],
+                        x_range=[-100, 100],
+                        y_range=[-100, 100],
                         follow_agent_id=True)
       # viewer = BufferedMPViewer(
       #   params=params,
