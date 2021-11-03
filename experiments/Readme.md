@@ -18,3 +18,22 @@ And to evaluate the performance of the agent, use:
 
 sbatch run_experiment_normal.sh --exp_json=experiments/experiment_runner.runfiles/bark_ml/experiments/configs/phd/01_hyperparams/dnns/merging_large_network.json --mode=train
 
+## Run driving experiment
+bazel run //experiments:experiment_runner --define build_platform=macos -- --exp_json=/Users/hart/Development/bark-ml/experiments/configs/driving/single_lane.json
+
+
+sudo openvpn --config ~/.ovpn --auth-user-pass --auth-retry interact
+
+First exp:
+tmux new -d -s 01_single_lane
+
+hart@fortiss-8gpu:~$ bash run_experiment_normal.sh --exp_json=./experiments/experiment_runner.runfiles/bark_ml/experiments/configs/driving/single_lane.json --mode=train
+
+hart@fortiss-8gpu:~$ bash run_experiment_normal.sh --exp_json=./experiments/experiment_runner.runfiles/bark_ml/experiments/configs/driving/single_lane_sparse.json --mode=train
+
+tmux attach -t 01_single_lane
+
+cntrl + b; then d
+
+
+

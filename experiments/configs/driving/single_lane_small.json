@@ -1,0 +1,201 @@
+{
+    "Experiment": {
+        "Observer": {
+            "ModuleName": "FrenetObserver",
+            "Config": {}
+        },
+        "Evaluator": {
+            "ModuleName": "RewardShapingEvaluator",
+            "Config": {}
+        },
+        "Runtime": {
+            "ModuleName": "SingleAgentRuntime",
+            "Config": {}
+        },
+        "Runner": {
+            "ModuleName": "SACRunner",
+            "Config": {}
+        },
+        "Agent": {
+            "ModuleName": "BehaviorSACAgent",
+            "Config": {}
+        },
+        "Blueprint": {
+            "ModuleName": "ContinuousSingleLaneBlueprint",
+            "Config": {
+                "num_scenarios": 10000,
+                "viewer": true,
+                "mode": "dense"
+            }
+        },
+        "NumEvaluationEpisodes": 500,
+        "NumVisualizationEpisodes": 10
+    },
+    "Visualization": {
+        "Agents": {
+            "Color": {
+                "Other": {
+                    "Lines": [
+                        0.0,
+                        0.27,
+                        0.58
+                    ],
+                    "Face": [
+                        0.49,
+                        0.63,
+                        0.83
+                    ]
+                },
+                "Controlled": {
+                    "Lines": [
+                        0.0,
+                        0.27,
+                        0.58
+                    ],
+                    "Face": [
+                        0.49,
+                        0.63,
+                        0.83
+                    ]
+                },
+                "UseColormapForOtherAgents": false,
+                "IfColormapUseLineColorOthers": true
+            },
+            "Alpha": {
+                "Controlled": 1.0,
+                "Other": 1
+            },
+            "ColorRoute": [
+                0.2,
+                0.2,
+                0.2
+            ],
+            "DrawRoute": false,
+            "DrawAgentId": true,
+            "DrawEvalGoals": true,
+            "EvalGoalColor": [
+                0.49,
+                0.63,
+                0.83
+            ],
+            "DrawHistory": false,
+            "DrawHistoryDrawFace": true
+        },
+        "Map": {
+            "XodrLanes": {
+                "Boundaries": {
+                    "Color": [
+                        0.7,
+                        0.7,
+                        0.7
+                    ],
+                    "Alpha": 1.0,
+                    "Linewidth": 1.0
+                }
+            },
+            "Plane": {
+                "Color": [
+                    1,
+                    1,
+                    1,
+                    1
+                ],
+                "Alpha": 1.0
+            }
+        },
+        "Evaluation": {
+            "DrawLTLDebugInfo": false
+        }
+    },
+    "ML": {
+        "RewardShapingEvaluator": {
+            "RewardShapingPotentials": {
+                "VelocityPotential" : {
+                    "desired_vel": 5.0, "vel_dev_max": 10.0, "exponent": 0.2, "type": "positive"
+                  }
+            }
+        },
+        "BehaviorTFAAgents": {
+            "NumCheckpointsToKeep": 3
+        },
+        "TFARunner": {
+            "EvaluationSteps": 25,
+            "InitialCollectionEpisodes": 50,
+            "CollectionEpisodesPerStep": 1
+        },
+        "GoalReachedEvaluator": {
+            "GoalReward": 1.0,
+            "CollisionPenalty": -1.0,
+            "MaxSteps": 60
+        },
+        "BehaviorContinuousML": {
+            "ActionsLowerBound": [
+                -4.0,
+                -0.1
+            ],
+            "ActionsUpperBound": [
+                4.0,
+                0.1
+            ]
+        },
+        "StateObserver": {
+            "VelocityRange": [
+                0,
+                100
+            ],
+            "ThetaRange": [
+                0,
+                6.283185307179586
+            ],
+            "NormalizationEnabled": true,
+            "MaxNumAgents": 5
+        },
+        "BehaviorSACAgent": {
+            "ActorFcLayerParams": [
+                256,
+                256,
+                256
+            ],
+            "CriticJointFcLayerParams": [
+                256,
+                256,
+                256
+            ],
+            "ActorLearningRate": 0.0003,
+            "CriticLearningRate": 0.0003,
+            "AlphaLearningRate": 0.0003,
+            "TargetUpdateTau": 0.05,
+            "TargetUpdatePeriod": 3,
+            "Gamma": 0.995,
+            "RewardScaleFactor": 1.0,
+            "AgentName": "sac_agent",
+            "DebugSummaries": false,
+            "ReplayBufferCapacity": 10000,
+            "ParallelBufferCalls": 1,
+            "BatchSize": 512,
+            "BufferNumSteps": 2,
+            "BufferPrefetch": 3
+        },
+        "SACRunner": {
+            "NumberOfCollections": 500000,
+            "EvaluateEveryNSteps": 2000
+        },
+        "GoalReachedGuiding": {
+            "GoalReward": 1.0,
+            "CollisionPenalty": -1.0,
+            "MaxSteps": 50,
+            "ActionPenalty": 0.01,
+            "GoalDistance": 0.01
+        },
+        "NearestAgentsObserver": {
+            "MaxOtherDistance": 100
+        }
+    },
+    "BehaviorDynamicModel": {
+        "IntegrationTimeDelta": 0.05000000074505806
+    },
+    "World": {
+        "remove_agents_out_of_map": true,
+        "other_vehicle": true
+    }
+}

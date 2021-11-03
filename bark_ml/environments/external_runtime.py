@@ -6,6 +6,8 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
+import numpy as np
+
 from bark.core.world.agent import *
 from bark.core.models.behavior import *
 from bark.core.world import *
@@ -53,11 +55,13 @@ class ExternalRuntime:
     return state, action
 
   def generateTrajectory(self, step_time, num_steps):
-    state_action_traj = []
+    state_traj = []
+    action_traj = []
     for _ in range(0, num_steps):
       s, a = self._step(step_time)
-      state_action_traj.append([s, a])
-    return state_action_traj
+      state_traj.append(s)
+      action_traj.append(a)
+    return np.array(state_traj), np.array(action_traj)
 
   def setupWorld(self):
     world = World(self._params)
@@ -101,10 +105,9 @@ class ExternalRuntime:
     self._world.ClearAgents()
 
   def render(self):
-    # TODO: call matplotviewer
     self._viewer.drawWorld(
       self._world,
-      self._ego_id)
+      [self._ego_id])
     self._viewer.clear()
 
   @property
