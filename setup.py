@@ -126,7 +126,7 @@ class BuildExtCommand(setuptools.command.build_ext.build_ext):
 
 setup(
     name = "bark-ml",
-    version = "0.4.4",
+    version = "0.4.6",
     description = "Gym Environments and Agents for Autonomous Driving",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -149,7 +149,7 @@ setup(
         'tensorboard>=2.2.2',
         'tf-agents>=0.5.0',
         'tensorflow-probability>=0.10.0',
-        'bark-simulator>=1.1.0',
+        'bark-simulator>=1.4.2',
         'graph-nets>=1.1.0'
     ],
     cmdclass={
