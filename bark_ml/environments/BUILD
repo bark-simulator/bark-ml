@@ -4,6 +4,7 @@ py_library(
                  "blueprints/__init__.py",
                  "blueprints/*/*.py"]),
     data = glob(["blueprints/*/*.xodr",
+                 "blueprints/*/*.csv",
                  "blueprints/*/*.json",
                  "blueprints/*.json"]) +
                 ["@bark_project//bark/python_wrapper:core.so",
@@ -24,6 +25,14 @@ py_library(
     data = ["@bark_project//bark/python_wrapper:core.so"],
     deps = ["//bark_ml/environments:blueprints",
             "@bark_project//bark/runtime:runtime"],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "external_runtime",
+    srcs = ["external_runtime.py"],
+    imports = ["../external/bark_project/bark/python_wrapper/"],
+    data = ["@bark_project//bark/python_wrapper:core.so"],
     visibility = ["//visibility:public"],
 )
 
