@@ -10,10 +10,12 @@
 import unittest
 import gym
 import numpy as np
+import os
 
 from bark.core.world import World
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
+from bark.core.world.map import MapInterface
 from bark_ml.environments.external_runtime import ExternalRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents.sac_agent import BehaviorSACAgent
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
@@ -29,12 +31,11 @@ viewer = MPViewer(params=ParameterServer(),
 class PyEnvironmentTests(unittest.TestCase):
   def setUp(self):
     params = ParameterServer()
-    test_bp = ContinuousHighwayBlueprint(params, viewer=False)
-    test_env = SingleAgentRuntime(
-      blueprint=test_bp, render=False, viewer=viewer)
-    test_env.reset()
-    self.map_interface = test_env._world.map
     self.params = params
+    csvfile = os.path.join(os.path.dirname(__file__), "../environments/blueprints/single_lane/base_map_lanes_guerickestr_assymetric_48.csv")
+    print(csvfile)
+    self.map_interface = MapInterface()
+    self.map_interface.SetCsvMap(csvfile)
 
   def test_create_environment(self):
     map_interface = self.map_interface
