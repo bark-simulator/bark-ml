@@ -22,6 +22,7 @@ py_binary(
     name = "experiment_runner",
     srcs = ["experiment_runner.py"],
     data = ["@bark_project//bark/python_wrapper:core.so",
+            "//bark_ml:generate_core",
             ":data"],
     imports = ["../external/bark_project/bark/python_wrapper/"],
     deps = [":experiment"],

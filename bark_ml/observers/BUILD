@@ -3,7 +3,6 @@ py_library(
     srcs = ["__init__.py",
             "nearest_state_observer.py",
             "simple_observer.py",
-            "frenet_observer.py",
             "observer.py",
             "graph_observer.py"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
@@ -16,7 +15,8 @@ cc_library(
   name = "cpp_observers",
   hdrs = [
     "base_observer.hpp",
-    "nearest_observer.hpp"
+    "nearest_observer.hpp",
+    "frenet_observer.hpp"
   ],
   deps = [
     "@bark_project//bark/world:world",

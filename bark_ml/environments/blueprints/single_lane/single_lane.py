@@ -24,8 +24,8 @@ from bark_ml.evaluators.reward_shaping import RewardShapingEvaluator
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
 
-# from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
-from bark_ml.observers.frenet_observer import FrenetObserver
+from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
+# from bark_ml.core.observers.frenet_observer import FrenetObserver
 
 
 class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
@@ -173,7 +173,7 @@ class SingleLaneBlueprint(Blueprint):
     }]
     params["ML"]["RewardShapingEvaluator"]["MaxSteps", "max. number of steps", 100]
     evaluator = RewardShapingEvaluator(params)
-    observer = FrenetObserver(params)
+    observer = NearestAgentsObserver(params)
     ml_behavior = ml_behavior
 
     super().__init__(

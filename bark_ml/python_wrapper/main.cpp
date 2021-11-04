@@ -17,7 +17,9 @@
 #include "bark/commons/params/params.hpp"
 #include "bark_ml/evaluators/base_evaluator.hpp"
 #include "bark_ml/evaluators/goal_reached.hpp"
+#include "bark_ml/observers/base_observer.hpp"
 #include "bark_ml/observers/nearest_observer.hpp"
+#include "bark_ml/observers/frenet_observer.hpp"
 #include "bark_ml/evaluators/goal_reached.hpp"
 #include "bark_ml/commons/spaces.hpp"
 
@@ -26,6 +28,8 @@ PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
 namespace py = pybind11;
 using bark::commons::ParamsPtr;
 using bark_ml::observers::NearestObserver;
+using bark_ml::observers::FrenetObserver;
+using bark_ml::observers::BaseObserver;
 using bark_ml::evaluators::GoalReachedEvaluator;
 using bark_ml::spaces::Box;
 using bark_ml::spaces::Matrix_t;
@@ -47,12 +51,20 @@ namespace pybind11 { namespace detail {
 
 void python_observers(py::module m) {
   py::class_<NearestObserver,
-              std::shared_ptr<NearestObserver>>(m, "NearestObserver")
+             std::shared_ptr<NearestObserver>>(m, "NearestObserver")
     .def(py::init<ParamsPtr>())
     .def("Observe", &NearestObserver::Observe)
     .def("Reset", &NearestObserver::Reset)
     .def_property_readonly(
       "observation_space", &NearestObserver::ObservationSpace);
+
+  py::class_<FrenetObserver,
+             std::shared_ptr<FrenetObserver>>(m, "FrenetObserver")
+    .def(py::init<ParamsPtr>())
+    .def("Observe", &FrenetObserver::Observe)
+    .def("Reset", &FrenetObserver::Reset)
+    .def_property_readonly(
+      "observation_space", &FrenetObserver::ObservationSpace);
 }
 
 void python_evaluators(py::module m) {
