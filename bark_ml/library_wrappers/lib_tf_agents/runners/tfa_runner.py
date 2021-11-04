@@ -213,7 +213,6 @@ class TFARunner:
       env_data = self._environment.step(action)
       self._tracer.Trace(env_data, **kwargs)
       state, reward, is_terminal, info = env_data
-      print(state)
       # graph stuff
       try:
         graph_tuples = self._agent._agent._actor_network._latent_trace
