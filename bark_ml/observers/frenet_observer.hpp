@@ -62,7 +62,7 @@ class FrenetObserver {
   explicit FrenetObserver(const ParamsPtr& params) {
       nearest_agent_num_ =
         params->GetInt(
-          "ML::FrenetObserver::NNearestAgents", "Nearest agents number", 4);
+          "ML::FrenetObserver::NNearestAgents", "Nearest agents number", 2);
       min_vel_lon_ = params->GetReal("ML::FrenetObserver::MinVelLon", "", -30.0);
       max_vel_lon_ = params->GetReal("ML::FrenetObserver::MaxVelLon", "", 30.0);
       min_vel_lat_ = params->GetReal("ML::FrenetObserver::MinVelLat", "", -10.0);

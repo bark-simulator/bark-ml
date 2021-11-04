@@ -52,7 +52,7 @@ namespace pybind11 { namespace detail {
 void python_observers(py::module m) {
   py::class_<NearestObserver,
              std::shared_ptr<NearestObserver>>(m, "NearestObserver")
-    .def(py::init<ParamsPtr>())
+    .def(py::init<const bark::commons::ParamsPtr&>())
     .def("Observe", &NearestObserver::Observe)
     .def("Reset", &NearestObserver::Reset)
     .def_property_readonly(
@@ -60,7 +60,7 @@ void python_observers(py::module m) {
 
   py::class_<FrenetObserver,
              std::shared_ptr<FrenetObserver>>(m, "FrenetObserver")
-    .def(py::init<ParamsPtr>())
+    .def(py::init<const bark::commons::ParamsPtr&>())
     .def("Observe", &FrenetObserver::Observe)
     .def("Reset", &FrenetObserver::Reset)
     .def_property_readonly(
@@ -70,7 +70,7 @@ void python_observers(py::module m) {
 void python_evaluators(py::module m) {
   py::class_<GoalReachedEvaluator,
              std::shared_ptr<GoalReachedEvaluator>>(m, "GoalReachedEvaluator")
-    .def(py::init<ParamsPtr>())
+    .def(py::init<const bark::commons::ParamsPtr&>())
     .def("Evaluate", &GoalReachedEvaluator::Evaluate)
     .def("Reset", &GoalReachedEvaluator::Reset);
 }
