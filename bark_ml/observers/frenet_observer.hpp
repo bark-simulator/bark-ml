@@ -165,6 +165,7 @@ class FrenetObserver {
         0, state_start_idx, 1, other_agent_state.cols()) = other_agent_state;
       state_start_idx += other_agent_state.cols();
     }
+    std::cout << std::endl << state << std::endl;
     return state;
   }
 
@@ -174,7 +175,8 @@ class FrenetObserver {
 
   Box<double> ObservationSpace() const {
     Matrix_t<double> low(1, observation_len_);
-    low.setZero();
+    low.setOnes();
+    low = -1*low;
     Matrix_t<double> high(1, observation_len_);
     high.setOnes();
     std::tuple<int> shape{observation_len_};
