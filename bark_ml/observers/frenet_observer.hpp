@@ -63,16 +63,16 @@ class FrenetObserver {
       nearest_agent_num_ =
         params->GetInt(
           "ML::FrenetObserver::NNearestAgents", "Nearest agents number", 2);
-      min_vel_lon_ = params->GetReal("ML::FrenetObserver::MinVelLon", "", -30.0);
-      max_vel_lon_ = params->GetReal("ML::FrenetObserver::MaxVelLon", "", 30.0);
+      min_vel_lon_ = params->GetReal("ML::FrenetObserver::MinVelLon", "", -20.0);
+      max_vel_lon_ = params->GetReal("ML::FrenetObserver::MaxVelLon", "", 20.0);
       min_vel_lat_ = params->GetReal("ML::FrenetObserver::MinVelLat", "", -10.0);
       max_vel_lat_ = params->GetReal("ML::FrenetObserver::MaxVelLat", "", 10.0);
       max_dist_ = params->GetReal("ML::FrenetObserver::MaxDist", "", 75.0);
       min_s_ = params->GetReal("ML::FrenetObserver::MinS", "", -100.0);
       min_abs_s_ = params->GetReal("ML::FrenetObserver::MinAbsS", "", 0.0);
       max_s_ = params->GetReal("ML::FrenetObserver::MaxS", "", 100.0);
-      min_d_ = params->GetReal("ML::FrenetObserver::MinD", "", -20.0);
-      max_d_ = params->GetReal("ML::FrenetObserver::MaxD", "", 20.0);
+      min_d_ = params->GetReal("ML::FrenetObserver::MinD", "", -10.0);
+      max_d_ = params->GetReal("ML::FrenetObserver::MaxD", "", 10.0);
       min_theta_ = params->GetReal("ML::FrenetObserver::MinTheta", "", -B_PI);
       max_theta_ = params->GetReal("ML::FrenetObserver::MaxTheta", "", B_PI);
       // Ego agent has s,d, vlat, vlon, theta, laneid other agents have del s,
@@ -165,7 +165,6 @@ class FrenetObserver {
         0, state_start_idx, 1, other_agent_state.cols()) = other_agent_state;
       state_start_idx += other_agent_state.cols();
     }
-    std::cout << std::endl << state << std::endl;
     return state;
   }
 
