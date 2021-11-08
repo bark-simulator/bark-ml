@@ -43,9 +43,6 @@ using bark::models::dynamic::StateDefinition::X_POSITION;
 using bark::models::dynamic::StateDefinition::Y_POSITION;
 using bark::models::dynamic::StateDefinition::THETA_POSITION;
 using bark::models::dynamic::StateDefinition::VEL_POSITION;
-// needs to be float to be compatible with tf.flaot32 and np.float32
-using ObservedState = Eigen::Matrix<float, 1, Eigen::Dynamic>;
-using State = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 
 
 /**

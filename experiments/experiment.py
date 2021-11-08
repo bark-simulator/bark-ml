@@ -20,6 +20,9 @@ def LoadModule(module_name, dict_items):
   Returns:
       Object: Object that has bene requested
   """
+  # HACK
+  if module_name == "FrenetObserver":
+    return FrenetObserver(dict_items['params'])
   return eval("{}(**dict_items)".format(module_name))
 
 class Experiment:
