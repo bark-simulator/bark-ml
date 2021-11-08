@@ -113,7 +113,8 @@
                 "VelocityPotential" : {
                     "desired_vel": 5.0, "vel_dev_max": 10.0, "exponent": 0.2, "type": "positive"
                   }
-            }
+            },
+            "MaxSteps": 200
         },
         "BehaviorTFAAgents": {
             "NumCheckpointsToKeep": 3

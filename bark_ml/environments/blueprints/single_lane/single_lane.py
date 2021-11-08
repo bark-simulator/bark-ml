@@ -8,16 +8,15 @@
 
 import os
 import numpy as np
-from bark.runtime.viewer.buffered_mp_viewer import BufferedMPViewer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
-from bark.core.world.goal_definition import GoalDefinitionPolygon
-from bark.core.geometry import Polygon2d, Point2d
 from bark.core.world.opendrive import *
 from bark.core.geometry import *
-from bark.core.models.behavior import BehaviorIDMLaneTracking, BehaviorDynamicModel
+from bark.core.models.behavior import BehaviorDynamicModel
 from bark.core.world.map import MapInterface
+from bark.core.world.opendrive import XodrDrivingDirection
+from bark.core.world.goal_definition import GoalDefinitionStateLimitsFrenet
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
 from bark_ml.evaluators.reward_shaping import RewardShapingEvaluator
@@ -47,11 +46,15 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
     self._xOffset = xOffset
 
   def goal(self, world):
-    # TODO: re-position the goal
-    goal_polygon = Polygon2d(
-      [0, 0, 0],
-      [Point2d(70, -4), Point2d(70, 0), Point2d(80, 0), Point2d(80, -4)])
-    return GoalDefinitionPolygon(goal_polygon)
+    world.map.GetRoadCorridor(
+      self._road_ids, XodrDrivingDirection.forward)
+    lane_corr = self._road_corridor.lane_corridors[0]
+    points = lane_corr.center_line.ToArray()[75:100]
+    new_line = Line2d(points)
+    return GoalDefinitionStateLimitsFrenet(new_line,
+                                           (2.5, 2.),
+                                           (0.15, 0.15),
+                                           (3., 7.))
 
   def position(self, world):
     if self._road_corridor == None:
@@ -133,7 +136,7 @@ class SingleLaneBlueprint(Blueprint):
         s_min=s_min,
         s_max=s_max,
         controlled_ids=None,
-        yOffset=[[1.85, 1.9], [-1.85, -1.9]],
+        yOffset=[[2, 2.1], [-2.4, -2.5]],
         samplingRange=[30, 50])
       lane_configs.append(lane_conf_other)
 
