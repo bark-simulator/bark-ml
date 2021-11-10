@@ -131,11 +131,11 @@
         },
         "BehaviorContinuousML": {
             "ActionsLowerBound": [
-                -4.0,
+                -2.0,
                 -0.1
             ],
             "ActionsUpperBound": [
-                4.0,
+                2.0,
                 0.1
             ]
         },
