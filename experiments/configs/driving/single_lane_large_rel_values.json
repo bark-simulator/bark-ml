@@ -108,12 +108,16 @@
         }
     },
     "ML": {
+        "FrenetObserver": {
+            "RelativeLonValues": true
+        },
         "RewardShapingEvaluator": {
             "RewardShapingPotentials": {
                 "VelocityPotential" : {
                     "desired_vel": 5.0, "vel_dev_max": 10.0, "exponent": 0.2, "type": "positive"
                   }
-            }
+            },
+            "MaxSteps": 200
         },
         "BehaviorTFAAgents": {
             "NumCheckpointsToKeep": 3
@@ -130,11 +134,11 @@
         },
         "BehaviorContinuousML": {
             "ActionsLowerBound": [
-                -4.0,
+                -2.0,
                 -0.1
             ],
             "ActionsUpperBound": [
-                4.0,
+                2.0,
                 0.1
             ]
         },
@@ -152,14 +156,14 @@
         },
         "BehaviorSACAgent": {
             "ActorFcLayerParams": [
-                256,
-                256,
-                256
+                512,
+                512,
+                512
             ],
             "CriticJointFcLayerParams": [
-                256,
-                256,
-                256
+                512,
+                512,
+                512
             ],
             "ActorLearningRate": 0.0003,
             "CriticLearningRate": 0.0003,

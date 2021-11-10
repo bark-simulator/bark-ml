@@ -75,7 +75,7 @@ class FrenetObserver {
       min_theta_ = params->GetReal("ML::FrenetObserver::MinTheta", "", -B_PI);
       max_theta_ = params->GetReal("ML::FrenetObserver::MaxTheta", "", B_PI);
       use_rel_s_values_ = params->GetBool(
-        "ML::FrenetObserver::RelativeLonValues", "", true);
+        "ML::FrenetObserver::RelativeLonValues", "", false);
       observation_len_ = nearest_agent_num_ * 4 + 5;
   }
 
@@ -176,7 +176,6 @@ class FrenetObserver {
         0, state_start_idx, 1, other_agent_state.cols()) = other_agent_state;
       state_start_idx += other_agent_state.cols();
     }
-    std::cout << state << std::endl;
     return state;
   }
 
