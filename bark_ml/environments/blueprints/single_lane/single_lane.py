@@ -84,6 +84,25 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
     behavior_model = BehaviorDynamicModel(self._params)
     return behavior_model
 
+  def state(self, world):
+    """Returns a state of the agent
+
+    Arguments:
+        world {bark.core.world}
+
+    Returns:
+        np.array -- time, x, y, theta, velocity
+    """
+    if self._controlled_ids is not None:
+      return super().state(world)
+    else:
+      has_vehicle = np.random.randint(0, 2)
+      if has_vehicle:
+        return super().state(world)
+      else:
+        return None
+
+
 class SingleLaneBlueprint(Blueprint):
   """The SingleLane blueprint sets up a merging scenario with initial
   conditions.
