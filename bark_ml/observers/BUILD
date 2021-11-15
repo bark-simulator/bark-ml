@@ -16,7 +16,8 @@ cc_library(
   hdrs = [
     "base_observer.hpp",
     "nearest_observer.hpp",
-    "frenet_observer.hpp"
+    "frenet_observer.hpp",
+    "static_observer.hpp"
   ],
   deps = [
     "@bark_project//bark/world:world",

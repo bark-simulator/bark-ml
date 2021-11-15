@@ -157,3 +157,26 @@ py_test(
             "//bark_ml/commons:tracer"],
     visibility = ["//visibility:public"],
 )
+
+
+cc_test(
+    name = "observer_test",
+    srcs = [
+        "observer_test.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "@bark_project//bark/geometry",
+        "@bark_project//bark/world:world",
+        "@bark_project//bark/world/map:map_interface",
+        "@bark_project//bark/world/map:roadgraph",
+        "@bark_project//bark/world/opendrive:opendrive",
+        "@bark_project//bark/models/behavior/constant_acceleration:constant_acceleration",
+        "@bark_project//bark/models/execution/interpolation:interpolation",
+        "@bark_project//bark/world/evaluation:evaluation",
+        "@bark_project//bark/models/behavior/motion_primitives:motion_primitives",
+        "@bark_project//bark/world/tests:make_test_world",
+        "//bark_ml/observers:cpp_observers",
+        "@gtest//:gtest_main",
+    ],
+)
