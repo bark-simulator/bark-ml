@@ -108,15 +108,13 @@
         }
     },
     "ML": {
-        "FrenetObserver": {
-            "NumOtherAgents": 0
-        },
         "RewardShapingEvaluator": {
             "RewardShapingPotentials": {
                 "VelocityPotential" : {
                     "desired_vel": 5.0, "vel_dev_max": 10.0, "exponent": 0.2, "type": "positive"
                   }
-            }
+            },
+            "MaxSteps": 200
         },
         "BehaviorTFAAgents": {
             "NumCheckpointsToKeep": 3
@@ -133,11 +131,11 @@
         },
         "BehaviorContinuousML": {
             "ActionsLowerBound": [
-                -4.0,
+                -1.0,
                 -0.1
             ],
             "ActionsUpperBound": [
-                4.0,
+                1.0,
                 0.1
             ]
         },
@@ -155,14 +153,14 @@
         },
         "BehaviorSACAgent": {
             "ActorFcLayerParams": [
-                256,
-                256,
-                256
+                512,
+                512,
+                512
             ],
             "CriticJointFcLayerParams": [
-                256,
-                256,
-                256
+                512,
+                512,
+                512
             ],
             "ActorLearningRate": 0.0003,
             "CriticLearningRate": 0.0003,
@@ -199,6 +197,6 @@
     },
     "World": {
         "remove_agents_out_of_map": true,
-        "other_vehicle": false
+        "other_vehicle": true
     }
 }

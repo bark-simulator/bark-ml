@@ -1,7 +1,7 @@
 {
     "Experiment": {
         "Observer": {
-            "ModuleName": "NearestAgentsObserver",
+            "ModuleName": "FrenetObserver",
             "Config": {}
         },
         "Evaluator": {
@@ -108,15 +108,16 @@
         }
     },
     "ML": {
+        "FrenetObserver": {
+            "RelativeLonValues": true
+        },
         "RewardShapingEvaluator": {
             "RewardShapingPotentials": {
                 "VelocityPotential" : {
                     "desired_vel": 5.0, "vel_dev_max": 10.0, "exponent": 0.2, "type": "positive"
                   }
             },
-            "MaxSteps": 200,
-            "GoalReward": 1.0,
-            "CollisionPenalty": -1.0
+            "MaxSteps": 200
         },
         "BehaviorTFAAgents": {
             "NumCheckpointsToKeep": 3
@@ -129,15 +130,15 @@
         "GoalReachedEvaluator": {
             "GoalReward": 1.0,
             "CollisionPenalty": -1.0,
-            "MaxSteps": 200
+            "MaxSteps": 60
         },
         "BehaviorContinuousML": {
             "ActionsLowerBound": [
-                -4.0,
+                -2.0,
                 -0.1
             ],
             "ActionsUpperBound": [
-                4.0,
+                2.0,
                 0.1
             ]
         },
