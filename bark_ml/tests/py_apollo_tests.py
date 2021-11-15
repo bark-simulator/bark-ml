@@ -12,6 +12,7 @@ import gym
 import numpy as np
 import os
 
+import bark
 from bark.core.world import World
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
@@ -22,6 +23,7 @@ from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML  # pylint: disable=unused-import
+from bark.runtime.scenario.scenario import Scenario
 
 viewer = MPViewer(params=ParameterServer(),
                   x_range=[-50, 50],
@@ -35,7 +37,7 @@ class PyEnvironmentTests(unittest.TestCase):
     csvfile = os.path.join(os.path.dirname(__file__), "../environments/blueprints/single_lane/base_map_lanes_guerickestr_assymetric_48.csv")
     print(csvfile)
     self.map_interface = MapInterface()
-    self.map_interface.SetCsvMap(csvfile)
+    self.map_interface.SetCsvMap(csvfile, 692000, 5.339e+06)
 
   def test_create_environment(self):
     map_interface = self.map_interface
@@ -102,6 +104,24 @@ class PyEnvironmentTests(unittest.TestCase):
     env._viewer.drawTrajectory(state_traj)
     env.render()
     self.assertEqual(len(state_traj), N)
+
+  def test_append_to_scenario_history(self):
+    params = ParameterServer()
+    env = self.create_runtime_and_setup_empty_world(params)
+    history = []
+    env.appendToScenarioHistory(history)
+    self.assertEqual(len(history), 1)
+    self.assertTrue(isinstance(history[-1], Scenario))
+
+    # behavior_model = BehaviorSACAgent(environment=env, params=params)
+    behavior_model = bark.core.models.behavior.BehaviorConstantAcceleration(params)
+
+    env.ml_behavior = behavior_model
+    state = np.array([0, 0, 0, 0, 0])
+    env.addEgoAgent(state)
+    env.appendToScenarioHistory(history)
+    self.assertEqual(len(history), 2)
+    self.assertTrue(isinstance(history[-1], Scenario))
 
 if __name__ == '__main__':
   unittest.main()
