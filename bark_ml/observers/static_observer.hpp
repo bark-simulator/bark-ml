@@ -7,8 +7,8 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef BARK_ML_OBSERVERS_FRENET_OBSERVER_HPP_
-#define BARK_ML_OBSERVERS_FRENET_OBSERVER_HPP_
+#ifndef BARK_ML_OBSERVERS_STATIC_OBSERVER_HPP_
+#define BARK_ML_OBSERVERS_STATIC_OBSERVER_HPP_
 
 #include <memory>
 #include <vector>
@@ -207,4 +207,4 @@ class StaticObserver {
 }  // namespace observers
 }  // namespace bark_ml
 
-#endif  // BARK_ML_OBSERVERS_FRENET_OBSERVER_HPP_
+#endif  // BARK_ML_OBSERVERS_STATIC_OBSERVER_HPP_

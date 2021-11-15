@@ -20,6 +20,7 @@
 #include "bark_ml/observers/base_observer.hpp"
 #include "bark_ml/observers/nearest_observer.hpp"
 #include "bark_ml/observers/frenet_observer.hpp"
+#include "bark_ml/observers/static_observer.hpp"
 #include "bark_ml/evaluators/goal_reached.hpp"
 #include "bark_ml/commons/spaces.hpp"
 
@@ -29,6 +30,7 @@ namespace py = pybind11;
 using bark::commons::ParamsPtr;
 using bark_ml::observers::NearestObserver;
 using bark_ml::observers::FrenetObserver;
+using bark_ml::observers::StaticObserver;
 using bark_ml::observers::BaseObserver;
 using bark_ml::evaluators::GoalReachedEvaluator;
 using bark_ml::spaces::Box;
@@ -65,7 +67,16 @@ void python_observers(py::module m) {
     .def("Reset", &FrenetObserver::Reset)
     .def_property_readonly(
       "observation_space", &FrenetObserver::ObservationSpace);
+
+  py::class_<StaticObserver,
+             std::shared_ptr<StaticObserver>>(m, "StaticObserver")
+    .def(py::init<const bark::commons::ParamsPtr&>())
+    .def("Observe", &StaticObserver::Observe)
+    .def("Reset", &StaticObserver::Reset)
+    .def_property_readonly(
+      "observation_space", &StaticObserver::ObservationSpace);
 }
+
 
 void python_evaluators(py::module m) {
   py::class_<GoalReachedEvaluator,
