@@ -212,7 +212,7 @@ class TFARunner:
       action = self.ReshapeActionIfRequired(action_step)
       env_data = self._environment.step(action)
       if render:
-        self._logger.info(f"Current state: {state}.")
+        self._logger.info("Current state: {}.".format(["{0:1.2f}".format(i) for i in state]))
       self._tracer.Trace(env_data, **kwargs)
       state, reward, is_terminal, info = env_data
       # graph stuff

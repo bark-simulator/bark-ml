@@ -147,7 +147,7 @@ TEST(static_observer, agents_exist ) {
 
     // Nearest lon right
     EXPECT_EQ(observed_nn_state(0, 6), 0.0); // longitudinal overlap
-    EXPECT_NEAR(observed_nn_state(0, 7), (0.0 -3.0 + es.left_dist_ + es.right_dist_)/10.0, 0.0001);
+    EXPECT_NEAR(observed_nn_state(0, 7), (3.0 - es.left_dist_ - es.right_dist_)/10.0, 0.0001);
 }
 
 TEST(static_observer, agents_no_left ) { 

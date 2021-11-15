@@ -175,10 +175,10 @@ class StaticObserver {
         min_lat_dist_front_right = lat;
       }
     }
-    state(0, state_start_idx) = exists_front_left ? Norm(min_lon_dist_front_left, min_s_, max_s_) : -1.0;
-    state(0, state_start_idx + 1) = exists_front_left ?  Norm(min_lat_dist_front_left, min_d_, max_d_) : -1.0;
-    state(0, state_start_idx + 2) = exists_front_right ? Norm(min_lon_dist_front_right, min_s_, max_s_) : -1.0;
-    state(0, state_start_idx + 3) = exists_front_right ? Norm(min_lat_dist_front_right, min_d_, max_d_) : -1.0;
+    state(0, state_start_idx) = exists_front_left ? Norm(std::abs(min_lon_dist_front_left), min_s_, max_s_) : -1.0;
+    state(0, state_start_idx + 1) = exists_front_left ?  Norm(std::abs(min_lat_dist_front_left), min_d_, max_d_) : -1.0;
+    state(0, state_start_idx + 2) = exists_front_right ? Norm(std::abs(min_lon_dist_front_right), min_s_, max_s_) : -1.0;
+    state(0, state_start_idx + 3) = exists_front_right ? Norm(std::abs(min_lat_dist_front_right), min_d_, max_d_) : -1.0;
     return state;
   }
 
