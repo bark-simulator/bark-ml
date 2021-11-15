@@ -60,18 +60,18 @@ using bark::commons::transformation::FrenetPosition;
 class StaticObserver {
  public:
   explicit StaticObserver(const ParamsPtr& params) {
-      min_vel_lon_ = params->GetReal("ML::StaticObserver::MinVelLon", "", -20.0);
-      max_vel_lon_ = params->GetReal("ML::StaticObserver::MaxVelLon", "", 20.0);
-      min_vel_lat_ = params->GetReal("ML::StaticObserver::MinVelLat", "", -10.0);
-      max_vel_lat_ = params->GetReal("ML::StaticObserver::MaxVelLat", "", 10.0);
-      max_dist_ = params->GetReal("ML::StaticObserver::MaxDist", "", 75.0);
-      min_s_ = params->GetReal("ML::StaticObserver::MinS", "", 0.0);
-      max_s_ = params->GetReal("ML::StaticObserver::MaxS", "", 50.0);
-      min_d_ = params->GetReal("ML::StaticObserver::MinD", "", -10.0);
-      max_d_ = params->GetReal("ML::StaticObserver::MaxD", "", 10.0);
-      min_theta_ = params->GetReal("ML::StaticObserver::MinTheta", "", -B_PI);
-      max_theta_ = params->GetReal("ML::StaticObserver::MaxTheta", "", B_PI);
-      observation_len_ = 4+4;
+    min_vel_lon_ = params->GetReal("ML::StaticObserver::MinVelLon", "", -20.0);
+    max_vel_lon_ = params->GetReal("ML::StaticObserver::MaxVelLon", "", 20.0);
+    min_vel_lat_ = params->GetReal("ML::StaticObserver::MinVelLat", "", -10.0);
+    max_vel_lat_ = params->GetReal("ML::StaticObserver::MaxVelLat", "", 10.0);
+    max_dist_ = params->GetReal("ML::StaticObserver::MaxDist", "", 75.0);
+    min_s_ = params->GetReal("ML::StaticObserver::MinS", "", 0.0);
+    max_s_ = params->GetReal("ML::StaticObserver::MaxS", "", 50.0);
+    min_d_ = params->GetReal("ML::StaticObserver::MinD", "", -10.0);
+    max_d_ = params->GetReal("ML::StaticObserver::MaxD", "", 10.0);
+    min_theta_ = params->GetReal("ML::StaticObserver::MinTheta", "", -B_PI);
+    max_theta_ = params->GetReal("ML::StaticObserver::MaxTheta", "", B_PI);
+    observation_len_ = 4+4;
   }
 
   double Norm(const double val, const double mi, const double ma) const {
@@ -91,7 +91,12 @@ class StaticObserver {
     FrenetState current_ego_frenet(ego_state, ego_corridor->GetCenterLine());
     return current_ego_frenet;
   }
-
+  /**
+   * @brief  Returns the normalized ego state
+   * @note   [lat, angle, v_lon, v_laat]
+   * @param  observed_world: Observed World
+   * @retval Normalized ego state.
+   */
   ObservedState GetEgoState(const ObservedWorld& observed_world) const {
     const auto current_ego_frenet = GetEgoFrenet(observed_world);
     ObservedState ego_nn_state(1, 4);
@@ -104,7 +109,13 @@ class StaticObserver {
     return ego_nn_state;
   }
 
-
+  /**
+   * @brief  Returns the difference between two FrenetStates (other and ego)
+   * @note
+   * @param  agent_id: Agent-ID
+   * @param  observed_world: Observed World
+   * @retval FrenetStateDifference state
+   */
   FrenetStateDifference GetOtherAgentState(
     const AgentId& agent_id, const ObservedWorld& observed_world) const {
     const auto ego_pos = observed_world.CurrentEgoPosition();
@@ -175,10 +186,10 @@ class StaticObserver {
         min_lat_dist_front_right = lat;
       }
     }
-    state(0, state_start_idx) = exists_front_left ? Norm(std::abs(min_lon_dist_front_left), min_s_, max_s_) : -1.0;
-    state(0, state_start_idx + 1) = exists_front_left ?  Norm(std::abs(min_lat_dist_front_left), min_d_, max_d_) : -1.0;
-    state(0, state_start_idx + 2) = exists_front_right ? Norm(std::abs(min_lon_dist_front_right), min_s_, max_s_) : -1.0;
-    state(0, state_start_idx + 3) = exists_front_right ? Norm(std::abs(min_lat_dist_front_right), min_d_, max_d_) : -1.0;
+    state(0, state_start_idx) = exists_front_left ? Norm(std::abs(min_lon_dist_front_left), min_s_, max_s_) : 0.0;
+    state(0, state_start_idx + 1) = exists_front_left ?  Norm(std::abs(min_lat_dist_front_left), min_d_, max_d_) : 0.0;
+    state(0, state_start_idx + 2) = exists_front_right ? Norm(std::abs(min_lon_dist_front_right), min_s_, max_s_) : 0.0;
+    state(0, state_start_idx + 3) = exists_front_right ? Norm(std::abs(min_lat_dist_front_right), min_d_, max_d_) : 0.0;
     return state;
   }
 
