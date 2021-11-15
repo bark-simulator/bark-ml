@@ -16,8 +16,8 @@ from bark.core.models.dynamic import *
 from bark.core.models.execution import *
 from bark.core.geometry import *
 from bark.core.geometry.standard_shapes import *
+from bark.runtime.scenario.scenario import Scenario
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML  # pylint: disable=unused-import
-
 
 class ExternalRuntime:
   """External runtime.
@@ -41,6 +41,7 @@ class ExternalRuntime:
     self._world = None
     self._ego_id = 0
     self._params = params
+    self._json_params= params.ConvertToDict()
     self._ml_behavior = BehaviorContinuousML(self._params)
 
   def _step(self, step_time):
@@ -110,6 +111,13 @@ class ExternalRuntime:
       [self._ego_id])
     self._viewer.clear()
 
+  def appendToScenarioHistory(self, scenario_history):
+      scenario = Scenario(agent_list=list(self._world.agents.values()),
+                          map_interface=self._map_interface,
+                          eval_agent_ids=[self._ego_id],
+                          json_params=self._json_params)
+      scenario_history.append(scenario.copy())
+      
   @property
   def action_space(self):
     """Action space of the agent."""
