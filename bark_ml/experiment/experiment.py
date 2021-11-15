@@ -1,4 +1,3 @@
-from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.environments.blueprints import *
 from bark_ml.environments import *
 from bark_ml.behaviors import *
@@ -8,6 +7,7 @@ from bark_ml.library_wrappers.lib_tf_agents.agents import *
 from bark_ml.library_wrappers.lib_tf_agents.runners import *
 from bark_ml.core.observers import *
 from bark_ml.core.evaluators import *
+from bark.runtime.commons.parameters import ParameterServer
 
 
 def LoadModule(module_name, dict_items):
@@ -24,6 +24,7 @@ def LoadModule(module_name, dict_items):
   if module_name == "FrenetObserver":
     return FrenetObserver(dict_items['params'])
   return eval("{}(**dict_items)".format(module_name))
+
 
 class Experiment:
   """The Experiment-class contains all entities in order to run,
