@@ -18,6 +18,7 @@ from bark.core.geometry import *
 from bark.core.geometry.standard_shapes import *
 from bark.runtime.scenario.scenario import Scenario
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML  # pylint: disable=unused-import
+from bark.core.world.goal_definition import GoalDefinitionStateLimitsFrenet
 
 class ExternalRuntime:
   """External runtime.
@@ -89,8 +90,13 @@ class ExternalRuntime:
     agent_exec = ExecutionModelInterpolate(self._params)
     agent_polygon = GenerateCarRectangle(wb, crad)
     agent_params = self._params.AddChild("agent")
-    # TODO: set the goal
-    # agent_goal = GoalDefinitionPolygon()
+
+    # HACK: fake goal
+    points = np.array([[0., 0.], [1., 1.]])
+    new_line = Line2d(points)
+    agent_goal = GoalDefinitionStateLimitsFrenet(new_line, (2.5, 2.),
+      (0.15, 0.15), (3., 7.))
+
     new_agent = Agent(
       state,
       agent_behavior,
@@ -98,7 +104,7 @@ class ExternalRuntime:
       agent_exec,
       agent_polygon,
       agent_params,
-      None,
+      agent_goal,
       self._map_interface)
     return new_agent
 
@@ -112,12 +118,12 @@ class ExternalRuntime:
     self._viewer.clear()
 
   def appendToScenarioHistory(self, scenario_history):
-      scenario = Scenario(agent_list=list(self._world.agents.values()),
-                          map_interface=self._map_interface,
-                          eval_agent_ids=[self._ego_id],
-                          json_params=self._json_params)
-      scenario_history.append(scenario.copy())
-      
+    scenario = Scenario(agent_list=list(self._world.agents.values()),
+                        map_interface=self._map_interface,
+                        eval_agent_ids=[self._ego_id],
+                        json_params=self._json_params)
+    scenario_history.append(scenario.copy())
+
   @property
   def action_space(self):
     """Action space of the agent."""

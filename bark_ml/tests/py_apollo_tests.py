@@ -104,7 +104,7 @@ class PyEnvironmentTests(unittest.TestCase):
     env._viewer.drawTrajectory(state_traj)
     env.render()
     self.assertEqual(len(state_traj), N)
-  
+
   def test_append_to_scenario_history(self):
     params = ParameterServer()
     env = self.create_runtime_and_setup_empty_world(params)
