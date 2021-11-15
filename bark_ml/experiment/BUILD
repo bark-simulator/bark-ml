@@ -1,3 +1,9 @@
+filegroup(
+    name = "data",
+    srcs = glob(["*.json", "**/*.yaml", "**/*.json", "**/*.xodr", "**/*.py"]),
+    visibility = ["//visibility:public"],
+)
+
 py_library(
     name = "experiment",
     srcs = ["experiment.py"],
@@ -24,7 +30,8 @@ py_binary(
 py_test(
     name = "py_experiment_tests",
     srcs = ["py_experiment_tests.py"],
-    data = ["@bark_project//bark/python_wrapper:core.so"],
+    data = ["@bark_project//bark/python_wrapper:core.so",
+            ":data"],
     imports = ["../external/bark_project/bark/python_wrapper/",
                "../python_wrapper/"],
     deps = [":experiment"],
