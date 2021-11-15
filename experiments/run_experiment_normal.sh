@@ -4,4 +4,4 @@
 #SBATCH --gres=gpu:1
 #SBATCH --mem=10GB
 
-singularity exec --nv bark_ml.img python3 -u ./experiments/experiment_runner "$@"
+singularity exec --nv bark_ml.img python3 -u ./experiments/run_experiment "$@"

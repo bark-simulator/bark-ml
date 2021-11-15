@@ -52,6 +52,10 @@ class RewardShapingEvaluator(BaseEvaluator):
       self._params["ML"]["RewardShapingEvaluator"]["MaxSteps",
         "Maximum steps per episode.",
         60]
+    self._max_vel = \
+      self._params["ML"]["RewardShapingEvaluator"]["MaxVelocity",
+        "Maximum velocity in episode.",
+        10]
     self._active_shaping_functions = \
       self._params["ML"]["RewardShapingEvaluator"]["RewardShapingPotentials",
         "Reward shaping functions.", {
@@ -147,9 +151,10 @@ class RewardShapingEvaluator(BaseEvaluator):
     step_count = eval_results["step_count"]
     collision = eval_results["collision"] or eval_results["drivable_area"]
 
-    # TERMINATE WITH NEGATIVE VEL.
+    # TERMINATE WITH NEGATIVE VEL. or if larger than max. vel
     ego_state = observed_world.ego_agent.state
-    ego_vel = ego_state[int(StateDefinition.VEL_POSITION)] < 0.
+    ego_vel = ego_state[int(StateDefinition.VEL_POSITION)] < 0 or \
+      ego_state[int(StateDefinition.VEL_POSITION)] > self._max_vel
 
     reward_shaping_signal = self.RewardShapingFunction(observed_world)
     if success or collision or step_count > self._max_steps or ego_vel:
