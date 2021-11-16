@@ -44,7 +44,7 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
     self._samplingRange = samplingRange
     self._yOffset = yOffset
     self._xOffset = xOffset
-    self._current_s = None 
+    self._current_s = None
     self._distanceRange = distanceRange
 
   def goal(self, world):
@@ -183,6 +183,10 @@ class SingleLaneBlueprint(Blueprint):
     csvfile = os.path.join(
       os.path.dirname(__file__),
       "../../../environments/blueprints/single_lane/base_map_lanes_guerickestr_assymetric_48.csv")
+    if params["SingleLaneBluePrint::UseRelative", "", False]:
+      csvfile = params[
+        "SingleLaneBluePrint::MapFile", "", "./tmp/base_map_lanes_guerickestr_assymetric_48.csv"]
+
     map_interface = MapInterface()
     map_interface.SetCsvMap(csvfile, 692000, 5.339e+06)
 
