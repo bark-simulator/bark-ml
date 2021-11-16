@@ -119,7 +119,8 @@ class SingleLaneBlueprint(Blueprint):
                random_seed=0,
                ml_behavior=None,
                viewer=True,
-               mode="medium"):
+               mode="medium",
+               csv_path=None):
     if mode == "dense":
       ds_min = 10.
       ds_max = 15.
@@ -180,15 +181,13 @@ class SingleLaneBlueprint(Blueprint):
       lane_configs.append(lane_conf_other_right)
 
     # Map Definition
-    csvfile = os.path.join(
-      os.path.dirname(__file__),
-      "../../../environments/blueprints/single_lane/base_map_lanes_guerickestr_assymetric_48.csv")
-    if params["SingleLaneBluePrint"]["UseRelative", "", False]:
-      csvfile = params["SingleLaneBluePrint"]["MapFile",
-                                              "", "./tmp/base_map_lanes_guerickestr_assymetric_48.csv"]
-
+    if csv_path is None:
+      csv_path = os.path.join(
+        os.path.dirname(__file__),
+        "../../../environments/blueprints/single_lane/base_map_lanes_guerickestr_assymetric_48.csv")
+    print(f"CSV map file path is: {csv_path}.")
     map_interface = MapInterface()
-    map_interface.SetCsvMap(csvfile, 692000, 5.339e+06)
+    map_interface.SetCsvMap(csv_path, 692000, 5.339e+06)
 
     scenario_generation = \
       ConfigWithEase(
@@ -235,7 +234,8 @@ class ContinuousSingleLaneBlueprint(SingleLaneBlueprint):
                num_scenarios=25,
                random_seed=0,
                viewer=True,
-               mode="dense"):
+               mode="dense",
+               csv_path=None):
     ml_behavior = BehaviorContinuousML(params)
     SingleLaneBlueprint.__init__(self,
                               params=params,
@@ -243,7 +243,8 @@ class ContinuousSingleLaneBlueprint(SingleLaneBlueprint):
                               random_seed=random_seed,
                               ml_behavior=ml_behavior,
                               viewer=True,
-                              mode=mode)
+                              mode=mode,
+                              csv_path=csv_path)
 
 
 class DiscreteSingleLaneBlueprint(SingleLaneBlueprint):
@@ -251,7 +252,8 @@ class DiscreteSingleLaneBlueprint(SingleLaneBlueprint):
                params=None,
                num_scenarios=25,
                random_seed=0,
-               mode="dense"):
+               mode="dense",
+               csv_path=None):
     ml_behavior = BehaviorDiscreteMacroActionsML(params)
     SingleLaneBlueprint.__init__(self,
                               params=params,
@@ -259,4 +261,5 @@ class DiscreteSingleLaneBlueprint(SingleLaneBlueprint):
                               random_seed=random_seed,
                               ml_behavior=ml_behavior,
                               viewer=True,
-                              mode=mode)
+                              mode=mode,
+                              csv_path=csv_path)
