@@ -17,7 +17,7 @@ py_library(
     visibility = ["//visibility:public"],
 )
 
-py_binary(
+py_library(
     name = "experiment_runner",
     srcs = ["experiment_runner.py"],
     data = ["@bark_project//bark/python_wrapper:core.so",
