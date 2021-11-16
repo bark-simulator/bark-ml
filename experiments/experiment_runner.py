@@ -9,11 +9,13 @@ import tensorflow as tf
 import numpy as np
 from bark.runtime.commons.parameters import ParameterServer
 from experiments.experiment import Experiment
+from pickle import NONE
+import json
 
 FLAGS = flags.FLAGS
 flags.DEFINE_enum("mode",
                   "visualize",
-                  ["train", "visualize", "evaluate", "print", "save"],
+                  ["train", "visualize", "evaluate", "print", "save", "collisions", "validate"],
                   "Mode the configuration should be executed in.")
 # NOTE: absolute paths are required
 flags.DEFINE_string("exp_json",
@@ -36,6 +38,7 @@ class ExperimentRunner:
   """
 
   def __init__(self, json_file, mode="visualize", random_seed=0):
+    self.collisionIDs = None
     self._logger = logging.getLogger()
     self._experiment_json = json_file
     self._params = ParameterServer(filename=json_file)
@@ -61,8 +64,10 @@ class ExperimentRunner:
       self.PrintExperiment()
     if mode == "save":
       self.SaveExperiment(FLAGS.save_path)
-    if mode == "nonconform":
-      self.Nonconform()
+    if mode == "collisions":
+      self.Collisions()
+    if mode == "validate":
+      self.Validate()
 
   def BuildExperiment(self, json_file, mode):
     return Experiment(json_file, self._params, mode)
@@ -124,13 +129,49 @@ class ExperimentRunner:
       self._params["Experiment"]["NumEvaluationEpisodes"]
     return self._experiment.runner.Run(
       num_episodes=num_episodes, render=False, trace_colliding_ids=True)
+    
+  def dump(self, data, file="dump.json"):
+    with open(file, 'w') as jsonFile:
+        json.dump(data, jsonFile)
+    jsonFile.close()
+    
+  def read(self, file="dump.json"):
+    with open(file, 'r') as jsonFile:
+        return json.load(jsonFile)
 
-  def Nonconform(self):
+  def Collisions(self):
     self.CompareHashes()
     num_episodes = \
       self._params["Experiment"]["NumEvaluationEpisodes"]
-    return self._experiment.runner.Run(
+    collisions = self._experiment.runner.Run(
       num_episodes=num_episodes, render=False, trace_colliding_ids=True)
+    if collisions == None:
+        self.dump(data = None)
+        return collisions
+    elif self.collisionIDs == None:
+        self.collisionIDs = collisions
+        self.dump(data = self.collisionIDs)
+        return collisions
+    self.collisionIDs.append(collisions)
+    print("\n")
+    print("Collisions:\n")
+    print(collisions)
+    self.dump(data = self.collisionIDs)
+    return collisions
+    
+  def Validate(self):
+    ids2 = [1, 3, 5]
+    print("dumping data")
+    self.dump(data = ids2)
+    print("dumped")
+    ids = self.read()
+    self.CompareHashes()
+    if self.collisionIDs == None:
+        return None
+    for i in ids:
+        self._experiment.runner.RunEpisode(render=True, num_episode=i)
+    return self.collisionIDs
+    
 
   def Visualize(self):
     self.CompareHashes()

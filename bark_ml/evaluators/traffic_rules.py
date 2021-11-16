@@ -85,8 +85,6 @@ class EvaluatorTrafficRules(RewardShapingEvaluator):
     #print('\nTraffic rule violation currently:\n')
     #print(self.current_traffic_rule_violations)
 
-    if step_count > 30:
-      success = 1    
     if success or collision or step_count > self._max_steps:
       done = True
     if collision:
