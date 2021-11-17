@@ -80,7 +80,8 @@ class ExternalRuntime:
     behavior = BehaviorStaticTrajectory(
       self._params,
       prediction)
-    agent = self._createAgent(prediction[0], behavior, wb=length, crad=width)
+    agent = self._createAgent(
+      prediction[0], behavior, wb=length/2., crad=width/2.)
     self._world.AddAgent(agent)
     return agent.id
 

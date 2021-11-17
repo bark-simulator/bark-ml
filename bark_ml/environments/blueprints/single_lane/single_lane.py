@@ -120,7 +120,9 @@ class SingleLaneBlueprint(Blueprint):
                ml_behavior=None,
                viewer=True,
                mode="medium",
-               csv_path=None):
+               csv_path=None,
+               map_x_offset=None,
+               map_y_offset=None):
     if mode == "dense":
       ds_min = 10.
       ds_max = 15.
@@ -187,7 +189,10 @@ class SingleLaneBlueprint(Blueprint):
         "../../../environments/blueprints/single_lane/base_map_lanes_guerickestr_assymetric_48.csv")
     print(f"CSV map file path is: {csv_path}.")
     map_interface = MapInterface()
-    map_interface.SetCsvMap(csv_path, 692000, 5.339e+06)
+    if map_x_offset is not None and map_y_offset is not None:
+      map_interface.SetCsvMap(csv_path, map_x_offset, map_y_offset)
+    else:
+      map_interface.SetCsvMap(csv_path, 692000, 5.339e+06)
 
     scenario_generation = \
       ConfigWithEase(
@@ -235,7 +240,9 @@ class ContinuousSingleLaneBlueprint(SingleLaneBlueprint):
                random_seed=0,
                viewer=True,
                mode="dense",
-               csv_path=None):
+               csv_path=None,
+               map_x_offset=None,
+               map_y_offset=None)):
     ml_behavior = BehaviorContinuousML(params)
     SingleLaneBlueprint.__init__(self,
                               params=params,
@@ -244,7 +251,9 @@ class ContinuousSingleLaneBlueprint(SingleLaneBlueprint):
                               ml_behavior=ml_behavior,
                               viewer=True,
                               mode=mode,
-                              csv_path=csv_path)
+                              csv_path=csv_path,
+                              map_x_offset=None,
+                              map_y_offset=None)
 
 
 class DiscreteSingleLaneBlueprint(SingleLaneBlueprint):
@@ -253,7 +262,9 @@ class DiscreteSingleLaneBlueprint(SingleLaneBlueprint):
                num_scenarios=25,
                random_seed=0,
                mode="dense",
-               csv_path=None):
+               csv_path=None,
+               map_x_offset=None,
+               map_y_offset=None)):
     ml_behavior = BehaviorDiscreteMacroActionsML(params)
     SingleLaneBlueprint.__init__(self,
                               params=params,
@@ -262,4 +273,6 @@ class DiscreteSingleLaneBlueprint(SingleLaneBlueprint):
                               ml_behavior=ml_behavior,
                               viewer=True,
                               mode=mode,
-                              csv_path=csv_path)
+                              csv_path=csv_path,
+                              map_x_offset=None,
+                              map_y_offset=None)
