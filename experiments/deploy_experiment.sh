@@ -1,7 +1,7 @@
 #!/bin/bash
 # $1 user
 echo "Building"
-bazel build //experiments:experiment_runner
+bazel build //experiments:run_experiment
 
 echo "Uploading.."
 rsync bazel-bin/experiments/ 8gpu:/mnt/glusterdata/home/$1/experiments/ -a --copy-links -v -z -P
