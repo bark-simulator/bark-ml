@@ -243,7 +243,7 @@ class ContinuousSingleLaneBlueprint(SingleLaneBlueprint):
                mode="dense",
                csv_path=None,
                map_x_offset=None,
-               map_y_offset=None)):
+               map_y_offset=None):
     ml_behavior = BehaviorContinuousML(params)
     SingleLaneBlueprint.__init__(self,
                               params=params,
