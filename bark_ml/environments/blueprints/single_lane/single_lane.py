@@ -213,6 +213,7 @@ class SingleLaneBlueprint(Blueprint):
       #   params=params,
       #   follow_agent_id=True)
     dt = 0.2
+    params["ML"]["RewardShapingEvaluator"]["MaxVelocity"] = 4
     params["ML"]["RewardShapingEvaluator"]["RewardShapingPotentials",
       "Reward shaping functions.", {
         "VelocityPotential" : {
