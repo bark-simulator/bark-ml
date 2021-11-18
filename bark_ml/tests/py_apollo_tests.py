@@ -108,20 +108,16 @@ class PyEnvironmentTests(unittest.TestCase):
   def test_append_to_scenario_history(self):
     params = ParameterServer()
     env = self.create_runtime_and_setup_empty_world(params)
-    history = []
-    env.appendToScenarioHistory(history)
-    self.assertEqual(len(history), 1)
-    self.assertTrue(isinstance(history[-1], Scenario))
 
     # behavior_model = BehaviorSACAgent(environment=env, params=params)
-    behavior_model = bark.core.models.behavior.BehaviorConstantAcceleration(params)
+    behavior_model = bark.core.models.behavior.BehaviorConstantAcceleration(
+      params)
 
     env.ml_behavior = behavior_model
     state = np.array([0, 0, 0, 0, 0])
     env.addEgoAgent(state)
-    env.appendToScenarioHistory(history)
-    self.assertEqual(len(history), 2)
-    self.assertTrue(isinstance(history[-1], Scenario))
+    scenario = env.getScenarioForSerialization()
+    self.assertTrue(isinstance(scenario, Scenario))
 
 if __name__ == '__main__':
   unittest.main()

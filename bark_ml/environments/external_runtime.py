@@ -118,12 +118,15 @@ class ExternalRuntime:
       [self._ego_id])
     self._viewer.clear()
 
-  def appendToScenarioHistory(self, scenario_history):
+  def getScenarioForSerialization(self):
+    self._world.agents[self._ego_id].behavior_model = BehaviorContinuousML(
+      self._params)
     scenario = Scenario(agent_list=list(self._world.agents.values()),
                         map_interface=self._map_interface,
                         eval_agent_ids=[self._ego_id],
                         json_params=self._json_params)
-    scenario_history.append(scenario.copy())
+    self._world.agents[self._ego_id].behavior_model = self._ml_behavior
+    return scenario
 
   @property
   def action_space(self):
