@@ -18,10 +18,17 @@ class ExperimentRunner:
   and evaluations.
   """
 
-  def __init__(self, json_file, mode="visualize", random_seed=0):
+  def __init__(self,
+               json_file=None,
+               params=None,
+               mode="visualize",
+               random_seed=0):
     self._logger = logging.getLogger()
     self._experiment_json = json_file
-    self._params = ParameterServer(filename=json_file)
+    if params is not None:
+      self._params = params
+    else:
+      self._params = ParameterServer(filename=json_file)
     self._experiment_folder, self._json_name = \
       self.GetExperimentsFolder(json_file)
     # set random seeds

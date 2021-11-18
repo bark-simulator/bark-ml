@@ -126,7 +126,7 @@ class BuildExtCommand(setuptools.command.build_ext.build_ext):
 
 setup(
     name = "bark-ml",
-    version = "0.4.20",
+    version = "0.4.21",
     description = "Gym Environments and Agents for Autonomous Driving",
     long_description=long_description,
     long_description_content_type="text/markdown",
