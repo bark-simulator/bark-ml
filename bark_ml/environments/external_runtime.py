@@ -125,8 +125,9 @@ class ExternalRuntime:
                         map_interface=self._map_interface,
                         eval_agent_ids=[self._ego_id],
                         json_params=self._json_params)
+    new_scenario = scenario.copy()
     self._world.agents[self._ego_id].behavior_model = self._ml_behavior
-    return scenario
+    return new_scenario
 
   @property
   def action_space(self):
