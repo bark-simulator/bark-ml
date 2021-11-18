@@ -34,7 +34,7 @@ class PyEnvironmentTests(unittest.TestCase):
   def setUp(self):
     params = ParameterServer()
     self.params = params
-    csvfile = os.path.join(os.path.dirname(__file__), "../environments/blueprints/single_lane/base_map_lanes_guerickestr_assymetric_48.csv")
+    csvfile = os.path.join(os.path.dirname(__file__), "../environments/blueprints/single_lane/base_map_lanes_guerickestr_short_assymetric_48.csv")
     print(csvfile)
     self.map_interface = MapInterface()
     self.map_interface.SetCsvMap(csvfile, 692000, 5.339e+06)

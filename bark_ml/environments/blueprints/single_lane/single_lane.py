@@ -186,7 +186,7 @@ class SingleLaneBlueprint(Blueprint):
     if csv_path is None:
       csv_path = os.path.join(
         os.path.dirname(__file__),
-        "../../../environments/blueprints/single_lane/base_map_lanes_guerickestr_assymetric_48.csv")
+        "../../../environments/blueprints/single_lane/base_map_lanes_guerickestr_short_assymetric_48.csv")
     print(f"CSV map file path is: {csv_path}.")
     map_interface = MapInterface()
     if map_x_offset is not None and map_y_offset is not None:
