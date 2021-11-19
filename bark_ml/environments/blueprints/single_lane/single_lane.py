@@ -191,8 +191,6 @@ class SingleLaneBlueprint(Blueprint):
       csv_path,
       params["SingleLaneBluePrint"]["MapOffsetX", "", 692000],
       params["SingleLaneBluePrint"]["MapOffsetX", "", 5.339e+06])
-    print(f"Map offset x: {params["SingleLaneBluePrint"]["MapOffsetX"]},"
-          f"y:{params["SingleLaneBluePrint"]["MapOffsetX"]}.")
     scenario_generation = \
       ConfigWithEase(
         num_scenarios=num_scenarios,
