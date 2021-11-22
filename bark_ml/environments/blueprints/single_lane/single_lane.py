@@ -190,7 +190,7 @@ class SingleLaneBlueprint(Blueprint):
     map_interface.SetCsvMap(
       csv_path,
       params["SingleLaneBluePrint"]["MapOffsetX", "", 692000],
-      params["SingleLaneBluePrint"]["MapOffsetX", "", 5.339e+06])
+      params["SingleLaneBluePrint"]["MapOffsetY", "", 5.339e+06])
     scenario_generation = \
       ConfigWithEase(
         num_scenarios=num_scenarios,
