@@ -62,7 +62,10 @@ class RewardShapingEvaluator(BaseEvaluator):
           "VelocityPotential" : {
             "desired_vel": 10., "vel_dev_max": 10., "exponent": 0.4, "type": "positive"
           },
-          "DistancePotential": {
+          "DistancePotentialGoal": {
+            "exponent": 0.4, "d_max": 10., "type": "positive"
+          },
+          "DistancePotentialReference": {
             "exponent": 0.4, "d_max": 10., "type": "positive"
           },
           "DistanceOtherPotential": {
@@ -93,8 +96,8 @@ class RewardShapingEvaluator(BaseEvaluator):
         v_dev_max=params_vp["vel_dev_max"],
         a=params_vp["exponent"]) for state in [last_state, current_state]]
       positive_potentials.append(vel_potentials)
-    if "DistancePotential" in self._active_shaping_functions:
-      params_goal = self._active_shaping_functions["DistancePotential"]
+    if "DistancePotentialGoal" in self._active_shaping_functions:
+      params_goal = self._active_shaping_functions["DistancePotentialGoal"]
       goal_center_line = ego_agent.goal_definition.center_line
       if Distance(
           goal_center_line,
@@ -102,6 +105,24 @@ class RewardShapingEvaluator(BaseEvaluator):
         goal_potentials = [DistancePotential(
           Distance(
             goal_center_line,
+            Point2d(state[1], state[2])),
+          d_max=params_goal["d_max"],
+          b=params_goal["exponent"]) for state in [last_state, current_state]]
+        positive_potentials.append(goal_potentials)
+    if "DistancePotentialReference" in self._active_shaping_functions:
+      params_goal = self._active_shaping_functions["DistancePotentialReference"]
+      ego_state = ego_agent.state
+      ego_lane_corridor =  \
+        ego_agent.road_corridor.GetCurrentLaneCorridor( \
+          Point2d(ego_state[int(StateDefinition.X_POSITION)], 
+                  ego_state[int(StateDefinition.Y_POSITION)]))
+      ego_reference_line = ego_lane_corridor.center_line
+      if Distance(
+          ego_reference_line,
+          Point2d(current_state[1], current_state[2])) < params_goal["d_max"]:
+        goal_potentials = [DistancePotential(
+          Distance(
+            ego_reference_line,
             Point2d(state[1], state[2])),
           d_max=params_goal["d_max"],
           b=params_goal["exponent"]) for state in [last_state, current_state]]
