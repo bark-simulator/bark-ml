@@ -36,6 +36,7 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
                params=None,
                samplingRange=[1., 10.],
                distanceRange=[2.0, 10.],
+               goalVelocityRange=[0.0, 12/3.6],
                yOffset=[[0., 0.]],
                xOffset=[[0., 0.]],
                **kwargs):
@@ -46,6 +47,7 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
     self._xOffset = xOffset
     self._current_s = None
     self._distanceRange = distanceRange
+    self._goalVelocityRange = goalVelocityRange
 
   def goal(self, world):
     world.map.GetRoadCorridor(
@@ -53,10 +55,12 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
     lane_corr = self._road_corridor.lane_corridors[0]
     points = lane_corr.center_line.ToArray()[75:100]
     new_line = Line2d(points)
+    des_velocity = np.random.uniform( \
+        self._goalVelocityRange[0], self._goalVelocityRange[1])
     return GoalDefinitionStateLimitsFrenet(new_line,
                                            (2.5, 2.),
                                            (0.15, 0.15),
-                                           (3., 7.))
+                                           (des_velocity, -1.0))
 
   def position(self, world):
     if self._road_corridor == None:

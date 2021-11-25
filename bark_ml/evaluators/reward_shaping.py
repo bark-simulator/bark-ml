@@ -60,7 +60,7 @@ class RewardShapingEvaluator(BaseEvaluator):
       self._params["ML"]["RewardShapingEvaluator"]["RewardShapingPotentials",
         "Reward shaping functions.", {
           "VelocityPotential" : {
-            "desired_vel": 10., "vel_dev_max": 10., "exponent": 0.4, "type": "positive"
+            "desired_vel": 10., "vel_dev_max": 10., "exponent": 0.4, "des_vel_from_goal" : False, "type": "positive"
           },
           "DistancePotentialGoal": {
             "exponent": 0.4, "d_max": 10., "type": "positive"
@@ -90,9 +90,12 @@ class RewardShapingEvaluator(BaseEvaluator):
     negative_potentials, positive_potentials = [], []
     if "VelocityPotential" in self._active_shaping_functions:
       params_vp = self._active_shaping_functions["VelocityPotential"]
+      des_vel = params_vp["desired_vel"] 
+      if params_vp["des_vel_from_goal"]:
+        des_vel = ego_agent.goal_definition.velocity_range[0]
       vel_potentials = [VelocityPotential(
         state[int(StateDefinition.VEL_POSITION)],
-        params_vp["desired_vel"],
+        des_vel,
         v_dev_max=params_vp["vel_dev_max"],
         a=params_vp["exponent"]) for state in [last_state, current_state]]
       positive_potentials.append(vel_potentials)

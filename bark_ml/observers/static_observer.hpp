@@ -71,7 +71,10 @@ class StaticObserver {
     max_d_ = params->GetReal("ML::StaticObserver::MaxD", "", 10.0);
     min_theta_ = params->GetReal("ML::StaticObserver::MinTheta", "", -B_PI);
     max_theta_ = params->GetReal("ML::StaticObserver::MaxTheta", "", B_PI);
-    observation_len_ = 4+4;
+    add_des_vel_ = params->GetBool("ML::StaticObserver::AddDesVel", "", false);
+    max_des_vel_ = params->GetReal("ML::StaticObserver::MaxDesVel", "", 0.0);
+    min_des_vel_ = params->GetReal("ML::StaticObserver::MinDesVel", "", 8.0);
+    observation_len_ = 4 + 4 + int(add_des_vel_ ? 1 : 0);
   }
 
   double Norm(const double val, const double mi, const double ma) const {
@@ -99,13 +102,25 @@ class StaticObserver {
    */
   ObservedState GetEgoState(const ObservedWorld& observed_world) const {
     const auto current_ego_frenet = GetEgoFrenet(observed_world);
-    ObservedState ego_nn_state(1, 4);
+    ObservedState ego_nn_state(1, 4 + int(add_des_vel_ ? 1 : 0));
     const double normalized_angle = NormToPI(current_ego_frenet.angle);
 
-    ego_nn_state << Norm(current_ego_frenet.lat, min_d_, max_d_),
-                    Norm(normalized_angle, min_theta_, max_theta_),
-                    Norm(current_ego_frenet.vlon, min_vel_lon_, max_vel_lon_),
-                    Norm(current_ego_frenet.vlat, min_vel_lat_, max_vel_lat_);
+    ego_nn_state(0, 0) = Norm(current_ego_frenet.lat, min_d_, max_d_),
+    ego_nn_state(0, 1) = Norm(normalized_angle, min_theta_, max_theta_),
+    ego_nn_state(0, 2) = Norm(current_ego_frenet.vlon, min_vel_lon_, max_vel_lon_),
+    ego_nn_state(0, 3) = Norm(current_ego_frenet.vlat, min_vel_lat_, max_vel_lat_);
+    
+    if(add_des_vel_) {
+      std::shared_ptr<GoalDefinitionStateLimitsFrenet> frenet_goal = 
+       std::dynamic_pointer_cast<GoalDefinitionStateLimitsFrenet>(observed_world.GetEgoAgent()->GetGoalDefinition());
+      if(!frenet_goal) {
+        LOG(FATAL) << "Static observer with desireved velocity"
+           "requires GoalDefinitionStateLimitsFrenet for ego agent";
+      }
+      double des_vel = frenet_goal->GetVelocityRange().first;
+      ego_nn_state(0, 4) = Norm(des_vel, min_des_vel_, max_des_vel_); 
+    }
+
     return ego_nn_state;
   }
 
@@ -212,7 +227,9 @@ class StaticObserver {
   double min_theta_, max_theta_, min_vel_lon_,
          max_vel_lon_, min_vel_lat_,
          max_vel_lat_, max_dist_,
-         min_d_, max_d_, min_s_, max_s_;
+         min_d_, max_d_, min_s_, max_s_,
+         min_des_vel_, max_des_vel_;
+  bool add_des_vel_;
 };
 
 }  // namespace observers
