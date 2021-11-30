@@ -76,12 +76,18 @@ class ExternalRuntime:
     self._ego_id = agent.id
     return agent.id
 
+  def ConvertShapeParameters(self, length, width):
+    crad = width/2.0 # collision circle radius
+    wb = length - 2*crad # wheelbase
+    return (crad, wb)
+
   def addObstacle(self, prediction, length, width):
     behavior = BehaviorStaticTrajectory(
       self._params,
       prediction)
+    (crad, wb) = self.ConvertShapeParameters(length=length, width=width)
     agent = self._createAgent(
-      prediction[0], behavior, wb=length/2., crad=width/2.)
+      prediction[0], behavior, wb=wb, crad=crad)
     self._world.AddAgent(agent)
     return agent.id
 
