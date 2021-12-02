@@ -79,7 +79,7 @@ class PyEvaluatorTests(unittest.TestCase):
     eval_id = env._scenario._eval_agent_ids[0]
     observed_world = world.Observe([eval_id])[0]
     evaluator = GeneralEvaluator(params)
-    action = np.array([0., 0.], dtype=np.float32)
+    action = np.array([0.1, 0.], dtype=np.float32)
     start_time = time.time()
     print(evaluator.Evaluate(observed_world, action))
     end_time = time.time()

@@ -98,7 +98,7 @@ class PotentialCenterlineFunctor(PotentialBasedFunctor):
     self._params = params["PotentialCenterlineFunctor"]
 
   @staticmethod
-  def DistancePotential(d, d_max, b=0.2):
+  def DistancePotential(d, d_max, b):
     return 1. - (d/d_max)**b
 
   def DistanceToCenterline(self, observed_world, state):
@@ -122,14 +122,15 @@ class PotentialCenterlineFunctor(PotentialBasedFunctor):
       return False, self._params["Gamma", "", 0.99]*cur_pot - prev_pot, {}
     return False, 0, {}
 
+
 class PotentialVelocityFunctor(PotentialBasedFunctor):
   def __init__(self, params):
     super().__init__(params=params)
     self._params = params["PotentialVelocityFunctor"]
 
   @staticmethod
-  def VelocityPotential(d, d_max, b=0.2):
-    return 1. - (d/d_max)**b
+  def VelocityPotential(v, v_des, v_dev_max, a):
+    return 1. - (np.sqrt((v-v_des)**2)/v_dev_max)**a
 
   def __call__(self, observed_world, action, eval_results):
     hist = observed_world.ego_agent.history
@@ -138,9 +139,11 @@ class PotentialVelocityFunctor(PotentialBasedFunctor):
       prev_v = prev_state[int(StateDefinition.VEL_POSITION)]
       cur_v = cur_state[int(StateDefinition.VEL_POSITION)]
       prev_pot = self.VelocityPotential(
-        prev_v, self._params["MaxVel", "", 100.], self._params["VelExponent", "", 0.2])
+        prev_v, self._params["DesiredVel", "", 4.],
+        self._params["MaxVel", "", 20.], self._params["VelExponent", "", 0.2])
       cur_pot = self.VelocityPotential(
-        cur_v, self._params["MaxVel", "", 100.], self._params["VelExponent", "", 0.2])
+        cur_v,  self._params["DesiredVel", "", 4.],
+        self._params["MaxVel", "", 100.], self._params["VelExponent", "", 0.2])
       return False, self._params["Gamma", "", 0.99]*cur_pot - prev_pot, {}
     return False, 0, {}
 
