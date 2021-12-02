@@ -6,6 +6,7 @@ py_library(
     srcs = ["__init__.py",
             "goal_reached.py",
             "reward_shaping.py",
+            "general_evaluator.py",
             "reward_shaping_max_steps.py",
             "reward_shaping_intersection.py",
             "commons.py",

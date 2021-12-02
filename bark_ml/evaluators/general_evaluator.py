@@ -19,7 +19,8 @@ class CollisionFunctor:
 
   def __call__(self, observed_world, action, eval_results):
     if eval_results["collision"]:
-      return True, self._params["CollisionReward"], {}
+      return True, self._params["CollisionReward", "", -1.], {}
+    return False, 0, {}
 
 
 class GoalFunctor:
@@ -28,7 +29,8 @@ class GoalFunctor:
 
   def __call__(self, observed_world, action, eval_results):
     if eval_results["goal_reached"]:
-      return True, self._params["GoalReward"], {}
+      return True, self._params["GoalReward", "", 1.], {}
+    return False, 0, {}
 
 
 class DrivableAreaFunctor:
@@ -37,7 +39,8 @@ class DrivableAreaFunctor:
 
   def __call__(self, observed_world, action, eval_results):
     if eval_results["drivable_area"]:
-      return True, self._params["DrivableAreaReward"], {}
+      return True, self._params["DrivableAreaReward", "", -1.], {}
+    return False, 0, {}
 
 
 class StepCountFunctor:
@@ -45,8 +48,10 @@ class StepCountFunctor:
     self._params = params["StepCountFunctor"]
 
   def __call__(self, observed_world, action, eval_results):
-    if eval_results["step_count"] > self._params["MaxStepCount"]:
-      return True, self._params["StepCountReward"], {}
+    if eval_results["step_count"] > self._params[
+      "MaxStepCount", "", 60]:
+      return True, self._params["StepCountReward", "", 0.], {}
+    return False, 0, {}
 
 
 class MaxVelFunctor:
@@ -56,8 +61,9 @@ class MaxVelFunctor:
   def __call__(self, observed_world, action, eval_results):
     ego_agent = observed_world.ego_agent
     ego_vel = ego_agent.state[int(StateDefinition.VEL_POSITION)]
-    if ego_vel > self._params["MaxVel"]:
-      return True, self._params["MaxVelViolationReward"], {}
+    if ego_vel > self._params["MaxVel", "", 25.]:
+      return True, self._params["MaxVelViolationReward", "", -1.], {}
+    return False, 0, {}
 
 
 class SmoothnessFunctor:
@@ -68,10 +74,11 @@ class SmoothnessFunctor:
     ego_agent = observed_world.ego_agent
     if len(ego_agent.history) >= 2:
       actions = np.array([s_a[1] for s_a in ego_agent.history[-2:]])
-      action_diff = abs(actions[1] - actions[0])/self._params["Dt"]
-      if action_diff[0] > self._params["MaxAccRate"] or \
-        action_diff[1] > self._params["MaxSteeringRate"]:
-          return True, self._params["InputRateViolation"], {}
+      action_diff = abs(actions[1] - actions[0])/self._params["Dt", "", 0.2]
+      if action_diff[0] > self._params["MaxAccRate", "", 1.] or \
+        action_diff[1] > self._params["MaxSteeringRate", "", 1.]:
+          return True, self._params["InputRateViolation", "", -1.], {}
+    return False, 0, {}
 
 
 class PotentialBasedFunctor:
@@ -103,15 +110,17 @@ class PotentialCenterlineFunctor(PotentialBasedFunctor):
     return dist
 
   def __call__(self, observed_world, action, eval_results):
-    prev_state, cur_state = self.GetPrevAndCurState(observed_world)
-    prev_dist = self.DistanceToCenterline(observed_world, prev_state)
-    cur_dist = self.DistanceToCenterline(observed_world, cur_state)
-    prev_pot = self.DistancePotential(
-      prev_dist, self._params["MaxDist"], self._params["DistExponent"])
-    cur_pot = self.DistancePotential(
-      cur_dist, self._params["MaxDist"], self._params["DistExponent"])
-    return False, self._params["Gamma"]*cur_pot - prev_pot, {}
-
+    hist = observed_world.ego_agent.history
+    if len(hist) >= 2:
+      prev_state, cur_state = self.GetPrevAndCurState(observed_world)
+      prev_dist = self.DistanceToCenterline(observed_world, prev_state)
+      cur_dist = self.DistanceToCenterline(observed_world, cur_state)
+      prev_pot = self.DistancePotential(
+        prev_dist, self._params["MaxDist", "", 100.], self._params["DistExponent", "", 0.2])
+      cur_pot = self.DistancePotential(
+        cur_dist, self._params["MaxDist", "", 100.], self._params["DistExponent", "", 0.2])
+      return False, self._params["Gamma", "", 0.99]*cur_pot - prev_pot, {}
+    return False, 0, {}
 
 class PotentialVelocityFunctor(PotentialBasedFunctor):
   def __init__(self, params):
@@ -123,14 +132,17 @@ class PotentialVelocityFunctor(PotentialBasedFunctor):
     return 1. - (d/d_max)**b
 
   def __call__(self, observed_world, action, eval_results):
-    prev_state, cur_state = self.GetPrevAndCurState(observed_world)
-    prev_v = prev_state[int(StateDefinition.VEL_POSITION)]
-    cur_v = cur_state[int(StateDefinition.VEL_POSITION)]
-    prev_pot = self.VelocityPotential(
-      prev_v, self._params["MaxVel"], self._params["VelExponent"])
-    cur_pot = self.VelocityPotential(
-      cur_v, self._params["MaxVel"], self._params["VelExponent"])
-    return False, self._params["Gamma"]*cur_pot - prev_pot, {}
+    hist = observed_world.ego_agent.history
+    if len(hist) >= 2:
+      prev_state, cur_state = self.GetPrevAndCurState(observed_world)
+      prev_v = prev_state[int(StateDefinition.VEL_POSITION)]
+      cur_v = cur_state[int(StateDefinition.VEL_POSITION)]
+      prev_pot = self.VelocityPotential(
+        prev_v, self._params["MaxVel", "", 100.], self._params["VelExponent", "", 0.2])
+      cur_pot = self.VelocityPotential(
+        cur_v, self._params["MaxVel", "", 100.], self._params["VelExponent", "", 0.2])
+      return False, self._params["Gamma", "", 0.99]*cur_pot - prev_pot, {}
+    return False, 0, {}
 
 
 class GeneralEvaluator:
