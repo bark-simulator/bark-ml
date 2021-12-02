@@ -110,7 +110,7 @@ class PotentialCenterlineFunctor(PotentialBasedFunctor):
       prev_dist, self._params["MaxDist"], self._params["DistExponent"])
     cur_pot = self.DistancePotential(
       cur_dist, self._params["MaxDist"], self._params["DistExponent"])
-    return self._params["Gamma"]*cur_pot - prev_pot
+    return False, self._params["Gamma"]*cur_pot - prev_pot, {}
 
 
 class PotentialVelocityFunctor(PotentialBasedFunctor):
@@ -130,7 +130,7 @@ class PotentialVelocityFunctor(PotentialBasedFunctor):
       prev_v, self._params["MaxVel"], self._params["VelExponent"])
     cur_pot = self.VelocityPotential(
       cur_v, self._params["MaxVel"], self._params["VelExponent"])
-    return self._params["Gamma"]*cur_pot - prev_pot
+    return False, self._params["Gamma"]*cur_pot - prev_pot, {}
 
 
 class GeneralEvaluator:
