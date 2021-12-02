@@ -73,7 +73,7 @@ class SmoothnessFunctor:
   def __call__(self, observed_world, action, eval_results):
     ego_agent = observed_world.ego_agent
     if len(ego_agent.history) >= 2:
-      actions = np.array([s_a[1] for s_a in ego_agent.history[-2:]])
+      actions = np.array([[s_a[1]] for s_a in ego_agent.history[-2:]])
       action_diff = abs(actions[1] - actions[0])/self._params["Dt", "", 0.2]
       if action_diff[0] > self._params["MaxAccRate", "", 1.] or \
         action_diff[1] > self._params["MaxSteeringRate", "", 1.]:
@@ -169,7 +169,7 @@ class GeneralEvaluator:
       "goal_reached_functor" : GoalFunctor(params),
       "drivable_area_functor" : DrivableAreaFunctor(params),
       "step_count_functor" : StepCountFunctor(params),
-      "smoothness_functor" : SmoothnessFunctor(params),
+      # "smoothness_functor" : SmoothnessFunctor(params),
       "max_vel_functor" : MaxVelFunctor(params),
       "pot_center_functor": PotentialCenterlineFunctor(params),
       "pot_vel_functor": PotentialVelocityFunctor(params),

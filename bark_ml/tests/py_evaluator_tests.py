@@ -73,17 +73,12 @@ class PyEvaluatorTests(unittest.TestCase):
     params = ParameterServer()
     bp = ContinuousHighwayBlueprint(params)
     env = SingleAgentRuntime(blueprint=bp, render=True)
-    env.reset()
-    world = env._world
-
-    eval_id = env._scenario._eval_agent_ids[0]
-    observed_world = world.Observe([eval_id])[0]
     evaluator = GeneralEvaluator(params)
-    action = np.array([0.1, 0.], dtype=np.float32)
-    start_time = time.time()
-    print(evaluator.Evaluate(observed_world, action))
-    end_time = time.time()
-    print(f"The general evaluator took {end_time-start_time} seconds.")
+    env._evaluator = evaluator
+    env.reset()
+    for _ in range(0, 4):
+      state, terminal, reward, info = env.step(np.array([0., 0.]))
+      print(terminal, reward)
 
 if __name__ == '__main__':
   unittest.main()
