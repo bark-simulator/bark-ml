@@ -119,13 +119,12 @@ class RewardShapingEvaluator(BaseEvaluator):
         ego_agent.road_corridor.GetCurrentLaneCorridor( \
           Point2d(ego_state[int(StateDefinition.X_POSITION)], 
                   ego_state[int(StateDefinition.Y_POSITION)]))
-      ego_reference_line = ego_lane_corridor.center_line
-      if Distance(
-          ego_reference_line,
+      if ego_lane_corridor and Distance(
+          ego_lane_corridor.center_line,
           Point2d(current_state[1], current_state[2])) < params_goal["d_max"]:
         goal_potentials = [DistancePotential(
           Distance(
-            ego_reference_line,
+            ego_lane_corridor.center_line,
             Point2d(state[1], state[2])),
           d_max=params_goal["d_max"],
           b=params_goal["exponent"]) for state in [last_state, current_state]]
