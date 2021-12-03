@@ -56,7 +56,7 @@ class StepCountFunctor:
 
 class MinMaxVelFunctor:
   def __init__(self, params):
-    self._params = params["MaxVelFunctor"]
+    self._params = params["MinMaxVelFunctor"]
 
   def __call__(self, observed_world, action, eval_results):
     ego_agent = observed_world.ego_agent
@@ -168,7 +168,7 @@ class GeneralEvaluator:
       "drivable_area_functor" : DrivableAreaFunctor(params),
       "step_count_functor" : StepCountFunctor(params),
       # "smoothness_functor" : SmoothnessFunctor(params),
-      "max_vel_functor" : MinMaxVelFunctor(params),
+      "min_max_vel_functor" : MinMaxVelFunctor(params),
       "pot_center_functor": PotentialCenterlineFunctor(params),
       "pot_vel_functor": PotentialVelocityFunctor(params),
     }
