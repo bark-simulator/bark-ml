@@ -160,7 +160,7 @@ class SingleLaneBlueprint(Blueprint):
                                              s_min=s_min,
                                              s_max=s_max,
                                              controlled_ids=True,
-                                             yOffset=[[-0.1, 0.1]])
+                                             yOffset=[[-2, 2.0]])
     lane_configs.append(lane_conf)
 
     # other vehicle
@@ -176,8 +176,8 @@ class SingleLaneBlueprint(Blueprint):
         s_min=s_min,
         s_max=s_max,
         controlled_ids=None,
-        yOffset=[[2.0, 3.5]],
-        samplingRange=[2, 100],
+        yOffset=[[2.2, 3.5]],
+        samplingRange=[10, 100],
         distanceRange=[4, 30])
       lane_configs.append(lane_conf_other_left)
       lane_conf_other_right = SingleLaneLaneCorridorConfig(
@@ -191,8 +191,8 @@ class SingleLaneBlueprint(Blueprint):
         s_min=s_min,
         s_max=s_max,
         controlled_ids=None,
-        yOffset=[[-2.0, -3.5]],
-        samplingRange=[2, 100],
+        yOffset=[[-2.2, -3.5]],
+        samplingRange=[10, 100],
         distanceRange=[4, 30])
       lane_configs.append(lane_conf_other_right)
 
