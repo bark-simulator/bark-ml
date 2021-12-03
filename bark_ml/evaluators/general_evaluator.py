@@ -49,7 +49,7 @@ class StepCountFunctor:
 
   def __call__(self, observed_world, action, eval_results):
     if eval_results["step_count"] > self._params[
-      "MaxStepCount", "", 60]:
+      "MaxStepCount", "", 120]:
       return True, self._params["StepCountReward", "", 0.], {}
     return False, 0, {}
 
@@ -157,10 +157,10 @@ class GeneralEvaluator:
     self._eval_agent = eval_agent
     self._params = params
     self._bark_eval_fns = bark_eval_fns or {
-      "goal_reached" : EvaluatorGoalReached(),
-      "collision" : EvaluatorCollisionEgoAgent(),
-      "step_count" : EvaluatorStepCount(),
-      "drivable_area" : EvaluatorDrivableArea()
+      "goal_reached" : lambda: EvaluatorGoalReached(),
+      "collision" : lambda: EvaluatorCollisionEgoAgent(),
+      "step_count" : lambda: EvaluatorStepCount(),
+      "drivable_area" : lambda: EvaluatorDrivableArea()
     }
     self._bark_ml_eval_fns = bark_ml_eval_fns or {
       "collision_functor" : CollisionFunctor(params),
@@ -179,6 +179,7 @@ class GeneralEvaluator:
     reward = 0.
     scheduleTerminate = False
 
+    print(eval_results)
     for _, eval_fn in self._bark_ml_eval_fns.items():
       t, r, i = eval_fn(observed_world, action, eval_results)
       eval_results = {**eval_results, **i} # merge info
@@ -191,7 +192,7 @@ class GeneralEvaluator:
   def Reset(self, world):
     world.ClearEvaluators()
     for eval_name, eval_fn in self._bark_eval_fns.items():
-      world.AddEvaluator(eval_name, eval_fn)
+      world.AddEvaluator(eval_name, eval_fn())
     return world
 
   def SetViewer(self, viewer):
