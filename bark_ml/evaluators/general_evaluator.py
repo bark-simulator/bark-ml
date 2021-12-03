@@ -71,13 +71,10 @@ class SmoothnessFunctor:
     self._params = params["SmoothnessFunctor"]
 
   def __call__(self, observed_world, action, eval_results):
-    ego_agent = observed_world.ego_agent
-    if len(ego_agent.history) >= 2:
-      actions = np.array([[s_a[1]] for s_a in ego_agent.history[-2:]])
-      action_diff = abs(actions[1] - actions[0])/self._params["Dt", "", 0.2]
-      if action_diff[0] > self._params["MaxAccRate", "", 1.] or \
-        action_diff[1] > self._params["MaxSteeringRate", "", 1.]:
-          return True, self._params["InputRateViolation", "", -1.], {}
+    ego_agent_state = observed_world.ego_agent.state
+    # TODO: what is a plausible steering rate
+    if abs(ego_agent_state[5]) > self._params["MaxSteeringRate", "", 0.2]:
+      return True, self._params["MaxSteeringRateViolationReward"], {}
     return False, 0, {}
 
 

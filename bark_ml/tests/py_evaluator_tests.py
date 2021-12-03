@@ -12,7 +12,8 @@ import numpy as np
 import time
 
 from bark.runtime.commons.parameters import ParameterServer
-from bark_ml.environments.blueprints import ContinuousHighwayBlueprint
+from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
+  ContinuousSingleLaneBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.evaluators.goal_reached import GoalReached
 from bark_ml.evaluators.general_evaluator import GeneralEvaluator
@@ -71,7 +72,7 @@ class PyEvaluatorTests(unittest.TestCase):
 
   def test_general_evaluator(self):
     params = ParameterServer()
-    bp = ContinuousHighwayBlueprint(params)
+    bp = ContinuousSingleLaneBlueprint(params)
     env = SingleAgentRuntime(blueprint=bp, render=True)
     evaluator = GeneralEvaluator(params)
     env._evaluator = evaluator

@@ -10,7 +10,7 @@ def bark_ml_dependencies():
   _maybe(
     git_repository,
     name = "bark_project",
-    branch = "pip_package",
+    branch = "dynamic_model",
     remote = "https://github.com/bark-simulator/bark",
   )
   # _maybe(

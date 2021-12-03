@@ -17,6 +17,7 @@ from bark.core.models.behavior import BehaviorDynamicModel
 from bark.core.world.map import MapInterface
 from bark.core.world.opendrive import XodrDrivingDirection
 from bark.core.world.goal_definition import GoalDefinitionStateLimitsFrenet
+from bark.core.models.dynamic import *
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
 from bark_ml.evaluators.reward_shaping import RewardShapingEvaluator
@@ -24,7 +25,7 @@ from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
 
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
-# from bark_ml.core.observers.frenet_observer import FrenetObserver
+from bark_ml.core.observers import StaticObserver
 
 
 class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
@@ -88,6 +89,15 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
     behavior_model = BehaviorDynamicModel(self._params)
     return behavior_model
 
+  @property
+  def dynamic_model(self):
+    """Returns dyn. model
+    """
+    if self._controlled_ids is not None:
+      return SingleTrackSteeringRateModel(self._params)
+    return SingleTrackModel(self._params)
+
+
   def state(self, world):
     """Returns a state of the agent
 
@@ -98,7 +108,13 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
         np.array -- time, x, y, theta, velocity
     """
     if self._controlled_ids is not None:
-      return super().state(world)
+      pose = self.position(world)
+      if pose is None:
+        return None
+      velocity = self.velocity()
+      # here we need to set the larger state space
+      # because of SingleTrackSteeringRateModel
+      return np.array([0, pose[0], pose[1], pose[2], velocity, 0.])
     else:
       has_vehicle = np.random.randint(0, 2)
       if has_vehicle:
