@@ -5,7 +5,7 @@
             "Config": {}
         },
         "Evaluator": {
-            "ModuleName": "RewardShapingEvaluator",
+            "ModuleName": "GeneralEvaluator",
             "Config": {}
         },
         "Runtime": {
@@ -114,7 +114,8 @@
                     "desired_vel": 5.0, "vel_dev_max": 10.0, "exponent": 0.2, "type": "positive"
                   }
             },
-            "MaxSteps": 200
+            "MaxSteps": 200,
+            "MaxVel": 4
         },
         "BehaviorTFAAgents": {
             "NumCheckpointsToKeep": 3
@@ -132,11 +133,11 @@
         "BehaviorContinuousML": {
             "ActionsLowerBound": [
                 -2.0,
-                -0.1
+                -4.0
             ],
             "ActionsUpperBound": [
                 2.0,
-                0.1
+                4.0
             ]
         },
         "StateObserver": {

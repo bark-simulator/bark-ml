@@ -66,7 +66,7 @@ class StaticObserver {
     max_vel_lat_ = params->GetReal("ML::StaticObserver::MaxVelLat", "", 10.0);
     max_dist_ = params->GetReal("ML::StaticObserver::MaxDist", "", 75.0);
     min_s_ = params->GetReal("ML::StaticObserver::MinS", "", 0.0);
-    max_s_ = params->GetReal("ML::StaticObserver::MaxS", "", 50.0);
+    max_s_ = params->GetReal("ML::StaticObserver::MaxS", "", 100.0);
     min_d_ = params->GetReal("ML::StaticObserver::MinD", "", -10.0);
     max_d_ = params->GetReal("ML::StaticObserver::MaxD", "", 10.0);
     min_theta_ = params->GetReal("ML::StaticObserver::MinTheta", "", -B_PI);
