@@ -13,7 +13,7 @@ from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
 from bark.core.world.opendrive import *
 from bark.core.geometry import *
-from bark.core.models.behavior import BehaviorDynamicModel
+from bark.core.models.behavior import BehaviorDynamicModel, BehaviorMacroActionsFromParamServer
 from bark.core.world.map import MapInterface
 from bark.core.world.opendrive import XodrDrivingDirection
 from bark.core.world.goal_definition import GoalDefinitionStateLimitsFrenet
@@ -60,7 +60,14 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
     return GoalDefinitionStateLimitsFrenet(new_line,
                                            (2.5, 2.),
                                            (0.15, 0.15),
-                                           (des_velocity, -1.0))
+                                           (des_velocity, 20.0))
+  
+  def velocity(self):
+    if not self._controlled_ids:
+      return 0.0
+    else:
+      return np.random.uniform( \
+        self._goalVelocityRange[0], self._goalVelocityRange[1])
 
   def position(self, world):
     if self._road_corridor == None:
@@ -73,8 +80,7 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
     lane_corr = self._road_corridor.lane_corridors[self._lane_corridor_id]
     centerline = lane_corr.center_line
     if not self._current_s:
-      self._current_s = np.random.uniform(
-        self._samplingRange[0], self._samplingRange[1])
+      self._current_s = self._samplingRange[0]
     else:
       self._current_s += np.random.uniform(
         self._distanceRange[0], self._distanceRange[1])
@@ -89,7 +95,13 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
             angle)
 
   def behavior_model(self, world):
-    behavior_model = BehaviorDynamicModel(self._params)
+    if self._controlled_ids:
+      behavior_model = BehaviorDynamicModel(self._params)
+    else:
+      self._params["StaticMacroAction"]["AccelerationInputs"] = [0.0]
+      self._params["StaticMacroAction"]["AddLaneChangeActions"] = False
+      self._params["StaticMacroAction"]["AddGapKeeping"] = False
+      behavior_model = BehaviorMacroActionsFromParamServer(self._params["StaticMacroAction"])
     return behavior_model
 
   def state(self, world):
@@ -104,7 +116,7 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
     if self._controlled_ids is not None:
       return super().state(world)
     else:
-      has_vehicle = np.random.randint(0, 2)
+      has_vehicle = 1
       if has_vehicle:
         return super().state(world)
       else:
@@ -141,8 +153,8 @@ class SingleLaneBlueprint(Blueprint):
     lane_conf = SingleLaneLaneCorridorConfig(params=local_params,
                                              road_ids=[0],
                                              lane_corridor_id=0,
-                                             min_vel=0.,
-                                             max_vel=0.01,
+                                             min_vel=40.0,
+                                             max_vel=50.0,
                                              ds_min=ds_min,
                                              ds_max=ds_max,
                                              s_min=s_min,
@@ -164,9 +176,9 @@ class SingleLaneBlueprint(Blueprint):
         s_min=s_min,
         s_max=s_max,
         controlled_ids=None,
-        yOffset=[[2.2, 2.8]],
-        samplingRange=[20, 60],
-        distanceRange=[1, 4])
+        yOffset=[[2.0, 3.5]],
+        samplingRange=[2, 100],
+        distanceRange=[4, 30])
       lane_configs.append(lane_conf_other_left)
       lane_conf_other_right = SingleLaneLaneCorridorConfig(
         params=local_params,
@@ -179,9 +191,9 @@ class SingleLaneBlueprint(Blueprint):
         s_min=s_min,
         s_max=s_max,
         controlled_ids=None,
-        yOffset=[[-2.2, -2.8]],
-        samplingRange=[20, 60],
-        distanceRange=[5, 10])
+        yOffset=[[-2.0, -3.5]],
+        samplingRange=[2, 100],
+        distanceRange=[4, 30])
       lane_configs.append(lane_conf_other_right)
 
     # Map Definition
