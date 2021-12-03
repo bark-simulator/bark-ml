@@ -133,11 +133,11 @@
         "BehaviorContinuousML": {
             "ActionsLowerBound": [
                 -2.0,
-                -0.1
+                -4.0
             ],
             "ActionsUpperBound": [
                 2.0,
-                0.1
+                4.0
             ]
         },
         "StateObserver": {
