@@ -145,6 +145,32 @@ class PotentialVelocityFunctor(PotentialBasedFunctor):
       return False, self._params["Gamma", "", 0.99]*cur_pot - prev_pot, {}
     return False, 0, {}
 
+class PotentialGoalSwitchVelocityFunctor(PotentialBasedFunctor):
+  def __init__(self, params):
+    super().__init__(params=params)
+    self._params = params["PotentialGoalSwitchVelocityFunctor"]
+
+  @staticmethod
+  def VelocityPotential(v, v_des, v_dev_max, a):
+    return 1. - (np.sqrt((v-v_des)**2)/v_dev_max)**a
+
+  def __call__(self, observed_world, action, eval_results):
+    hist = observed_world.ego_agent.history
+    desired_vel = self._params["DesiredVel", "", 4.]
+    if eval_results["goal_reached"]:
+      desired_vel = 0.
+    if len(hist) >= 2:
+      prev_state, cur_state = self.GetPrevAndCurState(observed_world)
+      prev_v = prev_state[int(StateDefinition.VEL_POSITION)]
+      cur_v = cur_state[int(StateDefinition.VEL_POSITION)]
+      prev_pot = self.VelocityPotential(
+        prev_v, desired_vel, self._params["MaxVel", "", 20.],
+        self._params["VelExponent", "", 0.2])
+      cur_pot = self.VelocityPotential(
+        cur_v,  desired_vel, self._params["MaxVel", "", 100.],
+        self._params["VelExponent", "", 0.2])
+      return False, self._params["Gamma", "", 0.99]*cur_pot - prev_pot, {}
+    return False, 0, {}
 
 class GeneralEvaluator:
   """Evaluator using Functors"""
@@ -170,7 +196,7 @@ class GeneralEvaluator:
       # "smoothness_functor" : SmoothnessFunctor(params),
       "min_max_vel_functor" : MinMaxVelFunctor(params),
       "pot_center_functor": PotentialCenterlineFunctor(params),
-      "pot_vel_functor": PotentialVelocityFunctor(params),
+      "pot_goal_switch_vel_functor": PotentialVelocityFunctor(params),
     }
 
   def Evaluate(self, observed_world, action):
@@ -179,7 +205,6 @@ class GeneralEvaluator:
     reward = 0.
     scheduleTerminate = False
 
-    print(eval_results)
     for _, eval_fn in self._bark_ml_eval_fns.items():
       t, r, i = eval_fn(observed_world, action, eval_results)
       eval_results = {**eval_results, **i} # merge info
