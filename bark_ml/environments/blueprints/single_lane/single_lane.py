@@ -35,16 +35,16 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
 
   def __init__(self,
                params=None,
-               samplingRange=[1., 10.],
+               samplingRange=[1., 8.],
                distanceRange=[2.0, 10.],
-               yOffset=[[0., 0.]],
-               xOffset=[[0., 0.]],
+               lateralOffset=[[0., 0.]],
+               longitudinalOffset=[[0., 0.]],
                **kwargs):
     super(SingleLaneLaneCorridorConfig, self).__init__(
       params, **dict(kwargs, min_vel=0., max_vel=0.2))
     self._samplingRange = samplingRange
-    self._yOffset = yOffset
-    self._xOffset = xOffset
+    self._lateralOffset = lateralOffset
+    self._longitudinalOffset = longitudinalOffset
     self._current_s = None
     self._distanceRange = distanceRange
 
@@ -65,24 +65,30 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
         self._road_ids, XodrDrivingDirection.forward)
       self._road_corridor = world.map.GetRoadCorridor(
         self._road_ids, XodrDrivingDirection.forward)
-    if self._current_s and (self._current_s >= self._samplingRange[1] or self._controlled_ids):
+    if self._current_s and (self._current_s >= self._distanceRange[1] or self._controlled_ids):
       return None
     lane_corr = self._road_corridor.lane_corridors[self._lane_corridor_id]
     centerline = lane_corr.center_line
+
     if not self._current_s:
-      self._current_s = np.random.uniform(
-        self._samplingRange[0], self._samplingRange[1])
-    else:
-      self._current_s += np.random.uniform(
-        self._distanceRange[0], self._distanceRange[1])
+      self._current_s = self._distanceRange[0]
+
+    self._current_s += np.random.uniform(
+      self._samplingRange[0], self._samplingRange[1])
+
     xy_point =  GetPointAtS(centerline, self._current_s)
     angle = GetTangentAngleAtS(centerline, self._current_s)
-    yOffsetBounds = self._yOffset[np.random.randint(0, len(self._yOffset))]
-    yOffset = np.random.uniform(yOffsetBounds[0], yOffsetBounds[1])
-    xOffsetBounds = self._xOffset[np.random.randint(0, len(self._xOffset))]
-    xOffset = np.random.uniform(xOffsetBounds[0], xOffsetBounds[1])
-    return (xy_point.x() + xOffset,
-            xy_point.y() + yOffset,
+
+
+    lateralOffsetBounds = self._lateralOffset[np.random.randint(0, len(self._lateralOffset))]
+    lateralOffset = np.random.uniform(lateralOffsetBounds[0], lateralOffsetBounds[1])
+    longitudinalOffsetBounds = self._longitudinalOffset[
+      np.random.randint(0, len(self._longitudinalOffset))]
+    longitudinalOffset = np.random.uniform(
+      longitudinalOffsetBounds[0], longitudinalOffsetBounds[1])
+
+    return (xy_point.x() + longitudinalOffset,
+            xy_point.y() + lateralOffset,
             angle)
 
   def behavior_model(self, world):
@@ -112,15 +118,9 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
       if pose is None:
         return None
       velocity = self.velocity()
-      # here we need to set the larger state space
-      # because of SingleTrackSteeringRateModel
       return np.array([0, pose[0], pose[1], pose[2], velocity, 0.])
     else:
-      has_vehicle = np.random.randint(0, 2)
-      if has_vehicle:
-        return super().state(world)
-      else:
-        return None
+      return super().state(world)
 
 
 class SingleLaneBlueprint(Blueprint):
@@ -160,7 +160,7 @@ class SingleLaneBlueprint(Blueprint):
                                              s_min=s_min,
                                              s_max=s_max,
                                              controlled_ids=True,
-                                             yOffset=[[-0.1, 0.1]],
+                                             lateralOffset=[[-0.1, 0.1]],
                                              wb=2.786,
                                              crad=1.1)
     lane_configs.append(lane_conf)
@@ -178,9 +178,9 @@ class SingleLaneBlueprint(Blueprint):
         s_min=s_min,
         s_max=s_max,
         controlled_ids=None,
-        yOffset=[[2.2, 2.8]],
-        samplingRange=[20, 60],
-        distanceRange=[1, 4],
+        lateralOffset=[[1.8, 3.5]],
+        samplingRange=[7.5, 25],
+        distanceRange=[10, 80],
         wb=2.786,
         crad=1.)
       lane_configs.append(lane_conf_other_left)
@@ -195,9 +195,9 @@ class SingleLaneBlueprint(Blueprint):
         s_min=s_min,
         s_max=s_max,
         controlled_ids=None,
-        yOffset=[[-2.2, -2.8]],
-        samplingRange=[20, 60],
-        distanceRange=[5, 10])
+        lateralOffset=[[-2.2, -3.5]],
+        samplingRange=[7.5, 25],
+        distanceRange=[10, 80])
       lane_configs.append(lane_conf_other_right)
 
     # Map Definition
