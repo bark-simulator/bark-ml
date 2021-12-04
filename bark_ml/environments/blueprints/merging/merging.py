@@ -12,15 +12,13 @@ from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
 from bark.core.world.opendrive import XodrDrivingDirection
 from bark.core.world.goal_definition import GoalDefinitionStateLimitsFrenet
-from bark.core.models.behavior import BehaviorMobilRuleBased
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
-from bark_ml.evaluators.reward_shaping_intersection import RewardShapingEvaluator
 
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
-
+from bark_ml.evaluators.reward_shaping import RewardShapingEvaluator
 
 class MergingLaneCorridorConfig(LaneCorridorConfig):
   """Configures the a single lane, e.g., the goal.
@@ -104,12 +102,8 @@ class MergingBlueprint(Blueprint):
         y_range=[-25, 25],
         follow_agent_id=True)
     dt = 0.2
-    params["ML"]["RewardShapingEvaluator"]["RewardShapingPotentials",
-      "Reward shaping functions.", {
-        "DistancePotential": {
-          "exponent": 0.4, "d_max": 10., "type": "positive"
-        }
-      }]
+    params["RewardShapingEvaluator"]["PotentialVelocityFunctor"][
+      "DesiredVel", "Desired velocity for the ego agent.", 20]
     evaluator = RewardShapingEvaluator(params)
     observer = NearestAgentsObserver(params)
     ml_behavior = ml_behavior

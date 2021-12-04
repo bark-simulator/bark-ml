@@ -200,7 +200,7 @@ class GeneralEvaluator:
       # "smoothness_functor" : SmoothnessFunctor(params),
       "min_max_vel_functor" : MinMaxVelFunctor(self._params),
       "pot_center_functor": PotentialCenterlineFunctor(self._params),
-      "pot_goal_switch_vel_functor": PotentialVelocityFunctor(self._params),
+      "pot_goal_switch_vel_functor": PotentialVelocityFunctor(self._params)
     }
 
   def Evaluate(self, observed_world, action):
