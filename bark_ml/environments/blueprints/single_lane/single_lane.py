@@ -52,7 +52,7 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
     world.map.GetRoadCorridor(
       self._road_ids, XodrDrivingDirection.forward)
     lane_corr = self._road_corridor.lane_corridors[0]
-    points = lane_corr.center_line.ToArray()[75:100]
+    points = lane_corr.center_line.ToArray()[75:]
     new_line = Line2d(points)
     return GoalDefinitionStateLimitsFrenet(new_line,
                                            (2.5, 2.),
