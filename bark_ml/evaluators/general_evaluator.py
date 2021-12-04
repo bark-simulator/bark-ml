@@ -49,7 +49,7 @@ class StepCountFunctor:
 
   def __call__(self, observed_world, action, eval_results):
     if eval_results["step_count"] > self._params[
-      "MaxStepCount", "", 120]:
+      "MaxStepCount", "", 220]:
       return True, self._params["StepCountReward", "", 0.], {}
     return False, 0, {}
 
@@ -181,7 +181,7 @@ class GeneralEvaluator:
                bark_eval_fns=None,
                bark_ml_eval_fns=None):
     self._eval_agent = eval_agent
-    self._params = params
+    self._params = params["GeneralEvaluator"]
     self._bark_eval_fns = bark_eval_fns or {
       "goal_reached" : lambda: EvaluatorGoalReached(),
       "collision" : lambda: EvaluatorCollisionEgoAgent(),
@@ -189,14 +189,14 @@ class GeneralEvaluator:
       "drivable_area" : lambda: EvaluatorDrivableArea()
     }
     self._bark_ml_eval_fns = bark_ml_eval_fns or {
-      "collision_functor" : CollisionFunctor(params),
-      "goal_reached_functor" : GoalFunctor(params),
-      "drivable_area_functor" : DrivableAreaFunctor(params),
-      "step_count_functor" : StepCountFunctor(params),
+      "collision_functor" : CollisionFunctor(self._params),
+      # "goal_reached_functor" : GoalFunctor(self._params),
+      "drivable_area_functor" : DrivableAreaFunctor(self._params),
+      "step_count_functor" : StepCountFunctor(self._params),
       # "smoothness_functor" : SmoothnessFunctor(params),
-      "min_max_vel_functor" : MinMaxVelFunctor(params),
-      "pot_center_functor": PotentialCenterlineFunctor(params),
-      "pot_goal_switch_vel_functor": PotentialVelocityFunctor(params),
+      "min_max_vel_functor" : MinMaxVelFunctor(self._params),
+      "pot_center_functor": PotentialCenterlineFunctor(self._params),
+      "pot_goal_switch_vel_functor": PotentialVelocityFunctor(self._params),
     }
 
   def Evaluate(self, observed_world, action):

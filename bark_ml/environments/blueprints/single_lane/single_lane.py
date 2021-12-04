@@ -20,7 +20,7 @@ from bark.core.world.goal_definition import GoalDefinitionStateLimitsFrenet
 from bark.core.models.dynamic import *
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
-from bark_ml.evaluators.reward_shaping import RewardShapingEvaluator
+from bark_ml.evaluators.general_evaluator import GeneralEvaluator
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
 
@@ -214,30 +214,15 @@ class SingleLaneBlueprint(Blueprint):
         params=params,
         map_interface=map_interface,
         lane_corridor_configs=lane_configs)
-    # HACK: change
-    # scenario_generation._map_interface = map_interface
-
     if viewer:
       viewer = MPViewer(params=params,
                         x_range=[-100, 100],
                         y_range=[-100, 100],
                         follow_agent_id=True)
-      # viewer = BufferedMPViewer(
-      #   params=params,
-      #   follow_agent_id=True)
-    dt = 0.2
-    params["ML"]["RewardShapingEvaluator"]["MaxVelocity"] = 4
-    params["ML"]["RewardShapingEvaluator"]["RewardShapingPotentials",
-      "Reward shaping functions.", {
-        "VelocityPotential" : {
-          "desired_vel": 5., "vel_dev_max": 10., "exponent": 0.2, "type": "positive"
-        }
-    }]
-    params["ML"]["RewardShapingEvaluator"]["MaxSteps", "max. number of steps", 100]
-    evaluator = RewardShapingEvaluator(params)
+    evaluator = GeneralEvaluator(params)
     observer = NearestAgentsObserver(params)
     ml_behavior = ml_behavior
-
+    dt = 0.2
     super().__init__(
       scenario_generation=scenario_generation,
       viewer=viewer,
