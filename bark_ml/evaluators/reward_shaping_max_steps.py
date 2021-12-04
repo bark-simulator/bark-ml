@@ -10,7 +10,6 @@ from bark.core.world.evaluation import \
 from bark.runtime.commons.parameters import ParameterServer
 
 from bark_ml.evaluators.reward_shaping import RewardShapingEvaluator
-from bark_ml.evaluators.commons import *
 
 def VelocityPotential(v, v_des, v_dev_max=10., a=0.4):
   return 1. - (np.sqrt((v-v_des)**2)/v_dev_max)**a

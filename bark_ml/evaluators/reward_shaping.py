@@ -12,7 +12,6 @@ from bark.core.models.dynamic import StateDefinition
 from bark.core.geometry import *
 
 from bark_ml.evaluators.evaluator import BaseEvaluator
-from bark_ml.evaluators.commons import *
 
 def VelocityPotential(v, v_des, v_dev_max=10., a=0.4):
   return 1. - (np.sqrt((v-v_des)**2)/v_dev_max)**a

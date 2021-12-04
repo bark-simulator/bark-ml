@@ -9,7 +9,6 @@ py_library(
             "general_evaluator.py",
             "reward_shaping_max_steps.py",
             "reward_shaping_intersection.py",
-            "commons.py",
             "evaluator.py"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
     imports = ["../external/bark_project/bark/python_wrapper/"],

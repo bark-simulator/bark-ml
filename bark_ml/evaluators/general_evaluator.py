@@ -13,7 +13,12 @@ from bark.core.models.dynamic import StateDefinition
 from bark.core.geometry import *
 
 
-class CollisionFunctor:
+class Functor:
+
+  def Reset(self):
+    pass
+
+class CollisionFunctor(Functor):
   def __init__(self, params):
     self._params = params["CollisionFunctor"]
 
@@ -23,7 +28,7 @@ class CollisionFunctor:
     return False, 0, {}
 
 
-class GoalFunctor:
+class GoalFunctor(Functor):
   def __init__(self, params):
     self._params = params["GoalFunctor"]
 
@@ -32,8 +37,7 @@ class GoalFunctor:
       return True, self._params["GoalReward", "", 1.], {}
     return False, 0, {}
 
-
-class DrivableAreaFunctor:
+class DrivableAreaFunctor(Functor):
   def __init__(self, params):
     self._params = params["DrivableAreaFunctor"]
 
@@ -43,7 +47,7 @@ class DrivableAreaFunctor:
     return False, 0, {}
 
 
-class StepCountFunctor:
+class StepCountFunctor(Functor):
   def __init__(self, params):
     self._params = params["StepCountFunctor"]
 
@@ -54,7 +58,7 @@ class StepCountFunctor:
     return False, 0, {}
 
 
-class MinMaxVelFunctor:
+class MinMaxVelFunctor(Functor):
   def __init__(self, params):
     self._params = params["MinMaxVelFunctor"]
 
@@ -67,7 +71,7 @@ class MinMaxVelFunctor:
     return False, 0, {}
 
 
-class SmoothnessFunctor:
+class SmoothnessFunctor(Functor):
   def __init__(self, params):
     self._params = params["SmoothnessFunctor"]
 
@@ -79,7 +83,7 @@ class SmoothnessFunctor:
     return False, 0, {}
 
 
-class PotentialBasedFunctor:
+class PotentialBasedFunctor(Functor):
   def __init__(self, params):
     self._params = params["PotentialBasedFunctor"]
 
@@ -218,6 +222,8 @@ class GeneralEvaluator:
     world.ClearEvaluators()
     for eval_name, eval_fn in self._bark_eval_fns.items():
       world.AddEvaluator(eval_name, eval_fn())
+    for _, eval_func in self._bark_ml_eval_fns.items():
+      eval_func.Reset()
     return world
 
   def SetViewer(self, viewer):

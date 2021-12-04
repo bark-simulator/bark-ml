@@ -12,7 +12,6 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark.core.geometry import *
 
 from bark_ml.evaluators.reward_shaping import RewardShapingEvaluator
-from bark_ml.evaluators.commons import *
 
 
 def DistancePotential(d, d_max, b=0.4):
