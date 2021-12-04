@@ -106,7 +106,7 @@ class IntersectionBlueprint(Blueprint):
         follow_agent_id=True)
     dt = 0.2
 
-    params["RewardShapingEvaluator"]["PotentialVelocityFunctor"][
+    params["ML"]["RewardShapingEvaluator"]["PotentialVelocityFunctor"][
       "DesiredVel", "Desired velocity for the ego agent.", 6]
     evaluator = RewardShapingEvaluator(params)
     observer = NearestAgentsObserver(params)

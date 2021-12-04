@@ -101,7 +101,7 @@ class HighwayBlueprint(Blueprint):
         y_range=[-55, 55],
         follow_agent_id=True)
     dt = 0.2
-    params["RewardShapingEvaluator"]["PotentialVelocityFunctor"][
+    params["ML"]["RewardShapingEvaluator"]["PotentialVelocityFunctor"][
           "DesiredVel", "Desired velocity for the ego agent.", 20]
     evaluator = RewardShapingEvaluator(params)
     observer = NearestObserver(params)

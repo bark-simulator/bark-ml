@@ -185,7 +185,7 @@ class GeneralEvaluator:
                bark_eval_fns=None,
                bark_ml_eval_fns=None):
     self._eval_agent = eval_agent
-    self._params = params["GeneralEvaluator"]
+    self._params = params["ML"]["GeneralEvaluator"]
     self._bark_eval_fns = bark_eval_fns or {
       "goal_reached" : lambda: EvaluatorGoalReached(),
       "collision" : lambda: EvaluatorCollisionEgoAgent(),

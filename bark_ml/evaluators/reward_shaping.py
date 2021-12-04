@@ -9,7 +9,7 @@ from bark_ml.evaluators.general_evaluator import *
 
 class RewardShapingEvaluator(GeneralEvaluator):
   def __init__(self, params):
-    self._params = params["RewardShapingEvaluator"]
+    self._params = params["ML"]["RewardShapingEvaluator"]
     super().__init__(
       params=self._params,
       bark_ml_eval_fns={
@@ -17,5 +17,5 @@ class RewardShapingEvaluator(GeneralEvaluator):
         "drivable_area_functor" : DrivableAreaFunctor(self._params),
         "step_count_functor" : StepCountFunctor(self._params),
         "pot_center_functor": PotentialCenterlineFunctor(self._params),
-        "pot_goal_switch_vel_functor": PotentialVelocityFunctor(self._params)
+        "pot_vel_functor": PotentialVelocityFunctor(self._params)
       })

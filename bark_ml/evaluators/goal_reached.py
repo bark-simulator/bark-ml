@@ -9,7 +9,7 @@ from bark_ml.evaluators.general_evaluator import *
 
 class GoalReached(GeneralEvaluator):
   def __init__(self, params):
-    self._params = params["GoalReached"]
+    self._params = params["ML"]["GoalReachedEvaluator"]
     super().__init__(
       params=self._params,
       bark_ml_eval_fns={
