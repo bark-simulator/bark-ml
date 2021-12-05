@@ -58,7 +58,7 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
     return GoalDefinitionStateLimitsFrenet(new_line,
                                            (2.5, 2.),
                                            (0.15, 0.15),
-                                           (0., 2.))
+                                           (0., 10.))
 
   def position(self, world):
     if self._road_corridor == None:
