@@ -47,6 +47,7 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
     self._longitudinalOffset = longitudinalOffset
     self._current_s = None
     self._distanceRange = distanceRange
+    self._hasVehicles = True
 
   def goal(self, world):
     world.map.GetRoadCorridor(
@@ -113,6 +114,9 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
     Returns:
         np.array -- time, x, y, theta, velocity
     """
+    if not self._hasVehicles:
+      return None
+
     if self._controlled_ids is not None:
       pose = self.position(world)
       if pose is None:
@@ -121,6 +125,14 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
       return np.array([0, pose[0], pose[1], pose[2], velocity, 0.])
     else:
       return super().state(world)
+
+  def reset(self):
+    """Resets the LaneCorridorConfig
+    """
+    if self._controlled_ids is None:
+      hasVehicles = np.random.randint(0, 2)
+      self._hasVehicles = hasVehicles
+    self._current_s = None
 
 
 class SingleLaneBlueprint(Blueprint):
@@ -178,9 +190,9 @@ class SingleLaneBlueprint(Blueprint):
         s_min=s_min,
         s_max=s_max,
         controlled_ids=None,
-        lateralOffset=[[1.8, 3.5]],
-        samplingRange=[7.5, 25],
-        distanceRange=[10, 80],
+        lateralOffset=[[1.8, 2.4]],
+        samplingRange=[20., 22.5],
+        distanceRange=[8, 70],
         wb=2.786,
         crad=1.)
       lane_configs.append(lane_conf_other_left)
@@ -195,9 +207,9 @@ class SingleLaneBlueprint(Blueprint):
         s_min=s_min,
         s_max=s_max,
         controlled_ids=None,
-        lateralOffset=[[-2.2, -3.5]],
-        samplingRange=[7.5, 25],
-        distanceRange=[10, 80])
+        lateralOffset=[[-2.2, -3.2]],
+        samplingRange=[20., 22.5],
+        distanceRange=[15., 70])
       lane_configs.append(lane_conf_other_right)
 
     # Map Definition
