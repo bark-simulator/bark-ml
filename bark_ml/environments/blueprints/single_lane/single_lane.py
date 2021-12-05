@@ -94,6 +94,7 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
 
   def behavior_model(self, world):
     behavior_model = BehaviorDynamicModel(self._params)
+    behavior_model.ActionToBehavior(np.array([0., 0.]))
     return behavior_model
 
   @property
@@ -190,8 +191,8 @@ class SingleLaneBlueprint(Blueprint):
         s_min=s_min,
         s_max=s_max,
         controlled_ids=None,
-        lateralOffset=[[1.8, 2.4]],
-        samplingRange=[20., 22.5],
+        lateralOffset=[[2.2, 2.4]],
+        samplingRange=[15., 17.5],
         distanceRange=[8, 70],
         wb=2.786,
         crad=1.)
@@ -208,7 +209,7 @@ class SingleLaneBlueprint(Blueprint):
         s_max=s_max,
         controlled_ids=None,
         lateralOffset=[[-2.2, -3.2]],
-        samplingRange=[20., 22.5],
+        samplingRange=[15., 17.5],
         distanceRange=[15., 70])
       lane_configs.append(lane_conf_other_right)
 

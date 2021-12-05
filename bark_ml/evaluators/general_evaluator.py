@@ -176,6 +176,20 @@ class PotentialGoalSwitchVelocityFunctor(PotentialBasedFunctor):
       return False, self._params["Gamma", "", 0.99]*cur_pot - prev_pot, {}
     return False, 0, {}
 
+
+class LowSpeedGoalFunctor(Functor):
+  def __init__(self, params):
+    self._params = params["LowSpeedGoalFunctor"]
+
+  def __call__(self, observed_world, action, eval_results):
+    ego_agent = observed_world.ego_agent
+    ego_vel = ego_agent.state[int(StateDefinition.VEL_POSITION)]
+    if eval_results["goal_reached"] and \
+      ego_vel < self._params["MaxSpeed", "", 1.]:
+      return True, self._params["GoalReward", "", 1.], {"low_speed_goal_reached": True}
+    return False, 0, {"low_speed_goal_reached": False}
+
+
 class GeneralEvaluator:
   """Evaluator using Functors"""
 
@@ -195,6 +209,7 @@ class GeneralEvaluator:
     self._bark_ml_eval_fns = bark_ml_eval_fns or {
       "collision_functor" : CollisionFunctor(self._params),
       # "goal_reached_functor" : GoalFunctor(self._params),
+      "low_speed_goal_reached_functor" : LowSpeedGoalFunctor(params),
       "drivable_area_functor" : DrivableAreaFunctor(self._params),
       "step_count_functor" : StepCountFunctor(self._params),
       # "smoothness_functor" : SmoothnessFunctor(params),
