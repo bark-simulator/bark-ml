@@ -136,11 +136,7 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
     self._current_s = None
 
   def velocity(self):
-    if not self._controlled_ids:
-      return 0.0
-    else:
-      return np.random.uniform( \
-        self._goalVelocityRange[0], self._goalVelocityRange[1])
+    return 0.0
 
 
 class SingleLaneBlueprint(Blueprint):
