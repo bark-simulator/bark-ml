@@ -135,6 +135,13 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
       self._hasVehicles = hasVehicles
     self._current_s = None
 
+  def velocity(self):
+    if not self._controlled_ids:
+      return 0.0
+    else:
+      return np.random.uniform( \
+        self._goalVelocityRange[0], self._goalVelocityRange[1])
+
 
 class SingleLaneBlueprint(Blueprint):
   """The SingleLane blueprint sets up a merging scenario with initial
@@ -192,7 +199,7 @@ class SingleLaneBlueprint(Blueprint):
         s_max=s_max,
         controlled_ids=None,
         lateralOffset=[[2.2, 2.4]],
-        samplingRange=[15., 17.5],
+        samplingRange=[25., 35.],
         distanceRange=[8, 70],
         wb=2.786,
         crad=1.)
@@ -209,7 +216,7 @@ class SingleLaneBlueprint(Blueprint):
         s_max=s_max,
         controlled_ids=None,
         lateralOffset=[[-2.2, -3.2]],
-        samplingRange=[15., 17.5],
+        samplingRange=[25., 35],
         distanceRange=[15., 70])
       lane_configs.append(lane_conf_other_right)
 
