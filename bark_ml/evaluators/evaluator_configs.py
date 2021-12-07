@@ -58,9 +58,9 @@ class SingleLaneEvaluator(GeneralEvaluator):
         "pot_goal_switch_vel_functor": PotentialVelocityFunctor(self._params)
       })
 
-class SmoothSingleLaneEvaluator(GeneralEvaluator):
+class SmoothnessSingleLaneEvaluator(GeneralEvaluator):
   def __init__(self, params):
-    self._params = params["ML"]["SmoothSingleLaneEvaluator"]
+    self._params = params["ML"]["SmoothnessSingleLaneEvaluator"]
     super().__init__(
       params=self._params,
       bark_ml_eval_fns={
