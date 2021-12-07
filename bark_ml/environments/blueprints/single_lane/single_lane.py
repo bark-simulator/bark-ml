@@ -151,19 +151,21 @@ class SingleLaneBlueprint(Blueprint):
                random_seed=0,
                ml_behavior=None,
                viewer=True,
-               mode="medium",
-               csv_path=None):
-    if mode == "dense":
-      ds_min = 10.
-      ds_max = 15.
-    if mode == "medium":
-      ds_min = 20.
-      ds_max = 35.
+               dt=0.2,
+               csv_path=None,
+               laneCorrConfigs={
+                 "corr0" :  {
+                   "samplingRange": [10., 20.],
+                   "distanceRange": [15., 70.],
+                   "lateralOffset": [[2.2, 2.4]]
+                 },
+                 "corr1" :  {
+                   "samplingRange": [10., 20.],
+                   "distanceRange": [15., 70.],
+                   "lateralOffset": [[-2.2, -3.2]]
+                  }}):
     params["World"]["remove_agents_out_of_map"] = False
-
     lane_configs = []
-    s_min = 0
-    s_max = 100
     local_params = params.clone()
     # ego vehicle
     lane_conf = SingleLaneLaneCorridorConfig(params=local_params,
@@ -171,50 +173,31 @@ class SingleLaneBlueprint(Blueprint):
                                              lane_corridor_id=0,
                                              min_vel=0.,
                                              max_vel=0.01,
-                                             ds_min=ds_min,
-                                             ds_max=ds_max,
-                                             s_min=s_min,
-                                             s_max=s_max,
                                              controlled_ids=True,
                                              lateralOffset=[[-0.1, 0.1]],
                                              wb=2.786,
-                                             crad=1.1)
+                                             crad=1.1,
+                                             samplingRange=[4., 10.],
+                                             distanceRange=[0., 20.])
     lane_configs.append(lane_conf)
+
 
     # other vehicle
     if params["World"]["other_vehicle", "Other Vehicle", True]:
-      lane_conf_other_left = SingleLaneLaneCorridorConfig(
-        params=local_params,
-        road_ids=[0],
-        lane_corridor_id=0,
-        min_vel=0.,
-        max_vel=0.,
-        ds_min=ds_min,
-        ds_max=ds_max,
-        s_min=s_min,
-        s_max=s_max,
-        controlled_ids=None,
-        lateralOffset=[[2.2, 2.4]],
-        samplingRange=[10., 20.],
-        distanceRange=[10, 70],
-        wb=2.786,
-        crad=1.)
-      lane_configs.append(lane_conf_other_left)
-      lane_conf_other_right = SingleLaneLaneCorridorConfig(
-        params=local_params,
-        road_ids=[0],
-        lane_corridor_id=0,
-        min_vel=0.,
-        max_vel=0.,
-        ds_min=ds_min,
-        ds_max=ds_max,
-        s_min=s_min,
-        s_max=s_max,
-        controlled_ids=None,
-        lateralOffset=[[-2.2, -3.2]],
-        samplingRange=[10., 20],
-        distanceRange=[17.5, 70])
-      lane_configs.append(lane_conf_other_right)
+      for conf in laneCorrConfigs.values():
+        lane_conf = SingleLaneLaneCorridorConfig(
+          params=local_params,
+          road_ids=[0],
+          lane_corridor_id=0,
+          min_vel=0.,
+          max_vel=0.,
+          controlled_ids=None,
+          lateralOffset=conf["lateralOffset"],
+          samplingRange=conf["samplingRange"],
+          distanceRange=conf["distanceRange"],
+          wb=2.786,
+          crad=1.)
+        lane_configs.append(lane_conf)
 
     # Map Definition
     if csv_path is None:
@@ -242,7 +225,7 @@ class SingleLaneBlueprint(Blueprint):
     evaluator = GeneralEvaluator(params)
     observer = NearestAgentsObserver(params)
     ml_behavior = ml_behavior
-    dt = 0.2
+
     super().__init__(
       scenario_generation=scenario_generation,
       viewer=viewer,
@@ -258,7 +241,8 @@ class ContinuousSingleLaneBlueprint(SingleLaneBlueprint):
                num_scenarios=25,
                random_seed=0,
                viewer=True,
-               mode="dense",
+               dt=0.2,
+               laneCorrConfigs={},
                csv_path=None):
     ml_behavior = BehaviorContinuousML(params)
     SingleLaneBlueprint.__init__(self,
@@ -266,8 +250,9 @@ class ContinuousSingleLaneBlueprint(SingleLaneBlueprint):
                               num_scenarios=num_scenarios,
                               random_seed=random_seed,
                               ml_behavior=ml_behavior,
-                              viewer=True,
-                              mode=mode,
+                              viewer=viewer,
+                              dt=dt,
+                              laneCorrConfigs=laneCorrConfigs,
                               csv_path=csv_path)
 
 
@@ -276,7 +261,9 @@ class DiscreteSingleLaneBlueprint(SingleLaneBlueprint):
                params=None,
                num_scenarios=25,
                random_seed=0,
-               mode="dense",
+               viewer=True,
+               dt=0.2,
+               laneCorrConfigs={},
                csv_path=None):
     ml_behavior = BehaviorDiscreteMacroActionsML(params)
     SingleLaneBlueprint.__init__(self,
@@ -284,6 +271,7 @@ class DiscreteSingleLaneBlueprint(SingleLaneBlueprint):
                               num_scenarios=num_scenarios,
                               random_seed=random_seed,
                               ml_behavior=ml_behavior,
-                              viewer=True,
-                              mode=mode,
+                              viewer=viewer,
+                              dt=dt,
+                              laneCorrConfigs=laneCorrConfigs,
                               csv_path=csv_path)

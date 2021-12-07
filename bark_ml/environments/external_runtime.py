@@ -71,7 +71,7 @@ class ExternalRuntime:
     self._world = world
 
   def addEgoAgent(self, state):
-    agent = self._createAgent(state, self._ml_behavior)
+    agent = self._createAgent(state, self._ml_behavior, ego_vehicle=True)
     self._world.AddAgent(agent)
     self._ego_id = agent.id
     return agent.id
@@ -91,9 +91,11 @@ class ExternalRuntime:
     self._world.AddAgent(agent)
     return agent.id
 
-  def _createAgent(self, state, behavior, wb=2., crad=1.):
+  def _createAgent(self, state, behavior, wb=2., crad=1., ego_vehicle=False):
     agent_behavior = behavior
     agent_dyn = SingleTrackModel(self._params)
+    if ego_vehicle:
+      agent_dyn = SingleTrackSteeringrateModel(self._params)
     agent_exec = ExecutionModelInterpolate(self._params)
     agent_polygon = GenerateCarRectangle(wb, crad)
     agent_params = self._params.AddChild("agent")
