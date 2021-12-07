@@ -43,6 +43,33 @@
         "NumVisualizationEpisodes": 10
     },
     "ML": {
+        "GeneralEvaluator": {
+            "CollisionFunctor": {
+                "CollisionReward": -1.0
+            },
+            "DrivableAreaFunctor": {
+                "DrivableAreaReward": -1.0
+            },
+            "StepCountFunctor": {
+                "StepCountReward": 0.0
+            },
+            "MinMaxVelFunctor": {
+                "MaxVelViolationReward": -1.0
+            },
+            "PotentialCenterlineFunctor": {
+                "MaxDist": 100.0,
+                "Exponent": 0.2
+            },
+            "PotentialGoalSwitchVelocityFunctor": {
+                "MaxDist": 100.0,
+                "DesiredVel": 4.0,
+                "VelExponent": 0.2,
+                "MaxVel": 100.0
+            },
+            "LowSpeedGoalFunctor": {
+                "GoalReward": 1.0
+            }
+        },
         "BehaviorTFAAgents": {
             "NumCheckpointsToKeep": 3
         },

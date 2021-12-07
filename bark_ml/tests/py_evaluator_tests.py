@@ -15,7 +15,7 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
   ContinuousSingleLaneBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-from bark_ml.evaluators.goal_reached import GoalReached
+from bark_ml.evaluators.evaluator_configs import GoalReached
 from bark_ml.evaluators.general_evaluator import GeneralEvaluator
 from bark_ml.core.evaluators import GoalReachedEvaluator
 

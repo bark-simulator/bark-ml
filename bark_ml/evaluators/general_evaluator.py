@@ -168,7 +168,7 @@ class PotentialGoalSwitchVelocityFunctor(PotentialBasedFunctor):
       prev_v = prev_state[int(StateDefinition.VEL_POSITION)]
       cur_v = cur_state[int(StateDefinition.VEL_POSITION)]
       prev_pot = self.VelocityPotential(
-        prev_v, desired_vel, self._params["MaxVel", "", 20.],
+        prev_v, desired_vel, self._params["MaxVel", "", 100.],
         self._params["VelExponent", "", 0.2])
       cur_pot = self.VelocityPotential(
         cur_v,  desired_vel, self._params["MaxVel", "", 100.],

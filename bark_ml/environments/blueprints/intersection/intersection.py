@@ -18,7 +18,7 @@ from bark_ml.environments.blueprints.blueprint import Blueprint
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
-from bark_ml.evaluators.reward_shaping import RewardShapingEvaluator
+from bark_ml.evaluators.evaluator_configs import RewardShapingEvaluator
 
 class IntersectionLaneCorridorConfig(LaneCorridorConfig):
   """Configures the a single lane, e.g., the goal.

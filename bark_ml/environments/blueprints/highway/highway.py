@@ -15,7 +15,7 @@ from bark.core.world.goal_definition import GoalDefinitionPolygon
 from bark.core.geometry import Polygon2d, Point2d
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
-from bark_ml.evaluators.reward_shaping import RewardShapingEvaluator
+from bark_ml.evaluators.evaluator_configs import RewardShapingEvaluator
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
 from bark_ml.core.observers import NearestObserver
