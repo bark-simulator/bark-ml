@@ -66,12 +66,16 @@ class StaticObserver {
     max_vel_lat_ = params->GetReal("ML::StaticObserver::MaxVelLat", "", 10.0);
     max_dist_ = params->GetReal("ML::StaticObserver::MaxDist", "", 75.0);
     min_s_ = params->GetReal("ML::StaticObserver::MinS", "", 0.0);
-    max_s_ = params->GetReal("ML::StaticObserver::MaxS", "", 50.0);
+    max_s_ = params->GetReal("ML::StaticObserver::MaxS", "", 100.0);
     min_d_ = params->GetReal("ML::StaticObserver::MinD", "", -10.0);
     max_d_ = params->GetReal("ML::StaticObserver::MaxD", "", 10.0);
     min_theta_ = params->GetReal("ML::StaticObserver::MinTheta", "", -B_PI);
     max_theta_ = params->GetReal("ML::StaticObserver::MaxTheta", "", B_PI);
-    observation_len_ = 4+4;
+    min_steering_rate_ = params->GetReal(
+      "ML::StaticObserver::MinSteeringRate", "", -4.0);;
+    max_steering_rate_ = params->GetReal(
+      "ML::StaticObserver::MaxSteeringRate", "", 4.0);;
+    observation_len_ = 6+4;
   }
 
   double Norm(const double val, const double mi, const double ma) const {
@@ -99,13 +103,21 @@ class StaticObserver {
    */
   ObservedState GetEgoState(const ObservedWorld& observed_world) const {
     const auto current_ego_frenet = GetEgoFrenet(observed_world);
-    ObservedState ego_nn_state(1, 4);
+    ObservedState ego_nn_state(1, 6);
     const double normalized_angle = NormToPI(current_ego_frenet.angle);
-
+    // TODO: check which dynamic model is used and integrate all the states
+    //       depending on that
+    auto ego_agent = observed_world.GetEgoAgent();
+    auto state = ego_agent->GetCurrentState();
+    double at_goal = 0.;
+    if (observed_world.GetEgoAgent()->AtGoal())
+      at_goal = 1.;
     ego_nn_state << Norm(current_ego_frenet.lat, min_d_, max_d_),
                     Norm(normalized_angle, min_theta_, max_theta_),
                     Norm(current_ego_frenet.vlon, min_vel_lon_, max_vel_lon_),
-                    Norm(current_ego_frenet.vlat, min_vel_lat_, max_vel_lat_);
+                    Norm(current_ego_frenet.vlat, min_vel_lat_, max_vel_lat_),
+                    Norm(state[5], min_steering_rate_, max_steering_rate_),
+                    at_goal;
     return ego_nn_state;
   }
 
@@ -212,7 +224,8 @@ class StaticObserver {
   double min_theta_, max_theta_, min_vel_lon_,
          max_vel_lon_, min_vel_lat_,
          max_vel_lat_, max_dist_,
-         min_d_, max_d_, min_s_, max_s_;
+         min_d_, max_d_, min_s_, max_s_,
+         min_steering_rate_, max_steering_rate_;
 };
 
 }  // namespace observers

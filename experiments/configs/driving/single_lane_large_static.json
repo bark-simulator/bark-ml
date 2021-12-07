@@ -5,7 +5,7 @@
             "Config": {}
         },
         "Evaluator": {
-            "ModuleName": "RewardShapingEvaluator",
+            "ModuleName": "GeneralEvaluator",
             "Config": {}
         },
         "Runtime": {
@@ -25,11 +25,109 @@
             "Config": {
                 "num_scenarios": 10000,
                 "viewer": true,
-                "mode": "dense"
+                "laneCorrConfigs": {
+                    "left_corr" :  {
+                      "samplingRange": [10, 20],
+                      "distanceRange": [15, 70],
+                      "lateralOffset": [[2.2, 2.4]]
+                    },
+                    "right_corr" :  {
+                      "samplingRange": [10, 20],
+                      "distanceRange": [15, 70],
+                      "lateralOffset": [[-2.2, -3.2]]
+                }},
+                "dt": 0.2
             }
         },
         "NumEvaluationEpisodes": 500,
         "NumVisualizationEpisodes": 10
+    },
+    "ML": {
+        "GeneralEvaluator": {
+            "CollisionFunctor": {
+                "CollisionReward": -1.0
+            },
+            "DrivableAreaFunctor": {
+                "DrivableAreaReward": -1.0
+            },
+            "StepCountFunctor": {
+                "StepCountReward": 0.0
+            },
+            "MinMaxVelFunctor": {
+                "MaxVelViolationReward": -1.0
+            },
+            "PotentialCenterlineFunctor": {
+                "MaxDist": 100.0,
+                "Exponent": 0.2
+            },
+            "PotentialGoalSwitchVelocityFunctor": {
+                "MaxDist": 100.0,
+                "DesiredVel": 4.0,
+                "VelExponent": 0.2,
+                "MaxVel": 100.0
+            },
+            "LowSpeedGoalFunctor": {
+                "GoalReward": 1.0
+            }
+        },
+        "BehaviorTFAAgents": {
+            "NumCheckpointsToKeep": 3
+        },
+        "TFARunner": {
+            "EvaluationSteps": 25,
+            "InitialCollectionEpisodes": 50,
+            "CollectionEpisodesPerStep": 1
+        },
+        "BehaviorContinuousML": {
+            "ActionsLowerBound": [
+                -2.0,
+                -4.0
+            ],
+            "ActionsUpperBound": [
+                2.0,
+                4.0
+            ]
+        },
+        "BehaviorSACAgent": {
+            "ActorFcLayerParams": [
+                512,
+                512,
+                512
+            ],
+            "CriticJointFcLayerParams": [
+                512,
+                512,
+                512
+            ],
+            "ActorLearningRate": 0.0003,
+            "CriticLearningRate": 0.0003,
+            "AlphaLearningRate": 0.0003,
+            "TargetUpdateTau": 0.05,
+            "TargetUpdatePeriod": 3,
+            "Gamma": 0.995,
+            "RewardScaleFactor": 1.0,
+            "AgentName": "sac_agent",
+            "DebugSummaries": false,
+            "ReplayBufferCapacity": 10000,
+            "ParallelBufferCalls": 1,
+            "BatchSize": 512,
+            "BufferNumSteps": 2,
+            "BufferPrefetch": 3
+        },
+        "SACRunner": {
+            "NumberOfCollections": 500000,
+            "EvaluateEveryNSteps": 2000
+        },
+        "NearestAgentsObserver": {
+            "MaxOtherDistance": 100
+        }
+    },
+    "BehaviorDynamicModel": {
+        "IntegrationTimeDelta": 0.05000000074505806
+    },
+    "World": {
+        "remove_agents_out_of_map": true,
+        "other_vehicle": true
     },
     "Visualization": {
         "Agents": {
@@ -106,97 +204,5 @@
         "Evaluation": {
             "DrawLTLDebugInfo": false
         }
-    },
-    "ML": {
-        "RewardShapingEvaluator": {
-            "RewardShapingPotentials": {
-                "VelocityPotential" : {
-                    "desired_vel": 5.0, "vel_dev_max": 10.0, "exponent": 0.2, "type": "positive"
-                  }
-            },
-            "MaxSteps": 200
-        },
-        "BehaviorTFAAgents": {
-            "NumCheckpointsToKeep": 3
-        },
-        "TFARunner": {
-            "EvaluationSteps": 25,
-            "InitialCollectionEpisodes": 50,
-            "CollectionEpisodesPerStep": 1
-        },
-        "GoalReachedEvaluator": {
-            "GoalReward": 1.0,
-            "CollisionPenalty": -1.0,
-            "MaxSteps": 60
-        },
-        "BehaviorContinuousML": {
-            "ActionsLowerBound": [
-                -2.0,
-                -0.1
-            ],
-            "ActionsUpperBound": [
-                2.0,
-                0.1
-            ]
-        },
-        "StateObserver": {
-            "VelocityRange": [
-                0,
-                100
-            ],
-            "ThetaRange": [
-                0,
-                6.283185307179586
-            ],
-            "NormalizationEnabled": true,
-            "MaxNumAgents": 5
-        },
-        "BehaviorSACAgent": {
-            "ActorFcLayerParams": [
-                512,
-                512,
-                512
-            ],
-            "CriticJointFcLayerParams": [
-                512,
-                512,
-                512
-            ],
-            "ActorLearningRate": 0.0003,
-            "CriticLearningRate": 0.0003,
-            "AlphaLearningRate": 0.0003,
-            "TargetUpdateTau": 0.05,
-            "TargetUpdatePeriod": 3,
-            "Gamma": 0.995,
-            "RewardScaleFactor": 1.0,
-            "AgentName": "sac_agent",
-            "DebugSummaries": false,
-            "ReplayBufferCapacity": 10000,
-            "ParallelBufferCalls": 1,
-            "BatchSize": 512,
-            "BufferNumSteps": 2,
-            "BufferPrefetch": 3
-        },
-        "SACRunner": {
-            "NumberOfCollections": 500000,
-            "EvaluateEveryNSteps": 2000
-        },
-        "GoalReachedGuiding": {
-            "GoalReward": 1.0,
-            "CollisionPenalty": -1.0,
-            "MaxSteps": 50,
-            "ActionPenalty": 0.01,
-            "GoalDistance": 0.01
-        },
-        "NearestAgentsObserver": {
-            "MaxOtherDistance": 100
-        }
-    },
-    "BehaviorDynamicModel": {
-        "IntegrationTimeDelta": 0.05000000074505806
-    },
-    "World": {
-        "remove_agents_out_of_map": true,
-        "other_vehicle": true
     }
 }

@@ -15,11 +15,9 @@ from bark.core.world.goal_definition import GoalDefinitionPolygon
 from bark.core.geometry import Polygon2d, Point2d
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
-from bark_ml.evaluators.reward_shaping_max_steps import RewardShapingEvaluatorMaxSteps
+from bark_ml.evaluators.evaluator_configs import RewardShapingEvaluator
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
-
-# from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.core.observers import NearestObserver
 
 
@@ -103,13 +101,9 @@ class HighwayBlueprint(Blueprint):
         y_range=[-55, 55],
         follow_agent_id=True)
     dt = 0.2
-    params["ML"]["RewardShapingEvaluator"]["RewardShapingPotentials",
-      "Reward shaping functions.", {
-        "VelocityPotential" : {
-          "desired_vel": 20., "vel_dev_max": 20., "exponent": 0.2, "type": "positive"
-        }
-    }]
-    evaluator = RewardShapingEvaluatorMaxSteps(params)
+    params["ML"]["RewardShapingEvaluator"]["PotentialVelocityFunctor"][
+          "DesiredVel", "Desired velocity for the ego agent.", 20]
+    evaluator = RewardShapingEvaluator(params)
     observer = NearestObserver(params)
     ml_behavior = ml_behavior
 

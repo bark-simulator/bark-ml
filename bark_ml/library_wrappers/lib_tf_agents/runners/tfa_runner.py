@@ -216,16 +216,16 @@ class TFARunner:
       self._tracer.Trace(env_data, **kwargs)
       state, reward, is_terminal, info = env_data
       # graph stuff
-      try:
-        graph_tuples = self._agent._agent._actor_network._latent_trace
-        ego_id = self._environment._scenario._eval_agent_ids[0]
-        self.ProcessGraphTuple(
-          self._environment,
-          graph_tuples[-1],
-          ego_id,
-          render)
-      except:
-        pass
+      # try:
+      #   graph_tuples = self._agent._agent._actor_network._latent_trace
+      #   ego_id = self._environment._scenario._eval_agent_ids[0]
+      #   self.ProcessGraphTuple(
+      #     self._environment,
+      #     graph_tuples[-1],
+      #     ego_id,
+      #     render)
+      # except:
+      #   pass
       if render:
         self._logger.info(f"The ego agent's action is {action} and " + \
                           f"a reward of {reward}.")
@@ -244,6 +244,7 @@ class TFARunner:
         self._logger.info(f"Simulating episode {i}.")
       self.RunEpisode(
         render=render, num_episode=i, trace_colliding_ids=trace_colliding_ids, **kwargs)
+
     mean_col_rate = self._tracer.collision_rate
     goal_reached = self._tracer.success_rate
     mean_reward = self._tracer.mean_reward
@@ -257,11 +258,24 @@ class TFARunner:
         "mean_collision_rate", mean_col_rate, step=global_iteration)
       tf.summary.scalar(
         "goal_reached", goal_reached, step=global_iteration)
+
+      res = {}
+      for state in self._tracer._states:
+        for key, val in state.items():
+          if key not in res:
+            res[key] = 0.
+          res[key] += val
+
+      for key, val in res.items():
+        if key not in ["state", "goal_reached", "step_count", "num_episode", "reward"]:
+          tf.summary.scalar(f"auto_{key}", val, step=global_iteration)
+
     print(
       f"The agent achieved an average reward of {mean_reward:.3f}," +
       f" collision-rate of {mean_col_rate:.5f}, took on average" +
       f" {mean_steps:.3f} steps, and reached the goal " +
       f" {goal_reached:.3f} (evaluated over {num_episodes} episodes).")
+
     if trace_colliding_ids:
       return self._colliding_scenario_ids
     else:

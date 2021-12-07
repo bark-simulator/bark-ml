@@ -15,12 +15,10 @@ from bark.core.world.goal_definition import GoalDefinitionPolygon
 from bark.core.models.behavior import BehaviorMobilRuleBased
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
-from bark_ml.evaluators.reward_shaping_intersection import RewardShapingEvaluatorIntersection
-# from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
-
+from bark_ml.evaluators.evaluator_configs import RewardShapingEvaluator
 
 class IntersectionLaneCorridorConfig(LaneCorridorConfig):
   """Configures the a single lane, e.g., the goal.
@@ -107,8 +105,10 @@ class IntersectionBlueprint(Blueprint):
         y_range=[-30, 30],
         follow_agent_id=True)
     dt = 0.2
-    params["ML"]["GoalReachedEvaluator"]["MaxSteps"] = 100
-    evaluator = RewardShapingEvaluatorIntersection(params)
+
+    params["ML"]["RewardShapingEvaluator"]["PotentialVelocityFunctor"][
+      "DesiredVel", "Desired velocity for the ego agent.", 6]
+    evaluator = RewardShapingEvaluator(params)
     observer = NearestAgentsObserver(params)
     ml_behavior = ml_behavior
 
