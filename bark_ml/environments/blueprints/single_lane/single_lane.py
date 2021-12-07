@@ -195,8 +195,8 @@ class SingleLaneBlueprint(Blueprint):
         s_max=s_max,
         controlled_ids=None,
         lateralOffset=[[2.2, 2.4]],
-        samplingRange=[25., 35.],
-        distanceRange=[8, 70],
+        samplingRange=[10., 20.],
+        distanceRange=[10, 70],
         wb=2.786,
         crad=1.)
       lane_configs.append(lane_conf_other_left)
@@ -212,8 +212,8 @@ class SingleLaneBlueprint(Blueprint):
         s_max=s_max,
         controlled_ids=None,
         lateralOffset=[[-2.2, -3.2]],
-        samplingRange=[25., 35],
-        distanceRange=[15., 70])
+        samplingRange=[10., 20],
+        distanceRange=[17.5, 70])
       lane_configs.append(lane_conf_other_right)
 
     # Map Definition
