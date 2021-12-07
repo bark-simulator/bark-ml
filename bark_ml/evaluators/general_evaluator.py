@@ -76,10 +76,11 @@ class SmoothnessFunctor(Functor):
     self._params = params["SmoothnessFunctor"]
 
   def __call__(self, observed_world, action, eval_results):
-    ego_agent_state = observed_world.ego_agent.state
-    # TODO: what is a plausible steering rate
-    if abs(ego_agent_state[5]) > self._params["MaxSteeringRate", "", 0.2]:
-      return True, self._params["MaxSteeringRateViolationReward"], {}
+    acc = action[0]
+    delta_dot = action[1]
+    reward = 0.
+    reward += self._params["AccWeight", "", 0.5]*acc*acc
+    reward += self._params["SteeringRateWeight", "", 0.5]*delta_dot*delta_dot
     return False, 0, {}
 
 

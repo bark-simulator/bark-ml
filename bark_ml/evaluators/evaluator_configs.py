@@ -67,6 +67,7 @@ class SmoothSingleLaneEvaluator(GeneralEvaluator):
         "collision_functor" : CollisionFunctor(self._params),
         "low_speed_goal_reached_functor" : LowSpeedGoalFunctor(params),
         "drivable_area_functor" : DrivableAreaFunctor(self._params),
+        "smoothness_functor": SmoothnessFunctor(self._params),
         "step_count_functor" : StepCountFunctor(self._params),
         "min_max_vel_functor" : MinMaxVelFunctor(self._params),
         "pot_center_functor": PotentialCenterlineFunctor(self._params),
