@@ -35,9 +35,9 @@
                       "samplingRange": [10, 20],
                       "distanceRange": [15, 70],
                       "lateralOffset": [[-2.2, -3.2]]
-                }}
-            },
-            "dt" : 0.2
+                }},
+                "dt": 0.2
+            }
         },
         "NumEvaluationEpisodes": 500,
         "NumVisualizationEpisodes": 10
