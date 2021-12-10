@@ -7,7 +7,6 @@
 import logging
 import tensorflow as tf
 import numpy as np
-tf.compat.v1.enable_v2_behavior()
 
 # BARK imports
 from bark.runtime.commons.parameters import ParameterServer
@@ -234,8 +233,10 @@ class TFARunner:
       if is_terminal and (info["collision"] or info["drivable_area"]) and trace_colliding_ids is not None:
         self._colliding_scenario_ids.append(
           self._environment._scenario_idx)
+        return True
       if is_terminal and info["goal_reached"]:
         self._logger.info("\033[92mThe ego agent reached its goal. \033[0m")
+    return False
 
   def Run(
     self, num_episodes=10, render=False, mode="not_training",

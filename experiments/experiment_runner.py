@@ -9,8 +9,9 @@ import tensorflow as tf
 import numpy as np
 from bark.runtime.commons.parameters import ParameterServer
 from experiments.experiment import Experiment
-from pickle import NONE
+import pickle
 import json
+import pathlib
 
 FLAGS = flags.FLAGS
 flags.DEFINE_enum("mode",
@@ -51,6 +52,7 @@ class ExperimentRunner:
     self.SetCkptsAndSummaries()
     self._experiment = self.BuildExperiment(json_file, mode)
     self.Visitor(mode)
+    self.path = os.getcwd()
 
   def Visitor(self, mode):
     if mode == "train":
@@ -130,14 +132,13 @@ class ExperimentRunner:
     return self._experiment.runner.Run(
       num_episodes=num_episodes, render=False, trace_colliding_ids=True)
     
-  def dump(self, data, file="dump.json"):
-    with open(file, 'w') as jsonFile:
-        json.dump(data, jsonFile)
-    jsonFile.close()
+  def dump(self, data, file=(str(pathlib.Path.home()) + '/dump.json')):
+    with open(file, 'w') as file:
+        json.dump(data, file)
     
-  def read(self, file="dump.json"):
-    with open(file, 'r') as jsonFile:
-        return json.load(jsonFile)
+  def read(self, file=(str(pathlib.Path.home()) + '/dump.json')):
+    with open(file, 'r') as file:
+        return json.load(file)
 
   def Collisions(self):
     self.CompareHashes()
@@ -147,30 +148,45 @@ class ExperimentRunner:
       num_episodes=num_episodes, render=False, trace_colliding_ids=True)
     if collisions == None:
         self.dump(data = None)
+        print("\n")
+        print("Collisions happened in these scenarios:\n")
+        print(collisions)
         return collisions
     elif self.collisionIDs == None:
         self.collisionIDs = collisions
         self.dump(data = self.collisionIDs)
+        print("\n")
+        print("Collisions happened in these scenarios:\n")
+        print(collisions)
         return collisions
     self.collisionIDs.append(collisions)
     print("\n")
-    print("Collisions:\n")
+    print("Collisions happened in these scenarios:\n")
     print(collisions)
     self.dump(data = self.collisionIDs)
     return collisions
     
   def Validate(self):
-    ids2 = [1, 3, 5]
-    print("dumping data")
-    self.dump(data = ids2)
-    print("dumped")
+    #ids2 = [1, 3, 5]
+    #print("dumping data")
+    #self.dump(data = ids2)
+    #print("dumped")
     ids = self.read()
+    print(ids)
     self.CompareHashes()
-    if self.collisionIDs == None:
-        return None
+    #if self.collisionIDs == None:
+    #    return None
+    noCollision = []
     for i in ids:
-        self._experiment.runner.RunEpisode(render=True, num_episode=i)
-    return self.collisionIDs
+        print("\nValidation episode ")
+        print(i)
+        print("\n")
+        if not self._experiment.runner.RunEpisode(render=False, num_episode=i, trace_colliding_ids=True):
+            noCollision.append(i)
+    print("\n")
+    print("No collisions happened in these scenarios:\n")
+    print(noCollision)
+    return noCollision
     
 
   def Visualize(self):

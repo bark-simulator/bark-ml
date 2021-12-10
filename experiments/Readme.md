@@ -5,16 +5,15 @@ To avoid mismatching training and execution runs, the experiment runner addition
 
 ## Usage
 
-For training, run the following command:
-`bazel run //experiments:experiment_runner -- --exp_json=/ABSOLUTE_PATH/bark-ml/experiments/configs/highway_gnn.json --mode=train`
+To train a neural network that does not obey traffic rules (as reference):
+`bazel run //experiments:experiment_runner --define ltl_rules=true --jobs 2 -- --exp_json=/home/groetzner/Documents/bark/bark-ml/bark-ml/experiments/configs/rules/single_lane_ref.json --mode=train`
 
-To visualize the current checkpoint, run:
-`bazel run //experiments:experiment_runner -- --exp_json=/ABSOLUTE_PATH/bark-ml/experiments/configs/highway_gnn.json`
+To train a neural network that obeys traffic rules:
+`bazel run //experiments:experiment_runner --define ltl_rules=true --jobs 2 -- --exp_json=/home/groetzner/Documents/bark/bark-ml/bark-ml/experiments/configs/rules/single_lane.json --mode=train`
 
-And to evaluate the performance of the agent, use:
-`bazel run //experiments:experiment_runner -- --exp_json=/ABSOLUTE_PATH/bark-ml/experiments/configs/highway_gnn.json --mode=evaluate`
+Save all scenarios where the reference-net violates traffic rules:
+`bazel run //experiments:experiment_runner --define ltl_rules=true --jobs 2 -- --exp_json=/home/groetzner/Documents/bark/bark-ml/bark-ml/experiments/configs/rules/single_lane_ref.json --mode=collisions`
+The scenarios are saved as `$HOME/dump.json`.
 
-## Cluster Usage
-
-sbatch run_experiment_normal.sh --exp_json=experiments/experiment_runner.runfiles/bark_ml/experiments/configs/phd/01_hyperparams/dnns/merging_large_network.json --mode=train
-
+Execute the second net in the saved scenarios:
+`bazel run //experiments:experiment_runner --define ltl_rules=true --jobs 2 -- --exp_json=/home/groetzner/Documents/bark/bark-ml/bark-ml/experiments/configs/rules/single_lane.json --mode=validate`

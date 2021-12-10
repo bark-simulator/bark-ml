@@ -92,7 +92,7 @@ class EvaluatorTrafficRules(RewardShapingEvaluator):
       eval_results["goal_reached"] = 0
     # calculate reward
     print("\n Traffic Rule Violation: ")
-    print(self.current_traffic_rule_violations)
+    #print(self.current_traffic_rule_violations)
     reward -= collision * self._col_penalty + \
       success * self._goal_reward - self.current_traffic_rule_violations
     #print('\nReward:\n')
