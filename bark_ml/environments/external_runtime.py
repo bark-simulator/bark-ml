@@ -95,7 +95,7 @@ class ExternalRuntime:
     agent_behavior = behavior
     agent_dyn = SingleTrackModel(self._params)
     if ego_vehicle:
-      agent_dyn = SingleTrackSteeringrateModel(self._params)
+      agent_dyn = SingleTrackSteeringRateModel(self._params)
     agent_exec = ExecutionModelInterpolate(self._params)
     agent_polygon = GenerateCarRectangle(wb, crad)
     agent_params = self._params.AddChild("agent")
