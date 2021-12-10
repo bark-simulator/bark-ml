@@ -64,7 +64,7 @@ class PyEnvironmentTests(unittest.TestCase):
   def test_add_ego_agent(self):
     params = ParameterServer()
     env = self.create_runtime_and_setup_empty_world(params)
-    state = np.array([0, 0, 0, 0, 0])
+    state = np.array([0, 0, 0, 0, 0, 0])
     env.addEgoAgent(state)
     self.assertTrue(np.array_equal(env.ego_agent.state, state))
 
@@ -97,7 +97,7 @@ class PyEnvironmentTests(unittest.TestCase):
     env.ml_behavior = sac_agent
 
     # add ego
-    state = np.array([0, 0, 0, 0, 0])
+    state = np.array([0, 0, 0, 0, 0, 0])
     env.addEgoAgent(state)
 
     N = 10
