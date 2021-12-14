@@ -14,6 +14,7 @@ import os
 
 import bark
 from bark.core.world import World
+from bark.core.geometry import Line2d
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.core.world.map import MapInterface
@@ -65,7 +66,8 @@ class PyEnvironmentTests(unittest.TestCase):
     params = ParameterServer()
     env = self.create_runtime_and_setup_empty_world(params)
     state = np.array([0, 0, 0, 0, 0, 0])
-    env.addEgoAgent(state)
+    goal_line = Line2d(np.array([[0., 0.], [1., 1.]]))
+    env.addEgoAgent(state, goal_line)
     self.assertTrue(np.array_equal(env.ego_agent.state, state))
 
   def test_add_obstacle(self):
@@ -98,7 +100,8 @@ class PyEnvironmentTests(unittest.TestCase):
 
     # add ego
     state = np.array([0, 0, 0, 0, 0, 0])
-    env.addEgoAgent(state)
+    goal_line = Line2d(np.array([[0., 0.], [1., 1.]]))
+    env.addEgoAgent(state, goal_line)
 
     N = 10
     state_traj, action_traj = env.generateTrajectory(0.2, N)
@@ -113,7 +116,8 @@ class PyEnvironmentTests(unittest.TestCase):
 
     # add ego
     state = np.array([0, 0, 0, 0, 0])
-    env.addEgoAgent(state)
+    goal_line = Line2d(np.array([[0., 0.], [1., 1.]]))
+    env.addEgoAgent(state, goal_line)
 
     N = 10
     state_traj, action_traj = env.generateTrajectory(0.2, N)
@@ -131,7 +135,8 @@ class PyEnvironmentTests(unittest.TestCase):
 
     env.ml_behavior = behavior_model
     state = np.array([0, 0, 0, 0, 0])
-    env.addEgoAgent(state)
+    goal_line = Line2d(np.array([[0., 0.], [1., 1.]]))
+    env.addEgoAgent(state, goal_line)
     scenario = env.getScenarioForSerialization()
     self.assertTrue(isinstance(scenario, Scenario))
 
