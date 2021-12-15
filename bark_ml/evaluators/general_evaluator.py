@@ -186,7 +186,7 @@ class LowSpeedGoalFunctor(Functor):
     ego_agent = observed_world.ego_agent
     ego_vel = ego_agent.state[int(StateDefinition.VEL_POSITION)]
     if eval_results["goal_reached"] and \
-      ego_vel < self._params["MaxSpeed", "", 1.]:
+      ego_vel < self._params["MaxSpeed", "", 0.2]:
       return True, self._params["GoalReward", "", 1.], {"low_speed_goal_reached": True}
     return False, 0, {"low_speed_goal_reached": False}
 
