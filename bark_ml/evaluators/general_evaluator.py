@@ -79,8 +79,8 @@ class SmoothnessFunctor(Functor):
     acc = action[0]
     delta_dot = action[1]
     reward = 0.
-    reward += self._params["AccWeight", "", 0.5]*acc*acc
-    reward += self._params["SteeringRateWeight", "", 0.5]*delta_dot*delta_dot
+    reward -= self._params["AccWeight", "", 0.1]*acc*acc
+    reward -= self._params["SteeringRateWeight", "", 0.05]*delta_dot*delta_dot
     return False, reward, {}
 
 
