@@ -81,7 +81,7 @@ class SmoothnessFunctor(Functor):
     reward = 0.
     reward += self._params["AccWeight", "", 0.5]*acc*acc
     reward += self._params["SteeringRateWeight", "", 0.5]*delta_dot*delta_dot
-    return False, 0, {}
+    return False, reward, {}
 
 
 class PotentialBasedFunctor(Functor):
