@@ -72,6 +72,7 @@ class EvaluatorTrafficRules(RewardShapingEvaluator):
     collision = eval_results["collision"] or \
         eval_results["drivable_area"] or \
         (step_count > self._max_steps)
+    eval_results["traffic_rules_violations"] = 0
 
     # TODO: integrate traffic rule violation
     self.traffic_rule_violation_post = eval_results["evaluator_ltl"]
@@ -91,10 +92,11 @@ class EvaluatorTrafficRules(RewardShapingEvaluator):
       success = 0
       eval_results["goal_reached"] = 0
     # calculate reward
-    print("\n Traffic Rule Violation: ")
+    #print("\n Traffic Rule Violation: ")
     #print(self.current_traffic_rule_violations)
     reward -= collision * self._col_penalty + \
       success * self._goal_reward - self.current_traffic_rule_violations
+    eval_results["traffic_rules_violations"] = self.current_traffic_rule_violations
     #print('\nReward:\n')
     #print(reward)
     return reward, done, eval_results

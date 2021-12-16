@@ -212,9 +212,6 @@ class TFARunner:
       env_data = self._environment.step(action)
       self._tracer.Trace(env_data, **kwargs)
       state, reward, is_terminal, info = env_data
-      print("\n INFO: \n")
-      print(info)
-      print(state)
       # graph stuff
       try:
         graph_tuples = self._agent._agent._actor_network._latent_trace
@@ -230,12 +227,18 @@ class TFARunner:
         self._logger.info(f"The ego agent's action is {action} and " + \
                           f"a reward of {reward}.")
         self._environment.render()
-      if is_terminal and (info["collision"] or info["drivable_area"]) and trace_colliding_ids is not None:
+      if is_terminal and (info["collision"] or info["drivable_area"] or (info["traffic_rules_violations"] > 0)) and trace_colliding_ids is not None:
         self._colliding_scenario_ids.append(
           self._environment._scenario_idx)
+        print("\n INFO: \n")
+        print(info)
+        print(state)
         return True
       if is_terminal and info["goal_reached"]:
         self._logger.info("\033[92mThe ego agent reached its goal. \033[0m")
+    print("\n INFO: \n")
+    print(info)
+    print(state)
     return False
 
   def Run(

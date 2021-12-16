@@ -149,33 +149,28 @@ class ExperimentRunner:
     if collisions == None:
         self.dump(data = None)
         print("\n")
-        print("Collisions happened in these scenarios:\n")
-        print(collisions)
+        print("No traffic rule violations or collisions happened!\n")
         return collisions
     elif self.collisionIDs == None:
         self.collisionIDs = collisions
         self.dump(data = self.collisionIDs)
         print("\n")
-        print("Collisions happened in these scenarios:\n")
+        print("Traffic rule violations or collisions happened in these scenarios:\n")
         print(collisions)
+        print("\n")
         return collisions
     self.collisionIDs.append(collisions)
     print("\n")
-    print("Collisions happened in these scenarios:\n")
+    print("Traffic rule violations happened in these scenarios:\n")
     print(collisions)
+    print("\n")
     self.dump(data = self.collisionIDs)
     return collisions
     
   def Validate(self):
-    #ids2 = [1, 3, 5]
-    #print("dumping data")
-    #self.dump(data = ids2)
-    #print("dumped")
     ids = self.read()
     print(ids)
     self.CompareHashes()
-    #if self.collisionIDs == None:
-    #    return None
     noCollision = []
     for i in ids:
         print("\nValidation episode ")
@@ -184,8 +179,9 @@ class ExperimentRunner:
         if not self._experiment.runner.RunEpisode(render=False, num_episode=i, trace_colliding_ids=True):
             noCollision.append(i)
     print("\n")
-    print("No collisions happened in these scenarios:\n")
+    print("No traffic rule violations or collisions happened in these scenarios:\n")
     print(noCollision)
+    print("\n")
     return noCollision
     
 
