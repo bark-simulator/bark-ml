@@ -25,6 +25,20 @@ from tf_agents.trajectories import time_step as ts
 from bark_ml.library_wrappers.lib_tf_agents.py_bark_environment import PyBARKEnvironment
 from bark_ml.commons.tracer import Tracer
 
+def get_index(episode_log, key, idx):
+  return episode_log[idx][key]
+
+def calculate_mean(episode_log, key):
+  mean = 0.
+  for log in episode_log:
+    mean += log[key]
+  return mean/len(episode_log)
+
+def check_if_any(episode_log, key, val):
+  for log in episode_log:
+    if log[key] == val:
+      return True
+  return False
 
 class TFARunner:
   """Used to train, evaluate and visualize a BARK-ML agent."""
@@ -131,35 +145,37 @@ class TFARunner:
         self._logger.info(f"Simulating episode {i}.")
 
       episode_log = self.RunEpisode(render=render)
-
-      if mode == "not_training":
+      if mode == "evaluate":
         episode_logs[i] = episode_log
+      steps += get_index(episode_log, "step_count", -1)
+      reward += calculate_mean(episode_log, "reward")
+      collision += check_if_any(episode_log, "collision", True) or \
+        check_if_any(episode_log, "drivable_area", True)
+      success += check_if_any(episode_log, "goal_reached", True)
 
-      # get_index(episode_log, "steps", -1)
-      # calculate_mean(episode_log, "reward")
-      # check_if_any(episode_log, "collision", True)
-      # check_if_any(episode_log, "success", True)
+    mean_steps = steps / num_episodes
+    mean_reward = reward / num_episodes
+    col_rate = collision / num_episodes
+    success_rate = success / num_episodes
+
+    print(
+      f"The agent achieved an average reward of {mean_reward:.3f}," +
+      f" collision-rate of {col_rate:.5f}, took on average" +
+      f" {mean_steps:.3f} steps, and reached the success-rate " +
+      f" {success_rate:.3f} (evaluated over {num_episodes} episodes).")
 
     # TODO: dump the results
-    if mode == "not_training":
+    if mode == "evaluate":
       pass
 
-    # TODO: specify what should be logged in tensorboard apart from the basic values
+    if mode == "training":
+      global_iteration = self._agent._agent._train_step_counter.numpy()
+      tf.summary.scalar("mean_reward", mean_reward, step=global_iteration)
+      tf.summary.scalar("mean_steps", mean_steps, step=global_iteration)
+      tf.summary.scalar("collision_rate", col_rate, step=global_iteration)
+      tf.summary.scalar("goal_rate", goal_rate, step=global_iteration)
 
-    # mean_col_rate = self._tracer.collision_rate
-    # goal_reached = self._tracer.success_rate
-    # mean_reward = self._tracer.mean_reward
-    # mean_steps = self._tracer.mean_steps
-
-    # if mode == "training":
-    #   global_iteration = self._agent._agent._train_step_counter.numpy()
-    #   tf.summary.scalar("mean_reward", mean_reward, step=global_iteration)
-    #   tf.summary.scalar("mean_steps", mean_steps, step=global_iteration)
-    #   tf.summary.scalar(
-    #     "mean_collision_rate", mean_col_rate, step=global_iteration)
-    #   tf.summary.scalar(
-    #     "goal_reached", goal_reached, step=global_iteration)
-
+    # TODO: specify what should be logged in tensorboard apart from the base values
     #   res = {}
     #   for state in self._tracer._states:
     #     for key, val in state.items():
@@ -170,9 +186,3 @@ class TFARunner:
     #   for key, val in res.items():
     #     if key not in ["state", "goal_reached", "step_count", "num_episode", "reward"]:
     #       tf.summary.scalar(f"auto_{key}", val, step=global_iteration)
-
-    # print(
-    #   f"The agent achieved an average reward of {mean_reward:.3f}," +
-    #   f" collision-rate of {mean_col_rate:.5f}, took on average" +
-    #   f" {mean_steps:.3f} steps, and reached the goal " +
-    #   f" {goal_reached:.3f} (evaluated over {num_episodes} episodes).")
