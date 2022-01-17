@@ -161,28 +161,28 @@ class TFARunner:
     print(
       f"The agent achieved an average reward of {mean_reward:.3f}," +
       f" collision-rate of {col_rate:.5f}, took on average" +
-      f" {mean_steps:.3f} steps, and reached the success-rate " +
+      f" {mean_steps:.3f} steps, and reached a success-rate of " +
       f" {success_rate:.3f} (evaluated over {num_episodes} episodes).")
-
-    # TODO: dump the results
-    if mode == "evaluate":
-      pass
 
     if mode == "training":
       global_iteration = self._agent._agent._train_step_counter.numpy()
       tf.summary.scalar("mean_reward", mean_reward, step=global_iteration)
       tf.summary.scalar("mean_steps", mean_steps, step=global_iteration)
       tf.summary.scalar("collision_rate", col_rate, step=global_iteration)
-      tf.summary.scalar("goal_rate", goal_rate, step=global_iteration)
+      tf.summary.scalar("goal_rate", success_rate, step=global_iteration)
 
-    # TODO: specify what should be logged in tensorboard apart from the base values
-    #   res = {}
-    #   for state in self._tracer._states:
-    #     for key, val in state.items():
-    #       if key not in res:
-    #         res[key] = 0.
-    #       res[key] += val
+      # TODO: specify what should be logged in tensorboard apart from the base values
+      #   res = {}
+      #   for state in self._tracer._states:
+      #     for key, val in state.items():
+      #       if key not in res:
+      #         res[key] = 0.
+      #       res[key] += val
 
-    #   for key, val in res.items():
-    #     if key not in ["state", "goal_reached", "step_count", "num_episode", "reward"]:
-    #       tf.summary.scalar(f"auto_{key}", val, step=global_iteration)
+      #   for key, val in res.items():
+      #     if key not in ["state", "goal_reached", "step_count", "num_episode", "reward"]:
+      #       tf.summary.scalar(f"auto_{key}", val, step=global_iteration)
+
+    if mode == "evaluate":
+      return episode_logs
+
