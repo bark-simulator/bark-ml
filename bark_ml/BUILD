@@ -27,7 +27,6 @@ test_suite(
     "//bark_ml/tests:py_behavior_tests",
     "//bark_ml/tests:py_library_tfa_tests",
     "//bark_ml/tests:py_bark_behavior_model_tests",
-    "//bark_ml/tests:py_tracer_tests",
     "//bark_ml/experiment:py_experiment_tests",
     "//bark_ml/tests:py_apollo_tests"
   ]
