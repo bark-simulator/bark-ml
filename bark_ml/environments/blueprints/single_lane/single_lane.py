@@ -214,7 +214,7 @@ class SingleLaneBlueprint(Blueprint):
       params["SingleLaneBluePrint"]["MapOffsetX", "", 692000],
       params["SingleLaneBluePrint"]["MapOffsetY", "", 5.339e+06])
     observer_model = None
-    if params["SingleLaneBluePrint"]["UseObserveModel", "", True]:
+    if params["SingleLaneBluePrint"]["UseObserveModel", "", False]:
       params["ObserverModelParametric"] \
             ["EgoStateDeviationDist"]["Covariance", "", [[0.05, 0.0, 0.0, 0.0],
                                                       [0.0, 0.01, 0.0, 0.0],

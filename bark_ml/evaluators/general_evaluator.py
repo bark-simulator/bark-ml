@@ -67,7 +67,7 @@ class MinMaxVelFunctor(Functor):
     ego_vel = ego_agent.state[int(StateDefinition.VEL_POSITION)]
     if ego_vel > self._params["MaxVel", "", 25.] or \
       ego_vel < self._params["MinVel", "", 0.]:
-      return True, self._params["MaxVelViolationReward", "", -1.], {}
+      return False, self._params["MaxVelViolationReward", "", -1.], {}
     return False, 0, {}
 
 

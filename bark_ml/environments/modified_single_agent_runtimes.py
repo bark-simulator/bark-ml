@@ -72,7 +72,7 @@ class SingleAgentGaussianNoiseRuntime(SingleAgentRuntime):
                      viewer=viewer,
                      scenario_generator=scenario_generator,
                      render=render)
-    self._sigmas = sigmas or [0., 0.001]
+    self._sigmas = sigmas or [0.01, 0.001]
 
   def step(self, action):
     action += np.random.multivariate_normal(
@@ -108,7 +108,7 @@ class SingleAgentDelayAndGaussianNoiseRuntime(SingleAgentRuntime):
                      render=render)
     self._default_action = default_action or [0., 0.]
     self._num_delay_steps = num_delay_steps or 5
-    self._sigmas = sigmas or [0., 0.001]
+    self._sigmas = sigmas or [0.01, 0.001]
     self._action_queue = queue.Queue()
 
   def step(self, action):
