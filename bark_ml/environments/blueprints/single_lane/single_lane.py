@@ -18,6 +18,7 @@ from bark.core.world.map import MapInterface
 from bark.core.world.opendrive import XodrDrivingDirection
 from bark.core.world.goal_definition import GoalDefinitionStateLimitsFrenet
 from bark.core.models.dynamic import *
+from bark.core.models.observer import ObserverModelParametric
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
 from bark_ml.evaluators.general_evaluator import GeneralEvaluator
@@ -212,13 +213,31 @@ class SingleLaneBlueprint(Blueprint):
       csv_path,
       params["SingleLaneBluePrint"]["MapOffsetX", "", 692000],
       params["SingleLaneBluePrint"]["MapOffsetY", "", 5.339e+06])
+    observer_model = None
+    if params["SingleLaneBluePrint"]["UseObserveModel", "", True]:
+      params["ObserverModelParametric"] \
+            ["EgoStateDeviationDist"]["Covariance", "", [[0.05, 0.0, 0.0, 0.0],
+                                                      [0.0, 0.01, 0.0, 0.0],
+                                                      [0.0, 0.00, 0.001, 0.0],
+                                                      [0.0, 0.00, 0.0, 0.05]]]
+      params["ObserverModelParametric"] \
+            ["EgoStateDeviationDist"]["Mean", "", [0.0, 0.0, 0.0, 0.0]]
+      params["ObserverModelParametric"] \
+            ["OtherStateDeviationDist"]["Covariance", "", [[0.05, 0.0, 0.0, 0.0],
+                                                      [0.0, 0.01, 0.0, 0.0],
+                                                      [0.0, 0.00, 0.001, 0.0],
+                                                      [0.0, 0.00, 0.0, 0.05]]]
+      params["ObserverModelParametric"] \
+            ["OtherStateDeviationDist"]["Mean", "", [0.0, 0.0, 0.0, 0.0]]
+      observer_model = ObserverModelParametric(params)
     scenario_generation = \
       ConfigWithEase(
         num_scenarios=num_scenarios,
         random_seed=random_seed,
         params=params,
         map_interface=map_interface,
-        lane_corridor_configs=lane_configs)
+        lane_corridor_configs=lane_configs,
+        observer_model=observer_model)
     if viewer:
       viewer = MPViewer(params=params,
                         x_range=[-100, 100],
