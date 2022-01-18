@@ -67,7 +67,7 @@ class MinMaxVelFunctor(Functor):
     ego_vel = ego_agent.state[int(StateDefinition.VEL_POSITION)]
     if ego_vel > self._params["MaxVel", "", 25.] or \
       ego_vel < self._params["MinVel", "", 0.]:
-      return True, self._params["MaxVelViolationReward", "", -1.], {}
+      return False, self._params["MaxVelViolationReward", "", -1.], {}
     return False, 0, {}
 
 
@@ -177,7 +177,6 @@ class PotentialGoalSwitchVelocityFunctor(PotentialBasedFunctor):
       return False, self._params["Gamma", "", 0.99]*cur_pot - prev_pot, {}
     return False, 0, {}
 
-
 class LowSpeedGoalFunctor(Functor):
   def __init__(self, params):
     self._params = params["LowSpeedGoalFunctor"]
@@ -190,6 +189,27 @@ class LowSpeedGoalFunctor(Functor):
       return True, self._params["GoalReward", "", 1.], {"low_speed_goal_reached": True}
     return False, 0, {"low_speed_goal_reached": False}
 
+
+class StateActionLoggingFunctor(Functor):
+  def __init__(self, params):
+    self._params = params["StateActionLoggingFunctor"]
+
+  def __call__(self, observed_world, action, eval_results):
+    ego_agent = observed_world.ego_agent
+    t = ego_agent.state[int(StateDefinition.TIME_POSITION)]
+    x = ego_agent.state[int(StateDefinition.X_POSITION)]
+    y = ego_agent.state[int(StateDefinition.Y_POSITION)]
+    theta = ego_agent.state[int(StateDefinition.THETA_POSITION)]
+    vel = ego_agent.state[int(StateDefinition.VEL_POSITION)]
+    acc = action[0]
+    delta = action[1]
+
+    return False, 0, {"time": t, "x": x, "y": y, "theta": theta,
+                      "vel": vel, "acc": acc, "delta": delta}
+
+# TODO: extract t -> (x, y), t -> v && min/max acc, delta, v, theta
+# TODO: MIN/MAX functor for defined state value
+# TODO: Deviation functor for state-difference (desired vel. and x,y)
 
 class GeneralEvaluator:
   """Evaluator using Functors"""

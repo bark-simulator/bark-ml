@@ -77,35 +77,6 @@ class PyEnvironmentTests(unittest.TestCase):
         observed_next_state, reward, done, info = env.step(action)
         print(f"Observed state: {observed_next_state}, Reward: {reward}, Done: {done}")
 
-  def test_counterfactual_runtime(self):
-    params = ParameterServer()
-    bp = ContinuousMergingBlueprint(params)
-    # BehaviorConstantAcceleration::ConstAcceleration
-    behavior_model_pool = []
-    count = 0
-    for a in [-3., 0.]:
-      local_params = params.AddChild("local_"+str(count))
-      local_params["BehaviorConstantAcceleration"]["ConstAcceleration"] = a
-      behavior = BehaviorConstantAcceleration(local_params)
-      behavior_model_pool.append(behavior)
-      count += 1
-
-    env = CounterfactualRuntime(
-      blueprint=bp,
-      render=True,
-      behavior_model_pool=behavior_model_pool,
-      params=params)
-    sac_agent = BehaviorSACAgent(environment=env,
-                                 params=params)
-    env.ml_behavior = sac_agent
-    env.ml_behavior.set_action_externally = False
-    env.reset()
-    for _ in range(0, 5):
-      action = np.random.uniform(low=-0.1, high=0.1, size=(2, ))
-      observed_next_state, reward, done, info = env.step(action)
-      print(f"Observed state: {observed_next_state}, Reward: {reward}, Done: {done}")
-    pprint.pprint(env.tracer._states)
-
   def test_configurable_blueprint(self):
     params = ParameterServer(filename="bark_ml/tests/data/highway_merge_configurable.json")
     # continuous model

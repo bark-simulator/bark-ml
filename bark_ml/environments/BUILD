@@ -20,7 +20,8 @@ py_library(
 
 py_library(
     name = "single_agent_runtime",
-    srcs = ["single_agent_runtime.py"],
+    srcs = ["single_agent_runtime.py",
+            "modified_single_agent_runtimes.py"],
     imports = ["../external/bark_project/bark/python_wrapper/"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
     deps = ["//bark_ml/environments:blueprints",
