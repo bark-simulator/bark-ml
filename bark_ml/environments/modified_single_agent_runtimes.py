@@ -12,7 +12,7 @@ from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 
 
 class SingleAgentDelayRuntime(SingleAgentRuntime):
-  """An environment that executes the actions with a pre-defined
+  """An environment that executes actions with a pre-defined
      delay.
   """
   def __init__(self,
@@ -41,7 +41,6 @@ class SingleAgentDelayRuntime(SingleAgentRuntime):
   def step(self, action):
     self._action_queue.put(action)
     action_to_execute = self._action_queue.get()
-    print("Current action to execute: ", action_to_execute)
     return super().step(action_to_execute)
 
   def reset(self, scenario=None):
@@ -49,5 +48,37 @@ class SingleAgentDelayRuntime(SingleAgentRuntime):
       self._action_queue.get()
     for _ in range(0, self._num_delay_steps):
       self._action_queue.put(np.array(self._default_action))
+    return super().reset(scenario)
+
+
+class SingleAgentGaussianRuntime(SingleAgentRuntime):
+  """An environment that executes actions with noise.
+  """
+  def __init__(self,
+               blueprint=None,
+               ml_behavior=None,
+               observer=None,
+               evaluator=None,
+               step_time=None,
+               viewer=None,
+               scenario_generator=None,
+               render=False,
+               sigmas=None):
+    super().__init__(blueprint=blueprint,
+                     ml_behavior=ml_behavior,
+                     observer=observer,
+                     evaluator=evaluator,
+                     step_time=step_time,
+                     viewer=viewer,
+                     scenario_generator=scenario_generator,
+                     render=render)
+    self._sigmas = sigmas or [4., 1.]
+
+  def step(self, action):
+    action += np.random.multivariate_normal(
+      mean=list(action), cov=np.diag(self._sigmas))
+    return super().step(action)
+
+  def reset(self, scenario=None):
     return super().reset(scenario)
 
