@@ -36,14 +36,14 @@ class SingleAgentDelayRuntime(SingleAgentRuntime):
                      render=render)
     self._default_action = default_action or [0., 0.]
     self._num_delay_steps = num_delay_steps or 5
-    self._action_queue = queue.LifoQueue()
+    self._action_queue = queue.Queue()
 
   def step(self, action):
     self._action_queue.put(action)
-    super().step(self._action_queue.get())
+    return super().step(self._action_queue.get())
 
   def reset(self, scenario=None):
     for _ in range(0, self._num_delay_steps):
       self._action_queue.put(np.array(self._default_action))
-    super().reset(scenario)
+    return super().reset(scenario)
 
