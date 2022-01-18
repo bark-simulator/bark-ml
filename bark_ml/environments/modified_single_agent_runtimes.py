@@ -34,15 +34,19 @@ class SingleAgentDelayRuntime(SingleAgentRuntime):
                      viewer=viewer,
                      scenario_generator=scenario_generator,
                      render=render)
-    self._default_action = default_action or [0., 0.]
+    self._default_action = default_action or [0.01, 0.]
     self._num_delay_steps = num_delay_steps or 5
     self._action_queue = queue.Queue()
 
   def step(self, action):
     self._action_queue.put(action)
-    return super().step(self._action_queue.get())
+    action_to_execute = self._action_queue.get()
+    # print("Current action to execute: ", action_to_execute)
+    return super().step(action_to_execute)
 
   def reset(self, scenario=None):
+    while not self._action_queue.empty():
+      self._action_queue.get()
     for _ in range(0, self._num_delay_steps):
       self._action_queue.put(np.array(self._default_action))
     return super().reset(scenario)
