@@ -71,7 +71,7 @@ class StaticObserver {
     max_d_ = params->GetReal("ML::StaticObserver::MaxD", "", 4.0);
     min_theta_ = params->GetReal("ML::StaticObserver::MinTheta", "", -B_PI);
     max_theta_ = params->GetReal("ML::StaticObserver::MaxTheta", "", B_PI);
-    min_goal_dist_ = params->GetReal("ML::StaticObserver::MinGoalDist", "", -5);
+    min_goal_dist_ = params->GetReal("ML::StaticObserver::MinGoalDist", "", -200);
     max_goal_dist_ = params->GetReal("ML::StaticObserver::MaxGoalDist", "", 200);
     min_steering_rate_ = params->GetReal(
       "ML::StaticObserver::MinSteeringRate", "", -4.0);;
@@ -113,7 +113,7 @@ class StaticObserver {
     auto ego_agent_poly = ego_agent->GetPolygonFromState(state);
     auto goal_def = ego_agent->GetGoalDefinition();
     auto goal_distance = Distance(ego_agent_poly, goal_def->GetShape());
-
+    std::cout << "Goal distance: " << goal_distance << std::endl;
     ego_nn_state << Norm(current_ego_frenet.lat, min_d_, max_d_),
                     Norm(normalized_angle, min_theta_, max_theta_),
                     Norm(current_ego_frenet.vlon, min_vel_lon_, max_vel_lon_),
