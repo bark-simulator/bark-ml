@@ -113,7 +113,6 @@ class StaticObserver {
     auto ego_agent_poly = ego_agent->GetPolygonFromState(state);
     auto goal_def = ego_agent->GetGoalDefinition();
     auto goal_distance = Distance(ego_agent_poly, goal_def->GetShape());
-    std::cout << "Goal distance: " << goal_distance << std::endl;
     ego_nn_state << Norm(current_ego_frenet.lat, min_d_, max_d_),
                     Norm(normalized_angle, min_theta_, max_theta_),
                     Norm(current_ego_frenet.vlon, min_vel_lon_, max_vel_lon_),
