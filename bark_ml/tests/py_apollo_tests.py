@@ -14,9 +14,11 @@ import os
 
 import bark
 from bark.core.world import World
+from bark.core.geometry import Line2d
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.core.world.map import MapInterface
+from bark.core.models.behavior import BehaviorIDMClassic
 from bark_ml.environments.external_runtime import ExternalRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents.sac_agent import BehaviorSACAgent
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
@@ -63,8 +65,9 @@ class PyEnvironmentTests(unittest.TestCase):
   def test_add_ego_agent(self):
     params = ParameterServer()
     env = self.create_runtime_and_setup_empty_world(params)
-    state = np.array([0, 0, 0, 0, 0])
-    env.addEgoAgent(state)
+    state = np.array([0, 0, 0, 0, 0, 0])
+    goal_line = Line2d(np.array([[0., 0.], [1., 1.]]))
+    env.addEgoAgent(state, goal_line)
     self.assertTrue(np.array_equal(env.ego_agent.state, state))
 
   def test_add_obstacle(self):
@@ -96,8 +99,25 @@ class PyEnvironmentTests(unittest.TestCase):
     env.ml_behavior = sac_agent
 
     # add ego
+    state = np.array([0, 0, 0, 0, 0, 0])
+    goal_line = Line2d(np.array([[0., 0.], [1., 1.]]))
+    env.addEgoAgent(state, goal_line)
+
+    N = 10
+    state_traj, action_traj = env.generateTrajectory(0.2, N)
+    env._viewer.drawTrajectory(state_traj)
+    env.render()
+    self.assertEqual(len(state_traj), N)
+
+  def test_generate_ego_trajectory_with_IDM(self):
+    params = ParameterServer()
+    env = self.create_runtime_and_setup_empty_world(params)
+    env.ml_behavior = BehaviorIDMClassic(params)
+
+    # add ego
     state = np.array([0, 0, 0, 0, 0])
-    env.addEgoAgent(state)
+    goal_line = Line2d(np.array([[0., 0.], [1., 1.]]))
+    env.addEgoAgent(state, goal_line)
 
     N = 10
     state_traj, action_traj = env.generateTrajectory(0.2, N)
@@ -115,7 +135,8 @@ class PyEnvironmentTests(unittest.TestCase):
 
     env.ml_behavior = behavior_model
     state = np.array([0, 0, 0, 0, 0])
-    env.addEgoAgent(state)
+    goal_line = Line2d(np.array([[0., 0.], [1., 1.]]))
+    env.addEgoAgent(state, goal_line)
     scenario = env.getScenarioForSerialization()
     self.assertTrue(isinstance(scenario, Scenario))
 

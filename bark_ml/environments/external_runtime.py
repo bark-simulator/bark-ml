@@ -70,32 +70,38 @@ class ExternalRuntime:
     world.SetMap(self._map_interface)
     self._world = world
 
-  def addEgoAgent(self, state):
-    agent = self._createAgent(state, self._ml_behavior)
+  def addEgoAgent(self, state, goal_line):
+    agent = self._createAgent(state, self._ml_behavior, goal_line, ego_vehicle=True)
     self._world.AddAgent(agent)
     self._ego_id = agent.id
     return agent.id
+
+  def ConvertShapeParameters(self, length, width):
+    crad = width/2.0 # collision circle radius
+    wb = length - 2*crad # wheelbase
+    return (crad, wb)
 
   def addObstacle(self, prediction, length, width):
     behavior = BehaviorStaticTrajectory(
       self._params,
       prediction)
+    (crad, wb) = self.ConvertShapeParameters(length=length, width=width)
+    goal_line = Line2d(np.array([[0., 0.], [1., 1.]]))
     agent = self._createAgent(
-      prediction[0], behavior, wb=length/2., crad=width/2.)
+      prediction[0], behavior, goal_line=goal_line, wb=wb, crad=crad)
     self._world.AddAgent(agent)
     return agent.id
 
-  def _createAgent(self, state, behavior, wb=2., crad=1.):
+  def _createAgent(self, state, behavior, goal_line, wb=2., crad=1., ego_vehicle=False):
     agent_behavior = behavior
     agent_dyn = SingleTrackModel(self._params)
+    if ego_vehicle:
+      agent_dyn = SingleTrackSteeringRateModel(self._params)
     agent_exec = ExecutionModelInterpolate(self._params)
     agent_polygon = GenerateCarRectangle(wb, crad)
     agent_params = self._params.AddChild("agent")
 
-    # HACK: fake goal
-    points = np.array([[0., 0.], [1., 1.]])
-    new_line = Line2d(points)
-    agent_goal = GoalDefinitionStateLimitsFrenet(new_line, (2.5, 2.),
+    agent_goal = GoalDefinitionStateLimitsFrenet(goal_line, (2.5, 2.),
       (0.15, 0.15), (3., 7.))
 
     new_agent = Agent(

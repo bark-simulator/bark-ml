@@ -14,15 +14,10 @@ from bark_ml.experiment.experiment_runner import ExperimentRunner
 
 
 class PyExperimentTests(unittest.TestCase):
-  def test_experiment(self):
-    experiment = Experiment(
-      os.path.join(os.path.dirname(__file__),
-      "data/highway_gnn.json"))
-
   def test_experiment_runner(self):
     exp_runner = ExperimentRunner(
       json_file=os.path.join(os.path.dirname(__file__),
-      "data/highway_gnn.json"), mode="evaluate", random_seed=0)
+      "data/highway_gnn.json"), mode="print", random_seed=0)
 
 
 if __name__ == '__main__':

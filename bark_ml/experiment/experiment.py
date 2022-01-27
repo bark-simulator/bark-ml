@@ -25,6 +25,8 @@ def LoadModule(module_name, dict_items):
     return FrenetObserver(dict_items['params'])
   if module_name == "StaticObserver":
     return StaticObserver(dict_items['params'])
+  if module_name ==  "GeneralEvaluator":
+    return GeneralEvaluator(dict_items['params'])
   return eval("{}(**dict_items)".format(module_name))
 
 

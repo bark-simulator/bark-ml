@@ -11,7 +11,7 @@ from bark.runtime.scenario.scenario_generation.configurable_scenario_generation 
   ConfigurableScenarioGeneration
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
-from bark_ml.evaluators.goal_reached import GoalReached
+from bark_ml.evaluators.evaluator_configs import GoalReached
 from bark_ml.behaviors.discrete_behavior import *
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 

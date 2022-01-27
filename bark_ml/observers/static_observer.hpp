@@ -66,16 +66,19 @@ class StaticObserver {
     max_vel_lat_ = params->GetReal("ML::StaticObserver::MaxVelLat", "", 10.0);
     max_dist_ = params->GetReal("ML::StaticObserver::MaxDist", "", 75.0);
     min_s_ = params->GetReal("ML::StaticObserver::MinS", "", 0.0);
-    max_s_ = params->GetReal("ML::StaticObserver::MaxS", "", 50.0);
-    min_d_ = params->GetReal("ML::StaticObserver::MinD", "", -10.0);
-    max_d_ = params->GetReal("ML::StaticObserver::MaxD", "", 10.0);
+    max_s_ = params->GetReal("ML::StaticObserver::MaxS", "", 100.0);
+    min_d_ = params->GetReal("ML::StaticObserver::MinD", "", -4.0);
+    max_d_ = params->GetReal("ML::StaticObserver::MaxD", "", 4.0);
     min_theta_ = params->GetReal("ML::StaticObserver::MinTheta", "", -B_PI);
     max_theta_ = params->GetReal("ML::StaticObserver::MaxTheta", "", B_PI);
-    add_des_vel_ = params->GetBool("ML::StaticObserver::AddDesVel", "", false);
-    max_des_vel_ = params->GetReal("ML::StaticObserver::MaxDesVel", "", 0.0);
-    min_des_vel_ = params->GetReal("ML::StaticObserver::MinDesVel", "", 8.0);
+    min_goal_dist_ = params->GetReal("ML::StaticObserver::MinGoalDist", "", -200);
+    max_goal_dist_ = params->GetReal("ML::StaticObserver::MaxGoalDist", "", 200);
+    min_steering_rate_ = params->GetReal(
+      "ML::StaticObserver::MinSteeringRate", "", -4.0);;
+    max_steering_rate_ = params->GetReal(
+      "ML::StaticObserver::MaxSteeringRate", "", 4.0);;
     check_in_road_corridor_ = params->GetBool("ML::StaticObserver::CheckInRoadCorridor", "", false);
-    observation_len_ = 4 + 4 + int(add_des_vel_ ? 1 : 0);
+    observation_len_ = 6+4;
   }
 
   double Norm(const double val, const double mi, const double ma) const {
@@ -103,25 +106,20 @@ class StaticObserver {
    */
   ObservedState GetEgoState(const ObservedWorld& observed_world) const {
     const auto current_ego_frenet = GetEgoFrenet(observed_world);
-    ObservedState ego_nn_state(1, 4 + int(add_des_vel_ ? 1 : 0));
+    ObservedState ego_nn_state(1, 6);
     const double normalized_angle = NormToPI(current_ego_frenet.angle);
+    auto ego_agent = observed_world.GetEgoAgent();
+    auto state = ego_agent->GetCurrentState();
 
-    ego_nn_state(0, 0) = Norm(current_ego_frenet.lat, min_d_, max_d_),
-    ego_nn_state(0, 1) = Norm(normalized_angle, min_theta_, max_theta_),
-    ego_nn_state(0, 2) = Norm(current_ego_frenet.vlon, min_vel_lon_, max_vel_lon_),
-    ego_nn_state(0, 3) = Norm(current_ego_frenet.vlat, min_vel_lat_, max_vel_lat_);
-    
-    if(add_des_vel_) {
-      std::shared_ptr<GoalDefinitionStateLimitsFrenet> frenet_goal = 
-       std::dynamic_pointer_cast<GoalDefinitionStateLimitsFrenet>(observed_world.GetEgoAgent()->GetGoalDefinition());
-      if(!frenet_goal) {
-        LOG(FATAL) << "Static observer with desireved velocity"
-           "requires GoalDefinitionStateLimitsFrenet for ego agent";
-      }
-      double des_vel = frenet_goal->GetVelocityRange().first;
-      ego_nn_state(0, 4) = Norm(des_vel, min_des_vel_, max_des_vel_); 
-    }
-
+    auto ego_agent_poly = ego_agent->GetPolygonFromState(state);
+    auto goal_def = ego_agent->GetGoalDefinition();
+    auto goal_distance = Distance(ego_agent_poly, goal_def->GetShape());
+    ego_nn_state << Norm(current_ego_frenet.lat, min_d_, max_d_),
+                    Norm(normalized_angle, min_theta_, max_theta_),
+                    Norm(current_ego_frenet.vlon, min_vel_lon_, max_vel_lon_),
+                    Norm(current_ego_frenet.vlat, min_vel_lat_, max_vel_lat_),
+                    Norm(state[5], min_steering_rate_, max_steering_rate_),
+                    Norm(goal_distance, min_goal_dist_, max_goal_dist_);
     return ego_nn_state;
   }
 
@@ -237,9 +235,9 @@ class StaticObserver {
          max_vel_lon_, min_vel_lat_,
          max_vel_lat_, max_dist_,
          min_d_, max_d_, min_s_, max_s_,
-         min_des_vel_, max_des_vel_;
-  bool add_des_vel_;
-  bool check_in_road_corridor_;
+         min_steering_rate_, max_steering_rate_,
+         min_goal_dist_, max_goal_dist_;
+         bool check_in_road_corridor_;
 };
 
 }  // namespace observers

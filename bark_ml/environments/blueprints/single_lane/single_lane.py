@@ -17,14 +17,16 @@ from bark.core.models.behavior import BehaviorDynamicModel, BehaviorMacroActions
 from bark.core.world.map import MapInterface
 from bark.core.world.opendrive import XodrDrivingDirection
 from bark.core.world.goal_definition import GoalDefinitionStateLimitsFrenet
+from bark.core.models.dynamic import *
+from bark.core.models.observer import ObserverModelParametric
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
-from bark_ml.evaluators.reward_shaping import RewardShapingEvaluator
+from bark_ml.evaluators.general_evaluator import GeneralEvaluator
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
 
 from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
-# from bark_ml.core.observers.frenet_observer import FrenetObserver
+from bark_ml.core.observers import StaticObserver
 
 
 class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
@@ -34,40 +36,34 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
 
   def __init__(self,
                params=None,
-               samplingRange=[1., 10.],
+               samplingRange=[1., 8.],
                distanceRange=[2.0, 10.],
-               goalVelocityRange=[0.0, 12/3.6],
-               yOffset=[[0., 0.]],
-               xOffset=[[0., 0.]],
+               lateralOffset=[[0., 0.]],
+               longitudinalOffset=[[0., 0.]],
                **kwargs):
     super(SingleLaneLaneCorridorConfig, self).__init__(
       params, **dict(kwargs, min_vel=0., max_vel=0.2))
     self._samplingRange = samplingRange
-    self._yOffset = yOffset
-    self._xOffset = xOffset
+    self._lateralOffset = lateralOffset
+    self._longitudinalOffset = longitudinalOffset
     self._current_s = None
     self._distanceRange = distanceRange
-    self._goalVelocityRange = goalVelocityRange
+    self._hasVehicles = True
 
   def goal(self, world):
     world.map.GetRoadCorridor(
       self._road_ids, XodrDrivingDirection.forward)
     lane_corr = self._road_corridor.lane_corridors[0]
-    points = lane_corr.center_line.ToArray()[75:100]
+    pt_num = 35
+    idx = np.random.randint(50, 90)
+    points = lane_corr.center_line.ToArray()[idx:idx+pt_num]
     new_line = Line2d(points)
     des_velocity = np.random.uniform( \
         self._goalVelocityRange[0], self._goalVelocityRange[1])
     return GoalDefinitionStateLimitsFrenet(new_line,
                                            (2.5, 2.),
                                            (0.15, 0.15),
-                                           (des_velocity, 20.0))
-  
-  def velocity(self):
-    if not self._controlled_ids:
-      return 0.0
-    else:
-      return np.random.uniform( \
-        self._goalVelocityRange[0], self._goalVelocityRange[1])
+                                           (0., 20.))
 
   def position(self, world):
     if self._road_corridor == None:
@@ -75,34 +71,45 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
         self._road_ids, XodrDrivingDirection.forward)
       self._road_corridor = world.map.GetRoadCorridor(
         self._road_ids, XodrDrivingDirection.forward)
-    if self._current_s and (self._current_s >= self._samplingRange[1] or self._controlled_ids):
+    if self._current_s and (self._current_s >= self._distanceRange[1] or self._controlled_ids):
       return None
     lane_corr = self._road_corridor.lane_corridors[self._lane_corridor_id]
     centerline = lane_corr.center_line
+
     if not self._current_s:
-      self._current_s = self._samplingRange[0]
-    else:
-      self._current_s += np.random.uniform(
-        self._distanceRange[0], self._distanceRange[1])
+      self._current_s = self._distanceRange[0]
+
+    self._current_s += np.random.uniform(
+      self._samplingRange[0], self._samplingRange[1])
+
     xy_point =  GetPointAtS(centerline, self._current_s)
     angle = GetTangentAngleAtS(centerline, self._current_s)
-    yOffsetBounds = self._yOffset[np.random.randint(0, len(self._yOffset))]
-    yOffset = np.random.uniform(yOffsetBounds[0], yOffsetBounds[1])
-    xOffsetBounds = self._xOffset[np.random.randint(0, len(self._xOffset))]
-    xOffset = np.random.uniform(xOffsetBounds[0], xOffsetBounds[1])
-    return (xy_point.x() + xOffset,
-            xy_point.y() + yOffset,
+
+
+    lateralOffsetBounds = self._lateralOffset[np.random.randint(0, len(self._lateralOffset))]
+    lateralOffset = np.random.uniform(lateralOffsetBounds[0], lateralOffsetBounds[1])
+    longitudinalOffsetBounds = self._longitudinalOffset[
+      np.random.randint(0, len(self._longitudinalOffset))]
+    longitudinalOffset = np.random.uniform(
+      longitudinalOffsetBounds[0], longitudinalOffsetBounds[1])
+
+    return (xy_point.x() + longitudinalOffset,
+            xy_point.y() + lateralOffset,
             angle)
 
   def behavior_model(self, world):
-    if self._controlled_ids:
-      behavior_model = BehaviorDynamicModel(self._params)
-    else:
-      self._params["StaticMacroAction"]["AccelerationInputs"] = [0.0]
-      self._params["StaticMacroAction"]["AddLaneChangeActions"] = False
-      self._params["StaticMacroAction"]["AddGapKeeping"] = False
-      behavior_model = BehaviorMacroActionsFromParamServer(self._params["StaticMacroAction"])
+    behavior_model = BehaviorDynamicModel(self._params)
+    behavior_model.ActionToBehavior(np.array([0., 0.]))
     return behavior_model
+
+  @property
+  def dynamic_model(self):
+    """Returns dyn. model
+    """
+    if self._controlled_ids is not None:
+      return SingleTrackSteeringRateModel(self._params)
+    return SingleTrackModel(self._params)
+
 
   def state(self, world):
     """Returns a state of the agent
@@ -113,14 +120,28 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
     Returns:
         np.array -- time, x, y, theta, velocity
     """
+    if not self._hasVehicles:
+      return None
+
     if self._controlled_ids is not None:
-      return super().state(world)
-    else:
-      has_vehicle = 1
-      if has_vehicle:
-        return super().state(world)
-      else:
+      pose = self.position(world)
+      if pose is None:
         return None
+      velocity = self.velocity()
+      return np.array([0, pose[0], pose[1], pose[2], velocity, 0.])
+    else:
+      return super().state(world)
+
+  def reset(self):
+    """Resets the LaneCorridorConfig
+    """
+    if self._controlled_ids is None:
+      hasVehicles = np.random.randint(0, 2)
+      self._hasVehicles = hasVehicles
+    self._current_s = None
+
+  def velocity(self):
+    return 0.0
 
 
 class SingleLaneBlueprint(Blueprint):
@@ -135,66 +156,53 @@ class SingleLaneBlueprint(Blueprint):
                random_seed=0,
                ml_behavior=None,
                viewer=True,
-               mode="medium",
-               csv_path=None):
-    if mode == "dense":
-      ds_min = 10.
-      ds_max = 15.
-    if mode == "medium":
-      ds_min = 20.
-      ds_max = 35.
+               dt=0.2,
+               csv_path=None,
+               laneCorrConfigs={
+                 "corr0" :  {
+                   "samplingRange": [10., 20.],
+                   "distanceRange": [15., 70.],
+                   "lateralOffset": [[2.2, 2.4]]
+                 },
+                 "corr1" :  {
+                   "samplingRange": [10., 20.],
+                   "distanceRange": [15., 70.],
+                   "lateralOffset": [[-2.2, -3.2]]
+                  }}):
     params["World"]["remove_agents_out_of_map"] = False
-
     lane_configs = []
-    s_min = 0
-    s_max = 100
     local_params = params.clone()
     # ego vehicle
     lane_conf = SingleLaneLaneCorridorConfig(params=local_params,
                                              road_ids=[0],
                                              lane_corridor_id=0,
-                                             min_vel=40.0,
-                                             max_vel=50.0,
-                                             ds_min=ds_min,
-                                             ds_max=ds_max,
-                                             s_min=s_min,
-                                             s_max=s_max,
+                                             min_vel=0.,
+                                             max_vel=0.01,
                                              controlled_ids=True,
-                                             yOffset=[[-2, 2.0]])
+                                             lateralOffset=[[-0.1, 0.1]],
+                                             wb=2.786,
+                                             crad=1.1,
+                                             samplingRange=[4., 10.],
+                                             distanceRange=[0., 20.])
     lane_configs.append(lane_conf)
+
 
     # other vehicle
     if params["World"]["other_vehicle", "Other Vehicle", True]:
-      lane_conf_other_left = SingleLaneLaneCorridorConfig(
-        params=local_params,
-        road_ids=[0],
-        lane_corridor_id=0,
-        min_vel=0.,
-        max_vel=0.,
-        ds_min=ds_min,
-        ds_max=ds_max,
-        s_min=s_min,
-        s_max=s_max,
-        controlled_ids=None,
-        yOffset=[[2.2, 3.5]],
-        samplingRange=[10, 100],
-        distanceRange=[4, 30])
-      lane_configs.append(lane_conf_other_left)
-      lane_conf_other_right = SingleLaneLaneCorridorConfig(
-        params=local_params,
-        road_ids=[0],
-        lane_corridor_id=0,
-        min_vel=0.,
-        max_vel=0.,
-        ds_min=ds_min,
-        ds_max=ds_max,
-        s_min=s_min,
-        s_max=s_max,
-        controlled_ids=None,
-        yOffset=[[-2.2, -3.5]],
-        samplingRange=[10, 100],
-        distanceRange=[4, 30])
-      lane_configs.append(lane_conf_other_right)
+      for conf in laneCorrConfigs.values():
+        lane_conf = SingleLaneLaneCorridorConfig(
+          params=local_params,
+          road_ids=[0],
+          lane_corridor_id=0,
+          min_vel=0.,
+          max_vel=0.,
+          controlled_ids=None,
+          lateralOffset=conf["lateralOffset"],
+          samplingRange=conf["samplingRange"],
+          distanceRange=conf["distanceRange"],
+          wb=2.786,
+          crad=1.)
+        lane_configs.append(lane_conf)
 
     # Map Definition
     if csv_path is None:
@@ -207,34 +215,37 @@ class SingleLaneBlueprint(Blueprint):
       csv_path,
       params["SingleLaneBluePrint"]["MapOffsetX", "", 692000],
       params["SingleLaneBluePrint"]["MapOffsetY", "", 5.339e+06])
+    observer_model = None
+    if params["SingleLaneBluePrint"]["UseObserveModel", "", False]:
+      params["ObserverModelParametric"] \
+            ["EgoStateDeviationDist"]["Covariance", "", [[0.05, 0.0, 0.0, 0.0],
+                                                      [0.0, 0.01, 0.0, 0.0],
+                                                      [0.0, 0.00, 0.001, 0.0],
+                                                      [0.0, 0.00, 0.0, 0.05]]]
+      params["ObserverModelParametric"] \
+            ["EgoStateDeviationDist"]["Mean", "", [0.0, 0.0, 0.0, 0.0]]
+      params["ObserverModelParametric"] \
+            ["OtherStateDeviationDist"]["Covariance", "", [[0.05, 0.0, 0.0, 0.0],
+                                                      [0.0, 0.01, 0.0, 0.0],
+                                                      [0.0, 0.00, 0.001, 0.0],
+                                                      [0.0, 0.00, 0.0, 0.05]]]
+      params["ObserverModelParametric"] \
+            ["OtherStateDeviationDist"]["Mean", "", [0.0, 0.0, 0.0, 0.0]]
+      observer_model = ObserverModelParametric(params)
     scenario_generation = \
       ConfigWithEase(
         num_scenarios=num_scenarios,
         random_seed=random_seed,
         params=params,
         map_interface=map_interface,
-        lane_corridor_configs=lane_configs)
-    # HACK: change
-    # scenario_generation._map_interface = map_interface
-
+        lane_corridor_configs=lane_configs,
+        observer_model=observer_model)
     if viewer:
       viewer = MPViewer(params=params,
                         x_range=[-100, 100],
                         y_range=[-100, 100],
                         follow_agent_id=True)
-      # viewer = BufferedMPViewer(
-      #   params=params,
-      #   follow_agent_id=True)
-    dt = 0.2
-    params["ML"]["RewardShapingEvaluator"]["MaxVelocity"] = 4
-    params["ML"]["RewardShapingEvaluator"]["RewardShapingPotentials",
-      "Reward shaping functions.", {
-        "VelocityPotential" : {
-          "desired_vel": 5., "vel_dev_max": 10., "exponent": 0.2, "type": "positive"
-        }
-    }]
-    params["ML"]["RewardShapingEvaluator"]["MaxSteps", "max. number of steps", 100]
-    evaluator = RewardShapingEvaluator(params)
+    evaluator = GeneralEvaluator(params)
     observer = NearestAgentsObserver(params)
     ml_behavior = ml_behavior
 
@@ -253,7 +264,8 @@ class ContinuousSingleLaneBlueprint(SingleLaneBlueprint):
                num_scenarios=25,
                random_seed=0,
                viewer=True,
-               mode="dense",
+               dt=0.2,
+               laneCorrConfigs={},
                csv_path=None):
     ml_behavior = BehaviorContinuousML(params)
     SingleLaneBlueprint.__init__(self,
@@ -261,8 +273,9 @@ class ContinuousSingleLaneBlueprint(SingleLaneBlueprint):
                               num_scenarios=num_scenarios,
                               random_seed=random_seed,
                               ml_behavior=ml_behavior,
-                              viewer=True,
-                              mode=mode,
+                              viewer=viewer,
+                              dt=dt,
+                              laneCorrConfigs=laneCorrConfigs,
                               csv_path=csv_path)
 
 
@@ -271,7 +284,9 @@ class DiscreteSingleLaneBlueprint(SingleLaneBlueprint):
                params=None,
                num_scenarios=25,
                random_seed=0,
-               mode="dense",
+               viewer=True,
+               dt=0.2,
+               laneCorrConfigs={},
                csv_path=None):
     ml_behavior = BehaviorDiscreteMacroActionsML(params)
     SingleLaneBlueprint.__init__(self,
@@ -279,6 +294,7 @@ class DiscreteSingleLaneBlueprint(SingleLaneBlueprint):
                               num_scenarios=num_scenarios,
                               random_seed=random_seed,
                               ml_behavior=ml_behavior,
-                              viewer=True,
-                              mode=mode,
+                              viewer=viewer,
+                              dt=dt,
+                              laneCorrConfigs=laneCorrConfigs,
                               csv_path=csv_path)

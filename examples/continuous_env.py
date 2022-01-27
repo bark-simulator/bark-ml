@@ -11,8 +11,8 @@ import numpy as np
 import bark_ml.environments.gym  # pylint: disable=unused-import
 
 # cont. highway env
-env = gym.make("singlelane-v0")
-# env = gym.make("merging-v0")
+# env = gym.make("singlelane-v0")
+env = gym.make("merging-v0")
 # env = gym.make("intersection-v0")
 
 

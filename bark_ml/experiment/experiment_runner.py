@@ -110,8 +110,11 @@ class ExperimentRunner:
     self.CompareHashes()
     num_episodes = \
       self._params["Experiment"]["NumEvaluationEpisodes"]
-    return self._experiment.runner.Run(
+    evaluation_results = self._experiment.runner.Run(
       num_episodes=num_episodes, render=False, trace_colliding_ids=True)
+    # metrics = self._evaluate(evaluation_results)
+    # ...
+
 
   def Visualize(self):
     self.CompareHashes()

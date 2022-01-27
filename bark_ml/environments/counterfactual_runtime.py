@@ -85,9 +85,9 @@ class CounterfactualRuntime(SingleAgentRuntime):
   def ReplaceBehaviorModel(self, agent_id=None, behavior=None):
     """Clones the world and replaced the behavior of an agent."""
     cloned_world = self._world.Copy()
-    evaluators = self._evaluator._add_evaluators()
-    for eval_key, eval_v in evaluators.items():
-      cloned_world.AddEvaluator(eval_key, eval_v)
+    evaluators = self._evaluator._bark_eval_fns
+    for eval_key, eval_fn in evaluators.items():
+      cloned_world.AddEvaluator(eval_key, eval_fn())
     if behavior is not None:
       cloned_world.agents[agent_id].behavior_model = behavior
     return cloned_world
