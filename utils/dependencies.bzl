@@ -10,7 +10,7 @@ def bark_ml_dependencies():
   _maybe(
     git_repository,
     name = "bark_project",
-    branch = "master",
+    branch = "cont_delay_environment",
     remote = "https://github.com/bark-simulator/bark",
   )
   # _maybe(
