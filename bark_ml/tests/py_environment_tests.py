@@ -20,6 +20,7 @@ from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
   ConfigurableScenarioBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from bark_ml.environments.counterfactual_runtime import CounterfactualRuntime
+from bark_ml.environments.modified_single_agent_runtimes import SingleAgentContinuousDelayRuntime
 from bark_ml.library_wrappers.lib_tf_agents.agents.sac_agent import BehaviorSACAgent
 import bark_ml.environments.gym  # pylint: disable=unused-import
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
@@ -85,6 +86,24 @@ class PyEnvironmentTests(unittest.TestCase):
       params=params,
       ml_behavior=ml_behavior)
     env = SingleAgentRuntime(blueprint=bp, render=False)
+    # agent
+    sac_agent = BehaviorSACAgent(environment=env,
+                                 params=params)
+    env.ml_behavior = sac_agent
+    # test run
+    env.reset()
+    for _ in range(0, 5):
+      action = np.random.randint(low=0, high=3)
+      observed_next_state, reward, done, info = env.step(action)
+
+  def test_continuous_delay_environment(self):
+    params = ParameterServer(filename="bark_ml/tests/data/highway_merge_configurable.json")
+    # continuous model
+    ml_behavior = BehaviorContinuousML(params=params)
+    bp = ConfigurableScenarioBlueprint(
+      params=params,
+      ml_behavior=ml_behavior)
+    env = SingleAgentContinuousDelayRuntime(blueprint=bp, render=False)
     # agent
     sac_agent = BehaviorSACAgent(environment=env,
                                  params=params)
