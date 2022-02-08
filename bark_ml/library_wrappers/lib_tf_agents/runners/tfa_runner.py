@@ -66,6 +66,7 @@ class TFARunner:
     self._logger = logging.getLogger()
     self._tracer = tracer or Tracer()
     self._colliding_scenario_ids = []
+    self._max_success_rate = 0.
 
   def SetupSummaryWriter(self):
     if self._params["ML"]["TFARunner"]["SummaryPath"] is not None:
@@ -165,6 +166,10 @@ class TFARunner:
       f" {success_rate:.3f} (evaluated over {num_episodes} episodes).")
 
     if mode == "training":
+      if success_rate > self._max_success_rate:
+        ckpt_path = self._params["ML"]["BehaviorTFAAgents"]["CheckpointPath"]
+        self._agent.SaveCheckpoint(ckpt_path + "best_checkpoints/")
+
       global_iteration = self._agent._agent._train_step_counter.numpy()
       tf.summary.scalar("mean_reward", mean_reward, step=global_iteration)
       tf.summary.scalar("mean_steps", mean_steps, step=global_iteration)

@@ -77,6 +77,17 @@ class BehaviorTFAAgent(BehaviorModel):
     self._logger.info("Saved checkpoint for step {}.".format(
       int(self._agent._train_step_counter.numpy())))
 
+  def SaveCheckpoint(self, path="./"):
+    checkpointer = Checkpointer(path,
+      global_step=self._ckpt.step,
+      tf_agent=self._agent,
+      max_to_keep=1)
+    checkpointer.save(
+      global_step=self._agent._train_step_counter)
+    self._logger.info(
+      f"Saved checkpoint for step "
+      f"{int(self._agent._train_step_counter.numpy())} at {path}.")
+
   def Load(self):
     try:
       self._ckpt.restore(self._ckpt_manager.latest_checkpoint)
