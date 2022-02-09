@@ -82,6 +82,61 @@ class SingleAgentGaussianNoiseRuntime(SingleAgentRuntime):
     return super().step(action)
 
 
+class SingleAgentContinuousDelayRuntime(SingleAgentRuntime):
+  """An environment that executes actions with noise.
+  """
+  def __init__(self,
+               blueprint=None,
+               ml_behavior=None,
+               observer=None,
+               evaluator=None,
+               step_time=None,
+               viewer=None,
+               scenario_generator=None,
+               render=False,
+               delay_range=None):
+    super().__init__(blueprint=blueprint,
+                     ml_behavior=ml_behavior,
+                     observer=observer,
+                     evaluator=evaluator,
+                     step_time=step_time,
+                     viewer=viewer,
+                     scenario_generator=scenario_generator,
+                     render=render)
+    self._delay_range = delay_range or [0., 0.1]
+
+  def step(self, action):
+    # set actions
+    eval_id = self._scenario._eval_agent_ids[0]
+    if eval_id in self._world.agents:
+      self._world.agents[eval_id].behavior_model.ActionToBehavior(action)
+
+    # step and observe
+    delta_t = np.random.uniform(
+      self._delay_range[0], self._delay_range[1])
+    world_dt = self._step_time + delta_t
+    # print(f"Current world step time is {world_dt}.")
+    self._world.Step(world_dt)
+    observed_world = self._world.Observe([eval_id])
+
+    if len(observed_world) > 0:
+      observed_world = observed_world[0]
+    else:
+      raise Exception('No world instance available.')
+
+    # observe and evaluate
+    observed_next_state = self._observer.Observe(observed_world)
+    reward, done, info = self._evaluator.Evaluate(
+      observed_world=observed_world,
+      action=action)
+
+    # render
+    if self._render:
+      self.render()
+
+    return observed_next_state, reward, done, info
+
+
 class SingleAgentDelayAndGaussianNoiseRuntime(SingleAgentRuntime):
   """An environment that executes actions with a pre-defined
      delay.

@@ -119,12 +119,45 @@ class PotentialCenterlineFunctor(PotentialBasedFunctor):
       prev_dist = self.DistanceToCenterline(observed_world, prev_state)
       cur_dist = self.DistanceToCenterline(observed_world, cur_state)
       prev_pot = self.DistancePotential(
-        prev_dist, self._params["MaxDist", "", 100.], self._params["DistExponent", "", 0.2])
+        prev_dist, self._params["MaxDist", "", 100.],
+        self._params["DistExponent", "", 0.2])
       cur_pot = self.DistancePotential(
-        cur_dist, self._params["MaxDist", "", 100.], self._params["DistExponent", "", 0.2])
+        cur_dist, self._params["MaxDist", "", 100.],
+        self._params["DistExponent", "", 0.2])
       return False, self._params["Gamma", "", 0.99]*cur_pot - prev_pot, {}
     return False, 0, {}
 
+class PotentialGoalCenterlineFunctor(PotentialBasedFunctor):
+  def __init__(self, params):
+    super().__init__(params=params)
+    self._params = params["PotentialGoalCenterlineFunctor"]
+
+  @staticmethod
+  def DistancePotential(d, d_max, b):
+    return 1. - (d/d_max)**b
+
+  def DistanceToCenterline(self, observed_world, state):
+    ego_agent = observed_world.ego_agent
+    goal_center_line = ego_agent.goal_definition.center_line
+    dist = Distance(goal_center_line,
+      Point2d(state[int(StateDefinition.X_POSITION)],
+              state[int(StateDefinition.Y_POSITION)]))
+    return dist
+
+  def __call__(self, observed_world, action, eval_results):
+    hist = observed_world.ego_agent.history
+    if len(hist) >= 2:
+      prev_state, cur_state = self.GetPrevAndCurState(observed_world)
+      prev_dist = self.DistanceToCenterline(observed_world, prev_state)
+      cur_dist = self.DistanceToCenterline(observed_world, cur_state)
+      prev_pot = self.DistancePotential(
+        prev_dist, self._params["MaxDist", "", 100.],
+        self._params["DistExponent", "", 0.2])
+      cur_pot = self.DistancePotential(
+        cur_dist, self._params["MaxDist", "", 100.],
+        self._params["DistExponent", "", 0.2])
+      return False, self._params["Gamma", "", 0.99]*cur_pot - prev_pot, {}
+    return False, 0, {}
 
 class PotentialVelocityFunctor(PotentialBasedFunctor):
   def __init__(self, params):

@@ -17,6 +17,19 @@ class GoalReached(GeneralEvaluator):
         "step_count_functor" : StepCountFunctor(self._params),
       })
 
+
+class RewardShapingGoalDistEvaluator(GeneralEvaluator):
+  def __init__(self, params):
+    self._params = params["ML"]["RewardShapingGoalDistEvaluator"]
+    super().__init__(
+      params=self._params,
+      bark_ml_eval_fns={
+        "collision_functor" : CollisionFunctor(self._params),
+        "drivable_area_functor" : DrivableAreaFunctor(self._params),
+        "step_count_functor" : StepCountFunctor(self._params),
+        "pot_center_functor": PotentialGoalCenterlineFunctor(self._params)
+      })
+
 class RewardShapingEvaluator(GeneralEvaluator):
   def __init__(self, params):
     self._params = params["ML"]["RewardShapingEvaluator"]
