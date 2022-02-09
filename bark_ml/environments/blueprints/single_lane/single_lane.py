@@ -13,7 +13,7 @@ from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
 from bark.core.world.opendrive import *
 from bark.core.geometry import *
-from bark.core.models.behavior import BehaviorDynamicModel
+from bark.core.models.behavior import BehaviorDynamicModel, BehaviorMacroActionsFromParamServer
 from bark.core.world.map import MapInterface
 from bark.core.world.opendrive import XodrDrivingDirection
 from bark.core.world.goal_definition import GoalDefinitionStateLimitsFrenet

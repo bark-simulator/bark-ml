@@ -112,8 +112,10 @@ class BehaviorTFAAgent(BehaviorModel):
     # set action to be executed
     self._bark_behavior_model.ActionToBehavior(action)
     trajectory = self._bark_behavior_model.Plan(dt, observed_world)
+    next_action = self._bark_behavior_model.GetLastAction()
     # NOTE: BARK requires models to have trajectories of the past
     BehaviorModel.SetLastTrajectory(self, trajectory)
+    BehaviorModel.SetLastAction(self, next_action)
     return trajectory
 
   @property
