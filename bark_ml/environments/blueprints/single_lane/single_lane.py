@@ -58,8 +58,6 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
     idx = np.random.randint(50, 90)
     points = lane_corr.center_line.ToArray()[idx:idx+pt_num]
     new_line = Line2d(points)
-    des_velocity = np.random.uniform( \
-        self._goalVelocityRange[0], self._goalVelocityRange[1])
     return GoalDefinitionStateLimitsFrenet(new_line,
                                            (2.5, 2.),
                                            (0.15, 0.15),
