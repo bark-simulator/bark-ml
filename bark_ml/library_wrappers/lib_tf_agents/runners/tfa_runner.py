@@ -168,7 +168,7 @@ class TFARunner:
     if mode == "training":
       if success_rate > self._max_success_rate:
         ckpt_path = self._params["ML"]["BehaviorTFAAgents"]["CheckpointPath"]
-        self._agent.SaveCheckpoint(ckpt_path + "best_checkpoints/")
+        self._agent.SaveCheckpoint(ckpt_path + "best_checkpoint/")
 
       global_iteration = self._agent._agent._train_step_counter.numpy()
       tf.summary.scalar("mean_reward", mean_reward, step=global_iteration)
