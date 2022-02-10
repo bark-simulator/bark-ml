@@ -12,7 +12,7 @@
 #include "bark/geometry/standard_shapes.hpp"
 #include "bark/models/behavior/constant_acceleration/constant_acceleration.hpp"
 #include "bark/models/behavior/motion_primitives/continuous_actions.hpp"
-#include "bark/models/dynamic/single_track.hpp"
+#include "bark/models/dynamic/single_track_steering_rate.hpp"
 #include "bark/models/execution/interpolation/interpolate.hpp"
 #include "bark/world/evaluation/evaluator_collision_agents.hpp"
 #include "bark/world/goal_definition/goal_definition.hpp"
@@ -80,12 +80,12 @@ AgentId create_agent(WorldPtr world,
 
     // Setting Up Agents (one in front of another)
     ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
-    DynamicModelPtr dyn_model(new SingleTrackModel(params));
+    DynamicModelPtr dyn_model(new SingleTrackSteeringRateModel(params));
     BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
     Polygon car_polygon = CarRectangle();
 
-    State init_state(static_cast<int>(MIN_STATE_SIZE));
-    init_state << 0.0, x, y, theta, v;
+    State init_state(static_cast<int>(MIN_STATE_SIZE) + 1);
+    init_state << 0.0, x, y, theta, v, 0.0;
     AgentPtr agent(new Agent(init_state, beh_model, dyn_model, exec_model,
                                 car_polygon, params, goal_ptr, world->GetMap(),
                                 Model3D())); 
@@ -132,7 +132,7 @@ TEST(static_observer, agents_exist ) {
     const ObservedWorld observed_world(world, id1);
 
     const auto observed_nn_state = nn_observer.Observe(observed_world);
-    EXPECT_EQ(observed_nn_state.cols(), 8);
+    EXPECT_EQ(observed_nn_state.cols(), 10);
 
     // Ego lat, theta, vlon, vlat
     EXPECT_EQ(observed_nn_state(0, 0), 0.0);
@@ -142,12 +142,12 @@ TEST(static_observer, agents_exist ) {
 
     const auto es = observed_world.GetEgoAgent()->GetShape();
     // Nearest lon/lat left
-    EXPECT_NEAR(observed_nn_state(0, 4), (10.0 - 5.0 - es.front_dist_ - es.rear_dist_)/20.0, 0.0001);
-    EXPECT_NEAR(observed_nn_state(0, 5), (0.0 + 4.0 - es.left_dist_ - es.right_dist_)/10.0, 0.0001);
+    EXPECT_NEAR(observed_nn_state(0, 6), (10.0 - 5.0 - es.front_dist_ - es.rear_dist_)/20.0, 0.0001);
+    EXPECT_NEAR(observed_nn_state(0, 7), (0.0 + 4.0 - es.left_dist_ - es.right_dist_)/10.0, 0.0001);
 
     // Nearest lon right
-    EXPECT_EQ(observed_nn_state(0, 6), 0.0); // longitudinal overlap
-    EXPECT_NEAR(observed_nn_state(0, 7), (3.0 - es.left_dist_ - es.right_dist_)/10.0, 0.0001);
+    EXPECT_EQ(observed_nn_state(0, 8), 0.0); // longitudinal overlap
+    EXPECT_NEAR(observed_nn_state(0, 9), (3.0 - es.left_dist_ - es.right_dist_)/10.0, 0.0001);
 }
 
 TEST(static_observer, agents_no_left ) { 
@@ -179,7 +179,7 @@ TEST(static_observer, agents_no_left ) {
     const ObservedWorld observed_world(world, id1);
 
     const auto observed_nn_state = nn_observer.Observe(observed_world);
-    EXPECT_EQ(observed_nn_state.cols(), 8);
+    EXPECT_EQ(observed_nn_state.cols(), 10);
 
     // Ego lat, theta, vlon, vlat
     EXPECT_EQ(observed_nn_state(0, 0), 0.0);
@@ -189,10 +189,10 @@ TEST(static_observer, agents_no_left ) {
 
     const auto es = observed_world.GetEgoAgent()->GetShape();
     // Nearest lon/lat left no existing
-    EXPECT_EQ(observed_nn_state(0, 4), -1.0);
-    EXPECT_EQ(observed_nn_state(0, 5), -1.0);
+    EXPECT_EQ(observed_nn_state(0, 6), -1.0);
+    EXPECT_EQ(observed_nn_state(0, 7), -1.0);
 
     // Nearest lon right
-    EXPECT_EQ(observed_nn_state(0, 6), 0.0); // longitudinal overlap
-    EXPECT_EQ(observed_nn_state(0, 7), 0.0); // lateral overlap
+    EXPECT_EQ(observed_nn_state(0, 8), 0.0); // longitudinal overlap
+    EXPECT_EQ(observed_nn_state(0, 9), 0.0); // lateral overlap
 }

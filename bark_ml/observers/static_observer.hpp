@@ -77,6 +77,7 @@ class StaticObserver {
       "ML::StaticObserver::MinSteeringRate", "", -4.0);;
     max_steering_rate_ = params->GetReal(
       "ML::StaticObserver::MaxSteeringRate", "", 4.0);;
+    check_in_road_corridor_ = params->GetBool("ML::StaticObserver::CheckInRoadCorridor", "", false);
     observation_len_ = 6+4;
   }
 
@@ -149,6 +150,12 @@ class StaticObserver {
     return state_diff;
   }
 
+  bool IntersectsEgoCorridor(const AgentId& other_agent_id, const ObservedWorld& observed_world) const {
+    auto other_agent =  observed_world.GetAgent(other_agent_id);
+    return bark::geometry::Collide(other_agent->GetPolygonFromState(other_agent->GetCurrentState()), 
+     observed_world.GetEgoAgent()->GetRoadCorridor()->GetPolygon());
+  }
+
   ObservedState Observe(const ObservedWorld& observed_world) const {
     // find near agents (n)
     AgentMap nearest_agents = observed_world.GetNearestAgents(
@@ -177,6 +184,8 @@ class StaticObserver {
       double distance = Distance(
         observed_world.CurrentEgoPosition(), agent_state);
       if (distance > max_dist_) continue;
+
+      if(check_in_road_corridor_ && !IntersectsEgoCorridor(agent.second->GetAgentId(), observed_world)) continue;
 
       auto state_diff = GetOtherAgentState(agent.second->GetAgentId(), observed_world);
 
@@ -228,6 +237,7 @@ class StaticObserver {
          min_d_, max_d_, min_s_, max_s_,
          min_steering_rate_, max_steering_rate_,
          min_goal_dist_, max_goal_dist_;
+         bool check_in_road_corridor_;
 };
 
 }  // namespace observers
