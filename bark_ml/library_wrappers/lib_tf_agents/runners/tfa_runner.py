@@ -66,7 +66,7 @@ class TFARunner:
     self._logger = logging.getLogger()
     self._tracer = tracer or Tracer()
     self._colliding_scenario_ids = []
-    self._max_success_rate = 0.
+    self._max_success_rate = 0.0
 
   def SetupSummaryWriter(self):
     if self._params["ML"]["TFARunner"]["SummaryPath"] is not None:
@@ -173,6 +173,7 @@ class TFARunner:
         with open(best_ckpt_folder + 'info.txt', 'w') as f:
           f.write(f"Success-rate {success_rate:.3f}, collision-rate: {col_rate:.5f}"
                   f", reward {mean_reward:.3f}, steps: {mean_steps:.3f}.")
+        self._max_success_rate = success_rate
 
       global_iteration = self._agent._agent._train_step_counter.numpy()
       tf.summary.scalar("mean_reward", mean_reward, step=global_iteration)
