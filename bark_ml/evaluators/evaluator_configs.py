@@ -15,6 +15,7 @@ class GoalReached(GeneralEvaluator):
         "collision_functor" : CollisionFunctor(self._params),
         "drivable_area_functor" : DrivableAreaFunctor(self._params),
         "step_count_functor" : StepCountFunctor(self._params),
+        "goal_functor": GoalFunctor(self._params)
       })
 
 
@@ -41,7 +42,8 @@ class RewardShapingEvaluator(GeneralEvaluator):
         "drivable_area_functor" : DrivableAreaFunctor(self._params),
         "step_count_functor" : StepCountFunctor(self._params),
         "pot_center_functor": PotentialCenterlineFunctor(self._params),
-        "pot_vel_functor": PotentialVelocityFunctor(self._params)
+        "pot_vel_functor": PotentialVelocityFunctor(self._params),
+        "goal_functor": GoalFunctor(self._params)
       })
 
 class SimpleSingleLaneEvaluator(GeneralEvaluator):
