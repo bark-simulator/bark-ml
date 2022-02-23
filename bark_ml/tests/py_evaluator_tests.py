@@ -82,7 +82,7 @@ class PyEvaluatorTests(unittest.TestCase):
       print(terminal, reward)
       
   def test_evaluator_configurator(self):
-    params = ParameterServer(filename="/home/xliu/bark-ml/bark_ml/tests/data/evaluator_config_test_paras.json")
+    params = ParameterServer()
     bp = ContinuousHighwayBlueprint(params)
     env = SingleAgentRuntime(blueprint=bp, render=True)
     env.reset()
