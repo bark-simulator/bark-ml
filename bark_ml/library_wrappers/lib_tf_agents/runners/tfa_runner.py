@@ -66,7 +66,8 @@ class TFARunner:
     self._logger = logging.getLogger()
     self._tracer = tracer or Tracer()
     self._colliding_scenario_ids = []
-    self._max_success_rate = 0.0
+    self._max_success_rate = -1.0
+    self._max_reward = -10000.0
 
   def SetupSummaryWriter(self):
     if self._params["ML"]["TFARunner"]["SummaryPath"] is not None:
@@ -152,7 +153,10 @@ class TFARunner:
       reward += calculate_mean(episode_log, "reward")
       collision += check_if_any(episode_log, "collision", True) or \
         check_if_any(episode_log, "drivable_area", True)
-      success += check_if_any(episode_log, "goal_reached", True)
+      # rethink success: goal_reached without collision and expiring drivable_area
+      success += check_if_any(episode_log, "goal_reached", True) and \
+        check_if_any(episode_log, "collision", False) and \
+        check_if_any(episode_log, "drivable_area", False)
 
     mean_steps = steps / num_episodes
     mean_reward = reward / num_episodes
@@ -166,14 +170,15 @@ class TFARunner:
       f" {success_rate:.3f} (evaluated over {num_episodes} episodes).")
 
     if mode == "training":
-      if success_rate > self._max_success_rate:
-        ckpt_path = self._params["ML"]["BehaviorTFAAgents"]["CheckpointPath"]
-        best_ckpt_folder = ckpt_path + "best_checkpoint/"
-        self._agent.SaveCheckpoint(best_ckpt_folder)
+      best_ckpt_folder=self._agent._best_ckpt_manager._manager._directory
+      if success_rate > self._max_success_rate or \
+        (success_rate == self._max_success_rate and mean_reward > self._max_reward):
+        self._agent.SaveCheckpoint()
         with open(best_ckpt_folder + 'info.txt', 'w') as f:
           f.write(f"Success-rate {success_rate:.3f}, collision-rate: {col_rate:.5f}"
                   f", reward {mean_reward:.3f}, steps: {mean_steps:.3f}.")
         self._max_success_rate = success_rate
+        self._max_reward = mean_reward
 
       global_iteration = self._agent._agent._train_step_counter.numpy()
       tf.summary.scalar("mean_reward", mean_reward, step=global_iteration)

@@ -41,7 +41,10 @@ class BehaviorTFAAgent(BehaviorModel):
     self._agent = self.GetAgent(self._wrapped_env, params)
     self._ckpt = tf.train.Checkpoint(step=tf.Variable(0, dtype=tf.int64),
                                      agent=self._agent)
-    self._ckpt_manager = self.GetCheckpointer()
+    ckpt_path= self._params["ML"]["BehaviorTFAAgents"]["CheckpointPath", "", ""]
+    self._ckpt_manager = self.GetCheckpointer(ckpt_path,self._params["ML"]["BehaviorTFAAgents"][
+        "NumCheckpointsToKeep", "", 3])
+    self._best_ckpt_manager = self.GetCheckpointer(ckpt_path+"best_checkpoint/",1)
     self._logger = logging.getLogger()
     # NOTE: by default we do not want the action to be set externally
     #       as this enables the agents to be plug and played in BARK.
@@ -61,13 +64,12 @@ class BehaviorTFAAgent(BehaviorModel):
     #   self._logger.info("Actions are now set externally.")
     self._set_action_externally = externally
 
-  def GetCheckpointer(self):
+  def GetCheckpointer(self,path_,max_to_keep_):
     checkpointer = Checkpointer(
-        self._params["ML"]["BehaviorTFAAgents"]["CheckpointPath", "", ""],
+        path_,
       global_step=self._ckpt.step,
       tf_agent=self._agent,
-      max_to_keep=self._params["ML"]["BehaviorTFAAgents"][
-        "NumCheckpointsToKeep", "", 3])
+      max_to_keep=max_to_keep_)
     checkpointer.initialize_or_restore()
     return checkpointer
 
@@ -77,16 +79,13 @@ class BehaviorTFAAgent(BehaviorModel):
     self._logger.info("Saved checkpoint for step {}.".format(
       int(self._agent._train_step_counter.numpy())))
 
-  def SaveCheckpoint(self, path="./"):
-    checkpointer = Checkpointer(path,
-      global_step=self._ckpt.step,
-      tf_agent=self._agent,
-      max_to_keep=1)
-    checkpointer.save(
+
+  def SaveCheckpoint(self):
+    self._best_ckpt_manager.save(
       global_step=self._agent._train_step_counter)
     self._logger.info(
-      f"Saved checkpoint for step "
-      f"{int(self._agent._train_step_counter.numpy())} at {path}.")
+      f"Saved best checkpoint for step "
+      f"{int(self._agent._train_step_counter.numpy())} at {self._best_ckpt_manager._manager._directory}.")
 
   def Load(self):
     try:

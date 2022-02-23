@@ -53,7 +53,7 @@ class SimpleSingleLaneEvaluator(GeneralEvaluator):
       params=self._params,
       bark_ml_eval_fns={
         "collision_functor" : CollisionFunctor(self._params),
-        "low_speed_goal_reached_functor" : LowSpeedGoalFunctor(params),
+        "low_speed_goal_reached_functor" : LowSpeedGoalFunctor(self._params),
         "drivable_area_functor" : DrivableAreaFunctor(self._params),
         "step_count_functor" : StepCountFunctor(self._params),
         "min_max_vel_functor" : MinMaxVelFunctor(self._params)
@@ -66,7 +66,7 @@ class SingleLaneEvaluator(GeneralEvaluator):
       params=self._params,
       bark_ml_eval_fns={
         "collision_functor" : CollisionFunctor(self._params),
-        "low_speed_goal_reached_functor" : LowSpeedGoalFunctor(params),
+        "low_speed_goal_reached_functor" : LowSpeedGoalFunctor(self._params),
         "drivable_area_functor" : DrivableAreaFunctor(self._params),
         "step_count_functor" : StepCountFunctor(self._params),
         "min_max_vel_functor" : MinMaxVelFunctor(self._params),
@@ -81,7 +81,7 @@ class SmoothnessSingleLaneEvaluator(GeneralEvaluator):
       params=self._params,
       bark_ml_eval_fns={
         "collision_functor" : CollisionFunctor(self._params),
-        "low_speed_goal_reached_functor" : LowSpeedGoalFunctor(params),
+        "low_speed_goal_reached_functor" : LowSpeedGoalFunctor(self._params),
         "drivable_area_functor" : DrivableAreaFunctor(self._params),
         "smoothness_functor": SmoothnessFunctor(self._params),
         "step_count_functor" : StepCountFunctor(self._params),

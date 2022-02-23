@@ -176,7 +176,7 @@ class PotentialVelocityFunctor(PotentialBasedFunctor):
       cur_v = cur_state[int(StateDefinition.VEL_POSITION)]
       prev_pot = self.VelocityPotential(
         prev_v, self._params["DesiredVel", "", 4.],
-        self._params["MaxVel", "", 20.], self._params["VelExponent", "", 0.2])
+        self._params["MaxVel", "", 100.], self._params["VelExponent", "", 0.2])
       cur_pot = self.VelocityPotential(
         cur_v,  self._params["DesiredVel", "", 4.],
         self._params["MaxVel", "", 100.], self._params["VelExponent", "", 0.2])
@@ -263,7 +263,7 @@ class GeneralEvaluator:
     self._bark_ml_eval_fns = bark_ml_eval_fns or {
       "collision_functor" : CollisionFunctor(self._params),
       # "goal_reached_functor" : GoalFunctor(self._params),
-      "low_speed_goal_reached_functor" : LowSpeedGoalFunctor(params),
+      "low_speed_goal_reached_functor" : LowSpeedGoalFunctor(self._params),
       "drivable_area_functor" : DrivableAreaFunctor(self._params),
       "step_count_functor" : StepCountFunctor(self._params),
       # "smoothness_functor" : SmoothnessFunctor(params),
