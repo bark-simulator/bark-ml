@@ -22,7 +22,8 @@ class ExperimentRunner:
                json_file=None,
                params=None,
                mode="visualize",
-               random_seed=0):
+               random_seed=0,
+               use_best_ckpt_folder = False):
     self._logger = logging.getLogger()
     self._experiment_json = json_file
     if params is not None:
@@ -35,7 +36,7 @@ class ExperimentRunner:
     self._random_seed = random_seed
     np.random.seed(random_seed)
     tf.random.set_seed(random_seed)
-    self.SetCkptsAndSummaries()
+    self.SetCkptsAndSummaries(use_best_ckpt_folder = use_best_ckpt_folder)
     self._experiment = self.BuildExperiment(json_file, mode)
     self.Visitor(mode)
 
@@ -83,10 +84,10 @@ class ExperimentRunner:
       if experiment_hash != old_experiment_hash:
         self._logger.warning("\033[31m Trained experiment hash does not match \033[0m")
 
-  def SetCkptsAndSummaries(self):
+  def SetCkptsAndSummaries(self, use_best_ckpt_folder = False):
     self._runs_folder = \
       str(self._experiment_folder) + "/" + self._json_name + "/" + str(self._random_seed) + "/"
-    ckpt_folder = self._runs_folder + "ckpts/"
+    ckpt_folder = self._runs_folder + ("ckpts/" if not use_best_ckpt_folder else "ckpts/best_checkpoint/")
     summ_folder = self._runs_folder + "summ/"
     self._logger.info(f"Run folder of the agent {self._runs_folder}.")
     self._hash_file_path = self._runs_folder + "hash.txt"
@@ -111,9 +112,10 @@ class ExperimentRunner:
     num_episodes = \
       self._params["Experiment"]["NumEvaluationEpisodes"]
     evaluation_results = self._experiment.runner.Run(
-      num_episodes=num_episodes, render=False, trace_colliding_ids=True)
+      num_episodes=num_episodes, render=False, trace_colliding_ids=True, mode="evaluate")
     # metrics = self._evaluate(evaluation_results)
     # ...
+    return evaluation_results
 
 
   def Visualize(self):
