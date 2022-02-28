@@ -29,9 +29,21 @@ class RewardShapingGoalDistEvaluator(GeneralEvaluator):
         "drivable_area_functor" : DrivableAreaFunctor(self._params),
         "step_count_functor" : StepCountFunctor(self._params),
         "pot_goal_center_functor": PotentialGoalCenterlineFunctor(self._params),
+        "min_max_vel_functor" : MinMaxVelFunctor(self._params),
         "goal_functor": GoalFunctor(self._params)
       })
-
+class TestRewardShapingGoalDistEvaluator(GeneralEvaluator):
+  def __init__(self, params):
+    self._params = params["ML"]["TestRewardShapingGoalDistEvaluator"]
+    super().__init__(
+      params=self._params,
+      bark_ml_eval_fns={
+        "collision_drivable_area_functor" : CollisionDrivableAreaFunctor(self._params),
+        "step_count_functor" : StepCountFunctor(self._params),
+        "pot_center_functor": PotentialGoalCenterlineFunctor(self._params),
+        "min_max_vel_functor" : MinMaxVelFunctor(self._params),
+        "goal_functor": GoalFunctor(self._params)
+      })
 class RewardShapingEvaluator(GeneralEvaluator):
   def __init__(self, params):
     self._params = params["ML"]["RewardShapingEvaluator"]
@@ -56,9 +68,22 @@ class SimpleSingleLaneEvaluator(GeneralEvaluator):
         "low_speed_goal_reached_functor" : LowSpeedGoalFunctor(self._params),
         "drivable_area_functor" : DrivableAreaFunctor(self._params),
         "step_count_functor" : StepCountFunctor(self._params),
+        "pot_goal_center_functor": PotentialGoalCenterlineFunctor(self._params),
         "min_max_vel_functor" : MinMaxVelFunctor(self._params)
       })
-
+class TestSimpleSingleLaneEvaluator(GeneralEvaluator):
+  def __init__(self, params):
+    self._params = params["ML"]["TestSimpleSingleLaneEvaluator"]
+    super().__init__(
+      params=self._params,
+      bark_ml_eval_fns={
+        "collision_drivable_area_functor" : CollisionDrivableAreaFunctor(self._params),
+        "low_speed_goal_reached_functor" : LowSpeedGoalFunctor(self._params),
+        "step_count_functor" : StepCountFunctor(self._params),
+        "pot_center_functor": PotentialGoalCenterlineFunctor(self._params),
+        "min_max_vel_functor" : MinMaxVelFunctor(self._params)
+        # "pot_goal_vel_functor": PotentialGoalReachedVelocityFunctor(self._params)
+      })
 class SingleLaneEvaluator(GeneralEvaluator):
   def __init__(self, params):
     self._params = params["ML"]["SingleLaneEvaluator"]

@@ -43,7 +43,7 @@
                 "FunctorConfigs":{
                     "CollisionFunctor": {
                         "CollisionReward": -1.0,
-                        "RewardWeight": 1.0
+                        "RewardWeight": 0.5
                     },
                     "DrivableAreaFunctor": {
                         "DrivableAreaReward": -1.0,
@@ -56,6 +56,11 @@
                     "MinMaxVelFunctor": {
                         "MaxVelViolationReward": -1.0,
                         "RewardWeight": 1.0
+                    },
+                    "PotentialGoalCenterlineFunctor":{
+                        "MaxDist": 20.0,
+                        "DistExponent": 0.4,
+                        "RewardWeight": 0.5
                     },
                     "LowSpeedGoalFunctor": {
                         "GoalReward": 1.0,

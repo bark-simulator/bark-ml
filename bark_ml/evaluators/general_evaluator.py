@@ -28,8 +28,8 @@ class Functor:
 
 class CollisionFunctor(Functor):
   def __init__(self, params):
-    super().__init__(params=params)
     self._params = params["CollisionFunctor"]
+    super().__init__(params=self._params)
 
   def __call__(self, observed_world, action, eval_results):
     if eval_results["collision"]:
@@ -39,29 +39,44 @@ class CollisionFunctor(Functor):
 
 class GoalFunctor(Functor):
   def __init__(self, params):
-    super().__init__(params=params)
     self._params = params["GoalFunctor"]
+    super().__init__(params=self._params)
 
   def __call__(self, observed_world, action, eval_results):
+    goal_terminate= False
     if eval_results["goal_reached"]:
-      return True, self.WeightedReward(self._params["GoalReward", "", 1.]), {}
+      goal_terminate = True
+      if eval_results["drivable_area"] or eval_results["collision"]:
+        return goal_terminate, 0, {}
+      return goal_terminate, self.WeightedReward(self._params["GoalReward", "", 1.]), {}
     return False, 0, {}
 
 class DrivableAreaFunctor(Functor):
   def __init__(self, params):
-    super().__init__(params=params)
     self._params = params["DrivableAreaFunctor"]
+    super().__init__(params=self._params)
 
   def __call__(self, observed_world, action, eval_results):
     if eval_results["drivable_area"]:
       return True, self.WeightedReward(self._params["DrivableAreaReward", "", -1.]), {}
     return False, 0, {}
 
+class CollisionDrivableAreaFunctor(Functor):
+  def __init__(self, params):
+    
+    self._params = params["CollisionDrivableAreaFunctor"]
+    super().__init__(params=self._params)
+
+  def __call__(self, observed_world, action, eval_results):
+    if eval_results["drivable_area"] or eval_results["collision"]:
+      return True, self.WeightedReward(self._params["FailReward", "", -1.]), {}
+    return False, 0, {}
 
 class StepCountFunctor(Functor):
   def __init__(self, params):
-    super().__init__(params=params)
+    
     self._params = params["StepCountFunctor"]
+    super().__init__(params=self._params)
 
   def __call__(self, observed_world, action, eval_results):
     if eval_results["step_count"] > self._params[
@@ -72,8 +87,9 @@ class StepCountFunctor(Functor):
 
 class MinMaxVelFunctor(Functor):
   def __init__(self, params):
-    super().__init__(params=params)
+    
     self._params = params["MinMaxVelFunctor"]
+    super().__init__(params=self._params)
 
   def __call__(self, observed_world, action, eval_results):
     ego_agent = observed_world.ego_agent
@@ -86,8 +102,9 @@ class MinMaxVelFunctor(Functor):
 
 class SmoothnessFunctor(Functor):
   def __init__(self, params):
-    super().__init__(params=params)
+    
     self._params = params["SmoothnessFunctor"]
+    super().__init__(params=self._params)
 
   def __call__(self, observed_world, action, eval_results):
     acc = action[0]
@@ -100,8 +117,8 @@ class SmoothnessFunctor(Functor):
 
 class PotentialBasedFunctor(Functor):
   def __init__(self, params):
-    super().__init__(params=params)
     self._params = params["PotentialBasedFunctor"]
+    super().__init__(params=params)
 
   def GetPrevAndCurState(self, observed_world):
     ego_agent = observed_world.ego_agent
@@ -112,8 +129,9 @@ class PotentialBasedFunctor(Functor):
 
 class PotentialCenterlineFunctor(PotentialBasedFunctor):
   def __init__(self, params):
-    super().__init__(params=params)
     self._params = params["PotentialCenterlineFunctor"]
+    super().__init__(params=self._params)
+    
 
   @staticmethod
   def DistancePotential(d, d_max, b):
@@ -144,8 +162,9 @@ class PotentialCenterlineFunctor(PotentialBasedFunctor):
 
 class PotentialGoalCenterlineFunctor(PotentialBasedFunctor):
   def __init__(self, params):
-    super().__init__(params=params)
     self._params = params["PotentialGoalCenterlineFunctor"]
+    super().__init__(params=self._params)
+    
 
   @staticmethod
   def DistancePotential(d, d_max, b):
@@ -176,8 +195,9 @@ class PotentialGoalCenterlineFunctor(PotentialBasedFunctor):
 
 class PotentialVelocityFunctor(PotentialBasedFunctor):
   def __init__(self, params):
-    super().__init__(params=params)
     self._params = params["PotentialVelocityFunctor"]
+    super().__init__(params=self._params)
+    
 
   @staticmethod
   def VelocityPotential(v, v_des, v_dev_max, a):
@@ -200,8 +220,9 @@ class PotentialVelocityFunctor(PotentialBasedFunctor):
 
 class PotentialGoalSwitchVelocityFunctor(PotentialBasedFunctor):
   def __init__(self, params):
-    super().__init__(params=params)
     self._params = params["PotentialGoalSwitchVelocityFunctor"]
+    super().__init__(params=self._params)
+    
 
   @staticmethod
   def VelocityPotential(v, v_des, v_dev_max, a):
@@ -225,15 +246,73 @@ class PotentialGoalSwitchVelocityFunctor(PotentialBasedFunctor):
       return False, self.WeightedReward(self._params["Gamma", "", 0.99]*cur_pot - prev_pot), {}
     return False, 0, {}
 
+class PotentialGoalReachedVelocityFunctor(PotentialBasedFunctor):
+  def __init__(self, params):
+    self._params = params["PotentialReachedVelocityFunctor"]
+    super().__init__(params=self._params)
+    
+
+  @staticmethod
+  def VelocityPotential(v, v_des, v_dev_max, a):
+    return 1. - (np.sqrt((v-v_des)**2)/v_dev_max)**a
+
+  def __call__(self, observed_world, action, eval_results):
+    desired_vel = self._params["DesiredVel", "", 0.]
+    if eval_results["goal_reached"]:
+      hist = observed_world.ego_agent.history
+    if len(hist) >= 2:
+      prev_state, cur_state = self.GetPrevAndCurState(observed_world)
+      prev_v = prev_state[int(StateDefinition.VEL_POSITION)]
+      cur_v = cur_state[int(StateDefinition.VEL_POSITION)]
+      prev_pot = self.VelocityPotential(
+        prev_v, desired_vel, self._params["MaxVel", "", 100.],
+        self._params["VelExponent", "", 0.2])
+      cur_pot = self.VelocityPotential(
+        cur_v,  desired_vel, self._params["MaxVel", "", 100.],
+        self._params["VelExponent", "", 0.2])
+      return False, self._params["Gamma", "", 0.99]*cur_pot - prev_pot, {}
+    return False, 0, {}
 class LowSpeedGoalFunctor(Functor):
   def __init__(self, params):
-    super().__init__(params=params)
     self._params = params["LowSpeedGoalFunctor"]
+    super().__init__(params=self._params)
+    
+    # self._in_goal_area = False
+
+#   @staticmethod
+#   def VelocityPotential(v, v_des, v_dev_max, a):
+#     return -(np.sqrt((v-v_des)**2)/v_dev_max)**a
+
+#   def __call__(self, observed_world, action, eval_results):
+#     cur_v = observed_world.ego_agent.history[-1][0][int(StateDefinition.VEL_POSITION)]
+#     desired_vel = self._params["DesiredVel", "", 0.]
+#     cur_pot = self.VelocityPotential(
+#         cur_v,  desired_vel, self._params["MaxVel", "", 100.],
+#         self._params["VelExponent", "", 0.8])
+#     if eval_results["goal_reached"] and (not(eval_results["drivable_area"] or eval_results["collision"])):
+#       return True, self._params["GoalReward", "", 1.]+ cur_pot, {"low_speed_goal_reached": True}
+#     return False, 0, {"low_speed_goal_reached": False}
+      
+  # def __call__(self, observed_world, action, eval_results):
+  #   ego_agent = observed_world.ego_agent
+  #   ego_vel = ego_agent.state[int(StateDefinition.VEL_POSITION)]
+  #   if eval_results["goal_reached"]:
+  #     self._in_goal_area = True
+    
+  #   if self._in_goal_area and ego_vel < self._params["MaxSpeed", "", 1.0]:
+  #     self._in_goal_area = False
+  #     return True, self._params["GoalReward", "", 1.], {"low_speed_goal_reached": True}
+
+  #   if self._in_goal_area and not eval_results["goal_reached"]:
+  #     self._in_goal_area = False
+  #     return True,0, {"low_speed_goal_reached": False}
+  #   return False, 0, {"low_speed_goal_reached": False}
 
   def __call__(self, observed_world, action, eval_results):
     ego_agent = observed_world.ego_agent
     ego_vel = ego_agent.state[int(StateDefinition.VEL_POSITION)]
     if eval_results["goal_reached"] and \
+      (not(eval_results["drivable_area"] or eval_results["collision"])) and \
       ego_vel < self._params["MaxSpeed", "", 0.2]:
       return True, self.WeightedReward(self._params["GoalReward", "", 1.]), {"low_speed_goal_reached": True}
     return False, 0, {"low_speed_goal_reached": False}
@@ -241,8 +320,9 @@ class LowSpeedGoalFunctor(Functor):
 
 class StateActionLoggingFunctor(Functor):
   def __init__(self, params):
-    super().__init__(params=params)
     self._params = params["StateActionLoggingFunctor"]
+    super().__init__(params=self._params)
+    
 
   def __call__(self, observed_world, action, eval_results):
     ego_agent = observed_world.ego_agent
@@ -280,10 +360,10 @@ class GeneralEvaluator:
     self._bark_ml_eval_fns = bark_ml_eval_fns or {
       "collision_functor" : CollisionFunctor(self._params),
       "goal_functor" : GoalFunctor(self._params),
-      # "low_speed_goal_reached_functor" : LowSpeedGoalFunctor(self._params),
+      "low_speed_goal_reached_functor" : LowSpeedGoalFunctor(self._params),
       "drivable_area_functor" : DrivableAreaFunctor(self._params),
       "step_count_functor" : StepCountFunctor(self._params),
-      # "smoothness_functor" : SmoothnessFunctor(self._params),
+      "smoothness_functor" : SmoothnessFunctor(self._params),
       "min_max_vel_functor" : MinMaxVelFunctor(self._params),
       # "pot_center_functor": PotentialCenterlineFunctor(self._params),
       # "pot_vel_functor": PotentialVelocityFunctor(self._params),
