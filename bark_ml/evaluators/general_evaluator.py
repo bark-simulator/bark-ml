@@ -251,7 +251,6 @@ class PotentialGoalReachedVelocityFunctor(PotentialBasedFunctor):
     self._params = params["PotentialReachedVelocityFunctor"]
     super().__init__(params=self._params)
     
-
   @staticmethod
   def VelocityPotential(v, v_des, v_dev_max, a):
     return 1. - (np.sqrt((v-v_des)**2)/v_dev_max)**a
@@ -272,50 +271,51 @@ class PotentialGoalReachedVelocityFunctor(PotentialBasedFunctor):
         self._params["VelExponent", "", 0.2])
       return False, self._params["Gamma", "", 0.99]*cur_pot - prev_pot, {}
     return False, 0, {}
+
 class LowSpeedGoalFunctor(Functor):
   def __init__(self, params):
     self._params = params["LowSpeedGoalFunctor"]
-    super().__init__(params=self._params)
-    
-    # self._in_goal_area = False
+    super().__init__(params=self._params) 
+    self._in_goal_area = False
 
-#   @staticmethod
-#   def VelocityPotential(v, v_des, v_dev_max, a):
-#     return -(np.sqrt((v-v_des)**2)/v_dev_max)**a
+  # @staticmethod
+  # def VelocityPotential(v, v_des, v_dev_max, a):
+  #   return -(np.sqrt((v-v_des)**2)/v_dev_max)**a
 
-#   def __call__(self, observed_world, action, eval_results):
-#     cur_v = observed_world.ego_agent.history[-1][0][int(StateDefinition.VEL_POSITION)]
-#     desired_vel = self._params["DesiredVel", "", 0.]
-#     cur_pot = self.VelocityPotential(
-#         cur_v,  desired_vel, self._params["MaxVel", "", 100.],
-#         self._params["VelExponent", "", 0.8])
-#     if eval_results["goal_reached"] and (not(eval_results["drivable_area"] or eval_results["collision"])):
-#       return True, self._params["GoalReward", "", 1.]+ cur_pot, {"low_speed_goal_reached": True}
-#     return False, 0, {"low_speed_goal_reached": False}
-      
   # def __call__(self, observed_world, action, eval_results):
-  #   ego_agent = observed_world.ego_agent
-  #   ego_vel = ego_agent.state[int(StateDefinition.VEL_POSITION)]
-  #   if eval_results["goal_reached"]:
-  #     self._in_goal_area = True
-    
-  #   if self._in_goal_area and ego_vel < self._params["MaxSpeed", "", 1.0]:
-  #     self._in_goal_area = False
-  #     return True, self._params["GoalReward", "", 1.], {"low_speed_goal_reached": True}
-
-  #   if self._in_goal_area and not eval_results["goal_reached"]:
-  #     self._in_goal_area = False
-  #     return True,0, {"low_speed_goal_reached": False}
+  #   cur_v = observed_world.ego_agent.history[-1][0][int(StateDefinition.VEL_POSITION)]
+  #   desired_vel = self._params["DesiredVel", "", 0.]
+  #   cur_pot = self.VelocityPotential(
+  #       cur_v,  desired_vel, self._params["MaxVel", "", 100.],
+  #       self._params["VelExponent", "", 0.8])
+  #   if eval_results["goal_reached"] and (not(eval_results["drivable_area"] or eval_results["collision"])):
+  #     return True, self._params["GoalReward", "", 1.]+ cur_pot, {"low_speed_goal_reached": True}
   #   return False, 0, {"low_speed_goal_reached": False}
-
+      
   def __call__(self, observed_world, action, eval_results):
     ego_agent = observed_world.ego_agent
     ego_vel = ego_agent.state[int(StateDefinition.VEL_POSITION)]
-    if eval_results["goal_reached"] and \
-      (not(eval_results["drivable_area"] or eval_results["collision"])) and \
-      ego_vel < self._params["MaxSpeed", "", 0.2]:
-      return True, self.WeightedReward(self._params["GoalReward", "", 1.]), {"low_speed_goal_reached": True}
-    return False, 0, {"low_speed_goal_reached": False}
+    if eval_results["goal_reached"]:
+      self._in_goal_area = True
+      if ego_vel < self._params["MaxSpeed", "", 1.0] and \
+        (not(eval_results["drivable_area"] or eval_results["collision"])):
+        self._in_goal_area = False
+        return True, self.WeightedReward(self._params["GoalReward", "", 1.]), {"goal_reached": True}
+
+    if self._in_goal_area and not eval_results["goal_reached"]:
+      self._in_goal_area = False
+      return True,0, {"goal_reached": False}
+
+    return False, 0, {"goal_reached": False}
+
+  # def __call__(self, observed_world, action, eval_results):
+  #   ego_agent = observed_world.ego_agent
+  #   ego_vel = ego_agent.state[int(StateDefinition.VEL_POSITION)]
+  #   if eval_results["goal_reached"] and \
+  #     (not(eval_results["drivable_area"] or eval_results["collision"])) and \
+  #     ego_vel < self._params["MaxSpeed", "", 1.0]:
+  #     return True, self.WeightedReward(self._params["GoalReward", "", 1.]), {"goal_reached": True}
+  #   return False, 0, {"goal_reached": False}
 
 
 class StateActionLoggingFunctor(Functor):
