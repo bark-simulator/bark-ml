@@ -9,6 +9,7 @@
 import os
 import numpy as np
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
+from bark.runtime.viewer.video_renderer import VideoRenderer
 from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
 from bark.core.world.opendrive import *
@@ -239,10 +240,11 @@ class SingleLaneBlueprint(Blueprint):
         lane_corridor_configs=lane_configs,
         observer_model=observer_model)
     if viewer:
-      viewer = MPViewer(params=params,
+      viewer = VideoRenderer(renderer= MPViewer(params=params,
                         x_range=[-100, 100],
                         y_range=[-100, 100],
-                        follow_agent_id=True)
+                        follow_agent_id=True),
+                        world_step_time=dt/4.0)
     evaluator = GeneralEvaluator(params)
     observer = NearestAgentsObserver(params)
     ml_behavior = ml_behavior
