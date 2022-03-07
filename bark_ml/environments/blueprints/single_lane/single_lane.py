@@ -57,10 +57,16 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
     world.map.GetRoadCorridor(
       self._road_ids, XodrDrivingDirection.forward)
     lane_corr = self._road_corridor.lane_corridors[0]
-    pt_num = 35
-    idx = np.random.randint(50, 90)
-    points = lane_corr.center_line.ToArray()[idx:idx+pt_num]
-    new_line = Line2d(points)
+    points = lane_corr.center_line.ToArray()
+    len_cent_line_ = len(points)
+    st_idx = self._goalConfigs.get("first_pt_index_range",[0.5,0.9])
+    idx = np.random.randint(st_idx[0]*len_cent_line_, st_idx[1]*len_cent_line_)
+    pt_num = self._goalConfigs.get("length_pt_portion",None)
+    if pt_num is None:
+      new_line = Line2d(points[idx:])
+    else:
+      pt_num = int(pt_num * len_cent_line_)
+      new_line = Line2d(points[idx:idx+pt_num])
     max_lateral_dist_= tuple(self._goalConfigs.get("max_lateral_dist",[2.5,2.0]))
     max_orient_diff_= tuple(self._goalConfigs.get("max_orient_diff",[0.15, 0.15]))
     velocity_range_= tuple(self._goalConfigs.get("velocity_range",[0.0, 20.0]))
@@ -179,7 +185,6 @@ class SingleLaneBlueprint(Blueprint):
     local_params = params.clone()
     # ego vehicle
     lane_conf = SingleLaneLaneCorridorConfig(params=local_params,
-                                             s_max = 100,
                                              road_ids=[0],
                                              lane_corridor_id=0,
                                              min_vel=0.,
@@ -199,7 +204,6 @@ class SingleLaneBlueprint(Blueprint):
       for conf in laneCorrConfigs.values():
         lane_conf = SingleLaneLaneCorridorConfig(
           params=local_params,
-          s_max = 100,
           road_ids=[0],
           lane_corridor_id=0,
           min_vel=0.,
@@ -250,11 +254,12 @@ class SingleLaneBlueprint(Blueprint):
         lane_corridor_configs=lane_configs,
         observer_model=observer_model)
     if viewer:
-      viewer = VideoRenderer(renderer= MPViewer(params=params,
+      viewer = MPViewer(params=params,
                         x_range=[-100, 100],
                         y_range=[-100, 100],
-                        follow_agent_id=True),
-                        world_step_time=dt/4.0)
+                        follow_agent_id=True)
+      if params["Experiment"]["ExportVideos"]:
+        viewer = VideoRenderer(renderer=viewer,world_step_time=dt/4.0)
     evaluator = GeneralEvaluator(params)
     observer = NearestAgentsObserver(params)
     ml_behavior = ml_behavior
