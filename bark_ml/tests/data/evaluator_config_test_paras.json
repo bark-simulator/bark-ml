@@ -1,0 +1,215 @@
+{
+    "Experiment": {
+        "Observer": {
+            "ModuleName": "StaticObserver",
+            "Config": {}
+        },
+        "Evaluator": {
+            "ModuleName": "EvaluatorConfigurator",
+            "Config": {}
+        },
+        "Runtime": {
+            "ModuleName": "SingleAgentRuntime",
+            "Config": {}
+        },
+        "Runner": {
+            "ModuleName": "SACRunner",
+            "Config": {}
+        },
+        "Agent": {
+            "ModuleName": "BehaviorSACAgent",
+            "Config": {}
+        },
+        "Blueprint": {
+            "ModuleName": "ContinuousSingleLaneBlueprint",
+            "Config": {
+                "num_scenarios": 10000,
+                "viewer": true,
+                "laneCorrConfigs": {
+                    "corr" :  {
+                      "samplingRange": [10, 20],
+                      "distanceRange": [15, 70],
+                      "lateralOffset": [[2.2, 2.4], [-2.3, -3.2]]
+                    }},
+                "dt": 0.2
+            }
+        },
+        "NumEvaluationEpisodes": 500,
+        "NumVisualizationEpisodes": 10
+    },
+    "ML": {
+        "EvaluatorConfigurator": {
+            "EvaluatorConfigs":{
+                "FunctorConfigs":{
+                    "CollisionFunctor": {
+                        "CollisionReward": -1.0,
+                        "RewardWeight": 0.5
+                    },
+                    "DrivableAreaFunctor": {
+                        "DrivableAreaReward": -1.0,
+                        "RewardWeight": 1.0
+                    },
+                    "StepCountFunctor": {
+                        "StepCountReward": 0.0,
+                        "RewardWeight": 1.0
+                    },
+                    "MinMaxVelFunctor": {
+                        "MaxVelViolationReward": -1.0,
+                        "RewardWeight": 1.0
+                    },
+                    "PotentialGoalCenterlineFunctor":{
+                        "MaxDist": 20.0,
+                        "DistExponent": 0.4,
+                        "RewardWeight": 0.5
+                    },
+                    "LowSpeedGoalFunctor": {
+                        "GoalReward": 1.0,
+                        "RewardWeight": 1.0
+                    }
+                },
+                "ExclusionProperties :":{
+                    "CollisionFunctor": 1,
+                    "DrivableAreaFunctor": 1,
+                    "StepCountFunctor": 1,
+                    "MinMaxVelFunctor": 1,
+                    "LowSpeedGoalFunctor": 1
+                }
+            }
+            
+        },
+        "BehaviorTFAAgents": {
+            "NumCheckpointsToKeep": 3
+        },
+        "TFARunner": {
+            "EvaluationSteps": 25,
+            "InitialCollectionEpisodes": 50,
+            "CollectionEpisodesPerStep": 1
+        },
+        "BehaviorContinuousML": {
+            "ActionsLowerBound": [
+                -2.0,
+                -3.0
+            ],
+            "ActionsUpperBound": [
+                2.0,
+                3.0
+            ]
+        },
+        "BehaviorSACAgent": {
+            "ActorFcLayerParams": [
+                512,
+                512,
+                512
+            ],
+            "CriticJointFcLayerParams": [
+                512,
+                512,
+                512
+            ],
+            "ActorLearningRate": 0.0003,
+            "CriticLearningRate": 0.0003,
+            "AlphaLearningRate": 0.0003,
+            "TargetUpdateTau": 0.05,
+            "TargetUpdatePeriod": 3,
+            "Gamma": 0.995,
+            "RewardScaleFactor": 1.0,
+            "AgentName": "sac_agent",
+            "DebugSummaries": false,
+            "ReplayBufferCapacity": 10000,
+            "ParallelBufferCalls": 1,
+            "BatchSize": 512,
+            "BufferNumSteps": 2,
+            "BufferPrefetch": 3
+        },
+        "SACRunner": {
+            "NumberOfCollections": 500000,
+            "EvaluateEveryNSteps": 2000
+        },
+        "NearestAgentsObserver": {
+            "MaxOtherDistance": 100
+        }
+    },
+    "BehaviorDynamicModel": {
+        "IntegrationTimeDelta": 0.05000000074505806
+    },
+    "World": {
+        "remove_agents_out_of_map": true,
+        "other_vehicle": true
+    },
+    "Visualization": {
+        "Agents": {
+            "Color": {
+                "Other": {
+                    "Lines": [
+                        0.0,
+                        0.27,
+                        0.58
+                    ],
+                    "Face": [
+                        0.49,
+                        0.63,
+                        0.83
+                    ]
+                },
+                "Controlled": {
+                    "Lines": [
+                        0.0,
+                        0.27,
+                        0.58
+                    ],
+                    "Face": [
+                        0.49,
+                        0.63,
+                        0.83
+                    ]
+                },
+                "UseColormapForOtherAgents": false,
+                "IfColormapUseLineColorOthers": true
+            },
+            "Alpha": {
+                "Controlled": 1.0,
+                "Other": 1
+            },
+            "ColorRoute": [
+                0.2,
+                0.2,
+                0.2
+            ],
+            "DrawRoute": false,
+            "DrawAgentId": true,
+            "DrawEvalGoals": true,
+            "EvalGoalColor": [
+                0.49,
+                0.63,
+                0.83
+            ],
+            "DrawHistory": false,
+            "DrawHistoryDrawFace": true
+        },
+        "Map": {
+            "XodrLanes": {
+                "Boundaries": {
+                    "Color": [
+                        0.7,
+                        0.7,
+                        0.7
+                    ],
+                    "Alpha": 1.0,
+                    "Linewidth": 1.0
+                }
+            },
+            "Plane": {
+                "Color": [
+                    1,
+                    1,
+                    1,
+                    1
+                ],
+                "Alpha": 1.0
+            }
+        },
+        "Evaluation": {
+            "DrawLTLDebugInfo": false
+        }
+    }
+}

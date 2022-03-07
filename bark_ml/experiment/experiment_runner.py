@@ -123,6 +123,8 @@ class ExperimentRunner:
     num_episodes = \
       self._params["Experiment"]["NumVisualizationEpisodes"]
     self._experiment.runner.Run(num_episodes=num_episodes, render=True)
+    if self._params["Experiment"]["ExportVideos"]:
+      self._experiment._blueprint._viewer.export_video(filename=f"./visualize", remove_image_dir=False)
 
   def PrintExperiment(self):
     pprint.pprint(self._experiment.params.ConvertToDict())
