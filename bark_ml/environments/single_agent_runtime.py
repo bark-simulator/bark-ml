@@ -24,11 +24,14 @@ class SingleAgentRuntime(Runtime):
                evaluator=None,
                step_time=None,
                viewer=None,
-               scenario_generator=None,
+               art_part=None,
+               num_scenarios=None,
+               art_scenario_generator=None,
+               odd_scenario_generator=None,
                render=False):
 
     if blueprint is not None:
-      self._scenario_generator = blueprint._scenario_generation
+      self._art_scenario_generator = blueprint._scenario_generation
       self._viewer = blueprint._viewer
       self._ml_behavior = blueprint._ml_behavior
       self._step_time = blueprint._dt
@@ -37,7 +40,10 @@ class SingleAgentRuntime(Runtime):
     Runtime.__init__(self,
                      step_time=step_time or self._step_time,
                      viewer=viewer or self._viewer,
-                     scenario_generator=scenario_generator or self._scenario_generator,
+                     art_part=art_part,
+                     num_scenarios=num_scenarios,
+                     art_scenario_generator = art_scenario_generator or blueprint._scenario_generation,
+                     odd_scenario_generator = odd_scenario_generator,
                      render=render)
     self._ml_behavior = ml_behavior or self._ml_behavior
     self._observer = observer or self._observer
