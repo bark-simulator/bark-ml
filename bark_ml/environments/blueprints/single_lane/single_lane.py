@@ -259,7 +259,7 @@ class SingleLaneBlueprint(Blueprint):
                         y_range=[-100, 100],
                         follow_agent_id=True)
       if params["Experiment"]["ExportVideos"]:
-        viewer = VideoRenderer(renderer=viewer,world_step_time=dt/4.0)
+        viewer = VideoRenderer(renderer=viewer,world_step_time=dt)
     evaluator = GeneralEvaluator(params)
     observer = NearestAgentsObserver(params)
     ml_behavior = ml_behavior
