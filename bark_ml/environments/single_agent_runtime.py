@@ -83,7 +83,8 @@ class SingleAgentRuntime(Runtime):
 
     self._world = self._scenario.GetWorldState()
     self._reset_has_been_called = True
-    self._viewer.Reset()
+    if self._viewer:
+      self._viewer.Reset()
     self._world_history = []
     assert len(self._scenario._eval_agent_ids) == 1, \
       "This runtime only supports a single agent!"
