@@ -68,6 +68,10 @@ class Experiment:
       return None
     filename = self._exp_params["ScenarioGeneration"]["ParamFile"]
     num_scenarios = self._exp_params["ScenarioGeneration"]["NumScenarios"]
+    if self._mode == "evaluate":
+      num_scenarios = self._exp_params["NumEvaluationEpisodes"]
+    if self._mode == "visualize":
+      num_scenarios = self._exp_params["NumVisualizationEpisodes"]
     param_server = ParameterServer(num_scenarios=num_scenarios, filename=filename)
     return eval(f"{module_name}(num_scenarios, param_server)")
   

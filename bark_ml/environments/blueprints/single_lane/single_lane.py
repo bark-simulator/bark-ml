@@ -226,10 +226,10 @@ class SingleLaneBlueprint(Blueprint):
     map_interface = MapInterface()
     map_interface.SetCsvMap(
       csv_path,
-      params["SingleLaneBluePrint"]["MapOffsetX", "", 692000],
-      params["SingleLaneBluePrint"]["MapOffsetY", "", 5.339e+06])
+      params["Experiment"]["Blueprint"]["MapOffsetX", "", 692000],
+      params["Experiment"]["Blueprint"]["MapOffsetY", "", 5.339e+06])
     observer_model = None
-    if params["SingleLaneBluePrint"]["UseObserveModel", "", False]:
+    if params["Experiment"]["Blueprint"]["UseObserveModel", "", False]:
       params["ObserverModelParametric"] \
             ["EgoStateDeviationDist"]["Covariance", "", [[0.05, 0.0, 0.0, 0.0],
                                                       [0.0, 0.01, 0.0, 0.0],

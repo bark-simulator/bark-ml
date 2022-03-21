@@ -52,7 +52,7 @@ class SingleAgentDelayRuntime(SingleAgentRuntime):
 
 
 class SingleAgentGaussianNoiseRuntime(SingleAgentRuntime):
-  """An environment that executes actions with noise.
+  """An environment that executes actions with Gaussian noise.
   """
   def __init__(self,
                blueprint=None,
@@ -75,12 +75,43 @@ class SingleAgentGaussianNoiseRuntime(SingleAgentRuntime):
     self._sigmas = sigmas or [0.01, 0.001]
 
   def step(self, action):
-    action += np.random.multivariate_normal(
-      mean=list(action), cov=np.diag(self._sigmas))
+    action = np.random.multivariate_normal(
+      mean=list(action), cov=np.diag(np.square(self._sigmas)))
     # TODO: use params
     action = np.clip(action, [-4, -0.1], [4, 0.1])
     return super().step(action)
 
+class SingleAgentActionNoiseRuntime(SingleAgentRuntime):
+  """An environment that executes actions with noise.
+  """
+  def __init__(self,
+               blueprint=None,
+               ml_behavior=None,
+               observer=None,
+               evaluator=None,
+               step_time=None,
+               viewer=None,
+               scenario_generator=None,
+               render=False,
+               noise_distribution=None):
+    super().__init__(blueprint=blueprint,
+                     ml_behavior=ml_behavior,
+                     observer=observer,
+                     evaluator=evaluator,
+                     step_time=step_time,
+                     viewer=viewer,
+                     scenario_generator=scenario_generator,
+                     render=render)
+    self._noise_distribution = noise_distribution
+
+  def step(self, action):
+    if self._noise_distribution is not None:
+      if self._noise_distribution["noise_type"]=="normal":
+        action = np.random.multivariate_normal(mean=list(action), cov=np.diag(np.square(self._noise_distribution["sigma"])))
+      if self._noise_distribution["noise_type"]=="uniform":
+        action += np.random.uniform(self._noise_distribution["low_action"],self._noise_distribution["high_action"])
+      action = np.clip(action, self._noise_distribution["low_bound"], self._noise_distribution["up_bound"])
+    return super().step(action)
 
 class SingleAgentContinuousDelayRuntime(SingleAgentRuntime):
   """An environment that executes actions with noise.
@@ -169,7 +200,7 @@ class SingleAgentDelayAndGaussianNoiseRuntime(SingleAgentRuntime):
   def step(self, action):
     self._action_queue.put(action)
     action_to_execute = self._action_queue.get()
-    action_to_execute += np.random.multivariate_normal(
+    action_to_execute = np.random.multivariate_normal(
       mean=list(action_to_execute), cov=np.diag(self._sigmas))
     # TODO: use params
     action_to_execute = np.clip(action_to_execute, [-4, -0.1], [4, 0.1])
