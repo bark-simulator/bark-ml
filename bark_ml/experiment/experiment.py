@@ -9,7 +9,7 @@ from bark_ml.core.observers import *
 from bark_ml.core.evaluators import *
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.scenario.scenario_generation.configurable_scenario_generation \
-  import ConfigurableScenarioGeneration
+  import ConfigurableScenarioGeneration # pylint: disable=unused-import
 
 
 def LoadModule(module_name, dict_items):
@@ -72,8 +72,10 @@ class Experiment:
       num_scenarios = self._exp_params["NumEvaluationEpisodes"]
     if self._mode == "visualize":
       num_scenarios = self._exp_params["NumVisualizationEpisodes"]
-    param_server = ParameterServer(num_scenarios=num_scenarios, filename=filename)
-    return eval(f"{module_name}(num_scenarios, param_server)")
+    dict_={}
+    dict_["num_scenarios"] = num_scenarios
+    dict_["params"] = ParameterServer(num_scenarios=num_scenarios, filename=filename)
+    return LoadModule(module_name, dict_)
   
   def InitBlueprint(self):
     """

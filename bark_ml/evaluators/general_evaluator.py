@@ -25,8 +25,9 @@ class Functor:
 
   def WeightedReward(self, reward_):
     return self._weight * reward_
-
-  def in_goal_area(self,observed_world):
+    
+  @staticmethod
+  def in_goal_area(observed_world):
     return observed_world.ego_agent.AtGoal()
 
 class CollisionFunctor(Functor):
