@@ -25,6 +25,10 @@ class Functor:
 
   def WeightedReward(self, reward_):
     return self._weight * reward_
+    
+  @staticmethod
+  def in_goal_area(observed_world):
+    return observed_world.ego_agent.AtGoal()
 
 class CollisionFunctor(Functor):
   def __init__(self, params):
@@ -231,8 +235,10 @@ class PotentialGoalSwitchVelocityFunctor(PotentialBasedFunctor):
   def __call__(self, observed_world, action, eval_results):
     hist = observed_world.ego_agent.history
     desired_vel = self._params["DesiredVel", "", 4.]
-    if eval_results["goal_reached"]:
+    if self.in_goal_area(observed_world):
       desired_vel = 0.
+    # if eval_results["goal_reached"]:
+    #   desired_vel = 0.
     if len(hist) >= 2:
       prev_state, cur_state = self.GetPrevAndCurState(observed_world)
       prev_v = prev_state[int(StateDefinition.VEL_POSITION)]
@@ -248,7 +254,7 @@ class PotentialGoalSwitchVelocityFunctor(PotentialBasedFunctor):
 
 class PotentialGoalReachedVelocityFunctor(PotentialBasedFunctor):
   def __init__(self, params):
-    self._params = params["PotentialReachedVelocityFunctor"]
+    self._params = params["PotentialGoalReachedVelocityFunctor"]
     super().__init__(params=self._params)
     
   @staticmethod
@@ -257,19 +263,19 @@ class PotentialGoalReachedVelocityFunctor(PotentialBasedFunctor):
 
   def __call__(self, observed_world, action, eval_results):
     desired_vel = self._params["DesiredVel", "", 0.]
-    if eval_results["goal_reached"]:
+    if self.in_goal_area(observed_world):
       hist = observed_world.ego_agent.history
-    if len(hist) >= 2:
-      prev_state, cur_state = self.GetPrevAndCurState(observed_world)
-      prev_v = prev_state[int(StateDefinition.VEL_POSITION)]
-      cur_v = cur_state[int(StateDefinition.VEL_POSITION)]
-      prev_pot = self.VelocityPotential(
-        prev_v, desired_vel, self._params["MaxVel", "", 100.],
-        self._params["VelExponent", "", 0.2])
-      cur_pot = self.VelocityPotential(
-        cur_v,  desired_vel, self._params["MaxVel", "", 100.],
-        self._params["VelExponent", "", 0.2])
-      return False, self._params["Gamma", "", 0.99]*cur_pot - prev_pot, {}
+      if len(hist) >= 2:
+        prev_state, cur_state = self.GetPrevAndCurState(observed_world)
+        prev_v = prev_state[int(StateDefinition.VEL_POSITION)]
+        cur_v = cur_state[int(StateDefinition.VEL_POSITION)]
+        prev_pot = self.VelocityPotential(
+          prev_v, desired_vel, self._params["MaxVel", "", 100.],
+          self._params["VelExponent", "", 0.2])
+        cur_pot = self.VelocityPotential(
+          cur_v,  desired_vel, self._params["MaxVel", "", 100.],
+          self._params["VelExponent", "", 0.2])
+        return False, self._params["Gamma", "", 0.99]*cur_pot - prev_pot, {}
     return False, 0, {}
 
 class LowSpeedGoalFunctor(Functor):

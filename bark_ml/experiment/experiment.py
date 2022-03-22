@@ -8,6 +8,8 @@ from bark_ml.library_wrappers.lib_tf_agents.runners import *
 from bark_ml.core.observers import *
 from bark_ml.core.evaluators import *
 from bark.runtime.commons.parameters import ParameterServer
+from bark.runtime.scenario.scenario_generation.configurable_scenario_generation \
+  import ConfigurableScenarioGeneration # pylint: disable=unused-import
 
 
 def LoadModule(module_name, dict_items):
@@ -52,6 +54,7 @@ class Experiment:
     if self._params is None:
       self._params = ParameterServer(filename=json_file)
     self._exp_params = self._params["Experiment"]
+    self._scenario_generation = self.InitScenarioGeneration()
     self._blueprint = self.InitBlueprint()
     self._observer = self.InitObserver()
     self._evaluator = self.InitEvaluator()
@@ -59,6 +62,21 @@ class Experiment:
     self._agent = self.InitAgent()
     self._runner = self.InitRunner()
 
+  def InitScenarioGeneration(self):
+    module_name = self._exp_params["ScenarioGeneration"]["ModuleName", "specify extra scenario generation", "FromBlueprint"]
+    if module_name == "FromBlueprint":
+      return None
+    filename = self._exp_params["ScenarioGeneration"]["ParamFile"]
+    num_scenarios = self._exp_params["ScenarioGeneration"]["NumScenarios"]
+    if self._mode == "evaluate":
+      num_scenarios = self._exp_params["NumEvaluationEpisodes"]
+    if self._mode == "visualize":
+      num_scenarios = self._exp_params["NumVisualizationEpisodes"]
+    dict_={}
+    dict_["num_scenarios"] = num_scenarios
+    dict_["params"] = ParameterServer(num_scenarios=num_scenarios, filename=filename)
+    return LoadModule(module_name, dict_)
+  
   def InitBlueprint(self):
     """
     Initialized the scenario blueprint.
@@ -76,6 +94,8 @@ class Experiment:
     blueprint = LoadModule(module_name, items)
     # NOTE: this should be configurable also
     blueprint._ml_behavior = BehaviorContinuousML(params=self._params)
+    if self._scenario_generation:
+      blueprint._scenario_generation = self._scenario_generation
     return blueprint
 
   def InitObserver(self):

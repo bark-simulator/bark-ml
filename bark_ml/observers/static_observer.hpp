@@ -77,7 +77,7 @@ class StaticObserver {
       "ML::StaticObserver::MinSteeringRate", "", -4.0);;
     max_steering_rate_ = params->GetReal(
       "ML::StaticObserver::MaxSteeringRate", "", 4.0);;
-    check_in_road_corridor_ = params->GetBool("ML::StaticObserver::CheckInRoadCorridor", "", false);
+    check_in_road_corridor_ = params->GetBool("ML::StaticObserver::CheckInRoadCorridor", "", true);
     observation_len_ = 6+4;
   }
 

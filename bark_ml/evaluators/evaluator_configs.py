@@ -81,8 +81,8 @@ class TestSimpleSingleLaneEvaluator(GeneralEvaluator):
         "low_speed_goal_reached_functor" : LowSpeedGoalFunctor(self._params),
         "step_count_functor" : StepCountFunctor(self._params),
         "pot_center_functor": PotentialGoalCenterlineFunctor(self._params),
-        "min_max_vel_functor" : MinMaxVelFunctor(self._params)
-        # "pot_goal_vel_functor": PotentialGoalReachedVelocityFunctor(self._params)
+        "min_max_vel_functor" : MinMaxVelFunctor(self._params),
+        "pot_goal_vel_functor" : PotentialGoalReachedVelocityFunctor(self._params)
       })
 class SingleLaneEvaluator(GeneralEvaluator):
   def __init__(self, params):
@@ -129,7 +129,9 @@ class EvaluatorConfigurator(GeneralEvaluator):
       "PotentialVelocityFunctor": "pot_vel_functor",
       "PotentialGoalSwitchVelocityFunctor": "pot_goal_switch_vel_functor",
       "PotentialGoalCenterlineFunctor": "pot_goal_center_functor",
-      "StateActionLoggingFunctor": "state_action_logging_functor"
+      "StateActionLoggingFunctor": "state_action_logging_functor",
+      "CollisionDrivableAreaFunctor" : "collision_drivable_area_functor",
+      "PotentialGoalReachedVelocityFunctor": "pot_goal_vel_functor"
     }
     self._params = params["ML"]["EvaluatorConfigurator"]["EvaluatorConfigs"]["FunctorConfigs"]
     config_params_dict = self._params.ConvertToDict()
