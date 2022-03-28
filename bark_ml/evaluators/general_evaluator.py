@@ -28,7 +28,10 @@ class Functor:
     
   @staticmethod
   def in_goal_area(observed_world):
-    return observed_world.ego_agent.AtGoal()
+    ego_agent = observed_world.ego_agent
+    goal_shape_ = ego_agent.goal_definition.goal_shape
+    ego_pos_ = Point2d(ego_agent.state[int(StateDefinition.X_POSITION)],ego_agent.state[int(StateDefinition.Y_POSITION)])
+    return Within(ego_pos_,goal_shape_)
 
 class CollisionFunctor(Functor):
   def __init__(self, params):
