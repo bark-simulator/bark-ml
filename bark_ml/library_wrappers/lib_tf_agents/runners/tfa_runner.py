@@ -129,11 +129,11 @@ class TFARunner:
       action_step = self._agent._eval_policy.action(
         ts.transition(state, reward=0.0, discount=1.0))
       action = self.ReshapeActionIfRequired(action_step)
+
+      state, reward, is_terminal, info = self._environment.step(action)
       episode_log.append({
         "state": state, "action" : action, "reward": reward,
         "is_terminal": is_terminal, **info})
-
-      state, reward, is_terminal, info = self._environment.step(action)
       if render:
         self._environment.render()
     episode_log.append({
