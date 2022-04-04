@@ -102,4 +102,11 @@
     "shared_mutex": "cpp"
   },
   "python.pythonPath": "${workspaceFolder}/bark_ml/python_wrapper/venv/bin/python",
+  "python.linting.flake8Enabled": false,
+  "python.linting.pylintEnabled": true,
+  "python.linting.enabled": true,
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/bazel-out/k8-fastbuild/bin/bark_ml",
+    "./bazel-bark-ml/external/bark_project"
+  ]
 }

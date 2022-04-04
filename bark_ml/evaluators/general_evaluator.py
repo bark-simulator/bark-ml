@@ -10,7 +10,7 @@ from bark.core.world.evaluation import \
   EvaluatorStepCount, EvaluatorDrivableArea
 from bark.runtime.commons.parameters import ParameterServer
 from bark.core.models.dynamic import StateDefinition
-from bark.core.geometry import *
+from bark.core.geometry import Point2d, Within, Distance
 
 
 class Functor:
@@ -28,7 +28,10 @@ class Functor:
     
   @staticmethod
   def in_goal_area(observed_world):
-    return observed_world.ego_agent.AtGoal()
+    ego_agent = observed_world.ego_agent
+    goal_shape_ = ego_agent.goal_definition.goal_shape
+    ego_pos_ = Point2d(ego_agent.state[int(StateDefinition.X_POSITION)],ego_agent.state[int(StateDefinition.Y_POSITION)])
+    return Within(ego_pos_,goal_shape_)
 
 class CollisionFunctor(Functor):
   def __init__(self, params):
@@ -237,8 +240,6 @@ class PotentialGoalSwitchVelocityFunctor(PotentialBasedFunctor):
     desired_vel = self._params["DesiredVel", "", 4.]
     if self.in_goal_area(observed_world):
       desired_vel = 0.
-    # if eval_results["goal_reached"]:
-    #   desired_vel = 0.
     if len(hist) >= 2:
       prev_state, cur_state = self.GetPrevAndCurState(observed_world)
       prev_v = prev_state[int(StateDefinition.VEL_POSITION)]
