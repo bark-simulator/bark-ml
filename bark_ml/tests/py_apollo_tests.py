@@ -6,6 +6,10 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
+# try:
+#     import debug_settings
+# except:
+#     pass
 
 import unittest
 import gym
@@ -14,7 +18,7 @@ import os
 
 import bark
 from bark.core.world import World
-from bark.core.geometry import Line2d
+from bark.core.geometry import Line2d, Point2d, Distance
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.core.world.map import MapInterface
@@ -70,16 +74,60 @@ class PyEnvironmentTests(unittest.TestCase):
     env.addEgoAgent(state, goal_line)
     self.assertTrue(np.array_equal(env.ego_agent.state, state))
 
+  def test_create_ROI(self):
+    params = ParameterServer()
+    if params["World"]["enable_roi","",True]:
+      env = self.create_runtime_and_setup_empty_world(params)
+    self.assertTrue(env._rect_around_ego is not None)
+    self.assertTrue(env._rect_around_ego.Valid())
+    a_rect = env._rect_around_ego.CalculateArea()
+    self.assertEqual(a_rect, 480)
+    self.assertTrue(env._roi is None)
+    # Intersection of road corridor and ego rectangle
+    state = np.array([0, 1008, 28, 0, 0, 0])
+    goal_line = Line2d(np.array([[1008, 28], [1010, 30]]))
+    env.addEgoAgent(state, goal_line)
+    env.createROI4EgoAgent()
+    self.assertTrue(env._roi is not None)
+    self.assertTrue(env._roi.Valid())
+    a_roi = env._roi.CalculateArea()
+    self.assertNotEqual(a_roi, a_rect)
+
+    # No Intersection of road corridor and ego rectangle:
+    # using ego rectangle
+    env.clearAgents()
+    state = np.array([0, 0, 0, 0, 0, 0])
+    goal_line = Line2d(np.array([[0, 0], [1, 1]]))
+    env.addEgoAgent(state, goal_line)
+    env.createROI4EgoAgent()
+    a_roi_new = env._roi.CalculateArea()
+    self.assertEqual(a_roi_new, a_rect)
+    
+    # env._viewer.drawPolygon2d(env._roi,'r',0.2)
+    # env.render()
+    # env._viewer.show()
+  
   def test_add_obstacle(self):
     params = ParameterServer()
-    env = self.create_runtime_and_setup_empty_world(params)
+    if params["World"]["enable_roi","",True]:
+      env = self.create_runtime_and_setup_empty_world(params)
     l = 4
     w = 2
-    traj = np.array([[0, 0, 0, 0, 0]])
+    state = np.array([0, 1008, 28, 0, 0, 0])
+    goal_line = Line2d(np.array([[1008., 28.], [1009., 29.]]))
+    env.addEgoAgent(state, goal_line)
+    env.createROI4EgoAgent()
+    # add obstacle in ROI
+    traj = np.array([[0, 1007, 27, 0, 0]])
     obst_id = env.addObstacle(traj, l, w)
+    self.assertNotEqual(obst_id, -1)
     self.assertTrue(np.array_equal(env._world.agents[obst_id].state, traj[0]))
+    # try adding obstacle outside of ROI
+    traj2 = np.array([[0, 100000, 0, 0, 0]])
+    obst_id2 = env.addObstacle(traj2, l, w)
+    self.assertEqual(obst_id2, -1)
+    self.assertEqual(len(env._world.agents), 2)
     env.clearAgents()
-    self.assertEqual(len(env._world.agents), 0)
 
   def test_create_sac_agent(self):
     params = ParameterServer()
@@ -105,8 +153,8 @@ class PyEnvironmentTests(unittest.TestCase):
 
     N = 10
     state_traj, action_traj = env.generateTrajectory(0.2, N)
-    env._viewer.drawTrajectory(state_traj)
-    env.render()
+    # env._viewer.drawTrajectory(state_traj)
+    # env.render()
     self.assertEqual(len(state_traj), N)
 
   def test_generate_ego_trajectory_with_IDM(self):
@@ -121,8 +169,8 @@ class PyEnvironmentTests(unittest.TestCase):
 
     N = 10
     state_traj, action_traj = env.generateTrajectory(0.2, N)
-    env._viewer.drawTrajectory(state_traj)
-    env.render()
+    # env._viewer.drawTrajectory(state_traj)
+    # env.render()
     self.assertEqual(len(state_traj), N)
 
   def test_append_to_scenario_history(self):
