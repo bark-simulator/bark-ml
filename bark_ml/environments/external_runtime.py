@@ -19,6 +19,7 @@ from bark.core.geometry.standard_shapes import *
 from bark.runtime.scenario.scenario import Scenario
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML  # pylint: disable=unused-import
 from bark.core.world.goal_definition import GoalDefinitionStateLimitsFrenet
+from bark.core.world.opendrive import XodrDrivingDirection
 
 class ExternalRuntime:
   """External runtime.
@@ -44,6 +45,11 @@ class ExternalRuntime:
     self._params = params
     self._json_params= params.ConvertToDict()
     self._ml_behavior = BehaviorContinuousML(self._params)
+    self._enable_roi = params["World"]["enable_roi","",False]
+    self._rect_around_ego = None
+    self._roi = None
+    if self._enable_roi:
+      self.initRectangleAroundEgoAgent()
 
   def _step(self, step_time):
     # step and observe
@@ -76,6 +82,42 @@ class ExternalRuntime:
     self._ego_id = agent.id
     return agent.id
 
+  def initRectangleAroundEgoAgent(self):
+    rect_dict_ = self._params["World"]["rectangle_around_ego"].ConvertToDict()
+    to_rear_dist = rect_dict_.get("to_rear",10.0)
+    to_front_dist = rect_dict_.get("to_front",30.0)
+    to_right_dist = rect_dict_.get("to_right",6.0)
+    to_left_dist = rect_dict_.get("to_left",6.0)
+    rear_right_pt = Point2d(-to_rear_dist, -to_right_dist)
+    rear_left_pt = Point2d(-to_rear_dist, to_left_dist)
+    front_left_pt = Point2d(to_front_dist, to_left_dist)
+    front_right_pt = Point2d(to_front_dist, -to_right_dist)
+    self._rect_around_ego = Polygon2d([0, 0, 0], [rear_right_pt,rear_left_pt,front_left_pt, front_right_pt])
+
+  def createROI4EgoAgent(self):
+    ego_agent = self._world.GetAgent(self._ego_id)
+    state = ego_agent.state
+    ego_pose = [state[int(StateDefinition.X_POSITION)], state[int(StateDefinition.Y_POSITION)], state[int(StateDefinition.THETA_POSITION)]]
+    curr_rect_ego = self._rect_around_ego.Transform(ego_pose)
+
+    if ego_agent.GenerateRoadCorridor(self._map_interface):
+        curr_road_corridor = ego_agent.road_corridor
+    else:
+        self._world.map.GenerateRoadCorridor([0], XodrDrivingDirection.forward)
+        curr_road_corridor = self._world.map.GetRoadCorridor()
+    curr_road_corridor.ComputeRoadPolygon(0.3)
+    if curr_road_corridor.polygon.Valid():
+      intersecting_pts = Intersection(curr_rect_ego, curr_road_corridor.polygon)
+      if len(intersecting_pts) < 3:
+        self._roi = curr_rect_ego
+        print("Error: Using rectangle around ego vehicle! Intersecting points fewer as 3! Number of intersescting points:", len(intersecting_pts))
+      else:
+        self._roi  = Polygon2d(ego_pose, intersecting_pts)
+        if not self._roi.Valid():
+          self._roi = curr_rect_ego
+    else:
+      print("Error: Invalid polygon from current road corridor!")
+
   def ConvertShapeParameters(self, length, width):
     crad = width/2.0 # collision circle radius
     wb = length - 2*crad # wheelbase
@@ -89,8 +131,12 @@ class ExternalRuntime:
     goal_line = Line2d(np.array([[0., 0.], [1., 1.]]))
     agent = self._createAgent(
       prediction[0], behavior, goal_line=goal_line, wb=wb, crad=crad)
-    self._world.AddAgent(agent)
-    return agent.id
+    agent_shape = agent.GetPolygonFromState(prediction[0])
+    if Collide(self._roi, agent_shape):
+      self._world.AddAgent(agent)
+      return agent.id
+    else:
+      return -1
 
   def _createAgent(self, state, behavior, goal_line, wb=2., crad=1., ego_vehicle=False):
     agent_behavior = behavior
