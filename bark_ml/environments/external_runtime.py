@@ -99,14 +99,16 @@ class ExternalRuntime:
     state = ego_agent.state
     ego_pose = [state[int(StateDefinition.X_POSITION)], state[int(StateDefinition.Y_POSITION)], state[int(StateDefinition.THETA_POSITION)]]
     curr_rect_ego = self._rect_around_ego.Transform(ego_pose)
-
+    # self._ego_pose = ego_pose
     if ego_agent.GenerateRoadCorridor(self._map_interface):
         curr_road_corridor = ego_agent.road_corridor
     else:
         self._world.map.GenerateRoadCorridor([0], XodrDrivingDirection.forward)
         curr_road_corridor = self._world.map.GetRoadCorridor()
     curr_road_corridor.ComputeRoadPolygon(0.3)
+    # self._curr_road_corridor = curr_road_corridor
     if curr_road_corridor.polygon.Valid():
+      # print("valid road corridor polygon!")
       intersecting_pts = Intersection(curr_rect_ego, curr_road_corridor.polygon)
       if len(intersecting_pts) < 3:
         self._roi = curr_rect_ego
@@ -115,6 +117,7 @@ class ExternalRuntime:
         self._roi  = Polygon2d(ego_pose, intersecting_pts)
         if not self._roi.Valid():
           self._roi = curr_rect_ego
+          print("Invalid ROI due to invalid intersection!")
     else:
       print("Error: Invalid polygon from current road corridor!")
 
@@ -131,12 +134,16 @@ class ExternalRuntime:
     goal_line = Line2d(np.array([[0., 0.], [1., 1.]]))
     agent = self._createAgent(
       prediction[0], behavior, goal_line=goal_line, wb=wb, crad=crad)
-    agent_shape = agent.GetPolygonFromState(prediction[0])
-    if Collide(self._roi, agent_shape):
+    if self._enable_roi:
+      agent_shape = agent.GetPolygonFromState(prediction[0])
+      if Collide(self._roi, agent_shape):
+        self._world.AddAgent(agent)
+        return agent.id
+      else:
+        return -1
+    else:
       self._world.AddAgent(agent)
       return agent.id
-    else:
-      return -1
 
   def _createAgent(self, state, behavior, goal_line, wb=2., crad=1., ego_vehicle=False):
     agent_behavior = behavior

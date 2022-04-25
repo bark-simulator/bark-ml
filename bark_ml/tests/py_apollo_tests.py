@@ -84,14 +84,25 @@ class PyEnvironmentTests(unittest.TestCase):
     self.assertEqual(a_rect, 480)
     self.assertTrue(env._roi is None)
     # Intersection of road corridor and ego rectangle
-    state = np.array([0, 1008, 28, 0, 0, 0])
-    goal_line = Line2d(np.array([[1008, 28], [1010, 30]]))
+    state = np.array([0, 970.157, 46.99, 0, 0, 0])
+    goal_line = Line2d(np.array([[970.157, 46.99], [971.157, 47.99]]))
     env.addEgoAgent(state, goal_line)
     env.createROI4EgoAgent()
     self.assertTrue(env._roi is not None)
+    # # ego_pose = np.array([970.157, 46.99, 0])
+    # curr_rect_ego = env._rect_around_ego.Transform(env._ego_pose)
+    # print("ego pose:",env._ego_pose)
     self.assertTrue(env._roi.Valid())
+    # self.assertTrue(curr_rect_ego.Valid())
     a_roi = env._roi.CalculateArea()
-    self.assertNotEqual(a_roi, a_rect)
+    self.assertEqual(a_roi, a_rect)
+    # env._viewer.drawPolygon2d(env._rect_around_ego,'r',0.2)
+    # env._viewer.drawPolygon2d(curr_rect_ego,'r',0.2)
+    # env._viewer.drawPolygon2d(env._curr_road_corridor.polygon,'r',0.2)
+    env._viewer.axes.axis('equal')
+    env._viewer.drawPoint2d(Point2d(969.685, 46.5325), 'b',1.0)
+    # env.render()
+    env._viewer.show(block=False)
 
     # No Intersection of road corridor and ego rectangle:
     # using ego rectangle
