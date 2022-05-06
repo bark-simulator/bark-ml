@@ -102,4 +102,7 @@
     "shared_mutex": "cpp"
   },
   "python.pythonPath": "${workspaceFolder}/bark_ml/python_wrapper/venv/bin/python",
+  "python.linting.pylintEnabled": true,
+  "python.linting.enabled": true,
+  "python.linting.flake8Enabled": false,
 }
