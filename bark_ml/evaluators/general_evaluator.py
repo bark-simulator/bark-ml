@@ -89,7 +89,7 @@ class StepCountFunctor(Functor):
     if eval_results["step_count"] > self._params[
       "MaxStepCount", "", 220]:
       return True, self.WeightedReward(self._params["StepCountReward", "", 0.]), {}
-    return False, 0, {}
+    return False, self.WeightedReward(self._params["StepPenalty", "", 0.]), {}
 
 
 class MinMaxVelFunctor(Functor):
