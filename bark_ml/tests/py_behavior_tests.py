@@ -9,16 +9,10 @@
 
 import unittest
 import numpy as np
-import os
-import matplotlib
-import time
 
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
-from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMotionPrimitivesML, \
-        BehaviorDiscreteMacroActionsML
+from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
 from bark.runtime.commons.parameters import ParameterServer
-from bark.core.models.dynamic import SingleTrackModel
-from bark.core.world import World, MakeTestWorldHighway
 
 
 class PyBehaviorTests(unittest.TestCase):
@@ -28,7 +22,7 @@ class PyBehaviorTests(unittest.TestCase):
     # sets 0-th motion primitive active
     discrete_behavior.ActionToBehavior(0)
     print(discrete_behavior.action_space)
-    
+
   def test_cont_behavior(self):
     params = ParameterServer()
     cont_behavior = BehaviorContinuousML(params)

@@ -1,14 +1,15 @@
-# Copyright (c) 2020 The diadem authors 
-# 
+# Copyright (c) 2020 The diadem authors
+#
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 # ========================================================
 #
 
-import os
 from diadem.environments import Environment
 
 class DiademBarkEnvironment(Environment):
+    """BARK environment for the diadem library."""
+
     def __init__(self, runtime,  params=None):
         super().__init__()
         self.runtime = runtime
@@ -38,10 +39,12 @@ class DiademBarkEnvironment(Environment):
     def observationspace(self):
         return self.runtime.observation_space
 
-    def contains_training_data(self):
+    @staticmethod
+    def contains_training_data():
         return True
 
-    def state_as_string(self):
+    @staticmethod
+    def state_as_string():
         return "BarkEnvironment" #todo: maybe print scenario idx
 
     @property

@@ -8,6 +8,21 @@
 
 
 class Blueprint:
+  """ Blueprints define the environment.
+
+  The `scenario_generation` generates the scenarios.
+
+  The `evaluator` is used to generate the reward signal and to
+  determine when the episode is terminal.
+
+  The `observer` converts the semantic environment into a
+  machine learnign friendly observation.
+
+  The `viewer` is used for rendering purposes.
+
+  The `ml_behavior` is the machine learning agent.
+  """
+
   def __init__(self,
                scenario_generation=None,
                viewer=None,

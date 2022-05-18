@@ -22,13 +22,17 @@ from bark.runtime.commons.parameters import ParameterServer
 
 # BARK-ML imports
 from bark_ml.environments.blueprints import \
-  DiscreteHighwayBlueprint, DiscreteMergingBlueprint
+  DiscreteHighwayBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-import bark_ml.environments.gym
+import bark_ml.environments.gym  # pylint: disable=unused-import
+from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.model_wrapper \
+ import pytorch_script_wrapper
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent import IQNAgent, FQFAgent, QRDQNAgent
 
 
 class PyLibraryWrappersPyTorchAgentTests(unittest.TestCase):
+  """TorchAgentTests tests."""
+
   # make sure the agent works
   def test_agent_wrapping(self):
     params = ParameterServer()
@@ -46,7 +50,7 @@ class PyLibraryWrappersPyTorchAgentTests(unittest.TestCase):
   def test_behavior_wrapping(self):
     # create scenario
     params = ParameterServer()
-    bp = DiscreteHighwayBlueprint(params, number_of_senarios=10, random_seed=0)
+    bp = DiscreteHighwayBlueprint(params, num_scenarios=10, random_seed=0)
     env = SingleAgentRuntime(blueprint=bp, render=False)
     #env = gym.make("highway-v1", params=params)
     ml_behaviors = []
@@ -101,7 +105,7 @@ class PyLibraryWrappersPyTorchAgentTests(unittest.TestCase):
     params["ML"]["BaseAgent"]["NumSteps"] = 2
     params["ML"]["BaseAgent"]["MaxEpisodeSteps"] = 2
 
-    bp = DiscreteHighwayBlueprint(params, number_of_senarios=10, random_seed=0)
+    bp = DiscreteHighwayBlueprint(params, num_scenarios=10, random_seed=0)
     env = SingleAgentRuntime(blueprint=bp, render=False)
 
     # IQN Agent

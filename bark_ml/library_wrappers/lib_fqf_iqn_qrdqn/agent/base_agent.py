@@ -14,7 +14,7 @@ import torch
 import numpy as np
 import pickle
 import os
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
 # BARK-ML imports
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.utils import RunningMeanStats, LinearAnneaer

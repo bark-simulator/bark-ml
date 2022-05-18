@@ -61,7 +61,10 @@ using Reward = double;
 using Done = bool;
 using EvalResults = std::map<std::string, EvaluationReturn>;
 
-
+/**
+ * @brief Sparse reward evaluator returning +1 for reaching the goal,
+  -1 for having a collision or leaving the drivable area.
+ */
 class GoalReachedEvaluator : public BaseEvaluator {
  public:
   explicit GoalReachedEvaluator(const ParamsPtr& params) :
@@ -74,7 +77,7 @@ class GoalReachedEvaluator : public BaseEvaluator {
       "ML::GoalReachedEvaluator::MaxSteps", "", 50);
   }
 
-  void AddEvaluators(WorldPtr& world) {  // NOLINT
+  void AddEvaluators(WorldPtr& world) {  // # pylint: disable=unused-import
     world->AddEvaluator("goal_reached",
       std::make_shared<EvaluatorGoalReached>());
     world->AddEvaluator("collision",
@@ -96,11 +99,13 @@ class GoalReachedEvaluator : public BaseEvaluator {
       int step_count = boost::get<int>(eval_results["step_count"]);
       if (success || collision || step_count > max_steps_)
         is_terminal = true;
+      if (collision)
+        success = 0;
       double reward = collision * col_penalty_ + success * goal_reward_;
       return {reward, is_terminal, eval_results};
     }
 
-  WorldPtr Reset(WorldPtr& world) {  // NOLINT
+  WorldPtr Reset(WorldPtr& world) {  // # pylint: disable=unused-import
     world->ClearEvaluators();
     AddEvaluators(world);
     return world;

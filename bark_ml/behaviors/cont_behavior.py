@@ -8,11 +8,20 @@
 
 import numpy as np
 
-from bark.core.models.behavior import BehaviorModel, BehaviorDynamicModel
+from bark.core.models.behavior import BehaviorDynamicModel
 from bark_ml.commons.py_spaces import BoundedContinuous
 
 
 class BehaviorContinuousML(BehaviorDynamicModel):
+  """
+  Single-track behavior model.
+
+  Input are the acceleration $a$ the steering-rate $\delta$.
+
+  The state-space is comprised of [x,y,$\theta$,v] with $\theta$ being
+  the vehicle angle and v the vehicles velocity.
+  """
+
   def __init__(self,
                params=None):
     BehaviorDynamicModel.__init__(self, params)
@@ -32,6 +41,6 @@ class BehaviorContinuousML(BehaviorDynamicModel):
       2,  # acceleration and steering-rate
       low=np.array(self._lower_bounds, dtype=np.float32),
       high=np.array(self._upper_bounds, dtype=np.float32))
-  
+
   def Clone(self):
     return self

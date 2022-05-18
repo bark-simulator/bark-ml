@@ -13,7 +13,7 @@
 					"env": {
 						"PYTHONPATH": "${workspaceFolder}/bazel-bark-ml/bark_ml/commons/",
 						"LD_LIBRARY_PATH" : "$LD_LIBRARY_PATH:/home/julo/development/thesis/tools/python/venv/lib/python3.7/site-packages/torch/lib/"
-			 }
+			 		}
 			},
 			{
 					"name": "(gdb) Launch",

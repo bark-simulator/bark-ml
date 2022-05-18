@@ -9,29 +9,27 @@ import tensorflow as tf
 
 # tfa
 from tf_agents.networks import actor_distribution_network
-from tf_agents.networks import actor_distribution_rnn_network
 from tf_agents.networks import value_network
-from tf_agents.networks import value_rnn_network
-from tf_agents.policies import greedy_policy
 
 from tf_agents.agents.ppo import ppo_agent
 from tf_agents.replay_buffers import tf_uniform_replay_buffer
-from tf_agents.trajectories import time_step as ts
 
 from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAAgent
-from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
-from bark_ml.commons.py_spaces import BoundedContinuous
 
 
 class BehaviorPPOAgent(BehaviorTFAAgent):
+  """BARK PPO agent."""
+
   def __init__(self,
                environment=None,
-               params=None):
+               params=None,
+               observer=None):
     self._ppo_params = params["ML"]["BehaviorPPOAgent"]
     BehaviorTFAAgent.__init__(
       self,
       environment=environment,
-      params=params)
+      params=params,
+      observer=observer)
     self._replay_buffer = self.GetReplayBuffer()
     self._collect_policy = self.GetCollectionPolicy()
     self._eval_policy = self.GetEvalPolicy()
@@ -58,7 +56,7 @@ class BehaviorPPOAgent(BehaviorTFAAgent):
       optimizer=tf.compat.v1.train.AdamOptimizer(
         learning_rate=self._ppo_params["LearningRate", "", 3e-4]),
       train_step_counter=self._ckpt.step,
-      num_epochs=self._ppo_params["NumEpochs", "", 30],
+      num_epochs=self._ppo_params["NumEpochs", "", 25],
       name=self._ppo_params["AgentName", "", "ppo_agent"],
       debug_summaries=self._ppo_params["DebugSummaries", "", False])
     tf_agent.initialize()

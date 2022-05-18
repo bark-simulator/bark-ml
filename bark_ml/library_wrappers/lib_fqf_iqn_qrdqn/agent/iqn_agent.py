@@ -20,6 +20,8 @@ from .base_agent import BaseAgent
 
 
 class IQNAgent(BaseAgent):
+  """IQNAgent that can be used in BARK and BARK-ML."""
+
   def __init__(self, env, test_env, params):
     super(IQNAgent, self).__init__(env, params)
 

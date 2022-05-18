@@ -8,20 +8,19 @@
 
 from gym import spaces
 import numpy as np
-import math
-import operator
 
 from bark.core.models.dynamic import StateDefinition
-from bark.core.world import ObservedWorld
 from bark.runtime.commons.parameters import ParameterServer
-from bark_ml.observers.observer import StateObserver
+from bark_ml.observers.observer import BaseObserver
 
 
-class SimpleObserver(StateObserver):
+class SimpleObserver(BaseObserver):
+  """Simple implementation of an state observer."""
+
   def __init__(self,
                normalize_observations=True,
                params=ParameterServer()):
-    StateObserver.__init__(self, params)
+    BaseObserver.__init__(self, params)
     self._state_definition = [int(StateDefinition.X_POSITION),
                               int(StateDefinition.Y_POSITION),
                               int(StateDefinition.THETA_POSITION),
@@ -30,11 +29,10 @@ class SimpleObserver(StateObserver):
       self._max_num_vehicles*self._len_state
     self._normalize_observations = normalize_observations
 
-  def Observe(self, world):
-    """see base class
-    """
+  def Observe(self, observed_world):
+    """See base class."""
     concatenated_state = np.zeros(self._observation_len, dtype=np.float32)
-    for i, (_, agent) in enumerate(world.agents.items()):
+    for i, (_, agent) in enumerate(observed_world.agents.items()):
       state = agent.state
       if self._normalize_observations:
         state = self._normalize(state)
@@ -66,14 +64,14 @@ class SimpleObserver(StateObserver):
     agent_state = \
       self._norm(agent_state,
                  StateDefinition.THETA_POSITION,
-                 self._ThetaRange)
+                 self._theta_range)
     agent_state = \
       self._norm(agent_state,
                  StateDefinition.VEL_POSITION,
-                 self._VelocityRange)
+                 self._velocity_range)
     return agent_state
 
-  def Reset(self, world, controlled_agent_ids):
+  def Reset(self, world):
     return world
 
   @property

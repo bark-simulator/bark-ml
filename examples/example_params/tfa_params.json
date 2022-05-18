@@ -16,22 +16,22 @@
                 0.2
             ]
         },
-        "GoalReachedEvaluator": {
-            "GoalReward": 1.0,
-            "CollisionPenalty": -1.0,
+        "GoalReachedGuiding": {
+            "GoalReward": 10.0,
+            "CollisionPenalty": -10.0,
             "MaxSteps": 60
         },
-        "StateObserver": {
+        "BaseObserver": {
             "VelocityRange": [
                 0,
-                100
+                40
             ],
             "ThetaRange": [
                 0,
                 6.283185307179586
             ],
             "NormalizationEnabled": true,
-            "MaxNumAgents": 2
+            "MaxNumAgents": 5
         },
         "NearestAgentsObserver": {
             "MaxOtherDistance": 100
@@ -70,6 +70,10 @@
             "EvaluationSteps": 25,
             "InitialCollectionEpisodes": 50,
             "CollectionEpisodesPerStep": 1
+        },
+        "SACRunner": {
+            "EvaluateEveryNSteps": 1000,
+            "NumberOfCollections": 100000
         }
     },
     "BehaviorIDMClassic": {

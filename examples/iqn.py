@@ -6,10 +6,7 @@
 
 import gym
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent import IQNAgent
-from bark_ml.environments.gym import DiscreteHighwayGym, DiscreteIntersectionGym, DiscreteMergingGym
 from bark.runtime.commons.parameters import ParameterServer
-from bark_ml.environments.blueprints import DiscreteHighwayBlueprint
-from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
 from absl import app
 from absl import flags
 # this will disable all BARK log messages
@@ -43,15 +40,15 @@ def run_configuration(argv):
   if FLAGS.load and params["ML"]["BaseAgent"]["CheckpointPath"]:
     agent.load_models(os.path.join(params["ML"]["BaseAgent"]["CheckpointPath"],"best"))
 
-  if FLAGS.mode == "train": 
+  if FLAGS.mode == "train":
     agent.run()
 
   elif FLAGS.mode == "visualize":
     agent.visualize()
-    
+
   elif FLAGS.mode == "evaluate":
     # writes evaluaion data using summary writer in summary path
-    agent.evaluate() 
+    agent.evaluate()
 
   else:
     raise Exception("Invalid argument for --mode")

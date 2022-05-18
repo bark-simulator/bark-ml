@@ -1,4 +1,4 @@
-# Copyright (c) 2020 Patrick Hart, Julian Bernhard, 
+# Copyright (c) 2020 Patrick Hart, Julian Bernhard,
 # Klemens Esterle, Tobias Kessler
 #
 # This software is released under the MIT License.
@@ -10,6 +10,11 @@ import numpy as np
 
 
 class Discrete(gym.spaces.Discrete):
+
+    """
+    Gym discrete spaces.
+    """
+
     def __init__(self, n):
         self._n = n
         super(Discrete, self).__init__( n)
@@ -19,7 +24,7 @@ class Discrete(gym.spaces.Discrete):
 
     @property
     def low(self):
-        return 0 
+        return 0
 
     @property
     def high(self):
@@ -43,6 +48,11 @@ class Discrete(gym.spaces.Discrete):
 
 
 class BoundedContinuous(Space):
+
+  """
+  Gym continuous spaces.
+  """
+
   def __init__(self,
                n,
                low=None,

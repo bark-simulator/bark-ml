@@ -1,11 +1,34 @@
+filegroup(
+    name = "data",
+    srcs = glob(["data/*.yaml", "data/*.json", "data/*.xodr"]),
+    visibility = ["//visibility:public"],
+)
+
 py_test(
     name = "py_environment_tests",
     srcs = ["py_environment_tests.py"],
-    data = ["@bark_project//bark/python_wrapper:core.so"],
+    data = ["@bark_project//bark/python_wrapper:core.so",
+            ":data"],
     imports = ["../external/bark_project/bark/python_wrapper/",
                "../python_wrapper/"],
     deps = ["//bark_ml/environments:single_agent_runtime",
+            "//bark_ml/environments:counterfactual_runtime",
+            "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
             "//bark_ml/environments:gym",
+            "//bark_ml/commons:py_spaces"],
+    visibility = ["//visibility:public"],
+)
+
+py_test(
+    name = "py_apollo_tests",
+    srcs = ["py_apollo_tests.py"],
+    data = ["@bark_project//bark/python_wrapper:core.so",
+            ":data"],
+    imports = ["../external/bark_project/bark/python_wrapper/",
+               "../python_wrapper/"],
+    deps = ["//bark_ml/environments:external_runtime",
+            "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
+            "//bark_ml/environments:single_agent_runtime",
             "//bark_ml/commons:py_spaces"],
     visibility = ["//visibility:public"],
 )
@@ -69,8 +92,8 @@ py_test(
             "//bark_ml/tests/lib_fqf_iqn_qrdqn_test_data:weights",
             "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/model_wrapper:pytorch_script_wrapper.so"],
     imports = ["../external/bark_project/bark/python_wrapper/",
-               "../external/torchcpp/torch/lib" # this path does not exist even after adding data dependency. Keeping it for further research. 
-                                                # and ../ should be ../../ for bark as well as pytorch as there is no external 
+               "../external/torchcpp/torch/lib" # this path does not exist even after adding data dependency. Keeping it for further research.
+                                                # and ../ should be ../../ for bark as well as pytorch as there is no external
                                                 # in runfiles/bark_ml/bark_ml/external (not exists but the import adds it!)
               ],
     deps = ["//bark_ml/environments:single_agent_runtime",
@@ -106,8 +129,8 @@ py_test(
 )
 
 py_test(
-    name = "py_gnn_wrapper_tests",
-    srcs = ["py_gnn_wrapper_tests.py"],
+    name = "py_graph_nets_tests",
+    srcs = ["py_graph_nets_tests.py"],
     data = ["@bark_project//bark/python_wrapper:core.so",
             "//bark_ml:generate_core"],
     imports = ["../external/bark_project/bark/python_wrapper/"],
@@ -118,20 +141,6 @@ py_test(
         "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
         "//bark_ml/library_wrappers/lib_tf_agents/runners:runners",
     ],
-    visibility = ["//visibility:public"],
-)
-
-py_test(
-    name = "py_tracer_tests",
-    srcs = ["py_tracer_tests.py"],
-    data = ["@bark_project//bark/python_wrapper:core.so"],
-    imports = ["../external/bark_project/bark/python_wrapper/"],
-    deps = ["//bark_ml/environments:single_agent_runtime",
-            "//bark_ml/environments:gym",
-            "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
-            "//bark_ml/library_wrappers/lib_tf_agents/runners:runners",
-            "//bark_ml/commons:py_spaces",
-            "//bark_ml/commons:tracer"],
     visibility = ["//visibility:public"],
 )
 

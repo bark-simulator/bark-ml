@@ -4,7 +4,9 @@ py_library(
                  "blueprints/__init__.py",
                  "blueprints/*/*.py"]),
     data = glob(["blueprints/*/*.xodr",
-                 "blueprints/*/*.json"]) +
+                 "blueprints/*/*.csv",
+                 "blueprints/*/*.json",
+                 "blueprints/*.json"]) +
                 ["@bark_project//bark/python_wrapper:core.so",
                  "//bark_ml:generate_core"],
     imports = ["../external/bark_project/bark/python_wrapper/",
@@ -18,11 +20,32 @@ py_library(
 
 py_library(
     name = "single_agent_runtime",
-    srcs = ["single_agent_runtime.py"],
+    srcs = ["single_agent_runtime.py",
+            "modified_single_agent_runtimes.py"],
     imports = ["../external/bark_project/bark/python_wrapper/"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
     deps = ["//bark_ml/environments:blueprints",
             "@bark_project//bark/runtime:runtime"],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "external_runtime",
+    srcs = ["external_runtime.py"],
+    imports = ["../external/bark_project/bark/python_wrapper/"],
+    data = ["@bark_project//bark/python_wrapper:core.so"],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "counterfactual_runtime",
+    srcs = ["counterfactual_runtime.py"],
+    imports = ["../external/bark_project/bark/python_wrapper/"],
+    data = ["@bark_project//bark/python_wrapper:core.so"],
+    deps = ["//bark_ml/environments:blueprints",
+            "@bark_project//bark/runtime:runtime",
+            ":single_agent_runtime",
+            "//bark_ml/commons:tracer"],
     visibility = ["//visibility:public"],
 )
 
@@ -33,5 +56,16 @@ py_library(
     data = ["@bark_project//bark/python_wrapper:core.so"],
     deps = ["//bark_ml/environments:blueprints",
             "//bark_ml/environments:single_agent_runtime"],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "environments",
+    srcs = ["__init__.py"],
+    imports = ["../external/bark_project/bark/python_wrapper/"],
+    data = ["@bark_project//bark/python_wrapper:core.so"],
+    deps = ["//bark_ml/environments:blueprints",
+            "//bark_ml/environments:single_agent_runtime",
+            "//bark_ml/environments:counterfactual_runtime"],
     visibility = ["//visibility:public"],
 )

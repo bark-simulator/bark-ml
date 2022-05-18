@@ -20,6 +20,8 @@ from .base_agent import BaseAgent
 
 
 class QRDQNAgent(BaseAgent):
+  """QRDQNAgent that can be used in BARK and BARK-ML."""
+
   def __init__(self, env, test_env, params):
     super(QRDQNAgent, self).__init__(env, params)
 

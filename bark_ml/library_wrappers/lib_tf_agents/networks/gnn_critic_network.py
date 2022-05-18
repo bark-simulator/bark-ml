@@ -6,9 +6,12 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 import gin
-import tensorflow as tf  # pylint: disable=g-explicit-tensorflow-version-import
+import tensorflow as tf  # pylint: disable=unused-import
 
 from tf_agents.networks import network, utils
+from bark.runtime.commons.parameters import ParameterServer
+from bark_ml.library_wrappers.lib_tf_agents.networks.gnns.interaction_wrapper import InteractionWrapper # pylint: disable=unused-import
+
 
 @gin.configurable
 class GNNCriticNetwork(network.Network):
@@ -29,13 +32,15 @@ class GNNCriticNetwork(network.Network):
                joint_dropout_layer_params=None,
                joint_activation_fn=tf.nn.relu,
                output_activation_fn=None,
-               name='CriticNetwork'):
-    """Creates an instance of `GNNCriticNetwork`.
+               name='CriticNetwork',
+               params=ParameterServer()):
+    """
+    Creates an instance of `GNNCriticNetwork`.
 
     Args:
       input_tensor_spec: A tuple of (observation, action) each a nest of
         `tensor_spec.TensorSpec` representing the inputs.
-      gnn: The function that initializes a graph neural network that 
+      gnn: The function that initializes a graph neural network that
         accepts the input observations and computes node embeddings.
       observation_fc_layer_params: Optional list of fully connected parameters
         for observations, where each item is the number of units in the layer.
@@ -50,8 +55,8 @@ class GNNCriticNetwork(network.Network):
         observation_fc_layer_params, or be None.
       observation_conv_layer_params: Optional list of convolution layer
         parameters for observations, where each item is a length-three tuple
-        indicating (num_units, kernel_size, stride).
-      observation_activation_fn: Activation function applied to the observation 
+        indicating (embedding_size, kernel_size, stride).
+      observation_activation_fn: Activation function applied to the observation
         layers, e.g. tf.nn.relu, slim.leaky_relu, ...
       action_fc_layer_params: Optional list of fully connected parameters for
         actions, where each item is the number of units in the layer.
@@ -66,7 +71,7 @@ class GNNCriticNetwork(network.Network):
         be None.
       action_conv_layer_params: Optional list of convolution layer
         parameters for actions, where each item is a length-three tuple
-        indicating (num_units, kernel_size, stride).
+        indicating (embedding_size, kernel_size, stride).
       action_activation_fn: Activation function applied to the action layers,
         e.g. tf.nn.relu, slim.leaky_relu, ...
       joint_fc_layer_params: Optional list of fully connected parameters after
@@ -105,11 +110,11 @@ class GNNCriticNetwork(network.Network):
 
     if len(tf.nest.flatten(action_spec)) > 1:
       raise ValueError('Only a single action is supported by this network')
-    
+
     if gnn is None:
       raise ValueError('`gnn` must not be `None`.')
 
-    self._gnn = gnn(name=name + "_GNN")
+    self._gnn = gnn(name=name, params=params)
 
     self._observation_layers = utils.mlp_layers(
       observation_conv_layer_params,
@@ -135,7 +140,7 @@ class GNNCriticNetwork(network.Network):
         joint_dropout_layer_params,
         activation_fn=joint_activation_fn,
         kernel_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
-            scale=1./3., mode='fan_in', distribution='uniform'),
+          scale=1./3., mode='fan_in', distribution='uniform'),
         name='joint_mlp')
 
     self._joint_layers.append(
@@ -150,14 +155,15 @@ class GNNCriticNetwork(network.Network):
     del step_type # unused.
 
     observations, actions = inputs
-    batch_size = observations.shape[0]
+    batch_size = tf.shape(observations)[0]
     embeddings = self._gnn(observations, training=training)
-    
+
     if batch_size > 0:
       embeddings = embeddings[:, 0] # extract ego state
       actions = tf.reshape(actions, [batch_size, -1])
-    else:
-      actions = tf.zeros([0, actions.shape[-1]])
+
+    # with tf.name_scope("GNNCriticEmbeddings"):
+    #   tf.summary.histogram("critic_gnn_output", embeddings)
 
     embeddings = tf.cast(tf.nest.flatten(embeddings)[0], tf.float32)
     for layer in self._observation_layers:
@@ -171,7 +177,7 @@ class GNNCriticNetwork(network.Network):
     for layer in self._joint_layers:
       joint = layer(joint, training=training)
 
-    with tf.name_scope("GNNCriticNetwork"):
-      tf.summary.histogram("critic_output_value", joint)
+    # with tf.name_scope("GNNCriticNetwork"):
+    #   tf.summary.histogram("critic_output_value", joint)
 
     return tf.reshape(joint, [-1]), network_state

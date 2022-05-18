@@ -10,17 +10,17 @@
 from gym import spaces
 import numpy as np
 from bark.core.models.dynamic import StateDefinition
-from bark.core.world import World, ObservedWorld
 from bark.runtime.commons.parameters import ParameterServer
-import math
 import operator
 
-from bark_ml.observers.observer import StateObserver
+from bark_ml.observers.observer import BaseObserver
 
 
-class NearestAgentsObserver(StateObserver):
+class NearestAgentsObserver(BaseObserver):
+  """Concatenates the n-nearest states of vehicles."""
+
   def __init__(self, params=ParameterServer()):
-    StateObserver.__init__(self, params)
+    BaseObserver.__init__(self, params)
     self._state_definition = [int(StateDefinition.X_POSITION),
                               int(StateDefinition.Y_POSITION),
                               int(StateDefinition.THETA_POSITION),
@@ -32,8 +32,7 @@ class NearestAgentsObserver(StateObserver):
       100]
 
   def Observe(self, observed_world):
-    """see base class
-    """
+    """See base class."""
     ego_observed_world = observed_world
     num_other_agents = len(ego_observed_world.other_agents)
     ego_state = ego_observed_world.ego_agent.state
@@ -52,10 +51,10 @@ class NearestAgentsObserver(StateObserver):
 
     # preallocate np.array and add ego state
     concatenated_state = np.zeros(self._len_ego_state + \
-      self._max_num_vehicles*self._len_relative_agent_state)
+      self._max_num_vehicles*self._len_relative_agent_state, dtype=np.float32)
     concatenated_state[0:self._len_ego_state] = \
-      self._select_state_by_index(self._norm(ego_state)) 
-    
+      self._select_state_by_index(self._norm(ego_state))
+
     # add max number of agents to state concatenation vector
     concat_pos = self._len_relative_agent_state
     nearest_distances = sorted(nearest_distances.items(),
@@ -87,7 +86,7 @@ class NearestAgentsObserver(StateObserver):
         self._max_num_vehicles*self._len_relative_agent_state))
 
   def _norm(self, agent_state):
-    if not self._NormalizationEnabled:
+    if not self._normalization_enabled:
         return agent_state
     agent_state[int(StateDefinition.X_POSITION)] = \
       self._norm_to_range(agent_state[int(StateDefinition.X_POSITION)],
@@ -97,13 +96,14 @@ class NearestAgentsObserver(StateObserver):
                           self._world_y_range)
     agent_state[int(StateDefinition.THETA_POSITION)] = \
       self._norm_to_range(agent_state[int(StateDefinition.THETA_POSITION)],
-                          self._ThetaRange)
+                          self._theta_range)
     agent_state[int(StateDefinition.VEL_POSITION)] = \
       self._norm_to_range(agent_state[int(StateDefinition.VEL_POSITION)],
-                          self._VelocityRange)
+                          self._velocity_range)
     return agent_state
 
-  def _norm_to_range(self, value, range):
+  @staticmethod
+  def _norm_to_range(value, range):
     return (value - range[0])/(range[1]-range[0])
 
   def _calculate_relative_agent_state(self, ego_agent_state, agent_state):

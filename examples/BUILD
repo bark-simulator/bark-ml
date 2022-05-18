@@ -1,6 +1,3 @@
-
-
-
 py_test(
   name = "continuous_env",
   srcs = ["continuous_env.py"],
@@ -48,6 +45,7 @@ py_test(
   imports = ["../bark_ml/python_wrapper/"],
   deps = [
     "//bark_ml/environments:single_agent_runtime",
+    "//bark_ml/environments:counterfactual_runtime",
     "//bark_ml/environments:blueprints",
     "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
     "//bark_ml/library_wrappers/lib_tf_agents/runners:runners",
@@ -103,6 +101,22 @@ py_test(
   imports = ["../bark_ml/python_wrapper/"],
   deps = [
     "//bark_ml/environments:single_agent_runtime",
+    "//bark_ml/environments:blueprints",
+    "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
+    "//bark_ml/library_wrappers/lib_tf_agents/runners:runners",
+  ]
+)
+
+py_test(
+  name = "tfa_counterfactual",
+  srcs = ["tfa_counterfactual.py"],
+  data = ["@bark_project//bark/python_wrapper:core.so",
+          "//bark_ml:generate_core",
+          "//examples/example_params:example_params"],
+  imports = ["../bark_ml/python_wrapper/"],
+  deps = [
+    "//bark_ml/environments:single_agent_runtime",
+    "//bark_ml/environments:counterfactual_runtime",
     "//bark_ml/environments:blueprints",
     "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
     "//bark_ml/library_wrappers/lib_tf_agents/runners:runners",

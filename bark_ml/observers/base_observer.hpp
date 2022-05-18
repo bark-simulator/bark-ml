@@ -34,6 +34,9 @@ using bark::world::WorldPtr;
 using bark::world::ObservedWorld;
 using ObservedState = Eigen::Matrix<double, 1, Eigen::Dynamic>;
 
+/**
+ * @brief  Base class for the Observer.
+ */
 class BaseObserver {
  public:
   explicit BaseObserver(const ParamsPtr& params) :

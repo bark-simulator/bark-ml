@@ -1,8 +1,16 @@
 package(default_visibility = ["//visibility:public"])
 
-cc_binary(
-  name = "core.so",
-  srcs = ["main.cpp", "pyobserver.hpp", "pynn_to_value_converter.hpp"],
+
+load("@pybind11_bazel//:build_defs.bzl", "pybind_extension")
+
+config_setting(
+  name = "op_sys",
+  define_values = { "build_platform": "macos" }
+)
+
+pybind_extension(
+  name = "core",
+  srcs = glob(["*.cpp", "*.hpp"]),
   deps = [
     "//bark_ml/observers:cpp_observers",
     "//bark_ml/evaluators:cpp_evaluators",
@@ -14,8 +22,14 @@ cc_binary(
     "@pybind11//:pybind11",
     "@com_github_eigen_eigen//:eigen",
   ],
-  linkshared = 1,
-  linkstatic = 1
+  linkopts = select({
+    ":op_sys": [""],
+    "//conditions:default": ["-L/usr/local/lib/ -Wl,-Bsymbolic"],
+  }),
+  linkstatic = select({
+    ":op_sys": 0,
+    "//conditions:default": 1,
+  })
 )
 
 cc_library(

@@ -8,9 +8,8 @@
 
 import numpy as np
 
-from bark.core.models.behavior import BehaviorModel, \
-    BehaviorMPContinuousActions, BehaviorMPMacroActions, BehaviorMacroActionsFromParamServer
-from bark.core.models.dynamic import SingleTrackModel
+from bark.core.models.behavior import BehaviorMPContinuousActions, \
+  BehaviorMPMacroActions, BehaviorMacroActionsFromParamServer
 
 from bark_ml.commons.py_spaces import Discrete
 

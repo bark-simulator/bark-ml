@@ -13,19 +13,17 @@ from absl import flags
 
 # this will disable all BARK log messages
 import os
-os.environ['GLOG_minloglevel'] = '3' 
+os.environ['GLOG_minloglevel'] = '3'
 
 # BARK imports
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
-from bark.runtime.viewer.video_renderer import VideoRenderer
 
 # BARK-ML imports
-from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
-  ContinuousMergingBlueprint, ContinuousIntersectionBlueprint
+from bark_ml.environments.blueprints import ContinuousMergingBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent, BehaviorPPOAgent
-from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner, PPORunner
+from bark_ml.library_wrappers.lib_tf_agents.agents import BehaviorSACAgent
+from bark_ml.library_wrappers.lib_tf_agents.runners import SACRunner
 
 
 # for training: bazel run //examples:tfa -- --mode=train
@@ -37,19 +35,31 @@ flags.DEFINE_enum("mode",
 
 
 def run_configuration(argv):
-  # params = ParameterServer(filename="examples/example_params/tfa_params.json")
-  params = ParameterServer()
+  params = ParameterServer(filename="examples/example_params/tfa_params.json")
+  # params = ParameterServer()
   # NOTE: Modify these paths in order to save the checkpoints and summaries
-  # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "YOUR_PATH"
-  # params["ML"]["TFARunner"]["SummaryPath"] = "YOUR_PATH"
-  params["World"]["remove_agents_out_of_map"] = True
+  # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/checkpoints_merging_nn/"
+  # params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/checkpoints_merging_nn/"
+  params["Visualization"]["Agents"]["Alpha"]["Other"] = 0.2
+  params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
+  params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
+  params["ML"]["VisualizeCfWorlds"] = False
+  params["ML"]["VisualizeCfHeatmap"] = True
+  params["World"]["remove_agents_out_of_map"] = False
+
+  viewer = MPViewer(
+   params=params,
+   x_range=[-35, 35],
+   y_range=[-35, 35],
+   follow_agent_id=True)
 
   # create environment
   bp = ContinuousMergingBlueprint(params,
-                                  number_of_senarios=2500,
+                                  num_scenarios=10000,
                                   random_seed=0)
   env = SingleAgentRuntime(blueprint=bp,
-                           render=False)
+                           render=False,
+                           viewer=viewer)
 
   # PPO-agent
   # ppo_agent = BehaviorPPOAgent(environment=env,
@@ -70,10 +80,10 @@ def run_configuration(argv):
     runner.SetupSummaryWriter()
     runner.Train()
   elif FLAGS.mode == "visualize":
-    runner.Run(num_episodes=10, render=True)
+    runner.Run(num_episodes=50, render=True)
   elif FLAGS.mode == "evaluate":
     runner.Run(num_episodes=100, render=False)
-  
+
   # store all used params of the training
   # params.Save("YOUR_PATH")
 

@@ -1,5 +1,5 @@
-# Copyright (c) 2019 The diadem authors 
-# 
+# Copyright (c) 2019 The diadem authors
+#
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 # ========================================================
@@ -12,21 +12,20 @@ Important sidemark: the Agent is defined in the parameters, not in the main file
 """
 
 try:
-  import debug_settings
+  import debug_settings # pylint: disable=unused-import
 except:
   pass
 
 import tensorflow as tf
 from tensorflow.python.util import deprecation
 deprecation._PRINT_DEPRECATION_WARNINGS = False
-import sys
 import os
 import logging
 logging.getLogger().setLevel(logging.INFO)
-import matplotlib as mpl
-#if os.environ.get('DISPLAY', '') == '':
-#  print('no display found. Using non-interactive Agg backend')
-#mpl.use('Agg')
+# import matplotlib as mpl
+# if os.environ.get('DISPLAY', '') == '':
+#   print('no display found. Using non-interactive Agg backend')
+# mpl.use('Agg')
 
 from diadem.agents import AgentContext, AgentManager
 from diadem.experiment import Experiment
@@ -49,7 +48,7 @@ if not os.path.exists("examples"):
 
 bark_params = ParameterServer(filename="examples/example_params/diadem_params.json")
 bp = DiscreteMergingBlueprint(bark_params,
-                                number_of_senarios=100,
+                                num_scenarios=100,
                                 random_seed=0)
 
 observer = NearestAgentsObserver(bark_params)

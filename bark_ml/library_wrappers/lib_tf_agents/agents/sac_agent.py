@@ -6,10 +6,9 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 import tensorflow as tf
-import numpy as np
 
 # BARK
-from bark.core.models.behavior import BehaviorModel, BehaviorDynamicModel
+from bark.core.models.behavior import BehaviorModel
 
 # tfa
 from tf_agents.networks import actor_distribution_network
@@ -19,25 +18,26 @@ from tf_agents.policies import greedy_policy
 
 from tf_agents.agents.sac import sac_agent
 from tf_agents.replay_buffers import tf_uniform_replay_buffer
-from tf_agents.utils.common import Checkpointer
-from tf_agents.trajectories import time_step as ts
 
 from bark_ml.library_wrappers.lib_tf_agents.agents.tfa_agent import BehaviorTFAAgent
-from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 
 
 class BehaviorSACAgent(BehaviorTFAAgent):
   """SAC-Agent
-     This agent is based on the tf-agents library.
+
+  Agent based on the tf-agents library.
   """
+
   def __init__(self,
                environment=None,
-               params=None):
-    self._sac_params = params
+               params=None,
+               observer=None):
+    self._sac_params = params["ML"]["BehaviorSACAgent"]
     BehaviorTFAAgent.__init__(
       self,
       environment=environment,
-      params=params)
+      params=params,
+      observer=observer)
     BehaviorModel.__init__(self, params)
     self._replay_buffer = self.GetReplayBuffer()
     self._dataset = self.GetDataset()
@@ -69,7 +69,7 @@ class BehaviorSACAgent(BehaviorTFAAgent):
       action_fc_layer_params=None,
       joint_fc_layer_params=tuple(
         self._sac_params["CriticJointFcLayerParams", "", [512, 256, 256]]))
-    
+
     # agent
     tf_agent = sac_agent.SacAgent(
       env.time_step_spec(),
@@ -84,13 +84,13 @@ class BehaviorSACAgent(BehaviorTFAAgent):
           learning_rate=self._sac_params["AlphaLearningRate", "", 3e-4]),
       target_update_tau=self._sac_params["TargetUpdateTau", "", 0.05],
       target_update_period=self._sac_params["TargetUpdatePeriod", "", 3],
-      td_errors_loss_fn=tf.compat.v1.losses.mean_squared_error,
+      td_errors_loss_fn=tf.math.squared_difference,
       gamma=self._sac_params["Gamma", "", 0.995],
       reward_scale_factor=self._sac_params["RewardScaleFactor", "", 1.],
       train_step_counter=self._ckpt.step,
       name=self._sac_params["AgentName", "", "sac_agent"],
       debug_summaries=self._sac_params["DebugSummaries", "", False])
-    
+
     tf_agent.initialize()
     return tf_agent
 
@@ -98,7 +98,7 @@ class BehaviorSACAgent(BehaviorTFAAgent):
     return tf_uniform_replay_buffer.TFUniformReplayBuffer(
       data_spec=self._agent.collect_data_spec,
       batch_size=self._wrapped_env.batch_size,
-      max_length=self._sac_params["ReplayBufferCapacity", "", 10000])
+      max_length=self._sac_params["ReplayBufferCapacity", "", 100000])
 
   def GetDataset(self):
     dataset = self._replay_buffer.as_dataset(
@@ -116,7 +116,7 @@ class BehaviorSACAgent(BehaviorTFAAgent):
 
   def Reset(self):
     pass
-  
+
   @property
   def collect_policy(self):
     return self._collect_policy

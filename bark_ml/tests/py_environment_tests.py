@@ -11,15 +11,20 @@ import unittest
 import numpy as np
 import os
 import gym
-import matplotlib
-# matplotlib.use('PS')
-import time
+import pprint
 
+from bark.core.models.behavior import BehaviorConstantAcceleration
 from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.environments.blueprints import ContinuousHighwayBlueprint, \
-  DiscreteHighwayBlueprint, ContinuousMergingBlueprint, DiscreteMergingBlueprint
+  DiscreteHighwayBlueprint, ContinuousMergingBlueprint, DiscreteMergingBlueprint, \
+  ConfigurableScenarioBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-import bark_ml.environments.gym
+from bark_ml.environments.counterfactual_runtime import CounterfactualRuntime
+from bark_ml.environments.modified_single_agent_runtimes import SingleAgentContinuousDelayRuntime
+from bark_ml.library_wrappers.lib_tf_agents.agents.sac_agent import BehaviorSACAgent
+import bark_ml.environments.gym  # pylint: disable=unused-import
+from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
+
 
 class PyEnvironmentTests(unittest.TestCase):
   def test_envs_cont_rl(self):
@@ -31,7 +36,7 @@ class PyEnvironmentTests(unittest.TestCase):
     for bp in cont_blueprints:
       env = SingleAgentRuntime(blueprint=bp, render=False)
       env.reset()
-      for _ in range(0, 10):
+      for _ in range(0, 5):
         action = np.random.uniform(low=-0.1, high=0.1, size=(2, ))
         observed_next_state, reward, done, info = env.step(action)
         # print(f"Reward: {reward}, Done: {done}")
@@ -45,7 +50,7 @@ class PyEnvironmentTests(unittest.TestCase):
     for bp in discrete_blueprints:
       env = SingleAgentRuntime(blueprint=bp, render=False)
       env.reset()
-      for _ in range(0, 10):
+      for _ in range(0, 5):
         action = np.random.randint(low=0, high=3)
         observed_next_state, reward, done, info = env.step(action)
         # print(f"Reward: {reward}, Done: {done}")
@@ -55,12 +60,12 @@ class PyEnvironmentTests(unittest.TestCase):
     # highway-v1: discrete
     # merging-v0: continuous
     # merging-v1: discrete
-    # are registered here: import bark_ml.environments.gym
+    # are registered here: import bark_ml.environments.gym  # pylint: disable=unused-import
 
     cont_envs = [gym.make("highway-v0"), gym.make("merging-v0")]
     for env in cont_envs:
       env.reset()
-      for _ in range(0, 10):
+      for _ in range(0, 5):
         action = np.random.uniform(low=-0.1, high=0.1, size=(2, ))
         observed_next_state, reward, done, info = env.step(action)
         print(f"Observed state: {observed_next_state}, Reward: {reward}, Done: {done}")
@@ -68,10 +73,47 @@ class PyEnvironmentTests(unittest.TestCase):
     cont_envs = [gym.make("highway-v1"), gym.make("merging-v1")]
     for env in cont_envs:
       env.reset()
-      for _ in range(0, 10):
+      for _ in range(0, 5):
         action = np.random.randint(low=0, high=3)
         observed_next_state, reward, done, info = env.step(action)
         print(f"Observed state: {observed_next_state}, Reward: {reward}, Done: {done}")
+
+  def test_configurable_blueprint(self):
+    params = ParameterServer(filename="bark_ml/tests/data/highway_merge_configurable.json")
+    # continuous model
+    ml_behavior = BehaviorContinuousML(params=params)
+    bp = ConfigurableScenarioBlueprint(
+      params=params,
+      ml_behavior=ml_behavior)
+    env = SingleAgentRuntime(blueprint=bp, render=False)
+    # agent
+    sac_agent = BehaviorSACAgent(environment=env,
+                                 params=params)
+    env.ml_behavior = sac_agent
+    # test run
+    env.reset()
+    for _ in range(0, 5):
+      action = np.random.randint(low=0, high=3)
+      observed_next_state, reward, done, info = env.step(action)
+
+  def test_continuous_delay_environment(self):
+    params = ParameterServer(filename="bark_ml/tests/data/highway_merge_configurable.json")
+    # continuous model
+    ml_behavior = BehaviorContinuousML(params=params)
+    bp = ConfigurableScenarioBlueprint(
+      params=params,
+      ml_behavior=ml_behavior)
+    env = SingleAgentContinuousDelayRuntime(blueprint=bp, render=False)
+    # agent
+    sac_agent = BehaviorSACAgent(environment=env,
+                                 params=params)
+    env.ml_behavior = sac_agent
+    # test run
+    env.reset()
+    for _ in range(0, 5):
+      action = np.random.randint(low=0, high=3)
+      observed_next_state, reward, done, info = env.step(action)
+
 
 if __name__ == '__main__':
   unittest.main()

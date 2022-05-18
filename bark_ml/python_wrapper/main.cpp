@@ -18,7 +18,10 @@
 #include "bark/commons/params/setter_params.hpp"
 #include "bark_ml/evaluators/base_evaluator.hpp"
 #include "bark_ml/evaluators/goal_reached.hpp"
+#include "bark_ml/observers/base_observer.hpp"
 #include "bark_ml/observers/nearest_observer.hpp"
+#include "bark_ml/observers/frenet_observer.hpp"
+#include "bark_ml/observers/static_observer.hpp"
 #include "bark_ml/evaluators/goal_reached.hpp"
 #include "bark_ml/commons/spaces.hpp"
 #include "bark_ml/python_wrapper/pyobserver.hpp"
@@ -33,6 +36,9 @@ namespace py = pybind11;
 using bark::commons::ParamsPtr;
 using bark::commons::SetterParams;
 using bark_ml::observers::NearestObserver;
+using bark_ml::observers::FrenetObserver;
+using bark_ml::observers::StaticObserver;
+using bark_ml::observers::BaseObserver;
 using bark_ml::evaluators::GoalReachedEvaluator;
 using bark_ml::spaces::Box;
 using bark_ml::spaces::Matrix_t;
@@ -83,12 +89,29 @@ void python_observers(py::module m) {
           throw std::runtime_error("Invalid behavior model state!");
         return new NearestObserver(PythonToParams(t[0].cast<py::tuple>()));
       }));
+
+  py::class_<FrenetObserver,
+             std::shared_ptr<FrenetObserver>>(m, "FrenetObserver")
+    .def(py::init<const bark::commons::ParamsPtr&>())
+    .def("Observe", &FrenetObserver::Observe)
+    .def("Reset", &FrenetObserver::Reset)
+    .def_property_readonly(
+      "observation_space", &FrenetObserver::ObservationSpace);
+
+  py::class_<StaticObserver,
+             std::shared_ptr<StaticObserver>>(m, "StaticObserver")
+    .def(py::init<const bark::commons::ParamsPtr&>())
+    .def("Observe", &StaticObserver::Observe)
+    .def("Reset", &StaticObserver::Reset)
+    .def_property_readonly(
+      "observation_space", &StaticObserver::ObservationSpace);
 }
+
 
 void python_evaluators(py::module m) {
   py::class_<GoalReachedEvaluator,
              std::shared_ptr<GoalReachedEvaluator>>(m, "GoalReachedEvaluator")
-    .def(py::init<ParamsPtr>())
+    .def(py::init<const bark::commons::ParamsPtr&>())
     .def("Evaluate", &GoalReachedEvaluator::Evaluate)
     .def("Reset", &GoalReachedEvaluator::Reset);
 }

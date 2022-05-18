@@ -1,5 +1,6 @@
 Bootstrap: docker
-From: barksim/barkml_diadem
+From: barksim/bark-ml
+
 
 % environment
 export MPLBACKEND="agg"

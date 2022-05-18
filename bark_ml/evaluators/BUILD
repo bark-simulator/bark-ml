@@ -3,9 +3,9 @@
 
 py_library(
     name = "evaluators",
-    srcs = ["goal_reached.py",
-            "goal_reached_guiding.py",
-            "evaluator.py"],
+    srcs = ["__init__.py",
+            "general_evaluator.py",
+            "evaluator_configs.py"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
     imports = ["../external/bark_project/bark/python_wrapper/"],
     deps = ["@bark_project//bark/runtime:runtime"],

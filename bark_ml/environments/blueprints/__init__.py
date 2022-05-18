@@ -1,7 +1,9 @@
-from bark_ml.environments.blueprints.blueprint import Blueprint
-from bark_ml.environments.blueprints.highway.highway import ContinuousHighwayBlueprint
-from bark_ml.environments.blueprints.highway.highway import DiscreteHighwayBlueprint
-from bark_ml.environments.blueprints.merging.merging import ContinuousMergingBlueprint
-from bark_ml.environments.blueprints.merging.merging import DiscreteMergingBlueprint
-from bark_ml.environments.blueprints.intersection.intersection import ContinuousIntersectionBlueprint
-from bark_ml.environments.blueprints.intersection.intersection import DiscreteIntersectionBlueprint
+from bark_ml.environments.blueprints.blueprint import Blueprint  # pylint: disable=unused-import
+from bark_ml.environments.blueprints.highway.highway import ContinuousHighwayBlueprint  # pylint: disable=unused-import
+from bark_ml.environments.blueprints.highway.highway import DiscreteHighwayBlueprint  # pylint: disable=unused-import
+from bark_ml.environments.blueprints.merging.merging import ContinuousMergingBlueprint  # pylint: disable=unused-import
+from bark_ml.environments.blueprints.merging.merging import DiscreteMergingBlueprint  # pylint: disable=unused-import
+from bark_ml.environments.blueprints.intersection.intersection import ContinuousIntersectionBlueprint  # pylint: disable=unused-import
+from bark_ml.environments.blueprints.intersection.intersection import DiscreteIntersectionBlueprint  # pylint: disable=unused-import
+from bark_ml.environments.blueprints.configurable.configurable_scenario import ConfigurableScenarioBlueprint  # pylint: disable=unused-import
+from bark_ml.environments.blueprints.single_lane.single_lane import ContinuousSingleLaneBlueprint  # pylint: disable=unused-import

@@ -29,7 +29,6 @@
 namespace bark_ml {
 namespace observers {
 using bark::commons::ParamsPtr;
-using bark::world::Agent;
 using spaces::Box;
 using commons::Norm;
 using spaces::Matrix_t;
@@ -57,6 +56,9 @@ using bark::commons::transformation::FrenetPosition;
 using State = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 
 
+/**
+ * @brief  Concatenates the nearest agents state into a row-vecot.
+ */
 class NearestObserver : public BaseObserver {
  public:
   explicit NearestObserver(const ParamsPtr& params) :
