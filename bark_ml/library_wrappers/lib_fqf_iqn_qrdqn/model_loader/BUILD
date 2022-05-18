@@ -10,8 +10,6 @@ pybind_extension(
            "-Lexternal/torchcpp/torch/lib",
            "-D_GLIBCXX_USE_CXX11_ABI=0"],
    linkopts = ["-ltorch_cpu","-lc10", "-ltorch"],
-   linkshared = 1,
-   linkstatic = 1,
    visibility = ["//visibility:public"],
 )
 

@@ -10,7 +10,7 @@ def bark_ml_dependencies():
   _maybe(
     git_repository,
     name = "bark_project",
-    commit = "af532f11a46699a0945be425a9a557326d758185",
+    branch = "master",
     remote = "https://github.com/bark-simulator/bark",
   )
 
@@ -30,7 +30,8 @@ cc_library(
         "-ltorch_cpu",
         "-lc10",
     ],
-)
+)"""
+  )
 
   _maybe(
       git_repository,

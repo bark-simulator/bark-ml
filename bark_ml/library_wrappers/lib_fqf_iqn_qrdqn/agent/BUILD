@@ -8,7 +8,8 @@ py_library(
         ":qrdqn_agent",
         ":imitation_agent",
         ":carin_agent",
-        "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent:util"
+        "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent:util",
+        "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent/demonstrations:demonstrations",
     ],
     visibility = ["//visibility:public"],
 )
