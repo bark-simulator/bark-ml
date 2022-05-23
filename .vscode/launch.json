@@ -12,7 +12,7 @@
 					"console": "integratedTerminal",
 					"env": {
 						"PYTHONPATH": "${workspaceFolder}/bazel-bark-ml/bark_ml/commons/",
-						"LD_LIBRARY_PATH" : "$LD_LIBRARY_PATH:/home/julo/development/thesis/tools/python/venv/lib/python3.7/site-packages/torch/lib/"
+						"LD_LIBRARY_PATH" : "$LD_LIBRARY_PATH:${workspaceFolder}/bark_ml/python_wrapper/venv/lib/python3.7/site-packages/torch/lib/"
 			 		}
 			},
 			{

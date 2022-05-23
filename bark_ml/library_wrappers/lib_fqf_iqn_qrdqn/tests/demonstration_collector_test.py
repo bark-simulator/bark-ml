@@ -31,13 +31,11 @@ from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
 
 import bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.tests.test_demo_behavior
-from bark_ml.evaluators.evaluator import StateEvaluator
 
-class TestEvaluator(StateEvaluator):
+class TestEvaluator:
   reach_goal = True
   def __init__(self,
                params=ParameterServer()):
-    StateEvaluator.__init__(self, params)
     self.step = 0
 
   def _evaluate(self, observed_world, eval_results, action):
@@ -53,6 +51,22 @@ class TestEvaluator(StateEvaluator):
         info = {"goal_r1" : True}
     self.step += 1
     return reward, done, info
+
+  def Evaluate(self, observed_world, action):
+    """Evaluates the observed world
+    """
+    eval_results, reward, done = None, 0., False
+    eval_results = observed_world.Evaluate()
+    reward, done, eval_results = self._evaluate(
+      observed_world, eval_results, action)
+    return reward, done, eval_results
+
+  def Reset(self, world):
+    world.ClearEvaluators()
+    self._add_evaluators()
+    for key, evaluator in self._evaluators.items():
+      world.AddEvaluator(key, evaluator)
+    return world
     
   def Reset(self, world):
     self._step = 0
@@ -63,7 +77,7 @@ class TestEvaluator(StateEvaluator):
 class DemonstrationCollectorTests(unittest.TestCase):
   def test_collect_demonstrations(self):
     params = ParameterServer()
-    bp = DiscreteHighwayBlueprint(params, number_of_senarios=10, random_seed=0)
+    bp = DiscreteHighwayBlueprint(params, num_scenarios=10, random_seed=0)
     env = SingleAgentRuntime(blueprint=bp, render=False)
     env._observer = NearestAgentsObserver(params)
     env._action_wrapper = BehaviorDiscreteMacroActionsML(params)

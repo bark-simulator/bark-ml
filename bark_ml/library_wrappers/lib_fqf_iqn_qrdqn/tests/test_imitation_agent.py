@@ -12,26 +12,16 @@ except:
 
 import unittest
 import numpy as np
-import os
-import gym
-import matplotlib
-import time
 from gym import spaces
 
 # BARK imports
 from bark.runtime.commons.parameters import ParameterServer
-
-# BARK-ML imports
-from bark_ml.environments.blueprints import \
-  DiscreteHighwayBlueprint, DiscreteMergingBlueprint
-from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-import bark_ml.environments.gym
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent import ImitationAgent
 
 observation_length = 5 
 num_actions = 4
 
-class TestObserver():
+class TestObserver:
   @property
   def observation_space(self):
     # TODO(@hart): use from spaces.py
@@ -63,11 +53,19 @@ def create_data(num):
   action_values_data = np.apply_along_axis(action_values_at_state, 1, observations)
   return action_values_data
 
-class TestDemonstrationCollector():
+class TestMotionPrimitiveBehavior:
+  def __init__(self, num_actions):
+    self._num_actions = num_actions
+
+  def GetMotionPrimitives(self):
+    return list(range(0,self._num_actions))
+
+class TestDemonstrationCollector:
   def __init__(self):
-    self.data = data = create_data(10000)
+    self.data = create_data(10000)
     self._observer = TestObserver()
     self._ml_behavior =  TestActionWrapper()
+    self.motion_primitive_behavior = TestMotionPrimitiveBehavior(num_actions)
 
   def GetDemonstrationExperiences(self):
     return self.data
@@ -80,22 +78,25 @@ class TestDemonstrationCollector():
   def ml_behavior(self):
     return self._ml_behavior
 
+  def GetDirectory(self):
+    return ""
+
 
 class EvaluationTests(unittest.TestCase):
   # make sure the agent works
   def test_agent_wrapping(self):
     params = ParameterServer()
+    params["ML"]["BaseAgent"]["NumSteps"] = 10
     params["ML"]["BaseAgent"]["MaxEpisodeSteps"] = 2
-    params["ML"]["BaseAgent"]["EvalInterval"] = 1000
+    params["ML"]["BaseAgent"]["EvalInterval"] = 2
     params["ML"]["BaseAgent"]["TrainTestRatio"] = 0.2
     
     demonstration_collector = TestDemonstrationCollector()
 
     agent = ImitationAgent(agent_save_dir="./save_dir", 
                            demonstration_collector=demonstration_collector,
-                           params=params)
+                           params=params, checkpoint_load = False)
     agent.run()
-
 
 if __name__ == '__main__':
   unittest.main()
