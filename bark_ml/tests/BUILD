@@ -108,21 +108,6 @@ py_test(
     visibility = ["//visibility:public"],
 )
 
-py_test(
-    name = "py_graph_nets_tests",
-    srcs = ["py_graph_nets_tests.py"],
-    data = ["@bark_project//bark/python_wrapper:core.so",
-            "//bark_ml:generate_core"],
-    imports = ["../external/bark_project/bark/python_wrapper/"],
-    deps = [
-        "//bark_ml/environments:single_agent_runtime",
-        "//bark_ml/environments:blueprints",
-        "//bark_ml/library_wrappers/lib_tf_agents/networks:networks",
-        "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
-        "//bark_ml/library_wrappers/lib_tf_agents/runners:runners",
-    ],
-    visibility = ["//visibility:public"],
-)
 
 cc_test(
     name = "observer_nearest_test",

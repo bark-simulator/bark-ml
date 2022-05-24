@@ -127,7 +127,7 @@ class TFARunner:
     reward = 0
     while not is_terminal:
       action_step = self._agent._eval_policy.action(
-        ts.transition(state, reward=0.0, discount=1.0))
+        ts.transition(np.float32(state), reward=0.0, discount=1.0))
       action = self.ReshapeActionIfRequired(action_step)
 
       state, reward, is_terminal, info = self._environment.step(action)

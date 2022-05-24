@@ -41,23 +41,6 @@ py_test(
 )
 
 py_test(
-    name = "test_training_benchmark",
-    srcs = ["test_training_benchmark.py"],
-    data = [
-        "//bark_ml:generate_core",
-        "@bark_project//bark:generate_core",
-    ],
-    deps = [
-        "//bark_ml/environments:blueprints",
-        "//bark_ml/environments:gym",
-        "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent:agents",
-        "@bark_project//bark/runtime/viewer:py_viewer",
-        "@benchmark_database//load:benchmark_database",
-        "@benchmark_database//serialization:database_serializer"
-    ],
-)
-
-py_test(
     name = "model_loader_tests",
     srcs = ["model_loader_tests.py",
             "test_imitation_agent.py"
@@ -96,4 +79,14 @@ py_test(
         "@benchmark_database//load:benchmark_database",
         "@benchmark_database//serialization:database_serializer"
     ],
+)
+
+test_suite(
+  name = "py_lib_fqf_imitation_agent_tests",
+  tests = [
+    ":save_load_test",
+    ":demonstration_collector_test",
+    ":model_loader_tests",
+    ":test_imitation_agent"
+  ]
 )

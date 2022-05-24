@@ -12,47 +12,52 @@ except:
 
 
 import unittest
+from gym import spaces
 import numpy as np
-import os
-import gym
-import matplotlib
-import time
 
 # BARK imports
 from bark.runtime.commons.parameters import ParameterServer
 
 # BARK-ML imports
-from bark_ml.environments.blueprints import \
-  DiscreteHighwayBlueprint, DiscreteMergingBlueprint
-from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
-import bark_ml.environments.gym
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent import FQFAgent
-from bark_ml.observers.nearest_state_observer import NearestAgentsObserver
-from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
 
+observation_length = 5 
+num_actions = 4
+
+class TestObserver:
+  @property
+  def observation_space(self):
+    # TODO(@hart): use from spaces.py
+    return spaces.Box(
+      low=np.zeros(observation_length),
+      high = np.ones(observation_length))
+
+class TestActionWrapper():
+  @property
+  def action_space(self):
+    return spaces.Discrete(num_actions)
+
+class DummyEnv:
+  def __init__(self):
+    self._observer = TestObserver()
+    self._ml_behavior =  TestActionWrapper()
+
+  def reset(self):
+    pass
+
+  def step(self):
+    pass
 
 class BaseAgentTests(unittest.TestCase):
   def test_agents(self):
     params = ParameterServer()
-    params["ML"]["BaseAgent"]["NumSteps"] = 2
-    params["ML"]["BaseAgent"]["MaxEpisodeSteps"] = 2
 
-    bp = DiscreteHighwayBlueprint(params, number_of_senarios=10, random_seed=0)
-    env = SingleAgentRuntime(blueprint=bp, render=False)
-    env._observer = NearestAgentsObserver(params)
-    env._action_wrapper = BehaviorDiscreteMacroActionsML(params)
-
-    fqf_agent = FQFAgent(agent_save_dir="./save_dir", env=env, params=params)
-    fqf_agent.train_episode()
+    fqf_agent = FQFAgent(env = DummyEnv(), agent_save_dir="./save_dir", params=params)
 
     fqf_agent.save(checkpoint_type="best")
     fqf_agent.save(checkpoint_type="last")
 
-    loaded_agent = FQFAgent(agent_save_dir="./save_dir", checkpoint_load="best")
-    loaded_agent2 = FQFAgent(agent_save_dir="./save_dir", checkpoint_load="last")
-    
-    loaded_agent_with_env = FQFAgent(env=env, agent_save_dir="./save_dir", checkpoint_load="last")
-    loaded_agent_with_env.train_episode()
+    loaded_agent = FQFAgent(env = DummyEnv(), agent_save_dir="./save_dir", checkpoint_load="best")
 
     self.assertEqual(loaded_agent.ml_behavior.action_space.n, fqf_agent.ml_behavior.action_space.n)
     self.assertEqual(loaded_agent.ent_coef, fqf_agent.ent_coef)

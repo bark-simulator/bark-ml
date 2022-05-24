@@ -4,6 +4,11 @@
 #
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
+try:
+    import debug_settings
+except:
+    pass
+
 
 import unittest
 import numpy as np

@@ -108,6 +108,7 @@ TEST(static_observer, agents_exist ) {
     params->SetReal("ML::StaticObserver::MaxD", 10.0);
     params->SetReal("ML::StaticObserver::MinTheta", -B_PI);
     params->SetReal("ML::StaticObserver::MaxTheta", B_PI);
+    params->SetBool("ML::StaticObserver::CheckInRoadCorridor", false);
     StaticObserver nn_observer(params);
 
     const auto world = create_world();

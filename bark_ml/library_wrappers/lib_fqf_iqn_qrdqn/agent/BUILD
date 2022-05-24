@@ -14,21 +14,6 @@ py_library(
     visibility = ["//visibility:public"],
 )
 
-py_library(
-    name = "training_benchmark_database",
-    srcs = [
-        "training_benchmark_database.py"
-    ],
-    data = [
-        "@bark_project//bark:generate_core",
-    ],
-    deps = [
-        "@bark_project//bark/benchmark:benchmark_runner",
-        "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent:agents",
-        "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent:util",
-    ],
-    visibility = ["//visibility:public"],
-)
 
 py_library(
     name = "util",

@@ -114,7 +114,7 @@ class BehaviorTFAAgent(BehaviorModel):
       # NOTE: we need to store the observer differently
       observed_state = self._environment._observer.Observe(
         observed_world)
-      self._action = self.Act(observed_state)
+      self._action = self.Act(np.float32(observed_state))
     # NOTE: BARK expects (m, 1) actions
     action = self._action
     if isinstance(self.action_space, BoundedContinuous):
