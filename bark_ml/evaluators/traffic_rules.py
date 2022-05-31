@@ -9,7 +9,7 @@ from bark.core.world import World, ObservedWorld
 from bark.core.world.evaluation import \
   EvaluatorGoalReached, EvaluatorCollisionEgoAgent, \
   EvaluatorStepCount, EvaluatorDrivableArea
-from bark.core.world.evaluation.ltl import *
+from bark.core.world.evaluation.ltl import EvaluatorLTL, SafeDistanceLabelFunction
 from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.evaluators.evaluator import BaseEvaluator
 # from bark.core.world.evaluation.ltl import EvaluatorLTL

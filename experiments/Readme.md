@@ -9,21 +9,21 @@ First, open a terminal in the root folder of bark-ml. Then, execute `source util
 
 To train a neural network that does not obey traffic rules (as reference):
 
-`bazel run //experiments:experiment_runner --define ltl_rules=true --jobs 2 -- --exp_json=$HOME/Documents/bark/bark-ml/bark-ml/experiments/configs/rules/single_lane_ref.json --mode=train`
+`bazel run //experiments:run_experiment --define ltl_rules=true --jobs 2 -- --exp_json=/home/<user>/bark-ml/experiments/configs/rules/single_lane_ref.json --mode=train`
 
 To train a neural network that obeys traffic rules:
 
-`bazel run //experiments:experiment_runner --define ltl_rules=true --jobs 2 -- --exp_json=$HOME/Documents/bark/bark-ml/bark-ml/experiments/configs/rules/single_lane.json --mode=train`
+`bazel run //experiments:run_experiment --define ltl_rules=true --jobs 2 -- --exp_json=/home/<user>/bark-ml/experiments/configs/rules/single_lane.json --mode=train`
 
 Save all scenarios where the reference-net violates traffic rules or causes a collision:
 
-`bazel run //experiments:experiment_runner --define ltl_rules=true --jobs 2 -- --exp_json=$HOME/Documents/bark/bark-ml/bark-ml/experiments/configs/rules/single_lane_ref2.json --mode=collisions`
+`bazel run //experiments:run_experiment --define ltl_rules=true --jobs 2 -- --exp_json=/home/<user>/bark-ml/experiments/configs/rules/single_lane_ref2.json --mode=collisions`
 The scenarios are saved as `$HOME/dump.json`.
 
 Execute the second net in the saved scenarios, and get a list of all scenarios where it did _not_ violate traffic rules:
 
-`bazel run //experiments:experiment_runner --define ltl_rules=true --jobs 2 -- --exp_json=$HOME/Documents/bark/bark-ml/bark-ml/experiments/configs/rules/single_lane.json --mode=validate`
+`bazel run //experiments:run_experiment --define ltl_rules=true --jobs 2 -- --exp_json=/home/<user>/bark-ml/experiments/configs/rules/single_lane.json --mode=validate`
 
 Visualize scenarios with this command:
 
-`bazel run //experiments:experiment_runner --define ltl_rules=true --jobs 2 -- --exp_json=$HOME/Documents/bark/bark-ml/bark-ml/experiments/configs/rules/single_lane.json --mode=visualize`
+`bazel run //experiments:run_experiment --define ltl_rules=true --jobs 2 -- --exp_json=/home/<user>/bark-ml/experiments/configs/rules/single_lane.json --mode=visualize`
