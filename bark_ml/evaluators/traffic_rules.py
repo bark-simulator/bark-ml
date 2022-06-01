@@ -9,10 +9,9 @@ from bark.core.world import World, ObservedWorld
 from bark.core.world.evaluation import \
   EvaluatorGoalReached, EvaluatorCollisionEgoAgent, \
   EvaluatorStepCount, EvaluatorDrivableArea
-from bark.core.world.evaluation.ltl import EvaluatorLTL, SafeDistanceLabelFunction
+from bark.core.world.evaluation.ltl import *
 from bark.runtime.commons.parameters import ParameterServer
 from bark_ml.evaluators.evaluator import BaseEvaluator
-# from bark.core.world.evaluation.ltl import EvaluatorLTL
 from bark_ml.evaluators.reward_shaping import RewardShapingEvaluator
 
 class EvaluatorTrafficRules(RewardShapingEvaluator):
