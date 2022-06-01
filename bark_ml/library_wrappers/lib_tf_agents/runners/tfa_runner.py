@@ -236,9 +236,9 @@ class TFARunner:
         return True
       if is_terminal and info["goal_reached"]:
         self._logger.info("\033[92mThe ego agent reached its goal. \033[0m")
-    print("\n INFO: \n")
-    print(info)
-    print(state)
+    # print("\n INFO: \n")
+    # print(info)
+    # print(state)
     return False
 
   def Run(
