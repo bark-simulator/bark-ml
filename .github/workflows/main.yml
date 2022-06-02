@@ -17,7 +17,7 @@ jobs:
       - name: Installing Tensorflow packages..
         run: pip install tensorflow-addons==0.11.2 graph-nets==1.1.0 ray==1.0.0
       - name: Installing Pytorch packages..
-        run: pip install -v -v torch==1.9.0+cpu torchvision -f https://download.pytorch.org/whl/torch_stable.html
+        run: pip install --target=./bark_ml/python_wrapper/venv/lib/python3.7/site-packages torch==1.9.0+cpu torchvision -f https://download.pytorch.org/whl/torch_stable.html
       - name: Ls dirs
         run: ls ./bark_ml/python_wrapper/venv/lib/python3.7/site-packages/torch/lib/
       - name: Add torch environment variable
