@@ -18,8 +18,8 @@ jobs:
         run: pip install tensorflow-addons==0.11.2 graph-nets==1.1.0 ray==1.0.0
       - name: Installing Pytorch venv..
         run: pip install --target=./bark_ml/python_wrapper/venv/lib/python3.7/site-packages torch==1.9.0+cpu torchvision -f https://download.pytorch.org/whl/torch_stable.html
-      - name: Add pytorch to python path
-        run: export PYTHONPATH=./bark_ml/python_wrapper/venv/lib/python3.7/site-packages:$PYTHONPATH
+      - name: Installing Pytorch global..
+        run: pip install torch==1.9.0+cpu torchvision -f https://download.pytorch.org/whl/torch_stable.html
       - name: Add torch environment variable
         run: export LD_LIBRARY_PATH=./bark_ml/python_wrapper/venv/lib/python3.7/site-packages/torch/lib/
       - name: Running tests
