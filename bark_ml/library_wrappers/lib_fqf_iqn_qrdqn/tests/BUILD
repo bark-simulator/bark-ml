@@ -79,6 +79,7 @@ py_test(
         "@benchmark_database//load:benchmark_database",
         "@benchmark_database//serialization:database_serializer"
     ],
+    visibility = ["//visibility:public"],
 )
 
 test_suite(
