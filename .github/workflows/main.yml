@@ -13,12 +13,13 @@ jobs:
       - name: Setting up virtual environment
         run: virtualenv -p python3 ./bark_ml/python_wrapper/venv  --system-site-packages
       - name: Entering the virtual python environment..
-        run: . ./bark_ml/python_wrapper/venv/bin/activate
-        run: export LD_LIBRARY_PATH=./bark_ml/python_wrapper/venv/lib/python3.7/site-packages/torch/lib/ 
+        run: . ./bark_ml/python_wrapper/venv/bin/activate 
       - name: Installing Tensorflow packages..
         run: pip install tensorflow-addons==0.11.2 graph-nets==1.1.0 ray==1.0.0
       - name: Installing Pytorch packages..
         run: pip install torch==1.9.0+cpu torchvision -f https://download.pytorch.org/whl/torch_stable.html
+      - name: Add torch environment variable
+        run: export LD_LIBRARY_PATH=./bark_ml/python_wrapper/venv/lib/python3.7/site-packages/torch/lib/
       - name: Running tests
         run: bazel test //bark_ml:unit_tests
 
