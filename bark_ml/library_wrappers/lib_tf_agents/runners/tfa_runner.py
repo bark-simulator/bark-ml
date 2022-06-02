@@ -227,7 +227,10 @@ class TFARunner:
         self._logger.info(f"The ego agent's action is {action} and " + \
                           f"a reward of {reward}.")
         self._environment.render()
-      if is_terminal and (info["collision"] or info["drivable_area"] or (info["traffic_rules_violations"] > 0)) and trace_colliding_ids is not None:
+      is_failed = info["collision"] or info["drivable_area"]
+      if "traffic_rules_violations" in info:
+        is_failed = is_failed or (info["traffic_rules_violations"] > 0)
+      if is_terminal and is_failed and (trace_colliding_ids is not None):
         self._colliding_scenario_ids.append(
           self._environment._scenario_idx)
         print("\n INFO: \n")
