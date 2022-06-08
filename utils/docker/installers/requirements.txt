@@ -18,6 +18,6 @@ spektral>=0.6.0
 ray==0.8.5
 tensorboard==2.5.0
 tf-agents==0.6.0
-notebook==6.4.0
+notebook==6.4.10
 graph-nets==1.1.0
 gin-config==0.4.0
