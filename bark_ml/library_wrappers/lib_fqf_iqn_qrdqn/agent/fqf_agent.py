@@ -20,11 +20,11 @@ from .base_agent import BaseAgent
 
 
 class FQFAgent(BaseAgent):
-  """FQFAgent that can be used in BARK and BARK-ML."""
+  def __init__(self, *args, **kwargs):
+    super(FQFAgent, self).__init__(*args, **kwargs)
 
-  def __init__(self, env, test_env, params):
-    super(FQFAgent, self).__init__(env, test_env, params)
-
+  def reset_params(self, params):
+    super(FQFAgent, self).reset_params(params)
     # NOTE: The author said the training of Fraction Proposal Net is
     # unstable and value distribution degenerates into a deterministic
     # one rarely (e.g. 1 out of 20 seeds). So you can use entropy of value
@@ -34,9 +34,13 @@ class FQFAgent(BaseAgent):
     self.N = self._params["ML"]["FQFAgent"]["N", "", 32]
     self.num_cosines = self._params["ML"]["FQFAgent"]["NumCosines", "", 64]
     self.kappa = self._params["ML"]["FQFAgent"]["Kappa", "", 1.0]
-
-    # Online network.
-    self.online_net = FQF(num_channels=env.observation_space.shape[0],
+    self.fractional_learning_rate = self._params["ML"]["FQFAgent"]["FractionalLearningRate", "",
+                                          2.5e-9]
+  
+  def init_always(self):
+    super(FQFAgent, self).init_always()
+      # Online network.
+    self.online_net = FQF(num_channels=self.observer.observation_space.shape[0],
                           num_actions=self.num_actions,
                           N=self.N,
                           num_cosines=self.num_cosines,
@@ -44,7 +48,7 @@ class FQFAgent(BaseAgent):
                           noisy_net=self.noisy_net,
                           params=self._params).to(self.device)
     # Target network.
-    self.target_net = FQF(num_channels=env.observation_space.shape[0],
+    self.target_net = FQF(num_channels=self.observer.observation_space.shape[0],
                           num_actions=self.num_actions,
                           N=self.N,
                           num_cosines=self.num_cosines,
@@ -60,8 +64,7 @@ class FQFAgent(BaseAgent):
 
     self.fraction_optim = RMSprop(
         self.online_net.fraction_net.parameters(),
-        lr=self._params["ML"]["FQFAgent"]["FractionalLearningRate", "",
-                                          2.5e-9],
+        lr=self.fractional_learning_rate,
         alpha=0.95,
         eps=0.00001)
 
@@ -71,6 +74,11 @@ class FQFAgent(BaseAgent):
         list(self.online_net.quantile_net.parameters()),
         lr=self._params["ML"]["FQFAgent"]["QuantileLearningRate", "", 5e-5],
         eps=1e-2 / self.batch_size)
+
+  def clean_pickables(self, pickables):
+    super(FQFAgent, self).clean_pickables(pickables)
+    del pickables["fraction_optim"]
+    del pickables["quantile_optim"]
 
   def update_target(self):
     self.target_net.dqn_net.load_state_dict(

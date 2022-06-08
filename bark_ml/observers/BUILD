@@ -26,3 +26,16 @@ cc_library(
   ],
   visibility = ["//visibility:public"],
 )
+
+cc_library(
+  name = "include",
+  hdrs = [
+    "base_observer.hpp",
+    "nearest_observer.hpp",
+  ],
+  deps=[
+    "//bark_ml/commons:spaces",
+    "//bark_ml/commons:commons"
+  ],
+  visibility = ["//visibility:public"],
+)

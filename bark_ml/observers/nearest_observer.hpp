@@ -34,15 +34,26 @@ using commons::Norm;
 using spaces::Matrix_t;
 using bark::world::AgentMap;
 using bark::world::AgentPtr;
+using bark::world::objects::AgentId;
 using bark::world::WorldPtr;
+using bark::world::goal_definition::GoalDefinitionStateLimitsFrenet;
+using bark::world::map::LaneCorridorPtr;
 using bark::world::ObservedWorldPtr;
 using bark::geometry::Point2d;
+using bark::commons::transformation::FrenetState;
+using bark::commons::transformation::FrenetStateDifference;
+using bark::geometry::B_2PI;
+using bark::geometry::B_PI;
+using bark::geometry::Line;
 using bark::geometry::Distance;
-using bark::geometry::Norm0To2PI;
+using bark::geometry::NormToPI;
 using bark::models::dynamic::StateDefinition::X_POSITION;
 using bark::models::dynamic::StateDefinition::Y_POSITION;
 using bark::models::dynamic::StateDefinition::THETA_POSITION;
 using bark::models::dynamic::StateDefinition::VEL_POSITION;
+using ObservedState = Eigen::Matrix<double, 1, Eigen::Dynamic>;
+using bark::commons::transformation::FrenetPosition;
+using State = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 
 
 /**
@@ -51,79 +62,108 @@ using bark::models::dynamic::StateDefinition::VEL_POSITION;
 class NearestObserver : public BaseObserver {
  public:
   explicit NearestObserver(const ParamsPtr& params) :
-    BaseObserver(params),
-    min_x_(0.), max_x_(100.),
-    min_y_(0.), max_y_(100.),
-    min_theta_(0.), max_theta_(2*3.14) {
+    BaseObserver(params) {
       nearest_agent_num_ =
         params->GetInt(
           "ML::NearestObserver::NNearestAgents", "Nearest agents number", 4);
-      min_vel_ = params->GetReal("ML::NearestObserver::MinVel", "", 0.0);
-      max_vel_ = params->GetReal("ML::NearestObserver::MaxVel", "", 50.0);
+      min_vel_lon_ = params->GetReal("ML::NearestObserver::MinVelLon", "", -30.0);
+      max_vel_lon_ = params->GetReal("ML::NearestObserver::MaxVelLon", "", 30.0);
+      min_vel_lat_ = params->GetReal("ML::NearestObserver::MinVelLat", "", -10.0);
+      max_vel_lat_ = params->GetReal("ML::NearestObserver::MaxVelLat", "", 10.0);
       max_dist_ = params->GetReal("ML::NearestObserver::MaxDist", "", 75.0);
-      state_size_ = params->GetInt("ML::NearestObserver::StateSize", "", 4);
-      observation_len_ = nearest_agent_num_ * state_size_;
+      min_s_ = params->GetReal("ML::NearestObserver::MinS", "", -100.0);
+      min_abs_s_ = params->GetReal("ML::NearestObserver::MinAbsS", "", 0.0);
+      max_s_ = params->GetReal("ML::NearestObserver::MaxS", "", 100.0);
+      min_d_ = params->GetReal("ML::NearestObserver::MinD", "", -20.0);
+      max_d_ = params->GetReal("ML::NearestObserver::MaxD", "", 20.0);
+      min_theta_ = params->GetReal("ML::NearestObserver::MinTheta", "", -B_PI);
+      max_theta_ = params->GetReal("ML::NearestObserver::MaxTheta", "", B_PI);
+      // Ego agent has s,d, vlat, vlon, theta, laneid other agents have del s, del d, del vlat, del vlon
+      observation_len_ = nearest_agent_num_ * 4 + 6; 
   }
 
   double Norm(const double val, const double mi, const double ma) const {
-    return (val - mi)/(ma - mi);
+    LOG_IF_EVERY_N(WARNING, (val < mi), 100) << "Val=" << val << " < Lower Limit=" << mi;
+    LOG_IF_EVERY_N(WARNING, (val > ma), 100) << "Val=" << val << " > Upper Limit=" << ma;
+    // Normalize to be within -1 to 1
+    return (val - (mi+ma)/2.0)/((ma-mi)/2.0);
   }
 
-  ObservedState FilterState(const State& state) const {
-    ObservedState ret_state(1, state_size_);
-    const double normalized_angle = Norm0To2PI(state(THETA_POSITION));
-    ret_state << Norm(state(X_POSITION), min_x_, max_x_),
-                 Norm(state(Y_POSITION), min_y_, max_y_),
+  ObservedState GetEgoState(const ObservedWorld& observed_world) const {
+    const auto ego_state = observed_world.CurrentEgoState();
+    const auto ego_pos = observed_world.CurrentEgoPosition();
+    const auto corridor_and_idx = observed_world.GetEgoAgent()
+      ->GetRoadCorridor()->GetNearestLaneCorridorAndIndex(ego_pos);
+    const auto& ego_corridor = corridor_and_idx.first;
+    const unsigned corr_idx = corridor_and_idx.second;
+    FrenetState current_ego_frenet(ego_state, ego_corridor->GetCenterLine());
+    ObservedState ego_nn_state(1, 6);
+    const double normalized_angle = NormToPI(current_ego_frenet.angle);
+    LOG_IF_EVERY_N(WARNING, (current_ego_frenet.lon < min_abs_s_), 100)
+         << "Sego=" << current_ego_frenet.lon << " < Min abs s=" << min_abs_s_;
+    ego_nn_state << Norm(current_ego_frenet.lon - min_abs_s_, min_s_, max_s_),
+                 Norm(current_ego_frenet.lat, min_d_, max_d_),
                  Norm(normalized_angle, min_theta_, max_theta_),
-                 Norm(state(VEL_POSITION), min_vel_, max_vel_);
-    return ret_state;
+                 Norm(current_ego_frenet.vlon, min_vel_lon_, max_vel_lon_),
+                 Norm(current_ego_frenet.vlat, min_vel_lat_, max_vel_lat_),
+                corr_idx;
+    return ego_nn_state;
   }
 
-  ObservedState Observe(const ObservedWorldPtr& observed_world) const {
-    int row_idx = 0;
+  ObservedState GetOtherAgentState(const AgentId& agent_id, const ObservedWorld& observed_world) const {
+    const auto ego_pos = observed_world.CurrentEgoPosition();
+    const auto corridor_and_idx = observed_world.GetEgoAgent()
+            ->GetRoadCorridor()->GetNearestLaneCorridorAndIndex(ego_pos);
+
+    const auto ego_state = observed_world.CurrentEgoState();
+    FrenetState current_ego_frenet(ego_state, corridor_and_idx.first->GetCenterLine());
+    const auto ego_shape = observed_world.GetEgoAgent()->GetShape();
+    const auto& other_state = observed_world.GetAgent(agent_id)->GetCurrentState();
+    FrenetState other_frenet(other_state, corridor_and_idx.first->GetCenterLine());
+    const auto other_shape = observed_world.GetAgent(agent_id)->GetShape();
+    FrenetStateDifference state_difference(current_ego_frenet, ego_shape, other_frenet, other_shape);
+
+    ObservedState other_nn_state(1, 4);
+    other_nn_state << Norm(state_difference.lon_zeroed ? 0.0 : state_difference.lon, min_s_, max_s_),
+                 Norm(state_difference.lat_zeroed ? 0.0 : state_difference.lat, min_d_, max_d_),
+                 Norm(state_difference.vlon, min_vel_lon_, max_vel_lon_),
+                 Norm(state_difference.vlat, min_vel_lat_, max_vel_lat_);
+    return other_nn_state;
+  }
+
+  ObservedState Observe(const ObservedWorld& observed_world) const {
+    // find near agents (n)
+    AgentMap nearest_agents = observed_world.GetNearestAgents(
+      observed_world.CurrentEgoPosition(), nearest_agent_num_ + 1);
+
+    // Build state
+    int state_start_idx = 0;
     ObservedState state(1, observation_len_);
     state.setZero();
 
-    // find near agents (n)
-    AgentMap nearest_agents = observed_world->GetNearestAgents(
-      observed_world->CurrentEgoPosition(), nearest_agent_num_);
-
-    // sort agents by distance and distance < max_dist_
-    std::map<double, AgentPtr, std::greater<double>> distance_agent_map;
-    for (const auto& agent : nearest_agents) {
-      const auto& agent_state = agent.second->GetCurrentPosition();
-      double distance = Distance(
-        observed_world->CurrentEgoPosition(), agent_state);
-      if (distance < max_dist_)
-        distance_agent_map[distance] = agent.second;
-    }
-
     // add ego agent state
-    ObservedState obs_ego_agent_state =
-      FilterState(observed_world->CurrentEgoState());
-    state.block(0, row_idx*state_size_, 1, state_size_) = obs_ego_agent_state;
-    row_idx++;
+    ObservedState obs_ego_agent_state = GetEgoState(observed_world);
+    state.block(0, state_start_idx, 1, obs_ego_agent_state.cols()) = obs_ego_agent_state;
+    state_start_idx = obs_ego_agent_state.cols();
 
     // add other states
-    for (const auto& agent : distance_agent_map) {
-      if (agent.second->GetAgentId() != observed_world->GetEgoAgentId()) {
-        ObservedState other_agent_state =
-          FilterState(agent.second->GetCurrentState());
-        state.block(0, row_idx*state_size_, 1, state_size_) = other_agent_state;  // # pylint: disable=unused-import
-        row_idx++;
-      }
+    for (const auto& agent : nearest_agents) {
+      if(agent.first == observed_world.GetEgoAgentId()) continue;
+
+      const auto& agent_state = agent.second->GetCurrentPosition();
+      double distance = Distance(
+        observed_world.CurrentEgoPosition(), agent_state);
+      if (distance > max_dist_) continue;
+
+      ObservedState other_agent_state = GetOtherAgentState(agent.second->GetAgentId(),
+                      observed_world);
+      state.block(0, state_start_idx, 1, other_agent_state.cols()) = other_agent_state;  // NOLINT
+      state_start_idx += other_agent_state.cols();
     }
     return state;
   }
 
   WorldPtr Reset(const WorldPtr& world) {
-    const auto& x_y = world->BoundingBox();
-    Point2d bb0 = x_y.first;
-    Point2d bb1 = x_y.second;
-    min_x_ = bb0.get<0>();
-    max_x_ = bb1.get<0>();
-    min_y_ = bb0.get<1>();
-    max_y_ = bb1.get<1>();
     return world;
   }
 
@@ -137,9 +177,11 @@ class NearestObserver : public BaseObserver {
   }
 
  private:
-  int state_size_, nearest_agent_num_, observation_len_;
-  double min_theta_, max_theta_, min_vel_, max_vel_, max_dist_,
-         min_x_, max_x_, min_y_, max_y_;
+  int nearest_agent_num_, observation_len_;
+  double min_theta_, max_theta_, min_vel_lon_,
+         max_vel_lon_, min_vel_lat_,
+         max_vel_lat_, max_dist_,
+         min_d_, max_d_, min_s_, max_s_, min_abs_s_;
 };
 
 }  // namespace observers

@@ -85,26 +85,6 @@ py_test(
 )
 
 py_test(
-    name = "py_library_torch_agents_tests",
-    srcs = ["py_library_torch_agents_tests.py"],
-    data = ["@torchcpp//:lib",
-            "@bark_project//bark/python_wrapper:core.so",
-            "//bark_ml/tests/lib_fqf_iqn_qrdqn_test_data:weights",
-            "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/model_wrapper:pytorch_script_wrapper.so"],
-    imports = ["../external/bark_project/bark/python_wrapper/",
-               "../external/torchcpp/torch/lib" # this path does not exist even after adding data dependency. Keeping it for further research.
-                                                # and ../ should be ../../ for bark as well as pytorch as there is no external
-                                                # in runfiles/bark_ml/bark_ml/external (not exists but the import adds it!)
-              ],
-    deps = ["//bark_ml/environments:single_agent_runtime",
-            "//bark_ml/environments:gym",
-            "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/agent:agents",
-            "//bark_ml/commons:py_spaces"
-           ],
-    visibility = ["//visibility:public"],
-)
-
-py_test(
     name = "py_bark_behavior_model_tests",
     srcs = ["py_bark_behavior_model_tests.py"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
@@ -128,26 +108,33 @@ py_test(
     visibility = ["//visibility:public"],
 )
 
-py_test(
-    name = "py_graph_nets_tests",
-    srcs = ["py_graph_nets_tests.py"],
-    data = ["@bark_project//bark/python_wrapper:core.so",
-            "//bark_ml:generate_core"],
-    imports = ["../external/bark_project/bark/python_wrapper/"],
-    deps = [
-        "//bark_ml/environments:single_agent_runtime",
-        "//bark_ml/environments:blueprints",
-        "//bark_ml/library_wrappers/lib_tf_agents/networks:networks",
-        "//bark_ml/library_wrappers/lib_tf_agents/agents:agents",
-        "//bark_ml/library_wrappers/lib_tf_agents/runners:runners",
+
+cc_test(
+    name = "observer_nearest_test",
+    srcs = [
+        "observer_nearest_test.cc",
     ],
-    visibility = ["//visibility:public"],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "@bark_project//bark/geometry",
+        "@bark_project//bark/world:world",
+        "@bark_project//bark/world/map:map_interface",
+        "@bark_project//bark/world/map:roadgraph",
+        "@bark_project//bark/world/opendrive:opendrive",
+        "@bark_project//bark/models/behavior/constant_acceleration:constant_acceleration",
+        "@bark_project//bark/models/execution/interpolation:interpolation",
+        "@bark_project//bark/world/evaluation:evaluation",
+        "@bark_project//bark/models/behavior/motion_primitives:motion_primitives",
+        "@bark_project//bark/world/tests:make_test_world",
+        "//bark_ml/observers:cpp_observers",
+        "@gtest//:gtest_main",
+    ],
 )
 
 cc_test(
-    name = "observer_test",
+    name = "observer_static_test",
     srcs = [
-        "observer_test.cc",
+        "observer_static_test.cc",
     ],
     copts = ["-Iexternal/gtest/include"],
     deps = [
