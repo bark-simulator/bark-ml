@@ -29,7 +29,6 @@ test_suite(
     "//bark_ml/tests:py_bark_behavior_model_tests",
     "//bark_ml/experiment:py_experiment_tests",
     "//bark_ml/tests:py_apollo_tests",
-    "//bark_ml/library_wrappers/lib_fqf_iqn_qrdqn/tests:py_lib_fqf_imitation_agent_tests"
   ]
 )
 
