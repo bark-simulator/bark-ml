@@ -92,7 +92,7 @@ class BaseAgent(BehaviorModel):
     self._params = params
     self._env = env
     self._training_benchmark = training_benchmark or TrainingBenchmark()
-    self._agent_save_dir = agent_save_dir
+    self._agent_save_dir = agent_save_dir or "./"
     self._demonstrations = demonstrations
     self._checkpoint_load = checkpoint_load
     
@@ -476,4 +476,5 @@ class BaseAgent(BehaviorModel):
   def __del__(self):
     # self.env.close()
     # self.test_env.close()
-    self.writer.close()
+    # self.writer.close()
+    pass

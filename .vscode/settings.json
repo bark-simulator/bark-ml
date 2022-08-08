@@ -107,6 +107,6 @@
   "python.linting.enabled": true,
   "python.analysis.extraPaths": [
     "${workspaceFolder}/bazel-out/k8-fastbuild/bin/bark_ml",
-    "./bazel-bark-ml/external/bark_project"
+    "${workspaceFolder}/bazel-out/k8-fastbuild/bin/experiments/run_experiment.runfiles/bark_project"
   ]
 }

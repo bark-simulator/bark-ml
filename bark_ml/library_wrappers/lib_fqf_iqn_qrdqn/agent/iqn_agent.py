@@ -22,8 +22,8 @@ from .base_agent import BaseAgent
 class IQNAgent(BaseAgent):
   """IQNAgent that can be used in BARK and BARK-ML."""
 
-  def __init__(self, env, test_env, params):
-    super(IQNAgent, self).__init__(env, params)
+  def __init__(self, env, params):
+    super(IQNAgent, self).__init__(env = env, params = params)
 
     self.N = self._params["ML"]["IQNAgent"]["N", "", 64]
     self.N_dash = self._params["ML"]["IQNAgent"]["N_dash", "", 64]

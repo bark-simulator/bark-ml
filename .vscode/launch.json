@@ -37,9 +37,9 @@
 					"name": "(gdb) Attach",
 					"type": "cppdbg",
 					"request": "attach",
-					"program": "${workspaceFolder}/python/venv/bin/python3",
+					"program": "${workspaceFolder}/bark_ml/python_wrapper/venv/bin/python",
 					"cwd" : "${workspaceFolder}",
-					"additionalSOLibSearchPath":"${workspaceFolder}/bazel-bin/examples/tfa.runfiles/__main__/python",
+					"additionalSOLibSearchPath":"${workspaceFolder}/bazel-out/k8-fastbuild/bin/experiments/run_experiment.runfiles/bark_project",
 					"processId": "${command:pickProcess}",
 					"MIMode": "gdb",
 					"sourceFileMap" : {"/proc/self/cwd/": "${workspaceFolder}"}

@@ -3,8 +3,12 @@
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
-
+try:
+    import debug_settings
+except:
+    pass
 import gym
+import bark_ml.environments.gym
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent import FQFAgent
 import bark_ml.environments.gym  # pylint: disable=unused-import
 from bark.runtime.commons.parameters import ParameterServer
@@ -32,11 +36,11 @@ flags.DEFINE_bool("load", False, "Load weights from checkpoint path.")
 def run_configuration(argv):
 
   params = ParameterServer(filename="examples/example_params/fqf_params.json")
-  params["ML"]["BaseAgent"]["SummaryPath"] = "/home/mansoor/Study/Werkstudent/fortiss/code/bark-ml/summaries"
-  params["ML"]["BaseAgent"]["CheckpointPath"] = "/home/mansoor/Study/Werkstudent/fortiss/code/bark-ml/checkpoints"
+  params["ML"]["BaseAgent"]["SummaryPath"] = "./summaries"
+  params["ML"]["BaseAgent"]["CheckpointPath"] = "./checkpoints"
 
   env = gym.make(FLAGS.env, params=params)
-  agent = FQFAgent(env=env, test_env=env, params = params)
+  agent = FQFAgent(env=env, params = params)
 
   if FLAGS.load and params["ML"]["BaseAgent"]["CheckpointPath"]:
     agent.load_models(os.path.join(params["ML"]["BaseAgent"]["CheckpointPath"],"best"))

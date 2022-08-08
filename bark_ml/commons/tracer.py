@@ -10,7 +10,7 @@ import pickle
 class Tracer:
   """The tracer can be used to log certain values during episodes."""
 
-  def __init__(self, states=None, trace_history=True):
+  def __init__(self, trace_history=True):
     self._trace_history = trace_history
     self._states = []
 

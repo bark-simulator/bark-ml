@@ -7,7 +7,8 @@ repo_paths = ["bark_project", "bark_project/python_wrapper", "benchmark_database
         "com_github_interaction_dataset_interaction_dataset/python", "diadem_project", "bark_ml"]
 
 executed_file = sys.argv[0]
-tmp = executed_file.replace("bark_ml", "bazel-bin/bark_ml")
+tmp = "bark-ml/bazel-bin/".join(executed_file.rsplit("bark-ml",1))
+tmp = tmp.replace("python_wrapper/", "bazel-bin/python_wrapper/")
 runfiles_dir = tmp.replace(".py", ".runfiles")
 
 sys.path.append(runfiles_dir)

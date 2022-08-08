@@ -9,6 +9,7 @@ from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent import IQNAgent
 from bark.runtime.commons.parameters import ParameterServer
 from absl import app
 from absl import flags
+import bark_ml.environments.gym  # pylint: disable=unused-import
 # this will disable all BARK log messages
 import os
 os.environ['GLOG_minloglevel'] = '3'
@@ -31,11 +32,12 @@ flags.DEFINE_bool("load", False, "Load weights from checkpoint path.")
 def run_configuration(argv):
 
   params = ParameterServer(filename="examples/example_params/iqn_params.json")
-  params["ML"]["BaseAgent"]["SummaryPath"] = "/home/mansoor/Study/Werkstudent/fortiss/code/bark-ml/summaries"
-  params["ML"]["BaseAgent"]["CheckpointPath"] = "/home/mansoor/Study/Werkstudent/fortiss/code/bark-ml/checkpoints"
+  params["ML"]["BaseAgent"]["SummaryPath"] = "./summaries"
+  params["ML"]["BaseAgent"]["CheckpointPath"] = "./checkpoints"
 
   env = gym.make(FLAGS.env, params=params)
-  agent = IQNAgent(env=env, test_env=env,params = params)
+
+  agent = IQNAgent(env=env, params = params)
 
   if FLAGS.load and params["ML"]["BaseAgent"]["CheckpointPath"]:
     agent.load_models(os.path.join(params["ML"]["BaseAgent"]["CheckpointPath"],"best"))

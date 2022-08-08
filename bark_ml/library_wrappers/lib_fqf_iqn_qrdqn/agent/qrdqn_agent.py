@@ -22,8 +22,8 @@ from .base_agent import BaseAgent
 class QRDQNAgent(BaseAgent):
   """QRDQNAgent that can be used in BARK and BARK-ML."""
 
-  def __init__(self, env, test_env, params):
-    super(QRDQNAgent, self).__init__(env, params)
+  def __init__(self, env, params):
+    super(QRDQNAgent, self).__init__(env = env, params = params)
 
     self.N = self._params["ML"]["QRDQNAgent"]["N", "", 200]
     self.kappa = self._params["ML"]["QRDQNAgent"]["Kappa", "", 1.0]

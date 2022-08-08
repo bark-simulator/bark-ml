@@ -21,7 +21,7 @@ import logging
 from bark.runtime.commons.parameters import ParameterServer
 
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.model_loader \
- import pytorch_script_wrapper
+  import pytorch_script_wrapper
 
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.tests.test_imitation_agent import TestActionWrapper, \
         TestObserver, create_data

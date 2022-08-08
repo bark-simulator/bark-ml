@@ -147,7 +147,7 @@ class CounterfactualRuntime(SingleAgentRuntime):
       agent_states = CaptureAgentStates(observed_world)
       eval_state = {**eval_state, **agent_states}
       # TODO: break at collision
-      local_tracer.Trace(eval_state, **kwargs)
+      local_tracer.Trace(eval_state)
       if eval_state["collision"] or eval_state["drivable_area"]:
         break
       world.Step(self._step_time)
@@ -166,8 +166,9 @@ class CounterfactualRuntime(SingleAgentRuntime):
     return self._tracer
 
   def TraceCounterfactualWorldStats(self, local_tracer):
-    collision_rate = local_tracer.collision_rate
-    goal_reached = local_tracer.success_rate
+
+    collision_rate = sum([states["collision"] for states in local_tracer._states])/len(local_tracer._states)
+    goal_reached = sum([states["goal_reached"] for states in local_tracer._states])/len(local_tracer._states)
     return {"collision": collision_rate,
             "goal_reached": goal_reached,
             "max_col_rate": self._max_col_rate}
