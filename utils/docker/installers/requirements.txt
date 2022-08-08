@@ -1,6 +1,6 @@
 aabbtree==2.8.1
 absl-py==0.13.0
-lxml==4.6.3
+lxml==4.9.1
 matplotlib==3.4.2
 numpy==1.19.5
 six==1.15.0
