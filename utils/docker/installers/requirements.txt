@@ -2,7 +2,7 @@ aabbtree==2.8.1
 absl-py==0.13.0
 lxml==4.6.3
 matplotlib==3.4.2
-numpy==1.19.5
+numpy==1.22.0
 six==1.15.0
 twine==3.4.1
 panda3d==1.10.9
