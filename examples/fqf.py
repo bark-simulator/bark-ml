@@ -3,12 +3,8 @@
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
-try:
-    import debug_settings
-except:
-    pass
+
 import gym
-import bark_ml.environments.gym
 from bark_ml.library_wrappers.lib_fqf_iqn_qrdqn.agent import FQFAgent
 import bark_ml.environments.gym  # pylint: disable=unused-import
 from bark.runtime.commons.parameters import ParameterServer

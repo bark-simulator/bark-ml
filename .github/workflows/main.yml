@@ -13,7 +13,7 @@ jobs:
       - name: Setting up virtual environment
         run: virtualenv -p python3 ./bark_ml/python_wrapper/venv  --system-site-packages
       - name: Entering the virtual python environment..
-        run: . ./bark_ml/python_wrapper/venv/bin/activate && pip3 install --upgrade protobuf==3.20.0
+        run: . ./bark_ml/python_wrapper/venv/bin/activate && pip install --no-cache-dir --upgrade --trusted-host pypi.org -r ./utils/docker/installers/requirements.txt
       - name: Installing Tensorflow packages..
         run: pip install tensorflow-addons==0.11.2 graph-nets==1.1.0 ray==1.0.0
       - name: Installing Pytorch venv..

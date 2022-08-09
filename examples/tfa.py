@@ -38,8 +38,8 @@ def run_configuration(argv):
   params = ParameterServer(filename="examples/example_params/tfa_params.json")
   # params = ParameterServer()
   # NOTE: Modify these paths in order to save the checkpoints and summaries
-  # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/Users/hart/Development/bark-ml/checkpoints_merging_nn/"
-  # params["ML"]["TFARunner"]["SummaryPath"] = "/Users/hart/Development/bark-ml/checkpoints_merging_nn/"
+  # params["ML"]["BehaviorTFAAgents"]["CheckpointPath"] = "/home/xliu/fortiss_bark/bark-ml/checkpoints_merging_nn/"
+  # params["ML"]["TFARunner"]["SummaryPath"] = "/home/xliu/fortiss_bark/bark-ml/checkpoints_merging_nn/"
   params["Visualization"]["Agents"]["Alpha"]["Other"] = 0.2
   params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2
   params["Visualization"]["Agents"]["Alpha"]["Controlled"] = 0.2

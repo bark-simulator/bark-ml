@@ -6,11 +6,7 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 # TensorFlow Agents (https://github.com/tensorflow/agents) example
-try:
-    import debug_settings
-except:
-    pass
-  
+
 import gym
 import numpy as np
 from absl import app
