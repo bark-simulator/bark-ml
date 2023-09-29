@@ -22,3 +22,4 @@ notebook==6.4.0
 graph-nets==1.1.0
 gin-config==0.4.0
 protobuf==3.20.0
+wheel==0.38.4
