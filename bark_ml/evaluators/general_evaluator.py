@@ -11,6 +11,7 @@ from bark.core.world.evaluation import \
 from bark.runtime.commons.parameters import ParameterServer
 from bark.core.models.dynamic import StateDefinition
 from bark.core.geometry import Point2d, Within, Distance
+from bark.core.world.evaluation.ltl import *
 
 
 class Functor:
@@ -344,6 +345,30 @@ class StateActionLoggingFunctor(Functor):
     return False, 0, {"time": t, "x": x, "y": y, "theta": theta,
                       "vel": vel, "acc": acc, "delta": delta}
 
+class TrafficRuleLTLFunctor(Functor):
+  def __init__(self, params):
+    self._params = params
+    self.traffic_rule_violation_pre = 0
+    self.traffic_rule_violation_post = 0
+    self.traffic_rule_violations = 0
+    super().__init__(params=self._params)
+
+  def __call__(self, observed_world, action, eval_results):
+    self.traffic_rule_violation_post = eval_results[self._params["RuleName"]]
+    max_vio_num = self._params["ViolationTolerance","",15]
+    if self.traffic_rule_violation_post < self.traffic_rule_violation_pre:
+        self.traffic_rule_violation_pre = self.traffic_rule_violation_post
+    current_traffic_rule_violations = self.traffic_rule_violation_post - self.traffic_rule_violation_pre
+    self.traffic_rule_violations = self.traffic_rule_violations + current_traffic_rule_violations
+    self.traffic_rule_violation_pre = self.traffic_rule_violation_post
+    if self.traffic_rule_violations > max_vio_num:
+      return True, 0, {}
+    return False, self.WeightedReward(current_traffic_rule_violations/max_vio_num), {}
+  def Reset(self):
+    self.traffic_rule_violation_pre = 0
+    self.traffic_rule_violation_post = 0
+    self.traffic_rule_violations = 0
+    super().Reset()
 # TODO: extract t -> (x, y), t -> v && min/max acc, delta, v, theta
 # TODO: MIN/MAX functor for defined state value
 # TODO: Deviation functor for state-difference (desired vel. and x,y)
@@ -367,14 +392,14 @@ class GeneralEvaluator:
     self._bark_ml_eval_fns = bark_ml_eval_fns or {
       "collision_functor" : CollisionFunctor(self._params),
       "goal_functor" : GoalFunctor(self._params),
-      "low_speed_goal_reached_functor" : LowSpeedGoalFunctor(self._params),
       "drivable_area_functor" : DrivableAreaFunctor(self._params),
       "step_count_functor" : StepCountFunctor(self._params),
-      "smoothness_functor" : SmoothnessFunctor(self._params),
-      "min_max_vel_functor" : MinMaxVelFunctor(self._params),
+      # "low_speed_goal_reached_functor" : LowSpeedGoalFunctor(self._params),
+      # "smoothness_functor" : SmoothnessFunctor(self._params),
+      # "min_max_vel_functor" : MinMaxVelFunctor(self._params),
       # "pot_center_functor": PotentialCenterlineFunctor(self._params),
       # "pot_vel_functor": PotentialVelocityFunctor(self._params),
-      "pot_goal_center_functor": PotentialGoalCenterlineFunctor(self._params),
+      # "pot_goal_center_functor": PotentialGoalCenterlineFunctor(self._params),
       # "pot_goal_switch_vel_functor": PotentialGoalSwitchVelocityFunctor(self._params)
       # "state_action_logging_functor": StateActionLoggingFunctor(self._params)
     }
@@ -397,6 +422,7 @@ class GeneralEvaluator:
   def Reset(self, world):
     world.ClearEvaluators()
     for eval_name, eval_fn in self._bark_eval_fns.items():
+      #TODO: check if reset evaluatorLTL is needed
       world.AddEvaluator(eval_name, eval_fn())
     for _, eval_func in self._bark_ml_eval_fns.items():
       eval_func.Reset()

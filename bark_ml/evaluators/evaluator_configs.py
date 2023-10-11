@@ -3,6 +3,9 @@
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
+from bark.core.world.evaluation import \
+  EvaluatorGoalReached, EvaluatorCollisionEgoAgent, \
+  EvaluatorStepCount, EvaluatorDrivableArea
 
 from bark_ml.evaluators.general_evaluator import *
 
@@ -133,15 +136,43 @@ class EvaluatorConfigurator(GeneralEvaluator):
       "CollisionDrivableAreaFunctor" : "collision_drivable_area_functor",
       "PotentialGoalReachedVelocityFunctor": "pot_goal_vel_functor"
     }
-    self._params = params["ML"]["EvaluatorConfigurator"]["EvaluatorConfigs"]["FunctorConfigs"]
-    config_params_dict = self._params.ConvertToDict()
+    self._params = params
+    functor_configs = self._params["ML"]["EvaluatorConfigurator"]["EvaluatorConfigs"]["FunctorConfigs"]
+    functor_config_params_dict = functor_configs.ConvertToDict()
     # initialize functor and functorweights dicts
     eval_fns = {}
     # get values for each item
-    for key in config_params_dict.keys():
+    for key in functor_config_params_dict.keys():
       matched_functor_key = self._fn_key_map[key]
-      eval_fns[matched_functor_key]= eval("{}(self._params)".format(key))
-    super().__init__(params=self._params, bark_ml_eval_fns=eval_fns)
+      eval_fns[matched_functor_key]= eval("{}(functor_configs)".format(key))
+    
+    # initialize evaluators for bark world
+    bark_evals = {
+      "goal_reached" : lambda: EvaluatorGoalReached(),
+      "collision" : lambda: EvaluatorCollisionEgoAgent(),
+      "step_count" : lambda: EvaluatorStepCount(),
+      "drivable_area" : lambda: EvaluatorDrivableArea()
+    }
+    rules_configs = self._params["ML"]["EvaluatorConfigurator"]["RulesConfigs"]
+
+    for rule_config in rules_configs["Rules"]:
+      # parse label function for each rule
+      labels_list = []
+      for label_conf in rule_config["RuleConfig"]["labels"]:
+        label_params_dict = label_conf["params"].ConvertToDict()
+        labels_list.append(eval("{}(**label_params_dict)".format(label_conf["type"])))
+
+      # instance rule evaluator for each rule
+      #TODO: check if evaluatorLTL can access private function in python
+      ltl_formula_ = rule_config["RuleConfig"]["params"]["formula"]
+      bark_evals[rule_config["RuleName"]] = eval("lambda: {}(agent_id=None, ltl_formula=ltl_formula_,label_functions=labels_list)".format(rule_config["RuleConfig"]["type"]))
+      # add rule functors to bark_ml_eval_fns
+      functor_n_ = rule_config["RuleName"] + "_functor"
+      eval_fns[functor_n_] = eval("{}(rule_config)".format("TrafficRuleLTLFunctor"))
+
+    super().__init__(params=self._params, bark_eval_fns=bark_evals, bark_ml_eval_fns=eval_fns)
+
+      
 
   def addKeyFunctorPair(self,functor_name,key_name):
     self._fn_key_map[functor_name] = key_name

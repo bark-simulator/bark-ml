@@ -16,7 +16,7 @@ from bark_ml.environments.blueprints.highway.highway import \
 from bark_ml.environments.blueprints.merging.merging import \
   ContinuousMergingBlueprint, DiscreteMergingBlueprint
 from bark_ml.environments.blueprints.single_lane.single_lane import \
-  ContinuousSingleLaneBlueprint
+  ContinuousSingleLaneBlueprint, DiscreteSingleLaneBlueprint
 from bark_ml.environments.blueprints.intersection.intersection import \
   ContinuousIntersectionBlueprint, DiscreteIntersectionBlueprint
 from bark_ml.environments.single_agent_runtime import SingleAgentRuntime
@@ -136,7 +136,7 @@ class GymSingleAgentRuntime(SingleAgentRuntime, gym.Wrapper):
     SingleAgentRuntime.__init__(self, *args, **kwargs)
 
 
-# highway
+# highway continuous
 class ContinuousSingleLaneGym(SingleAgentRuntime, gym.Env):
   """Highway scenario with continuous behavior model.
 
@@ -149,7 +149,23 @@ class ContinuousSingleLaneGym(SingleAgentRuntime, gym.Env):
     cont_highway_bp = ContinuousSingleLaneBlueprint(params)
     SingleAgentRuntime.__init__(self,
       blueprint=cont_highway_bp, render=True)
+    
+# highway discrete
+class DiscreteSingleLaneGym(SingleAgentRuntime, gym.Env):
+  """Highway scenario with discrete behavior model.
 
+  Behavior model takes integers [0, 1, 2] as specified in the
+  discrete behavior model.
+  """
+
+  def __init__(self,
+    params = ParameterServer(filename= \
+      os.path.join(os.path.dirname(__file__),
+      "../environments/blueprints/visualization_params.json")),
+    render=False):
+    discrete_highway_bp = DiscreteSingleLaneBlueprint(params)
+    SingleAgentRuntime.__init__(self,
+      blueprint=discrete_highway_bp, render=render)
 
 # register gym envs
 register(
@@ -183,4 +199,8 @@ register(
 register(
   id='singlelane-v0',
   entry_point='bark_ml.environments.gym:ContinuousSingleLaneGym'
+)
+register(
+  id='singlelane-v1',
+  entry_point='bark_ml.environments.gym:DiscreteSingleLaneGym'
 )
