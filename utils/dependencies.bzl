@@ -10,9 +10,15 @@ def bark_ml_dependencies():
   _maybe(
     git_repository,
     name = "bark_project",
-    branch = "master",
+    branch = "dev_stl",
     remote = "https://github.com/bark-simulator/bark",
   )
+
+  #_maybe(
+  #      native.local_repository,
+  #      name = "bark_project",
+  #      path = "/home/acarcelik/bark_ws/bark"
+  #)
 
   _maybe(
     native.new_local_repository,
