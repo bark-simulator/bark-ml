@@ -12,12 +12,13 @@ from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.viewer.video_renderer import VideoRenderer
 from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
+from bark.runtime.commons.xodr_parser import XodrParser
 from bark.core.world.opendrive import *
-from bark.core.geometry import Line2d, GetPointAtS, GetTangentAngleAtS
+from bark.core.geometry import Line2d, GetPointAtS, GetTangentAngleAtS, Polygon2d, Point2d
 from bark.core.models.behavior import BehaviorDynamicModel, BehaviorMacroActionsFromParamServer
 from bark.core.world.map import MapInterface
 from bark.core.world.opendrive import XodrDrivingDirection
-from bark.core.world.goal_definition import GoalDefinitionStateLimitsFrenet
+from bark.core.world.goal_definition import GoalDefinitionStateLimitsFrenet, GoalDefinitionPolygon
 from bark.core.models.dynamic import SingleTrackSteeringRateModel, SingleTrackModel
 from bark.core.models.observer import ObserverModelParametric
 
@@ -153,7 +154,103 @@ class SingleLaneLaneCorridorConfig(LaneCorridorConfig):
   def velocity(self):
     return 0.0
 
+class NaiveGoalSingleLaneLaneCorridorConfig(LaneCorridorConfig):
 
+  """
+  Configures the a single lane, e.g., with a simple goal.
+  """
+  def __init__(self,
+               params=None,
+               **kwargs):
+    super(NaiveGoalSingleLaneLaneCorridorConfig, self).__init__(params,
+                                                                **kwargs)
+  def goal(self, world):
+        lane_corr = self._road_corridor.lane_corridors[0]
+        goal_polygon = Polygon2d([0, 0, 0], [Point2d(-1, -1), Point2d(-1, 1), Point2d(1, 1), Point2d(1, -1)])
+        goal_polygon = goal_polygon.Translate(Point2d(lane_corr.center_line.ToArray()[-1, 0], lane_corr.center_line.ToArray()[-1, 1]))
+        return GoalDefinitionPolygon(goal_polygon)
+  
+
+class NaiveSingleLaneBlueprint(Blueprint):
+  """The NaiveSingleLaneBlueprint blueprint sets up a single lane scenario with initial
+  conditions.
+  One lane SingleLane, with the ego vehicle following leading vehicle.
+  """
+
+  def __init__(self,
+               params=None,
+               num_scenarios=250,
+               random_seed=0,
+               ml_behavior=None,
+               viewer=True,
+               dt=0.2,
+               xodr_path=None,
+               goalConfigs=None,
+               mode="medium"):
+    ds_min = 35. # [m]
+    ds_max = 50.
+    if mode == "dense":
+      ds_min = 20. # [m]
+      ds_max = 35.
+    if mode == "medium":
+      ds_min = 30. # [m]
+      ds_max = 40.
+    params["World"]["remove_agents_out_of_map"] = False
+    lane_configs = []
+    s_min = 20.
+    s_max = 80.
+    local_params = params.clone()
+    local_params["BehaviorIDMClassic"]["DesiredVelocity"] = np.random.uniform(12, 17)
+    lane_conf = NaiveGoalSingleLaneLaneCorridorConfig(params=local_params,
+                                                      road_ids=[16],
+                                                      lane_corridor_id=0,
+                                                      min_vel=10,
+                                                      max_vel=17,
+                                                      ds_min=ds_min,
+                                                      ds_max=ds_max,
+                                                      s_min=s_min,
+                                                      s_max=s_max,
+                                                      controlled_ids=True)
+    lane_configs.append(lane_conf)
+
+    # Map Definition
+    if xodr_path is None:
+      xodr_path = os.path.join(
+        os.path.dirname(__file__),
+        "../../../environments/blueprints/single_lane/single_lane.xodr")
+    print(f"xodr map file path is: {xodr_path}.")
+    map_interface = MapInterface()
+    xodr_parser = XodrParser(xodr_path)
+    map_interface.SetOpenDriveMap(xodr_parser.map)
+    
+    scenario_generation = \
+      ConfigWithEase(
+        num_scenarios=num_scenarios,
+        random_seed=random_seed,
+        params=params,
+        map_interface=map_interface,
+        lane_corridor_configs=lane_configs)
+    
+    if viewer:
+      viewer = MPViewer(params=params,
+                        x_range=[-150, 150],
+                        y_range=[-150, 150],
+                        follow_agent_id=True)
+      if params["Experiment"]["ExportVideos"]:
+        viewer = VideoRenderer(renderer=viewer, world_step_time=dt)
+
+    evaluator = GeneralEvaluator(params)
+    observer = NearestAgentsObserver(params)
+
+    super().__init__(
+      scenario_generation=scenario_generation,
+      viewer=viewer,
+      dt=dt,
+      evaluator=evaluator,
+      observer=observer,
+      ml_behavior=ml_behavior)
+    
+  
 class SingleLaneBlueprint(Blueprint):
   """The SingleLane blueprint sets up a merging scenario with initial
   conditions.
@@ -255,14 +352,13 @@ class SingleLaneBlueprint(Blueprint):
         observer_model=observer_model)
     if viewer:
       viewer = MPViewer(params=params,
-                        x_range=[-100, 100],
-                        y_range=[-100, 100],
+                        x_range=[-150, 150],
+                        y_range=[-150, 150],
                         follow_agent_id=True)
       if params["Experiment"]["ExportVideos"]:
-        viewer = VideoRenderer(renderer=viewer,world_step_time=dt)
+        viewer = VideoRenderer(renderer=viewer, world_step_time=dt)
     evaluator = GeneralEvaluator(params)
     observer = NearestAgentsObserver(params)
-    ml_behavior = ml_behavior
 
     super().__init__(
       scenario_generation=scenario_generation,
@@ -316,4 +412,24 @@ class DiscreteSingleLaneBlueprint(SingleLaneBlueprint):
                               dt=dt,
                               laneCorrConfigs=laneCorrConfigs,
                               csv_path=csv_path,
+                              goalConfigs=goalConfigs)
+    
+class ContinuousNaiveSingleLaneBlueprint(NaiveSingleLaneBlueprint):
+  def __init__(self,
+               params=None,
+               num_scenarios=25,
+               random_seed=0,
+               viewer=True,
+               dt=0.2,
+               xodr_path=None,
+               goalConfigs={}):
+    ml_behavior = BehaviorContinuousML(params)
+    NaiveSingleLaneBlueprint.__init__(self,
+                              params=params,
+                              num_scenarios=num_scenarios,
+                              random_seed=random_seed,
+                              ml_behavior=ml_behavior,
+                              viewer=viewer,
+                              dt=dt,
+                              xodr_path=xodr_path,
                               goalConfigs=goalConfigs)

@@ -14,7 +14,8 @@ py_library(
     deps = ["//bark_ml/observers:observers",
             "//bark_ml/evaluators:evaluators",
             "//bark_ml/behaviors:behaviors",
-            "@bark_project//bark/runtime/scenario/scenario_generation:scenario_generation"],
+            "@bark_project//bark/runtime/scenario/scenario_generation:scenario_generation",
+            "@bark_project//bark/runtime/commons:commons"],
     visibility = ["//visibility:public"],
 )
 

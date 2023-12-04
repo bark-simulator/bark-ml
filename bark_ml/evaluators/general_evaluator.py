@@ -91,6 +91,19 @@ class StepCountFunctor(Functor):
       "MaxStepCount", "", 220]:
       return True, self.WeightedReward(self._params["StepCountReward", "", 0.]), {}
     return False, 0, {}
+  
+class MaxStepCountAsGoalFunctor(Functor):
+  def __init__(self, params):
+    
+    self._params = params["MaxStepCountAsGoalFunctor"]
+    super().__init__(params=self._params)
+
+  def __call__(self, observed_world, action, eval_results):
+    if eval_results["step_count"] > self._params[
+      "MaxStepCount", "", 220]:
+      eval_results["goal_reached"] = True
+      return True, self.WeightedReward(self._params["StepCountAsGoalReward", "", 1.]), {}
+    return False, 0, {}
 
 
 class MinMaxVelFunctor(Functor):
@@ -192,6 +205,39 @@ class PotentialGoalCenterlineFunctor(PotentialBasedFunctor):
       prev_state, cur_state = self.GetPrevAndCurState(observed_world)
       prev_dist = self.DistanceToCenterline(observed_world, prev_state)
       cur_dist = self.DistanceToCenterline(observed_world, cur_state)
+      prev_pot = self.DistancePotential(
+        prev_dist, self._params["MaxDist", "", 100.],
+        self._params["DistExponent", "", 0.2])
+      cur_pot = self.DistancePotential(
+        cur_dist, self._params["MaxDist", "", 100.],
+        self._params["DistExponent", "", 0.2])
+      return False, self.WeightedReward(self._params["Gamma", "", 0.99]*cur_pot - prev_pot), {}
+    return False, 0, {}
+  
+class PotentialGoalPolyFunctor(PotentialBasedFunctor):
+  def __init__(self, params):
+    self._params = params["PotentialGoalPolyFunctor"]
+    super().__init__(params=self._params)
+    
+
+  @staticmethod
+  def DistancePotential(d, d_max, b):
+    return 1. - (d/d_max)**b
+
+  def DistanceToPolygon(self, observed_world, state):
+    ego_agent = observed_world.ego_agent
+    goal_poly = ego_agent.goal_definition.goal_shape
+    dist = Distance(goal_poly,
+      Point2d(state[int(StateDefinition.X_POSITION)],
+              state[int(StateDefinition.Y_POSITION)]))
+    return dist
+
+  def __call__(self, observed_world, action, eval_results):
+    hist = observed_world.ego_agent.history
+    if len(hist) >= 2:
+      prev_state, cur_state = self.GetPrevAndCurState(observed_world)
+      prev_dist = self.DistanceToPolygon(observed_world, prev_state)
+      cur_dist = self.DistanceToPolygon(observed_world, cur_state)
       prev_pot = self.DistancePotential(
         prev_dist, self._params["MaxDist", "", 100.],
         self._params["DistExponent", "", 0.2])
@@ -355,12 +401,14 @@ class TrafficRuleLTLFunctor(Functor):
 
   def __call__(self, observed_world, action, eval_results):
     self.traffic_rule_violation_post = eval_results[self._params["RuleName"]]
+    print("Result from evaluatorLTL:", self.traffic_rule_violation_post)
     max_vio_num = self._params["ViolationTolerance","",15]
     if self.traffic_rule_violation_post < self.traffic_rule_violation_pre:
         self.traffic_rule_violation_pre = self.traffic_rule_violation_post
     current_traffic_rule_violations = self.traffic_rule_violation_post - self.traffic_rule_violation_pre
     self.traffic_rule_violations = self.traffic_rule_violations + current_traffic_rule_violations
     self.traffic_rule_violation_pre = self.traffic_rule_violation_post
+    print("current traffic rule violations:", self.traffic_rule_violations)
     if self.traffic_rule_violations > max_vio_num:
       return True, 0, {}
     return False, self.WeightedReward(current_traffic_rule_violations/max_vio_num), {}
