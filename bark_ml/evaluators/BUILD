@@ -8,7 +8,9 @@ py_library(
             "evaluator_configs.py"],
     data = ["@bark_project//bark/python_wrapper:core.so"],
     imports = ["../external/bark_project/bark/python_wrapper/"],
-    deps = ["@bark_project//bark/runtime:runtime"],
+    deps = ["@bark_project//bark/runtime:runtime",
+            "//bark_ml/evaluators/stl:evaluator_stl"
+    ],
     visibility = ["//visibility:public"],
 )
 

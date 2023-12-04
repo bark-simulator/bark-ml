@@ -59,6 +59,19 @@ py_test(
 )
 
 py_test(
+    name = "py_label_function_tests",
+    srcs = ["py_label_function_tests.py"],
+    data = ["@bark_project//bark/python_wrapper:core.so",
+            "//bark_ml:generate_core"],
+    imports = ["../external/bark_project/bark/python_wrapper/",
+               "../python_wrapper/"],
+    deps = ["//bark_ml/environments:single_agent_runtime",
+            "//bark_ml/behaviors:behaviors",
+            "//bark_ml/commons:py_spaces"],
+    visibility = ["//visibility:public"],
+)
+
+py_test(
     name = "py_evaluator_tests",
     srcs = ["py_evaluator_tests.py"],
     data = ["@bark_project//bark/python_wrapper:core.so",
