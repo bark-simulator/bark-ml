@@ -176,7 +176,7 @@ class TFARunner:
       best_ckpt_folder=self._agent._best_ckpt_manager._manager._directory
       if success_rate > self._max_success_rate or \
         (success_rate == self._max_success_rate and mean_reward > self._max_reward):
-        self._agent.SaveCheckpoint()
+        self._agent.SaveBestCheckpoint()
         with open(best_ckpt_folder + 'info.txt', 'w') as f:
           f.write(f"Success-rate {success_rate:.3f}, collision-rate: {col_rate:.5f}"
                   f", reward {mean_reward:.3f}, steps: {mean_steps:.3f}.")

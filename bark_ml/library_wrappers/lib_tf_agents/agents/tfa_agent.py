@@ -42,10 +42,12 @@ class BehaviorTFAAgent(BehaviorModel):
     self._ckpt = tf.train.Checkpoint(step=tf.Variable(0, dtype=tf.int64),
                                      agent=self._agent)
     ckpt_path= self._params["ML"]["BehaviorTFAAgents"]["CheckpointPath", "", ""]
+    self._best_ckpt_manager = self.GetCheckpointer(ckpt_path+"best_checkpoint/",1)
     self._ckpt_manager = self.GetCheckpointer(ckpt_path,self._params["ML"]["BehaviorTFAAgents"][
         "NumCheckpointsToKeep", "", 3])
-    self._best_ckpt_manager = self.GetCheckpointer(ckpt_path+"best_checkpoint/",1)
     self._logger = logging.getLogger()
+    # restored_step = self._agent.train_step_counter.numpy()
+    # print(f"Loaded the agent checkpoint at step {restored_step}")
     # NOTE: by default we do not want the action to be set externally
     #       as this enables the agents to be plug and played in BARK.
     self._set_action_externally = False
@@ -80,12 +82,20 @@ class BehaviorTFAAgent(BehaviorModel):
       int(self._agent._train_step_counter.numpy())))
 
 
-  def SaveCheckpoint(self):
+  def SaveBestCheckpoint(self):
     self._best_ckpt_manager.save(
       global_step=self._agent._train_step_counter)
     self._logger.info(
       f"Saved best checkpoint for step "
       f"{int(self._agent._train_step_counter.numpy())} at {self._best_ckpt_manager._manager._directory}.")
+  
+  def LoadCheckpoint(self, use_best_ckpt_folder=False):
+    if use_best_ckpt_folder:
+      self._best_ckpt_manager.initialize_or_restore()
+      self._logger.info("Restored agent from best checkpoint!")
+    else:
+      self._ckpt_manager.initialize_or_restore()
+      self._logger.info("Restored agent from latest checkpoint!")
 
   def Load(self):
     try:
