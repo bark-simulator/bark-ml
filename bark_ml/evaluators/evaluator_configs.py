@@ -196,8 +196,3 @@ class EvaluatorConfigurator(GeneralEvaluator):
       eval_fns[functor_n_] = eval("{}(rule_config)".format("TrafficRuleLTLFunctor"))
 
     super().__init__(params=self._params, bark_eval_fns=bark_evals, bark_ml_eval_fns=eval_fns)
-
-      
-
-  def addKeyFunctorPair(self,functor_name,key_name):
-    self._fn_key_map[functor_name] = key_name

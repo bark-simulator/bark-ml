@@ -401,19 +401,19 @@ class TrafficRuleLTLFunctor(Functor):
 
   def __call__(self, observed_world, action, eval_results):
     self.traffic_rule_violation_post = eval_results[self._params["RuleName"]]
-    print("Result from evaluatorLTL:", self.traffic_rule_violation_post)
+    # print("Result from evaluatorLTL:", self.traffic_rule_violation_post)
     max_vio_num = self._params["ViolationTolerance","",15]
     if self.traffic_rule_violation_post < self.traffic_rule_violation_pre:
         self.traffic_rule_violation_pre = self.traffic_rule_violation_post
     current_traffic_rule_violations = self.traffic_rule_violation_post - self.traffic_rule_violation_pre
     self.traffic_rule_violations = self.traffic_rule_violations + current_traffic_rule_violations
     self.traffic_rule_violation_pre = self.traffic_rule_violation_post
-    print("current traffic rule violations:", self.traffic_rule_violations)
+    # print("current traffic rule violations:", self.traffic_rule_violations)
     if self.traffic_rule_violations > max_vio_num:
       return True, 0, {}
     return False, self.WeightedReward(current_traffic_rule_violations/max_vio_num), {}
   def Reset(self):
-    self.traffic_rule_violation_pre = 0
+    # self.traffic_rule_violation_pre = 0
     self.traffic_rule_violation_post = 0
     self.traffic_rule_violations = 0
     super().Reset()

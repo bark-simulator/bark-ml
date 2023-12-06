@@ -166,7 +166,7 @@ class NaiveGoalSingleLaneLaneCorridorConfig(LaneCorridorConfig):
                                                                 **kwargs)
   def goal(self, world):
         lane_corr = self._road_corridor.lane_corridors[0]
-        goal_polygon = Polygon2d([0, 0, 0], [Point2d(-1, -1), Point2d(-1, 1), Point2d(1, 1), Point2d(1, -1)])
+        goal_polygon = Polygon2d([0, 0, 0], [Point2d(-20, -2.5), Point2d(-20, 2.5), Point2d(5, 2.5), Point2d(5, -2.5)])
         goal_polygon = goal_polygon.Translate(Point2d(lane_corr.center_line.ToArray()[-1, 0], lane_corr.center_line.ToArray()[-1, 1]))
         return GoalDefinitionPolygon(goal_polygon)
   
