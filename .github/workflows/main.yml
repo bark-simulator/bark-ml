@@ -26,6 +26,8 @@ jobs:
         run: pip install torch==1.9.0+cpu torchvision -f https://download.pytorch.org/whl/torch_stable.html
       - name: Add torch environment variable
         run: export LD_LIBRARY_PATH=./bark_ml/python_wrapper/venv/lib/python3.7/site-packages/torch/lib/
+      - name: reinstall protobuf3.20.*.
+        run: pip install protobuf==3.20.*
       - name: Running tests
         run: bazel test //bark_ml:unit_tests
 
