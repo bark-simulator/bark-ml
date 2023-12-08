@@ -14,8 +14,9 @@ jobs:
         run: virtualenv -p python3 ./bark_ml/python_wrapper/venv  --system-site-packages
       - name: Entering the virtual python environment..
         run: . ./bark_ml/python_wrapper/venv/bin/activate
-      - name: Installing and upgrading pip packages..
+      - name: Installing and upgrading pip..
         run: pip install --upgrade pip
+      - name: Installing and upgrading pip packages..
         run: pip install --upgrade --trusted-host pypi.org -r ./utils/docker/installers/requirements.txt
       - name: Installing Tensorflow packages..
         run: pip install tensorflow-addons==0.11.2 graph-nets==1.1.0 ray==1.0.0
