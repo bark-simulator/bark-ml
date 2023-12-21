@@ -6,7 +6,7 @@
 from bark.core.world.evaluation import \
   EvaluatorGoalReached, EvaluatorCollisionEgoAgent, \
   EvaluatorStepCount, EvaluatorDrivableArea
-
+from bark.core.geometry import Point2d
 from bark_ml.evaluators.general_evaluator import *
 
 class GoalReached(GeneralEvaluator):
@@ -177,6 +177,9 @@ class EvaluatorConfigurator(GeneralEvaluator):
       labels_list = []
       for label_conf in rule_config["RuleConfig"]["labels"]:
         label_params_dict = label_conf["params"].ConvertToDict()
+        if label_conf["type"] == "EgoBeyondPointLabelFunction" or label_conf["type"] == "AgentBeyondPointLabelFunction":
+          merge_point = label_params_dict["point"]
+          label_params_dict["point"] = Point2d(merge_point[0],merge_point[1])
         labels_list.append(eval("{}(*(label_params_dict.values()))".format(label_conf["type"])))
       print("labels_list:",labels_list)
 

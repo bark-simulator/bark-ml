@@ -238,12 +238,14 @@ class PotentialGoalPolyFunctor(PotentialBasedFunctor):
       prev_state, cur_state = self.GetPrevAndCurState(observed_world)
       prev_dist = self.DistanceToPolygon(observed_world, prev_state)
       cur_dist = self.DistanceToPolygon(observed_world, cur_state)
+      # print("!!!!!!!!!!!!!current distance to goal is ", cur_dist)
       prev_pot = self.DistancePotential(
         prev_dist, self._params["MaxDist", "", 100.],
         self._params["DistExponent", "", 0.2])
       cur_pot = self.DistancePotential(
         cur_dist, self._params["MaxDist", "", 100.],
         self._params["DistExponent", "", 0.2])
+      print("!!!!!!!!!!!!!current potential is ", 0.99*cur_pot - prev_pot)
       return False, self.WeightedReward(self._params["Gamma", "", 0.99]*cur_pot - prev_pot), {}
     return False, 0, {}
 

@@ -8,14 +8,16 @@
 
 import os
 import numpy as np
-from bark.runtime.viewer.buffered_mp_viewer import BufferedMPViewer
+# from bark.runtime.viewer.buffered_mp_viewer import BufferedMPViewer
+from bark.runtime.viewer.matplotlib_viewer import MPViewer
+from bark.runtime.viewer.video_renderer import VideoRenderer
 from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
 from bark.core.world.goal_definition import GoalDefinitionPolygon
 from bark.core.geometry import Polygon2d, Point2d
 
 from bark_ml.environments.blueprints.blueprint import Blueprint
-from bark_ml.evaluators.evaluator_configs import RewardShapingEvaluator
+from bark_ml.evaluators.general_evaluator import GeneralEvaluator
 from bark_ml.behaviors.cont_behavior import BehaviorContinuousML
 from bark_ml.behaviors.discrete_behavior import BehaviorDiscreteMacroActionsML
 from bark_ml.core.observers import NearestObserver
@@ -64,7 +66,7 @@ class HighwayBlueprint(Blueprint):
 
     ego_lane_id = 2
     lane_configs = []
-    for i in range(0, 4):
+    for i in range(1, 4):
       is_controlled = True if (ego_lane_id == i) else None
       s_min = 0
       s_max = 250
@@ -92,18 +94,19 @@ class HighwayBlueprint(Blueprint):
         random_seed=random_seed,
         params=params,
         lane_corridor_configs=lane_configs)
+    
+    dt = 0.2  
     if viewer:
-      # viewer = MPViewer(params=params,
-      #                   use_world_bounds=True)
-      viewer = BufferedMPViewer(
-        params=params,
-        x_range=[-55, 55],
-        y_range=[-55, 55],
-        follow_agent_id=True)
-    dt = 0.2
+      viewer = MPViewer(params=params,
+                        x_range=[-150, 150],
+                        y_range=[-150, 150],
+                        follow_agent_id=True)
+      if params["Experiment"]["ExportVideos"]:
+        viewer = VideoRenderer(renderer=viewer, world_step_time=dt)
+    
     params["ML"]["RewardShapingEvaluator"]["PotentialVelocityFunctor"][
           "DesiredVel", "Desired velocity for the ego agent.", 20]
-    evaluator = RewardShapingEvaluator(params)
+    evaluator = GeneralEvaluator(params)
     observer = NearestObserver(params)
     ml_behavior = ml_behavior
 
