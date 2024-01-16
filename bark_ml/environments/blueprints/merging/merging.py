@@ -7,7 +7,8 @@
 # https://opensource.org/licenses/MIT
 
 import os
-from bark.runtime.viewer.buffered_mp_viewer import BufferedMPViewer
+# from bark.runtime.viewer.buffered_mp_viewer import BufferedMPViewer
+from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
 from bark.core.world.opendrive import XodrDrivingDirection
@@ -96,11 +97,10 @@ class MergingBlueprint(Blueprint):
         params=params,
         lane_corridor_configs=[left_lane, right_lane])
     if viewer:
-      viewer = BufferedMPViewer(
-        params=params,
-        x_range=[-25, 25],
-        y_range=[-25, 25],
-        follow_agent_id=True)
+      viewer = MPViewer(params=params,
+                        x_range=[-150, 150],
+                        y_range=[-150, 150],
+                        follow_agent_id=True)
     dt = 0.2
     params["ML"]["RewardShapingEvaluator"]["PotentialVelocityFunctor"][
       "DesiredVel", "Desired velocity for the ego agent.", 20]
