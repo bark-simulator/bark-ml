@@ -10,6 +10,10 @@ class SafeDistanceQuantizedLabelFunction(SafeDistanceLabelFunction, BaseQuantize
     robustness_min = float('inf')  
     robustness_max = float('-inf')  
 
+    lon_value_range = (-200, 200)
+    lat_value_range = (-20, 20)
+    feature_range = (-1, 1)
+
     def __init__(self, label_str: str, to_rear: bool, delta_ego: float, delta_others: float, a_e: float, a_o: float, 
                  consider_crossing_corridors: bool, max_agents_for_crossing: int, use_frac_param_from_world: bool, 
                  lateral_difference_threshold: float, angle_difference_threshold: float, check_lateral_dist: bool):
@@ -90,19 +94,23 @@ class SafeDistanceQuantizedLabelFunction(SafeDistanceLabelFunction, BaseQuantize
     def compute_robustness(self, eval_result):        
         safe_distance = eval_result 
 
+        if (self.stl_spec_lon_checked):
+            self.robustness_lon = self.normalize_robustness(self.robustness_lon, self.feature_range, self.lon_value_range) 
+
+        if (self.stl_spec_lat_checked):
+            self.robustness_lat = self.normalize_robustness(self.robustness_lat, self.feature_range, self.lat_value_range) 
+
         if (not self.stl_spec_lon_checked and not self.stl_spec_lat_checked):
             if safe_distance:
                 if SafeDistanceQuantizedLabelFunction.robustness_max >= 0.0:   
                     self.robustness = SafeDistanceQuantizedLabelFunction.robustness_max
-                else:
-                    # TODO: Should be taken from configuration.
-                    self.robustness = 1.0
+                else:                    
+                    self.robustness = max(self.feature_range)
             else:
                 if SafeDistanceQuantizedLabelFunction.robustness_min <= 0.0:   
                     self.robustness = SafeDistanceQuantizedLabelFunction.robustness_min
                 else:    
-                    # TODO: Should be taken from configuration.
-                    self.robustness = -1.0
+                    self.robustness = min(self.feature_range)
         elif (self.stl_spec_lon_checked and self.stl_spec_lat_checked):            
             if safe_distance and (self.robustness_lon < 0.0 or self.robustness_lat < 0.0):
                 self.robustness = max(self.robustness_lon, self.robustness_lat)   
@@ -120,6 +128,17 @@ class SafeDistanceQuantizedLabelFunction(SafeDistanceLabelFunction, BaseQuantize
 
         if self.robustness < SafeDistanceQuantizedLabelFunction.robustness_min:
             SafeDistanceQuantizedLabelFunction.robustness_min = self.robustness
+
+    def normalize_robustness(self, robustness, feature_range, value_range):
+        logging.info(f"Robustness BEFORE Normalization={robustness} and value_range={value_range}")
+        min_value, max_value = value_range
+        min_range, max_range = feature_range
+        
+        scaled_robustness = ((robustness - min_value) / (max_value - min_value)) * (max_range - min_range) + min_range
+
+        logging.info(f"Robustness AFTER Normalization={scaled_robustness}")
+
+        return scaled_robustness
 
     def Evaluate(self, observed_world):
         self.stl_spec_timestep = observed_world.time
