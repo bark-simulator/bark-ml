@@ -9,6 +9,7 @@ import time
 import numpy as np
 import logging
 import matplotlib.pyplot as plt
+import types
 
 # bark
 from bark.runtime.commons.parameters import ParameterServer
@@ -87,7 +88,10 @@ class CounterfactualRuntime(SingleAgentRuntime):
     cloned_world = self._world.Copy()
     evaluators = self._evaluator._bark_eval_fns
     for eval_key, eval_fn in evaluators.items():
-      cloned_world.AddEvaluator(eval_key, eval_fn())
+      if isinstance(eval_fn, types.LambdaType):
+        cloned_world.AddEvaluator(eval_key, eval_fn())
+      else:
+        cloned_world.AddEvaluator(eval_key, eval_fn)
     if behavior is not None:
       cloned_world.agents[agent_id].behavior_model = behavior
     return cloned_world
