@@ -176,3 +176,24 @@ tests/data/database_maps_DR_DEU_Merging_MT_shifted.xodr
 /experiments/runs/**/**
 /experiments/runs/**/**
 /_build/**
+
+# Testing and Coverage (additional entries)
+.pytest_cache/
+htmlcov/
+.coverage
+coverage.xml
+*.cover
+.hypothesis/
+
+# Virtual environments
+.venv/
+venv/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Claude Code settings
+.claude/*

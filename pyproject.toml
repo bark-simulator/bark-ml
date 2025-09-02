@@ -1,0 +1,107 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "bark-ml"
+version = "0.4.32"
+description = "Gym Environments and Agents for Autonomous Driving"
+authors = ["Patrick Hart <patrickhart.1990@gmail.com>", "Julian Bernhard", "Klemens Esterle", "Tobias Kessler"]
+license = "MIT"
+readme = "Readme.md"
+homepage = "https://github.com/bark-simulator/bark-ml"
+repository = "https://github.com/bark-simulator/bark-ml"
+keywords = ["gym environments", "reinforcement learning", "autonomous driving", "machine learning"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11"
+]
+packages = [{include = "bark_ml"}]
+
+[tool.poetry.dependencies]
+python = ">=3.7"
+pygame = ">=1.9.6"
+gym = ">=0.17.2"
+tensorflow = ">=2.2.0"
+tensorboard = ">=2.2.2"
+tf-agents = ">=0.5.0"
+tensorflow-probability = ">=0.10.0"
+bark-simulator = ">=1.4.8"
+graph-nets = ">=1.1.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+pytest-cov = "^4.1.0"
+pytest-mock = "^3.11.1"
+
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+    "--cov=bark_ml",
+    "--cov-report=term-missing:skip-covered",
+    "--cov-report=html:htmlcov",
+    "--cov-report=xml:coverage.xml",
+    "--cov-fail-under=80"
+]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+markers = [
+    "unit: Unit tests that test individual components in isolation",
+    "integration: Integration tests that test component interactions", 
+    "slow: Tests that take a long time to run"
+]
+filterwarnings = [
+    "error",
+    "ignore::UserWarning",
+    "ignore::DeprecationWarning"
+]
+
+[tool.coverage.run]
+source = ["bark_ml"]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+    "*/__pycache__/*",
+    "*/venv/*",
+    "*/.venv/*",
+    "*/build/*",
+    "*/dist/*",
+    "*/bazel-*/*",
+    "*/setup.py",
+    "*/pip_package.py"
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod"
+]
+show_missing = true
+precision = 2
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+[tool.coverage.xml]
+output = "coverage.xml"
